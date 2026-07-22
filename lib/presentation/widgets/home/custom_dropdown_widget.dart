@@ -3,19 +3,22 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 
-class CommonDropdown<T> extends StatelessWidget {
+class CommonDropdown<T> extends StatefulWidget {
   final String hintText;
   final List<DropdownItem<T>> items;
   final TextEditingController? controller;
   final ValueChanged<T> onItemSelected;
   final T? selectedValue;
-  final bool enabled; // Added enabled property
+  final bool enabled;
   final bool isMultiLine;
   final Widget? labelWidget;
   final Widget? prefixIcon;
   final Widget? suffixIcon;
   final FloatingLabelBehavior? floatingLabelBehavior;
   final bool showError;
+  final double? borderRadius;
+  final Color? borderColor;
+  final Color? focusedBorderColor;
 
   const CommonDropdown({
     super.key,
@@ -24,7 +27,7 @@ class CommonDropdown<T> extends StatelessWidget {
     this.controller,
     required this.onItemSelected,
     this.selectedValue,
-    this.enabled = true, // Default to true
+    this.enabled = true,
     this.isMultiLine = false,
     this.labelWidget,
     this.prefixIcon,
@@ -36,155 +39,311 @@ class CommonDropdown<T> extends StatelessWidget {
     this.showError = false,
   });
 
-  final double? borderRadius;
-  final Color? borderColor;
-  final Color? focusedBorderColor;
+  @override
+  State<CommonDropdown<T>> createState() => _CommonDropdownState<T>();
+}
+
+class _CommonDropdownState<T> extends State<CommonDropdown<T>> {
+  late TextEditingController _textController;
+  final FocusNode _focusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    _textController = widget.controller ?? TextEditingController();
+    _syncTextWithSelectedValue();
+  }
+
+  @override
+  void didUpdateWidget(CommonDropdown<T> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.controller != oldWidget.controller && widget.controller != null) {
+      _textController = widget.controller!;
+    }
+    if (widget.selectedValue != oldWidget.selectedValue ||
+        widget.items != oldWidget.items) {
+      _syncTextWithSelectedValue();
+    }
+  }
+
+  void _syncTextWithSelectedValue() {
+    if (widget.selectedValue != null) {
+      DropdownItem<T>? matchingItem;
+      for (final item in widget.items) {
+        if (item.id == widget.selectedValue) {
+          matchingItem = item;
+          break;
+        }
+      }
+      if (matchingItem != null) {
+        if (_textController.text != matchingItem.name) {
+          _textController.text = matchingItem.name;
+        }
+      } else {
+        if (_textController.text.isNotEmpty && widget.controller == null) {
+          _textController.clear();
+        }
+      }
+    } else {
+      if (_textController.text.isNotEmpty && widget.controller == null) {
+        _textController.clear();
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    if (widget.controller == null) {
+      _textController.dispose();
+    }
+    _focusNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    bool hasAsterisk = hintText.contains('*');
-
-    // Ensure the selectedValue is valid (not null, not invalid, and exists in the items list)
-    T? validValue = selectedValue;
-    if (validValue != null && !items.any((item) => item.id == validValue)) {
-      validValue = null; // or handle it appropriately if needed
-    }
+    bool hasAsterisk = widget.hintText.contains('*');
 
     return LayoutBuilder(builder: (context, constraints) {
-      return Stack(
-        children: [
-          SizedBox(
-            width: constraints.biggest.width,
-            child: DropdownButtonFormField<T>(
-          style: GoogleFonts.plusJakartaSans(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: AppColors.textBlack),
-          isDense: true,
-          isExpanded: true,
-          itemHeight: null, // Allow variable height
-          iconSize: 18,
-          icon: Icon(
-            Icons.keyboard_arrow_down_rounded,
-            color: enabled
-                ? null
-                : AppColors.textGrey2, // Icon color changes when disabled
-          ),
-          decoration: InputDecoration(
-            prefixIcon: prefixIcon,
-            suffixIcon: suffixIcon,
-            label: labelWidget ??
-                RichText(
-                  text: TextSpan(
-                    text: hintText.replaceAll('*', ''),
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.textGrey4,
+      return RawAutocomplete<DropdownItem<T>>(
+        focusNode: _focusNode,
+        textEditingController: _textController,
+        displayStringForOption: (option) => option.name,
+        optionsBuilder: (TextEditingValue textEditingValue) {
+          if (!widget.enabled) return const Iterable.empty();
+          final query = textEditingValue.text.toLowerCase().trim();
+          if (query.isEmpty) {
+            return widget.items;
+          }
+          final matches = widget.items.where(
+            (item) => item.name.toLowerCase().contains(query),
+          );
+          if (matches.isEmpty) {
+            return widget.items;
+          }
+          return matches;
+        },
+        onSelected: (DropdownItem<T> option) {
+          if (_focusNode.hasFocus) {
+            _focusNode.unfocus();
+          }
+          _textController.text = option.name;
+          widget.onItemSelected(option.id);
+        },
+        fieldViewBuilder: (
+          BuildContext context,
+          TextEditingController textEditingController,
+          FocusNode fieldFocusNode,
+          VoidCallback onFieldSubmitted,
+        ) {
+          return Stack(
+            children: [
+              SizedBox(
+                width: constraints.biggest.width,
+                child: TextFormField(
+                  controller: textEditingController,
+                  focusNode: fieldFocusNode,
+                  enabled: widget.enabled,
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.textBlack,
+                  ),
+                  onTap: () {
+                    if (!widget.enabled) return;
+                    if (!fieldFocusNode.hasFocus) {
+                      fieldFocusNode.requestFocus();
+                    }
+                    final currentText = textEditingController.text;
+                    textEditingController.text = '$currentText ';
+                    Future.microtask(() {
+                      textEditingController.text = currentText;
+                      textEditingController.selection = TextSelection(
+                        baseOffset: 0,
+                        extentOffset: textEditingController.text.length,
+                      );
+                    });
+                  },
+                  decoration: InputDecoration(
+                    prefixIcon: widget.prefixIcon,
+                    suffixIcon: InkWell(
+                      onTap: widget.enabled
+                          ? () {
+                              if (fieldFocusNode.hasFocus) {
+                                fieldFocusNode.unfocus();
+                              } else {
+                                fieldFocusNode.requestFocus();
+                                final currentText = textEditingController.text;
+                                textEditingController.text = '$currentText ';
+                                Future.microtask(() {
+                                  textEditingController.text = currentText;
+                                });
+                              }
+                            }
+                          : null,
+                      child: widget.suffixIcon ??
+                          Icon(
+                            Icons.keyboard_arrow_down_rounded,
+                            size: 18,
+                            color: widget.enabled
+                                ? AppColors.textBlack
+                                : AppColors.textGrey2,
+                          ),
                     ),
-                    children: <TextSpan>[
-                      if (hasAsterisk)
-                        const TextSpan(
-                          text: ' *',
-                          style: TextStyle(color: Colors.red),
+                    label: widget.labelWidget ??
+                        RichText(
+                          text: TextSpan(
+                            text: widget.hintText.replaceAll('*', ''),
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.textGrey4,
+                            ),
+                            children: <TextSpan>[
+                              if (hasAsterisk)
+                                const TextSpan(
+                                  text: ' *',
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                            ],
+                          ),
                         ),
-                    ],
+                    floatingLabelBehavior: widget.floatingLabelBehavior ??
+                        FloatingLabelBehavior.auto,
+                    floatingLabelStyle: GoogleFonts.plusJakartaSans(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: widget.showError
+                          ? Colors.red
+                          : (widget.focusedBorderColor ?? AppColors.bluebutton),
+                    ),
+                    labelStyle: GoogleFonts.plusJakartaSans(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: AppColors.textGrey3,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius:
+                          BorderRadius.circular(widget.borderRadius ?? 10),
+                      borderSide: BorderSide(
+                        color: widget.showError
+                            ? Colors.red
+                            : (widget.borderColor ?? AppColors.textGrey2),
+                        width: 1,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius:
+                          BorderRadius.circular(widget.borderRadius ?? 10),
+                      borderSide: BorderSide(
+                        color: widget.showError
+                            ? Colors.red
+                            : (widget.focusedBorderColor ??
+                                AppColors.bluebutton),
+                        width: 1.5,
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius:
+                          BorderRadius.circular(widget.borderRadius ?? 10),
+                      borderSide: BorderSide(
+                        color: widget.showError
+                            ? Colors.red
+                            : (widget.borderColor ??
+                                (AppStyles.isWebScreen(context)
+                                    ? AppColors.textGrey2
+                                    : AppColors.grey)),
+                        width: 1,
+                      ),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      vertical: 14,
+                      horizontal: 16,
+                    ),
                   ),
                 ),
-            floatingLabelBehavior:
-                floatingLabelBehavior ?? FloatingLabelBehavior.auto,
-            floatingLabelStyle: GoogleFonts.plusJakartaSans(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              color: showError ? Colors.red : (focusedBorderColor ?? AppColors.bluebutton),
-            ),
-            labelStyle: GoogleFonts.plusJakartaSans(
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
-              color: AppColors.textGrey3,
-            ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(borderRadius ?? 10),
-              borderSide: BorderSide(
-                  color: showError ? Colors.red : (borderColor ?? AppColors.textGrey2), width: 1),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(borderRadius ?? 10),
-              borderSide: BorderSide(
-                  color: showError ? Colors.red : (focusedBorderColor ?? AppColors.bluebutton), width: 1.5),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(borderRadius ?? 10),
-              borderSide: BorderSide(
-                  color: showError ? Colors.red : (borderColor ??
-                      (AppStyles.isWebScreen(context)
-                          ? AppColors.textGrey2
-                          : AppColors.grey)),
-                  width: 1),
-            ),
-            contentPadding:
-                const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-          ),
-          // Handle selectedValue properly, it should be a valid id in items
-          initialValue: validValue,
-          items: items
-              .map((item) => DropdownMenuItem<T>(
-                    value: item.id,
-                    child: Text(
-                      item.name,
-                      overflow: isMultiLine
-                          ? TextOverflow.visible
-                          : TextOverflow.ellipsis,
-                      maxLines: isMultiLine ? null : 1,
+              ),
+              if (widget.showError)
+                Positioned(
+                  right: 36,
+                  top: 8,
+                  child: Text(
+                    '*',
+                    style: GoogleFonts.plusJakartaSans(
+                      color: Colors.red,
+                      fontSize: 20,
                     ),
-                  ))
-              .toList(),
-          selectedItemBuilder: enabled
-              ? (BuildContext context) {
-                  return items.map<Widget>((item) {
-                    return SizedBox(
-                      width: constraints.biggest.width - 50,
-                      child: Text(
-                        item.name,
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.textBlack,
+                  ),
+                ),
+            ],
+          );
+        },
+        optionsViewBuilder: (
+          BuildContext context,
+          AutocompleteOnSelected<DropdownItem<T>> onSelected,
+          Iterable<DropdownItem<T>> options,
+        ) {
+          final screenHeight = MediaQuery.of(context).size.height;
+          final maxHeight = screenHeight * 0.35;
+
+          return Align(
+            alignment: Alignment.topLeft,
+            child: Material(
+              elevation: 4.0,
+              shadowColor: Colors.black26,
+              borderRadius: BorderRadius.circular(widget.borderRadius ?? 8),
+              child: Container(
+                constraints: BoxConstraints(
+                  maxHeight: maxHeight,
+                  maxWidth: constraints.biggest.width,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius:
+                      BorderRadius.circular(widget.borderRadius ?? 8),
+                ),
+                child: ListView.builder(
+                  padding: EdgeInsets.zero,
+                  shrinkWrap: true,
+                  itemCount: options.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    final option = options.elementAt(index);
+                    return InkWell(
+                      onTap: () {
+                        onSelected(option);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 10,
+                          horizontal: 16,
                         ),
-                        overflow: isMultiLine
-                            ? TextOverflow.visible
-                            : TextOverflow.ellipsis,
-                        maxLines: isMultiLine ? null : 1,
+                        decoration: const BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(
+                              color: Color(0xFFF1F5F9),
+                            ),
+                          ),
+                        ),
+                        child: Text(
+                          option.name,
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.textBlack,
+                          ),
+                          maxLines: widget.isMultiLine ? null : 1,
+                          overflow: widget.isMultiLine
+                              ? TextOverflow.visible
+                              : TextOverflow.ellipsis,
+                        ),
                       ),
                     );
-                  }).toList();
-                }
-              : null,
-          onChanged: enabled
-              ? (T? value) {
-                  if (value != null) {
-                    final selectedItem =
-                        items.firstWhere((item) => item.id == value);
-                    controller?.text = selectedItem.name;
-                    onItemSelected(selectedItem.id);
-                  }
-                }
-              : null, // Set onChanged to null when disabled
-        ),
-          ),
-          if (showError)
-            Positioned(
-              right: 12,
-              top: 8,
-              child: Text(
-                '*',
-                style: GoogleFonts.plusJakartaSans(
-                  color: Colors.red,
-                  fontSize: 20,
+                  },
                 ),
               ),
             ),
-        ],
+          );
+        },
       );
     });
   }
