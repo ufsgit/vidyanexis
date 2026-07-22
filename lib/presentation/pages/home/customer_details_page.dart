@@ -601,28 +601,30 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                   icon: const Icon(Icons.delete_outline,
                                       color: Colors.red),
                                 ),
-                              IconButton(
-                                tooltip: 'Export PDF',
-                                icon: const Icon(Icons.picture_as_pdf,
-                                    color: Colors.blue),
-                                onPressed: () async {
-                                  if (customerDetailsProvider.leadDetails != null &&
-                                      customerDetailsProvider.leadDetails!.isNotEmpty) {
-                                    final companyName = settingsprovider.companyDetails.isNotEmpty
-                                        ? settingsprovider.companyDetails[0].companyName
-                                        : '3rd Eye Security Systems';
-                                    await generateCustomerDetailsPdf(
-                                      customerData: customerDetailsProvider.leadDetails![0],
-                                      customFields: leadProvider.customFieldEnquiryFor ?? [],
-                                      companyName: companyName,
-                                    );
-                                  } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(content: Text('No details available to export')),
-                                    );
-                                  }
-                                },
-                              ),
+                              if (settingsprovider.menuIsViewMap[169] == 1 ||
+                                  settingsprovider.menuIsViewMap[169].toString() == '1')
+                                IconButton(
+                                  tooltip: 'Export PDF',
+                                  icon: const Icon(Icons.picture_as_pdf,
+                                      color: Colors.blue),
+                                  onPressed: () async {
+                                    if (customerDetailsProvider.leadDetails != null &&
+                                        customerDetailsProvider.leadDetails!.isNotEmpty) {
+                                      final companyName = settingsprovider.companyDetails.isNotEmpty
+                                          ? settingsprovider.companyDetails[0].companyName
+                                          : '3rd Eye Security Systems';
+                                      await generateCustomerDetailsPdf(
+                                        customerData: customerDetailsProvider.leadDetails![0],
+                                        customFields: leadProvider.customFieldEnquiryFor ?? [],
+                                        companyName: companyName,
+                                      );
+                                    } else {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(content: Text('No details available to export')),
+                                      );
+                                    }
+                                  },
+                                ),
                               const SizedBox(width: 20),
                               if (_canScrollLeft)
                                 IconButton(
