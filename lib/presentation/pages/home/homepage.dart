@@ -9,6 +9,7 @@ import 'package:vidyanexis/presentation/pages/home/notifications_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/followup_reports.dart';
 import 'package:vidyanexis/presentation/pages/reports/followup_amount_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/lead_page_report.dart';
+import 'package:vidyanexis/presentation/pages/reports/deleted_lead_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/quotation_report.dart';
 import 'package:vidyanexis/presentation/pages/home/process_flow_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/out_of_warrenty_report_screen.dart';
@@ -415,6 +416,12 @@ class _HomePageState extends State<HomePage> {
           title: 'Lead Reports',
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: LeadPageReport()),
+        ),
+      if (settingsProvider.menuIsViewMap[56].toString() == '1' || settingsProvider.menuIsViewMap[168].toString() == '1')
+        SidebarOption(
+          title: 'Deleted Lead Reports',
+          iconPath: 'assets/images/Reports.svg',
+          baseContent: const Center(child: DeletedLeadReportScreen()),
         ),
       if (settingsProvider.menuIsViewMap[113].toString() == '1')
         SidebarOption(

@@ -76,6 +76,7 @@ class HttpUrls {
   static String timeTrack = "followup/Time_track_reports";
   static String followupByuser = "followup/Get_followup";
   static String deleteLead = "lead/Delete_lead";
+  static String deletedLeadReport = "lead/Deleted_Lead_Report";
   static String deleteCustomer = "lead/Delete_Customer";
   static String convertLead = "followup/Convert_lead";
   static String enquirySource = "lead/Search_Enquiry_Source";
