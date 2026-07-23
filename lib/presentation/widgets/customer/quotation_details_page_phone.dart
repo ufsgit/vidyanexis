@@ -495,7 +495,12 @@ class _QuotationDetailsPagePhoneState extends State<QuotationDetailsPagePhone> {
           ? const Center(
               child: CustomText('No data'),
             )
-          : SingleChildScrollView(
+          : RefreshIndicator(
+              onRefresh: () async {
+                await Provider.of<CustomerDetailsProvider>(context, listen: false)
+                    .getQuatationListByMasterId(widget.quotationId, context);
+              },
+              child: SingleChildScrollView(
               child: Column(
                 children: [
                   Padding(
@@ -870,6 +875,7 @@ class _QuotationDetailsPagePhoneState extends State<QuotationDetailsPagePhone> {
                     ],
                   ),
                 ],
+              ),
               ),
             ),
     );

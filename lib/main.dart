@@ -168,7 +168,8 @@ class MyApp extends StatelessWidget {
             create: (context) => LeadCheckInReportProvider()),
         ChangeNotifierProvider(create: (context) => ReceiptReportProvider()),
         ChangeNotifierProvider(create: (context) => SolarLeadReportProvider()),
-        ChangeNotifierProvider(create: (context) => DeletedLeadReportProvider()),
+        ChangeNotifierProvider(
+            create: (context) => DeletedLeadReportProvider()),
         ChangeNotifierProvider(create: (context) => LeadStatusReportProvider()),
         ChangeNotifierProvider(
             create: (context) => LeadCheckInReportProvider()),
