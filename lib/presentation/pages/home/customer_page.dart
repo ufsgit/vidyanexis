@@ -414,7 +414,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                       ],
                                       data: customerProvider.customerData.map((cust) {
                                         return {
-                                          'Customer Code': cust.leadCode,
+                                          'Customer Code': cust.getDisplayLeadCode(settingsProvider.leadCodeWithEnquiryCode),
                                           'Customer Name': cust.customerName,
                                           'Mobile No': cust.contactNumber,
                                           'Email': cust.email,
@@ -829,7 +829,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                                 fontWeight: FontWeight.normal,
                                                 padding: const EdgeInsets.symmetric(
                                                     vertical: 6.0, horizontal: 8.0),
-                                                title: lead.leadCode ?? '-',
+                                                title: lead.getDisplayLeadCode(settingsProvider.leadCodeWithEnquiryCode),
                                               ),
                                               // TableWidget(title: lead.orderNo),
                                               TableWidget(

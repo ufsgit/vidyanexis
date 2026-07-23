@@ -163,29 +163,9 @@ class _CustomAutocompleteSearchState<T extends Object>
                           widget.onChanged?.call(value);
                         },
                   onTap: () {
-                    final controller =
-                        widget.controller ?? textEditingController;
-
                     if (!fieldFocusNode.hasFocus) {
                       fieldFocusNode.requestFocus();
                     }
-
-                    // Show all options
-                    widget.onChanged?.call('');
-
-                    // Simple & effective force open
-                    Future.delayed(const Duration(milliseconds: 50), () {
-                      final text = controller.text;
-                      controller.text = '$text ';
-                      controller.selection =
-                          TextSelection.collapsed(offset: text.length);
-
-                      Future.delayed(const Duration(milliseconds: 20), () {
-                        controller.text = text;
-                        controller.selection =
-                            TextSelection.collapsed(offset: text.length);
-                      });
-                    });
                   },
                   validator: widget.validator,
                   minLines: 1,

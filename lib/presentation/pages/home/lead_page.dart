@@ -713,7 +713,7 @@ class _LeadsPageState extends State<LeadPage> {
                                       ],
                                       data: leadProvider.leadData.map((lead) {
                                         return {
-                                          'Lead Code': lead.leadCode,
+                                          'Lead Code': lead.getDisplayLeadCode(settingsProvider.leadCodeWithEnquiryCode),
                                           'Customer Name': lead.customerName,
                                           'Mobile No': lead.contactNumber,
                                           'Email': lead.email,
@@ -994,7 +994,7 @@ class _LeadsPageState extends State<LeadPage> {
                         children: [
                           // Fixed columns section
                           SizedBox(
-                            width: 800,
+                            width: 860,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
@@ -1039,7 +1039,7 @@ class _LeadsPageState extends State<LeadPage> {
                                         ),
                                       ),
                                       TableWidget(
-                                        width: 100,
+                                        width: 160,
                                         padding: EdgeInsets.symmetric(
                                             vertical: 4.0, horizontal: 12.0),
                                         alignment: Alignment.centerLeft,
@@ -1215,7 +1215,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                         ),
                                                       ),
                                                       TableWidget(
-                                                        width: 100,
+                                                        width: 160,
                                                         alignment: Alignment
                                                             .centerLeft,
                                                         padding: EdgeInsets
@@ -1224,7 +1224,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                                 horizontal:
                                                                     12.0),
                                                         data: Text(
-                                                          lead.leadCode,
+                                                          lead.getDisplayLeadCode(settingsProvider.leadCodeWithEnquiryCode),
                                                           maxLines: 1,
                                                           overflow: TextOverflow
                                                               .ellipsis,
