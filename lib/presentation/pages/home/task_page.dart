@@ -374,7 +374,8 @@ class _tasksPageReportState extends State<TaskPage> {
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton<String>(
                     value: reportsProvider.entryType == 'all' ? 'ALL' : 'ME',
-                    icon: const Icon(Icons.keyboard_arrow_down, color: AppColors.primaryBlue),
+                    icon: const Icon(Icons.keyboard_arrow_down,
+                        color: AppColors.primaryBlue),
                     style: const TextStyle(
                       color: AppColors.primaryBlue,
                       fontWeight: FontWeight.w500,
@@ -382,7 +383,8 @@ class _tasksPageReportState extends State<TaskPage> {
                     ),
                     onChanged: (String? newValue) {
                       if (newValue != null) {
-                        reportsProvider.setEntryType(newValue == 'ALL' ? 'all' : 'myown');
+                        reportsProvider
+                            .setEntryType(newValue == 'ALL' ? 'all' : 'myown');
                         reportsProvider.goToPage(1);
                         reportsProvider.searchTaskByCustomer(context);
                       }
@@ -1391,19 +1393,27 @@ class _tasksPageReportState extends State<TaskPage> {
                                   ),
                                   Expanded(
                                     child: reportsProvider.taskReport.isEmpty
-                                        ? const Center(child: Text("No tasks found"))
+                                        ? const Center(
+                                            child: Text("No tasks found"))
                                         : ListView.builder(
                                             controller: _scrollController,
-                                            itemCount: reportsProvider.taskReport.length +
+                                            itemCount: reportsProvider
+                                                    .taskReport.length +
                                                 (_isLoadingMore ? 1 : 0),
                                             itemBuilder: (context, index) {
-                                              if (index == reportsProvider.taskReport.length && _isLoadingMore) {
+                                              if (index ==
+                                                      reportsProvider
+                                                          .taskReport.length &&
+                                                  _isLoadingMore) {
                                                 return const Padding(
                                                   padding: EdgeInsets.all(16),
-                                                  child: Center(child: CircularProgressIndicator()),
+                                                  child: Center(
+                                                      child:
+                                                          CircularProgressIndicator()),
                                                 );
                                               }
-                                              var task = reportsProvider.taskReport[index];
+                                              var task = reportsProvider
+                                                  .taskReport[index];
                                               return Column(
                                                 children: [
                                                   Divider(
@@ -1413,23 +1423,41 @@ class _tasksPageReportState extends State<TaskPage> {
                                                   ),
                                                   TaskCard(
                                                     task: task,
-                                                    isExpanded: reportsProvider.expandedIndex == index,
-                                                    onTap: () => reportsProvider.toggleExpansion(index),
-                                                    showStatusUpdate: (context, task) {
-                                                      reportsProvider.selectedTaskTypeIds.clear();
-                                                      reportsProvider.taskTypeModel.clear();
-                                                      if (task.customerName.isEmpty) {
-                                                        updateStatusDialogWithoutTask(task).then((value) {
+                                                    isExpanded: reportsProvider
+                                                            .expandedIndex ==
+                                                        index,
+                                                    onTap: () => reportsProvider
+                                                        .toggleExpansion(index),
+                                                    showStatusUpdate:
+                                                        (context, task) {
+                                                      reportsProvider
+                                                          .selectedTaskTypeIds
+                                                          .clear();
+                                                      reportsProvider
+                                                          .taskTypeModel
+                                                          .clear();
+                                                      if (task.customerName
+                                                          .isEmpty) {
+                                                        updateStatusDialogWithoutTask(
+                                                                task)
+                                                            .then((value) {
                                                           if (value == true) {
-                                                            reportsProvider.goToPage(1);
-                                                            reportsProvider.searchTaskByCustomer(context);
+                                                            reportsProvider
+                                                                .goToPage(1);
+                                                            reportsProvider
+                                                                .searchTaskByCustomer(
+                                                                    context);
                                                           }
                                                         });
                                                       } else {
-                                                        statusDialogMobile(task).then((value) {
+                                                        statusDialogMobile(task)
+                                                            .then((value) {
                                                           if (value == true) {
-                                                            reportsProvider.goToPage(1);
-                                                            reportsProvider.searchTaskByCustomer(context);
+                                                            reportsProvider
+                                                                .goToPage(1);
+                                                            reportsProvider
+                                                                .searchTaskByCustomer(
+                                                                    context);
                                                           }
                                                         });
                                                       }
@@ -1453,9 +1481,10 @@ class _tasksPageReportState extends State<TaskPage> {
                                   if (settingsProvider.showView[162] != 1) {
                                     minWidth -= 130;
                                   }
-                                  double tableWidth = minWidth > constraints.maxWidth
-                                      ? minWidth
-                                      : constraints.maxWidth;
+                                  double tableWidth =
+                                      minWidth > constraints.maxWidth
+                                          ? minWidth
+                                          : constraints.maxWidth;
                                   return Scrollbar(
                                     controller: _horizontalScrollController,
                                     thumbVisibility: true,
@@ -1465,232 +1494,270 @@ class _tasksPageReportState extends State<TaskPage> {
                                       controller: _horizontalScrollController,
                                       child: SizedBox(
                                         width: tableWidth,
-                                    child: Column(
-                                      children: [
-                                        // Header
-                                        Container(
-                                          decoration: BoxDecoration(
-                                            color: AppColors.primaryBlue,
-                                            borderRadius:
-                                                BorderRadius.circular(4),
-                                          ),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              SizedBox(
-                                                width: 60,
-                                                child: Padding(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      vertical: 4.0,
-                                                      horizontal: 12.0),
-                                                  child: Text('No.',
-                                                      style: const TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: Colors.white)),
-                                                ),
+                                        child: Column(
+                                          children: [
+                                            // Header
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                color: AppColors.primaryBlue,
+                                                borderRadius:
+                                                    BorderRadius.circular(4),
                                               ),
-                                              TableWidget(
-                                                  width: 120,
-                                                  title: 'Lead Code',
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      vertical: 4.0,
-                                                      horizontal: 12.0),
-                                                  alignment:
-                                                      Alignment.centerLeft,
-                                                  color: Colors.white),
-                                              TableWidget(
-                                                  width: 180,
-                                                  title: 'Customer',
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      vertical: 4.0,
-                                                      horizontal: 12.0),
-                                                  alignment:
-                                                      Alignment.centerLeft,
-                                                  color: Colors.white),
-                                              TableWidget(
-                                                  width: 110,
-                                                  title: 'Mobile No.',
-                                                  fontSize: 13,
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      vertical: 4.0,
-                                                      horizontal: 12.0),
-                                                  color: Colors.white),
-                                              TableWidget(
-                                                  width: 180,
-                                                  title: 'Task',
-                                                  fontSize: 13,
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      vertical: 4.0,
-                                                      horizontal: 12.0),
-                                                  color: Colors.white),
-                                              TableWidget(
-                                                  width: 150,
-                                                  title: 'Enquiry for',
-                                                  fontSize: 13,
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      vertical: 4.0,
-                                                      horizontal: 12.0),
-                                                  color: Colors.white),
-                                              TableWidget(
-                                                  width: 120,
-                                                  title: 'Staff',
-                                                  fontSize: 13,
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      vertical: 4.0,
-                                                      horizontal: 12.0),
-                                                  color: Colors.white),
-                                              TableWidget(
-                                                  flex: 1,
-                                                  title: 'Description',
-                                                  fontSize: 13,
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      vertical: 4.0,
-                                                      horizontal: 12.0),
-                                                  color: Colors.white),
-                                              TableWidget(
-                                                  width: 140,
-                                                  title: 'Created Date',
-                                                  fontSize: 13,
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      vertical: 4.0,
-                                                      horizontal: 12.0),
-                                                  color: Colors.white),
-                                              TableWidget(
-                                                  width: 160,
-                                                  title: 'Followup Date&Time',
-                                                  fontSize: 13,
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      vertical: 4.0,
-                                                      horizontal: 12.0),
-                                                  color: Colors.white),
-                                              TableWidget(
-                                                  width: 120,
-                                                  title: 'Status',
-                                                  fontSize: 13,
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      vertical: 4.0,
-                                                      horizontal: 12.0),
-                                                  color: Colors.white),
-                                              if (settingsProvider
-                                                      .showView[162] ==
-                                                  1)
-                                                TableWidget(
-                                                    width: 130,
-                                                    title: 'Job Sheet',
-                                                    fontSize: 13,
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        vertical: 4.0,
-                                                        horizontal: 12.0),
-                                                    color: Colors.white),
-                                            ],
-                                          ),
-                                        ),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  SizedBox(
+                                                    width: 60,
+                                                    child: Padding(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          vertical: 4.0,
+                                                          horizontal: 12.0),
+                                                      child: Text('No.',
+                                                          style:
+                                                              const TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color: Colors
+                                                                      .white)),
+                                                    ),
+                                                  ),
+                                                  TableWidget(
+                                                      width: 120,
+                                                      title: 'Lead Code',
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          vertical: 4.0,
+                                                          horizontal: 12.0),
+                                                      alignment:
+                                                          Alignment.centerLeft,
+                                                      color: Colors.white),
+                                                  TableWidget(
+                                                      width: 180,
+                                                      title: 'Customer',
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          vertical: 4.0,
+                                                          horizontal: 12.0),
+                                                      alignment:
+                                                          Alignment.centerLeft,
+                                                      color: Colors.white),
+                                                  TableWidget(
+                                                      width: 110,
+                                                      title: 'Mobile No.',
+                                                      fontSize: 13,
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          vertical: 4.0,
+                                                          horizontal: 12.0),
+                                                      color: Colors.white),
+                                                  TableWidget(
+                                                      width: 180,
+                                                      title: 'Task',
+                                                      fontSize: 13,
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          vertical: 4.0,
+                                                          horizontal: 12.0),
+                                                      color: Colors.white),
+                                                  TableWidget(
+                                                      width: 150,
+                                                      title: 'Enquiry for',
+                                                      fontSize: 13,
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          vertical: 4.0,
+                                                          horizontal: 12.0),
+                                                      color: Colors.white),
+                                                  TableWidget(
+                                                      width: 120,
+                                                      title: 'Staff',
+                                                      fontSize: 13,
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          vertical: 4.0,
+                                                          horizontal: 12.0),
+                                                      color: Colors.white),
+                                                  TableWidget(
+                                                      flex: 1,
+                                                      title: 'Description',
+                                                      fontSize: 13,
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          vertical: 4.0,
+                                                          horizontal: 12.0),
+                                                      color: Colors.white),
+                                                  TableWidget(
+                                                      width: 140,
+                                                      title: 'Created Date',
+                                                      fontSize: 13,
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          vertical: 4.0,
+                                                          horizontal: 12.0),
+                                                      color: Colors.white),
+                                                  TableWidget(
+                                                      width: 160,
+                                                      title:
+                                                          'Followup Date&Time',
+                                                      fontSize: 13,
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          vertical: 4.0,
+                                                          horizontal: 12.0),
+                                                      color: Colors.white),
+                                                  TableWidget(
+                                                      width: 120,
+                                                      title: 'Status',
+                                                      fontSize: 13,
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          vertical: 4.0,
+                                                          horizontal: 12.0),
+                                                      color: Colors.white),
+                                                  if (settingsProvider
+                                                          .showView[162] ==
+                                                      1)
+                                                    TableWidget(
+                                                        width: 130,
+                                                        title: 'Job Sheet',
+                                                        fontSize: 13,
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                vertical: 4.0,
+                                                                horizontal:
+                                                                    12.0),
+                                                        color: Colors.white),
+                                                ],
+                                              ),
+                                            ),
 
-                                        // Data Rows
-                                        Expanded(
-                                          child:
-                                              reportsProvider.taskReport.isEmpty
-                                                  ? const Center(
-                                                      child: Text(
-                                                          "No tasks found"))
-                                                  : ListView.builder(
-                                                      controller:
-                                                          _scrollController,
-                                                      shrinkWrap: false,
-                                                      physics:
-                                                          const AlwaysScrollableScrollPhysics(),
-                                                      itemCount: reportsProvider
-                                                              .taskReport
-                                                              .length +
-                                                          (_isLoadingMore &&
-                                                                  !AppStyles
-                                                                      .isWebScreen(
-                                                                          context)
-                                                              ? 1
-                                                              : 0),
-                                                      itemBuilder:
-                                                          (context, index) {
-                                                        // Loading indicator for mobile
-                                                        if (!AppStyles
-                                                                .isWebScreen(
-                                                                    context) &&
-                                                            index ==
+                                            // Data Rows
+                                            Expanded(
+                                              child:
+                                                  reportsProvider
+                                                          .taskReport.isEmpty
+                                                      ? const Center(
+                                                          child: Text(
+                                                              "No tasks found"))
+                                                      : ListView.builder(
+                                                          controller:
+                                                              _scrollController,
+                                                          shrinkWrap: false,
+                                                          physics:
+                                                              const AlwaysScrollableScrollPhysics(),
+                                                          itemCount: reportsProvider
+                                                                  .taskReport
+                                                                  .length +
+                                                              (_isLoadingMore &&
+                                                                      !AppStyles
+                                                                          .isWebScreen(
+                                                                              context)
+                                                                  ? 1
+                                                                  : 0),
+                                                          itemBuilder:
+                                                              (context, index) {
+                                                            // Loading indicator for mobile
+                                                            if (!AppStyles
+                                                                    .isWebScreen(
+                                                                        context) &&
+                                                                index ==
+                                                                    reportsProvider
+                                                                        .taskReport
+                                                                        .length &&
+                                                                _isLoadingMore) {
+                                                              return const Padding(
+                                                                padding:
+                                                                    EdgeInsets
+                                                                        .all(
+                                                                            16),
+                                                                child: Center(
+                                                                  child:
+                                                                      CircularProgressIndicator(),
+                                                                ),
+                                                              );
+                                                            }
+
+                                                            var task =
                                                                 reportsProvider
-                                                                    .taskReport
-                                                                    .length &&
-                                                            _isLoadingMore) {
-                                                          return const Padding(
-                                                            padding:
-                                                                EdgeInsets.all(
-                                                                    16),
-                                                            child: Center(
-                                                              child:
-                                                                  CircularProgressIndicator(),
-                                                            ),
-                                                          );
-                                                        }
+                                                                        .taskReport[
+                                                                    index];
+                                                            final itemNumber =
+                                                                ((reportsProvider.pageIndex ??
+                                                                                1) -
+                                                                            1) *
+                                                                        (reportsProvider.pageSize ??
+                                                                            20) +
+                                                                    index +
+                                                                    1;
 
-                                                        var task =
-                                                            reportsProvider
-                                                                    .taskReport[
-                                                                index];
-                                                        final itemNumber =
-                                                            ((reportsProvider.pageIndex ??
-                                                                            1) -
-                                                                        1) *
-                                                                    (reportsProvider
-                                                                            .pageSize ??
-                                                                        20) +
-                                                                index +
-                                                                1;
+                                                            if (!AppStyles
+                                                                .isWebScreen(
+                                                                    context)) {
+                                                              return Column(
+                                                                children: [
+                                                                  Divider(
+                                                                    height: 1,
+                                                                    thickness:
+                                                                        1,
+                                                                    color:
+                                                                        AppColors
+                                                                            .grey,
+                                                                  ),
+                                                                  TaskCard(
+                                                                    task: task,
+                                                                    isExpanded:
+                                                                        reportsProvider.expandedIndex ==
+                                                                            index,
+                                                                    onTap: () =>
+                                                                        reportsProvider
+                                                                            .toggleExpansion(index),
+                                                                    showStatusUpdate:
+                                                                        (ctx,
+                                                                            t) {
+                                                                      reportsProvider
+                                                                          .selectedTaskTypeIds
+                                                                          .clear();
+                                                                      reportsProvider
+                                                                          .taskTypeModel
+                                                                          .clear();
+                                                                      statusDialogMobile(
+                                                                              t)
+                                                                          .then(
+                                                                              (value) {
+                                                                        if (value ==
+                                                                            true) {
+                                                                          reportsProvider
+                                                                              .goToPage(1);
+                                                                          reportsProvider
+                                                                              .searchTaskByCustomer(context);
+                                                                        }
+                                                                      });
+                                                                    },
+                                                                  ),
+                                                                ],
+                                                              );
+                                                            }
 
-                                                        if (!AppStyles
-                                                            .isWebScreen(
-                                                                context)) {
-                                                          return Column(
-                                                            children: [
-                                                              Divider(
-                                                                height: 1,
-                                                                thickness: 1,
-                                                                color: AppColors
-                                                                    .grey,
-                                                              ),
-                                                              TaskCard(
-                                                                task: task,
-                                                                isExpanded:
-                                                                    reportsProvider
-                                                                            .expandedIndex ==
-                                                                        index,
-                                                                onTap: () =>
-                                                                    reportsProvider
-                                                                        .toggleExpansion(
-                                                                            index),
-                                                                showStatusUpdate:
-                                                                    (ctx, t) {
-                                                                  reportsProvider
-                                                                      .selectedTaskTypeIds
-                                                                      .clear();
-                                                                  reportsProvider
-                                                                      .taskTypeModel
-                                                                      .clear();
-                                                                  statusDialogMobile(
-                                                                          t)
+                                                            // === WEB ROW ===
+                                                            return InkWell(
+                                                              onTap: () {
+                                                                reportsProvider
+                                                                    .selectedTaskTypeIds
+                                                                    .clear();
+                                                                reportsProvider
+                                                                    .taskTypeModel
+                                                                    .clear();
+                                                                if (task
+                                                                    .customerName
+                                                                    .isEmpty) {
+                                                                  updateStatusDialogWithoutTask(
+                                                                          task)
                                                                       .then(
                                                                           (value) {
                                                                     if (value ==
@@ -1703,582 +1770,536 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                               context);
                                                                     }
                                                                   });
-                                                                },
-                                                              ),
-                                                            ],
-                                                          );
-                                                        }
-
-                                                        // === WEB ROW ===
-                                                        return InkWell(
-                                                          onTap: () {
-                                                            reportsProvider
-                                                                .selectedTaskTypeIds
-                                                                .clear();
-                                                            reportsProvider
-                                                                .taskTypeModel
-                                                                .clear();
-                                                            if (task
-                                                                .customerName
-                                                                .isEmpty) {
-                                                              updateStatusDialogWithoutTask(
-                                                                      task)
-                                                                  .then(
-                                                                      (value) {
-                                                                if (value ==
-                                                                    true) {
-                                                                  reportsProvider
-                                                                      .goToPage(
-                                                                          1);
-                                                                  reportsProvider
-                                                                      .searchTaskByCustomer(
-                                                                          context);
+                                                                } else {
+                                                                  if (AppStyles
+                                                                      .isWebScreen(
+                                                                          context)) {
+                                                                    statusDialog(
+                                                                            task)
+                                                                        .then(
+                                                                            (value) {
+                                                                      if (value ==
+                                                                          true) {
+                                                                        reportsProvider
+                                                                            .goToPage(1);
+                                                                        reportsProvider
+                                                                            .searchTaskByCustomer(context);
+                                                                      }
+                                                                    });
+                                                                  } else {
+                                                                    statusDialogMobile(
+                                                                            task)
+                                                                        .then(
+                                                                            (value) {
+                                                                      if (value ==
+                                                                          true) {
+                                                                        reportsProvider
+                                                                            .goToPage(1);
+                                                                        reportsProvider
+                                                                            .searchTaskByCustomer(context);
+                                                                      }
+                                                                    });
+                                                                  }
                                                                 }
-                                                              });
-                                                            } else {
-                                                              if (AppStyles
-                                                                  .isWebScreen(
-                                                                      context)) {
-                                                                statusDialog(
-                                                                        task)
-                                                                    .then(
-                                                                        (value) {
-                                                                  if (value ==
-                                                                      true) {
-                                                                    reportsProvider
-                                                                        .goToPage(
-                                                                            1);
-                                                                    reportsProvider
-                                                                        .searchTaskByCustomer(
-                                                                            context);
-                                                                  }
-                                                                });
-                                                              } else {
-                                                                statusDialogMobile(
-                                                                        task)
-                                                                    .then(
-                                                                        (value) {
-                                                                  if (value ==
-                                                                      true) {
-                                                                    reportsProvider
-                                                                        .goToPage(
-                                                                            1);
-                                                                    reportsProvider
-                                                                        .searchTaskByCustomer(
-                                                                            context);
-                                                                  }
-                                                                });
-                                                              }
-                                                            }
-                                                          },
-                                                          hoverColor:
-                                                              const Color(
-                                                                  0xFFF8FAFC),
-                                                          child: Container(
-                                                            constraints:
-                                                                BoxConstraints(
-                                                                    minHeight:
-                                                                        rowHeight),
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              color: index %
-                                                                          2 ==
-                                                                      0
-                                                                  ? Colors.white
-                                                                  : const Color(
-                                                                      0xFFF6F7F9),
-                                                            ),
-                                                            child: Row(
-                                                              children: [
-                                                                SizedBox(
-                                                                  width: 60,
-                                                                  child:
-                                                                      Padding(
-                                                                    padding: const EdgeInsets
-                                                                        .symmetric(
-                                                                        vertical:
-                                                                            4.0,
-                                                                        horizontal:
-                                                                            12.0),
-                                                                    child: Text(
-                                                                      itemNumber
-                                                                          .toString(),
-                                                                      style:
-                                                                          const TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight.bold,
-                                                                        fontSize:
-                                                                            13,
-                                                                      ),
-                                                                    ),
-                                                                  ),
+                                                              },
+                                                              hoverColor:
+                                                                  const Color(
+                                                                      0xFFF8FAFC),
+                                                              child: Container(
+                                                                constraints:
+                                                                    BoxConstraints(
+                                                                        minHeight:
+                                                                            rowHeight),
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  color: index %
+                                                                              2 ==
+                                                                          0
+                                                                      ? Colors
+                                                                          .white
+                                                                      : const Color(
+                                                                          0xFFF6F7F9),
                                                                 ),
-                                                                TableWidget(
-                                                                  width: 120,
-                                                                  fontSize: 13,
-                                                                  padding: const EdgeInsets
-                                                                      .symmetric(
-                                                                      vertical:
-                                                                          4.0,
-                                                                      horizontal:
-                                                                          12.0),
-                                                                  title:
-                                                                      task.leadCode ??
-                                                                          '-',
-                                                                ),
-                                                                TableWidget(
-                                                                  width: 180,
-                                                                  padding: const EdgeInsets
-                                                                      .symmetric(
-                                                                      vertical:
-                                                                          4.0,
-                                                                      horizontal:
-                                                                          12.0),
-                                                                  data: Row(
-                                                                    children: [
-                                                                      Expanded(
+                                                                child: Row(
+                                                                  children: [
+                                                                    SizedBox(
+                                                                      width: 60,
+                                                                      child:
+                                                                          Padding(
+                                                                        padding: const EdgeInsets
+                                                                            .symmetric(
+                                                                            vertical:
+                                                                                4.0,
+                                                                            horizontal:
+                                                                                12.0),
                                                                         child:
-                                                                            Container(
-                                                                          decoration:
-                                                                              BoxDecoration(
-                                                                            color:
-                                                                                const Color(0xFFEBF5FF),
-                                                                            borderRadius:
-                                                                                BorderRadius.circular(5),
-                                                                          ),
-                                                                          padding: const EdgeInsets
-                                                                              .symmetric(
-                                                                              horizontal: 10,
-                                                                              vertical: 6),
-                                                                          child:
-                                                                              InkWell(
-                                                                            onTap:
-                                                                                () {
-                                                                              context.push('${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
-                                                                            },
-                                                                            child:
-                                                                                Text(
-                                                                              task.customerName.isNotEmpty ? task.customerName : 'Unknown',
-                                                                              overflow: TextOverflow.ellipsis,
-                                                                              maxLines: 1,
-                                                                              style: const TextStyle(
-                                                                                color: Colors.blue,
-                                                                                fontWeight: FontWeight.w500,
-                                                                                fontSize: 13,
-                                                                              ),
-                                                                            ),
+                                                                            Text(
+                                                                          itemNumber
+                                                                              .toString(),
+                                                                          style:
+                                                                              const TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                            fontSize:
+                                                                                13,
                                                                           ),
                                                                         ),
                                                                       ),
-                                                                      _HoverMenuAnchor(
-                                                                        builder: (context,
-                                                                            controller,
-                                                                            onHover,
-                                                                            child) {
-                                                                          return InkWell(
-                                                                            onTap:
-                                                                                () {
-                                                                              if (controller.isOpen) {
-                                                                                controller.close();
-                                                                              } else {
-                                                                                controller.open();
-                                                                              }
-                                                                            },
-                                                                            onHover:
-                                                                                onHover,
+                                                                    ),
+                                                                    TableWidget(
+                                                                      width:
+                                                                          120,
+                                                                      fontSize:
+                                                                          13,
+                                                                      padding: const EdgeInsets
+                                                                          .symmetric(
+                                                                          vertical:
+                                                                              4.0,
+                                                                          horizontal:
+                                                                              12.0),
+                                                                      title: task
+                                                                              .leadCode ??
+                                                                          '-',
+                                                                    ),
+                                                                    TableWidget(
+                                                                      width:
+                                                                          180,
+                                                                      padding: const EdgeInsets
+                                                                          .symmetric(
+                                                                          vertical:
+                                                                              4.0,
+                                                                          horizontal:
+                                                                              12.0),
+                                                                      data: Row(
+                                                                        children: [
+                                                                          Expanded(
                                                                             child:
                                                                                 Container(
-                                                                              padding: const EdgeInsets.all(4),
                                                                               decoration: BoxDecoration(
-                                                                                color: Colors.transparent,
-                                                                                borderRadius: BorderRadius.circular(8),
+                                                                                color: const Color(0xFFEBF5FF),
+                                                                                borderRadius: BorderRadius.circular(5),
                                                                               ),
-                                                                              child: Icon(
-                                                                                Icons.keyboard_arrow_down_rounded,
-                                                                                size: 20,
-                                                                                color: Colors.grey[500],
+                                                                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                                                              child: InkWell(
+                                                                                onTap: () {
+                                                                                  context.push('${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
+                                                                                },
+                                                                                child: Text(
+                                                                                  task.customerName.isNotEmpty ? task.customerName : 'Unknown',
+                                                                                  overflow: TextOverflow.ellipsis,
+                                                                                  maxLines: 1,
+                                                                                  style: const TextStyle(
+                                                                                    color: Colors.blue,
+                                                                                    fontWeight: FontWeight.w500,
+                                                                                    fontSize: 13,
+                                                                                  ),
+                                                                                ),
                                                                               ),
                                                                             ),
-                                                                          );
-                                                                        },
-                                                                        menuChildren: [
-                                                                          // Add your menu items here (Create Task, Edit Lead, etc.)
+                                                                          ),
+                                                                          _HoverMenuAnchor(
+                                                                            builder: (context,
+                                                                                controller,
+                                                                                onHover,
+                                                                                child) {
+                                                                              return InkWell(
+                                                                                onTap: () {
+                                                                                  if (controller.isOpen) {
+                                                                                    controller.close();
+                                                                                  } else {
+                                                                                    controller.open();
+                                                                                  }
+                                                                                },
+                                                                                onHover: onHover,
+                                                                                child: Container(
+                                                                                  padding: const EdgeInsets.all(4),
+                                                                                  decoration: BoxDecoration(
+                                                                                    color: Colors.transparent,
+                                                                                    borderRadius: BorderRadius.circular(8),
+                                                                                  ),
+                                                                                  child: Icon(
+                                                                                    Icons.keyboard_arrow_down_rounded,
+                                                                                    size: 20,
+                                                                                    color: Colors.grey[500],
+                                                                                  ),
+                                                                                ),
+                                                                              );
+                                                                            },
+                                                                            menuChildren: [
+                                                                              // Add your menu items here (Create Task, Edit Lead, etc.)
+                                                                            ],
+                                                                          ),
                                                                         ],
                                                                       ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                                TableWidget(
-                                                                  width: 110,
-                                                                  padding: const EdgeInsets
-                                                                      .symmetric(
-                                                                      vertical:
-                                                                          4.0,
-                                                                      horizontal:
-                                                                          12.0),
-                                                                  data: Tooltip(
-                                                                    message: task
-                                                                        .mobile,
-                                                                    child: Text(
-                                                                      task.mobile
-                                                                              .isNotEmpty
-                                                                          ? task
-                                                                              .mobile
-                                                                          : '-',
-                                                                      overflow:
-                                                                          TextOverflow
-                                                                              .ellipsis,
-                                                                      maxLines:
-                                                                          1,
-                                                                      style:
-                                                                          const TextStyle(
-                                                                        fontSize:
-                                                                            13,
-                                                                        color: Color(
-                                                                            0xFF334155),
-                                                                        fontWeight:
-                                                                            FontWeight.w500,
-                                                                      ),
                                                                     ),
-                                                                  ),
-                                                                ),
-                                                                TableWidget(
-                                                                  width: 180,
-                                                                  padding: const EdgeInsets
-                                                                      .symmetric(
-                                                                      vertical:
-                                                                          4.0,
-                                                                      horizontal:
-                                                                          12.0),
-                                                                  data: Tooltip(
-                                                                    message:
-                                                                        task.taskTypeName ??
-                                                                            '',
-                                                                    child: Text(
-                                                                      task.taskTypeName ??
-                                                                          '',
-                                                                      overflow:
-                                                                          TextOverflow
-                                                                              .ellipsis,
-                                                                      maxLines:
-                                                                          1,
-                                                                      style:
-                                                                          const TextStyle(
-                                                                        fontSize:
-                                                                            13,
-                                                                        color: Color(
-                                                                            0xFF334155),
-                                                                        fontWeight:
-                                                                            FontWeight.w500,
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                TableWidget(
-                                                                  width: 150,
-                                                                  padding: const EdgeInsets
-                                                                      .symmetric(
-                                                                      vertical:
-                                                                          4.0,
-                                                                      horizontal:
-                                                                          12.0),
-                                                                  data: Tooltip(
-                                                                    message: provider.getEnquiryForNameById(
-                                                                        task.enquiryForId,
-                                                                        task.enquiryForName),
-                                                                    child: Text(
-                                                                      provider.getEnquiryForNameById(
-                                                                          task.enquiryForId,
-                                                                          task.enquiryForName),
-                                                                      overflow:
-                                                                          TextOverflow
-                                                                              .ellipsis,
-                                                                      maxLines:
-                                                                          1,
-                                                                      style:
-                                                                          const TextStyle(
-                                                                        fontSize:
-                                                                            13,
-                                                                        color: Color(
-                                                                            0xFF334155),
-                                                                        fontWeight:
-                                                                            FontWeight.w500,
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                TableWidget(
-                                                                  width: 120,
-                                                                  padding: const EdgeInsets
-                                                                      .symmetric(
-                                                                      vertical:
-                                                                          4.0,
-                                                                      horizontal:
-                                                                          12.0),
-                                                                  data: Text(
-                                                                    task.toUserName ??
-                                                                        '',
-                                                                    overflow:
-                                                                        TextOverflow
-                                                                            .ellipsis,
-                                                                    maxLines: 1,
-                                                                    style:
-                                                                        const TextStyle(
-                                                                      fontSize:
-                                                                          13,
-                                                                      color: Color(
-                                                                          0xFF334155),
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w500,
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                TableWidget(
-                                                                  flex: 1,
-                                                                  padding: const EdgeInsets
-                                                                      .symmetric(
-                                                                      vertical:
-                                                                          4.0,
-                                                                      horizontal:
-                                                                          12.0),
-                                                                  data: Tooltip(
-                                                                    message:
-                                                                        task.description ??
-                                                                            '',
-                                                                    child: Text(
-                                                                      task.description ??
-                                                                          '',
-                                                                      overflow:
-                                                                          TextOverflow
-                                                                              .ellipsis,
-                                                                      maxLines:
-                                                                          1,
-                                                                      style:
-                                                                          const TextStyle(
-                                                                        fontSize:
-                                                                            13,
-                                                                        color: Color(
-                                                                            0xFF334155),
-                                                                        fontWeight:
-                                                                            FontWeight.w500,
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                TableWidget(
-                                                                  width: 140,
-                                                                  padding: const EdgeInsets
-                                                                      .symmetric(
-                                                                      vertical:
-                                                                          4.0,
-                                                                      horizontal:
-                                                                          12.0),
-                                                                  data: Text(
-                                                                    task.entryDate
-                                                                        .toDayMonthYearFormat(),
-                                                                    overflow:
-                                                                        TextOverflow
-                                                                            .ellipsis,
-                                                                    maxLines: 1,
-                                                                    style:
-                                                                        const TextStyle(
-                                                                      fontSize:
-                                                                          13,
-                                                                      color: Color(
-                                                                          0xFF334155),
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w500,
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                TableWidget(
-                                                                  width: 160,
-                                                                  padding: const EdgeInsets
-                                                                      .symmetric(
-                                                                      vertical:
-                                                                          4.0,
-                                                                      horizontal:
-                                                                          12.0),
-                                                                  data: Text(
-                                                                    () {
-                                                                      String date = task
-                                                                          .taskDate
-                                                                          .toDayMonthYearFormat();
-                                                                      String
-                                                                          time =
-                                                                          '';
-                                                                      if (task
-                                                                          .taskTime
-                                                                          .isNotEmpty) {
-                                                                        try {
-                                                                          final parsed =
-                                                                              DateFormat('HH:mm:ss').parse(task.taskTime);
-                                                                          time =
-                                                                              DateFormat('hh:mm a').format(parsed);
-                                                                        } catch (_) {
-                                                                          time =
-                                                                              task.taskTime;
-                                                                        }
-                                                                      }
-                                                                      return time
-                                                                              .isEmpty
-                                                                          ? date
-                                                                          : '$date $time';
-                                                                    }(),
-                                                                    overflow:
-                                                                        TextOverflow
-                                                                            .ellipsis,
-                                                                    maxLines: 1,
-                                                                    style:
-                                                                        const TextStyle(
-                                                                      fontSize:
-                                                                          13,
-                                                                      color: Color(
-                                                                          0xFF334155),
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w500,
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                TableWidget(
-                                                                  width: 120,
-                                                                  padding: const EdgeInsets
-                                                                      .symmetric(
-                                                                      vertical:
-                                                                          4.0,
-                                                                      horizontal:
-                                                                          12.0),
-                                                                  data: InkWell(
-                                                                    onTap: () {
-                                                                      reportsProvider.selectedTaskTypeIds.clear();
-                                                                      reportsProvider.taskTypeModel.clear();
-                                                                      if (task.customerName.isEmpty) {
-                                                                        updateStatusDialogWithoutTask(task).then((value) {
-                                                                          if (value == true) {
-                                                                            reportsProvider.goToPage(1);
-                                                                            reportsProvider.searchTaskByCustomer(context);
-                                                                          }
-                                                                        });
-                                                                      } else {
-                                                                        if (AppStyles.isWebScreen(context)) {
-                                                                          statusDialog(task).then((value) {
-                                                                            if (value == true) {
-                                                                              reportsProvider.goToPage(1);
-                                                                              reportsProvider.searchTaskByCustomer(context);
-                                                                            }
-                                                                          });
-                                                                        } else {
-                                                                          statusDialogMobile(task).then((value) {
-                                                                            if (value == true) {
-                                                                              reportsProvider.goToPage(1);
-                                                                              reportsProvider.searchTaskByCustomer(context);
-                                                                            }
-                                                                          });
-                                                                        }
-                                                                      }
-                                                                    },
-                                                                    child:
-                                                                        Container(
-                                                                      height:
-                                                                          30,
-                                                                      decoration:
-                                                                          BoxDecoration(
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(30),
-                                                                        color: (task.colorCode ??
-                                                                                const Color(0xFF3B82F6))
-                                                                            .withOpacity(0.2),
-                                                                      ),
-                                                                      child:
-                                                                          Center(
+                                                                    TableWidget(
+                                                                      width:
+                                                                          110,
+                                                                      padding: const EdgeInsets
+                                                                          .symmetric(
+                                                                          vertical:
+                                                                              4.0,
+                                                                          horizontal:
+                                                                              12.0),
+                                                                      data:
+                                                                          Tooltip(
+                                                                        message:
+                                                                            task.mobile,
                                                                         child:
-                                                                            Padding(
-                                                                          padding: const EdgeInsets
-                                                                              .symmetric(
-                                                                              horizontal: 10,
-                                                                              vertical: 6),
+                                                                            Text(
+                                                                          task.mobile.isNotEmpty
+                                                                              ? task.mobile
+                                                                              : '-',
+                                                                          overflow:
+                                                                              TextOverflow.ellipsis,
+                                                                          maxLines:
+                                                                              1,
+                                                                          style:
+                                                                              const TextStyle(
+                                                                            fontSize:
+                                                                                13,
+                                                                            color:
+                                                                                Color(0xFF334155),
+                                                                            fontWeight:
+                                                                                FontWeight.w500,
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    TableWidget(
+                                                                      width:
+                                                                          180,
+                                                                      padding: const EdgeInsets
+                                                                          .symmetric(
+                                                                          vertical:
+                                                                              4.0,
+                                                                          horizontal:
+                                                                              12.0),
+                                                                      data:
+                                                                          Tooltip(
+                                                                        message:
+                                                                            task.taskTypeName ??
+                                                                                '',
+                                                                        child:
+                                                                            Text(
+                                                                          task.taskTypeName ??
+                                                                              '',
+                                                                          overflow:
+                                                                              TextOverflow.ellipsis,
+                                                                          maxLines:
+                                                                              1,
+                                                                          style:
+                                                                              const TextStyle(
+                                                                            fontSize:
+                                                                                13,
+                                                                            color:
+                                                                                Color(0xFF334155),
+                                                                            fontWeight:
+                                                                                FontWeight.w500,
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    TableWidget(
+                                                                      width:
+                                                                          150,
+                                                                      padding: const EdgeInsets
+                                                                          .symmetric(
+                                                                          vertical:
+                                                                              4.0,
+                                                                          horizontal:
+                                                                              12.0),
+                                                                      data:
+                                                                          Tooltip(
+                                                                        message: provider.getEnquiryForNameById(
+                                                                            task.enquiryForId,
+                                                                            task.enquiryForName),
+                                                                        child:
+                                                                            Text(
+                                                                          provider.getEnquiryForNameById(
+                                                                              task.enquiryForId,
+                                                                              task.enquiryForName),
+                                                                          overflow:
+                                                                              TextOverflow.ellipsis,
+                                                                          maxLines:
+                                                                              1,
+                                                                          style:
+                                                                              const TextStyle(
+                                                                            fontSize:
+                                                                                13,
+                                                                            color:
+                                                                                Color(0xFF334155),
+                                                                            fontWeight:
+                                                                                FontWeight.w500,
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    TableWidget(
+                                                                      width:
+                                                                          120,
+                                                                      padding: const EdgeInsets
+                                                                          .symmetric(
+                                                                          vertical:
+                                                                              4.0,
+                                                                          horizontal:
+                                                                              12.0),
+                                                                      data:
+                                                                          Text(
+                                                                        task.toUserName ??
+                                                                            '',
+                                                                        overflow:
+                                                                            TextOverflow.ellipsis,
+                                                                        maxLines:
+                                                                            1,
+                                                                        style:
+                                                                            const TextStyle(
+                                                                          fontSize:
+                                                                              13,
+                                                                          color:
+                                                                              Color(0xFF334155),
+                                                                          fontWeight:
+                                                                              FontWeight.w500,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    TableWidget(
+                                                                      flex: 1,
+                                                                      padding: const EdgeInsets
+                                                                          .symmetric(
+                                                                          vertical:
+                                                                              4.0,
+                                                                          horizontal:
+                                                                              12.0),
+                                                                      data:
+                                                                          Tooltip(
+                                                                        message:
+                                                                            task.description ??
+                                                                                '',
+                                                                        child:
+                                                                            Text(
+                                                                          task.description ??
+                                                                              '',
+                                                                          overflow:
+                                                                              TextOverflow.ellipsis,
+                                                                          maxLines:
+                                                                              1,
+                                                                          style:
+                                                                              const TextStyle(
+                                                                            fontSize:
+                                                                                13,
+                                                                            color:
+                                                                                Color(0xFF334155),
+                                                                            fontWeight:
+                                                                                FontWeight.w500,
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    TableWidget(
+                                                                      width:
+                                                                          140,
+                                                                      padding: const EdgeInsets
+                                                                          .symmetric(
+                                                                          vertical:
+                                                                              4.0,
+                                                                          horizontal:
+                                                                              12.0),
+                                                                      data:
+                                                                          Text(
+                                                                        task.entryDate
+                                                                            .toDayMonthYearFormat(),
+                                                                        overflow:
+                                                                            TextOverflow.ellipsis,
+                                                                        maxLines:
+                                                                            1,
+                                                                        style:
+                                                                            const TextStyle(
+                                                                          fontSize:
+                                                                              13,
+                                                                          color:
+                                                                              Color(0xFF334155),
+                                                                          fontWeight:
+                                                                              FontWeight.w500,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    TableWidget(
+                                                                      width:
+                                                                          160,
+                                                                      padding: const EdgeInsets
+                                                                          .symmetric(
+                                                                          vertical:
+                                                                              4.0,
+                                                                          horizontal:
+                                                                              12.0),
+                                                                      data:
+                                                                          Text(
+                                                                        () {
+                                                                          String
+                                                                              date =
+                                                                              task.taskDate.toDayMonthYearFormat();
+                                                                          String
+                                                                              time =
+                                                                              '';
+                                                                          if (task
+                                                                              .taskTime
+                                                                              .isNotEmpty) {
+                                                                            try {
+                                                                              final parsed = DateFormat('HH:mm:ss').parse(task.taskTime);
+                                                                              time = DateFormat('hh:mm a').format(parsed);
+                                                                            } catch (_) {
+                                                                              time = task.taskTime;
+                                                                            }
+                                                                          }
+                                                                          return time.isEmpty
+                                                                              ? date
+                                                                              : '$date $time';
+                                                                        }(),
+                                                                        overflow:
+                                                                            TextOverflow.ellipsis,
+                                                                        maxLines:
+                                                                            1,
+                                                                        style:
+                                                                            const TextStyle(
+                                                                          fontSize:
+                                                                              13,
+                                                                          color:
+                                                                              Color(0xFF334155),
+                                                                          fontWeight:
+                                                                              FontWeight.w500,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    TableWidget(
+                                                                      width:
+                                                                          120,
+                                                                      padding: const EdgeInsets
+                                                                          .symmetric(
+                                                                          vertical:
+                                                                              4.0,
+                                                                          horizontal:
+                                                                              12.0),
+                                                                      data:
+                                                                          InkWell(
+                                                                        onTap:
+                                                                            () {
+                                                                          reportsProvider
+                                                                              .selectedTaskTypeIds
+                                                                              .clear();
+                                                                          reportsProvider
+                                                                              .taskTypeModel
+                                                                              .clear();
+                                                                          if (task
+                                                                              .customerName
+                                                                              .isEmpty) {
+                                                                            updateStatusDialogWithoutTask(task).then((value) {
+                                                                              if (value == true) {
+                                                                                reportsProvider.goToPage(1);
+                                                                                reportsProvider.searchTaskByCustomer(context);
+                                                                              }
+                                                                            });
+                                                                          } else {
+                                                                            if (AppStyles.isWebScreen(context)) {
+                                                                              statusDialog(task).then((value) {
+                                                                                if (value == true) {
+                                                                                  reportsProvider.goToPage(1);
+                                                                                  reportsProvider.searchTaskByCustomer(context);
+                                                                                }
+                                                                              });
+                                                                            } else {
+                                                                              statusDialogMobile(task).then((value) {
+                                                                                if (value == true) {
+                                                                                  reportsProvider.goToPage(1);
+                                                                                  reportsProvider.searchTaskByCustomer(context);
+                                                                                }
+                                                                              });
+                                                                            }
+                                                                          }
+                                                                        },
+                                                                        child:
+                                                                            Container(
+                                                                          height:
+                                                                              30,
+                                                                          decoration:
+                                                                              BoxDecoration(
+                                                                            borderRadius:
+                                                                                BorderRadius.circular(30),
+                                                                            color:
+                                                                                (task.colorCode ?? const Color(0xFF3B82F6)).withOpacity(0.2),
+                                                                          ),
                                                                           child:
-                                                                              Text(
-                                                                            task.taskStatusName,
-                                                                            overflow:
-                                                                                TextOverflow.ellipsis,
-                                                                            maxLines:
-                                                                                1,
-                                                                            style:
-                                                                                TextStyle(
-                                                                              fontSize: 13,
-                                                                              fontWeight: FontWeight.w600,
-                                                                              color: task.colorCode ?? const Color(0xFF3B82F6),
+                                                                              Center(
+                                                                            child:
+                                                                                Padding(
+                                                                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                                                              child: Text(
+                                                                                task.taskStatusName,
+                                                                                overflow: TextOverflow.ellipsis,
+                                                                                maxLines: 1,
+                                                                                style: TextStyle(
+                                                                                  fontSize: 13,
+                                                                                  fontWeight: FontWeight.w600,
+                                                                                  color: task.colorCode ?? const Color(0xFF3B82F6),
+                                                                                ),
+                                                                              ),
                                                                             ),
                                                                           ),
                                                                         ),
                                                                       ),
                                                                     ),
-                                                                  ),
-                                                                ),
-                                                                if (settingsProvider
-                                                                            .showView[
-                                                                        162] ==
-                                                                    1)
-                                                                  TableWidget(
-                                                                    width: 130,
-                                                                    padding: const EdgeInsets
-                                                                        .symmetric(
-                                                                        vertical:
-                                                                            4.0,
-                                                                        horizontal:
-                                                                            12.0),
-                                                                    data:
-                                                                        Center(
-                                                                      child:
-                                                                          SizedBox(
-                                                                        height:
-                                                                            32,
-                                                                        child:
-                                                                            ElevatedButton(
-                                                                          style: ElevatedButton.styleFrom(
-                                                                              backgroundColor: AppColors.primaryBlue,
-                                                                              foregroundColor: Colors.white,
-                                                                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                                                                              minimumSize: const Size(80, 32),
-                                                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4))),
-                                                                          onPressed:
-                                                                              () async {
-                                                                            Navigator.push(
-                                                                              context,
-                                                                              MaterialPageRoute(
-                                                                                builder: (context) => JobSheetPage(
-                                                                                  taskId: task.taskId,
-                                                                                  customerId: int.tryParse(task.customerId.toString()) ?? 0,
-                                                                                ),
-                                                                              ),
-                                                                            );
-                                                                          },
-                                                                          child: const Text(
-                                                                              'Job Sheet',
-                                                                              style: TextStyle(fontSize: 12)),
+                                                                    if (settingsProvider
+                                                                            .showView[162] ==
+                                                                        1)
+                                                                      TableWidget(
+                                                                        width:
+                                                                            130,
+                                                                        padding: const EdgeInsets
+                                                                            .symmetric(
+                                                                            vertical:
+                                                                                4.0,
+                                                                            horizontal:
+                                                                                12.0),
+                                                                        data:
+                                                                            Center(
+                                                                          child:
+                                                                              SizedBox(
+                                                                            height:
+                                                                                32,
+                                                                            child:
+                                                                                ElevatedButton(
+                                                                              style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryBlue, foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6), minimumSize: const Size(80, 32), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4))),
+                                                                              onPressed: () async {
+                                                                                Navigator.push(
+                                                                                  context,
+                                                                                  MaterialPageRoute(
+                                                                                    builder: (context) => JobSheetPage(
+                                                                                      taskId: task.taskId,
+                                                                                      customerId: int.tryParse(task.customerId.toString()) ?? 0,
+                                                                                    ),
+                                                                                  ),
+                                                                                );
+                                                                              },
+                                                                              child: const Text('Job Sheet', style: TextStyle(fontSize: 12)),
+                                                                            ),
+                                                                          ),
                                                                         ),
                                                                       ),
-                                                                    ),
-                                                                  ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        );
-                                                      },
-                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            );
+                                                          },
+                                                        ),
+                                            ),
+                                          ],
                                         ),
-                                      ],
+                                      ),
                                     ),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
+                                  );
+                                },
+                              ),
+                            ),
                         ],
                       ),
                     ),
@@ -2773,8 +2794,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                     maxLines: 3,
                                     minLines: 2,
                                     decoration: InputDecoration(
-                                      contentPadding: const EdgeInsets.symmetric(
-                                          horizontal: 14, vertical: 12),
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              horizontal: 14, vertical: 12),
                                       border: InputBorder.none,
                                       hintText: 'Enter remarks here...',
                                       hintStyle: TextStyle(
@@ -3728,7 +3750,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                               int tId = selectedStatus.value.taskTypeId ?? 0;
                                                                               int cId = task.customerId ?? 0;
                                                                               int eId = task.enquiryForId ?? 0;
-                                                                              if (result == true) { reportsProvider.removePendingDocument(doc.documentTypeId ?? 0); }
+                                                                              if (result == true) {
+                                                                                reportsProvider.removePendingDocument(doc.documentTypeId ?? 0);
+                                                                              }
                                                                             },
                                                                             child:
                                                                                 Container(
@@ -3880,8 +3904,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                     maxLines: 3,
                                     minLines: 2,
                                     decoration: InputDecoration(
-                                      contentPadding: const EdgeInsets.symmetric(
-                                          horizontal: 14, vertical: 12),
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              horizontal: 14, vertical: 12),
                                       border: InputBorder.none,
                                       hintText: 'Enter remarks here...',
                                       hintStyle: TextStyle(
@@ -4172,6 +4197,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                               final item = provider
                                                                       .taskHistoryList[
                                                                   index];
+                                                              const Color statusColor = Color(0xFF3B82F6);
                                                               return Card(
                                                                 color: Colors
                                                                     .white,
@@ -4207,59 +4233,175 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                         children: [
                                                                           Container(
                                                                             padding:
-                                                                                const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                                                                const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                                                                             decoration:
                                                                                 BoxDecoration(
-                                                                              color: const Color(0xFFEFF6FF),
-                                                                              borderRadius: BorderRadius.circular(4),
+                                                                              color: statusColor.withOpacity(0.1),
+                                                                              borderRadius: BorderRadius.circular(20),
                                                                             ),
                                                                             child:
                                                                                 Text(
-                                                                              item.statusName ?? '',
+                                                                              item.statusName ?? 'Updated',
                                                                               style: GoogleFonts.plusJakartaSans(
                                                                                 fontSize: 11,
                                                                                 fontWeight: FontWeight.w700,
-                                                                                color: const Color(0xFF3B82F6),
+                                                                                color: statusColor,
+                                                                                letterSpacing: 0.3,
                                                                               ),
                                                                             ),
                                                                           ),
-                                                                          Text(
-                                                                            item.entryDate ??
-                                                                                '',
-                                                                            style:
-                                                                                GoogleFonts.plusJakartaSans(
-                                                                              fontSize: 11,
-                                                                              color: const Color(0xFF94A3B8),
-                                                                              fontWeight: FontWeight.w500,
-                                                                            ),
+                                                                          Row(
+                                                                            children: [
+                                                                              const Icon(
+                                                                                Icons.access_time_rounded,
+                                                                                size: 13,
+                                                                                color: Color(0xFF94A3B8),
+                                                                              ),
+                                                                              const SizedBox(width: 4),
+                                                                              Text(
+                                                                                item.entryDate ?? '',
+                                                                                style: GoogleFonts.plusJakartaSans(
+                                                                                  fontSize: 11.5,
+                                                                                  color: const Color(0xFF64748B),
+                                                                                  fontWeight: FontWeight.w500,
+                                                                                ),
+                                                                              ),
+                                                                            ],
                                                                           ),
                                                                         ],
                                                                       ),
-                                                                      const SizedBox(
-                                                                          height:
-                                                                              8),
-                                                                      Text(
-                                                                        item.description ??
-                                                                            '',
-                                                                        style: GoogleFonts
-                                                                            .plusJakartaSans(
-                                                                          fontSize:
-                                                                              13,
-                                                                          color:
-                                                                              const Color(0xFF334155),
-                                                                          height:
-                                                                              1.5,
+                                                                      if (item.description !=
+                                                                              null &&
+                                                                          item.description!
+                                                                              .trim()
+                                                                              .isNotEmpty) ...[
+                                                                        const SizedBox(
+                                                                            height:
+                                                                                10),
+                                                                        Container(
+                                                                          width:
+                                                                              double.infinity,
+                                                                          padding: const EdgeInsets
+                                                                              .symmetric(
+                                                                              horizontal: 12,
+                                                                              vertical: 8),
+                                                                          decoration:
+                                                                              BoxDecoration(
+                                                                            color:
+                                                                                const Color(0xFFF8FAFC),
+                                                                            borderRadius:
+                                                                                BorderRadius.circular(6),
+                                                                            border:
+                                                                                Border.all(color: const Color(0xFFE2E8F0)),
+                                                                          ),
+                                                                          child:
+                                                                              Column(
+                                                                            crossAxisAlignment:
+                                                                                CrossAxisAlignment.start,
+                                                                            children: [
+                                                                              Row(
+                                                                                children: [
+                                                                                  const Icon(
+                                                                                    Icons.chat_bubble_outline_rounded,
+                                                                                    size: 13,
+                                                                                    color: Color(0xFF3B82F6),
+                                                                                  ),
+                                                                                  const SizedBox(width: 6),
+                                                                                  Text(
+                                                                                    'Comments',
+                                                                                    style: GoogleFonts.plusJakartaSans(
+                                                                                      fontSize: 11.5,
+                                                                                      fontWeight: FontWeight.w700,
+                                                                                      color: const Color(0xFF334155),
+                                                                                    ),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                              const SizedBox(height: 4),
+                                                                              Text(
+                                                                                item.description!,
+                                                                                style: GoogleFonts.plusJakartaSans(
+                                                                                  fontSize: 12.5,
+                                                                                  color: const Color(0xFF1E293B),
+                                                                                  height: 1.4,
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          ),
                                                                         ),
-                                                                      ),
+                                                                      ],
+                                                                      if (item.remarks !=
+                                                                              null &&
+                                                                          item.remarks!
+                                                                              .trim()
+                                                                              .isNotEmpty) ...[
+                                                                        const SizedBox(
+                                                                            height:
+                                                                                8),
+                                                                        Container(
+                                                                          width:
+                                                                              double.infinity,
+                                                                          padding: const EdgeInsets
+                                                                              .symmetric(
+                                                                              horizontal: 12,
+                                                                              vertical: 8),
+                                                                          decoration:
+                                                                              BoxDecoration(
+                                                                            color:
+                                                                                const Color(0xFFFFFBEB),
+                                                                            borderRadius:
+                                                                                BorderRadius.circular(6),
+                                                                            border:
+                                                                                Border.all(color: const Color(0xFFFDE68A)),
+                                                                          ),
+                                                                          child:
+                                                                              Column(
+                                                                            crossAxisAlignment:
+                                                                                CrossAxisAlignment.start,
+                                                                            children: [
+                                                                              Row(
+                                                                                children: [
+                                                                                  const Icon(
+                                                                                    Icons.rate_review_outlined,
+                                                                                    size: 13,
+                                                                                    color: Color(0xFFD97706),
+                                                                                  ),
+                                                                                  const SizedBox(width: 6),
+                                                                                  Text(
+                                                                                    'Remarks / Feedback',
+                                                                                    style: GoogleFonts.plusJakartaSans(
+                                                                                      fontSize: 11.5,
+                                                                                      fontWeight: FontWeight.w700,
+                                                                                      color: const Color(0xFFB45309),
+                                                                                    ),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                              const SizedBox(height: 4),
+                                                                              Text(
+                                                                                item.remarks!,
+                                                                                style: GoogleFonts.plusJakartaSans(
+                                                                                  fontSize: 12.5,
+                                                                                  color: const Color(0xFF1E293B),
+                                                                                  height: 1.4,
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                        ),
+                                                                      ],
                                                                       const SizedBox(
                                                                           height:
                                                                               8),
                                                                       Row(
                                                                         children: [
                                                                           const Icon(
-                                                                              Icons.person_outline,
-                                                                              size: 14,
-                                                                              color: Color(0xFF94A3B8)),
+                                                                            Icons.account_circle_outlined,
+                                                                            size:
+                                                                                15,
+                                                                            color:
+                                                                                Color(0xFF64748B),
+                                                                          ),
                                                                           const SizedBox(
                                                                               width: 4),
                                                                           Text(
@@ -4267,9 +4409,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                                 '',
                                                                             style:
                                                                                 GoogleFonts.plusJakartaSans(
-                                                                              fontSize: 11,
-                                                                              fontWeight: FontWeight.w500,
-                                                                              color: const Color(0xFF64748B),
+                                                                              fontSize: 11.5,
+                                                                              fontWeight: FontWeight.w600,
+                                                                              color: const Color(0xFF475569),
                                                                             ),
                                                                           ),
                                                                         ],
