@@ -142,6 +142,19 @@ class _UsersContentState extends State<UsersContent> {
                                     ),
                                   ),
                                   SizedBox(
+                                    width: 180,
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        'Full name',
+                                        style: GoogleFonts.plusJakartaSans(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w600,
+                                            color: const Color(0xFF475569)),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
                                     width: 140,
                                     child: Align(
                                       alignment: Alignment.centerLeft,
@@ -380,6 +393,19 @@ class _UsersContentState extends State<UsersContent> {
                                         ),
                                       ),
                                       SizedBox(
+                                        width: 180,
+                                        child: Text(
+                                          settingsProvider
+                                              .searchUserDetails[index]
+                                              .displayName,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: GoogleFonts.plusJakartaSans(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                              color: AppColors.textBlack),
+                                        ),
+                                      ),
+                                      SizedBox(
                                         width: 140,
                                         child: (settingsProvider
                                                     .searchUserDetails[index]
@@ -510,8 +536,8 @@ class _UsersContentState extends State<UsersContent> {
                                                               .toString(),
                                                           email: settingsProvider.searchUserDetails[index].email,
                                                           userName: settingsProvider.searchUserDetails[index].userDetailsName,
-                                                           firstName: settingsProvider.searchUserDetails[index].firstName,
-                                                           lastName: settingsProvider.searchUserDetails[index].lastName,
+                                                          firstName: settingsProvider.searchUserDetails[index].firstName,
+                                                          lastName: settingsProvider.searchUserDetails[index].lastName,
                                                           password: settingsProvider.searchUserDetails[index].password,
                                                           newPassword: settingsProvider.searchUserDetails[index].password,
                                                           mobileNo: settingsProvider.searchUserDetails[index].mobile,
@@ -617,16 +643,19 @@ class _UsersContentState extends State<UsersContent> {
                                               shape: BoxShape.circle,
                                             ),
                                             child: IconButton(
-                                              onPressed: () => assignTeamDialogue(
-                                                  context,
-                                                  settingsProvider
-                                                      .searchUserDetails[index]),
+                                              onPressed: () =>
+                                                  assignTeamDialogue(
+                                                      context,
+                                                      settingsProvider
+                                                              .searchUserDetails[
+                                                          index]),
                                               icon: Icon(
                                                 Icons.group_add_rounded,
                                                 size: 18,
                                                 color: AppColors.primaryBlue,
                                               ),
-                                              constraints: const BoxConstraints(),
+                                              constraints:
+                                                  const BoxConstraints(),
                                               padding: const EdgeInsets.all(8),
                                               tooltip: 'Team',
                                             ),
@@ -643,16 +672,19 @@ class _UsersContentState extends State<UsersContent> {
                                               shape: BoxShape.circle,
                                             ),
                                             child: IconButton(
-                                              onPressed: () => assignEnquiryForDialogue(
-                                                  context,
-                                                  settingsProvider
-                                                      .searchUserDetails[index]),
+                                              onPressed: () =>
+                                                  assignEnquiryForDialogue(
+                                                      context,
+                                                      settingsProvider
+                                                              .searchUserDetails[
+                                                          index]),
                                               icon: const Icon(
                                                 Icons.assignment_rounded,
                                                 size: 18,
                                                 color: Color(0xFF6D28D9),
                                               ),
-                                              constraints: const BoxConstraints(),
+                                              constraints:
+                                                  const BoxConstraints(),
                                               padding: const EdgeInsets.all(8),
                                               tooltip: 'Enquiry For',
                                             ),
@@ -669,16 +701,19 @@ class _UsersContentState extends State<UsersContent> {
                                               shape: BoxShape.circle,
                                             ),
                                             child: IconButton(
-                                              onPressed: () => assignEnquirySourceDialogue(
-                                                  context,
-                                                  settingsProvider
-                                                      .searchUserDetails[index]),
+                                              onPressed: () =>
+                                                  assignEnquirySourceDialogue(
+                                                      context,
+                                                      settingsProvider
+                                                              .searchUserDetails[
+                                                          index]),
                                               icon: const Icon(
                                                 Icons.campaign_rounded,
                                                 size: 18,
                                                 color: Color(0xFF059669),
                                               ),
-                                              constraints: const BoxConstraints(),
+                                              constraints:
+                                                  const BoxConstraints(),
                                               padding: const EdgeInsets.all(8),
                                               tooltip: 'Enquiry Source',
                                             ),
@@ -695,16 +730,19 @@ class _UsersContentState extends State<UsersContent> {
                                               shape: BoxShape.circle,
                                             ),
                                             child: IconButton(
-                                              onPressed: () => assignTaskTypeDialogue(
-                                                  context,
-                                                  settingsProvider
-                                                      .searchUserDetails[index]),
+                                              onPressed: () =>
+                                                  assignTaskTypeDialogue(
+                                                      context,
+                                                      settingsProvider
+                                                              .searchUserDetails[
+                                                          index]),
                                               icon: const Icon(
                                                 Icons.task_rounded,
                                                 size: 18,
                                                 color: Color(0xFFEA580C),
                                               ),
-                                              constraints: const BoxConstraints(),
+                                              constraints:
+                                                  const BoxConstraints(),
                                               padding: const EdgeInsets.all(8),
                                               tooltip: 'Task Type',
                                             ),
@@ -719,39 +757,40 @@ class _UsersContentState extends State<UsersContent> {
                                           child: Container(
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 6, vertical: 4),
-                                          decoration: BoxDecoration(
-                                            color: settingsProvider
-                                                        .searchUserDetails[
-                                                            index]
-                                                        .workingStatus ==
-                                                    '1'
-                                                ? const Color(0xFFE8F8EE)
-                                                : const Color(0xFFFDECEB),
-                                            borderRadius:
-                                                BorderRadius.circular(4),
-                                          ),
-                                          child: Text(
-                                            settingsProvider
-                                                        .searchUserDetails[
-                                                            index]
-                                                        .workingStatus ==
-                                                    '1'
-                                                ? 'Active'
-                                                : 'Inactive',
-                                            style: GoogleFonts.plusJakartaSans(
+                                            decoration: BoxDecoration(
                                               color: settingsProvider
                                                           .searchUserDetails[
                                                               index]
                                                           .workingStatus ==
                                                       '1'
-                                                  ? const Color(0xFF1B7C3D)
-                                                  : const Color(0xFFC53030),
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w600,
+                                                  ? const Color(0xFFE8F8EE)
+                                                  : const Color(0xFFFDECEB),
+                                              borderRadius:
+                                                  BorderRadius.circular(4),
+                                            ),
+                                            child: Text(
+                                              settingsProvider
+                                                          .searchUserDetails[
+                                                              index]
+                                                          .workingStatus ==
+                                                      '1'
+                                                  ? 'Active'
+                                                  : 'Inactive',
+                                              style:
+                                                  GoogleFonts.plusJakartaSans(
+                                                color: settingsProvider
+                                                            .searchUserDetails[
+                                                                index]
+                                                            .workingStatus ==
+                                                        '1'
+                                                    ? const Color(0xFF1B7C3D)
+                                                    : const Color(0xFFC53030),
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w600,
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
                                       ),
                                       const SizedBox(width: 8),
                                       SizedBox(
@@ -852,11 +891,11 @@ class _UsersContentState extends State<UsersContent> {
                                           CircleAvatar(
                                             radius: 24,
                                             backgroundColor: getAvatarColor(
-                                                user.userDetailsName),
+                                                user.displayName),
                                             child: Text(
                                               () {
                                                 final nameStr =
-                                                    user.userDetailsName.trim();
+                                                    user.displayName.trim();
                                                 if (nameStr.isEmpty) return 'U';
                                                 final words = nameStr
                                                     .split(RegExp(r'\s+'));
@@ -887,7 +926,7 @@ class _UsersContentState extends State<UsersContent> {
                                                   CrossAxisAlignment.start,
                                               children: [
                                                 Text(
-                                                  user.userDetailsName,
+                                                  user.displayName,
                                                   style: GoogleFonts
                                                       .plusJakartaSans(
                                                     fontSize: 16,
@@ -1082,8 +1121,8 @@ class _UsersContentState extends State<UsersContent> {
                                                               .toString(),
                                                           email: settingsProvider.searchUserDetails[index].email,
                                                           userName: settingsProvider.searchUserDetails[index].userDetailsName,
-                                                           firstName: settingsProvider.searchUserDetails[index].firstName,
-                                                           lastName: settingsProvider.searchUserDetails[index].lastName,
+                                                          firstName: settingsProvider.searchUserDetails[index].firstName,
+                                                          lastName: settingsProvider.searchUserDetails[index].lastName,
                                                           password: settingsProvider.searchUserDetails[index].password,
                                                           newPassword: settingsProvider.searchUserDetails[index].password,
                                                           mobileNo: settingsProvider.searchUserDetails[index].mobile,
