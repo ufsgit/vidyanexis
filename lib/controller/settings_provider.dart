@@ -244,6 +244,7 @@ class SettingsProvider extends ChangeNotifier {
 
   //enquiry for
   final TextEditingController enquiryForController = TextEditingController();
+  final TextEditingController enquiryCodeController = TextEditingController();
 
   //document type
   final TextEditingController documentTypeController = TextEditingController();
@@ -3710,6 +3711,7 @@ class SettingsProvider extends ChangeNotifier {
     required BuildContext context,
     required String forId,
     required String forName,
+    String enquiryCode = '',
     required final customFields,
     required final taskTypes,
   }) async {
@@ -3718,6 +3720,8 @@ class SettingsProvider extends ChangeNotifier {
       Map<String, dynamic> bodyData = {
         "Enquiry_For_Id": forId,
         "Enquiry_For_Name": forName,
+        "Enquiry_Code": enquiryCode,
+        "enquiry_code": enquiryCode,
         "Source_Category_Id": sourceCategoryId,
         "Source_Category_Name": sourceCategoryEnquiryController.text,
         "Custom_Fields": customFields,
@@ -3731,6 +3735,8 @@ class SettingsProvider extends ChangeNotifier {
         enquirySourceController.clear();
         searchEnquiryForController.clear();
         sourceCategoryEnquiryController.clear();
+        enquiryForController.clear();
+        enquiryCodeController.clear();
         setSourceId(0);
         final data = response.data;
         searchEnquiryForData('', context);
