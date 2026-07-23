@@ -303,7 +303,6 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                       'Mobile no',
                                       'Address',
                                       'Enquiry Source',
-                                      'Registered By',
                                       'Created By',
                                       'Assigned To',
                                       'Status',
@@ -334,7 +333,6 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                         'Enquiry For': task.enquiryFor,
                                         'Enquiry Source':
                                             task.enquirySourceName,
-                                        'Registered By': task.byUserName,
                                         'Created By': task.createdByName,
                                         'Assigned To': task.toUserName,
                                         'Status': task.statusName,
@@ -371,7 +369,6 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                       'Address',
                                       'Enquiry For',
                                       'Enquiry Source',
-                                      'Registered By',
                                       'Created By',
                                       'Assigned To',
                                       'Status',
@@ -402,7 +399,6 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                         'Enquiry For': task.enquiryFor,
                                         'Enquiry Source':
                                             task.enquirySourceName,
-                                        'Registered By': task.byUserName,
                                         'Created By': task.createdByName,
                                         'Assigned To': task.toUserName,
                                         'Status': task.statusName,
@@ -697,95 +693,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                               ),
                             ),
 
-                            // Registered By Dropdown
-                            Container(
-                              width: 250,
-                              height: 40,
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 8),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(4),
-                                border: Border.all(
-                                  color: (leadReportProvider.selectedByUser !=
-                                              null &&
-                                          leadReportProvider.selectedByUser != 0)
-                                      ? AppColors.primaryBlue
-                                      : Colors.grey[300]!,
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text('Registered By: ',
-                                      style: TextStyle(
-                                          color: Colors.grey[600],
-                                          fontSize: 13)),
-                                  Expanded(
-                                    child: DropdownButton<int>(
-                                      value:
-                                          leadReportProvider.selectedByUser ?? 0,
-                                      hint: const Text('All',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 13)),
-                                      items: [
-                                            const DropdownMenuItem<int>(
-                                              value: 0,
-                                              child: Text('All',
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      fontSize: 13)),
-                                            ),
-                                          ] +
-                                          provider.searchUserDetails
-                                              .map((user) =>
-                                                  DropdownMenuItem<int>(
-                                                    value:
-                                                        user.userDetailsId ?? 0,
-                                                    child: ConstrainedBox(
-                                                      constraints:
-                                                          const BoxConstraints(
-                                                              maxWidth: 150),
-                                                      child: Text(
-                                                        user.userDetailsName ??
-                                                            '',
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        style: const TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                            fontSize: 13),
-                                                      ),
-                                                    ),
-                                                  ))
-                                              .toList(),
-                                      onChanged: (int? newValue) {
-                                        if (newValue != null) {
-                                          leadReportProvider
-                                              .setByUserFilterStatus(newValue);
-                                        }
-                                        leadReportProvider.getSearchLeadReports(
-                                            leadReportProvider.search,
-                                            leadReportProvider.fromDateS,
-                                            leadReportProvider.toDateS,
-                                            (leadReportProvider
-                                                        .selectedStatus ??
-                                                    0)
-                                                .toString(),
-                                            context);
-                                      },
-                                      underline: Container(),
-                                      isDense: true,
-                                      isExpanded: true,
-                                      iconSize: 18,
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
+
 
                             // Assigned Staff Dropdown
                             Container(
@@ -1175,10 +1083,6 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                         color: Color(0xFF607185)),
                                     TableWidget(
                                         flex: 1,
-                                        title: 'Registered By',
-                                        color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 1,
                                         title: 'Created By',
                                         color: Color(0xFF607185)),
                                     TableWidget(
@@ -1393,10 +1297,6 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                                           flex: 1,
                                                           title:
                                                               lead.enquirySourceName),
-                                                      TableWidget(
-                                                          flex: 1,
-                                                          title:
-                                                              lead.byUserName),
                                                       TableWidget(
                                                           flex: 1,
                                                           title:
