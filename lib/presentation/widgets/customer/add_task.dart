@@ -1028,7 +1028,11 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
                                           _selectedDocTypeName =
                                               docType.documentTypeName;
                                         });
-                                        _showPickOptions(context);
+                                        if (AppStyles.isWebScreen(context)) {
+                                          _addFileMobile();
+                                        } else {
+                                          _showPickOptions(context);
+                                        }
                                       },
                                       child: Container(
                                         padding: const EdgeInsets.all(6),
