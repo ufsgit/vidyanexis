@@ -14,6 +14,7 @@ class QuatationListModel {
   String subsidyAmount;
   int? subsidyticked;
   String netTotal;
+  String netCost;
   final String ksebRegistrationFee;
   final String ksebFeasibilityFee;
   final String discountAmount;
@@ -62,6 +63,7 @@ class QuatationListModel {
     required this.subsidyAmount,
     this.subsidyticked,
     required this.netTotal,
+    this.netCost = '0.0',
     required this.ksebRegistrationFee,
     required this.ksebFeasibilityFee,
     required this.discountAmount,
@@ -111,6 +113,7 @@ class QuatationListModel {
             ? int.tryParse(json["Subsidyticked"].toString())
             : null,
         netTotal: json["NetTotal"]?.toString() ?? '0.0',
+        netCost: json["NetCost"]?.toString() ?? json["Net_Cost"]?.toString() ?? json["net_cost"]?.toString() ?? '0.0',
         ksebRegistrationFee: json["KSEB_Registration_Fees_KW"]?.toString() ?? '0.0',
         ksebFeasibilityFee: json["KSEB_Feasibility_Study_Fees"]?.toString() ?? '0.0',
         discountAmount: json["Discount_Amount"]?.toString() ?? '0.0',

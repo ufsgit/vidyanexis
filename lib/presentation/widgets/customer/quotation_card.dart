@@ -462,12 +462,12 @@ class QuotationCard extends StatelessWidget {
               Row(
                 children: [
                   const Text(
-                    'Total Amount:',
+                    'Net Cost:',
                     style: TextStyle(color: Colors.grey, fontSize: 13),
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    '₹ ${quotation?.netTotal ?? '0'}',
+                    '₹ ${quotation?.netCost != null && quotation!.netCost.isNotEmpty && quotation?.netCost != '0.0' ? quotation!.netCost : (quotation?.netTotal ?? '0')}',
                     style: const TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 15),
                   ),
