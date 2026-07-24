@@ -736,11 +736,11 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                                                 size: 20,
                                                 color: Color(0xFF3B82F6)),
                                             onPressed: () {
-                                              _showEditMaterialDialog(context,
-                                                  expenseProvider, provider);
                                               expenseProvider
                                                   .populateItemFieldsForEditing(
                                                       index);
+                                              _showEditMaterialDialog(context,
+                                                  expenseProvider, provider);
                                             },
                                           ),
                                           IconButton(
@@ -862,8 +862,10 @@ class _AddItemWidgetState extends State<AddItemWidget> {
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: const Text("Edit Material"),
+        return Consumer<ExpenseProvider>(
+          builder: (context, expenseProviderState, child) {
+            return AlertDialog(
+              title: const Text("Edit Material"),
           contentPadding: const EdgeInsets.all(16),
           backgroundColor: Colors.white,
           content: SizedBox(
@@ -1088,6 +1090,8 @@ class _AddItemWidgetState extends State<AddItemWidget> {
               ],
             ),
           ],
+        );
+        },
         );
       },
     );
