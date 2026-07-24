@@ -138,14 +138,14 @@ class ProcessFlowProvider extends ChangeNotifier {
       if (response.statusCode == 200) {
         final data = response.data as Map<String, dynamic>;
 
-        if (data.isNotEmpty && data["success"]) {
-          var taskTypeData = data["data"]["task_type"] as List;
-          var departmentData = data["data"]["department"] as List;
-          var branchData = data["data"]["branch"] as List;
-          var taskTypeStatusData = data["data"]["task_type_status"] as List;
-          var documentTypeData = data["data"]["document"] as List;
-          var enquiryForData = data["data"]["enquiry_for"] as List;
-          var searchLeadStatusData = data["data"]["search_lead_status"] as List;
+        if (data.isNotEmpty && data["success"] == true) {
+          var taskTypeData = (data["data"]?["task_type"] as List?) ?? [];
+          var departmentData = (data["data"]?["department"] as List?) ?? [];
+          var branchData = (data["data"]?["branch"] as List?) ?? [];
+          var taskTypeStatusData = (data["data"]?["task_type_status"] as List?) ?? [];
+          var documentTypeData = (data["data"]?["document"] as List?) ?? [];
+          var enquiryForData = (data["data"]?["enquiry_for"] as List?) ?? [];
+          var searchLeadStatusData = (data["data"]?["search_lead_status"] as List?) ?? [];
           taskTypeList =
               taskTypeData.map((item) => TaskTypeModel.fromJson(item)).toList();
           taskTypeStatusList = taskTypeStatusData
@@ -224,7 +224,7 @@ class ProcessFlowProvider extends ChangeNotifier {
         } else if (rawData is Map) {
           final rawMap = Map<String, dynamic>.from(rawData);
           if (rawMap.containsKey("success") && rawMap["success"] == true) {
-            var taskTypeStatusData = rawMap["data"] as List;
+            var taskTypeStatusData = (rawMap["data"] as List?) ?? [];
             List<Map<String, dynamic>> statusData = [];
             for (var item in taskTypeStatusData) {
               if (item is Map) {
@@ -263,8 +263,10 @@ class ProcessFlowProvider extends ChangeNotifier {
       if (response.statusCode == 200) {
         final data = response.data as Map<String, dynamic>;
 
-        if (data.containsKey("success") && data["success"]) {
-          processFlowFilteredList = (data["data"] as List<dynamic>)
+        if (data.containsKey("success") && data["success"] == true) {
+          var rawFlows = data["data"] as List<dynamic>? ?? [];
+          processFlowFilteredList = rawFlows
+              .where((item) => item != null)
               .map((item) => ProcessFlowModel.fromJson(item))
               .toList();
           processFlowList = processFlowFilteredList;
@@ -324,8 +326,10 @@ class ProcessFlowProvider extends ChangeNotifier {
       if (response.statusCode == 200) {
         final data = response.data as Map<String, dynamic>;
 
-        if (data.containsKey("success") && data["success"]) {
-          taskList = (data["data"] as List<dynamic>)
+        if (data.containsKey("success") && data["success"] == true) {
+          var rawTasks = data["data"] as List<dynamic>? ?? [];
+          taskList = rawTasks
+              .where((item) => item != null)
               .map((item) => TaskTypeModel.fromJson(item))
               .toList();
           notifyListeners();
@@ -355,62 +359,95 @@ class ProcessFlowProvider extends ChangeNotifier {
       if (response.statusCode == 200) {
         final data = response.data as Map<String, dynamic>;
 
-        if (data.containsKey("success") && data["success"]) {
-          final data = response.data as Map<String, dynamic>;
+        if (data.containsKey("success") && data["success"] == true) {
+          final resData = data["data"] as Map<String, dynamic>?;
 
-          var flowData = data["data"]["flow_tasks"] as List;
-          var mandatoryData = data["data"]["mandatory_tasks"] ?? [];
-          var documentsData = data["data"]["flow_documents"] ?? [];
-          var customFieldsData = data["data"]["custom_fields"] ??
-              data["data"]["flow_custom_fields"] ??
-              data["data"]["custom_field"] ??
-              [];
-          int taskTypeId = data["data"]["task_type_id"];
+          if (resData != null) {
+            var flowData = (resData["flow_tasks"] as List?) ?? [];
+            var mandatoryData = (resData["mandatory_tasks"] as List?) ?? [];
+            var documentsData = (resData["flow_documents"] as List?) ?? [];
 
-          taskFlowList =
-              flowData.map((item) => TaskFlowModel.fromJson(item)).toList();
-          savedCustomFields = List<Map<String, dynamic>>.from(customFieldsData);
-          if (mandatoryData.isNotEmpty) {
-            mandatoryTaskList = (mandatoryData as List)
-                .map((item) => MandatoryTaskModel.fromJson(item))
+            var rawCustomFields = resData["custom_fields"] ??
+                resData["flow_custom_fields"] ??
+                resData["custom_field"];
+            var customFieldsData = (rawCustomFields as List?) ?? [];
+
+            int? taskTypeId = resData["task_type_id"] != null
+                ? int.tryParse(resData["task_type_id"].toString())
+                : null;
+            if (taskTypeId != null) {
+              processFlowModel.taskTypeId = taskTypeId;
+            }
+
+            taskFlowList = flowData
+                .where((item) => item != null)
+                .map((item) => TaskFlowModel.fromJson(item))
+                .toList();
+
+            savedCustomFields = customFieldsData
+                .where((item) => item is Map)
+                .map((item) => Map<String, dynamic>.from(item as Map))
+                .toList();
+
+            if (mandatoryData.isNotEmpty) {
+              mandatoryTaskList = mandatoryData
+                  .where((item) => item != null)
+                  .map((item) => MandatoryTaskModel.fromJson(item))
+                  .toList();
+            } else {
+              mandatoryTaskList = [];
+            }
+
+            _selectedDocuments = documentsData
+                .where((item) => item != null)
+                .map((item) => DocumentTypeModel.fromJson(item))
+                .toList();
+
+            processFlowModel.templateId = resData["template_id"]?.toString();
+
+            if (resData["lead_status_id"] != null) {
+              processFlowModel.leadStatusId =
+                  int.tryParse(resData["lead_status_id"].toString());
+            }
+            processFlowModel.leadStatusName =
+                resData["lead_status_name"]?.toString();
+
+            if (resData["task_sub_status_id"] != null) {
+              processFlowModel.taskSubStatusId =
+                  int.tryParse(resData["task_sub_status_id"].toString());
+            }
+            processFlowModel.taskSubStatusName =
+                resData["task_sub_status_name"]?.toString();
+
+            if (resData["lead_sub_status_id"] != null) {
+              processFlowModel.leadSubStatusId =
+                  int.tryParse(resData["lead_sub_status_id"].toString());
+            }
+            processFlowModel.leadSubStatusName =
+                resData["lead_sub_status_name"]?.toString();
+
+            if (resData["enquiry_for_id"] != null) {
+              processFlowModel.enquiryForId =
+                  int.tryParse(resData["enquiry_for_id"].toString());
+            }
+            if (resData["enquiry_for_name"] != null) {
+              processFlowModel.enquiryForName =
+                  resData["enquiry_for_name"]?.toString();
+            }
+
+            _showLeadStatus = resData["Show_Lead_Status"]?.toString() == "1" ||
+                resData["show_lead_status"]?.toString() == "1";
+
+            var rawShowCustomFields = resData["show_custom_fields"] ??
+                resData["show_custom_field"];
+            var showCustomFieldsData = (rawShowCustomFields as List?) ?? [];
+
+            showCustomFields = showCustomFieldsData
+                .where((item) => item != null)
+                .map((item) => CustomFieldModel.fromJson(item))
                 .toList();
           }
-          _selectedDocuments = (documentsData as List)
-              .map((item) => DocumentTypeModel.fromJson(item))
-              .toList();
-          processFlowModel.templateId = data["data"]["template_id"]?.toString();
-          processFlowModel.leadStatusId =
-              data["data"]["lead_status_id"]?.toInt();
-          processFlowModel.leadStatusName =
-              data["data"]["lead_status_name"]?.toString();
-          processFlowModel.taskSubStatusId =
-              data["data"]["task_sub_status_id"]?.toInt();
-          processFlowModel.taskSubStatusName =
-              data["data"]["task_sub_status_name"]?.toString();
-          processFlowModel.leadSubStatusId =
-              data["data"]["lead_sub_status_id"]?.toInt();
-          processFlowModel.leadSubStatusName =
-              data["data"]["lead_sub_status_name"]?.toString();
-          _showLeadStatus = data["data"]["Show_Lead_Status"]?.toString() == "1";
-          var showCustomFieldsData = data["data"]["show_custom_fields"] ??
-              data["data"]["show_custom_field"] ??
-              [];
-          showCustomFields = (showCustomFieldsData as List)
-              .map((item) => CustomFieldModel.fromJson(item))
-              .toList();
-          print(documentsData);
 
-          // departmentList = departmentData
-          //     .map((item) => DepartmentModel.fromJson(item))
-          //     .toList();
-          // branchList =
-          //     branchData.map((item) => BranchModel.fromJson(item)).toList();
-          // branchList.insert(
-          //     0,
-          //     BranchModel(
-          //       branchId: 0,
-          //       branchName: "Customer branch",
-          //     ));
           notifyListeners();
         }
         return processFlowFilteredList;
@@ -421,7 +458,7 @@ class ProcessFlowProvider extends ChangeNotifier {
         return processFlowFilteredList;
       }
     } catch (e) {
-      print('Exception occurred: $e');
+      print('Exception occurred in getProcessFlowById: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('An error occurred')),
       );
