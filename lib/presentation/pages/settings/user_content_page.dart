@@ -69,7 +69,7 @@ class _UsersContentState extends State<UsersContent> {
   @override
   Widget build(BuildContext context) {
     final settingsProvider = Provider.of<SettingsProvider>(context);
-    const double minContentWidth = 1100.0;
+    const double minContentWidth = 1300.0;
     return LayoutBuilder(
       builder: (context, constraints) {
         return Column(
