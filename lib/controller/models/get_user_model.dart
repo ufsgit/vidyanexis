@@ -29,6 +29,13 @@ class GetUserModel {
   String? lastName;
   List<DepartmentModel>? transferDepartments;
 
+  String get displayName {
+    final fn = (firstName ?? '').trim();
+    final ln = (lastName ?? '').trim();
+    final combined = '$fn $ln'.trim();
+    return combined.isNotEmpty ? combined : userDetailsName;
+  }
+
   GetUserModel(
       {required this.userDetailsId,
       required this.userDetailsName,

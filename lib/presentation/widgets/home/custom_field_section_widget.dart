@@ -1500,7 +1500,11 @@ class CustomFieldWidgetBuilder {
               value.toLowerCase().trim(),
           orElse: () => DropdownValue(dropdownId: null, dropdownValue: null),
         );
-        onFieldValueChanged(matchedItem.dropdownValue);
+        if (matchedItem.dropdownValue != null) {
+          onFieldValueChanged(matchedItem.dropdownValue);
+        } else {
+          _setFieldValue(field.customFieldId!, value);
+        }
       },
     );
   }

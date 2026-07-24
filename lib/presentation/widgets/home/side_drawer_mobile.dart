@@ -8,6 +8,7 @@ import 'package:vidyanexis/presentation/pages/reports/followup_report_mobile.dar
 import 'package:vidyanexis/presentation/pages/reports/followup_amount_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/lead_check_in_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/lead_report_mobile.dart';
+import 'package:vidyanexis/presentation/pages/reports/deleted_lead_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/quotation_report_mobile.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
@@ -146,6 +147,8 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
         {'title': 'Quotation Reports', 'page': const QuotationReportMobile()},
       if (settingsProvider.menuIsViewMap[56].toString() == '1')
         {'title': 'Lead Reports', 'page': const LeadReportMobile(false)},
+      if (settingsProvider.menuIsViewMap[56].toString() == '1' || settingsProvider.menuIsViewMap[168].toString() == '1')
+        {'title': 'Deleted Lead Reports', 'page': const DeletedLeadReportScreen()},
       if (settingsProvider.menuIsViewMap[97].toString() == '1')
         {'title': 'Solar Lead Reports', 'page': const SolarLeadReportPage()},
       if (settingsProvider.menuIsViewMap[98].toString() == '1')

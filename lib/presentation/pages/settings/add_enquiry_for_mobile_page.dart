@@ -528,6 +528,8 @@ class _AddEnquiryForMobilePageState extends State<AddEnquiryForMobilePage> {
       settingsProvider.searchTaskType('', context);
       if (widget.isEdit) {
         settingsProvider.enquiryForController.text = widget.status;
+        settingsProvider.enquiryCodeController.text =
+            widget.data?.enquiryCode ?? '';
         settingsProvider.sourceCategoryEnquiryController.text =
             widget.sourceName;
         settingsProvider.setSourceId(int.parse(widget.sourceId));
@@ -559,6 +561,8 @@ class _AddEnquiryForMobilePageState extends State<AddEnquiryForMobilePage> {
           });
         }
       } else {
+        settingsProvider.enquiryForController.clear();
+        settingsProvider.enquiryCodeController.clear();
         settingsProvider.sourceCategoryEnquiryController.clear();
         settingsProvider.setSourceId(0);
       }
@@ -579,6 +583,7 @@ class _AddEnquiryForMobilePageState extends State<AddEnquiryForMobilePage> {
         leading: IconButton(
           onPressed: () {
             settingsProvider.enquiryForController.clear();
+            settingsProvider.enquiryCodeController.clear();
             Navigator.pop(context);
           },
           icon: Container(
@@ -647,6 +652,14 @@ class _AddEnquiryForMobilePageState extends State<AddEnquiryForMobilePage> {
                           height: 54,
                           controller: settingsProvider.enquiryForController,
                           hintText: 'Enquiry For Name *',
+                          labelText: '',
+                        ),
+                        const SizedBox(height: 14),
+                        CustomTextField(
+                          readOnly: false,
+                          height: 54,
+                          controller: settingsProvider.enquiryCodeController,
+                          hintText: 'Enquiry Code',
                           labelText: '',
                         ),
                       ],
@@ -809,6 +822,7 @@ class _AddEnquiryForMobilePageState extends State<AddEnquiryForMobilePage> {
                     buttonText: 'Cancel',
                     onPressed: () {
                       settingsProvider.enquiryForController.clear();
+                      settingsProvider.enquiryCodeController.clear();
                       Navigator.pop(context);
                     },
                     radius: 4,
@@ -832,6 +846,8 @@ class _AddEnquiryForMobilePageState extends State<AddEnquiryForMobilePage> {
                         context: context,
                         forId: widget.editId,
                         forName: settingsProvider.enquiryForController.text,
+                        enquiryCode:
+                            settingsProvider.enquiryCodeController.text,
                         customFields: selectedFields,
                         taskTypes: selectedTaskTypes,
                       );

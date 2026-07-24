@@ -3,6 +3,7 @@ class TaskHistoryModel {
   String? entryDate;
   String? description;
   String? statusName;
+  String? remarks;
   String? byUserName;
   String? location;
   String? latitude;
@@ -13,6 +14,7 @@ class TaskHistoryModel {
     this.entryDate,
     this.description,
     this.statusName,
+    this.remarks,
     this.byUserName,
     this.location,
     this.latitude,
@@ -27,6 +29,8 @@ class TaskHistoryModel {
         json['Description']?.toString() ?? json['Task_Description']?.toString();
     statusName =
         json['Status_Name']?.toString() ?? json['Task_Status']?.toString();
+    remarks =
+        json['Remarks']?.toString() ?? json['remarks']?.toString() ?? json['Remark']?.toString();
     byUserName =
         json['By_User_Name']?.toString() ?? json['User_Name']?.toString();
     location = json['Location']?.toString() ?? json['location']?.toString();
@@ -40,6 +44,7 @@ class TaskHistoryModel {
     data['Entry_Date'] = entryDate;
     data['Description'] = description;
     data['Status_Name'] = statusName;
+    data['Remarks'] = remarks;
     data['By_User_Name'] = byUserName;
     data['Location'] = location;
     data['Latitude'] = latitude;

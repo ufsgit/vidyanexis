@@ -244,6 +244,7 @@ class SettingsProvider extends ChangeNotifier {
 
   //enquiry for
   final TextEditingController enquiryForController = TextEditingController();
+  final TextEditingController enquiryCodeController = TextEditingController();
 
   //document type
   final TextEditingController documentTypeController = TextEditingController();
@@ -499,6 +500,7 @@ class SettingsProvider extends ChangeNotifier {
   final TextEditingController cgstNoController = TextEditingController();
   final TextEditingController cpanNoController = TextEditingController();
   final TextEditingController ccinNoController = TextEditingController();
+  final TextEditingController ccompanyCodeController = TextEditingController();
 
   final List<Uint8List> _images = [];
   List<Uint8List> get images => _images;
@@ -516,6 +518,7 @@ class SettingsProvider extends ChangeNotifier {
   int _districtCityMandatory = 0;
   int _leadMobileExistedCheck = 0;
   int _leadNameChangeToCustomerName = 0;
+  int _leadCodeWithEnquiryCode = 0;
   int? _selectedStatusId;
 
   int get toggleValue => _toggleValue;
@@ -525,11 +528,13 @@ class SettingsProvider extends ChangeNotifier {
   int get consumerContactNoMandatory => _consumerContactNoMandatory;
   int get leadInSales => _leadInSales;
   int get quotationItem => _quotationItem;
+
   int get additionalExpense => _additionalExpense;
   int get commercialProposal => _commercialProposal;
   int get districtCityMandatory => _districtCityMandatory;
   int get leadMobileExistedCheck => _leadMobileExistedCheck;
   int get leadNameChangeToCustomerName => _leadNameChangeToCustomerName;
+  int get leadCodeWithEnquiryCode => _leadCodeWithEnquiryCode;
   String get leadNameLabel => _leadNameChangeToCustomerName == 1 ? 'Customer Name' : 'Lead Name';
 
   String getPermissionCaption(dynamic key, String defaultCaption) {
@@ -573,6 +578,8 @@ class SettingsProvider extends ChangeNotifier {
       _leadMobileExistedCheck = value;
     } else if (permissionId == 14) {
       _leadNameChangeToCustomerName = value;
+    } else if (permissionId == 15) {
+      _leadCodeWithEnquiryCode = value;
     }
   }
 
@@ -3709,6 +3716,7 @@ class SettingsProvider extends ChangeNotifier {
     required BuildContext context,
     required String forId,
     required String forName,
+    String enquiryCode = '',
     required final customFields,
     required final taskTypes,
   }) async {
@@ -3717,6 +3725,8 @@ class SettingsProvider extends ChangeNotifier {
       Map<String, dynamic> bodyData = {
         "Enquiry_For_Id": forId,
         "Enquiry_For_Name": forName,
+        "Enquiry_Code": enquiryCode,
+        "enquiry_code": enquiryCode,
         "Source_Category_Id": sourceCategoryId,
         "Source_Category_Name": sourceCategoryEnquiryController.text,
         "Custom_Fields": customFields,
@@ -3730,6 +3740,8 @@ class SettingsProvider extends ChangeNotifier {
         enquirySourceController.clear();
         searchEnquiryForController.clear();
         sourceCategoryEnquiryController.clear();
+        enquiryForController.clear();
+        enquiryCodeController.clear();
         setSourceId(0);
         final data = response.data;
         searchEnquiryForData('', context);
@@ -4375,6 +4387,7 @@ class SettingsProvider extends ChangeNotifier {
             "Gst_No": cgstNoController.text.toString(),
             "Pan_No": cpanNoController.text.toString(),
             "Cin_No": ccinNoController.text.toString(),
+            "Company_Code": ccompanyCodeController.text.toString(),
             "Is_Location": _toggleValue,
             "Enquiry_For_Mandatory": _enquiryForMandatory,
             "Enquiry_Source_Mandatory": _enquirySourceMandatory,
@@ -4506,6 +4519,7 @@ class SettingsProvider extends ChangeNotifier {
     cgstNoController.clear();
     cpanNoController.clear();
     ccinNoController.clear();
+    ccompanyCodeController.clear();
     uploadedFilePath = '';
     _toggleValue = 0;
     _enquiryForMandatory = 0;

@@ -3,6 +3,7 @@ import 'package:vidyanexis/controller/models/custom_field_by_status.dart';
 class EnquiryForModel {
   final int enquiryForId;
   final String enquiryForName;
+  final String enquiryCode;
   final int deleteStatus;
   final int sourceCategoryId;
   final String sourceCategoryName;
@@ -13,6 +14,7 @@ class EnquiryForModel {
   EnquiryForModel({
     required this.enquiryForId,
     required this.enquiryForName,
+    this.enquiryCode = '',
     required this.deleteStatus,
     required this.sourceCategoryId,
     required this.sourceCategoryName,
@@ -34,6 +36,11 @@ class EnquiryForModel {
       sourceCategoryName: json["Source_Category_Name"] ?? '',
       enquiryForId: json['Enquiry_For_Id'] ?? 0,
       enquiryForName: json['Enquiry_For_Name'] ?? '',
+      enquiryCode: json['Enquiry_Code']?.toString() ??
+          json['enquiry_code']?.toString() ??
+          json['Enquiry_For_Code']?.toString() ??
+          json['enquiryCode']?.toString() ??
+          '',
       deleteStatus: json['DeleteStatus'] ?? 0,
       parsedCustomFields: customFieldsList,
       taskTypes: json['Task_Types'] != null
@@ -47,6 +54,8 @@ class EnquiryForModel {
     return {
       'Enquiry_For_Id': enquiryForId,
       'Enquiry_For_Name': enquiryForName,
+      'Enquiry_Code': enquiryCode,
+      'enquiry_code': enquiryCode,
       'DeleteStatus': deleteStatus,
       'Source_Category_Id': sourceCategoryId,
       'Source_Category_Name': sourceCategoryName,

@@ -173,7 +173,7 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
               ],
               data: customerProvider.customerData.map((cust) {
                 return {
-                  'Customer Code': cust.leadCode,
+                  'Customer Code': cust.getDisplayLeadCode(settingsProvider.leadCodeWithEnquiryCode),
                   'Customer Name': cust.customerName,
                   'Mobile No': cust.contactNumber,
                   'Email': cust.email,

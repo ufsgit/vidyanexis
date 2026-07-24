@@ -232,7 +232,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                     ],
                     data: leadProvider.leadData.map((lead) {
                       return {
-                        'Lead Code': lead.leadCode,
+                        'Lead Code': lead.getDisplayLeadCode(settingsProvider.leadCodeWithEnquiryCode),
                         'Customer Name': lead.customerName,
                         'Mobile No': lead.contactNumber,
                         'Email': lead.email,
@@ -332,7 +332,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                     ],
                     data: leadProvider.leadData.map((lead) {
                       return {
-                        'Lead Code': lead.leadCode,
+                        'Lead Code': lead.getDisplayLeadCode(settingsProvider.leadCodeWithEnquiryCode),
                         'Customer Name': lead.customerName,
                         'Mobile No': lead.contactNumber,
                         'Email': lead.email,

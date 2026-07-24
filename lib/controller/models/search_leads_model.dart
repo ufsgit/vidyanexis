@@ -49,6 +49,14 @@ class SearchLeadModel {
   final String consumerName;
   final String contactNo;
   final String leadCode;
+  final String leadCode2;
+
+  String getDisplayLeadCode(int leadCodeWithEnquiryCodePermission) {
+    if (leadCodeWithEnquiryCodePermission == 1) {
+      return leadCode2;
+    }
+    return leadCode;
+  }
 
   // ─────────────────── Additional Fields ───────────────────
   final int tp;
@@ -194,6 +202,7 @@ class SearchLeadModel {
     required this.contactNo,
     required this.amount,
     required this.leadCode,
+    this.leadCode2 = '',
     required this.leadDuration,
   });
 
@@ -303,6 +312,7 @@ class SearchLeadModel {
       contactNo: parseString(json['Contact_No']),
       amount: parseString(json['Amount']),
       leadCode: parseString(json['Lead_Code']),
+      leadCode2: parseString(json['Lead_Code2'] ?? json['lead_code2']),
       leadDuration: parseString(json['Lead_Age_Days']),
     );
   }
@@ -398,6 +408,7 @@ class SearchLeadModel {
       "Contact_No": contactNo,
       "Amount": amount,
       "Lead_Code": leadCode,
+      "Lead_Code2": leadCode2,
     };
   }
 
@@ -490,12 +501,14 @@ class SearchLeadModel {
     String? contactNo,
     String? amount,
     String? leadCode,
+    String? leadCode2,
     List<AudioFileLead>? audioFiles,
     String? leadDuration,
   }) {
     return SearchLeadModel(
       amount: amount ?? this.amount,
       leadCode: leadCode ?? this.leadCode,
+      leadCode2: leadCode2 ?? this.leadCode2,
       audioFiles: audioFiles ?? this.audioFiles,
       leadDuration: leadDuration ?? this.leadDuration,
       customerId: customerId ?? this.customerId,

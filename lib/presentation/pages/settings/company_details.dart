@@ -87,6 +87,8 @@ class _CompanyDetailsState extends State<CompanyDetails> {
                             settingsProvider.companyDetails[0].panNo.toString();
                         settingsProvider.ccinNoController.text =
                             settingsProvider.companyDetails[0].cinNo.toString();
+                        settingsProvider.ccompanyCodeController.text =
+                            settingsProvider.companyDetails[0].companyCode.toString();
                         settingsProvider.saveImagePath(
                             settingsProvider.companyDetails[0].logo.toString());
                         settingsProvider.setToggleValue(
@@ -172,6 +174,9 @@ class _CompanyDetailsState extends State<CompanyDetails> {
                       // CIN No
                       _buildInfoTile(Icons.business, "CIN No",
                           settingsProvider.companyDetails[0].cinNo),
+                      // Company Code
+                      _buildInfoTile(Icons.code, "Company Code",
+                          settingsProvider.companyDetails[0].companyCode),
                       // Website
                       _buildInfoTile(
                         Icons.location_on_sharp,

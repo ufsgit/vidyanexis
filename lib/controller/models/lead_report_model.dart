@@ -220,8 +220,10 @@ class LeadReportModel {
           quotationCount: json["Quotation_Count"]?.toString() ?? '0',
           taskCount: json["Task_Count"]?.toString() ?? '0',
           requestCount: json["Request_Count"]?.toString() ?? '0',
-          createdBy: json["Created_By"]?.toString() ?? '0',
-          createdByName: json["Created_By_Name"]?.toString() ?? '',
+          createdBy: json["Created_By"]?.toString() ?? json["By_User_Id"]?.toString() ?? '0',
+          createdByName: (json["Created_By_Name"] != null && json["Created_By_Name"].toString().trim().isNotEmpty)
+              ? json["Created_By_Name"].toString().trim()
+              : (json["By_User_Name"]?.toString() ?? ''),
           entryDate: json["Entry_Date"]?.toString() ?? '',
           statusId: json["Status_Id"]?.toString() ?? '0',
           statusName: json["Status_Name"]?.toString() ?? '',

@@ -29,6 +29,7 @@ import 'package:vidyanexis/presentation/widgets/home/confirmation_dialog_widget.
 import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget_mobile.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_task_overview_tab.dart';
 import 'package:vidyanexis/presentation/widgets/customer/customer_detail_custom_tab.dart';
+import 'package:vidyanexis/presentation/widgets/home/lazy_indexed_stack.dart';
 
 class CustomerDetailPageMobile extends StatefulWidget {
   static const String route = '/customer-detail-mobile/';
@@ -340,7 +341,7 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile> {
           ),
           const SizedBox(height: 8),
           Expanded(
-            child: IndexedStack(
+            child: LazyIndexedStack(
               index: _selectedIndex,
               children: tabPages,
             ),

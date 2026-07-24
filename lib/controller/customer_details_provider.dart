@@ -18,6 +18,7 @@ import 'package:vidyanexis/controller/models/quotation_type_model.dart';
 import 'package:vidyanexis/controller/models/scope_of_work_model.dart';
 import 'package:vidyanexis/controller/models/task_page_provider.dart';
 import 'package:vidyanexis/controller/models/user_location_model.dart';
+import 'package:vidyanexis/controller/models/tab_state.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/controller/models/custom_field_by_status.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
@@ -322,6 +323,14 @@ class CustomerDetailsProvider extends ChangeNotifier {
       _quotationListByMaster;
 
   List<QuotationField> _quotationFields = [];
+  final TabState<List<TaskCustomerModel>> taskListState = TabState();
+  final TabState<List<DocumentListModel>> documentListState = TabState();
+  final TabState<List<QuatationListModel>> quotationListState = TabState();
+  final TabState<List<TaskUserListModel>> taskOverviewState = TabState();
+  final TabState<List<FollowUpHistoryModel>> historyState = TabState();
+  final TabState<List<FollowUpHistoryModel>> followUpHistoryState = TabState(); // for activity?
+  final TabState<List<PaymentModel>> paymentListState = TabState();
+  
   List<QuotationField> get quotationFields => _quotationFields;
 
   List<FollowUpHistoryModel> _followUpHistory = [];
@@ -2842,24 +2851,37 @@ class CustomerDetailsProvider extends ChangeNotifier {
       Loader.stopLoader(context);
     }
   }
+  String? _lastQuotationCustomerId;
 
   Future<void> getQuatationList(String customerId, BuildContext context) async {
     _isQuotationListLoading = true;
+    quotationListState.setLoading();
+    _quotationList.clear(); // Clear stale data before fetching
     notifyListeners();
 
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
+      String token = preferences.getString('token') ?? ""; // Assuming token is stored
 
-      final response = await HttpRequest.httpGetRequest(
-          endPoint:
-              '${HttpUrls.getQuatationByCustomer}?Customer_Id=$customerId');
+      final url = '${HttpUrls.getQuatationByCustomer}?Customer_Id=$customerId';
+      
+      log('--- QUOTATION API REQUEST ---');
+      log('Base URL: ${HttpUrls.baseUrl}');
+      log('Endpoint: $url');
+      log('Authorization Token: $token');
+      log('Customer ID: $customerId');
+      log('-------------------------------');
+
+      final response = await HttpRequest.httpGetRequest(endPoint: url);
 
       if (response.statusCode == 200) {
         final data = response.data;
 
         if (data != null) {
-          log(data.toString());
+          log('--- QUOTATION API RESPONSE ---');
+          log('Response Body: ${jsonEncode(data)}');
+          log('--------------------------------');
 
           List<dynamic> rawList = [];
           if (data is List) {
@@ -2868,25 +2890,73 @@ class CustomerDetailsProvider extends ChangeNotifier {
             rawList = data['data'] as List;
           }
 
-          _quotationList = rawList
+          var parsedList = rawList
               .map((item) => QuatationListModel.fromMap(
                   Map<String, dynamic>.from(item as Map)))
               .toList();
+
+          // Prevent duplicates by ensuring unique Quotation_Master_Id
+          final uniqueQuotations = <int, QuatationListModel>{};
+          for (var q in parsedList) {
+            uniqueQuotations[q.quotationMasterId] = q;
+          }
+          
+          _quotationList = uniqueQuotations.values.toList();
+          
+          // Sort descending by quotationMasterId so the latest is on top
+          _quotationList.sort((a, b) => b.quotationMasterId.compareTo(a.quotationMasterId));
+          
+          log('Parsed Model Count: ${_quotationList.length}');
+          log('Displayed Quotation Count: ${_quotationList.length}');
+
+          if (_quotationList.isEmpty) {
+            quotationListState.setEmpty();
+          } else {
+            quotationListState.setLoaded(_quotationList);
+          }
+        } else {
+          quotationListState.setEmpty();
+        }
+      } else if (response.statusCode == 401 || response.statusCode == 403) {
+        quotationListState.setError('Unauthorized');
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Unauthorized. Please login again.')),
+          );
+        }
+      } else if (response.statusCode == 404) {
+        quotationListState.setEmpty();
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Quotations not found (404)')),
+          );
         }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Server Error')),
-        );
+        quotationListState.setError('Server Error: ${response.statusCode}');
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Server Error: ${response.statusCode}')),
+          );
+        }
       }
     } catch (e) {
-      print('Exception occurred: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred')),
-      );
+      print('Exception occurred in getQuatationList: $e');
+      quotationListState.setError('Network error');
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Network or Parsing error occurred')),
+        );
+      }
     } finally {
       _isQuotationListLoading = false;
-      // _isLoading = false; // Set loading to false once the request completes
-      notifyListeners(); // Notify listeners to rebuild with the final state
+      notifyListeners();
+    }
+  }
+
+  Future<void> fetchQuotationListIfNeeded(String customerId, BuildContext context, {bool forceRefresh = false}) async {
+    if (forceRefresh || _lastQuotationCustomerId != customerId || quotationListState.status == TabStatus.initial || quotationListState.status == TabStatus.error) {
+      _lastQuotationCustomerId = customerId;
+      await getQuatationList(customerId, context);
     }
   }
 

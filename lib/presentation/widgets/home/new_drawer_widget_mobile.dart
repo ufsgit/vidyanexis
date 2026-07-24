@@ -491,24 +491,11 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
           dropDownProvider.updateEnquiryForName(
               defaultEnquiryForId, selectedEnquiryFor.enquiryForName);
           leadProvider.clearCustomFieldEnquiryFor();
-          if (widget.isEdit) {
-            leadProvider.getCustomFieldsByEnquiryForId(
-              context,
-              leadId: leadProvider.customerId,
-              enquiryForId: defaultEnquiryForId,
-            );
-          } else {
-            if (selectedEnquiryFor.parsedCustomFields.isNotEmpty) {
-              leadProvider.setCustomFieldEnquiryFor(
-                  selectedEnquiryFor.parsedCustomFields);
-            } else {
-              leadProvider.getCustomFieldsByEnquiryForId(
-                context,
-                leadId: 0,
-                enquiryForId: defaultEnquiryForId,
-              );
-            }
-          }
+          leadProvider.getCustomFieldsByEnquiryForId(
+            context,
+            leadId: widget.isEdit ? (leadProvider.customerId ?? 0) : 0,
+            enquiryForId: defaultEnquiryForId,
+          );
         }
       }
       dropDownProvider.getUserDetails(context);
@@ -2604,24 +2591,11 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
                     dropDownProvider.updateEnquiryForName(
                         newValue, selectedEnquiryFor.enquiryForName);
                     leadProvider.clearCustomFieldEnquiryFor();
-                    if (widget.isEdit) {
-                      leadProvider.getCustomFieldsByEnquiryForId(
-                        context,
-                        leadId: leadProvider.customerId,
-                        enquiryForId: newValue,
-                      );
-                    } else {
-                      if (selectedEnquiryFor.parsedCustomFields.isNotEmpty) {
-                        leadProvider.setCustomFieldEnquiryFor(
-                            selectedEnquiryFor.parsedCustomFields);
-                      } else {
-                        leadProvider.getCustomFieldsByEnquiryForId(
-                          context,
-                          leadId: 0,
-                          enquiryForId: newValue,
-                        );
-                      }
-                    }
+                    leadProvider.getCustomFieldsByEnquiryForId(
+                      context,
+                      leadId: widget.isEdit ? (leadProvider.customerId ?? 0) : 0,
+                      enquiryForId: newValue,
+                    );
                   }
                 },
                 selectedValue: dropDownProvider.selectedEnquiryForId,

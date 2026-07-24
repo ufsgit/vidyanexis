@@ -125,13 +125,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
               lead.enquiryForId.toString(), context);
         }
       });
-      customerDetailsProvider.getServiceList(widget.customerId, context);
-      customerDetailsProvider.getAmc(widget.customerId, '0', context);
-      customerDetailsProvider.getQuatationList(widget.customerId, context);
-      customerDetailsProvider.getDocument(widget.customerId, context);
-      customerDetailsProvider.getTaskDocument(widget.customerId, context);
-      customerDetailsProvider.getRecieptListApi(widget.customerId, context);
-      customerDetailsProvider.getFollowUpHistory(widget.customerId, context);
+      // Eager loading removed for lazy tab initialization
+      // APIs will be fetched when their respective tabs are opened.
       final dropDownProvider =
           Provider.of<DropDownProvider>(context, listen: false);
       dropDownProvider.getUserDetails(context);
@@ -226,9 +221,53 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
       _tabController = TabController(
           length: _tabs.length, vsync: this, initialIndex: initialIndex);
       _tabController.addListener(() {
-        setState(() {});
+        if (!_tabController.indexIsChanging) {
+          _fetchDataForCurrentTab();
+          setState(() {});
+        }
       });
       _isControllerInitialized = true;
+      
+      // Fetch data for the initially selected tab
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _fetchDataForCurrentTab();
+      });
+    }
+  }
+
+  void _fetchDataForCurrentTab() {
+    if (_tabController.index < 0 || _tabController.index >= _tabs.length) return;
+    String currentTabName = _tabs[_tabController.index].text ?? "";
+    final provider = Provider.of<CustomerDetailsProvider>(context, listen: false);
+
+    switch (currentTabName) {
+      case "Info":
+        break;
+      case "Summary":
+        // provider.getTaskOverview(...) // if needed
+        break;
+      case "Tasks":
+        provider.getTaskList(widget.customerId, context);
+        break;
+      case "Quotations":
+        provider.fetchQuotationListIfNeeded(widget.customerId, context);
+        break;
+      case "Documents":
+        provider.getDocument(widget.customerId, context);
+        break;
+      case "Forms":
+        provider.getTaskDocument(widget.customerId, context);
+        break;
+      case "History":
+        provider.getFollowUpHistory(widget.customerId, context);
+        break;
+      case "Receipt":
+        provider.getRecieptListApi(widget.customerId, context);
+        break;
+      case "Periodic Service":
+        provider.getServiceList(widget.customerId, context);
+        provider.getAmc(widget.customerId, '0', context);
+        break;
     }
   }
 
@@ -601,28 +640,30 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                   icon: const Icon(Icons.delete_outline,
                                       color: Colors.red),
                                 ),
-                              IconButton(
-                                tooltip: 'Export PDF',
-                                icon: const Icon(Icons.picture_as_pdf,
-                                    color: Colors.blue),
-                                onPressed: () async {
-                                  if (customerDetailsProvider.leadDetails != null &&
-                                      customerDetailsProvider.leadDetails!.isNotEmpty) {
-                                    final companyName = settingsprovider.companyDetails.isNotEmpty
-                                        ? settingsprovider.companyDetails[0].companyName
-                                        : '3rd Eye Security Systems';
-                                    await generateCustomerDetailsPdf(
-                                      customerData: customerDetailsProvider.leadDetails![0],
-                                      customFields: leadProvider.customFieldEnquiryFor ?? [],
-                                      companyName: companyName,
-                                    );
-                                  } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(content: Text('No details available to export')),
-                                    );
-                                  }
-                                },
-                              ),
+                              if (settingsprovider.menuIsViewMap[169] == 1 ||
+                                  settingsprovider.menuIsViewMap[169].toString() == '1')
+                                IconButton(
+                                  tooltip: 'Export PDF',
+                                  icon: const Icon(Icons.picture_as_pdf,
+                                      color: Colors.blue),
+                                  onPressed: () async {
+                                    if (customerDetailsProvider.leadDetails != null &&
+                                        customerDetailsProvider.leadDetails!.isNotEmpty) {
+                                      final companyName = settingsprovider.companyDetails.isNotEmpty
+                                          ? settingsprovider.companyDetails[0].companyName
+                                          : '3rd Eye Security Systems';
+                                      await generateCustomerDetailsPdf(
+                                        customerData: customerDetailsProvider.leadDetails![0],
+                                        customFields: leadProvider.customFieldEnquiryFor ?? [],
+                                        companyName: companyName,
+                                      );
+                                    } else {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(content: Text('No details available to export')),
+                                      );
+                                    }
+                                  },
+                                ),
                               const SizedBox(width: 20),
                               if (_canScrollLeft)
                                 IconButton(
@@ -4843,6 +4884,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
             .where((task) => task.serviceStatusId == serviceId)
             .toList();
 
+    if (customerDetailsProvider.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     return filteredService.isEmpty
         ? const Center(child: Text("No Complaints available."))
         : Expanded(
@@ -5134,6 +5179,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
             .toList();
 
     const borderColor = Color(0xFFE9EDF1);
+
+    if (customerDetailsProvider.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
     return filteredTasks.isEmpty
         ? const Center(child: Text("No tasks available."))
@@ -5551,6 +5600,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
             .toList();
 
     const borderColor = Color(0xFFE9EDF1);
+
+    if (customerDetailsProvider.isQuotationListLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
     return filteredQuotations.isEmpty
         ? const Center(child: Text("No Quotations available."))

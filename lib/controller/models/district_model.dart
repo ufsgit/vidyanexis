@@ -30,8 +30,8 @@ class DistrictModel {
       );
 
   factory DistrictModel.fromJson(Map<String, dynamic> json) => DistrictModel(
-        districtId: json["District_Id"],
-        districtName: json["District_Name"],
+        districtId: json["District_Id"] ?? json["district_id"] ?? json["Id"],
+        districtName: json["Name"] ?? json["District_Name"] ?? json["district_name"],
       );
 
   Map<String, dynamic> toJson() => {

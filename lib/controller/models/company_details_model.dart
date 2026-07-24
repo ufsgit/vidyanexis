@@ -42,6 +42,7 @@ class Company {
   final String gstNo;
   final String panNo;
   final String cinNo;
+  final String companyCode;
   final int deleteStatus;
   final int isLocation;
   final String notificationTopic;
@@ -72,6 +73,7 @@ class Company {
     required this.gstNo,
     required this.panNo,
     required this.cinNo,
+    required this.companyCode,
     required this.deleteStatus,
     required this.isLocation,
     required this.notificationTopic,
@@ -105,6 +107,7 @@ class Company {
       gstNo: json['Gst_No'] ?? '',
       panNo: json['Pan_No'] ?? '',
       cinNo: json['Cin_No'] ?? '',
+      companyCode: json['Company_Code'] ?? '',
       deleteStatus: json['DeleteStatus'] ?? 0,
       isLocation: json['Is_Location'] ?? 0,
       notificationTopic: json['notification_topic'] ?? '',
@@ -142,6 +145,7 @@ class Company {
       'Gst_No': gstNo,
       'Pan_No': panNo,
       'Cin_No': cinNo,
+      'Company_Code': companyCode,
       'DeleteStatus': deleteStatus,
       'Is_Location': isLocation,
       'notification_topic': notificationTopic,

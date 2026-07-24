@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:printing/printing.dart';
 import 'package:flutter/foundation.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart' hide StatusUtils;
 import 'package:vidyanexis/constants/app_styles.dart';
@@ -19,6 +20,7 @@ import 'package:vidyanexis/utils/pdf_action_helper.dart';
 import 'package:vidyanexis/utils/status_utils.dart';
 import 'package:vidyanexis/presentation/widgets/customer/pdf/print_commercial.dart';
 import 'package:vidyanexis/presentation/widgets/customer/pdf/print_residential.dart';
+import 'package:vidyanexis/controller/models/tab_state.dart';
 
 class QuotationMobileView extends StatefulWidget {
   const QuotationMobileView({super.key, required this.customerId});
@@ -28,13 +30,16 @@ class QuotationMobileView extends StatefulWidget {
   State<QuotationMobileView> createState() => _QuotationMobileViewState();
 }
 
-class _QuotationMobileViewState extends State<QuotationMobileView> {
+class _QuotationMobileViewState extends State<QuotationMobileView> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<CustomerDetailsProvider>(context, listen: false)
-          .getQuatationList(widget.customerId, context);
+          .fetchQuotationListIfNeeded(widget.customerId, context, forceRefresh: true);
     });
   }
 
@@ -95,11 +100,29 @@ class _QuotationMobileViewState extends State<QuotationMobileView> {
           Expanded(
             child: Consumer<CustomerDetailsProvider>(
               builder: (context, customerDetailsProvider, child) {
-                if (customerDetailsProvider.isQuotationListLoading) {
+                final state = customerDetailsProvider.quotationListState;
+
+                if (state.status == TabStatus.loading) {
                   return const Center(child: CircularProgressIndicator());
                 }
 
-                if (customerDetailsProvider.quotationList.isEmpty) {
+                if (state.status == TabStatus.error) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(state.errorMessage ?? 'An error occurred', style: GoogleFonts.plusJakartaSans(color: Colors.red)),
+                        const SizedBox(height: 8),
+                        ElevatedButton(
+                          onPressed: () => customerDetailsProvider.fetchQuotationListIfNeeded(widget.customerId, context, forceRefresh: true),
+                          child: const Text('Retry'),
+                        )
+                      ],
+                    ),
+                  );
+                }
+
+                if (state.status == TabStatus.empty || state.data == null || state.data!.isEmpty) {
                   return Center(
                     child: Column(
                       children: [
@@ -128,12 +151,17 @@ class _QuotationMobileViewState extends State<QuotationMobileView> {
                   );
                 }
 
-                return ListView.separated(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                  separatorBuilder: (_, __) => const SizedBox(height: 12),
-                  itemCount: customerDetailsProvider.quotationList.length,
-                  itemBuilder: (context, index) {
+                return RefreshIndicator(
+                  onRefresh: () async {
+                    await Provider.of<CustomerDetailsProvider>(context, listen: false)
+                        .fetchQuotationListIfNeeded(widget.customerId, context, forceRefresh: true);
+                  },
+                  child: ListView.separated(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                    separatorBuilder: (_, __) => const SizedBox(height: 12),
+                    itemCount: state.data!.length,
+                    itemBuilder: (context, index) {
                     final item = customerDetailsProvider.quotationList[index];
                     final settingsProvider =
                         Provider.of<SettingsProvider>(context, listen: false);
@@ -671,7 +699,7 @@ class _QuotationMobileViewState extends State<QuotationMobileView> {
                               Row(
                                 children: [
                                   Text(
-                                    '₹ ${item.totalAmount}',
+                                    NumberFormat.currency(locale: 'en_IN', symbol: '₹ ', decimalDigits: 2).format(item.calculatedNetCost),
                                     style: GoogleFonts.plusJakartaSans(
                                       fontSize: 15,
                                       fontWeight: FontWeight.w700,
@@ -720,6 +748,7 @@ class _QuotationMobileViewState extends State<QuotationMobileView> {
                       ),
                     );
                   },
+                ),
                 );
               },
             ),

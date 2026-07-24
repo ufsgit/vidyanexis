@@ -566,6 +566,8 @@ class _AddEnquiryForState extends State<AddEnquiryFor> {
       settingsProvider.searchTaskType('', context);
       if (widget.isEdit) {
         settingsProvider.enquiryForController.text = widget.status;
+        settingsProvider.enquiryCodeController.text =
+            widget.data?.enquiryCode ?? '';
         settingsProvider.sourceCategoryEnquiryController.text =
             widget.sourceName;
         settingsProvider.setSourceId(int.parse(widget.sourceId));
@@ -600,6 +602,8 @@ class _AddEnquiryForState extends State<AddEnquiryFor> {
           });
         }
       } else {
+        settingsProvider.enquiryForController.clear();
+        settingsProvider.enquiryCodeController.clear();
         settingsProvider.sourceCategoryEnquiryController.clear();
         settingsProvider.setSourceId(0);
       }
@@ -629,6 +633,7 @@ class _AddEnquiryForState extends State<AddEnquiryFor> {
           IconButton(
             onPressed: () {
               settingsProvider.enquiryForController.clear();
+              settingsProvider.enquiryCodeController.clear();
               Navigator.pop(context);
             },
             icon: const Icon(Icons.close),
@@ -689,6 +694,20 @@ class _AddEnquiryForState extends State<AddEnquiryFor> {
                       height: 54,
                       controller: settingsProvider.enquiryForController,
                       hintText: 'Enquiry For Name*',
+                      labelText: '',
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  Expanded(
+                    child: CustomTextField(
+                      readOnly: false,
+                      height: 54,
+                      controller: settingsProvider.enquiryCodeController,
+                      hintText: 'Enquiry Code',
                       labelText: '',
                     ),
                   ),
@@ -860,6 +879,7 @@ class _AddEnquiryForState extends State<AddEnquiryFor> {
                 buttonText: 'Cancel',
                 onPressed: () {
                   settingsProvider.enquiryForController.clear();
+                  settingsProvider.enquiryCodeController.clear();
                   Navigator.pop(context);
                 },
                 radius: 4,
@@ -884,6 +904,7 @@ class _AddEnquiryForState extends State<AddEnquiryFor> {
                     context: context,
                     forId: widget.editId,
                     forName: settingsProvider.enquiryForController.text,
+                    enquiryCode: settingsProvider.enquiryCodeController.text,
                     customFields: selectedFields,
                     taskTypes: selectedTaskTypes,
                   );

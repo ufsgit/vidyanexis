@@ -184,41 +184,146 @@ class TaskHistoryPopup extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFEFF6FF),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Text(
-                          history.statusName ?? 'Updated',
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                            color: const Color(0xFF3B82F6),
+                      Builder(builder: (_) {
+                        Color statusColor = const Color(0xFF3B82F6);
+                        final lowerStatus = (history.statusName ?? '').toLowerCase();
+                        if (lowerStatus.contains('complete') || lowerStatus.contains('done')) {
+                          statusColor = const Color(0xFF10B981);
+                        } else if (lowerStatus.contains('progress')) {
+                          statusColor = const Color(0xFF3B82F6);
+                        } else if (lowerStatus.contains('pend') || lowerStatus.contains('hold')) {
+                          statusColor = const Color(0xFFF59E0B);
+                        } else if (lowerStatus.contains('cancel') || lowerStatus.contains('reject')) {
+                          statusColor = const Color(0xFFEF4444);
+                        }
+                        return Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: statusColor.withOpacity(0.12),
+                            borderRadius: BorderRadius.circular(20),
                           ),
-                        ),
-                      ),
-                      Text(
-                        _formatDate(history.entryDate),
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 11,
-                          color: const Color(0xFF94A3B8),
-                          fontWeight: FontWeight.w500,
-                        ),
+                          child: Text(
+                            history.statusName ?? 'Updated',
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                              color: statusColor,
+                              letterSpacing: 0.3,
+                            ),
+                          ),
+                        );
+                      }),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.access_time_rounded,
+                            size: 13,
+                            color: Color(0xFF94A3B8),
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            _formatDate(history.entryDate),
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 11.5,
+                              color: const Color(0xFF64748B),
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    history.description ?? 'No description provided',
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 13,
-                      color: const Color(0xFF334155),
-                      height: 1.5,
+                  if (history.description != null &&
+                      history.description!.trim().isNotEmpty) ...[
+                    const SizedBox(height: 10),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF8FAFC),
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(color: const Color(0xFFE2E8F0)),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.chat_bubble_outline_rounded,
+                                size: 13,
+                                color: Color(0xFF3B82F6),
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                'Comments',
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 11.5,
+                                  fontWeight: FontWeight.w700,
+                                  color: const Color(0xFF334155),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            history.description!,
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 12.5,
+                              color: const Color(0xFF1E293B),
+                              height: 1.4,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
+                  ],
+                  if (history.remarks != null &&
+                      history.remarks!.trim().isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFFFBEB),
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(color: const Color(0xFFFDE68A)),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.rate_review_outlined,
+                                size: 13,
+                                color: Color(0xFFD97706),
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                'Remarks / Feedback',
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 11.5,
+                                  fontWeight: FontWeight.w700,
+                                  color: const Color(0xFFB45309),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            history.remarks!,
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 12.5,
+                              color: const Color(0xFF1E293B),
+                              height: 1.4,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                   const SizedBox(height: 8),
                   if (history.location != null && history.location!.isNotEmpty) ...[
                     Row(

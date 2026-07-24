@@ -14,6 +14,10 @@ class QuatationListModel {
   String subsidyAmount;
   int? subsidyticked;
   String netTotal;
+  final String ksebRegistrationFee;
+  final String ksebFeasibilityFee;
+  final String discountAmount;
+  final String additionalStructure;
   String productName;
   String warranty;
   String termsAndConditions;
@@ -34,6 +38,19 @@ class QuatationListModel {
   int quotationTypeId;
   int branchId;
 
+  double get calculatedNetCost {
+    double systemPrice = double.tryParse(totalAmount) ?? 0.0;
+    double regFee = double.tryParse(ksebRegistrationFee) ?? 0.0;
+    double feasFee = double.tryParse(ksebFeasibilityFee) ?? 0.0;
+    
+    double totalPrice = systemPrice + regFee + feasFee;
+    
+    double discount = double.tryParse(discountAmount) ?? 0.0;
+    double addStructure = double.tryParse(additionalStructure) ?? 0.0;
+    
+    return totalPrice - discount + addStructure;
+  }
+
   QuatationListModel({
     required this.quotationMasterId,
     required this.customerId,
@@ -45,6 +62,10 @@ class QuatationListModel {
     required this.subsidyAmount,
     this.subsidyticked,
     required this.netTotal,
+    required this.ksebRegistrationFee,
+    required this.ksebFeasibilityFee,
+    required this.discountAmount,
+    required this.additionalStructure,
     required this.productName,
     required this.warranty,
     required this.termsAndConditions,
@@ -90,6 +111,10 @@ class QuatationListModel {
             ? int.tryParse(json["Subsidyticked"].toString())
             : null,
         netTotal: json["NetTotal"]?.toString() ?? '0.0',
+        ksebRegistrationFee: json["KSEB_Registration_Fees_KW"]?.toString() ?? '0.0',
+        ksebFeasibilityFee: json["KSEB_Feasibility_Study_Fees"]?.toString() ?? '0.0',
+        discountAmount: json["Discount_Amount"]?.toString() ?? '0.0',
+        additionalStructure: json["Additional_Structure_Work"]?.toString() ?? '0.0',
         productName: json["Product_Name"]?.toString() ?? '',
         warranty: json["Warranty"]?.toString() ?? '',
         termsAndConditions: json["Terms_And_Conditions"]?.toString() ?? '',
@@ -135,6 +160,10 @@ class QuatationListModel {
         "Subsidy_Amount": subsidyAmount,
         "Subsidyticked": subsidyticked,
         "NetTotal": netTotal,
+        "KSEB_Registration_Fees_KW": ksebRegistrationFee,
+        "KSEB_Feasibility_Study_Fees": ksebFeasibilityFee,
+        "Discount_Amount": discountAmount,
+        "Additional_Structure_Work": additionalStructure,
         "Product_Name": productName,
         "Warranty": warranty,
         "Terms_And_Conditions": termsAndConditions,
