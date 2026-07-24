@@ -159,6 +159,60 @@ class _TermsWarrantyContentState extends State<TermsWarrantyContent> {
                       contentPadding: const EdgeInsets.all(16),
                     ),
                   ),
+                  const SizedBox(height: 40),
+
+                  _buildSectionHeader('Advance Percentage'),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: provider.advancePercentageController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      hintText: 'Enter advance percentage...',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(color: Colors.grey.shade300),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                      contentPadding: const EdgeInsets.all(16),
+                    ),
+                  ),
+                  const SizedBox(height: 40),
+
+                  _buildSectionHeader('On Material Delivery Percentage'),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: provider.onMaterialDeliveryPercentageController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      hintText: 'Enter material delivery percentage...',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(color: Colors.grey.shade300),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                      contentPadding: const EdgeInsets.all(16),
+                    ),
+                  ),
+                  const SizedBox(height: 40),
+
+                  _buildSectionHeader('On Work Completion Percentage'),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: provider.onWorkCompletionPercentageController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      hintText: 'Enter work completion percentage...',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(color: Colors.grey.shade300),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                      contentPadding: const EdgeInsets.all(16),
+                    ),
+                  ),
                 ],
               ),
             ),

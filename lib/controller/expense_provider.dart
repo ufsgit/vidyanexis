@@ -288,7 +288,7 @@ class ExpenseProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  bool _asPerRequired = false;
+  bool _asPerRequired = true;
   bool get asPerRequired => _asPerRequired;
   set asPerRequired(bool value) {
     _asPerRequired = value;
@@ -1472,7 +1472,7 @@ class ExpenseProvider extends ChangeNotifier {
     setSubId(-1);
     _subItemId = null;
     _isQuantity = false;
-    _asPerRequired = false;
+    _asPerRequired = true;
     _selectedItemMaterialUnit = 0;
     itemMaterialOrderByController.clear();
     notifyListeners();

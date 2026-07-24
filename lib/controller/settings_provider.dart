@@ -6321,12 +6321,18 @@ class SettingsProvider extends ChangeNotifier {
   final TextEditingController description1Controller = TextEditingController();
   final TextEditingController description2Controller = TextEditingController();
   final TextEditingController description3Controller = TextEditingController();
+  final TextEditingController advancePercentageController = TextEditingController();
+  final TextEditingController onMaterialDeliveryPercentageController = TextEditingController();
+  final TextEditingController onWorkCompletionPercentageController = TextEditingController();
 
   String _warrantyText = '';
   String _termsText = '';
   String _description1Text = '';
   String _description2Text = '';
   String _description3Text = '';
+  String _advancePercentageText = '';
+  String _onMaterialDeliveryPercentageText = '';
+  String _onWorkCompletionPercentageText = '';
   int _termsWarrantyId = 0;
 
   String get warrantyText => _warrantyText;
@@ -6334,6 +6340,9 @@ class SettingsProvider extends ChangeNotifier {
   String get description1Text => _description1Text;
   String get description2Text => _description2Text;
   String get description3Text => _description3Text;
+  String get advancePercentageText => _advancePercentageText;
+  String get onMaterialDeliveryPercentageText => _onMaterialDeliveryPercentageText;
+  String get onWorkCompletionPercentageText => _onWorkCompletionPercentageText;
   int get termsWarrantyId => _termsWarrantyId;
 
   Future<void> getTermsAndWarranty(BuildContext context) async {
@@ -6351,6 +6360,9 @@ class SettingsProvider extends ChangeNotifier {
           _description1Text = data['Description_1']?.toString() ?? '';
           _description2Text = data['Description_2']?.toString() ?? '';
           _description3Text = data['Description_3']?.toString() ?? '';
+          _advancePercentageText = data['Advance_Percentage']?.toString() ?? '';
+          _onMaterialDeliveryPercentageText = data['OnMaterialDelivery_Percentage']?.toString() ?? '';
+          _onWorkCompletionPercentageText = data['OnWorkCompletion_Percentage']?.toString() ?? '';
         }
 
         warrantyController.text = _warrantyText;
@@ -6358,6 +6370,9 @@ class SettingsProvider extends ChangeNotifier {
         description1Controller.text = _description1Text;
         description2Controller.text = _description2Text;
         description3Controller.text = _description3Text;
+        advancePercentageController.text = _advancePercentageText;
+        onMaterialDeliveryPercentageController.text = _onMaterialDeliveryPercentageText;
+        onWorkCompletionPercentageController.text = _onWorkCompletionPercentageText;
         notifyListeners();
       }
     } catch (e) {
@@ -6378,6 +6393,9 @@ class SettingsProvider extends ChangeNotifier {
           "Description_1": description1Controller.text.trim(),
           "Description_2": description2Controller.text.trim(),
           "Description_3": description3Controller.text.trim(),
+          "Advance_Percentage": advancePercentageController.text.trim(),
+          "OnMaterialDelivery_Percentage": onMaterialDeliveryPercentageController.text.trim(),
+          "OnWorkCompletion_Percentage": onWorkCompletionPercentageController.text.trim(),
         },
       );
 
@@ -6409,11 +6427,17 @@ class SettingsProvider extends ChangeNotifier {
     description1Controller.clear();
     description2Controller.clear();
     description3Controller.clear();
+    advancePercentageController.clear();
+    onMaterialDeliveryPercentageController.clear();
+    onWorkCompletionPercentageController.clear();
     _warrantyText = '';
     _termsText = '';
     _description1Text = '';
     _description2Text = '';
     _description3Text = '';
+    _advancePercentageText = '';
+    _onMaterialDeliveryPercentageText = '';
+    _onWorkCompletionPercentageText = '';
     _termsWarrantyId = 0;
     notifyListeners();
   }
