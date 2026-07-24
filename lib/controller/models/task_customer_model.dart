@@ -128,11 +128,15 @@ class TaskFile {
   String? filePath;
   String? fileName;
   String? fileType;
+  int? documentTypeId;
+  String? documentTypeName;
 
   TaskFile({
     this.filePath,
     this.fileName,
     this.fileType,
+    this.documentTypeId,
+    this.documentTypeName,
   });
 
   // Factory constructor with null checks
@@ -141,11 +145,17 @@ class TaskFile {
       filePath: json['File_Path'] ?? '',
       fileName: json['File_Name'] ?? '',
       fileType: json['File_Type'] ?? '',
+      documentTypeId: json['Document_Type_Id'] is int
+          ? json['Document_Type_Id']
+          : int.tryParse(json['Document_Type_Id']?.toString() ?? ''),
+      documentTypeName: json['Document_Type_Name'] ?? '',
     );
   }
   Map<String, dynamic> toJson() => {
         "File_Path": filePath,
         "File_Name": fileName,
         "File_Type": fileType,
+        "Document_Type_Id": documentTypeId,
+        "Document_Type_Name": documentTypeName,
       };
 }
