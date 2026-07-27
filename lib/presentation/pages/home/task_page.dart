@@ -728,6 +728,37 @@ class _tasksPageReportState extends State<TaskPage> {
                                   ),
                                 ),
                               ),
+                            //Create Task
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 8.0),
+                              child: ElevatedButton.icon(
+                                onPressed: () {
+                                  showDialog(
+                                    barrierDismissible: false,
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return TaskCreationWidget(
+                                        isEdit: false,
+                                        taskId: '0',
+                                        showDocument: true,
+                                      );
+                                    },
+                                  );
+                                },
+                                icon: const Icon(Icons.add),
+                                label: const Text('Create Task'),
+                                style: ElevatedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(4)),
+                                  backgroundColor: AppColors.primaryBlue,
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 12),
+                                ),
+                              ),
+                            ),
+                            //
                           ],
                         ),
                       ],
@@ -2339,7 +2370,36 @@ class _tasksPageReportState extends State<TaskPage> {
                 ),
               ),
             )
-          : null,
+          : !reportsProvider.isFilter && !AppStyles.isWebScreen(context)
+              ? //Create Task
+              Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: IconButton(
+                    onPressed: () {
+                      showDialog(
+                        barrierDismissible: false,
+                        context: context,
+                        builder: (BuildContext context) {
+                          return TaskCreationWidget(
+                            isEdit: false,
+                            taskId: '0',
+                            showDocument: true,
+                          );
+                        },
+                      );
+                    },
+                    icon: const Icon(Icons.add),
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(4)),
+                      backgroundColor: AppColors.primaryBlue,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 12),
+                    ),
+                  ),
+                )
+              : null,
     );
   }
 

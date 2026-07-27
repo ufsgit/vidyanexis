@@ -35,6 +35,7 @@ import 'package:vidyanexis/controller/models/document_checklist_model.dart';
 import 'package:vidyanexis/controller/models/user_enquiry_for_model.dart';
 import 'package:vidyanexis/controller/models/user_enquiry_source_model.dart';
 import 'package:vidyanexis/controller/models/user_task_type_model.dart';
+import 'package:vidyanexis/controller/models/priority_model.dart';
 import 'package:vidyanexis/utils/util_functions.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -429,6 +430,9 @@ class SettingsProvider extends ChangeNotifier {
   //for print
   final Map<int, int> _menuIsViewMapPrint = {};
   Map<int, int> get menuIsViewMapPrint => _menuIsViewMapPrint;
+
+  List<PriorityModel> _priorities = [];
+  List<PriorityModel> get priorities => _priorities;
   final Map<int, int> _menuIsEditMapPrint = {};
   Map<int, int> get menuIsEditMapPrint => _menuIsEditMapPrint;
   final Map<int, int> _menuIsSaveMapPrint = {};
@@ -4078,6 +4082,8 @@ class SettingsProvider extends ChangeNotifier {
     mobileNoController.clear();
     emailIdController.clear();
     workingStatusController.clear();
+    departmentUserController.clear();
+    branchController.clear();
     defaultStatusController.clear();
     employeeCodeController.clear();
     designationController.clear();
@@ -4807,6 +4813,112 @@ class SettingsProvider extends ChangeNotifier {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('An error occurred')),
       );
+    }
+  }
+
+  Future<void> getPriorities(BuildContext context) async {
+    try {
+      final response = await HttpRequest.httpGetRequest(
+        endPoint: HttpUrls.getPriority,
+      );
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data != null) {
+          if (data is List<dynamic>) {
+            _priorities = data.map((item) => PriorityModel.fromJson(item)).toList();
+          } else if (data is Map<String, dynamic> && data.containsKey('data')) {
+            _priorities = (data['data'] as List<dynamic>)
+                .map((item) => PriorityModel.fromJson(item))
+                .toList();
+          } else {
+            _priorities = [];
+          }
+          notifyListeners();
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error fetching priorities')),
+        );
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred while fetching priorities')),
+      );
+    }
+  }
+
+  Future<void> savePriority({
+    required BuildContext context,
+    required int priorityId,
+    required String priorityName,
+    required String colorCode,
+  }) async {
+    try {
+      Loader.showLoader(context);
+
+      final response = await HttpRequest.httpPostRequest(
+        endPoint: HttpUrls.savePriority,
+        bodyData: {
+          "Priority_Id": priorityId,
+          "Priority_Name": priorityName,
+          "Color_Code": colorCode,
+        },
+      );
+
+      if (response != null && response.statusCode == 200) {
+        getPriorities(context);
+        Navigator.pop(context);
+        Loader.stopLoader(context);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error saving priority')),
+        );
+        Loader.stopLoader(context);
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred while saving priority')),
+      );
+      Loader.stopLoader(context);
+    }
+  }
+
+  Future<void> deletePriority(BuildContext context, int priorityId) async {
+    try {
+      Loader.showLoader(context);
+      final response = await HttpRequest.httpDeleteRequest(
+        endPoint: '${HttpUrls.deletePriority}/$priorityId',
+      );
+
+      if (response != null && response.statusCode == 200) {
+        final data = response.data;
+        if (data != null && data['Priority_Id_'] == -1) {
+          Loader.stopLoader(context);
+          alert(context,
+              "You are attempting to delete a Priority \n that is currently in use!");
+        } else {
+          getPriorities(context);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Priority deleted successfully')),
+          );
+          Loader.stopLoader(context);
+          Navigator.pop(context);
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to delete priority')),
+        );
+        Loader.stopLoader(context);
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred while deleting priority')),
+      );
+      Loader.stopLoader(context);
     }
   }
 

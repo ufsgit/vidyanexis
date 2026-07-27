@@ -445,4 +445,7 @@ class HttpUrls {
   static String getTermsAndWarranty = "settings/Get_Terms_And_Warranty";
   static String saveTermsAndWarranty = "settings/Save_Terms_And_Warranty";
   static String verifyDocument = "category/Update_Document_Verification_Status";
+  static String savePriority = "settings/Save_Priority";
+  static String getPriority = "settings/Get_Priority";
+  static String deletePriority = "settings/Delete_Priority";
 }

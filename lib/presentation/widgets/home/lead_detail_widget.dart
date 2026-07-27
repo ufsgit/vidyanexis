@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:go_router/go_router.dart';
+import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/lead_details_provider.dart';
 import 'package:vidyanexis/controller/leads_provider.dart';
@@ -152,14 +154,15 @@ class LeadDetailsWidgetState extends State<LeadDetailsWidget> {
                     const Spacer(),
                     ElevatedButton(
                       onPressed: () {
+                        final customerDetailsProvider =
+                            Provider.of<CustomerDetailsProvider>(context,
+                                listen: false);
+                        customerDetailsProvider.setCustomerId(
+                            int.tryParse(widget.customerId.toString()) ?? 0);
                         sideprovider.replaceWidget(
                             false, widget.customerId.toString());
-                        CustomerDetailsScreen(
-                          customerId: widget.customerId.toString(),
-                          report: 'false',
-                        );
-                        // context.push(
-                        //     '${CustomerDetailsScreen.route}${widget.customerId.toString()}');
+                        context.push(
+                            '/customerDetails/${widget.customerId}/false');
                       },
                       style: ElevatedButton.styleFrom(
                         foregroundColor: AppColors.primaryBlue,
