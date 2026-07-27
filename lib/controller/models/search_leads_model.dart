@@ -50,6 +50,9 @@ class SearchLeadModel {
   final String contactNo;
   final String leadCode;
   final String leadCode2;
+  final String priorityName;
+  final String priorityId;
+  final String priorityColor;
 
   String getDisplayLeadCode(int leadCodeWithEnquiryCodePermission) {
     if (leadCodeWithEnquiryCodePermission == 1) {
@@ -204,6 +207,9 @@ class SearchLeadModel {
     required this.leadCode,
     this.leadCode2 = '',
     required this.leadDuration,
+    required this.priorityName,
+    required this.priorityId,
+    required this.priorityColor,
   });
 
   factory SearchLeadModel.fromJson(Map<String, dynamic> json) {
@@ -314,6 +320,9 @@ class SearchLeadModel {
       leadCode: parseString(json['Lead_Code']),
       leadCode2: parseString(json['Lead_Code2'] ?? json['lead_code2']),
       leadDuration: parseString(json['Lead_Age_Days']),
+      priorityName: parseString(json['Priority_Name']),
+      priorityId: parseString(json['Priority_Id']),
+      priorityColor: parseString(json['Priority_Color']),
     );
   }
 
@@ -504,6 +513,9 @@ class SearchLeadModel {
     String? leadCode2,
     List<AudioFileLead>? audioFiles,
     String? leadDuration,
+    String? priorityName,
+    String? priorityId,
+    String? priorityColor,
   }) {
     return SearchLeadModel(
       amount: amount ?? this.amount,
@@ -598,6 +610,9 @@ class SearchLeadModel {
       commission: commission ?? this.commission,
       consumerName: consumerName ?? this.consumerName,
       contactNo: contactNo ?? this.contactNo,
+      priorityName: priorityName ?? this.priorityName,
+      priorityId: priorityId ?? this.priorityId,
+      priorityColor: priorityColor ?? this.priorityColor,
     );
   }
 

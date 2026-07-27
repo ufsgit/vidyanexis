@@ -1,4 +1,5 @@
 import 'package:vidyanexis/controller/models/Sales_model.dart';
+import 'package:vidyanexis/controller/models/priority_model.dart';
 import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:async';
@@ -157,6 +158,7 @@ class _LeadsPageState extends State<LeadPage> {
       provider.getFollowUpStatus(context, "1");
       leadProvider.setSearchCriteria('', '', '');
       leadProvider.getSearchLeads(context);
+      settingsProvider.getPriorities(context);
 
       //search
       // searchController.addListener(() {
@@ -1665,6 +1667,21 @@ class _LeadsPageState extends State<LeadPage> {
                                               ),
                                             ),
                                             TableWidget(
+                                              width: 150,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 4.0,
+                                                      horizontal: 12.0),
+                                              alignment: Alignment.centerLeft,
+                                              data: const Text(
+                                                'Priority',
+                                                style: TextStyle(
+                                                  fontSize: 13,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ),
+                                            TableWidget(
                                               width: 120,
                                               padding:
                                                   const EdgeInsets.symmetric(
@@ -2164,6 +2181,146 @@ class _LeadsPageState extends State<LeadPage> {
                                                                 const TextStyle(
                                                                     fontSize:
                                                                         13),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      TableWidget(
+                                                        width: 150,
+                                                        alignment: Alignment
+                                                            .centerLeft,
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                vertical: 4.0,
+                                                                horizontal:
+                                                                    12.0),
+                                                        data: PopupMenuButton<
+                                                            PriorityModel>(
+                                                          tooltip:
+                                                              lead.priorityName,
+                                                          constraints:
+                                                              const BoxConstraints(
+                                                                  maxHeight:
+                                                                      300),
+                                                          offset: const Offset(
+                                                              0, 40),
+                                                          shape: RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8)),
+                                                          onSelected:
+                                                              (PriorityModel
+                                                                  selected) async {
+                                                            await leadProvider
+                                                                .updateLeadPriority(
+                                                              context: context,
+                                                              leadId: lead
+                                                                  .customerId,
+                                                              priorityId: selected
+                                                                  .priorityId,
+                                                            );
+                                                          },
+                                                          itemBuilder:
+                                                              (context) {
+                                                            return settingsProvider
+                                                                .priorities
+                                                                .map(
+                                                                    (priority) {
+                                                              return PopupMenuItem<
+                                                                  PriorityModel>(
+                                                                value: priority,
+                                                                child: Row(
+                                                                  children: [
+                                                                    Container(
+                                                                      width: 12,
+                                                                      height:
+                                                                          12,
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        color: AppColors.parseColor(priority.colorCode)
+                                                                            .withOpacity(0.8),
+                                                                        shape: BoxShape
+                                                                            .circle,
+                                                                      ),
+                                                                    ),
+                                                                    const SizedBox(
+                                                                        width:
+                                                                            10),
+                                                                    Text(
+                                                                      priority
+                                                                          .priorityName,
+                                                                      style:
+                                                                          TextStyle(
+                                                                        color: AppColors.parseColor(
+                                                                            priority.colorCode),
+                                                                        fontWeight:
+                                                                            FontWeight.w500,
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              );
+                                                            }).toList();
+                                                          },
+                                                          child: Container(
+                                                            height: 32,
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        10,
+                                                                    vertical:
+                                                                        6),
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: AppColors
+                                                                      .parseColor(lead
+                                                                          .priorityColor)
+                                                                  .withOpacity(
+                                                                      0.2),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          5),
+                                                            ),
+                                                            child: Row(
+                                                              mainAxisSize:
+                                                                  MainAxisSize
+                                                                      .min,
+                                                              children: [
+                                                                Flexible(
+                                                                  child: Text(
+                                                                    lead.priorityName,
+                                                                    maxLines: 1,
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis,
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontSize:
+                                                                          13,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w500,
+                                                                      color: AppColors
+                                                                          .parseColor(
+                                                                              lead.priorityColor),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                                const SizedBox(
+                                                                    width: 4),
+                                                                Icon(
+                                                                  Icons
+                                                                      .arrow_drop_down,
+                                                                  size: 18,
+                                                                  color: AppColors
+                                                                      .parseColor(
+                                                                          lead.priorityColor),
+                                                                ),
+                                                              ],
+                                                            ),
                                                           ),
                                                         ),
                                                       ),

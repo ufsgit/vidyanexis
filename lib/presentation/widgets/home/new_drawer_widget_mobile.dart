@@ -203,6 +203,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
         followUp: leadProvider.followUpDateController.text.isNotEmpty ? 1 : 0,
         mapLink: leadProvider.mapLinkController.text,
         nextFollowUpDate: leadProvider.followUpDateController.text,
+        landmark: leadProvider.landmarkController.text,
         pincode: leadProvider.pincodeController.text,
         proposedKW: leadProvider.proposedKWController.text,
         remark: leadProvider.remarksController.text,
@@ -1838,6 +1839,11 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
           labelText: 'State',
           showError: dropDownProvider.showValidation &&
               !_isFieldValid(leadProvider.stateController.text),
+        ),
+        const SizedBox(height: 8),
+        CustomTextfieldWidgetMobile(
+          controller: leadProvider.landmarkController,
+          labelText: 'Landmark',
         ),
       ],
     );

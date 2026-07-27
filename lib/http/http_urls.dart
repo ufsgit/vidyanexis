@@ -42,7 +42,7 @@ class HttpUrls {
 
 //  static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
 
-   //static String baseUrl = 'https://2jw4dwnj-3512.inc1.devtunnels.ms/';
+  //static String baseUrl = 'https://2jw4dwnj-3512.inc1.devtunnels.ms/';
 
   static String imgBaseUrl =
       'https://pub-b2e3330da2344ea490c08dd119392728.r2.dev/';
@@ -445,4 +445,8 @@ class HttpUrls {
   static String getTermsAndWarranty = "settings/Get_Terms_And_Warranty";
   static String saveTermsAndWarranty = "settings/Save_Terms_And_Warranty";
   static String verifyDocument = "category/Update_Document_Verification_Status";
+  static String savePriority = "settings/Save_Priority";
+  static String getPriority = "settings/Get_Priority";
+  static String deletePriority = "settings/Delete_Priority";
+  static String updateLeadPriority = "settings/Change_Lead_Priority";
 }

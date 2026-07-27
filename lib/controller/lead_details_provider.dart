@@ -73,6 +73,7 @@ class LeadDetailsProvider with ChangeNotifier {
             leadProvider.latitudeController.text = leadData.latitude ?? '';
             leadProvider.longitudeController.text = leadData.longitude ?? '';
             leadProvider.pincodeController.text = leadData.pinCode ?? '';
+            leadProvider.landmarkController.text = leadData.landmark ?? '';
             leadProvider.followUpStatusController.text = leadData.statusName;
             leadProvider.inverterTypeController.text =
                 leadData.inverterTypeName;
