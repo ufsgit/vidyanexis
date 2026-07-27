@@ -4078,6 +4078,8 @@ class SettingsProvider extends ChangeNotifier {
     mobileNoController.clear();
     emailIdController.clear();
     workingStatusController.clear();
+    departmentUserController.clear();
+    branchController.clear();
     defaultStatusController.clear();
     employeeCodeController.clear();
     designationController.clear();

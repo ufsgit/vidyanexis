@@ -137,6 +137,12 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
           settingsProvider.setTransferDepartments(widget.transferDepartments!);
         }
       });
+    } else {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final settingsProvider =
+            Provider.of<SettingsProvider>(context, listen: false);
+        settingsProvider.resetStates();
+      });
     }
   }
 
@@ -401,7 +407,7 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                 const SizedBox(height: 16),
                 CommonDropdown<int>(
                   hintText: 'User Type *',
-                  selectedValue: widget.isEdit
+                  selectedValue: settingsProvider.selectedUserTypeId != -1
                       ? settingsProvider.selectedUserTypeId
                       : null,
                   items: settingsProvider.searchUserType
@@ -472,7 +478,7 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                 const SizedBox(height: 16),
                 CommonDropdown<int>(
                   hintText: 'Working Status *',
-                  selectedValue: widget.isEdit
+                  selectedValue: settingsProvider.selectedWorkingStatusId != -1
                       ? settingsProvider.selectedWorkingStatusId
                       : null,
                   items: settingsProvider.searchWorkingStatus
@@ -489,7 +495,7 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                 const SizedBox(height: 16),
                 CommonDropdown<int>(
                   hintText: 'Department*',
-                  selectedValue: widget.isEdit
+                  selectedValue: settingsProvider.selectedDepartmentId != -1
                       ? settingsProvider.selectedDepartmentId
                       : null,
                   items: settingsProvider.departmentModel
@@ -524,8 +530,9 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                 const SizedBox(height: 16),
                 CommonDropdown<int>(
                   hintText: 'Branch*',
-                  selectedValue:
-                      widget.isEdit ? settingsProvider.selectedBranchId : null,
+                  selectedValue: settingsProvider.selectedBranchId != -1
+                      ? settingsProvider.selectedBranchId
+                      : null,
                   items: settingsProvider.branchModel
                       .map((source) => DropdownItem<int>(
                             id: source.branchId ?? 0,
@@ -612,7 +619,7 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                     Expanded(
                       child: CommonDropdown<int>(
                         hintText: 'User Type *',
-                        selectedValue: widget.isEdit
+                        selectedValue: settingsProvider.selectedUserTypeId != -1
                             ? settingsProvider.selectedUserTypeId
                             : null,
                         items: settingsProvider.searchUserType
@@ -705,9 +712,10 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                     Expanded(
                       child: CommonDropdown<int>(
                         hintText: 'Working Status *',
-                        selectedValue: widget.isEdit
-                            ? settingsProvider.selectedWorkingStatusId
-                            : null,
+                        selectedValue:
+                            settingsProvider.selectedWorkingStatusId != -1
+                                ? settingsProvider.selectedWorkingStatusId
+                                : null,
                         items: settingsProvider.searchWorkingStatus
                             .map((source) => DropdownItem<int>(
                                   id: source.workingStatusId,
@@ -724,7 +732,7 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                     Expanded(
                       child: CommonDropdown<int>(
                         hintText: 'Department*',
-                        selectedValue: widget.isEdit
+                        selectedValue: settingsProvider.selectedDepartmentId != -1
                             ? settingsProvider.selectedDepartmentId
                             : null,
                         items: settingsProvider.departmentModel
@@ -773,7 +781,7 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                     Expanded(
                       child: CommonDropdown<int>(
                         hintText: 'Branch*',
-                        selectedValue: widget.isEdit
+                        selectedValue: settingsProvider.selectedBranchId != -1
                             ? settingsProvider.selectedBranchId
                             : null,
                         items: settingsProvider.branchModel
