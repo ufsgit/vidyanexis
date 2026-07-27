@@ -2593,4 +2593,22 @@ class LeadsProvider extends ChangeNotifier {
       return false;
     }
   }
+
+  Future<void> updateLeadPriority({
+    required BuildContext context,
+    required int leadId,
+    required int priorityId,
+  }) async {
+    try {
+      final response = await HttpRequest.httpPostRequest(
+          endPoint: HttpUrls.updateLeadPriority,
+          bodyData: {"Customer_Id_": leadId, "Priority_Id_": priorityId});
+
+      if (response != null && response.statusCode == 200) {
+        await getSearchLeads(context, isSilent: true);
+      }
+    } catch (e) {
+      log('Error converting lead: $e');
+    }
+  }
 }
