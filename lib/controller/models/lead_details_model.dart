@@ -76,6 +76,7 @@ class LeadDetails {
   final String? latitude;
   final String? longitude;
   final String? pinCode;
+  final String? landmark;
   final int branchId;
   final String branchName;
   final int departmentId;
@@ -143,6 +144,7 @@ class LeadDetails {
     this.latitude,
     this.longitude,
     this.pinCode,
+    this.landmark,
     this.address1,
     this.address2,
     this.address3,
@@ -281,6 +283,7 @@ class LeadDetails {
       latitude: parseString(json['Latitude']),
       longitude: parseString(json['Longitude']),
       pinCode: parseString(json['Pincode']),
+      landmark: parseString(json['Landmark']),
       address1: parseString(json['Address1']),
       address2: parseString(json['Address2']),
       address3: parseString(json['Address3']),
@@ -425,6 +428,7 @@ class LeadDetails {
       'Latitude': latitude,
       'Longitude': longitude,
       'Pincode': pinCode,
+      'Landmark': landmark,
       'Address1': address1,
       'Address2': address2,
       'Address3': address3,
@@ -546,6 +550,7 @@ class LeadDetails {
     String? latitude,
     String? longitude,
     String? pinCode,
+    String? landmark,
     String? address1,
     String? address2,
     String? address3,
@@ -661,6 +666,7 @@ class LeadDetails {
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
       pinCode: pinCode ?? this.pinCode,
+      landmark: landmark ?? this.landmark,
       address1: address1 ?? this.address1,
       address2: address2 ?? this.address2,
       address3: address3 ?? this.address3,

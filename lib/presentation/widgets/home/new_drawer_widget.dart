@@ -126,6 +126,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
       followUp: leadProvider.followUpDateController.text.isNotEmpty ? 1 : 0,
       mapLink: leadProvider.mapLinkController.text,
       nextFollowUpDate: leadProvider.followUpDateController.text,
+      landmark: leadProvider.landmarkController.text,
       pincode: leadProvider.pincodeController.text,
       proposedKW: leadProvider.proposedKWController.text,
       remark: leadProvider.remarksController.text,
@@ -1585,7 +1586,15 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                                   .stateController.text),
                                     ),
                                   ),
-                                  const Spacer()
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: CustomTextField(
+                                      height: 54,
+                                      controller: leadProvider.landmarkController,
+                                      hintText: 'Landmark',
+                                      labelText: '',
+                                    ),
+                                  ),
                                 ],
                               ),
                             ],

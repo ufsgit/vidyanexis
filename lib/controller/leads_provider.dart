@@ -59,6 +59,7 @@ class LeadsProvider extends ChangeNotifier {
   final TextEditingController districtController = TextEditingController();
   final TextEditingController pincodeController = TextEditingController();
   final TextEditingController stateController = TextEditingController();
+  final TextEditingController landmarkController = TextEditingController();
   final TextEditingController followUpStatusController =
       TextEditingController();
   final TextEditingController branchController = TextEditingController();
@@ -627,6 +628,7 @@ class LeadsProvider extends ChangeNotifier {
     cityController.clear();
     districtController.clear();
     stateController.clear();
+    landmarkController.clear();
     consumerNoController.clear();
     electricalSectionController.clear();
     invertorCapacityController.clear();
@@ -1344,6 +1346,7 @@ class LeadsProvider extends ChangeNotifier {
     required int enquirySourceId,
     required String enquirySourceName,
     required String mapLink,
+    required String landmark,
     required String pincode,
     required String nextFollowUpDate,
     required int statusId,
@@ -1489,6 +1492,7 @@ class LeadsProvider extends ChangeNotifier {
           "Address": addressController.text,
           "City": cityController.text,
           "State": stateController.text,
+          "Landmark": landmarkController.text,
           "Latitude": latitudeController.text,
           "Longitude": longitudeController.text,
           "Pincode": pincodeController.text,
