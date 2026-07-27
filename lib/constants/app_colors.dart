@@ -54,6 +54,15 @@ class AppColors {
         return const Color(0xFF8E97A3); // Neutral dark grey fallback
       }
 
+      // Handle hex format like #FF0000 or FF0000
+      if (colorCode.startsWith("#")) {
+        String hex = colorCode.replaceAll("#", "").trim();
+        if (hex.length == 6) {
+          hex = "FF$hex";
+        }
+        return Color(int.parse(hex, radix: 16));
+      }
+
       // Handle format: Color(0xFFFFFFFF)
       if (colorCode.contains("0x")) {
         final hexString =
