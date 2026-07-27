@@ -519,6 +519,7 @@ class SettingsProvider extends ChangeNotifier {
   int _leadMobileExistedCheck = 0;
   int _leadNameChangeToCustomerName = 0;
   int _leadCodeWithEnquiryCode = 0;
+  int _documentButtonTaskStatus = 0;
   int? _selectedStatusId;
 
   int get toggleValue => _toggleValue;
@@ -535,6 +536,7 @@ class SettingsProvider extends ChangeNotifier {
   int get leadMobileExistedCheck => _leadMobileExistedCheck;
   int get leadNameChangeToCustomerName => _leadNameChangeToCustomerName;
   int get leadCodeWithEnquiryCode => _leadCodeWithEnquiryCode;
+  int get documentButtonTaskStatus => _documentButtonTaskStatus;
   String get leadNameLabel => _leadNameChangeToCustomerName == 1 ? 'Customer Name' : 'Lead Name';
 
   String getPermissionCaption(dynamic key, String defaultCaption) {
@@ -580,6 +582,8 @@ class SettingsProvider extends ChangeNotifier {
       _leadNameChangeToCustomerName = value;
     } else if (permissionId == 15) {
       _leadCodeWithEnquiryCode = value;
+    } else if (permissionId == 16) {
+      _documentButtonTaskStatus = value;
     }
   }
 

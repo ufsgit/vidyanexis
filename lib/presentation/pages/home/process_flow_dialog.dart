@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/leads_provider.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/presentation/widgets/customer/upload_image.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/controller/models/search_user_details_model.dart';
 import 'package:vidyanexis/controller/models/sub_status_model.dart';
 import 'package:vidyanexis/controller/models/task_page_provider.dart';
@@ -723,6 +727,38 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                             builder: (context, reportsProvider, child) {
                               if (reportsProvider
                                   .documentTypeModel.isNotEmpty) {
+                                final settingsProvider =
+                                    Provider.of<SettingsProvider>(context, listen: false);
+                                bool isDocumentButtonEnabled =
+                                    settingsProvider.documentButtonTaskStatus == 1;
+
+                                if (isDocumentButtonEnabled) {
+                                  return Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      _buildSectionHeader('PENDING DOCUMENTS'),
+                                      const SizedBox(height: 8),
+                                      CustomElevatedButton(
+                                        onPressed: () async {
+                                          await showDialog(
+                                            barrierDismissible: false,
+                                            context: context,
+                                            builder: (context) => ImageUploadAlert(
+                                              customerId: widget.task.customerId.toString(),
+                                            ),
+                                          );
+                                        },
+                                        buttonText: 'Upload Documents',
+                                        backgroundColor: AppColors.appViolet,
+                                        borderColor: AppColors.appViolet,
+                                        textColor: Colors.white,
+                                        radius: 4,
+                                      ),
+                                      const SizedBox(height: 8),
+                                    ],
+                                  );
+                                }
+
                                 return Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -929,8 +965,15 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                       return;
                                     }
 
-                                    if (reportsProvider
-                                        .documentTypeModel.isNotEmpty) {
+                                    final settingsProvider =
+                                        Provider.of<SettingsProvider>(context,
+                                            listen: false);
+                                    bool isDocumentButtonEnabled =
+                                        settingsProvider.documentButtonTaskStatus == 1;
+
+                                    if (!isDocumentButtonEnabled &&
+                                        reportsProvider
+                                            .documentTypeModel.isNotEmpty) {
                                       showDialog(
                                         context: context,
                                         builder: (context) => AlertDialog(

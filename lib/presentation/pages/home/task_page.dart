@@ -10,6 +10,7 @@ import 'package:intl/intl.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/lead_details_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/pages/home/process_flow_dialog.dart';
 import 'package:vidyanexis/presentation/widgets/common/custom_form_filler_view.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_quotation.dart';
@@ -3726,6 +3727,10 @@ class _tasksPageReportState extends State<TaskPage> {
                                           reportsProvider.statusData.isNotEmpty;
                                       bool showRightList =
                                           hasDocs || hasMandatory;
+                                      final settingsProvider =
+                                          Provider.of<SettingsProvider>(context, listen: false);
+                                      bool isDocumentButtonEnabled =
+                                          settingsProvider.documentButtonTaskStatus == 1;
 
                                       Widget leftSide = (showDate || showTime)
                                           ? Column(
@@ -3774,10 +3779,28 @@ class _tasksPageReportState extends State<TaskPage> {
                                                         CrossAxisAlignment
                                                             .start,
                                                     children: [
-                                                      if (hasDocs)
-                                                        ...reportsProvider
-                                                            .documentTypeModel
-                                                            .map(
+                                                      if (hasDocs && isDocumentButtonEnabled)
+                                                        Padding(
+                                                          padding: const EdgeInsets.symmetric(vertical: 4),
+                                                          child: CustomElevatedButton(
+                                                            onPressed: () async {
+                                                              await showDialog(
+                                                                barrierDismissible: false,
+                                                                context: context,
+                                                                builder: (context) => ImageUploadAlert(
+                                                                  customerId: task.customerId.toString(),
+                                                                ),
+                                                              );
+                                                            },
+                                                            buttonText: 'Upload Documents',
+                                                            backgroundColor: AppColors.appViolet,
+                                                            borderColor: AppColors.appViolet,
+                                                            textColor: Colors.white,
+                                                            radius: 4,
+                                                          ),
+                                                        ),
+                                                      if (hasDocs && !isDocumentButtonEnabled)
+                                                        ...reportsProvider.documentTypeModel.map(
                                                                 (doc) =>
                                                                     Padding(
                                                                       padding: const EdgeInsets
@@ -3805,11 +3828,6 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                                   initialDocumentTypeName: doc.documentTypeName,
                                                                                 ),
                                                                               );
-                                                                              // Refresh data after upload
-                                                                              int sId = selectedStatus.value.statusId ?? 0;
-                                                                              int tId = selectedStatus.value.taskTypeId ?? 0;
-                                                                              int cId = task.customerId ?? 0;
-                                                                              int eId = task.enquiryForId ?? 0;
                                                                               if (result == true) {
                                                                                 reportsProvider.removePendingDocument(doc.documentTypeId ?? 0);
                                                                               }
@@ -3842,7 +3860,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                       vertical:
                                                                           4),
                                                                   child: Text(
-                                                                      '${e.key + 1 + (hasDocs ? reportsProvider.documentTypeModel.length : 0)}. ${e.value.taskTypeName}-${e.value.requiredStatuses}',
+                                                                      '${e.key + 1 + (hasDocs && !isDocumentButtonEnabled ? reportsProvider.documentTypeModel.length : (hasDocs ? 1 : 0))}. ${e.value.taskTypeName}-${e.value.requiredStatuses}',
                                                                       style: const TextStyle(
                                                                           fontSize:
                                                                               13)),
@@ -4671,9 +4689,19 @@ class _tasksPageReportState extends State<TaskPage> {
                                                       return;
                                                     }
 
-                                                    if (provider
-                                                        .documentTypeModel
-                                                        .isEmpty) {
+                                                    final settingsProvider =
+                                                        Provider.of<SettingsProvider>(
+                                                            context,
+                                                            listen: false);
+                                                    bool isDocumentButtonEnabled =
+                                                        settingsProvider
+                                                                .documentButtonTaskStatus ==
+                                                            1;
+
+                                                    if (isDocumentButtonEnabled ||
+                                                        provider
+                                                            .documentTypeModel
+                                                            .isEmpty) {
                                                       isSaving.value = true;
                                                       try {
                                                         bool isSuccess = await provider
