@@ -108,7 +108,8 @@ class StructureMaterialCard extends StatelessWidget {
                         GestureDetector(
                           onTap: onMoveUp,
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 4.0),
                             child: Icon(
                               Icons.arrow_upward_rounded,
                               size: 20,
@@ -121,7 +122,8 @@ class StructureMaterialCard extends StatelessWidget {
                         GestureDetector(
                           onTap: onMoveDown,
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 4.0),
                             child: Icon(
                               Icons.arrow_downward_rounded,
                               size: 20,
@@ -155,6 +157,10 @@ class StructureMaterialCard extends StatelessWidget {
               const SizedBox(height: 8),
               _buildDetailRow(
                   'Brand', item.brand.isNotEmpty ? item.brand : '-'),
+              if (item.specification.isNotEmpty) ...[
+                const SizedBox(height: 8),
+                _buildDetailRow('Specification', item.specification),
+              ],
             ],
           ),
         ),

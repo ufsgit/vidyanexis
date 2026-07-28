@@ -44,6 +44,8 @@ class HttpUrls {
 
   //static String baseUrl = 'https://2jw4dwnj-3512.inc1.devtunnels.ms/';
 
+  // static String baseUr = 'https://cn1hct1v-3512.inc1.devtunnels.ms/';
+
   static String imgBaseUrl =
       'https://pub-b2e3330da2344ea490c08dd119392728.r2.dev/';
 
@@ -449,4 +451,5 @@ class HttpUrls {
   static String getPriority = "settings/Get_Priority";
   static String deletePriority = "settings/Delete_Priority";
   static String updateLeadPriority = "settings/Change_Lead_Priority";
+  static String workCompletionReport = "lead/Work_Completion_Report";
 }

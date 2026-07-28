@@ -15,6 +15,7 @@ import 'package:vidyanexis/presentation/pages/home/process_flow_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/out_of_warrenty_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/attendance_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/lead_check_in_report_screen.dart';
+import 'package:vidyanexis/presentation/pages/reports/work_completion_report_screen.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -423,6 +424,11 @@ class _HomePageState extends State<HomePage> {
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: DeletedLeadReportScreen()),
         ),
+      SidebarOption(
+        title: 'Work Completion Report',
+        iconPath: 'assets/images/Reports.svg',
+        baseContent: const Center(child: WorkCompletionReportScreen()),
+      ),
       if (settingsProvider.menuIsViewMap[113].toString() == '1')
         SidebarOption(
           title: 'Commission Reports',

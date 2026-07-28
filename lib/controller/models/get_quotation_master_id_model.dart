@@ -452,12 +452,14 @@ class StructureMaterial {
   final String items;
   final String qty;
   final String brand;
+  final String specification;
 
   StructureMaterial({
     required this.id,
     required this.items,
     required this.qty,
     required this.brand,
+    required this.specification,
   });
 
   factory StructureMaterial.fromJson(Map<String, dynamic> json) {
@@ -466,6 +468,7 @@ class StructureMaterial {
       items: toStr(json['Items']),
       qty: toStr(json['Qty']),
       brand: toStr(json['Brand']),
+      specification: toStr(json['Specification']),
     );
   }
 }

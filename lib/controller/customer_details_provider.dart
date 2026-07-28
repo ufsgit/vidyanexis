@@ -328,9 +328,10 @@ class CustomerDetailsProvider extends ChangeNotifier {
   final TabState<List<QuatationListModel>> quotationListState = TabState();
   final TabState<List<TaskUserListModel>> taskOverviewState = TabState();
   final TabState<List<FollowUpHistoryModel>> historyState = TabState();
-  final TabState<List<FollowUpHistoryModel>> followUpHistoryState = TabState(); // for activity?
+  final TabState<List<FollowUpHistoryModel>> followUpHistoryState =
+      TabState(); // for activity?
   final TabState<List<PaymentModel>> paymentListState = TabState();
-  
+
   List<QuotationField> get quotationFields => _quotationFields;
 
   List<FollowUpHistoryModel> _followUpHistory = [];
@@ -356,13 +357,24 @@ class CustomerDetailsProvider extends ChangeNotifier {
   double get mutipleItemsTotalAmount => _mutipleItemsTotalAmount;
   set mutipleItemsTotalAmount(double value) {
     _mutipleItemsTotalAmount = value;
+    final settingsProvider = SettingsProvider();
+    if (settingsProvider.quotationItem == 1) {
+      subtotalController.text = value.toStringAsFixed(2);
+      totalController.text = value.toStringAsFixed(2);
+      gstTaxableAmountController.text = value.toStringAsFixed(2);
+      cgstTaxableAmountController.text = (value / 2).toStringAsFixed(2);
+      sgstTaxableAmountController.text = (value / 2).toStringAsFixed(2);
+      totalGstAmountController.text = "0.00";
+      totalCgstAmountController.text = "0.00";
+      totalSgstAmountController.text = "0.00";
+      totalGstPerController.text = "0.00";
+    }
     notifyListeners();
   }
 
   void clearMultiItems() {
     _multiItems.clear();
-    _mutipleItemsTotalAmount = 0.0;
-    notifyListeners();
+    mutipleItemsTotalAmount = 0.0;
   }
 
   void removeMultiItem(int index) {
@@ -375,9 +387,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
           .fold<double>(0.0, (a, b) => a + b);
 
       _multiItems.removeAt(index);
-      _mutipleItemsTotalAmount -= totalAmount;
-
-      notifyListeners();
+      mutipleItemsTotalAmount -= totalAmount;
     }
   }
 
@@ -950,6 +960,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
       TextEditingController();
   final TextEditingController structureQtyController = TextEditingController();
   final TextEditingController structureBrandController =
+      TextEditingController();
+  final TextEditingController structureSpecificationController =
       TextEditingController();
   List<StructureMaterialItem> _structureMaterialsItems = [];
   List<StructureMaterialItem> get structureMaterialsItems =>
@@ -2062,6 +2074,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
       items: structureItemsController.text,
       qty: structureQtyController.text,
       brand: structureBrandController.text,
+      specification: structureSpecificationController.text,
     );
 
     if (editStructureMaterialsIndex != null &&
@@ -2081,6 +2094,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     structureItemsController.clear();
     structureQtyController.clear();
     structureBrandController.clear();
+    structureSpecificationController.clear();
     _editStructureMaterialsIndex = null;
     notifyListeners();
   }
@@ -2091,6 +2105,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
       structureItemsController.text = itemToEdit.items;
       structureQtyController.text = itemToEdit.qty;
       structureBrandController.text = itemToEdit.brand;
+      structureSpecificationController.text = itemToEdit.specification;
       setStructureMaterialsIndex(index);
       notifyListeners();
     }
@@ -2851,6 +2866,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
       Loader.stopLoader(context);
     }
   }
+
   String? _lastQuotationCustomerId;
 
   Future<void> getQuatationList(String customerId, BuildContext context) async {
@@ -2862,10 +2878,11 @@ class CustomerDetailsProvider extends ChangeNotifier {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
-      String token = preferences.getString('token') ?? ""; // Assuming token is stored
+      String token =
+          preferences.getString('token') ?? ""; // Assuming token is stored
 
       final url = '${HttpUrls.getQuatationByCustomer}?Customer_Id=$customerId';
-      
+
       log('--- QUOTATION API REQUEST ---');
       log('Base URL: ${HttpUrls.baseUrl}');
       log('Endpoint: $url');
@@ -2886,7 +2903,9 @@ class CustomerDetailsProvider extends ChangeNotifier {
           List<dynamic> rawList = [];
           if (data is List) {
             rawList = data;
-          } else if (data is Map && data['data'] != null && data['data'] is List) {
+          } else if (data is Map &&
+              data['data'] != null &&
+              data['data'] is List) {
             rawList = data['data'] as List;
           }
 
@@ -2900,12 +2919,13 @@ class CustomerDetailsProvider extends ChangeNotifier {
           for (var q in parsedList) {
             uniqueQuotations[q.quotationMasterId] = q;
           }
-          
+
           _quotationList = uniqueQuotations.values.toList();
-          
+
           // Sort descending by quotationMasterId so the latest is on top
-          _quotationList.sort((a, b) => b.quotationMasterId.compareTo(a.quotationMasterId));
-          
+          _quotationList.sort(
+              (a, b) => b.quotationMasterId.compareTo(a.quotationMasterId));
+
           log('Parsed Model Count: ${_quotationList.length}');
           log('Displayed Quotation Count: ${_quotationList.length}');
 
@@ -2953,8 +2973,13 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> fetchQuotationListIfNeeded(String customerId, BuildContext context, {bool forceRefresh = false}) async {
-    if (forceRefresh || _lastQuotationCustomerId != customerId || quotationListState.status == TabStatus.initial || quotationListState.status == TabStatus.error) {
+  Future<void> fetchQuotationListIfNeeded(
+      String customerId, BuildContext context,
+      {bool forceRefresh = false}) async {
+    if (forceRefresh ||
+        _lastQuotationCustomerId != customerId ||
+        quotationListState.status == TabStatus.initial ||
+        quotationListState.status == TabStatus.error) {
       _lastQuotationCustomerId = customerId;
       await getQuatationList(customerId, context);
     }
@@ -3159,12 +3184,14 @@ class CustomerDetailsProvider extends ChangeNotifier {
         "Is_Profit_Percentage": isPercentage ? "1" : "0",
         "Multiple_Item_Material": _multiItems.map((e) => e.toJson()).toList(),
         "Multiple_Items_TotalAmount": _mutipleItemsTotalAmount,
-        "KSEB_Feasibility_Study_Fees_3Phase": feasibilityFeeThreeController.text.isNotEmpty
-            ? feasibilityFeeThreeController.text
-            : "0",
-        "KSEB_Registration_Fees_3Phase": registrationFeeThreeController.text.isNotEmpty
-            ? registrationFeeThreeController.text
-            : "0",
+        "KSEB_Feasibility_Study_Fees_3Phase":
+            feasibilityFeeThreeController.text.isNotEmpty
+                ? feasibilityFeeThreeController.text
+                : "0",
+        "KSEB_Registration_Fees_3Phase":
+            registrationFeeThreeController.text.isNotEmpty
+                ? registrationFeeThreeController.text
+                : "0",
       });
 
       if (response!.statusCode == 200) {
@@ -3520,6 +3547,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
         items: '',
         qty: '0',
         brand: '',
+        specification: '',
       ),
     );
 
@@ -3529,6 +3557,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
       _structureMaterialsItems[i].items = structureMaterials[i].items;
       _structureMaterialsItems[i].qty = structureMaterials[i].qty;
       _structureMaterialsItems[i].brand = structureMaterials[i].brand;
+      _structureMaterialsItems[i].specification =
+          structureMaterials[i].specification;
     }
 
     notifyListeners();

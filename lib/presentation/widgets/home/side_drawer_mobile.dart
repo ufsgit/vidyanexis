@@ -45,6 +45,8 @@ import 'package:vidyanexis/presentation/pages/reports/task_summary_report_screen
 import 'package:vidyanexis/presentation/pages/reports/solar_lead_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/lead_status_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/stock_report.dart';
+import 'package:vidyanexis/presentation/pages/reports/work_completion_report_screen.dart';
+import 'package:vidyanexis/presentation/pages/reports/staff_attendance_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/commission_report_mobile.dart';
 import 'package:vidyanexis/presentation/pages/reports/sub_contract_report_mobile.dart';
 import 'package:vidyanexis/presentation/pages/reports/receipt_report_page.dart';
@@ -149,6 +151,7 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
         {'title': 'Lead Reports', 'page': const LeadReportMobile(false)},
       if (settingsProvider.menuIsViewMap[56].toString() == '1' || settingsProvider.menuIsViewMap[168].toString() == '1')
         {'title': 'Deleted Lead Reports', 'page': const DeletedLeadReportScreen()},
+      {'title': 'Work Completion Report', 'page': const WorkCompletionReportScreen()},
       if (settingsProvider.menuIsViewMap[97].toString() == '1')
         {'title': 'Solar Lead Reports', 'page': const SolarLeadReportPage()},
       if (settingsProvider.menuIsViewMap[98].toString() == '1')

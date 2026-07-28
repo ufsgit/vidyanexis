@@ -3,12 +3,14 @@ class StructureMaterialItem {
   String items;
   String qty;
   String brand;
+  String specification;
 
   StructureMaterialItem({
     this.id,
     required this.items,
     required this.qty,
     required this.brand,
+    required this.specification,
   });
 
   // Convert to JSON
@@ -18,6 +20,7 @@ class StructureMaterialItem {
       'Items': items,
       'Qty': qty,
       'Brand': brand,
+      'Specification': specification,
     };
   }
 
@@ -30,6 +33,7 @@ class StructureMaterialItem {
       items: json['Items'] ?? '',
       qty: json['Qty']?.toString() ?? '',
       brand: json['Brand'] ?? '',
+      specification: json['Specification'] ?? '',
     );
   }
 }

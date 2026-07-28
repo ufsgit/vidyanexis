@@ -94,6 +94,19 @@ class _AddStructureMaterialDialogState
                   borderColor: const Color(0xFFD0D5DD),
                   focusedBorderColor: AppColors.bluebutton,
                 ),
+                const SizedBox(height: 16),
+              ],
+              if (provider.isQuotationFieldVisible(153)) ...[
+                CustomTextField(
+                  controller: provider.structureSpecificationController,
+                  labelText:
+                      provider.getQuotationFieldName(153, 'Specification'),
+                  hintText: provider.getQuotationFieldName(153, 'Specification'),
+                  height: 54,
+                  borderRadius: 12,
+                  borderColor: const Color(0xFFD0D5DD),
+                  focusedBorderColor: AppColors.bluebutton,
+                ),
                 const SizedBox(height: 24),
               ],
               Row(
