@@ -117,6 +117,15 @@ class LeadsProvider extends ChangeNotifier {
   String _sortOrder = 'DESC'; // ASC or DESC
   String get sortOrder => _sortOrder;
 
+  int _priorityId = 0;
+  int get priorityId => _priorityId;
+  set priorityId(int id) {
+    _priorityId = id;
+    notifyListeners();
+  }
+  final TextEditingController priorityNameController =
+      TextEditingController();
+
   void setSortOption(int option, BuildContext context) {
     switch (option) {
       case 0:
@@ -688,6 +697,8 @@ class LeadsProvider extends ChangeNotifier {
     followUpTimeController.clear();
     dropDownProvider.setSelectedTransferStatusId(0);
     transferStatusController.clear();
+    priorityId = 0;
+    priorityNameController.clear();
     notifyListeners();
   }
 //api for dropdowns
@@ -1563,6 +1574,7 @@ class LeadsProvider extends ChangeNotifier {
           "Lead_Type_Id": leadtypeId,
           "Lead_Type_Name": leadtypeName,
           "Location_Id": locationId,
+          "Priority_Id": priorityId,
         },
         "followup": {
           "Next_FollowUp_date": nextFollowUpDate,

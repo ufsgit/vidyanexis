@@ -410,6 +410,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
       await leadProvider.loadLoginDetails();
       await dropDownProvider.getEnquirySource(context, fetchUserSpecific: true);
       await dropDownProvider.getEnquiryFor(context, fetchUserSpecific: true);
+      await settingsProvider.getPriorities(context);
 
       if (widget.isEdit) {
         leadProvider.getCustomFieldsByEnquiryForId(
@@ -419,6 +420,13 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
         );
       } else {
         leadProvider.clearAllLeadControllers(context);
+
+        // After priorities are loaded
+        if (settingsProvider.priorities.isNotEmpty) {
+          final first = settingsProvider.priorities.first;
+          leadProvider.priorityId = first.priorityId;
+          leadProvider.priorityNameController.text = first.priorityName;
+        }
 
         // Set default follow-up status to 11 if available
         final followUpStatus = dropDownProvider.followUpData.firstWhere(
@@ -2634,6 +2642,27 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
               },
             ),
           ],
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        CommonDropdown<int>(
+          hintText: 'Priority',
+          items: settingsProvider.priorities
+              .map((source) => DropdownItem<int>(
+                    id: source.priorityId,
+                    name: source.priorityName,
+                  ))
+              .toList(),
+          controller: leadProvider.priorityNameController,
+          onItemSelected: (selectedId) {
+            leadProvider.priorityId = selectedId;
+            final selectedItem = settingsProvider.priorities
+                .firstWhere((source) => source.priorityId == selectedId);
+            leadProvider.priorityNameController.text =
+                selectedItem.priorityName;
+          },
+          selectedValue: leadProvider.priorityId,
         ),
         const SizedBox(
           height: 10,
