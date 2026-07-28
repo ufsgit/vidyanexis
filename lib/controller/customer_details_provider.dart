@@ -558,6 +558,12 @@ class CustomerDetailsProvider extends ChangeNotifier {
   final TextEditingController taskTypeController = TextEditingController();
   final TextEditingController amcStatusNameController = TextEditingController();
   final TextEditingController commissionController = TextEditingController();
+  int _selectedPriorityId = 0;
+  int get selectedPriorityId => _selectedPriorityId;
+  set selectedPriorityId(int id) {
+    _selectedPriorityId = id;
+    notifyListeners();
+  }
 
   //service
   final TextEditingController serviceTypeController = TextEditingController();
@@ -2529,6 +2535,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
       addTaskModel.completionTime = "";
       addTaskModel.commissionNumber =
           int.tryParse(commissionController.text) ?? 0;
+      addTaskModel.priorityId = _selectedPriorityId;
 
       final response = await HttpRequest.httpPostRequest(
           endPoint: HttpUrls.saveTask, bodyData: addTaskModel.toJson());

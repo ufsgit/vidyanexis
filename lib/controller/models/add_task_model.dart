@@ -29,6 +29,7 @@ class AddTaskModel {
 
   String? completionTime;
   int? commissionNumber;
+  int? priorityId;
 
   AddTaskModel({
     this.taskId,
@@ -47,6 +48,7 @@ class AddTaskModel {
     this.completionTime,
     this.taskFiles,
     this.commissionNumber,
+    this.priorityId = 0,
   });
 
   AddTaskModel copyWith({
@@ -66,6 +68,7 @@ class AddTaskModel {
     String? completionTime,
     List<TaskFile>? taskFiles,
     int? commissionNumber,
+    int? priorityId,
   }) =>
       AddTaskModel(
         taskId: taskId ?? this.taskId,
@@ -84,6 +87,7 @@ class AddTaskModel {
         completionTime: completionTime ?? this.completionTime,
         taskFiles: taskFiles ?? this.taskFiles,
         commissionNumber: commissionNumber ?? this.commissionNumber,
+        priorityId: priorityId ?? this.priorityId,
       );
 
   factory AddTaskModel.fromJson(Map<String, dynamic> json) => AddTaskModel(
@@ -104,6 +108,7 @@ class AddTaskModel {
         completionTime: json["Completion_Time"],
         commissionNumber:
             int.tryParse(json["Commission_Number"]?.toString() ?? '0') ?? 0,
+        priorityId: int.tryParse(json["Priority_Id"]?.toString() ?? '0') ?? 0,
       );
 
   Map<String, dynamic> toJson() => {
@@ -128,6 +133,7 @@ class AddTaskModel {
         "Task_Files": taskFiles != null
             ? List<dynamic>.from(taskFiles!.map((x) => x.toJson()))
             : [], // Add this to JSON
+        "Priority_Id": priorityId,
       };
 }
 
