@@ -433,6 +433,38 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                           ),
                           const SizedBox(height: 16),
                           CustomText(
+                            'Priority',
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textBlack,
+                          ),
+                          const SizedBox(height: 8),
+                          Wrap(
+                            spacing: 8.0,
+                            runSpacing: 8.0,
+                            children: [
+                              FilterChipWidget(
+                                label: 'All',
+                                isSelected: leadProvider.selectedPriority == 0,
+                                onTap: () {
+                                  leadProvider.setPriorityFilter(0);
+                                },
+                              ),
+                              ...settingsProvider.priorities.map((priority) {
+                                return FilterChipWidget(
+                                  label: priority.priorityName,
+                                  isSelected: leadProvider.selectedPriority ==
+                                      priority.priorityId,
+                                  onTap: () {
+                                    leadProvider
+                                        .setPriorityFilter(priority.priorityId);
+                                  },
+                                );
+                              }),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          CustomText(
                             'Status',
                             fontSize: 16,
                             fontWeight: FontWeight.bold,

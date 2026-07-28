@@ -222,6 +222,13 @@ class LeadsProvider extends ChangeNotifier {
 
   final List<SearchLeadModel> _tempData = [];
 
+  int _selectedPriority = 0; // for filter
+  int get selectedPriority => _selectedPriority;
+  void setPriorityFilter(int priorityId) {
+    _selectedPriority = priorityId;
+    notifyListeners();
+  }
+
   bool _isFilter = false;
   bool _isImporting = false;
   double _importProgress = 0.0;
@@ -839,6 +846,7 @@ class LeadsProvider extends ChangeNotifier {
     _enquiryForS = '';
     _isFilter = false;
     _selectedDateFilterIndex = null;
+    _selectedPriority = 0;
     notifyListeners();
   }
 
@@ -1069,7 +1077,7 @@ class LeadsProvider extends ChangeNotifier {
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchLead}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$_loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$_enquiryForS&Enquiry_Source_Id_=$enquirySourceIds&Branch_Id_=$branchIds&User_Details_Id_=$_loginUserId&Lead_Id_=$_leadId&Order_By_=$apiSortOption&Order_Type_=$_sortOrder&Entry_Type_=$_entryType');
+              '${HttpUrls.searchLead}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$_loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$_enquiryForS&Enquiry_Source_Id_=$enquirySourceIds&Branch_Id_=$branchIds&User_Details_Id_=$_loginUserId&Lead_Id_=$_leadId&Order_By_=$apiSortOption&Order_Type_=$_sortOrder&Entry_Type_=$_entryType&Priority_Id_=$_selectedPriority');
 
       if (response.statusCode == 200) {
         final data = response.data;
