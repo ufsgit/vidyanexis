@@ -1,4 +1,5 @@
 // Check line 1776
+import 'package:vidyanexis/controller/models/priority_model.dart';
 import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'dart:async';
 import 'dart:ui' as ui;
@@ -115,6 +116,7 @@ class _tasksPageReportState extends State<TaskPage> {
       settingsProvider.searchsourceCategoryData('', context);
       settingsProvider.searchPermission(context);
       provider.getDistricts(context);
+      settingsProvider.getPriorities(context);
     });
   }
 
@@ -1509,7 +1511,7 @@ class _tasksPageReportState extends State<TaskPage> {
                             Expanded(
                               child: LayoutBuilder(
                                 builder: (context, constraints) {
-                                  double minWidth = 1650;
+                                  double minWidth = 1850;
                                   if (settingsProvider.showView[162] != 1) {
                                     minWidth -= 130;
                                   }
@@ -1615,7 +1617,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                           horizontal: 12.0),
                                                       color: Colors.white),
                                                   TableWidget(
-                                                      flex: 1,
+                                                       width: 180,
                                                       title: 'Description',
                                                       fontSize: 13,
                                                       padding: const EdgeInsets
@@ -1623,6 +1625,22 @@ class _tasksPageReportState extends State<TaskPage> {
                                                           vertical: 4.0,
                                                           horizontal: 12.0),
                                                       color: Colors.white),
+                                                  TableWidget(
+                                                    width: 150,
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        vertical: 4.0,
+                                                        horizontal: 12.0),
+                                                    alignment:
+                                                        Alignment.centerLeft,
+                                                    data: const Text(
+                                                      'Priority',
+                                                      style: TextStyle(
+                                                        fontSize: 13,
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                  ),
                                                   TableWidget(
                                                       width: 140,
                                                       title: 'Created Date',
@@ -2096,7 +2114,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                       ),
                                                                     ),
                                                                     TableWidget(
-                                                                      flex: 1,
+                                                                      width: 180,
                                                                       padding: const EdgeInsets
                                                                           .symmetric(
                                                                           vertical:
@@ -2124,6 +2142,116 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                                 Color(0xFF334155),
                                                                             fontWeight:
                                                                                 FontWeight.w500,
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    TableWidget(
+                                                                      width:
+                                                                          150,
+                                                                      alignment:
+                                                                          Alignment
+                                                                              .centerLeft,
+                                                                      padding: const EdgeInsets
+                                                                          .symmetric(
+                                                                          vertical:
+                                                                              4.0,
+                                                                          horizontal:
+                                                                              12.0),
+                                                                      data: PopupMenuButton<
+                                                                          PriorityModel>(
+                                                                        tooltip:
+                                                                            task.priorityName,
+                                                                        constraints:
+                                                                            const BoxConstraints(maxHeight: 300),
+                                                                        offset: const Offset(
+                                                                            0,
+                                                                            40),
+                                                                        shape: RoundedRectangleBorder(
+                                                                            borderRadius:
+                                                                                BorderRadius.circular(8)),
+                                                                        onSelected:
+                                                                            (PriorityModel
+                                                                                selected) async {
+                                                                          await reportsProvider
+                                                                              .updateTaskPriority(
+                                                                            context:
+                                                                                context,
+                                                                            taskId:
+                                                                                task.taskId,
+                                                                            priorityId:
+                                                                                selected.priorityId,
+                                                                          );
+                                                                        },
+                                                                        itemBuilder:
+                                                                            (context) {
+                                                                          return settingsProvider
+                                                                              .priorities
+                                                                              .map((priority) {
+                                                                            return PopupMenuItem<PriorityModel>(
+                                                                              value: priority,
+                                                                              child: Row(
+                                                                                children: [
+                                                                                  Container(
+                                                                                    width: 12,
+                                                                                    height: 12,
+                                                                                    decoration: BoxDecoration(
+                                                                                      color: AppColors.parseColor(priority.colorCode).withOpacity(0.8),
+                                                                                      shape: BoxShape.circle,
+                                                                                    ),
+                                                                                  ),
+                                                                                  const SizedBox(width: 10),
+                                                                                  Text(
+                                                                                    priority.priorityName,
+                                                                                    style: TextStyle(
+                                                                                      color: AppColors.parseColor(priority.colorCode),
+                                                                                      fontWeight: FontWeight.w500,
+                                                                                    ),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                            );
+                                                                          }).toList();
+                                                                        },
+                                                                        child:
+                                                                            Container(
+                                                                          height:
+                                                                              32,
+                                                                          padding: const EdgeInsets
+                                                                              .symmetric(
+                                                                              horizontal: 10,
+                                                                              vertical: 6),
+                                                                          decoration:
+                                                                              BoxDecoration(
+                                                                            color:
+                                                                                AppColors.parseColor(task.priorityColor).withOpacity(0.2),
+                                                                            borderRadius:
+                                                                                BorderRadius.circular(5),
+                                                                          ),
+                                                                          child:
+                                                                              Row(
+                                                                            mainAxisSize:
+                                                                                MainAxisSize.min,
+                                                                            children: [
+                                                                              Flexible(
+                                                                                child: Text(
+                                                                                  task.priorityName,
+                                                                                  maxLines: 1,
+                                                                                  overflow: TextOverflow.ellipsis,
+                                                                                  style: TextStyle(
+                                                                                    fontSize: 13,
+                                                                                    fontWeight: FontWeight.w500,
+                                                                                    color: AppColors.parseColor(task.priorityColor),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                              const SizedBox(width: 4),
+                                                                              Icon(
+                                                                                Icons.arrow_drop_down,
+                                                                                size: 18,
+                                                                                color: AppColors.parseColor(task.priorityColor),
+                                                                              ),
+                                                                            ],
                                                                           ),
                                                                         ),
                                                                       ),

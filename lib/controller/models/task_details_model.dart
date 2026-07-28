@@ -29,6 +29,7 @@ class TaskDetails {
   final List<TaskUser> taskUser;
   final List<TaskFile> taskFiles;
   final int commissionNumber;
+  final int priorityId;
 
   TaskDetails({
     required this.taskId,
@@ -59,6 +60,7 @@ class TaskDetails {
     required this.taskUser,
     required this.taskFiles,
     required this.commissionNumber,
+    required this.priorityId,
   });
 
   // Factory constructor with null checks
@@ -89,6 +91,7 @@ class TaskDetails {
       enquiryForName: json['Enquiry_For_Name'] ?? '',
       commissionNumber:
           int.tryParse(json['Commission_Number']?.toString() ?? '0') ?? 0,
+      priorityId: int.tryParse(json['Priority_Id']?.toString() ?? '0') ?? 0,
 
       // Null check for task_notes and task_document
       taskNotes: (json['task_notes'] as List<dynamic>?)

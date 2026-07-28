@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/controller/models/custom_field_by_status.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/http/loader.dart';
@@ -249,6 +250,17 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
                             customerDetailsProvider.customFieldQuotation,
                         controllerKey: 'quotation',
                         showEditButton: true,
+                        onFieldValuesChanged: (values) {
+                          for (final fv in values) {
+                            final match = customerDetailsProvider.customFieldQuotation.firstWhere(
+                              (e) => e.customFieldId == fv.customFieldId,
+                              orElse: () => CustomFieldByStatusId(),
+                            );
+                            if (match.customFieldId != null) {
+                              match.datavalue = fv.value;
+                            }
+                          }
+                        },
                       ),
                     ],
                     const SizedBox(height: 16),

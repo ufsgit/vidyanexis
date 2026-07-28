@@ -451,5 +451,9 @@ class HttpUrls {
   static String getPriority = "settings/Get_Priority";
   static String deletePriority = "settings/Delete_Priority";
   static String updateLeadPriority = "settings/Change_Lead_Priority";
+
   static String workCompletionReport = "lead/Work_Completion_Report";
+
+  static String updateTaskPriority = "settings/Change_Task_Priority";
+
 }

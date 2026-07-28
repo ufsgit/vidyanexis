@@ -45,6 +45,10 @@ class TaskReportModel {
   final int userDetailsId;
   final String? nextFollowupDate;
   final String? leadCode;
+  final String priorityName;
+  final String priorityId;
+  final String priorityColor;
+
 
   TaskReportModel({
     required this.taskId,
@@ -88,6 +92,9 @@ class TaskReportModel {
     required this.userDetailsId,
     this.nextFollowupDate,
     this.leadCode,
+    required this.priorityName,
+    required this.priorityId,
+    required this.priorityColor,
   });
 
   factory TaskReportModel.fromJson(Map<String, dynamic> json) {
@@ -192,6 +199,9 @@ class TaskReportModel {
       userDetailsId: json['User_Details_Id'] ?? 0,
       nextFollowupDate: json['next_followup_date'],
       leadCode: json['Lead_Code'],
+      priorityName: json['Priority_Name']?.toString() ?? '',
+      priorityId: json['Priority_Id']?.toString() ?? '',
+      priorityColor: json['Priority_Color']?.toString() ?? '',
     );
   }
 

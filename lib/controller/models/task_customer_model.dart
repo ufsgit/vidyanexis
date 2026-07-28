@@ -21,6 +21,7 @@ class TaskCustomerModel {
   final List<TaskUser> taskUser;
   final List<TaskFile> taskFiles;
   final int commissionNumber;
+  int priorityId;
 
   TaskCustomerModel({
     required this.taskId,
@@ -44,6 +45,7 @@ class TaskCustomerModel {
     required this.taskUser,
     required this.taskFiles,
     required this.commissionNumber,
+    this.priorityId = 0,
   });
 
   // Factory constructor to create an instance of TaskCustomerModel from JSON
@@ -71,6 +73,7 @@ class TaskCustomerModel {
       deleteStatus: json['DeleteStatus'] ?? 0,
       commissionNumber:
           int.tryParse(json['Commission_Number']?.toString() ?? '0') ?? 0,
+      priorityId: json['Priority_Id'] ?? 0,
       taskUser: (json['Task_user'] as List<dynamic>?)
               ?.map((item) => TaskUser.fromJson(item))
               .toList() ??
@@ -102,6 +105,7 @@ class TaskCustomerModel {
       'Task_Date': taskDate.toIso8601String(),
       'DeleteStatus': deleteStatus,
       'Commission_Number': commissionNumber,
+      "Priority_Id": priorityId,
     };
   }
 }

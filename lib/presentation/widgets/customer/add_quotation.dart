@@ -7,6 +7,7 @@ import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/expense_provider.dart';
+import 'package:vidyanexis/controller/models/custom_field_by_status.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_commercial_custom_fields_dialog.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_commercial_item_dialog.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_item_dialog.dart';
@@ -566,6 +567,17 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                                         .toList(),
                                     controllerKey: 'quotation',
                                     showEditButton: true,
+                                    onFieldValuesChanged: (values) {
+                                      for (final fv in values) {
+                                        final match = nonCommercialFields.firstWhere(
+                                          (e) => e.customFieldId == fv.customFieldId,
+                                          orElse: () => CustomFieldByStatusId(),
+                                        );
+                                        if (match.customFieldId != null) {
+                                          match.datavalue = fv.value;
+                                        }
+                                      }
+                                    },
                                   ),
                                   const SizedBox(height: 16),
                                 ],
@@ -732,6 +744,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                           ),
                           const SizedBox(height: 16),
                         ],
+                        if (customerDetailsProvider
+                            .isQuotationFieldVisible(39)) ...[
                         CustomTextField(
                           readOnly: false,
                           height: 54,
@@ -752,6 +766,9 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                           },
                         ),
                         const SizedBox(height: 16),
+                         ],
+                        if (customerDetailsProvider
+                            .isQuotationFieldVisible(40)) ...[
                         CustomTextField(
                           readOnly: false,
                           height: 54,
@@ -772,6 +789,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                           labelText: '',
                         ),
                         const SizedBox(height: 16),
+                        ],
                         if (settingsProvider.menuIsViewMap[154] == 1) ...[
                           CustomTextField(
                             readOnly: false,

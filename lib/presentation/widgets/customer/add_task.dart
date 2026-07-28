@@ -23,9 +23,11 @@ import 'package:vidyanexis/controller/models/task_details_model.dart';
 import 'package:vidyanexis/controller/models/search_user_details_model.dart';
 import 'package:vidyanexis/controller/models/add_task_model.dart';
 import 'package:vidyanexis/controller/models/task_report_model.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/http/cloudflare_upload.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/http/loader.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 
 class TaskCreationWidget extends StatefulWidget {
@@ -106,17 +108,25 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       final provider = Provider.of<DropDownProvider>(context, listen: false);
       final customerDetailsProvider =
           Provider.of<CustomerDetailsProvider>(context, listen: false);
+      final settingsProvider =
+          Provider.of<SettingsProvider>(context, listen: false);
       provider.getTaskType(context, fetchUserSpecific: true);
       // Fetch document types for document upload section
       provider.getDocumentType(context);
+      await settingsProvider.getPriorities(context);
 
       if (!widget.isEdit) {
         customerDetailsProvider.taskChoosedateController.text =
             DateFormat('dd MMM yyyy').format(DateTime.now());
+        // After priorities are loaded
+        if (settingsProvider.priorities.isNotEmpty) {
+          final first = settingsProvider.priorities.first;
+          customerDetailsProvider.selectedPriorityId = first.priorityId;
+        }
       }
 
       if (customerDetailsProvider.selectedTaskType != null) {
@@ -132,6 +142,9 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
             widget.taskDetails?.commissionNumber.toString() ??
                 widget.task?.commissionNumber.toString() ??
                 '';
+        customerDetailsProvider.selectedPriorityId =
+            widget.taskDetails?.priorityId ?? widget.task?.priorityId ?? 0;
+
         customerDetailsProvider.taskDescriptionController.text =
             widget.taskDetails?.description ??
                 widget.task?.description ??
@@ -505,6 +518,7 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
     final dropDownProvider = Provider.of<DropDownProvider>(context);
     final customerDetailsProvider =
         Provider.of<CustomerDetailsProvider>(context);
+    final settingsProvider = Provider.of<SettingsProvider>(context);
 
     final double dialogWidth = AppStyles.isWebScreen(context)
         ? MediaQuery.of(context).size.width / 2
@@ -902,6 +916,47 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
                                   color: AppColors.bluebutton, size: 20),
                             ],
                           ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // Row: Priority
+                Container(
+                  width: double.infinity,
+                  height: 100,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(4),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.04),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: CommonDropdown<int>(
+                          hintText: 'Priority',
+                          items: settingsProvider.priorities
+                              .map((source) => DropdownItem<int>(
+                                    id: source.priorityId,
+                                    name: source.priorityName,
+                                  ))
+                              .toList(),
+                          onItemSelected: (selectedId) {
+                            customerDetailsProvider.selectedPriorityId =
+                                selectedId;
+                          },
+                          selectedValue:
+                              customerDetailsProvider.selectedPriorityId,
                         ),
                       ),
                     ],
