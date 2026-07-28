@@ -732,6 +732,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                           ),
                           const SizedBox(height: 16),
                         ],
+                        if (customerDetailsProvider
+                            .isQuotationFieldVisible(39)) ...[
                         CustomTextField(
                           readOnly: false,
                           height: 54,
@@ -752,6 +754,9 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                           },
                         ),
                         const SizedBox(height: 16),
+                         ],
+                        if (customerDetailsProvider
+                            .isQuotationFieldVisible(40)) ...[
                         CustomTextField(
                           readOnly: false,
                           height: 54,
@@ -772,6 +777,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                           labelText: '',
                         ),
                         const SizedBox(height: 16),
+                        ],
                         if (settingsProvider.menuIsViewMap[154] == 1) ...[
                           CustomTextField(
                             readOnly: false,

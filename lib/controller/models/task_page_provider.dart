@@ -1382,4 +1382,21 @@ class TaskPageProvider extends ChangeNotifier {
       );
     }
   }
+
+  Future<void> updateTaskPriority(
+      {required BuildContext context,
+      required int taskId,
+      required int priorityId}) async {
+    try {
+      final response = await HttpRequest.httpPostRequest(
+          endPoint: HttpUrls.updateTaskPriority,
+          bodyData: {"Task_Id_": taskId, "Priority_Id_": priorityId});
+
+      if (response != null && response.statusCode == 200) {
+        await searchTaskByCustomer(context, isShowLoader: false);
+      }
+    } catch (e) {
+      print('Error converting lead: $e');
+    }
+  }
 }
