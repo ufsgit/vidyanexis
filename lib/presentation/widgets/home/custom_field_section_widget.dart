@@ -140,13 +140,42 @@ class _CustomFieldSectionWidgetState extends State<CustomFieldSectionWidget> {
     return true;
   }
 
+  bool _areFieldValuesEqual(
+      List<FieldValueModel>? list1, List<FieldValueModel>? list2) {
+    if (identical(list1, list2)) return true;
+    if (list1 == null && list2 == null) return true;
+    if (list1 == null || list2 == null) return false;
+    if (list1.length != list2.length) return false;
+    for (int i = 0; i < list1.length; i++) {
+      if (list1[i].customFieldId != list2[i].customFieldId ||
+          list1[i].value != list2[i].value) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  bool _areMapValuesEqual(Map<int, dynamic>? map1, Map<int, dynamic>? map2) {
+    if (identical(map1, map2)) return true;
+    if (map1 == null && map2 == null) return true;
+    if (map1 == null || map2 == null) return false;
+    if (map1.length != map2.length) return false;
+    for (final key in map1.keys) {
+      if (!map2.containsKey(key) || map1[key] != map2[key]) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   @override
   void didUpdateWidget(CustomFieldSectionWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
 
     // Handle updates to initial values
-    if (widget.initialFieldValues != oldWidget.initialFieldValues ||
-        widget.initialValues != oldWidget.initialValues) {
+    if (!_areFieldValuesEqual(
+            widget.initialFieldValues, oldWidget.initialFieldValues) ||
+        !_areMapValuesEqual(widget.initialValues, oldWidget.initialValues)) {
       _isInitialized = false;
       _initializeData();
     }
