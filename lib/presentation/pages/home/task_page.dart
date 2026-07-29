@@ -1122,6 +1122,9 @@ provider.getLandmarks(context);
                       ),
                     ),
 
+                    //Priority Filter
+                    _buildPriorityFilter(reportsProvider),
+
                     // Reset Button
                     if (reportsProvider.fromDate != null ||
                         reportsProvider.toDate != null ||
@@ -1135,6 +1138,8 @@ provider.getLandmarks(context);
                             reportsProvider.selectedEnquiryFor != 0) ||
                         (reportsProvider.selectedBranch != null &&
                             reportsProvider.selectedBranch != 0) ||
+                        (reportsProvider.selectedPriority != null &&
+                            reportsProvider.selectedPriority != 0) ||
                         reportsProvider.Search.isNotEmpty)
                       ElevatedButton(
                         onPressed: () {
@@ -1192,6 +1197,38 @@ provider.getLandmarks(context);
                                     onTap: () => reportsProvider
                                         .toggleStatus(status.statusId!),
                                   )),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      CustomText(
+                        'Priority',
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textBlack,
+                      ),
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 8.0,
+                        runSpacing: 8.0,
+                        children: [
+                          FilterChipWidget(
+                            label: 'All',
+                            isSelected: reportsProvider.selectedPriority == 0,
+                            onTap: () {
+                              reportsProvider.setPriorityFilter(0);
+                            },
+                          ),
+                          ...settingsProvider.priorities.map((priority) {
+                            return FilterChipWidget(
+                              label: priority.priorityName,
+                              isSelected: reportsProvider.selectedPriority ==
+                                  priority.priorityId,
+                              onTap: () {
+                                reportsProvider
+                                    .setPriorityFilter(priority.priorityId);
+                              },
+                            );
+                          }),
                         ],
                       ),
                       const SizedBox(height: 16),
@@ -1619,7 +1656,7 @@ provider.getLandmarks(context);
                                                           horizontal: 12.0),
                                                       color: Colors.white),
                                                   TableWidget(
-                                                       width: 180,
+                                                      width: 180,
                                                       title: 'Description',
                                                       fontSize: 13,
                                                       padding: const EdgeInsets
@@ -5488,6 +5525,82 @@ provider.getLandmarks(context);
       ),
     );
   }
+}
+
+Widget _buildPriorityFilter(TaskPageProvider taskProvider) {
+  return Consumer<SettingsProvider>(
+    builder: (context, settingsProvider, child) {
+      final List<DropdownMenuItem<int>> items = [
+            const DropdownMenuItem<int>(
+              value: 0,
+              child: Text(
+                'All',
+                style: TextStyle(fontSize: 14),
+              ),
+            ),
+          ] +
+          settingsProvider.priorities
+              .map((priority) => DropdownMenuItem<int>(
+                    value: priority.priorityId,
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 150),
+                      child: Text(
+                        priority.priorityName ?? '',
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: AppColors.parseColor(priority.colorCode),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ))
+              .toList();
+
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(
+            color: (taskProvider.selectedPriority != null &&
+                    taskProvider.selectedPriority != 0)
+                ? AppColors.primaryBlue
+                : Colors.grey[300]!,
+          ),
+        ),
+        child: DropdownButtonHideUnderline(
+          child: DropdownButton<int>(
+            value: taskProvider.selectedPriority ?? 0,
+            hint: const Text('Priority: All',
+                style: TextStyle(fontSize: 14, color: Colors.black87)),
+            items: items,
+            selectedItemBuilder: (BuildContext context) {
+              return items.map<Widget>((DropdownMenuItem<int> item) {
+                return Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text('Priority: ',
+                        style: TextStyle(fontSize: 14, color: Colors.black87)),
+                    item.child,
+                  ],
+                );
+              }).toList();
+            },
+            onChanged: (int? newValue) {
+              if (newValue != null) {
+                taskProvider.setPriorityFilter(newValue);
+                taskProvider.goToPage(1);
+                taskProvider.searchTaskByCustomer(context);
+              }
+            },
+            isDense: true,
+            iconSize: 18,
+          ),
+        ),
+      );
+    },
+  );
 }
 
 class _HoverMenuAnchor extends StatefulWidget {

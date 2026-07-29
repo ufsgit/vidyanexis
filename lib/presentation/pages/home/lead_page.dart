@@ -933,6 +933,7 @@ provider.getLandmarks(context);
                     _buildEnquiryForFilter(leadProvider),
                     _buildEnquirySourceFilter(leadProvider),
                     _buildBranchFilter(leadProvider),
+                    _buildPriorityFilter(leadProvider),
                     if (leadProvider.fromDate != null ||
                         leadProvider.toDate != null ||
                         (leadProvider.selectedStatus != null &&
@@ -945,6 +946,8 @@ provider.getLandmarks(context);
                             leadProvider.selectedEnquirySource != 0) ||
                         (leadProvider.selectedBranch != null &&
                             leadProvider.selectedBranch != 0) ||
+                        (leadProvider.selectedPriority != null &&
+                            leadProvider.selectedPriority != 0) ||
                         leadProvider.search.isNotEmpty)
                       ElevatedButton(
                         onPressed: () {
@@ -3256,6 +3259,86 @@ provider.getLandmarks(context);
               onChanged: (int? newValue) {
                 if (newValue != null) {
                   leadProvider.setEnquirySourceFilter(newValue);
+                }
+                String fromDate = leadProvider.formattedFromDate;
+                String toDate = leadProvider.formattedToDate;
+                leadProvider.setSearchCriteria(
+                    searchController.text, fromDate, toDate);
+                leadProvider.getSearchLeads(context);
+              },
+              isDense: true,
+              iconSize: 18,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildPriorityFilter(LeadsProvider leadProvider) {
+    return Consumer<SettingsProvider>(
+      builder: (context, settingsProvider, child) {
+        final List<DropdownMenuItem<int>> items = [
+              const DropdownMenuItem<int>(
+                value: 0,
+                child: Text(
+                  'All',
+                  style: TextStyle(fontSize: 14),
+                ),
+              ),
+            ] +
+            settingsProvider.priorities
+                .map((priority) => DropdownMenuItem<int>(
+                      value: priority.priorityId,
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 150),
+                        child: Text(
+                          priority.priorityName ?? '',
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: AppColors.parseColor(priority.colorCode),
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ))
+                .toList();
+
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(4),
+            border: Border.all(
+              color: (leadProvider.selectedPriority != null &&
+                      leadProvider.selectedPriority != 0)
+                  ? AppColors.primaryBlue
+                  : Colors.grey[300]!,
+            ),
+          ),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<int>(
+              value: leadProvider.selectedPriority ?? 0,
+              hint: const Text('Priority: All',
+                  style: TextStyle(fontSize: 14, color: Colors.black87)),
+              items: items,
+              selectedItemBuilder: (BuildContext context) {
+                return items.map<Widget>((DropdownMenuItem<int> item) {
+                  return Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text('Priority: ',
+                          style:
+                              TextStyle(fontSize: 14, color: Colors.black87)),
+                      item.child,
+                    ],
+                  );
+                }).toList();
+              },
+              onChanged: (int? newValue) {
+                if (newValue != null) {
+                  leadProvider.setPriorityFilter(newValue);
                 }
                 String fromDate = leadProvider.formattedFromDate;
                 String toDate = leadProvider.formattedToDate;
