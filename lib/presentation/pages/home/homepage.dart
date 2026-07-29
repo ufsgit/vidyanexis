@@ -15,6 +15,7 @@ import 'package:vidyanexis/presentation/pages/home/process_flow_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/out_of_warrenty_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/attendance_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/lead_check_in_report_screen.dart';
+import 'package:vidyanexis/presentation/pages/reports/target_page_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/work_completion_report_screen.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
@@ -514,6 +515,12 @@ class _HomePageState extends State<HomePage> {
           baseContent: AppStyles.isWebScreen(context)
               ? const Center(child: SalesReportScreen())
               : const SalesReportScreenPhone(),
+        ),
+      // if (settingsProvider.menuIsViewMap[7].toString() == '1')
+        SidebarOption(
+          title: 'Target Reports',
+          iconPath: 'assets/images/Reports.svg',
+          baseContent: const Center(child: TargetPageReport()),
         ),
     ];
 

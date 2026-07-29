@@ -458,4 +458,5 @@ class HttpUrls {
 
   static String updateTaskPriority = "settings/Change_Task_Priority";
 
+  static String getTargetReport = 'lead/Get_Target_Report';
 }

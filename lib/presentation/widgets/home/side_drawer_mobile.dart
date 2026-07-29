@@ -27,6 +27,7 @@ import 'package:vidyanexis/presentation/pages/reports/employee_summary_report_sc
 import 'package:vidyanexis/presentation/pages/reports/enquiry_for_summary_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/periodic_service_report_page_mobile.dart';
 import 'package:vidyanexis/presentation/pages/reports/stock_return_report.dart';
+import 'package:vidyanexis/presentation/pages/reports/target_page_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/task_page_report_mobile.dart';
 import 'package:vidyanexis/presentation/pages/reports/work_summary_screen_phone.dart';
 import 'package:vidyanexis/presentation/pages/settings/settings_page.dart';
@@ -205,6 +206,8 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
           'title': 'Customer Outstanding Reports',
           'page': const CustomerOutstandingReportMobile()
         },
+      // if (settingsProvider.menuIsViewMap[7].toString() == '1')
+        {'title': 'Target Reports', 'page': const TargetPageReport()},
     ];
 
     Future<String> getUserName() async {
