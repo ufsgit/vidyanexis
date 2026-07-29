@@ -33,6 +33,8 @@ class TaskTypeModel {
   List<EnquiryFor>? enquiryFor;
   int enquiryForVisible;
   int showUser;
+  String dailyTarget;
+  String monthlyTarget;
 
   TaskTypeModel(
       {required this.taskTypeId,
@@ -54,6 +56,8 @@ class TaskTypeModel {
       this.enquiryFor,
       required this.enquiryForVisible,
       required this.showUser,
+      required this.dailyTarget,
+      required this.monthlyTarget,
       this.description});
 
   factory TaskTypeModel.fromJson(Map<String, dynamic> json) => TaskTypeModel(
@@ -102,6 +106,8 @@ class TaskTypeModel {
       orderBy:
           int.tryParse(json["Order_By"]?.toString() ?? json["order_by"]?.toString() ?? '0') ??
               0,
+      dailyTarget: json["Daily_Target"]?.toString() ?? '0',
+      monthlyTarget: json["Monthly_Target"]?.toString() ?? '0',
       statuses: json["Statuses"] == null
           ? []
           : List<Status>.from(json["Statuses"].map((x) => Status.fromJson(x))),

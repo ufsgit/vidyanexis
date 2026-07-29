@@ -148,6 +148,8 @@ class _AddTaskTypeState extends State<AddTaskType> {
       settingsProvider.departmentUserController.clear();
       settingsProvider.durationController.clear();
       settingsProvider.taskTypeDescriptionController.clear();
+      settingsProvider.dailyTargetController.clear();
+      settingsProvider.monthlyTargetController.clear();
 
       settingsProvider.defaultStatusController.clear();
       _selectedStatuses.clear();
@@ -173,6 +175,19 @@ class _AddTaskTypeState extends State<AddTaskType> {
         } else {
           settingsProvider.orderByController.clear();
         }
+        if (widget.taskType?.dailyTarget != null) {
+          settingsProvider.dailyTargetController.text =
+              widget.taskType!.dailyTarget.toString();
+        } else {
+          settingsProvider.dailyTargetController.clear();
+        }
+        if (widget.taskType?.monthlyTarget != null) {
+          settingsProvider.monthlyTargetController.text =
+              widget.taskType!.monthlyTarget.toString();
+        } else {
+          settingsProvider.monthlyTargetController.clear();
+        }
+
         bool isActive = widget.taskType?.conversionTask != 0;
         bool isLocationTracking = widget.taskType?.locationTracking != 0;
         bool isCommissionNumber = widget.taskType?.commissionNumber != 0;
@@ -536,6 +551,32 @@ class _AddTaskTypeState extends State<AddTaskType> {
                                                     .selectedDefaultStatus =
                                                 selectedId;
                                           },
+                                        ),
+                                      ),
+                                      const SizedBox(height: 10),
+                                      SizedBox(
+                                        width: double.infinity,
+                                        child: CustomTextField(
+                                          readOnly: false,
+                                          height: 54,
+                                          controller: settingsProvider
+                                              .dailyTargetController,
+                                          hintText: 'Daily Target',
+                                          labelText: '',
+                                          keyboardType: TextInputType.number,
+                                        ),
+                                      ),
+                                      SizedBox(height: 20),
+                                      SizedBox(
+                                        width: double.infinity,
+                                        child: CustomTextField(
+                                          readOnly: false,
+                                          height: 54,
+                                          controller: settingsProvider
+                                              .monthlyTargetController,
+                                          hintText: 'Monthly Target',
+                                          labelText: '',
+                                          keyboardType: TextInputType.number,
                                         ),
                                       ),
                                       const SizedBox(height: 10),
@@ -1044,6 +1085,32 @@ class _AddTaskTypeState extends State<AddTaskType> {
                                       },
                                     ),
                                   ),
+                                  const SizedBox(height: 20),
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: CustomTextField(
+                                      readOnly: false,
+                                      height: 54,
+                                      controller: settingsProvider
+                                          .dailyTargetController,
+                                      hintText: 'Daily Target',
+                                      labelText: '',
+                                      keyboardType: TextInputType.number,
+                                    ),
+                                  ),
+                                  SizedBox(height: 20),
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: CustomTextField(
+                                      readOnly: false,
+                                      height: 54,
+                                      controller: settingsProvider
+                                          .monthlyTargetController,
+                                      hintText: 'Monthly Target',
+                                      labelText: '',
+                                      keyboardType: TextInputType.number,
+                                    ),
+                                  ),
                                   const SizedBox(height: 10),
                                   CheckboxListTile(
                                       title: const Text(
@@ -1379,6 +1446,12 @@ class _AddTaskTypeState extends State<AddTaskType> {
                           "Enquiry_For_Ids": enquiryForList,
                           "Enquiry_For_Visible":
                               settingsProvider.isEnquiryForVisible ? 1 : 0,
+                          "Daily_Target": int.tryParse(settingsProvider
+                                  .dailyTargetController.text) ??
+                              0,
+                          "Monthly_Target": int.tryParse(settingsProvider
+                                  .monthlyTargetController.text) ??
+                              0,
                         };
 
                         settingsProvider.addTaskType(

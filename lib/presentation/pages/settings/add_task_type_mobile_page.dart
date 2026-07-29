@@ -111,6 +111,8 @@ class _AddTaskTypeMobilePageState extends State<AddTaskTypeMobilePage> {
       settingsProvider.durationController.clear();
       settingsProvider.taskTypeDescriptionController.clear();
       settingsProvider.defaultStatusController.clear();
+      settingsProvider.dailyTargetController.clear();
+      settingsProvider.monthlyTargetController.clear();
       _selectedStatuses.clear();
       settingsProvider.toggleConversionCheckbox(false);
       settingsProvider.toggleLocation(false);
@@ -130,6 +132,18 @@ class _AddTaskTypeMobilePageState extends State<AddTaskTypeMobilePage> {
         if (widget.taskType?.orderBy != null) {
           settingsProvider.orderByController.text =
               widget.taskType!.orderBy.toString();
+        }
+        if (widget.taskType?.dailyTarget != null) {
+          settingsProvider.dailyTargetController.text =
+              widget.taskType!.dailyTarget.toString();
+        } else {
+          settingsProvider.dailyTargetController.clear();
+        }
+        if (widget.taskType?.monthlyTarget != null) {
+          settingsProvider.monthlyTargetController.text =
+              widget.taskType!.monthlyTarget.toString();
+        } else {
+          settingsProvider.monthlyTargetController.clear();
         }
 
         settingsProvider
@@ -307,6 +321,10 @@ class _AddTaskTypeMobilePageState extends State<AddTaskTypeMobilePage> {
       "order_by": int.tryParse(settingsProvider.orderByController.text) ?? 0,
       "Enquiry_For_Ids": enquiryForList,
       "Enquiry_For_Visible": settingsProvider.isEnquiryForVisible ? 1 : 0,
+      "Daily_Target":
+          int.tryParse(settingsProvider.dailyTargetController.text) ?? 0,
+      "Monthly_Target":
+          int.tryParse(settingsProvider.monthlyTargetController.text) ?? 0,
     };
 
     settingsProvider.addTaskType(context: context, data: requestData);
@@ -447,6 +465,31 @@ class _AddTaskTypeMobilePageState extends State<AddTaskTypeMobilePage> {
                             onItemSelected: (id) {
                               settingsProvider.selectedDefaultStatus = id;
                             },
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        SizedBox(
+                          width: double.infinity,
+                          child: CustomTextField(
+                            readOnly: false,
+                            height: 54,
+                            controller: settingsProvider.dailyTargetController,
+                            hintText: 'Daily Target',
+                            labelText: '',
+                            keyboardType: TextInputType.number,
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                        SizedBox(
+                          width: double.infinity,
+                          child: CustomTextField(
+                            readOnly: false,
+                            height: 54,
+                            controller:
+                                settingsProvider.monthlyTargetController,
+                            hintText: 'Monthly Target',
+                            labelText: '',
+                            keyboardType: TextInputType.number,
                           ),
                         ),
                         const SizedBox(height: 14),
