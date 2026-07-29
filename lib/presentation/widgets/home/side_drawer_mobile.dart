@@ -151,7 +151,8 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
         {'title': 'Lead Reports', 'page': const LeadReportMobile(false)},
       if (settingsProvider.menuIsViewMap[56].toString() == '1' || settingsProvider.menuIsViewMap[168].toString() == '1')
         {'title': 'Deleted Lead Reports', 'page': const DeletedLeadReportScreen()},
-      {'title': 'Work Completion Report', 'page': const WorkCompletionReportScreen()},
+      if (settingsProvider.menuIsViewMap[163].toString() == '1')
+        {'title': 'Work Completion Report', 'page': const WorkCompletionReportScreen()},
       if (settingsProvider.menuIsViewMap[97].toString() == '1')
         {'title': 'Solar Lead Reports', 'page': const SolarLeadReportPage()},
       if (settingsProvider.menuIsViewMap[98].toString() == '1')

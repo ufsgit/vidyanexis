@@ -151,6 +151,8 @@ class _LeadsPageState extends State<LeadPage> {
       settingsProvider.searchDepartment('', context);
       settingsProvider.searchsourceCategoryData('', context);
       provider.getDistricts(context);
+provider.getStatesDropdown(context);
+provider.getLandmarks(context);
 
       provider.getEnquiryFor(context);
       provider.getUserDetails(context);

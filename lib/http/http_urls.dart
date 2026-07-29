@@ -312,6 +312,8 @@ class HttpUrls {
   static String deleteBranch = "branch/delete_branch";
   static String getAllBranch = "branch/get_all_branch";
   static String getDistricts = "lead/Get_Districts";
+  static String getStatesDropdown = "lead/Get_State_Dropdown";
+  static String getLandmarks = "lead/Landmark";
   static String getCustomFieldType = "settings/Get_custom_field_type";
   static String getAllCustomField = "settings/Get_All_custom_field";
   static String saveCustomField = "settings/Save_custom_field";

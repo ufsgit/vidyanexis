@@ -1521,6 +1521,42 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                           .address ??
                                                       ''),
 
+                                              // Place
+                                              const SizedBox(height: 2),
+                                              DetailRow(
+                                                  label: "Place",
+                                                  value: customerDetailsProvider
+                                                          .leadDetails![0]
+                                                          .address2 ??
+                                                      ''),
+
+                                              // State
+                                              const SizedBox(height: 2),
+                                              DetailRow(
+                                                  label: "State",
+                                                  value: customerDetailsProvider
+                                                          .leadDetails![0]
+                                                          .address4 ??
+                                                      ''),
+
+                                              // Landmark
+                                              const SizedBox(height: 2),
+                                              DetailRow(
+                                                  label: "Landmark",
+                                                  value: customerDetailsProvider
+                                                          .leadDetails![0]
+                                                          .landmark ??
+                                                      ''),
+
+                                              // Pincode
+                                              const SizedBox(height: 2),
+                                              DetailRow(
+                                                  label: "Pincode",
+                                                  value: customerDetailsProvider
+                                                          .leadDetails![0]
+                                                          .pinCode ??
+                                                      ''),
+
                                               // Latitude
                                               const SizedBox(height: 2),
                                               DetailRow(
@@ -1987,6 +2023,46 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                         label:
                                                                             "Address",
                                                                         value: customerDetailsProvider.leadDetails![0].address ??
+                                                                            ''),
+
+                                                                    // Place
+                                                                    const SizedBox(
+                                                                        height:
+                                                                            2),
+                                                                    DetailRow(
+                                                                        label:
+                                                                            "Place",
+                                                                        value: customerDetailsProvider.leadDetails![0].address2 ??
+                                                                            ''),
+
+                                                                    // State
+                                                                    const SizedBox(
+                                                                        height:
+                                                                            2),
+                                                                    DetailRow(
+                                                                        label:
+                                                                            "State",
+                                                                        value: customerDetailsProvider.leadDetails![0].address4 ??
+                                                                            ''),
+
+                                                                    // Landmark
+                                                                    const SizedBox(
+                                                                        height:
+                                                                            2),
+                                                                    DetailRow(
+                                                                        label:
+                                                                            "Landmark",
+                                                                        value: customerDetailsProvider.leadDetails![0].landmark ??
+                                                                            ''),
+
+                                                                    // Pincode
+                                                                    const SizedBox(
+                                                                        height:
+                                                                            2),
+                                                                    DetailRow(
+                                                                        label:
+                                                                            "Pincode",
+                                                                        value: customerDetailsProvider.leadDetails![0].pinCode ??
                                                                             ''),
 
                                                                     // Latitude
@@ -2978,6 +3054,54 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           .leadDetails![
                                                                               0]
                                                                           .address ??
+                                                                      ''),
+
+                                                              // Place
+                                                              const SizedBox(
+                                                                  height: 2),
+                                                              DetailRow(
+                                                                  label:
+                                                                      "Place",
+                                                                  value: customerDetailsProvider
+                                                                          .leadDetails![
+                                                                              0]
+                                                                          .address2 ??
+                                                                      ''),
+
+                                                              // State
+                                                              const SizedBox(
+                                                                  height: 2),
+                                                              DetailRow(
+                                                                  label:
+                                                                      "State",
+                                                                  value: customerDetailsProvider
+                                                                          .leadDetails![
+                                                                              0]
+                                                                          .address4 ??
+                                                                      ''),
+
+                                                              // Landmark
+                                                              const SizedBox(
+                                                                  height: 2),
+                                                              DetailRow(
+                                                                  label:
+                                                                      "Landmark",
+                                                                  value: customerDetailsProvider
+                                                                          .leadDetails![
+                                                                              0]
+                                                                          .landmark ??
+                                                                      ''),
+
+                                                              // Pincode
+                                                              const SizedBox(
+                                                                  height: 2),
+                                                              DetailRow(
+                                                                  label:
+                                                                      "Pincode",
+                                                                  value: customerDetailsProvider
+                                                                          .leadDetails![
+                                                                              0]
+                                                                          .pinCode ??
                                                                       ''),
 
                                                               // Latitude

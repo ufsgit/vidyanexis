@@ -268,7 +268,7 @@ class SearchLeadModel {
       enquiryFor: parseString(json['Enquiry_For_Name']),
       enquirySourceId: parseInt(json['Enquiry_Source_Id']),
       enquirySourceName: parseString(json['Enquiry_Source_Name']),
-      tp: parseInt(json['tp']),
+      tp: json['tp'] != null ? parseInt(json['tp']) : 1,
       address: parseString(json['address']),
       phoneNumber: parseString(json['Phone_Number']),
       isRegistered: json['Is_Registered'],

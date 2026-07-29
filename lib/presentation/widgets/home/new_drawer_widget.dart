@@ -1613,24 +1613,80 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                   ),
                                   const SizedBox(width: 8),
                                   Expanded(
-                                    child: CustomTextField(
-                                      height: 54,
-                                      controller: leadProvider.stateController,
+                                    child: CommonDropdown<int>(
                                       hintText: 'State',
-                                      labelText: '',
-                                      showError:
-                                          dropDownProvider.showValidation &&
-                                              !_isFieldValid(leadProvider
-                                                  .stateController.text),
+                                      items: dropDownProvider.stateList
+                                          .map((status) => DropdownItem<int>(
+                                                id: status.stateId ?? 0,
+                                                name: status.stateName ?? '',
+                                              ))
+                                          .toList(),
+                                      controller: leadProvider.stateController,
+                                      onItemSelected: (int? newValue) {
+                                        if (newValue != null) {
+                                          final selectedState =
+                                              dropDownProvider.stateList
+                                                  .firstWhere((task) =>
+                                                      task.stateId ==
+                                                      newValue);
+                                          dropDownProvider.updateState(
+                                              newValue,
+                                              selectedState.stateName ?? '');
+                                          leadProvider.stateController.text =
+                                              selectedState.stateName ?? '';
+                                        }
+                                      },
+                                      selectedValue: dropDownProvider
+                                                      .selectedStateId !=
+                                                  null &&
+                                              dropDownProvider.stateList
+                                                  .any((item) =>
+                                                      item.stateId ==
+                                                      dropDownProvider
+                                                          .selectedStateId)
+                                          ? dropDownProvider.selectedStateId
+                                          : null,
+                                      showError: dropDownProvider.showValidation &&
+                                          !_isFieldValid(leadProvider.stateController.text),
                                     ),
                                   ),
                                   const SizedBox(width: 8),
                                   Expanded(
-                                    child: CustomTextField(
-                                      height: 54,
-                                      controller: leadProvider.landmarkController,
+                                    child: CommonDropdown<int>(
                                       hintText: 'Landmark',
-                                      labelText: '',
+                                      items: dropDownProvider.landmarkList
+                                          .map((status) => DropdownItem<int>(
+                                                id: status.landmarkId ?? 0,
+                                                name: status.landmarkName ?? '',
+                                              ))
+                                          .toList(),
+                                      controller: leadProvider.landmarkController,
+                                      onItemSelected: (int? newValue) {
+                                        if (newValue != null) {
+                                          final selectedLandmark =
+                                              dropDownProvider.landmarkList
+                                                  .firstWhere((task) =>
+                                                      task.landmarkId ==
+                                                      newValue);
+                                          dropDownProvider.updateLandmark(
+                                              newValue,
+                                              selectedLandmark.landmarkName ?? '');
+                                          leadProvider.landmarkController.text =
+                                              selectedLandmark.landmarkName ?? '';
+                                        }
+                                      },
+                                      selectedValue: dropDownProvider
+                                                      .selectedLandmarkId !=
+                                                  null &&
+                                              dropDownProvider.landmarkList
+                                                  .any((item) =>
+                                                      item.landmarkId ==
+                                                      dropDownProvider
+                                                          .selectedLandmarkId)
+                                          ? dropDownProvider.selectedLandmarkId
+                                          : null,
+                                      showError: dropDownProvider.showValidation &&
+                                          !_isFieldValid(leadProvider.landmarkController.text),
                                     ),
                                   ),
                                 ],

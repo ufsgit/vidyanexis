@@ -424,11 +424,12 @@ class _HomePageState extends State<HomePage> {
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: DeletedLeadReportScreen()),
         ),
-      SidebarOption(
-        title: 'Work Completion Report',
-        iconPath: 'assets/images/Reports.svg',
-        baseContent: const Center(child: WorkCompletionReportScreen()),
-      ),
+      if (settingsProvider.menuIsViewMap[163].toString() == '1')
+        SidebarOption(
+          title: 'Work Completion Report',
+          iconPath: 'assets/images/Reports.svg',
+          baseContent: const Center(child: WorkCompletionReportScreen()),
+        ),
       if (settingsProvider.menuIsViewMap[113].toString() == '1')
         SidebarOption(
           title: 'Commission Reports',

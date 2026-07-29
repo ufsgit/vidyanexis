@@ -71,6 +71,8 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
     provider.getFollowUpStatus(context, '1');
     settingsProvider.searchsourceCategoryData('', context);
     provider.getDistricts(context);
+provider.getStatesDropdown(context);
+provider.getLandmarks(context);
     settingsProvider.searchBranch(context);
     settingsProvider.searchDepartment('', context);
     leadProvider.selectedStatusIds.clear();
@@ -123,6 +125,8 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
       provider.getFollowUpStatus(context, '1');
       settingsProvider.searchsourceCategoryData('', context);
       provider.getDistricts(context);
+provider.getStatesDropdown(context);
+provider.getLandmarks(context);
       leadProvider.totalCount;
 
       leadProvider.selectedStatusIds.clear();

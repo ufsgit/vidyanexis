@@ -3,6 +3,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/controller/models/amc_status_model.dart';
 import 'package:vidyanexis/controller/models/district_model.dart';
 import 'package:vidyanexis/controller/models/document_type_model.dart';
+import 'package:vidyanexis/controller/models/landmark_model.dart';
+import 'package:vidyanexis/controller/models/state_model.dart';
 import 'package:vidyanexis/controller/models/duration_model.dart';
 import 'package:vidyanexis/controller/models/enquiry_for_model.dart';
 import 'package:vidyanexis/controller/models/enquiry_source_model.dart';
@@ -108,6 +110,21 @@ class DropDownProvider extends ChangeNotifier {
   int? get selectedDistrictId => _selectedDistrictId;
   String _selectedDistrictName = '';
   String get selectedDistrictName => _selectedDistrictName;
+
+  List<StateModel> _stateList = [];
+  List<StateModel> get stateList => _stateList;
+  int? _selectedStateId;
+  int? get selectedStateId => _selectedStateId;
+  String _selectedStateName = '';
+  String get selectedStateName => _selectedStateName;
+
+  List<LandmarkModel> _landmarkList = [];
+  List<LandmarkModel> get landmarkList => _landmarkList;
+  int? _selectedLandmarkId;
+  int? get selectedLandmarkId => _selectedLandmarkId;
+  String _selectedLandmarkName = '';
+  String get selectedLandmarkName => _selectedLandmarkName;
+
   int? _amcPeriodIntervalId;
   int? get amcPeriodIntervalId => _amcPeriodIntervalId;
   int? _amcTotalDurationId;
@@ -142,6 +159,18 @@ class DropDownProvider extends ChangeNotifier {
   void updateDistrict(int? value, String districtName) {
     _selectedDistrictId = value;
     _selectedDistrictName = districtName;
+    notifyListeners();
+  }
+
+  void updateState(int? value, String stateName) {
+    _selectedStateId = value;
+    _selectedStateName = stateName;
+    notifyListeners();
+  }
+
+  void updateLandmark(int? value, String landmarkName) {
+    _selectedLandmarkId = value;
+    _selectedLandmarkName = landmarkName;
     notifyListeners();
   }
 
@@ -273,6 +302,70 @@ class DropDownProvider extends ChangeNotifier {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('An error occurred')),
       );
+    }
+  }
+
+  void getStatesDropdown(BuildContext context) async {
+    try {
+      final response =
+          await HttpRequest.httpGetRequest(endPoint: HttpUrls.getStatesDropdown);
+
+      if (response.statusCode == 200) {
+        final responseData = response.data;
+        if (responseData != null) {
+          if (responseData is Map<String, dynamic> &&
+              responseData.containsKey('success') &&
+              responseData.containsKey('data')) {
+            if (responseData['success'] == true) {
+              final data = responseData['data'];
+              if (data is List<dynamic>) {
+                _stateList =
+                    data.map((item) => StateModel.fromJson(item)).toList();
+                notifyListeners();
+              }
+            }
+          } else if (responseData is List<dynamic>) {
+            _stateList = responseData
+                .map((item) => StateModel.fromJson(item))
+                .toList();
+            notifyListeners();
+          }
+        }
+      }
+    } catch (e) {
+      print('Exception occurred fetching states: $e');
+    }
+  }
+
+  void getLandmarks(BuildContext context) async {
+    try {
+      final response =
+          await HttpRequest.httpGetRequest(endPoint: HttpUrls.getLandmarks);
+
+      if (response.statusCode == 200) {
+        final responseData = response.data;
+        if (responseData != null) {
+          if (responseData is Map<String, dynamic> &&
+              responseData.containsKey('success') &&
+              responseData.containsKey('data')) {
+            if (responseData['success'] == true) {
+              final data = responseData['data'];
+              if (data is List<dynamic>) {
+                _landmarkList =
+                    data.map((item) => LandmarkModel.fromJson(item)).toList();
+                notifyListeners();
+              }
+            }
+          } else if (responseData is List<dynamic>) {
+            _landmarkList = responseData
+                .map((item) => LandmarkModel.fromJson(item))
+                .toList();
+            notifyListeners();
+          }
+        }
+      }
+    } catch (e) {
+      print('Exception occurred fetching landmarks: $e');
     }
   }
 

@@ -1600,15 +1600,23 @@ class LeadsProvider extends ChangeNotifier {
 
       if (response!.statusCode == 200) {
         final data = response.data;
-        if (data['Customer_Id_'] == -2) {
+        
+        int? customerIdFlag;
+        if (data is Map) {
+          customerIdFlag = data['Customer_Id_'];
+        } else if (data is List && data.isNotEmpty && data[0] is Map) {
+          customerIdFlag = data[0]['Customer_Id_'];
+        }
+
+        if (customerIdFlag == -2) {
           Loader.stopLoader(context);
           alert(context, "Email Already Exists");
-        } else if (data['Customer_Id_'] == -1) {
+        } else if (customerIdFlag == -1) {
           Loader.stopLoader(context);
           if (leadMobileExistedCheck == 1) {
             alert(context, "Mobile No. Already Exists");
           }
-        } else if (data['Customer_Id_'] == -3) {
+        } else if (customerIdFlag == -3) {
           Loader.stopLoader(context);
           alert(context, "Consumer No. Already Exists");
         } else {
