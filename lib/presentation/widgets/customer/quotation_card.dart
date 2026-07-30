@@ -686,6 +686,186 @@ class QuotationCard extends StatelessWidget {
                       backgroundColor: Colors.red.withOpacity(0.05),
                       borderSide: const BorderSide(color: Colors.red),
                     ),
+                  CustomOutlinedSvgButton(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    onPressed: () async {
+                      await customerDetailsProvider.getQuatationListByMasterId(
+                          taskId, context);
+                      final quotaion =
+                          customerDetailsProvider.quotationListByMaster.first;
+
+                      // ---- Population Logic ----
+                      customerDetailsProvider.customerId = customerId;
+                      customerDetailsProvider.qproductnameController.text =
+                          title;
+                      customerDetailsProvider.advanceController.text =
+                          advancePercentage;
+                      customerDetailsProvider.deliveryController.text =
+                          deliveryPercentage;
+                      customerDetailsProvider.workCompletionController.text =
+                          completionPercentage;
+                      customerDetailsProvider.qsubsidyAmountController.text =
+                          subsidy;
+                      customerDetailsProvider.qwarrentyController.text =
+                          warranty;
+                      customerDetailsProvider.qtermsConditionsController.text =
+                          terms;
+                      customerDetailsProvider.quotationDescriptionController
+                          .text = quotaion.description;
+                      customerDetailsProvider.quotationDescription2Controller
+                          .text = quotaion.description2;
+                      customerDetailsProvider.quotationDescription3Controller
+                          .text = quotaion.description3;
+
+                      // ---- STATUS ----
+                      customerDetailsProvider.selectedQuotationStatus =
+                          quotaion.quotationStatusId;
+                      customerDetailsProvider.selectedQuotationStatusName =
+                          quotaion.quotationStatusName;
+
+                      // ---- FEES ----
+                      customerDetailsProvider.registrationFeeController.text =
+                          quotaion.ksebRegistrationFee.toString();
+                      customerDetailsProvider.feasibilityFeeController.text =
+                          quotaion.ksebFeasibilityFee.toString();
+                      customerDetailsProvider.systemPriceController.text =
+                          quotaion.ksebSystemPrice.toString();
+                      customerDetailsProvider.additionalStructureController
+                          .text = quotaion.additionalStructure.toString();
+
+                      // ---- TOTALS ----
+                      customerDetailsProvider.subtotalController.text =
+                          quotaion.totalAmount.toString();
+                      customerDetailsProvider.totalController.text =
+                          quotaion.netTotal.toString();
+
+                      // ---- ITEMS ----
+                      customerDetailsProvider
+                          .updateItemsFromQuotationDetailsNew(
+                        quotaion.quotationDetails,
+                        quotaion.billOfMaterials,
+                        quotaion.productionChart,
+                        quotaion.structureMaterials,
+                      );
+
+                      // ---- GST ----
+                      final taxable =
+                          double.tryParse(quotaion.taxableAmount) ?? 0;
+                      final gst = double.tryParse(quotaion.gstAmount) ?? 0;
+                      final gstPer = double.tryParse(quotaion.gstPer) ?? 0;
+
+                      customerDetailsProvider.gstTaxableAmountController.text =
+                          taxable.toStringAsFixed(2);
+                      customerDetailsProvider.cgstTaxableAmountController.text =
+                          (taxable / 2).toStringAsFixed(2);
+                      customerDetailsProvider.sgstTaxableAmountController.text =
+                          (taxable / 2).toStringAsFixed(2);
+
+                      customerDetailsProvider.totalGstAmountController.text =
+                          gst.toStringAsFixed(2);
+                      customerDetailsProvider.totalCgstAmountController.text =
+                          (gst / 2).toStringAsFixed(2);
+                      customerDetailsProvider.totalSgstAmountController.text =
+                          (gst / 2).toStringAsFixed(2);
+
+                      customerDetailsProvider.totalGstPerController.text =
+                          gstPer.toStringAsFixed(2);
+                      customerDetailsProvider.totalCgstPerController.text =
+                          (gstPer / 2).toStringAsFixed(2);
+                      customerDetailsProvider.totalSgstPerController.text =
+                          (gstPer / 2).toStringAsFixed(2);
+
+                      // ---- QUOTATION TYPE ----
+                      customerDetailsProvider.quotationTypeController.text =
+                          quotaion.quotationTypeName;
+                      customerDetailsProvider.selectedQuotationType =
+                          quotaion.quotationTypeId;
+
+                      // ---- CABLE DETAILS ----
+                      customerDetailsProvider.cableStructureController.text =
+                          quotaion.cableStructure;
+                      customerDetailsProvider.cableTypeController.text =
+                          quotaion.cableType;
+                      customerDetailsProvider.cableShortCircuitTempController
+                          .text = quotaion.cableShortCircuitTemp;
+                      customerDetailsProvider.cableStandardController.text =
+                          quotaion.cableStandard;
+                      customerDetailsProvider.cableConductorClassController
+                          .text = quotaion.cableConductorClass;
+                      customerDetailsProvider.cableMaterialController.text =
+                          quotaion.cableMaterial;
+                      customerDetailsProvider.cableProtectionController.text =
+                          quotaion.cableProtection;
+                      customerDetailsProvider.cableWarrantyController.text =
+                          quotaion.cableWarranty;
+                      customerDetailsProvider.cableTensileStrengthController
+                          .text = quotaion.cableTensileStrength;
+
+                      // ---- OTHER DETAILS ----
+                      customerDetailsProvider.plantCapacityController.text =
+                          quotaion.plantCapacity;
+                      customerDetailsProvider.moduleTechnologiesController
+                          .text = quotaion.moduleTechnologies;
+                      customerDetailsProvider
+                          .mountingStructureTechnologiesController
+                          .text = quotaion.mountingStructureTechnologies;
+                      customerDetailsProvider.projectSchemeController.text =
+                          quotaion.projectScheme;
+                      customerDetailsProvider.powerEvacuationController.text =
+                          quotaion.powerEvacuation;
+                      customerDetailsProvider.areaApproximateController.text =
+                          quotaion.areaApproximate;
+                      customerDetailsProvider
+                          .solarPlantOutputConnectionController
+                          .text = quotaion.solarPlantOutputConnection;
+                      customerDetailsProvider.schemeController.text =
+                          quotaion.scheme;
+                      customerDetailsProvider.qvalidityController.text =
+                          quotaion.validity;
+                      customerDetailsProvider.qtendorNumberController.text =
+                          quotaion.tendorNumber;
+                      customerDetailsProvider.paymentTermsController.text =
+                          quotaion.paymentTermsName;
+                      customerDetailsProvider.incoTermsController.text =
+                          quotaion.incoTerms;
+                      customerDetailsProvider.shippingChargesController.text =
+                          quotaion.shippingCharges;
+                      customerDetailsProvider.totalAdCESSController.text =
+                          quotaion.otherTax;
+                      customerDetailsProvider.totalCgstAmountController.text =
+                          quotaion.totalCgstAmount;
+                      customerDetailsProvider.totalSgstAmountController.text =
+                          quotaion.totalSgstAmount;
+
+                      customerDetailsProvider.selectedBranchId =
+                          quotaion.branchId;
+
+                      customerDetailsProvider.commercialItems =
+                          quotaion.commercialItems;
+
+                      customerDetailsProvider.scopeOfWorkItems =
+                          quotaion.scopeOfWorkItems;
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (BuildContext context) {
+                            return EditQuotationScreen(
+                                quotationId: taskId,
+                                customerId: customerId,
+                                isDuplicate: true);
+                          },
+                        ),
+                      );
+                    },
+                    svgPath: 'assets/images/Reports.svg',
+                    label: 'Duplicate',
+                    breakpoint: 300,
+                    foregroundColor: AppColors.darkGreen,
+                    backgroundColor: Colors.white,
+                    borderSide: BorderSide(color: AppColors.darkGreen),
+                  ),
                 ],
               ),
               const Divider(height: 32),

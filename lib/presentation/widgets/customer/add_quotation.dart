@@ -32,10 +32,12 @@ class QuotationCreationWidget extends StatefulWidget {
   bool isEdit;
   String customerId;
   String quotationId;
+  bool isDuplicate;
   QuotationCreationWidget(
       {super.key,
       required this.quotationId,
       required this.isEdit,
+      this.isDuplicate = false,
       required this.customerId});
 
   @override
@@ -1635,7 +1637,9 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                   try {
                     final responseData =
                         await customerDetailsProvider.saveQuotation(
-                            widget.quotationId,
+                            widget.isDuplicate == true
+                                ? "0"
+                                : widget.quotationId,
                             widget.customerId,
                             context,
                             widget.isEdit);

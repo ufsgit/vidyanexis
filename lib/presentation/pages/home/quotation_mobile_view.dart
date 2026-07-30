@@ -243,6 +243,36 @@ class _QuotationMobileViewState extends State<QuotationMobileView> with Automati
                                     ),
                                   ),
                                   const Spacer(),
+                                    GestureDetector(
+                                      onTap: () async {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (c) =>
+                                                QuotationCreationWidget(
+                                              isEdit: true,
+                                              quotationId: item
+                                                  .quotationMasterId
+                                                  .toString(),
+                                              customerId:
+                                                  widget.customerId.toString(),
+                                              isDuplicate: true,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      child: const Padding(
+                                        padding: EdgeInsets.all(4),
+                                        child: Tooltip(
+                                          message: 'Duplicate Quotation',
+                                          child: Icon(Icons.copy,
+                                              size: 20,
+                                              color: Color.fromARGB(
+                                                  255, 184, 175, 0)),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
                                   // Share 1 — API-generated PDF (menuIsViewMap[32])
                                   if (settingsProvider.menuIsViewMap[32] ==
                                       1) ...[
