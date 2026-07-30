@@ -6,6 +6,7 @@ import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/image_upload_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 
 class ImageUploadAlert extends StatefulWidget {
@@ -103,70 +104,103 @@ class _ImageUploadAlertState extends State<ImageUploadAlert> {
                                   e['docTypeId'] == docType.documentTypeId)
                               .length;
 
-                          return Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 8),
-                            decoration: BoxDecoration(
-                              color: Colors.transparent,
-                            ),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      CustomText(
-                                        docType.documentTypeName ?? '',
-                                        fontSize: 14,
-                                        fontWeight: selectedCount > 0
-                                            ? FontWeight.w600
-                                            : FontWeight.w500,
-                                        color: AppColors.textBlack,
-                                      ),
-                                      if (selectedCount > 0)
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 2),
-                                          child: CustomText(
-                                            '$selectedCount file${selectedCount > 1 ? 's' : ''} added',
-                                            fontSize: 11,
-                                            color: AppColors.appViolet,
-                                            fontWeight: FontWeight.w600,
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 8),
+                                decoration: const BoxDecoration(
+                                    color: Colors.transparent),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          CustomText(
+                                            docType.documentTypeName ?? '',
+                                            fontSize: 14,
+                                            fontWeight: selectedCount > 0
+                                                ? FontWeight.w600
+                                                : FontWeight.w500,
+                                            color: AppColors.textBlack,
                                           ),
+                                          if (selectedCount > 0)
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.only(top: 2),
+                                              child: CustomText(
+                                                '$selectedCount file${selectedCount > 1 ? 's' : ''} added',
+                                                fontSize: 11,
+                                                color: AppColors.appViolet,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                        ],
+                                      ),
+                                    ),
+                                    InkWell(
+                                      onTap: () async {
+                                        provider.updateDocumentType(
+                                            docType.documentTypeId,
+                                            docType.documentTypeName);
+                                        await provider.addFileMobile();
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.all(6),
+                                        decoration: BoxDecoration(
+                                          color: selectedCount > 0
+                                              ? AppColors.appViolet
+                                              : AppColors.appViolet
+                                                  .withOpacity(0.1),
+                                          borderRadius:
+                                              BorderRadius.circular(4),
                                         ),
-                                    ],
+                                        child: Icon(
+                                          selectedCount > 0
+                                              ? Icons.add
+                                              : Icons.upload_sharp,
+                                          color: selectedCount > 0
+                                              ? Colors.white
+                                              : AppColors.appViolet,
+                                          size: 18,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              // ---------- Description box (only when files exist) ----------
+                              if (selectedCount > 0) ...[
+                                const SizedBox(height: 8),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 8),
+                                  child: CustomTextField(
+                                    height: 54,
+                                    controller: TextEditingController(
+                                      text: provider.getDescription(
+                                          docType.documentTypeId),
+                                    )..selection = TextSelection.collapsed(
+                                        offset: provider
+                                            .getDescription(
+                                                docType.documentTypeId)
+                                            .length),
+                                    hintText: 'Add description',
+                                    labelText: '',
+                                    onChanged: (value) {
+                                      provider.updateDescription(
+                                          docType.documentTypeId, value);
+                                    },
+                                    keyboardType: TextInputType.multiline,
                                   ),
                                 ),
-                                InkWell(
-                                  onTap: () async {
-                                    provider.updateDocumentType(
-                                        docType.documentTypeId,
-                                        docType.documentTypeName);
-                                    await provider.addFileMobile();
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.all(6),
-                                    decoration: BoxDecoration(
-                                      color: selectedCount > 0
-                                          ? AppColors.appViolet
-                                          : AppColors.appViolet
-                                              .withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(4),
-                                    ),
-                                    child: Icon(
-                                      selectedCount > 0
-                                          ? Icons.add
-                                          : Icons.upload_sharp,
-                                      color: selectedCount > 0
-                                          ? Colors.white
-                                          : AppColors.appViolet,
-                                      size: 18,
-                                    ),
-                                  ),
-                                ),
+                                const SizedBox(height: 8),
                               ],
-                            ),
+                            ],
                           );
                         },
                       ),

@@ -8,6 +8,7 @@ import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/image_upload_provider.dart';
 import 'package:vidyanexis/presentation/widgets/customer/custom_app_bar_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 
 class AddDocumentPhone extends StatefulWidget {
@@ -172,56 +173,85 @@ class _AddDocumentPhoneState extends State<AddDocumentPhone> {
                       ),
                     ],
                   ),
-                  child: Row(
+                  child: Column(
                     children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            CustomText(
-                              docType.documentTypeName ?? '',
-                              fontSize: 13,
-                              fontWeight: selectedCount > 0
-                                  ? FontWeight.w600
-                                  : FontWeight.w500,
-                              color: AppColors.textBlack,
-                            ),
-                            if (selectedCount > 0)
-                              Padding(
-                                padding: const EdgeInsets.only(top: 2),
-                                child: CustomText(
-                                  '$selectedCount file${selectedCount > 1 ? 's' : ''} added',
-                                  fontSize: 10,
-                                  color: AppColors.bluebutton,
-                                  fontWeight: FontWeight.w600,
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                CustomText(
+                                  docType.documentTypeName ?? '',
+                                  fontSize: 13,
+                                  fontWeight: selectedCount > 0
+                                      ? FontWeight.w600
+                                      : FontWeight.w500,
+                                  color: AppColors.textBlack,
                                 ),
+                                if (selectedCount > 0)
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 2),
+                                    child: CustomText(
+                                      '$selectedCount file${selectedCount > 1 ? 's' : ''} added',
+                                      fontSize: 10,
+                                      color: AppColors.bluebutton,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () {
+                              provider.updateDocumentType(
+                                  docType.documentTypeId,
+                                  docType.documentTypeName);
+                              _showPickOptions(context, provider);
+                            },
+                            child: Container(
+                              padding: EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                color: selectedCount > 0
+                                    ? AppColors.bluebutton
+                                    : AppColors.bluebutton.withOpacity(0.05),
+                                borderRadius: BorderRadius.circular(4),
                               ),
-                          ],
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          provider.updateDocumentType(
-                              docType.documentTypeId, docType.documentTypeName);
-                          _showPickOptions(context, provider);
-                        },
-                        child: Container(
-                          padding: EdgeInsets.all(6),
-                          decoration: BoxDecoration(
-                            color: selectedCount > 0
-                                ? AppColors.bluebutton
-                                : AppColors.bluebutton.withOpacity(0.05),
-                            borderRadius: BorderRadius.circular(4),
+                              child: Icon(
+                                selectedCount > 0
+                                    ? Icons.add
+                                    : Icons.upload_sharp,
+                                color: selectedCount > 0
+                                    ? Colors.white
+                                    : AppColors.bluebutton,
+                                size: 18,
+                              ),
+                            ),
                           ),
-                          child: Icon(
-                            selectedCount > 0 ? Icons.add : Icons.upload_sharp,
-                            color: selectedCount > 0
-                                ? Colors.white
-                                : AppColors.bluebutton,
-                            size: 18,
-                          ),
-                        ),
+                        ],
                       ),
+                      // ---------- Description box (only when files exist) ----------
+                      if (selectedCount > 0) ...[
+                        const SizedBox(height: 10),
+                        CustomTextField(
+                          height: 54,
+                          controller: TextEditingController(
+                            text:
+                                provider.getDescription(docType.documentTypeId),
+                          )..selection = TextSelection.collapsed(
+                              offset: provider
+                                  .getDescription(docType.documentTypeId)
+                                  .length),
+                          hintText: 'Add description',
+                          labelText: '',
+                          onChanged: (value) {
+                            provider.updateDescription(
+                                docType.documentTypeId, value);
+                          },
+                          keyboardType: TextInputType.multiline,
+                        ),
+                        const SizedBox(height: 8),
+                      ],
                     ],
                   ),
                 );

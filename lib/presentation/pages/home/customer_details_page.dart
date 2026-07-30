@@ -4642,6 +4642,17 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                             textAlign:
                                                                                 TextAlign.center,
                                                                           ),
+                                                                          Text(
+                                                                            image.description,
+                                                                            style:
+                                                                                TextStyle(fontSize: 12, color: AppColors.textBlack),
+                                                                            textAlign:
+                                                                                TextAlign.center,
+                                                                            maxLines:
+                                                                                3,
+                                                                            overflow:
+                                                                                TextOverflow.ellipsis,
+                                                                          ),
                                                                         ],
                                                                       ),
                                                                     );
