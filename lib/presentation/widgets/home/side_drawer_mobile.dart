@@ -206,7 +206,7 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
           'title': 'Customer Outstanding Reports',
           'page': const CustomerOutstandingReportMobile()
         },
-      // if (settingsProvider.menuIsViewMap[7].toString() == '1')
+      if (settingsProvider.menuIsViewMap[172].toString() == '1')
         {'title': 'Target Reports', 'page': const TargetPageReport()},
     ];
 

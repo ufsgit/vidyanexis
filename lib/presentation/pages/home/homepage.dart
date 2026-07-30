@@ -516,7 +516,7 @@ class _HomePageState extends State<HomePage> {
               ? const Center(child: SalesReportScreen())
               : const SalesReportScreenPhone(),
         ),
-      // if (settingsProvider.menuIsViewMap[7].toString() == '1')
+      if (settingsProvider.menuIsViewMap[172].toString() == '1')
         SidebarOption(
           title: 'Target Reports',
           iconPath: 'assets/images/Reports.svg',
