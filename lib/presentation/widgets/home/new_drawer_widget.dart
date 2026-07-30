@@ -1221,6 +1221,25 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                   selectedValue: leadProvider.priorityId,
                                 ),
                               ),
+                              if (settingsProvider.menuIsViewMap[171] == 1) ...[
+                                Expanded(
+                                  child: CustomTextField(
+                                    height: 54,
+                                    controller:
+                                        leadProvider.leadSubsidyController,
+                                    hintText: 'Subsidy Amount',
+                                    labelText: '',
+                                    showError:
+                                        dropDownProvider.showValidation &&
+                                            !_isFieldValid(leadProvider
+                                                .leadSubsidyController.text),
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.allow(
+                                          RegExp(r'^\d+\.?\d{0,2}')),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ],
                           ),
                           const SizedBox(height: 8),

@@ -135,6 +135,7 @@ class LeadDetails {
   final String consumerName;
   final String consumerContactNo;
   final int priorityId;
+  final String subsidyAmount;
 
   LeadDetails({
     required this.customerId,
@@ -259,6 +260,7 @@ class LeadDetails {
     required this.consumerName,
     required this.consumerContactNo,
     required this.priorityId,
+    required this.subsidyAmount,
   });
 
   factory LeadDetails.fromJson(Map<String, dynamic> json) {
@@ -419,6 +421,7 @@ class LeadDetails {
       consumerName: parseString(json['Consumer_Name']),
       consumerContactNo: parseString(json['Contact_No']),
       priorityId: parseInt(json['Priority_Id']),
+      subsidyAmount: parseString(json['Subsidy_Amount']),
     );
   }
 
@@ -658,6 +661,7 @@ class LeadDetails {
     String? consumerName,
     String? consumerContactNo,
     int? priorityId,
+    String? subsidyAmount,
   }) {
     return LeadDetails(
       audioFiles: audioFiles ?? this.audioFiles,
@@ -785,6 +789,7 @@ class LeadDetails {
       consumerName: consumerName ?? this.consumerName,
       consumerContactNo: consumerContactNo ?? this.consumerContactNo,
       priorityId: priorityId ?? this.priorityId,
+      subsidyAmount: subsidyAmount ?? this.subsidyAmount,
     );
   }
 
