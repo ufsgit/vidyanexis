@@ -58,7 +58,7 @@ class DashboardCountTab extends StatelessWidget {
         'Transferred_Leads',
       if (settingsProvider.menuIsViewMap[129] == 1 ||
           settingsProvider.menuIsViewMap[138] == 1)
-        'Closed_Leads',
+        'Completed_Leads',
     ];
     final items = dashBoardProvider.leadCountMap.entries
         .where((e) => allowedKeys.contains(e.key))

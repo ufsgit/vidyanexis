@@ -319,7 +319,7 @@ class _LeadDataPageState extends State<LeadDataPage> {
     if (!isPagination) {
       setState(() {
         _isLoading = true;
-        _currentPage = 1;
+        // _currentPage = 1;
         _hasMoreData = true;
         _leads.clear();
         _filteredLeads.clear();
@@ -1672,7 +1672,7 @@ class _LeadDataPageState extends State<LeadDataPage> {
                                                                                 .ellipsis,
                                                                             style:
                                                                                 const TextStyle(fontSize: 13))),
-                                                                  ],
+                                                                ],
                                                               ),
                                                             ),
                                                           );
