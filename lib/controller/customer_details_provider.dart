@@ -115,6 +115,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
   List<CustomFieldByStatusId> _customFieldQuotation = [];
   List<CustomFieldByStatusId> get customFieldQuotation => _customFieldQuotation;
 
+  List<Map<String, dynamic>> _savedMasterCustomFields = [];
+
   List<CustomFieldByStatusId> _commercialCustomFields = [];
   List<CustomFieldByStatusId> get commercialCustomFields =>
       _commercialCustomFields;
@@ -1334,6 +1336,11 @@ class CustomerDetailsProvider extends ChangeNotifier {
               .map((e) => CustomFieldByStatusId.fromJson(e))
               .toList();
         }
+
+        if (_savedMasterCustomFields.isNotEmpty) {
+          populateCustomFieldsFromMaster(_savedMasterCustomFields);
+        }
+
         notifyListeners();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -3371,6 +3378,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     a3SScopeController.clear();
     clientScopeController.clear();
     _scopeOfWorkItems.clear();
+    _savedMasterCustomFields.clear();
     _customFieldQuotation.clear();
     _commercialCustomFields.clear();
     _selectedCommercialFields.clear();
@@ -5160,6 +5168,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
     // ---- CUSTOM FIELDS ----
     if (quotation.quotationCustomFields.isNotEmpty) {
+      _savedMasterCustomFields = quotation.quotationCustomFields;
       populateCustomFieldsFromMaster(quotation.quotationCustomFields);
     }
 

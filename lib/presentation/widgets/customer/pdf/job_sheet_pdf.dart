@@ -9,12 +9,26 @@ import 'package:http/http.dart' as http;
 
 pw.MemoryImage? customer;
 pw.MemoryImage? technician;
+pw.MemoryImage? companyLogoImage;
 
 Future<void> generateJobSheetPdf(
     {required JobSheetData jobSheet,
     required LeadDetails customerData,
+    String? companyLogoUrl,
+    String? companyTitle,
     bool isShare = false}) async {
   final pdf = pw.Document();
+
+  if (companyLogoUrl != null && companyLogoUrl.isNotEmpty) {
+    try {
+      final logoUrl = companyLogoUrl.startsWith('http')
+          ? companyLogoUrl
+          : '${HttpUrls.imgBaseUrl}$companyLogoUrl';
+      companyLogoImage = await _loadImageFromNetwork(logoUrl);
+    } catch (e) {
+      print('Failed to load company logo: $e');
+    }
+  }
 
   customer = await _loadImageFromNetwork(
       HttpUrls.imgBaseUrl + jobSheet.customerSignature);
@@ -26,7 +40,7 @@ Future<void> generateJobSheetPdf(
       pageFormat: PdfPageFormat.a4,
       margin: const pw.EdgeInsets.all(60),
       build: (context) => [
-        _buildHeader(),
+        _buildHeader(companyTitle),
         pw.SizedBox(height: 20),
         ..._buildCustomerDetails(customerData, jobSheet),
         pw.SizedBox(height: 20),
@@ -59,12 +73,18 @@ Future<void> generateJobSheetPdf(
   }
 }
 
-pw.Widget _buildHeader() {
+pw.Widget _buildHeader(String? companyTitle) {
   return pw.Column(
     crossAxisAlignment: pw.CrossAxisAlignment.center,
     children: [
+      if (companyLogoImage != null)
+        pw.Container(
+          height: 60,
+          child: pw.Image(companyLogoImage!),
+        ),
+      if (companyLogoImage != null) pw.SizedBox(height: 10),
       pw.Text(
-        'BODHIE SOLAR - PERIODICAL SERVICE REPORT',
+        '${companyTitle != null && companyTitle.isNotEmpty ? companyTitle : 'BODHIE SOLAR'} - PERIODICAL SERVICE REPORT',
         style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold),
       ),
       pw.Divider(thickness: 1),
@@ -504,7 +524,6 @@ List<pw.Widget> _buildSignatures(JobSheetData jobSheet) {
     ),
   ];
 }
-
 
 Future<pw.MemoryImage> _loadImageFromNetwork(String logoUrl) async {
   final response = await http.get(Uri.parse(logoUrl));

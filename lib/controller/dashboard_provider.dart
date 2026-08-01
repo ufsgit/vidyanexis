@@ -185,7 +185,13 @@ class DashboardProvider extends ChangeNotifier {
 
     try {
       final response = await HttpRequest.httpGetRequest(
-          endPoint: HttpUrls.fetchDashBoardTaskData);
+          endPoint: HttpUrls.fetchDashBoardTaskData,
+          bodyData: {
+            "Fromdate": _formattedFromDate,
+            "Todate": _formattedToDate,
+            "Is_Date_Check": _formattedFromDate.isNotEmpty ? "1" : "0",
+            "User": _selectedUser
+          });
 
       if (response.statusCode == 200) {
         // Use compute for parsing heavy JSON
