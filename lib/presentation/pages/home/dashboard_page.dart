@@ -27,6 +27,7 @@ import 'package:vidyanexis/presentation/pages/dashboard/amc_notification_tab.dar
 import 'package:vidyanexis/presentation/pages/dashboard/payment_reminder_tab.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/dashboard_count_tab.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/customer_outstanding_summary_tab.dart';
+import 'package:vidyanexis/presentation/pages/dashboard/user_activity_tab.dart';
 
 class DashBoardPage extends StatefulWidget {
   const DashBoardPage({super.key});
@@ -79,6 +80,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
         if ((settingsProvider.menuIsViewMap[51] ?? 1).toString() != '0') 2,
         if ((settingsProvider.menuIsViewMap[52] ?? 1).toString() != '0') 3,
         if ((settingsProvider.menuIsViewMap[152] ?? 1).toString() != '0') 7,
+        if (userType == "1") 8,
       ];
 
       if (allowedTabs.isNotEmpty) {
@@ -115,6 +117,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
       if ((settingsProvider.menuIsViewMap[51] ?? 1).toString() != '0') 2,
       if ((settingsProvider.menuIsViewMap[52] ?? 1).toString() != '0') 3,
       if ((settingsProvider.menuIsViewMap[152] ?? 1).toString() != '0') 7,
+      if (userType == "1") 8,
     ];
 
     Widget dateFilterBtn = Material(
@@ -342,7 +345,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
                         Expanded(
                           flex: 4,
                           child:
-                              CustomTab(dashBoardProvider: dashBoardProvider),
+                              CustomTab(dashBoardProvider: dashBoardProvider, userType: userType),
                         ),
                         const SizedBox(width: 12),
                         Expanded(flex: 2, child: dateFilterBtn),
@@ -355,7 +358,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
                   : Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        CustomTab(dashBoardProvider: dashBoardProvider),
+                        CustomTab(dashBoardProvider: dashBoardProvider, userType: userType),
                         const SizedBox(height: 12),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -457,6 +460,12 @@ class _DashBoardPageState extends State<DashBoardPage> {
                       duration: const Duration(milliseconds: 600),
                       alignment: const Alignment(0, 0),
                       child: const CustomerOutstandingSummaryTab(),
+                    );
+                  case 8:
+                    return AnimatedAlign(
+                      duration: const Duration(milliseconds: 600),
+                      alignment: const Alignment(0, 0),
+                      child: const UserActivityTab(),
                     );
                 }
                 return const SizedBox.shrink();

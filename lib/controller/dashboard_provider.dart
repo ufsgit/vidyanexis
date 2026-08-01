@@ -11,6 +11,7 @@ import 'package:vidyanexis/controller/models/task_allocation_model.dart';
 import 'package:vidyanexis/controller/models/work_report_summary_model.dart';
 import 'package:vidyanexis/controller/models/lead_enquiry_report_model.dart';
 import 'package:vidyanexis/controller/models/customer_outstanding_summary_model.dart';
+import 'package:vidyanexis/model/dashboard/user_activity_report_model.dart';
 import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/http/loader.dart';
@@ -84,6 +85,18 @@ class DashboardProvider extends ChangeNotifier {
   bool isPaymentLoaded = false;
   bool isCustomerOutstandingSummaryLoaded = false;
   CustomerOutstandingSummaryModel? customerOutstandingSummary;
+  bool isUserActivityLoaded = false;
+  UserActivityReportModel? userActivityReport;
+
+  String? selectedTaskFilterType;
+  List<Map<String, dynamic>>? adminDashboardTasks;
+  bool isAdminDashboardTasksLoading = false;
+
+  void clearAdminDashboardTasks() {
+    selectedTaskFilterType = null;
+    adminDashboardTasks = null;
+    notifyListeners();
+  }
 
   String? selectedeLeadConversionValue;
   String? selectedeLeadProgressValue;
@@ -628,6 +641,11 @@ class DashboardProvider extends ChangeNotifier {
       case 7: // Customer Outstanding Summary
         await getCustomerOutstandingSummary();
         break;
+      case 8: // User Activity
+        if (!isUserActivityLoaded) {
+          await fetchUserActivityData(context);
+        }
+        break;
     }
   }
 
@@ -760,6 +778,7 @@ class DashboardProvider extends ChangeNotifier {
     isAmcLoaded = false;
     isPaymentLoaded = false;
     isCustomerOutstandingSummaryLoaded = false;
+    isUserActivityLoaded = false;
   }
 
   Future<void> refreshDashboardData(BuildContext context,
@@ -898,5 +917,82 @@ class DashboardProvider extends ChangeNotifier {
     } finally {
       if (shouldNotify) notifyListeners();
     }
+  }
+
+  Future<void> fetchUserActivityData(BuildContext context, {bool shouldNotify = true}) async {
+    isUserActivityLoaded = false;
+    if (shouldNotify) notifyListeners();
+
+    try {
+      final response = await HttpRequest.httpGetRequest(
+          endPoint: HttpUrls.getAdminDashboard,
+          bodyData: {
+            "From_Date": _formattedFromDate,
+            "To_Date": _formattedToDate,
+            "User_Id": _selectedUser == 0 ? null : _selectedUser,
+            "Department_Id": null,
+            "Task_Status_Id": null,
+          });
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data != null) {
+          userActivityReport = UserActivityReportModel.fromJson(data);
+          isUserActivityLoaded = true;
+        }
+      } else {
+        _errorMessage = 'Failed to load user activity data';
+      }
+    } catch (e) {
+      _errorMessage = e.toString();
+    }
+
+    if (shouldNotify) notifyListeners();
+  }
+
+  Future<void> fetchAdminDashboardTaskList(String filterType, {int? userId}) async {
+    selectedTaskFilterType = filterType;
+    isAdminDashboardTasksLoading = true;
+    notifyListeners();
+
+    try {
+      final response = await HttpRequest.httpGetRequest(
+          endPoint: HttpUrls.getAdminDashboardTaskList,
+          bodyData: {
+            "From_Date": _formattedFromDate,
+            "To_Date": _formattedToDate,
+            "Is_Date": 1,
+            "User_Id": userId ?? (_selectedUser == 0 ? 0 : _selectedUser),
+            "Department_Id": 0,
+            "Filter_Type": filterType,
+          });
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data != null) {
+          if (data is List) {
+            adminDashboardTasks = List<Map<String, dynamic>>.from(data);
+          } else if (data is Map && data.containsKey('Tasks')) {
+            adminDashboardTasks = List<Map<String, dynamic>>.from(data['Tasks'] ?? []);
+          } else if (data is Map && data.containsKey('data')) {
+            adminDashboardTasks = List<Map<String, dynamic>>.from(data['data'] ?? []);
+          } else {
+             // Fallback if structure is unknown, maybe it's just the map itself or something
+             adminDashboardTasks = [Map<String, dynamic>.from(data)];
+          }
+        } else {
+           adminDashboardTasks = [];
+        }
+      } else {
+        _errorMessage = 'Failed to load task list';
+        adminDashboardTasks = [];
+      }
+    } catch (e) {
+      _errorMessage = e.toString();
+      adminDashboardTasks = [];
+    }
+
+    isAdminDashboardTasksLoading = false;
+    notifyListeners();
   }
 }

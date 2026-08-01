@@ -188,9 +188,11 @@ class CustomTab extends StatelessWidget {
   const CustomTab({
     super.key,
     required DashboardProvider dashBoardProvider,
+    this.userType = "",
   }) : _dashBoardProvider = dashBoardProvider;
 
   final DashboardProvider _dashBoardProvider;
+  final String userType;
 
   @override
   Widget build(BuildContext context) {
@@ -216,6 +218,7 @@ class CustomTab extends StatelessWidget {
       if (settingsProvider.menuIsViewMap[52].toString() != '0') 'Task Summary',
       if (settingsProvider.menuIsViewMap[152].toString() != '0')
         'Customer Outstanding Summary',
+      if (userType == '1') 'User Activity',
     ];
 
     //change permissions id in dashBoardPage also ----------------
@@ -262,6 +265,7 @@ class CustomTab extends StatelessWidget {
                         3,
                       if (settingsProvider.menuIsViewMap[152].toString() != '0')
                         7,
+                      if (userType == '1') 8,
                     ];
 
                     if (index >= 0 && index < allowedTabIds.length) {
@@ -328,6 +332,8 @@ class CustomTab extends StatelessWidget {
         return 'Summary';
       case 'Customer Outstanding Summary':
         return 'Outstanding';
+      case 'User Activity':
+        return 'Activity';
       default:
         return fullName;
     }

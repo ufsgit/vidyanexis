@@ -44,7 +44,11 @@ class HttpUrls {
 
   //static String baseUrl = 'https://2jw4dwnj-3512.inc1.devtunnels.ms/';
 
-  // static String baseUr = 'https://cn1hct1v-3512.inc1.devtunnels.ms/';
+  // static String baseUrl = 'https://cn1hct1v-3512.inc1.devtunnels.ms/';
+  
+//   static String baseUrl = 'https://28tzz0hf-3512.inc1.devtunnels.ms/';
+
+
 
   static String imgBaseUrl =
       'https://pub-b2e3330da2344ea490c08dd119392728.r2.dev/';
@@ -458,4 +462,6 @@ class HttpUrls {
 
   static String updateTaskPriority = "settings/Change_Task_Priority";
 
+  static String getAdminDashboard = "lead/Get_Admin_Dashboard";
+  static String getAdminDashboardTaskList = "lead/Get_Admin_Dashboard_Task_List";
 }

@@ -74,6 +74,7 @@ dependencies:
   android_intent_plus: ^6.0.0
   font_awesome_flutter: ^11.0.0
   signature: ^6.3.0
+  data_table_2: ^2.7.2
 dependency_overrides:
   record_linux: 
     git:
