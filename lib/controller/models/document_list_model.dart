@@ -27,6 +27,7 @@ class ImageDetail {
   final String isVerified;
   final String verifiedName;
   final String verifiedDate;
+  final String description;
 
   ImageDetail({
     required this.filePath,
@@ -37,6 +38,7 @@ class ImageDetail {
     required this.isVerified,
     required this.verifiedName,
     required this.verifiedDate,
+    required this.description,
   });
 
   factory ImageDetail.fromJson(Map<String, dynamic> json) {
@@ -49,6 +51,7 @@ class ImageDetail {
       isVerified: json['Is_Verified']?.toString() ?? '0',
       verifiedName: json['Verified_By_Name']?.toString() ?? '',
       verifiedDate: json['Verified_Date']?.toString() ?? '',
+      description: json['Description']?.toString() ?? '',
     );
   }
 }

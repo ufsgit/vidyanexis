@@ -462,6 +462,10 @@ class HttpUrls {
 
   static String updateTaskPriority = "settings/Change_Task_Priority";
 
+
   static String getAdminDashboard = "lead/Get_Admin_Dashboard";
   static String getAdminDashboardTaskList = "lead/Get_Admin_Dashboard_Task_List";
+
+  static String getTargetReport = 'lead/Get_Target_Report';
+
 }

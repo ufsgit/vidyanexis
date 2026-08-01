@@ -67,6 +67,7 @@ class LeadDetailsProvider with ChangeNotifier {
             leadProvider.referenceNameController.text =
                 leadData.referenceName ?? '';
             leadProvider.priorityId = leadData.priorityId;
+            leadProvider.leadSubsidyController.text = leadData.subsidyAmount;
 
             leadProvider.cityController.text = leadData.address1 ?? '';
             leadProvider.districtController.text = leadData.address2 ?? '';

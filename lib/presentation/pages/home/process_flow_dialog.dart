@@ -3,6 +3,7 @@ import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/leads_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/presentation/pages/home/job_sheet_page.dart';
 import 'package:vidyanexis/presentation/widgets/customer/upload_image.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/controller/models/search_user_details_model.dart';
@@ -133,6 +134,8 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
     final reportsProvider =
         Provider.of<TaskPageProvider>(context, listen: false);
     final leadProvider = Provider.of<LeadsProvider>(context, listen: false);
+    final settingsProvider = Provider.of<SettingsProvider>(context);
+
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC), // Subtle grey background
       appBar: AppBar(
@@ -249,6 +252,43 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                       child: ListView(
                         padding: const EdgeInsets.fromLTRB(16, 8, 16, 80),
                         children: [
+                          if (settingsProvider.showView[162] == 1) ...[
+                            Center(
+                              child: SizedBox(
+                                height: 32,
+                                width: double.infinity,
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor: AppColors.primaryBlue,
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16, vertical: 6),
+                                      minimumSize: const Size(80, 32),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(4))),
+                                  onPressed: () async {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => JobSheetPage(
+                                          taskId: widget.task.taskId,
+                                          customerId: int.tryParse(widget
+                                                  .task.customerId
+                                                  .toString()) ??
+                                              0,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: const Text('Job Sheet',
+                                      style: TextStyle(fontSize: 12)),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                          ],
+
                           // Status Segmented Control (Wrap instead of horizontal scroll)
                           Container(
                             width: double.infinity,

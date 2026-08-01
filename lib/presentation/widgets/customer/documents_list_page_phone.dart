@@ -565,6 +565,22 @@ class _DocumentsListPagePhoneState extends State<DocumentsListPagePhone> {
                                                                 color: const Color(
                                                                     0xFF64748B)),
                                                       ),
+                                                      Text(
+                                                        image.description,
+                                                        maxLines: 3,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        style: GoogleFonts
+                                                            .plusJakartaSans(
+                                                                fontSize: 11,
+                                                                color: const Color(
+                                                                    0xFF1E293B),
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600),
+                                                      ),
                                                     ],
                                                   ),
                                                 );

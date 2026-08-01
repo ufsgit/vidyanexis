@@ -4529,9 +4529,9 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                                         }
                                                                                       },
                                                                                       child: const CircleAvatar(
-                                                                                        radius: 4,
-                                                                                        backgroundColor: AppColors.primaryBlue,
-                                                                                        child: Icon(Icons.download, size: 14, color: Colors.white),
+                                                                                        radius: 12,
+                                                                                        backgroundColor: AppColors.whiteColor,
+                                                                                        child: Icon(Icons.download, size: 20, color: AppColors.primaryBlue),
                                                                                       ),
                                                                                     ),
                                                                                     if (settingsprovider.menuIsDeleteMap[19] == 1) ...[
@@ -4554,9 +4554,9 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                                           );
                                                                                         },
                                                                                         child: const CircleAvatar(
-                                                                                          radius: 4,
-                                                                                          backgroundColor: Colors.grey,
-                                                                                          child: Icon(Icons.delete, size: 14, color: Colors.white),
+                                                                                          radius: 12,
+                                                                                          backgroundColor: AppColors.whiteColor,
+                                                                                          child: Icon(Icons.delete, size: 20, color: AppColors.textRed),
                                                                                         ),
                                                                                       ),
                                                                                     ],
@@ -4641,6 +4641,17 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                                 TextStyle(fontSize: 10, color: AppColors.textGrey4),
                                                                             textAlign:
                                                                                 TextAlign.center,
+                                                                          ),
+                                                                          Text(
+                                                                            image.description,
+                                                                            style:
+                                                                                TextStyle(fontSize: 12, color: AppColors.textBlack),
+                                                                            textAlign:
+                                                                                TextAlign.center,
+                                                                            maxLines:
+                                                                                3,
+                                                                            overflow:
+                                                                                TextOverflow.ellipsis,
                                                                           ),
                                                                         ],
                                                                       ),

@@ -306,6 +306,7 @@ class ImageUploadProvider extends ChangeNotifier {
     _selectedDocumentType = null;
     _fileInfoList.clear();
     uploadedFilePaths.clear();
+    _documentDescriptions.clear();
     notifyListeners();
   }
 
@@ -453,7 +454,8 @@ class ImageUploadProvider extends ChangeNotifier {
             "Customer_Id": customerId,
             "Document_Type_Id": _selectedDocumentType ?? 0,
             "File_Paths": uploadedFilePaths,
-            "User_Details_Id": userId
+            "User_Details_Id": userId,
+            "Description": getDescription(_selectedDocumentType),
           });
 
       if (response!.statusCode == 200) {
@@ -539,7 +541,8 @@ class ImageUploadProvider extends ChangeNotifier {
                 "Customer_Id": customerId,
                 "Document_Type_Id": typeId ?? 0,
                 "File_Paths": currentUploadedPaths,
-                "User_Details_Id": userId
+                "User_Details_Id": userId,
+                "Description": getDescription(typeId),
               });
 
           if (response != null && response.statusCode == 200) {
@@ -571,5 +574,19 @@ class ImageUploadProvider extends ChangeNotifier {
         const SnackBar(content: Text('An error occurred during upload')),
       );
     }
+  }
+
+  // Descriptions per document type
+  final Map<int, String> _documentDescriptions = {};
+  Map<int, String> get documentDescriptions => _documentDescriptions;
+
+  void updateDescription(int docTypeId, String description) {
+    _documentDescriptions[docTypeId] = description;
+    notifyListeners();
+  }
+
+  String getDescription(int? docTypeId) {
+    if (docTypeId == null) return '';
+    return _documentDescriptions[docTypeId] ?? '';
   }
 }

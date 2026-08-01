@@ -32,6 +32,7 @@ import 'package:vidyanexis/controller/side_bar_provider.dart';
 
 import 'package:vidyanexis/controller/models/task_type_status_model.dart';
 import 'package:vidyanexis/controller/models/sub_status_model.dart';
+import 'package:vidyanexis/presentation/widgets/home/expandable_fab_button.dart';
 import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
 import 'package:vidyanexis/presentation/pages/home/job_sheet_page.dart';
@@ -2538,6 +2539,7 @@ provider.getLandmarks(context);
             )
           : !reportsProvider.isFilter && !AppStyles.isWebScreen(context)
               ? //Create Task
+
               Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: IconButton(
@@ -2625,22 +2627,57 @@ provider.getLandmarks(context);
                                     ),
                                   ],
                                 ],
+
+              ExpandableCreateFab(
+                  backgroundColor: AppColors.appViolet,
+                  iconColor: Colors.white,
+                  options: [
+                    // if (settingsProvider.menuIsViewMap[156] == 1)
+                      FabOption(
+                        label: 'Create Lead',
+                        icon: Icons.person_add,
+                        onTap: () async {
+                          final dropDownProvider =
+                              Provider.of<DropDownProvider>(context,
+                                  listen: false);
+                          final leadProvider = Provider.of<LeadsProvider>(
+                              context,
+                              listen: false);
+                          dropDownProvider.updateEnquiryForName(null, '');
+                          dropDownProvider.updateDistrict(null, '');
+
+                          leadProvider.getLeadDropdowns(context);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const NewLeadDrawerMobileWidget(
+                                isEdit: false,
+                                customerId: '0',
+
                               ),
                             ),
                           );
                         },
-                      );
-                    },
-                    icon: const Icon(Icons.add),
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(4)),
-                      backgroundColor: AppColors.primaryBlue,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 12),
+                      ),
+                    FabOption(
+                      label: 'Create Task',
+                      icon: Icons.task_alt,
+                      onTap: () {
+                        showDialog(
+                          barrierDismissible: false,
+                          context: context,
+                          builder: (BuildContext context) {
+                            return TaskCreationWidget(
+                              isEdit: false,
+                              taskId: '0',
+                              showDocument: true,
+                            );
+                          },
+                        );
+                      },
                     ),
-                  ),
+                  ],
                 )
               : null,
     );

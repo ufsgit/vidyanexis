@@ -49,6 +49,7 @@ class LeadsProvider extends ChangeNotifier {
   final TextEditingController consumerContactNoController =
       TextEditingController();
   final TextEditingController referenceNameController = TextEditingController();
+  final TextEditingController leadSubsidyController = TextEditingController();
 
   final TextEditingController emailIdController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
@@ -706,6 +707,7 @@ class LeadsProvider extends ChangeNotifier {
     transferStatusController.clear();
     priorityId = 0;
     priorityNameController.clear();
+    leadSubsidyController.clear();
     notifyListeners();
   }
 //api for dropdowns
@@ -1583,6 +1585,7 @@ class LeadsProvider extends ChangeNotifier {
           "Lead_Type_Name": leadtypeName,
           "Location_Id": locationId,
           "Priority_Id": priorityId,
+          "Subsidy_Amount": double.tryParse(leadSubsidyController.text) ?? 0,
         },
         "followup": {
           "Next_FollowUp_date": nextFollowUpDate,

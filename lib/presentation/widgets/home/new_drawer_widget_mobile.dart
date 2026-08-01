@@ -2711,6 +2711,22 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
         const SizedBox(
           height: 10,
         ),
+       if (settingsProvider.menuIsViewMap[171] == 1) ...[
+          CustomTextField(
+            height: 54,
+            controller: leadProvider.leadSubsidyController,
+            hintText: 'Subsidy Amount',
+            labelText: '',
+            showError: dropDownProvider.showValidation &&
+                !_isFieldValid(leadProvider.leadSubsidyController.text),
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
+            ],
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+        ],
         if (settingsProvider.menuIsViewMap[104] == 1) ...[
           CustomTextfieldWidgetMobile(
             focusNode: FocusNode(),

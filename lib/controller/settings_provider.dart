@@ -262,6 +262,8 @@ class SettingsProvider extends ChangeNotifier {
   //tasktype
   final TextEditingController taskTypeController = TextEditingController();
   final TextEditingController durationController = TextEditingController();
+  final TextEditingController dailyTargetController = TextEditingController();
+  final TextEditingController monthlyTargetController = TextEditingController();
   final TextEditingController orderByController = TextEditingController();
   final TextEditingController departmentTaskController =
       TextEditingController();
@@ -5189,6 +5191,8 @@ class SettingsProvider extends ChangeNotifier {
         searchTaskTypeController.clear();
         defaultStatusController.clear();
         durationController.clear();
+        dailyTargetController.clear();
+        monthlyTargetController.clear();
         orderByController.clear();
         taskTypeDescriptionController.clear();
         _selectedDefaultStatusId = -1;
