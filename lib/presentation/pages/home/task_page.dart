@@ -2541,144 +2541,96 @@ provider.getLandmarks(context);
               ? //Create Task
 
               Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: IconButton(
-                    onPressed: () {
-                      showModalBottomSheet(
-                        context: context,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-                        ),
-                        builder: (BuildContext sheetContext) {
-                          return SafeArea(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 16.0),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
+                padding: const EdgeInsets.only(bottom: 32),
+                child: FloatingActionButton(
+                  backgroundColor: AppColors.appViolet,
+                  onPressed: () {
+                    showModalBottomSheet(
+                      context: context,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                      ),
+                      builder: (BuildContext sheetContext) {
+                        return SafeArea(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 16.0),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                ListTile(
+                                  leading: const Icon(Icons.task, color: AppColors.primaryBlue),
+                                  title: const Text('Create Task', style: TextStyle(fontWeight: FontWeight.w500)),
+                                  onTap: () {
+                                    Navigator.pop(sheetContext);
+                                    showDialog(
+                                      barrierDismissible: false,
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return TaskCreationWidget(
+                                          isEdit: false,
+                                          taskId: '0',
+                                          showDocument: true,
+                                        );
+                                      },
+                                    );
+                                  },
+                                ),
+                                if (settingsProvider.menuIsViewMap[156] == 1) ...[
+                                  const Divider(),
                                   ListTile(
-                                    leading: const Icon(Icons.task, color: AppColors.primaryBlue),
-                                    title: const Text('Create Task', style: TextStyle(fontWeight: FontWeight.w500)),
-                                    onTap: () {
-                                      Navigator.pop(sheetContext);
-                                      showDialog(
-                                        barrierDismissible: false,
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return TaskCreationWidget(
-                                            isEdit: false,
-                                            taskId: '0',
-                                            showDocument: true,
-                                          );
-                                        },
-                                      );
-                                    },
-                                  ),
-                                  if (settingsProvider.menuIsViewMap[156] == 1) ...[
-                                    const Divider(),
-                                    ListTile(
-                                      leading: const Icon(Icons.person_add, color: AppColors.primaryBlue),
-                                      title: const Text('Add New Lead', style: TextStyle(fontWeight: FontWeight.w500)),
+                                    leading: const Icon(Icons.person_add, color: AppColors.primaryBlue),
+                                    title: const Text('Add New Lead', style: TextStyle(fontWeight: FontWeight.w500)),
                                     onTap: () async {
                                       Navigator.pop(sheetContext);
                                         
-                                        final dropDownProvider =
-                                            Provider.of<DropDownProvider>(context,
-                                                listen: false);
-                                        final leadsProvider =
-                                            Provider.of<LeadsProvider>(context,
-                                                listen: false);
+                                      final dropDownProvider =
+                                          Provider.of<DropDownProvider>(context, listen: false);
+                                      final leadsProvider =
+                                          Provider.of<LeadsProvider>(context, listen: false);
                                         
-                                        dropDownProvider.updateEnquiryForName(
-                                            null, '');
-                                        dropDownProvider.updateDistrict(null, '');
-                                        final settingsProvider =
-                                            Provider.of<SettingsProvider>(context,
-                                                listen: false);
+                                      dropDownProvider.updateEnquiryForName(null, '');
+                                      dropDownProvider.updateDistrict(null, '');
+                                      final settingsProvider =
+                                          Provider.of<SettingsProvider>(context, listen: false);
                                         
-                                        await Future.wait([
-                                          leadsProvider.getLeadDropdowns(context),
-                                          dropDownProvider.getFollowUpStatus(context, "1"),
-                                          dropDownProvider.getEnquirySource(context),
-                                          dropDownProvider.getEnquiryFor(context),
-                                          settingsProvider.searchsourceCategoryData('', context),
-                                        ]);
-                                        settingsProvider.searchBranch(context);
-                                        settingsProvider.searchDepartment(
-                                            '', context);
+                                      await Future.wait([
+                                        leadsProvider.getLeadDropdowns(context),
+                                        dropDownProvider.getFollowUpStatus(context, "1"),
+                                        dropDownProvider.getEnquirySource(context),
+                                        dropDownProvider.getEnquiryFor(context),
+                                        settingsProvider.searchsourceCategoryData('', context),
+                                      ]);
+                                      settingsProvider.searchBranch(context);
+                                      settingsProvider.searchDepartment('', context);
                                         
-                                        if (!context.mounted) return;
+                                      if (!context.mounted) return;
                                         
-                                        await Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => const NewLeadDrawerMobileWidget(
-                                              isEdit: false,
-                                              customerId: '0',
-                                            ),
+                                      await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => const NewLeadDrawerMobileWidget(
+                                            isEdit: false,
+                                            customerId: '0',
                                           ),
-                                        );
+                                        ),
+                                      );
                                         
-                                        if (context.mounted) {
-                                          dropDownProvider.getFollowUpStatus(
-                                              context, "3");
-                                        }
-                                      },
-                                    ),
-                                  ],
+                                      if (context.mounted) {
+                                        dropDownProvider.getFollowUpStatus(context, "3");
+                                      }
+                                    },
+                                  ),
                                 ],
-
-              ExpandableCreateFab(
-                  backgroundColor: AppColors.appViolet,
-                  iconColor: Colors.white,
-                  options: [
-                    // if (settingsProvider.menuIsViewMap[156] == 1)
-                      FabOption(
-                        label: 'Create Lead',
-                        icon: Icons.person_add,
-                        onTap: () async {
-                          final dropDownProvider =
-                              Provider.of<DropDownProvider>(context,
-                                  listen: false);
-                          final leadProvider = Provider.of<LeadsProvider>(
-                              context,
-                              listen: false);
-                          dropDownProvider.updateEnquiryForName(null, '');
-                          dropDownProvider.updateDistrict(null, '');
-
-                          leadProvider.getLeadDropdowns(context);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  const NewLeadDrawerMobileWidget(
-                                isEdit: false,
-                                customerId: '0',
-
-                              ),
+                              ],
                             ),
-                          );
-                        },
-                      ),
-                    FabOption(
-                      label: 'Create Task',
-                      icon: Icons.task_alt,
-                      onTap: () {
-                        showDialog(
-                          barrierDismissible: false,
-                          context: context,
-                          builder: (BuildContext context) {
-                            return TaskCreationWidget(
-                              isEdit: false,
-                              taskId: '0',
-                              showDocument: true,
-                            );
-                          },
+                          ),
                         );
                       },
-                    ),
-                  ],
-                )
+                    );
+                  },
+                  child: const Icon(Icons.add, color: Colors.white),
+                ),
+              )
               : null,
     );
   }
