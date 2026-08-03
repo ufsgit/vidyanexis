@@ -467,5 +467,6 @@ class HttpUrls {
   static String getAdminDashboardTaskList = "lead/Get_Admin_Dashboard_Task_List";
 
   static String getTargetReport = 'lead/Get_Target_Report';
+  static String searchAccountsSummaryReport = 'lead/Search_Accounts_Summary_Report';
 
 }
