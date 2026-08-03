@@ -443,16 +443,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                               return Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const SizedBox(height: 24),
-                                  Text(
-                                    'CUSTOM FIELDS',
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      color: Colors.grey.shade600,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 12),
+                                  const SizedBox(height: 8),
                                   CustomFieldSectionWidget(
                                     key:
                                         customFieldTaskStatusKey, // Make sure this GlobalKey is defined
