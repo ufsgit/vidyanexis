@@ -467,7 +467,7 @@ class QuotationCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    '₹ ${quotation?.netCost != null && quotation!.netCost.isNotEmpty && quotation?.netCost != '0.0' ? quotation!.netCost : (quotation?.netTotal ?? '0')}',
+                    NumberFormat.currency(locale: 'en_IN', symbol: '₹ ', decimalDigits: 2).format(double.tryParse(quotation?.netTotal ?? '0') ?? 0.0),
                     style: const TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 15),
                   ),

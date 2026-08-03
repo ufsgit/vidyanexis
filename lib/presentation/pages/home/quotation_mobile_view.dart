@@ -699,7 +699,7 @@ class _QuotationMobileViewState extends State<QuotationMobileView> with Automati
                               Row(
                                 children: [
                                   Text(
-                                    NumberFormat.currency(locale: 'en_IN', symbol: '₹ ', decimalDigits: 2).format(item.calculatedNetCost),
+                                    NumberFormat.currency(locale: 'en_IN', symbol: '₹ ', decimalDigits: 2).format(double.tryParse(item.netTotal) ?? 0.0),
                                     style: GoogleFonts.plusJakartaSans(
                                       fontSize: 15,
                                       fontWeight: FontWeight.w700,

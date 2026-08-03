@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:printing/printing.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:vidyanexis/utils/file_downloader.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
@@ -474,7 +475,7 @@ class QuotationDetailsWidget extends StatelessWidget {
                                                       horizontal: 8),
                                               child: buildItemRow(
                                                   'Customer Amount to Pay',
-                                                  '₹${customerDetailsProvider.quotationListByMaster[0].netTotal}',
+                                                  NumberFormat.currency(locale: 'en_IN', symbol: '₹ ', decimalDigits: 2).format(double.tryParse(customerDetailsProvider.quotationListByMaster[0].netTotal) ?? 0.0),
                                                   textStyle: GoogleFonts
                                                       .plusJakartaSans(
                                                           color: AppColors
