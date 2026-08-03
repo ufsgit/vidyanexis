@@ -3,6 +3,7 @@ import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/job_sheet_provider.dart';import 'package:vidyanexis/http/http_urls.dart';
 
 import 'package:vidyanexis/http/loader.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
 
 import 'package:vidyanexis/presentation/widgets/customer/pdf/job_sheet_pdf.dart';
 
@@ -106,12 +107,12 @@ class _JobSheetPageState extends State<JobSheetPage> {
 
               // await settingsprovider.getCompanyDetails();
 
+              final settingsprovider = Provider.of<SettingsProvider>(context, listen: false);
               await generateJobSheetPdf(
-
                   jobSheet: jobSheetProvider.jobSheet[0],
-
                   customerData: customerDetailsProvider.leadDetails![0],
-
+                  companyLogoUrl: settingsprovider.logo,
+                  companyTitle: settingsprovider.title,
                   isShare: true);
 
               Loader.stopLoader(context);
@@ -138,11 +139,12 @@ class _JobSheetPageState extends State<JobSheetPage> {
 
               // await settingsprovider.getCompanyDetails();
 
+              final settingsprovider = Provider.of<SettingsProvider>(context, listen: false);
               await generateJobSheetPdf(
-
                   jobSheet: jobSheetProvider.jobSheet[0],
-
-                  customerData: customerDetailsProvider.leadDetails![0]);
+                  customerData: customerDetailsProvider.leadDetails![0],
+                  companyLogoUrl: settingsprovider.logo,
+                  companyTitle: settingsprovider.title);
 
               Loader.stopLoader(context);
 
@@ -176,19 +178,19 @@ class _JobSheetPageState extends State<JobSheetPage> {
 
           children: [
 
-            // Service Type
+            // Task Type
 
             CommonDropdown<int>(
 
-              hintText: 'Select Service Type',
+              hintText: 'Select Service type',
 
-              items: jobSheetProvider.serviceTypes,
+              items: jobSheetProvider.taskTypes,
 
-              controller: jobSheetProvider.serviceTypeController,
+              controller: jobSheetProvider.taskTypeController,
 
-              onItemSelected: jobSheetProvider.setServiceType,
+              onItemSelected: jobSheetProvider.setTaskType,
 
-              selectedValue: jobSheetProvider.selectedServiceType,
+              selectedValue: jobSheetProvider.selectedTaskType,
 
             ),
 

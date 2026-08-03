@@ -6,11 +6,13 @@ import 'package:vidyanexis/presentation/widgets/customer/add_quotation.dart';
 class EditQuotationScreen extends StatelessWidget {
   final String customerId;
   final String quotationId;
+  final bool isDuplicate;
 
   const EditQuotationScreen({
     super.key,
     required this.customerId,
     required this.quotationId,
+    this.isDuplicate = false,
   });
 
   @override
@@ -19,6 +21,7 @@ class EditQuotationScreen extends StatelessWidget {
       customerId: customerId,
       quotationId: quotationId,
       isEdit: true,
+      isDuplicate: isDuplicate,
     );
   }
 }

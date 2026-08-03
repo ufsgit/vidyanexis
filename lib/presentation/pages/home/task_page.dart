@@ -32,11 +32,13 @@ import 'package:vidyanexis/controller/side_bar_provider.dart';
 
 import 'package:vidyanexis/controller/models/task_type_status_model.dart';
 import 'package:vidyanexis/controller/models/sub_status_model.dart';
+import 'package:vidyanexis/presentation/widgets/home/expandable_fab_button.dart';
 import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
 import 'package:vidyanexis/presentation/pages/home/job_sheet_page.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import 'package:vidyanexis/controller/leads_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
@@ -677,20 +679,17 @@ provider.getLandmarks(context);
                                   dropDownProvider.updateEnquiryForName(
                                       null, '');
                                   dropDownProvider.updateDistrict(null, '');
-
-                                  await leadsProvider.getLeadDropdowns(context);
-                                  await dropDownProvider.getFollowUpStatus(
-                                      context, "1");
-
-                                  // Fetch missing dropdown data for the Lead drawer explicitly
-                                  await dropDownProvider
-                                      .getEnquirySource(context);
-                                  await dropDownProvider.getEnquiryFor(context);
+                                  
                                   final settingsProvider =
                                       Provider.of<SettingsProvider>(context,
                                           listen: false);
-                                  await settingsProvider
-                                      .searchsourceCategoryData('', context);
+                                  await Future.wait([
+                                    leadsProvider.getLeadDropdowns(context),
+                                    dropDownProvider.getFollowUpStatus(context, "1"),
+                                    dropDownProvider.getEnquirySource(context),
+                                    dropDownProvider.getEnquiryFor(context),
+                                    settingsProvider.searchsourceCategoryData('', context),
+                                  ]);
                                   settingsProvider.searchBranch(context);
                                   settingsProvider.searchDepartment(
                                       '', context);
@@ -2540,33 +2539,98 @@ provider.getLandmarks(context);
             )
           : !reportsProvider.isFilter && !AppStyles.isWebScreen(context)
               ? //Create Task
+
               Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: IconButton(
-                    onPressed: () {
-                      showDialog(
-                        barrierDismissible: false,
-                        context: context,
-                        builder: (BuildContext context) {
-                          return TaskCreationWidget(
-                            isEdit: false,
-                            taskId: '0',
-                            showDocument: true,
-                          );
-                        },
-                      );
-                    },
-                    icon: const Icon(Icons.add),
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(4)),
-                      backgroundColor: AppColors.primaryBlue,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 12),
-                    ),
-                  ),
-                )
+                padding: const EdgeInsets.only(bottom: 32),
+                child: FloatingActionButton(
+                  backgroundColor: AppColors.appViolet,
+                  onPressed: () {
+                    showModalBottomSheet(
+                      context: context,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                      ),
+                      builder: (BuildContext sheetContext) {
+                        return SafeArea(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 16.0),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                ListTile(
+                                  leading: const Icon(Icons.task, color: AppColors.primaryBlue),
+                                  title: const Text('Create Task', style: TextStyle(fontWeight: FontWeight.w500)),
+                                  onTap: () {
+                                    Navigator.pop(sheetContext);
+                                    showDialog(
+                                      barrierDismissible: false,
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return TaskCreationWidget(
+                                          isEdit: false,
+                                          taskId: '0',
+                                          showDocument: true,
+                                        );
+                                      },
+                                    );
+                                  },
+                                ),
+                                if (settingsProvider.menuIsViewMap[156] == 1) ...[
+                                  const Divider(),
+                                  ListTile(
+                                    leading: const Icon(Icons.person_add, color: AppColors.primaryBlue),
+                                    title: const Text('Add New Lead', style: TextStyle(fontWeight: FontWeight.w500)),
+                                    onTap: () async {
+                                      Navigator.pop(sheetContext);
+                                        
+                                      final dropDownProvider =
+                                          Provider.of<DropDownProvider>(context, listen: false);
+                                      final leadsProvider =
+                                          Provider.of<LeadsProvider>(context, listen: false);
+                                        
+                                      dropDownProvider.updateEnquiryForName(null, '');
+                                      dropDownProvider.updateDistrict(null, '');
+                                      final settingsProvider =
+                                          Provider.of<SettingsProvider>(context, listen: false);
+                                        
+                                      await Future.wait([
+                                        leadsProvider.getLeadDropdowns(context),
+                                        dropDownProvider.getFollowUpStatus(context, "1"),
+                                        dropDownProvider.getEnquirySource(context),
+                                        dropDownProvider.getEnquiryFor(context),
+                                        settingsProvider.searchsourceCategoryData('', context),
+                                      ]);
+                                      settingsProvider.searchBranch(context);
+                                      settingsProvider.searchDepartment('', context);
+                                        
+                                      if (!context.mounted) return;
+                                        
+                                      await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => const NewLeadDrawerMobileWidget(
+                                            isEdit: false,
+                                            customerId: '0',
+                                          ),
+                                        ),
+                                      );
+                                        
+                                      if (context.mounted) {
+                                        dropDownProvider.getFollowUpStatus(context, "3");
+                                      }
+                                    },
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                  child: const Icon(Icons.add, color: Colors.white),
+                ),
+              )
               : null,
     );
   }
@@ -3577,16 +3641,7 @@ provider.getLandmarks(context);
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      const SizedBox(height: 24),
-                                      Text(
-                                        'CUSTOM FIELDS',
-                                        style: TextStyle(
-                                          fontSize: 13,
-                                          color: Colors.grey.shade600,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 12),
+                                      const SizedBox(height: 8),
                                       CustomFieldSectionWidget(
                                         key:
                                             customFieldTaskStatusKey, // Make sure this GlobalKey is defined

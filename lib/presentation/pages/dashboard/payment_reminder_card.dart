@@ -20,8 +20,9 @@ class PaymentReminderCard extends StatelessWidget {
   }
 
   String _getInitials(String name) {
-    if (name.isEmpty) return '??';
-    final parts = name.split(' ');
+    final cleanName = name.trim();
+    if (cleanName.isEmpty) return '??';
+    final parts = cleanName.split(RegExp(r'\s+'));
     if (parts.length > 1) {
       return (parts[0][0] + parts[1][0]).toUpperCase();
     }

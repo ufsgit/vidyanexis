@@ -230,7 +230,7 @@ class _TaskOverviewTabState extends State<TaskOverviewTab> {
                           ),
                         ),
                         Text(
-                          "${department.taskCount ?? 0} task categories",
+                          "${department.tasks?.length ?? 0} task categories • ${department.taskCount ?? 0} tasks",
                           style: GoogleFonts.plusJakartaSans(
                             fontSize: 12,
                             fontWeight: FontWeight.w500,

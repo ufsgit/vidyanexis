@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 extension DateStringFormatter on String {
   String toFormattedDate() {
     try {
-      final DateTime date = DateTime.parse(this);
+      final DateTime date = DateTime.parse(this).toLocal();
       return DateFormat('E, MMM d').format(date);
       // 'E' for abbreviated weekday (Mon)
       // 'MMM' for abbreviated month (May)
@@ -52,7 +52,7 @@ extension DateStringFormatter on String {
 
   String toDDMMYYYY() {
     try {
-      final DateTime date = DateTime.parse(this);
+      final DateTime date = DateTime.parse(this).toLocal();
       return DateFormat('dd/MM/yyyy').format(date);
       // 'E' for abbreviated weekday (Mon)
       // 'MMM' for abbreviated month (May)

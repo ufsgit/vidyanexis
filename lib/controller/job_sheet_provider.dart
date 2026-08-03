@@ -14,11 +14,7 @@ class JobSheetProvider extends ChangeNotifier {
   int jobSheetId = 0;
 
   // Dropdown data
-  List<DropdownItem<int>> serviceTypes = [
-    DropdownItem(id: 1, name: "Routine Maintenance"),
-    DropdownItem(id: 2, name: "Complaint Visit"),
-    DropdownItem(id: 3, name: "Follow-up"),
-  ];
+  List<DropdownItem<int>> taskTypes = [];
 
   List<DropdownItem<int>> satisfactionLevels = [
     DropdownItem(id: 1, name: "Excellent"),
@@ -34,7 +30,7 @@ class JobSheetProvider extends ChangeNotifier {
   ];
 
   // Controllers
-  final TextEditingController serviceTypeController = TextEditingController();
+  final TextEditingController taskTypeController = TextEditingController();
   final TextEditingController selectedSatisfactionName =
       TextEditingController();
   final TextEditingController selectedScheduleDateName =
@@ -54,7 +50,7 @@ class JobSheetProvider extends ChangeNotifier {
   final TextEditingController customerSignatureDate = TextEditingController();
 
   // Selected values
-  int? selectedServiceType;
+  int? selectedTaskType;
   int? selectedSatisfactionId;
   int? selectedScheduleDateType;
 
@@ -104,20 +100,25 @@ class JobSheetProvider extends ChangeNotifier {
 
   Future<void> saveCustomerSignature(BuildContext context) async {
     if (signatureController.isNotEmpty) {
-      // Convert the signature to an image
-      final signature = await signatureController.toImage();
-      final byteData = await signature!.toByteData(format: ImageByteFormat.png);
-      final pngBytes = byteData!.buffer.asUint8List();
-      _customerSignatureImage = await CloudflareUpload.uploadToCloudflare(
-              pngBytes, 'image/jpeg', taskId.toString(), context) ??
-          '';
-      
-      signatureController.clear();
-      Navigator.of(context).pop();
+      Loader.showLoader(context);
+      try {
+        // Convert the signature to an image
+        final signature = await signatureController.toImage();
+        final byteData = await signature!.toByteData(format: ImageByteFormat.png);
+        final pngBytes = byteData!.buffer.asUint8List();
+        _customerSignatureImage = await CloudflareUpload.uploadToCloudflare(
+                pngBytes, 'image/jpeg', taskId.toString(), context) ??
+            '';
+        
+        signatureController.clear();
+        Navigator.of(context).pop();
 
-      notifyListeners();
-      // You can now use the filePath to access the saved image later
-      print("Signature saved at $_customerSignatureImage");
+        notifyListeners();
+        // You can now use the filePath to access the saved image later
+        print("Signature saved at $_customerSignatureImage");
+      } finally {
+        Loader.stopLoader(context);
+      }
     } else {
       print("Please draw a signature before saving!");
     }
@@ -125,33 +126,65 @@ class JobSheetProvider extends ChangeNotifier {
 
   Future<void> saveTechnicianSignature(BuildContext context) async {
     if (signatureController.isNotEmpty) {
-      // Convert the signature to an image
-      final signature = await signatureController.toImage();
-      final byteData = await signature!.toByteData(format: ImageByteFormat.png);
-      final pngBytes = byteData!.buffer.asUint8List();
-      _technicianSignatureImage = await CloudflareUpload.uploadToCloudflare(
-              pngBytes, 'image/jpeg', taskId.toString(), context) ??
-          '';
-      
-      signatureController.clear();
-      Navigator.of(context).pop();
+      Loader.showLoader(context);
+      try {
+        // Convert the signature to an image
+        final signature = await signatureController.toImage();
+        final byteData = await signature!.toByteData(format: ImageByteFormat.png);
+        final pngBytes = byteData!.buffer.asUint8List();
+        _technicianSignatureImage = await CloudflareUpload.uploadToCloudflare(
+                pngBytes, 'image/jpeg', taskId.toString(), context) ??
+            '';
+        
+        signatureController.clear();
+        Navigator.of(context).pop();
 
-      notifyListeners();
-      // You can now use the filePath to access the saved image later
-      print("Signature saved at $_technicianSignatureImage");
+        notifyListeners();
+        // You can now use the filePath to access the saved image later
+        print("Signature saved at $_technicianSignatureImage");
+      } finally {
+        Loader.stopLoader(context);
+      }
     } else {
       print("Please draw a signature before saving!");
     }
   }
 
   // Dropdown setters
-  void setServiceType(int? id) {
-    selectedServiceType = id;
-    serviceTypeController.text = serviceTypes
+  void setTaskType(int? id) {
+    selectedTaskType = id;
+    taskTypeController.text = taskTypes
         .firstWhere((item) => item.id == id,
             orElse: () => DropdownItem(id: 0, name: ''))
         .name;
     notifyListeners();
+  }
+
+  Future<void> fetchTaskTypes(BuildContext context) async {
+    try {
+      final response = await HttpRequest.httpGetRequest(
+          endPoint: HttpUrls.searchTaskType,
+          bodyData: {
+            'Task_Type_Name': '',
+            'Enquiry_For_Id': '0',
+          });
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data != null) {
+          final allTaskTypes = (data as List<dynamic>);
+          taskTypes = allTaskTypes
+              .map((item) => DropdownItem<int>(
+                    id: item['Task_Type_Id'] ?? 0,
+                    name: item['Task_Type_Name'] ?? '',
+                  ))
+              .toList();
+          notifyListeners();
+        }
+      }
+    } catch (e) {
+      debugPrint('Exception occurred while fetching task types: $e');
+    }
   }
 
   void setSatisfactionId(int? id) {
@@ -225,20 +258,28 @@ class JobSheetProvider extends ChangeNotifier {
     try {
       final jobSheetData = jobSheet[0];
       // Populate values
-      final serviceTypeItem = serviceTypes.firstWhere(
+      final taskTypeItem = taskTypes.firstWhere(
         (item) => item.name == jobSheetData.serviceType,
         orElse: () => DropdownItem(id: 0, name: ''),
       );
-      if (serviceTypeItem.id != 0) {
-        setServiceType(serviceTypeItem.id);
+      if (taskTypeItem.id != 0) {
+        setTaskType(taskTypeItem.id);
       }
       setJobSheetId(jobSheetData.jobSheetId);
 
       weatherConditionController.text = jobSheetData.weatherCondition;
       actionTakenController.text = jobSheetData.actionTaken;
       observationController.text = jobSheetData.observation;
-      nextScheduledDateController.text =
-          jobSheetData.nextScheduledDate.split('T').first;
+      String getLocalDate(String dateStr) {
+        if (dateStr.isEmpty) return '';
+        try {
+          return DateTime.parse(dateStr).toLocal().toIso8601String().split('T').first;
+        } catch (_) {
+          return dateStr.split('T').first;
+        }
+      }
+
+      nextScheduledDateController.text = getLocalDate(jobSheetData.nextScheduledDate);
       setScheduleDateType(jobSheetData.nextScheduledDateType);
       setSatisfactionId(jobSheetData.customerOverallSatisfactionId);
       remarkController.text = jobSheetData.additionalRemark;
@@ -247,10 +288,8 @@ class JobSheetProvider extends ChangeNotifier {
       _customerSignatureImage = jobSheetData.customerSignature;
       _technicianSignatureImage = jobSheetData.technicianSignature;
 
-      customerSignatureDate.text =
-          jobSheetData.customerSignatureDate.split('T').first;
-      technicianSignatureDate.text =
-          jobSheetData.technicianSignatureDate.split('T').first;
+      customerSignatureDate.text = getLocalDate(jobSheetData.customerSignatureDate);
+      technicianSignatureDate.text = getLocalDate(jobSheetData.technicianSignatureDate);
 
       // Populate system performance
       print(
@@ -297,8 +336,8 @@ class JobSheetProvider extends ChangeNotifier {
     return JobSheetData(
       jobSheetId: jobSheetId,
       taskId: taskId,
-      serviceType: serviceTypeController.text,
-      serviceTypeId: selectedServiceType ?? 0,
+      serviceType: taskTypeController.text,
+      serviceTypeId: selectedTaskType ?? 0,
       weatherCondition: weatherConditionController.text,
       actionTaken: actionTakenController.text,
       nextScheduledDate: nextScheduledDateController.text,
@@ -321,8 +360,8 @@ class JobSheetProvider extends ChangeNotifier {
   String validateForm() {
     String errorMessage = '';
 
-    if (selectedServiceType == null) {
-      errorMessage += '• Service type is required.\n';
+    if (selectedTaskType == null) {
+      errorMessage += '• Task type is required.\n';
     }
     if (selectedSatisfactionId == null) {
       errorMessage += '• Satisfaction level is required.\n';
@@ -473,6 +512,7 @@ class JobSheetProvider extends ChangeNotifier {
             }
           }
           
+          await fetchTaskTypes(context);
           if (_jobSheet.isNotEmpty) {
             populateFormWithExistingData();
           }
@@ -497,7 +537,7 @@ class JobSheetProvider extends ChangeNotifier {
     jobSheetId = 0;
     _jobSheet.clear();
     // Clear all text controllers
-    serviceTypeController.clear();
+    taskTypeController.clear();
     selectedSatisfactionName.clear();
     selectedScheduleDateName.clear();
     weatherConditionController.clear();
@@ -512,7 +552,7 @@ class JobSheetProvider extends ChangeNotifier {
     customerSignatureDate.clear();
 
     // Reset selected values
-    selectedServiceType = null;
+    selectedTaskType = null;
     selectedSatisfactionId = null;
     selectedScheduleDateType = null;
 

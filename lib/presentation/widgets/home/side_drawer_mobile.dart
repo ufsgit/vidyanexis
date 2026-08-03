@@ -28,6 +28,7 @@ import 'package:vidyanexis/presentation/pages/reports/enquiry_for_summary_report
 import 'package:vidyanexis/presentation/pages/reports/periodic_service_report_page_mobile.dart';
 import 'package:vidyanexis/presentation/pages/reports/stock_return_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/target_page_report.dart';
+import 'package:vidyanexis/presentation/pages/reports/accounts_summary_page_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/task_page_report_mobile.dart';
 import 'package:vidyanexis/presentation/pages/reports/work_summary_screen_phone.dart';
 import 'package:vidyanexis/presentation/pages/settings/settings_page.dart';
@@ -208,6 +209,11 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
         },
       if (settingsProvider.menuIsViewMap[172].toString() == '1')
         {'title': 'Target Reports', 'page': const TargetPageReport()},
+      if (settingsProvider.menuIsViewMap[172].toString() == '1')
+        {
+          'title': 'Accounts Summary Reports',
+          'page': const AccountsSummaryPageReport()
+        },
     ];
 
     Future<String> getUserName() async {
