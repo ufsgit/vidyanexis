@@ -1027,7 +1027,7 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
       if (settingsProvider.menuIsViewMap[161].toString() == '1')
         _buildMenuItem(context, 'Terms & Warranty', Icons.description,
             isMobile: isMobile), //new
-      if (settingsProvider.menuIsViewMap[172].toString() == '1')
+      if (settingsProvider.menuIsViewMap[174].toString() == '1')
         _buildMenuItem(context, 'Designation', Icons.category, isMobile: isMobile),
     ];
   }
