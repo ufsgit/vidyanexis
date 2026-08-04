@@ -1671,41 +1671,12 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                   ),
                                   const SizedBox(width: 8),
                                   Expanded(
-                                    child: CommonDropdown<int>(
+                                    child: CustomTextField(
+                                      height: 54,
+                                      controller:
+                                          leadProvider.landmarkController,
                                       hintText: 'Landmark',
-                                      items: dropDownProvider.landmarkList
-                                          .map((status) => DropdownItem<int>(
-                                                id: status.landmarkId ?? 0,
-                                                name: status.landmarkName ?? '',
-                                              ))
-                                          .toList(),
-                                      controller: leadProvider.landmarkController,
-                                      onItemSelected: (int? newValue) {
-                                        if (newValue != null) {
-                                          final selectedLandmark =
-                                              dropDownProvider.landmarkList
-                                                  .firstWhere((task) =>
-                                                      task.landmarkId ==
-                                                      newValue);
-                                          dropDownProvider.updateLandmark(
-                                              newValue,
-                                              selectedLandmark.landmarkName ?? '');
-                                          leadProvider.landmarkController.text =
-                                              selectedLandmark.landmarkName ?? '';
-                                        }
-                                      },
-                                      selectedValue: dropDownProvider
-                                                      .selectedLandmarkId !=
-                                                  null &&
-                                              dropDownProvider.landmarkList
-                                                  .any((item) =>
-                                                      item.landmarkId ==
-                                                      dropDownProvider
-                                                          .selectedLandmarkId)
-                                          ? dropDownProvider.selectedLandmarkId
-                                          : null,
-                                      showError: dropDownProvider.showValidation &&
-                                          !_isFieldValid(leadProvider.landmarkController.text),
+                                      labelText: '',
                                     ),
                                   ),
                                 ],

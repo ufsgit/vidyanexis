@@ -118,8 +118,7 @@ class _tasksPageReportState extends State<TaskPage> {
       settingsProvider.searchsourceCategoryData('', context);
       settingsProvider.searchPermission(context);
       provider.getDistricts(context);
-provider.getStatesDropdown(context);
-provider.getLandmarks(context);
+      provider.getStatesDropdown(context);
       settingsProvider.getPriorities(context);
     });
   }
