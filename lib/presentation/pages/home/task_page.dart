@@ -678,16 +678,18 @@ class _tasksPageReportState extends State<TaskPage> {
                                   dropDownProvider.updateEnquiryForName(
                                       null, '');
                                   dropDownProvider.updateDistrict(null, '');
-                                  
+
                                   final settingsProvider =
                                       Provider.of<SettingsProvider>(context,
                                           listen: false);
                                   await Future.wait([
                                     leadsProvider.getLeadDropdowns(context),
-                                    dropDownProvider.getFollowUpStatus(context, "1"),
+                                    dropDownProvider.getFollowUpStatus(
+                                        context, "1"),
                                     dropDownProvider.getEnquirySource(context),
                                     dropDownProvider.getEnquiryFor(context),
-                                    settingsProvider.searchsourceCategoryData('', context),
+                                    settingsProvider.searchsourceCategoryData(
+                                        '', context),
                                   ]);
                                   settingsProvider.searchBranch(context);
                                   settingsProvider.searchDepartment(
@@ -2151,7 +2153,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                       ),
                                                                     ),
                                                                     TableWidget(
-                                                                      width: 180,
+                                                                      width:
+                                                                          180,
                                                                       padding: const EdgeInsets
                                                                           .symmetric(
                                                                           vertical:
@@ -2540,96 +2543,121 @@ class _tasksPageReportState extends State<TaskPage> {
               ? //Create Task
 
               Padding(
-                padding: const EdgeInsets.only(bottom: 32),
-                child: FloatingActionButton(
-                  backgroundColor: AppColors.appViolet,
-                  onPressed: () {
-                    showModalBottomSheet(
-                      context: context,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-                      ),
-                      builder: (BuildContext sheetContext) {
-                        return SafeArea(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 16.0),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                ListTile(
-                                  leading: const Icon(Icons.task, color: AppColors.primaryBlue),
-                                  title: const Text('Create Task', style: TextStyle(fontWeight: FontWeight.w500)),
-                                  onTap: () {
-                                    Navigator.pop(sheetContext);
-                                    showDialog(
-                                      barrierDismissible: false,
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return TaskCreationWidget(
-                                          isEdit: false,
-                                          taskId: '0',
-                                          showDocument: true,
-                                        );
-                                      },
-                                    );
-                                  },
-                                ),
-                                if (settingsProvider.menuIsViewMap[156] == 1) ...[
-                                  const Divider(),
+                  padding: const EdgeInsets.only(bottom: 32),
+                  child: FloatingActionButton(
+                    backgroundColor: AppColors.appViolet,
+                    onPressed: () {
+                      showModalBottomSheet(
+                        context: context,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.vertical(top: Radius.circular(16)),
+                        ),
+                        builder: (BuildContext sheetContext) {
+                          return SafeArea(
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 16.0),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
                                   ListTile(
-                                    leading: const Icon(Icons.person_add, color: AppColors.primaryBlue),
-                                    title: const Text('Add New Lead', style: TextStyle(fontWeight: FontWeight.w500)),
-                                    onTap: () async {
+                                    leading: const Icon(Icons.task,
+                                        color: AppColors.primaryBlue),
+                                    title: const Text('Create Task',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w500)),
+                                    onTap: () {
                                       Navigator.pop(sheetContext);
-                                        
-                                      final dropDownProvider =
-                                          Provider.of<DropDownProvider>(context, listen: false);
-                                      final leadsProvider =
-                                          Provider.of<LeadsProvider>(context, listen: false);
-                                        
-                                      dropDownProvider.updateEnquiryForName(null, '');
-                                      dropDownProvider.updateDistrict(null, '');
-                                      final settingsProvider =
-                                          Provider.of<SettingsProvider>(context, listen: false);
-                                        
-                                      await Future.wait([
-                                        leadsProvider.getLeadDropdowns(context),
-                                        dropDownProvider.getFollowUpStatus(context, "1"),
-                                        dropDownProvider.getEnquirySource(context),
-                                        dropDownProvider.getEnquiryFor(context),
-                                        settingsProvider.searchsourceCategoryData('', context),
-                                      ]);
-                                      settingsProvider.searchBranch(context);
-                                      settingsProvider.searchDepartment('', context);
-                                        
-                                      if (!context.mounted) return;
-                                        
-                                      await Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => const NewLeadDrawerMobileWidget(
+                                      showDialog(
+                                        barrierDismissible: false,
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return TaskCreationWidget(
                                             isEdit: false,
-                                            customerId: '0',
-                                          ),
-                                        ),
+                                            taskId: '0',
+                                            showDocument: true,
+                                          );
+                                        },
                                       );
-                                        
-                                      if (context.mounted) {
-                                        dropDownProvider.getFollowUpStatus(context, "3");
-                                      }
                                     },
                                   ),
+                                  if (settingsProvider.menuIsViewMap[156] ==
+                                      1) ...[
+                                    const Divider(),
+                                    ListTile(
+                                      leading: const Icon(Icons.person_add,
+                                          color: AppColors.primaryBlue),
+                                      title: const Text('Add New Lead',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w500)),
+                                      onTap: () async {
+                                        Navigator.pop(sheetContext);
+
+                                        final dropDownProvider =
+                                            Provider.of<DropDownProvider>(
+                                                context,
+                                                listen: false);
+                                        final leadsProvider =
+                                            Provider.of<LeadsProvider>(context,
+                                                listen: false);
+
+                                        dropDownProvider.updateEnquiryForName(
+                                            null, '');
+                                        dropDownProvider.updateDistrict(
+                                            null, '');
+                                        final settingsProvider =
+                                            Provider.of<SettingsProvider>(
+                                                context,
+                                                listen: false);
+
+                                        await Future.wait([
+                                          leadsProvider
+                                              .getLeadDropdowns(context),
+                                          dropDownProvider.getFollowUpStatus(
+                                              context, "1"),
+                                          dropDownProvider
+                                              .getEnquirySource(context),
+                                          dropDownProvider
+                                              .getEnquiryFor(context),
+                                          settingsProvider
+                                              .searchsourceCategoryData(
+                                                  '', context),
+                                        ]);
+                                        settingsProvider.searchBranch(context);
+                                        settingsProvider.searchDepartment(
+                                            '', context);
+
+                                        if (!context.mounted) return;
+
+                                        await Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                const NewLeadDrawerMobileWidget(
+                                              isEdit: false,
+                                              customerId: '0',
+                                            ),
+                                          ),
+                                        );
+
+                                        if (context.mounted) {
+                                          dropDownProvider.getFollowUpStatus(
+                                              context, "3");
+                                        }
+                                      },
+                                    ),
+                                  ],
                                 ],
-                              ],
+                              ),
                             ),
-                          ),
-                        );
-                      },
-                    );
-                  },
-                  child: const Icon(Icons.add, color: Colors.white),
-                ),
-              )
+                          );
+                        },
+                      );
+                    },
+                    child: const Icon(Icons.add, color: Colors.white),
+                  ),
+                )
               : null,
     );
   }
@@ -3955,9 +3983,12 @@ class _tasksPageReportState extends State<TaskPage> {
                                       bool showRightList =
                                           hasDocs || hasMandatory;
                                       final settingsProvider =
-                                          Provider.of<SettingsProvider>(context, listen: false);
+                                          Provider.of<SettingsProvider>(context,
+                                              listen: false);
                                       bool isDocumentButtonEnabled =
-                                          settingsProvider.documentButtonTaskStatus == 1;
+                                          settingsProvider
+                                                  .documentButtonTaskStatus ==
+                                              1;
 
                                       Widget leftSide = (showDate || showTime)
                                           ? Column(
@@ -4006,28 +4037,49 @@ class _tasksPageReportState extends State<TaskPage> {
                                                         CrossAxisAlignment
                                                             .start,
                                                     children: [
-                                                      if (hasDocs && isDocumentButtonEnabled)
+                                                      if (hasDocs &&
+                                                          isDocumentButtonEnabled)
                                                         Padding(
-                                                          padding: const EdgeInsets.symmetric(vertical: 4),
-                                                          child: CustomElevatedButton(
-                                                            onPressed: () async {
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .symmetric(
+                                                                  vertical: 4),
+                                                          child:
+                                                              CustomElevatedButton(
+                                                            onPressed:
+                                                                () async {
                                                               await showDialog(
-                                                                barrierDismissible: false,
-                                                                context: context,
-                                                                builder: (context) => ImageUploadAlert(
-                                                                  customerId: task.customerId.toString(),
+                                                                barrierDismissible:
+                                                                    false,
+                                                                context:
+                                                                    context,
+                                                                builder:
+                                                                    (context) =>
+                                                                        ImageUploadAlert(
+                                                                  customerId: task
+                                                                      .customerId
+                                                                      .toString(),
                                                                 ),
                                                               );
                                                             },
-                                                            buttonText: 'Upload Documents',
-                                                            backgroundColor: AppColors.appViolet,
-                                                            borderColor: AppColors.appViolet,
-                                                            textColor: Colors.white,
+                                                            buttonText:
+                                                                'Upload Documents',
+                                                            backgroundColor:
+                                                                AppColors
+                                                                    .appViolet,
+                                                            borderColor:
+                                                                AppColors
+                                                                    .appViolet,
+                                                            textColor:
+                                                                Colors.white,
                                                             radius: 4,
                                                           ),
                                                         ),
-                                                      if (hasDocs && !isDocumentButtonEnabled)
-                                                        ...reportsProvider.documentTypeModel.map(
+                                                      if (hasDocs &&
+                                                          !isDocumentButtonEnabled)
+                                                        ...reportsProvider
+                                                            .documentTypeModel
+                                                            .map(
                                                                 (doc) =>
                                                                     Padding(
                                                                       padding: const EdgeInsets
@@ -4502,7 +4554,10 @@ class _tasksPageReportState extends State<TaskPage> {
                                                               final item = provider
                                                                       .taskHistoryList[
                                                                   index];
-                                                              const Color statusColor = Color(0xFF3B82F6);
+                                                              const Color
+                                                                  statusColor =
+                                                                  Color(
+                                                                      0xFF3B82F6);
                                                               return Card(
                                                                 color: Colors
                                                                     .white,
@@ -4917,10 +4972,12 @@ class _tasksPageReportState extends State<TaskPage> {
                                                     }
 
                                                     final settingsProvider =
-                                                        Provider.of<SettingsProvider>(
+                                                        Provider.of<
+                                                                SettingsProvider>(
                                                             context,
                                                             listen: false);
-                                                    bool isDocumentButtonEnabled =
+                                                    bool
+                                                        isDocumentButtonEnabled =
                                                         settingsProvider
                                                                 .documentButtonTaskStatus ==
                                                             1;

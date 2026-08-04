@@ -267,6 +267,10 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                 );
                 leadProvider.getSearchLeads(context);
               },
+              showRefresh: true,
+              onRefreshTap: () {
+                _refreshData();
+              },
               // onChanged: _onSearchChanged,
               searchController: searchController,
               customActionWidget: Padding(
@@ -366,6 +370,10 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                   leadId: leadIdController.text,
                 );
                 leadProvider.getSearchLeads(context);
+              },
+              showRefresh: true,
+              onRefreshTap: () {
+                _refreshData();
               },
               searchController: searchController,
               customActionWidget: Padding(

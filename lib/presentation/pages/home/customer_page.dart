@@ -395,6 +395,20 @@ class _CustomerPageState extends State<CustomerPage> {
                                 },
                                 isFilter: customerProvider.isFilter,
                               ),
+                              IconButton(
+                                icon: const Icon(Icons.refresh, color: Color(0xFF64748B), size: 20),
+                                onPressed: () {
+                                  customerProvider.setSearchCriteria(
+                                    searchController.text,
+                                    customerProvider.fromDateS,
+                                    customerProvider.toDateS,
+                                  );
+                                  customerProvider.getSearchCustomers(
+                                      context,
+                                      isSilent: true);
+                                },
+                                tooltip: 'Refresh',
+                              ),
                             if (settingsProvider.menuIsSaveMap[167].toString() == '1')
                               ElevatedButton.icon(
                                 onPressed: () {
