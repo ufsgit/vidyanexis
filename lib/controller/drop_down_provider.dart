@@ -191,21 +191,38 @@ class DropDownProvider extends ChangeNotifier {
   }
 
   void filterStaffByBranchAndDepartment({
-    required int? branchId,
-    required int? departmentId,
+    dynamic branchId,
+    required dynamic departmentId,
   }) {
     _currentBranchId = branchId;
     _currentDepartmentId = departmentId;
 
-    if (branchId == null || departmentId == null) {
+    if (departmentId == null ||
+        departmentId.toString().trim().isEmpty ||
+        departmentId.toString().trim() == "0") {
       filteredStaffData = [];
     } else {
-      filteredStaffData = searchUserDetails
-          .where((staff) =>
-              staff.branchId == branchId.toString() &&
-              staff.departmentId == departmentId.toString() &&
-              staff.workingStatus == "1")
+      final targetDeptStr = departmentId.toString().trim();
+      final targetDeptList = targetDeptStr
+          .split(',')
+          .map((e) => e.trim())
+          .where((e) => e.isNotEmpty)
           .toList();
+
+      filteredStaffData = searchUserDetails.where((staff) {
+        if (staff.workingStatus != "1") return false;
+
+        final staffDeptStr = (staff.departmentId ?? '').toString().trim();
+        if (staffDeptStr.isEmpty || staffDeptStr == "0") return false;
+
+        final staffDeptList = staffDeptStr
+            .split(',')
+            .map((e) => e.trim())
+            .where((e) => e.isNotEmpty)
+            .toList();
+
+        return targetDeptList.any((dept) => staffDeptList.contains(dept));
+      }).toList();
     }
     // Print the full list with all fields as maps for clarity
     print(
@@ -214,18 +231,37 @@ class DropDownProvider extends ChangeNotifier {
   }
 
   void filterStaff(String query) {
-    if (_currentBranchId == null || _currentDepartmentId == null) {
+    if (_currentDepartmentId == null ||
+        _currentDepartmentId.toString().trim().isEmpty ||
+        _currentDepartmentId.toString().trim() == "0") {
       filteredStaffData = [];
       notifyListeners();
       return;
     }
 
     final lowerQuery = query.trim().toLowerCase();
+    final targetDeptStr = _currentDepartmentId.toString().trim();
+    final targetDeptList = targetDeptStr
+        .split(',')
+        .map((e) => e.trim())
+        .where((e) => e.isNotEmpty)
+        .toList();
 
     filteredStaffData = searchUserDetails.where((staff) {
-      if (staff.branchId != _currentBranchId.toString() ||
-          staff.departmentId != _currentDepartmentId.toString() ||
-          staff.workingStatus != "1") {
+      if (staff.workingStatus != "1") {
+        return false;
+      }
+
+      final staffDeptStr = (staff.departmentId ?? '').toString().trim();
+      final staffDeptList = staffDeptStr
+          .split(',')
+          .map((e) => e.trim())
+          .where((e) => e.isNotEmpty)
+          .toList();
+
+      bool matchesDept =
+          targetDeptList.any((dept) => staffDeptList.contains(dept));
+      if (!matchesDept) {
         return false;
       }
 

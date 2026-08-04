@@ -3901,6 +3901,12 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                       suffixIcon:
                                                                           const Icon(
                                                                               Icons.search),
+                                                                      onTap: () {
+                                                                        dropDownProvider.filterStaffByBranchAndDepartment(
+                                                                          branchId: taskItem.branchIds,
+                                                                          departmentId: taskItem.departmentIds,
+                                                                        );
+                                                                      },
                                                                       onSelected:
                                                                           (SearchUserDetails
                                                                               selected) {

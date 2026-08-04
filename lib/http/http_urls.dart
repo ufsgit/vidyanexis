@@ -468,5 +468,8 @@ class HttpUrls {
 
   static String getTargetReport = 'lead/Get_Target_Report';
   static String searchAccountsSummaryReport = 'lead/Search_Accounts_Summary_Report';
+  static String saveDesignation = 'settings/Save_Designation_Target';
+  static String getDesignation = 'settings/Get_Designation_Target';
+  static String deleteDesignation = 'settings/Delete_Designation_Target';
 
 }
