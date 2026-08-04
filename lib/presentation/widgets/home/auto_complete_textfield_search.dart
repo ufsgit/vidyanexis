@@ -25,6 +25,7 @@ class CustomAutocompleteSearch<T extends Object> extends StatefulWidget {
   final bool showOptionsOnTap;
   final double? maxHeight;
   final Future<void> Function(String)? onSearch; // Async callback
+  final VoidCallback? onTap;
 
   const CustomAutocompleteSearch({
     super.key,
@@ -48,6 +49,7 @@ class CustomAutocompleteSearch<T extends Object> extends StatefulWidget {
     this.showOptionsOnTap = true,
     this.maxHeight,
     this.onSearch,
+    this.onTap,
   });
 
   @override
@@ -163,6 +165,7 @@ class _CustomAutocompleteSearchState<T extends Object>
                           widget.onChanged?.call(value);
                         },
                   onTap: () {
+                    widget.onTap?.call();
                     if (!fieldFocusNode.hasFocus) {
                       fieldFocusNode.requestFocus();
                     }
