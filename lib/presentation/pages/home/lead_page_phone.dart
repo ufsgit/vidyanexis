@@ -269,6 +269,10 @@ provider.getLandmarks(context);
                 );
                 leadProvider.getSearchLeads(context);
               },
+              showRefresh: true,
+              onRefreshTap: () {
+                _refreshData();
+              },
               // onChanged: _onSearchChanged,
               searchController: searchController,
               customActionWidget: Padding(
@@ -368,6 +372,10 @@ provider.getLandmarks(context);
                   leadId: leadIdController.text,
                 );
                 leadProvider.getSearchLeads(context);
+              },
+              showRefresh: true,
+              onRefreshTap: () {
+                _refreshData();
               },
               searchController: searchController,
               customActionWidget: Padding(

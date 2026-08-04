@@ -206,6 +206,10 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
           );
           customerProvider.getSearchCustomers(context);
         },
+        showRefresh: true,
+        onRefreshTap: () {
+          _refreshData();
+        },
         // onChanged: _onSearchChanged,
         searchController: searchController,
         customActionWidget: Padding(

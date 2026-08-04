@@ -374,6 +374,11 @@ provider.getLandmarks(context);
 
                 reportsProvider.searchTaskByCustomer(context);
               },
+              showRefresh: true,
+              onRefreshTap: () {
+                reportsProvider.goToPage(1);
+                reportsProvider.searchTaskByCustomer(context);
+              },
               onChanged: _onSearchChanged,
               searchController: searchController,
               customActionWidget: Padding(
@@ -665,6 +670,14 @@ provider.getLandmarks(context);
                                 reportsProvider.toggleFilter();
                               },
                               isFilter: reportsProvider.isFilter,
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.refresh, color: Color(0xFF64748B), size: 20),
+                              onPressed: () {
+                                reportsProvider.goToPage(1);
+                                reportsProvider.searchTaskByCustomer(context);
+                              },
+                              tooltip: 'Refresh',
                             ),
                             if (settingsProvider.menuIsViewMap[156] == 1)
                               ElevatedButton.icon(

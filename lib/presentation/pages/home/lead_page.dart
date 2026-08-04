@@ -655,6 +655,19 @@ provider.getLandmarks(context);
                               },
                               isFilter: leadProvider.isFilter,
                             ),
+                            IconButton(
+                              icon: const Icon(Icons.refresh, color: Color(0xFF64748B), size: 20),
+                              onPressed: () {
+                                leadProvider.setSearchCriteria(
+                                  searchController.text,
+                                  leadProvider.fromDateS,
+                                  leadProvider.toDateS,
+                                  leadId: leadIdController.text,
+                                );
+                                leadProvider.getSearchLeads(context);
+                              },
+                              tooltip: 'Refresh',
+                            ),
                             if (settingsProvider.menuIsSaveMap[3] == 1)
                               ElevatedButton.icon(
                                 onPressed: () async {
