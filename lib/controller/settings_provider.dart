@@ -11,6 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/leads_provider.dart';
 import 'package:vidyanexis/controller/models/department_custom_field_model.dart';
+import 'package:vidyanexis/controller/models/designation_model.dart';
 import 'package:vidyanexis/controller/models/inventory_customer_model.dart';
 import 'package:vidyanexis/controller/models/lead_customer_model.dart';
 import 'package:vidyanexis/controller/models/location_model.dart';
@@ -6574,5 +6575,93 @@ class SettingsProvider extends ChangeNotifier {
     _onWorkCompletionPercentageText = '';
     _termsWarrantyId = 0;
     notifyListeners();
+  }
+
+  // ========== Designation ==========
+final TextEditingController designationNameController = TextEditingController();
+final TextEditingController searchDesignationController = TextEditingController();
+
+List<DesignationModel> _designationList = [];
+List<DesignationModel> get designationList => _designationList;
+
+Future<void> searchDesignation(String query, BuildContext context) async {
+  try {
+    final response = await HttpRequest.httpGetRequest(
+      endPoint: '${HttpUrls.getDesignation}?Designation_Name=$query',
+    );
+
+    if (response.statusCode == 200 && response.data != null) {
+      final data = response.data;
+      if (data is List) {
+        _designationList = data.map((e) => DesignationModel.fromJson(e)).toList();
+      } else if (data is Map && data['data'] != null) {
+        _designationList = (data['data'] as List)
+            .map((e) => DesignationModel.fromJson(e))
+            .toList();
+      } else {
+          _designationList = [];
+        }
+        notifyListeners();
+      }
+    } catch (e) {
+      print('searchDesignation error: $e');
+    }
+  }
+
+  Future<void> addDesignation({
+    required BuildContext context,
+    required Map<String, dynamic> data,
+  }) async {
+    try {
+      Loader.showLoader(context);
+      final response = await HttpRequest.httpPostRequest(
+        endPoint: HttpUrls.saveDesignation, // you need to add this URL
+        bodyData: data,
+      );
+
+      if (response != null && response.statusCode == 200) {
+        designationNameController.clear();
+        searchDesignation('', context);
+        Navigator.pop(context);
+        Loader.stopLoader(context);
+      } else {
+        Loader.stopLoader(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+      }
+    } catch (e) {
+      Loader.stopLoader(context);
+      print('addDesignation error: $e');
+    }
+  }
+
+  void deleteDesignation(BuildContext context, int designationId) async {
+    try {
+      Loader.showLoader(context);
+      final response = await HttpRequest.httpDeleteRequest(
+        endPoint: '${HttpUrls.deleteDesignation}/$designationId',
+      );
+
+      if (response != null && response.statusCode == 200) {
+        final data = response.data;
+        if (data['Designation_Id_'] == -1) {
+          Loader.stopLoader(context);
+          alert(context, "This Designation is currently in use");
+        } else {
+          searchDesignation('', context);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Designation deleted successfully')),
+          );
+          Loader.stopLoader(context);
+        }
+        notifyListeners();
+      } else {
+        Loader.stopLoader(context);
+      }
+    } catch (e) {
+      Loader.stopLoader(context);
+      print(e);
+    }
   }
 }
