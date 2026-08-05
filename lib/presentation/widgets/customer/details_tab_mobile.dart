@@ -442,6 +442,29 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                                       );
                                     },
                                   ),
+                                 if ((settingsProvider.menuIsViewMap[174] == 1 || settingsProvider.menuIsViewMapPrint[174] == 1) && sideProvider.name != 'Lead /')
+                                  _buildActionBtn(
+                                    context,
+                                    text: 'Status Image',
+                                    icon: Icons.image_outlined,
+                                    onTap: () async {
+                                      PdfActionHelper.showPdfOptions(
+                                        context: context,
+                                        title: 'Status Image',
+                                        pdfUrl:
+                                            '${HttpUrls.generateStatusImage}${widget.customerId}',
+                                        onGenerate: () async {
+                                          await Loader.showLoader(context);
+                                          final bytes =
+                                              await customerDetailsProvider
+                                                  .getStatusImageBytes(
+                                                      widget.customerId);
+                                          Loader.stopLoader(context);
+                                          return bytes ?? Uint8List(0);
+                                        },
+                                      );
+                                    },
+                                  ),
                               ],
                             ),
                           ),

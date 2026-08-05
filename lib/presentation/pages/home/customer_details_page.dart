@@ -2788,6 +2788,27 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           );
                                                                         },
                                                                       ),
+                                                                    if ((settingsprovider.menuIsViewMap[174] == 1 || settingsprovider.menuIsViewMapPrint[174] == 1) && sideprovider.name != 'Lead /')
+                                                                      CustomElevatedButton(
+                                                                        radius: 4,
+                                                                        backgroundColor: AppColors.whiteColor,
+                                                                        borderColor: AppColors.bluebutton,
+                                                                        textColor: AppColors.bluebutton,
+                                                                        buttonText: 'Status Image',
+                                                                        onPressed: () async {
+                                                                          PdfActionHelper.showPdfOptions(
+                                                                            context: context,
+                                                                            title: 'Status Image',
+                                                                            pdfUrl: '${HttpUrls.generateStatusImage}${widget.customerId}',
+                                                                            onGenerate: () async {
+                                                                              await Loader.showLoader(context);
+                                                                              final bytes = await customerDetailsProvider.getStatusImageBytes(widget.customerId);
+                                                                              Loader.stopLoader(context);
+                                                                              return bytes ?? Uint8List(0);
+                                                                            },
+                                                                          );
+                                                                        },
+                                                                      ),
                                                                   ],
                                                                 ),
                                                                 const SizedBox(
