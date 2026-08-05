@@ -6240,8 +6240,31 @@ class SettingsProvider extends ChangeNotifier {
   List<SearchLeadStatusModel> get subStatusGetModels => _subStatusGetModels;
 
   List<SubStatus> _uniqueStatuses = [];
-  List<SubStatus> get uniqueSubStatuses => _uniqueStatuses;
-  List<SubStatus> get uniqueTransferStatuses => _uniqueStatuses; // Reuse
+  List<SubStatus> get uniqueSubStatuses {
+    if (_formViewInId == null || _formViewInId == 0) {
+      return _uniqueStatuses;
+    }
+    final validStatusIds = _subStatusGetModels
+        .where((model) => model.viewInId == _formViewInId)
+        .map((model) => model.statusId)
+        .toSet();
+    return _uniqueStatuses
+        .where((subStatus) => validStatusIds.contains(subStatus.subStatusId))
+        .toList();
+  }
+
+  List<SubStatus> get uniqueTransferStatuses {
+    if (_formViewInId == null || _formViewInId == 0) {
+      return _uniqueStatuses;
+    }
+    final validStatusIds = _subStatusGetModels
+        .where((model) => model.viewInId == _formViewInId)
+        .map((model) => model.statusId)
+        .toSet();
+    return _uniqueStatuses
+        .where((subStatus) => validStatusIds.contains(subStatus.subStatusId))
+        .toList();
+  }
 
   Set<int> _selectedSubIds = {};
   Set<int> _selectedTransferIds = {};
@@ -6322,14 +6345,14 @@ class SettingsProvider extends ChangeNotifier {
 
 // Using toJson() - Much cleaner
   List<Map<String, dynamic>> get selectedSubStatusesForApi {
-    return _uniqueStatuses
+    return uniqueSubStatuses
         .where((s) => _selectedSubIds.contains(s.subStatusId))
         .map((s) => s.toJson())
         .toList();
   }
 
   List<Map<String, dynamic>> get selectedTransferStatusesForApi {
-    return _uniqueStatuses
+    return uniqueTransferStatuses
         .where((s) => _selectedTransferIds.contains(s.subStatusId))
         .map((s) => s.toJson())
         .toList();
@@ -6371,11 +6394,11 @@ class SettingsProvider extends ChangeNotifier {
     try {
       _subStatusGetModels.clear();
       _uniqueStatuses.clear();
-      _selectedSubIds.clear();
-      _selectedTransferIds.clear();
-
+      // DO NOT clear selectedSubIds and selectedTransferIds here, as it breaks Edit mode initialization.
+      
+      final int viewInIdParam = _formViewInId ?? 0;
       final response = await HttpRequest.httpGetRequest(
-          endPoint: '${HttpUrls.searchStatus}?status_Name=&ViewIn_Id=0');
+          endPoint: '${HttpUrls.searchStatus}?status_Name=&ViewIn_Id=$viewInIdParam');
 
       if (response.statusCode == 200 && response.data != null) {
         _subStatusGetModels = (response.data as List)
