@@ -544,6 +544,9 @@ class SettingsProvider extends ChangeNotifier {
   int get leadNameChangeToCustomerName => _leadNameChangeToCustomerName;
   int get leadCodeWithEnquiryCode => _leadCodeWithEnquiryCode;
   int get documentButtonTaskStatus => _documentButtonTaskStatus;
+
+  int _leadPermissionMeAndAll = 0;
+  int get leadPermissionMeAndAll => _leadPermissionMeAndAll;
   String get leadNameLabel => _leadNameChangeToCustomerName == 1 ? 'Customer Name' : 'Lead Name';
 
   String getPermissionCaption(dynamic key, String defaultCaption) {
@@ -591,7 +594,39 @@ class SettingsProvider extends ChangeNotifier {
       _leadCodeWithEnquiryCode = value;
     } else if (permissionId == 16) {
       _documentButtonTaskStatus = value;
+    } else if (permissionId == 17) {
+      _leadPermissionMeAndAll = value;
+    } else if (permissionId == 18) {
+      _customerPermissionMeAndAll = value;
+    } else if (permissionId == 19) {
+      _taskPermissionMeAndAll = value;
     }
+  }
+
+  void setDocumentButtonTaskStatus(int value) {
+    _documentButtonTaskStatus = value;
+    notifyListeners();
+  }
+
+  void setLeadPermissionMeAndAll(int value) {
+    _leadPermissionMeAndAll = value;
+    notifyListeners();
+  }
+
+  int _customerPermissionMeAndAll = 0;
+  int get customerPermissionMeAndAll => _customerPermissionMeAndAll;
+
+  int _taskPermissionMeAndAll = 0;
+  int get taskPermissionMeAndAll => _taskPermissionMeAndAll;
+
+  void setCustomerPermissionMeAndAll(int value) {
+    _customerPermissionMeAndAll = value;
+    notifyListeners();
+  }
+
+  void setTaskPermissionMeAndAll(int value) {
+    _taskPermissionMeAndAll = value;
+    notifyListeners();
   }
 
   void _syncStateToPermissionsList(int permissionId, int value) {
@@ -1972,9 +2007,9 @@ class SettingsProvider extends ChangeNotifier {
         if (data != null) {
           var rawData = data as List<dynamic>;
 
-          // Filter out permissions that are hidden by the backend (Menu_Status == 0)
+          // Filter out permissions that are hidden by the backend (Menu_Status == 0) or deleted (DeleteStatus == 1)
           var filteredData =
-              rawData.where((item) => (item['Menu_Status'] ?? 1) != 0).toList();
+              rawData.where((item) => (item['Menu_Status'] ?? 1) != 0 && (item['DeleteStatus'] ?? 0) != 1).toList();
 
           _getMenuPermission = filteredData
               .map((item) => GetMenuPermissionModel.fromJson(item))
@@ -2142,9 +2177,9 @@ class SettingsProvider extends ChangeNotifier {
         if (data != null) {
           var rawData = data as List<dynamic>;
 
-          // Filter out permissions that are hidden by the backend (Menu_Status == 0)
+          // Filter out permissions that are hidden by the backend (Menu_Status == 0) or deleted (DeleteStatus == 1)
           var filteredData =
-              rawData.where((item) => (item['Menu_Status'] ?? 1) != 0).toList();
+              rawData.where((item) => (item['Menu_Status'] ?? 1) != 0 && (item['DeleteStatus'] ?? 0) != 1).toList();
 
           _getMenuPermission = filteredData
               .map((item) => GetMenuPermissionModel.fromJson(item))
@@ -4537,6 +4572,9 @@ class SettingsProvider extends ChangeNotifier {
     _toggleValue = 0;
     _enquiryForMandatory = 0;
     _enquirySourceMandatory = 0;
+    _leadPermissionMeAndAll = 0;
+    _customerPermissionMeAndAll = 0;
+    _taskPermissionMeAndAll = 0;
   }
 
   Future<void> searchPermission(BuildContext context) async {
@@ -4555,8 +4593,8 @@ class SettingsProvider extends ChangeNotifier {
               .map((item) => MenuPermissionModel.fromJson(item))
               .toList();
 
-          // Filter out permissions that are hidden by the backend (Menu_Status == 0)
-          _showMenu.removeWhere((item) => item.menuStatus == 0);
+          // Filter out permissions that are hidden by the backend (Menu_Status == 0) or deleted (DeleteStatus == 1)
+          _showMenu.removeWhere((item) => item.menuStatus == 0 || item.deleteStatus == 1);
 
           _showMenu
               .removeWhere((item) => item.menuId == 82 || item.menuId == 83);
@@ -6117,24 +6155,12 @@ class SettingsProvider extends ChangeNotifier {
       Loader.showLoader(context);
 
       final List<DepartmentCustomFieldMapping> list =
-          mapping.entries.map((entry) {
-        // Find enquiry for details
-        final enquiryFor = searchEnquiryFor.firstWhere(
-          (e) => e.enquiryForId == entry.key,
-          orElse: () => EnquiryForModel(
-            enquiryForId: entry.key,
-            enquiryForName: "",
-            deleteStatus: 0,
-            sourceCategoryId: 0,
-            sourceCategoryName: '',
-          ),
-        );
-
+          searchEnquiryFor.map((enquiryFor) {
         return DepartmentCustomFieldMapping(
           departmentId: departmentId,
-          enquiryForId: entry.key,
+          enquiryForId: enquiryFor.enquiryForId,
           enquiryForName: enquiryFor.enquiryForName,
-          customFields: entry.value,
+          customFields: mapping[enquiryFor.enquiryForId] ?? [],
         );
       }).toList();
 

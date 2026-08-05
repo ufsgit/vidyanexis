@@ -7,6 +7,7 @@ class MenuModel {
   int isSave;
   int isEdit;
   int isDelete;
+  int? deleteStatus;
   Widget? widget;
 
   MenuModel({
@@ -16,6 +17,7 @@ class MenuModel {
     this.isSave = 0,
     this.isEdit = 0,
     this.isDelete = 0,
+    this.deleteStatus,
     this.widget,
   });
 
@@ -27,6 +29,7 @@ class MenuModel {
       isSave: json['IsSave'] ?? 0,
       isEdit: json['IsEdit'] ?? 0,
       isDelete: json['IsDelete'] ?? 0,
+      deleteStatus: json['DeleteStatus'] ?? 0,
     );
   }
 
@@ -38,6 +41,7 @@ class MenuModel {
       'IsSave': isSave,
       'IsEdit': isEdit,
       'IsDelete': isDelete,
+      'DeleteStatus': deleteStatus,
     };
   }
 
@@ -48,6 +52,7 @@ class MenuModel {
     int? isSave,
     int? isEdit,
     int? isDelete,
+    int? deleteStatus,
   }) {
     return MenuModel(
       menuId: menuId ?? this.menuId,
@@ -56,6 +61,7 @@ class MenuModel {
       isSave: isSave ?? this.isSave,
       isEdit: isEdit ?? this.isEdit,
       isDelete: isDelete ?? this.isDelete,
+      deleteStatus: deleteStatus ?? this.deleteStatus,
     );
   }
 }

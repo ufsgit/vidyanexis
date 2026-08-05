@@ -273,33 +273,35 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
               },
               // onChanged: _onSearchChanged,
               searchController: searchController,
-              customActionWidget: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    value: leadProvider.entryType == 'all' ? 'ALL' : 'ME',
-                    icon: const Icon(Icons.keyboard_arrow_down, color: AppColors.primaryBlue),
-                    style: const TextStyle(
-                      color: AppColors.primaryBlue,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 14,
-                    ),
-                    onChanged: (String? newValue) {
-                      if (newValue != null) {
-                        leadProvider.setEntryType(newValue == 'ALL' ? 'all' : 'myown');
-                        leadProvider.getSearchLeads(context);
-                      }
-                    },
-                    items: <String>['ME', 'ALL']
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ),
+              customActionWidget: settingsProvider.leadPermissionMeAndAll == 1
+                  ? Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          value: leadProvider.entryType == 'all' ? 'ALL' : 'ME',
+                          icon: const Icon(Icons.keyboard_arrow_down, color: AppColors.primaryBlue),
+                          style: const TextStyle(
+                            color: AppColors.primaryBlue,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 14,
+                          ),
+                          onChanged: (String? newValue) {
+                            if (newValue != null) {
+                              leadProvider.setEntryType(newValue == 'ALL' ? 'all' : 'myown');
+                              leadProvider.getSearchLeads(context);
+                            }
+                          },
+                          items: <String>['ME', 'ALL']
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    )
+                  : const SizedBox.shrink(),
             )
           : CustomAppBar(
               onSearchTap: () {
@@ -376,33 +378,35 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                 _refreshData();
               },
               searchController: searchController,
-              customActionWidget: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    value: leadProvider.entryType == 'all' ? 'ALL' : 'ME',
-                    icon: const Icon(Icons.keyboard_arrow_down, color: AppColors.primaryBlue),
-                    style: const TextStyle(
-                      color: AppColors.primaryBlue,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 14,
-                    ),
-                    onChanged: (String? newValue) {
-                      if (newValue != null) {
-                        leadProvider.setEntryType(newValue == 'ALL' ? 'all' : 'myown');
-                        leadProvider.getSearchLeads(context);
-                      }
-                    },
-                    items: <String>['ME', 'ALL']
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ),
+              customActionWidget: settingsProvider.leadPermissionMeAndAll == 1
+                  ? Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          value: leadProvider.entryType == 'all' ? 'ALL' : 'ME',
+                          icon: const Icon(Icons.keyboard_arrow_down, color: AppColors.primaryBlue),
+                          style: const TextStyle(
+                            color: AppColors.primaryBlue,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 14,
+                          ),
+                          onChanged: (String? newValue) {
+                            if (newValue != null) {
+                              leadProvider.setEntryType(newValue == 'ALL' ? 'all' : 'myown');
+                              leadProvider.getSearchLeads(context);
+                            }
+                          },
+                          items: <String>['ME', 'ALL']
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    )
+                  : const SizedBox.shrink(),
             ),
       body: leadProvider.isLoading
           ? const Center(

@@ -536,76 +536,77 @@ class _LeadsPageState extends State<LeadPage> {
                           crossAxisAlignment: WrapCrossAlignment.center,
                           children: [
                             // Entry Type Filter
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    leadProvider.setEntryType('myown');
-                                    leadProvider.getSearchLeads(context);
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.only(bottom: 2),
-                                    decoration: BoxDecoration(
-                                      border: Border(
-                                        bottom: BorderSide(
+                            if (settingsProvider.leadPermissionMeAndAll == 1)
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      leadProvider.setEntryType('myown');
+                                      leadProvider.getSearchLeads(context);
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.only(bottom: 2),
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                          bottom: BorderSide(
+                                            color: leadProvider.entryType != 'all'
+                                                ? AppColors.primaryBlue
+                                                : Colors.transparent,
+                                            width: 2.0,
+                                          ),
+                                        ),
+                                      ),
+                                      child: Text(
+                                        'ME',
+                                        style: TextStyle(
                                           color: leadProvider.entryType != 'all'
                                               ? AppColors.primaryBlue
-                                              : Colors.transparent,
-                                          width: 2.0,
+                                              : Colors.grey,
+                                          fontWeight:
+                                              leadProvider.entryType != 'all'
+                                                  ? FontWeight.w600
+                                                  : FontWeight.normal,
+                                          fontSize: 14,
                                         ),
                                       ),
                                     ),
-                                    child: Text(
-                                      'ME',
-                                      style: TextStyle(
-                                        color: leadProvider.entryType != 'all'
-                                            ? AppColors.primaryBlue
-                                            : Colors.grey,
-                                        fontWeight:
-                                            leadProvider.entryType != 'all'
-                                                ? FontWeight.w600
-                                                : FontWeight.normal,
-                                        fontSize: 14,
-                                      ),
-                                    ),
                                   ),
-                                ),
-                                const SizedBox(width: 16),
-                                GestureDetector(
-                                  onTap: () {
-                                    leadProvider.setEntryType('all');
-                                    leadProvider.getSearchLeads(context);
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.only(bottom: 2),
-                                    decoration: BoxDecoration(
-                                      border: Border(
-                                        bottom: BorderSide(
+                                  const SizedBox(width: 16),
+                                  GestureDetector(
+                                    onTap: () {
+                                      leadProvider.setEntryType('all');
+                                      leadProvider.getSearchLeads(context);
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.only(bottom: 2),
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                          bottom: BorderSide(
+                                            color: leadProvider.entryType == 'all'
+                                                ? AppColors.primaryBlue
+                                                : Colors.transparent,
+                                            width: 2.0,
+                                          ),
+                                        ),
+                                      ),
+                                      child: Text(
+                                        'ALL',
+                                        style: TextStyle(
                                           color: leadProvider.entryType == 'all'
                                               ? AppColors.primaryBlue
-                                              : Colors.transparent,
-                                          width: 2.0,
+                                              : Colors.grey,
+                                          fontWeight:
+                                              leadProvider.entryType == 'all'
+                                                  ? FontWeight.w600
+                                                  : FontWeight.normal,
+                                          fontSize: 14,
                                         ),
                                       ),
                                     ),
-                                    child: Text(
-                                      'ALL',
-                                      style: TextStyle(
-                                        color: leadProvider.entryType == 'all'
-                                            ? AppColors.primaryBlue
-                                            : Colors.grey,
-                                        fontWeight:
-                                            leadProvider.entryType == 'all'
-                                                ? FontWeight.w600
-                                                : FontWeight.normal,
-                                        fontSize: 14,
-                                      ),
-                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
+                                ],
+                              ),
                             Container(
                               width: 280,
                               height: 38,

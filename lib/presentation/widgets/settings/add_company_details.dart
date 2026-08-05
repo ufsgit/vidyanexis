@@ -547,6 +547,54 @@ class _AddCompanyDetailsState extends State<AddCompanyDetails> {
                     ),
                   ],
                 ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${settingsProvider.getPermissionCaption(17, "Lead Permission ME and ALL")} :   ${settingsProvider.leadPermissionMeAndAll == 1 ? "On" : "Off"}',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    const SizedBox(width: 10),
+                    Switch(
+                      value: settingsProvider.leadPermissionMeAndAll == 1,
+                      onChanged: (bool value) {
+                        settingsProvider.updateCompanyPermission(17, value ? 1 : 0);
+                      },
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${settingsProvider.getPermissionCaption(18, "Customer Permission ME and ALL")} :   ${settingsProvider.customerPermissionMeAndAll == 1 ? "On" : "Off"}',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    const SizedBox(width: 10),
+                    Switch(
+                      value: settingsProvider.customerPermissionMeAndAll == 1,
+                      onChanged: (bool value) {
+                        settingsProvider.updateCompanyPermission(18, value ? 1 : 0);
+                      },
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${settingsProvider.getPermissionCaption(19, "Task Permission ME and ALL")} :   ${settingsProvider.taskPermissionMeAndAll == 1 ? "On" : "Off"}',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    const SizedBox(width: 10),
+                    Switch(
+                      value: settingsProvider.taskPermissionMeAndAll == 1,
+                      onChanged: (bool value) {
+                        settingsProvider.updateCompanyPermission(19, value ? 1 : 0);
+                      },
+                    ),
+                  ],
+                ),
               ],
               const SizedBox(height: 10),
               CustomElevatedButton(

@@ -212,33 +212,35 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
         },
         // onChanged: _onSearchChanged,
         searchController: searchController,
-        customActionWidget: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-              value: customerProvider.entryType == 'all' ? 'ALL' : 'ME',
-              icon: const Icon(Icons.keyboard_arrow_down, color: AppColors.primaryBlue),
-              style: const TextStyle(
-                color: AppColors.primaryBlue,
-                fontWeight: FontWeight.w500,
-                fontSize: 14,
-              ),
-              onChanged: (String? newValue) {
-                if (newValue != null) {
-                  customerProvider.setEntryType(newValue == 'ALL' ? 'all' : 'myown');
-                  customerProvider.getSearchCustomers(context);
-                }
-              },
-              items: <String>['ME', 'ALL']
-                  .map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-            ),
-          ),
-        ),
+        customActionWidget: settingsProvider.customerPermissionMeAndAll == 1
+            ? Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    value: customerProvider.entryType == 'all' ? 'ALL' : 'ME',
+                    icon: const Icon(Icons.keyboard_arrow_down, color: AppColors.primaryBlue),
+                    style: const TextStyle(
+                      color: AppColors.primaryBlue,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
+                    ),
+                    onChanged: (String? newValue) {
+                      if (newValue != null) {
+                        customerProvider.setEntryType(newValue == 'ALL' ? 'all' : 'myown');
+                        customerProvider.getSearchCustomers(context);
+                      }
+                    },
+                    items: <String>['ME', 'ALL']
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              )
+            : const SizedBox.shrink(),
       ),
       drawer: const SidebarDrawer(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,

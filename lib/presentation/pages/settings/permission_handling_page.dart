@@ -94,7 +94,8 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
 
     // Filter menus based on search query
     final filteredMenus = settingsProvider.getMenu.where((item) {
-      return item.menuName.toLowerCase().contains(_searchQuery.toLowerCase());
+      final matchesSearch = item.menuName.toLowerCase().contains(_searchQuery.toLowerCase());
+      return matchesSearch && item.deleteStatus == 0;
     }).toList();
 
     void updatePermission(int menuId, String permissionType, bool value) {
@@ -261,6 +262,7 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
                                       isSave: item.isSave,
                                       isEdit: item.isEdit,
                                       isDelete: item.isDelete,
+                                      deleteStatus: item.deleteStatus,
                                     ))
                                 .toList();
                         if (widget.isPrintPermission) {
@@ -440,6 +442,7 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
                                           isSave: item.isSave,
                                           isEdit: item.isEdit,
                                           isDelete: item.isDelete,
+                                          deleteStatus: item.deleteStatus,
                                         ))
                                     .toList();
                             if (widget.isPrintPermission) {

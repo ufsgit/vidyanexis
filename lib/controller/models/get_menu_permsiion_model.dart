@@ -5,6 +5,7 @@ class GetMenuPermissionModel {
   int isSave;
   int isEdit;
   int isDelete;
+  int? deleteStatus;
 
   GetMenuPermissionModel({
     required this.menuId,
@@ -13,6 +14,7 @@ class GetMenuPermissionModel {
     required this.isSave,
     required this.isEdit,
     required this.isDelete,
+    this.deleteStatus,
   });
 
   factory GetMenuPermissionModel.fromJson(Map<String, dynamic> json) =>
@@ -23,6 +25,7 @@ class GetMenuPermissionModel {
         isSave: json["IsSave"],
         isEdit: json["IsEdit"],
         isDelete: json["IsDelete"],
+        deleteStatus: json["DeleteStatus"] ?? 0,
       );
 
   Map<String, dynamic> toJson() => {
@@ -32,6 +35,7 @@ class GetMenuPermissionModel {
         "IsSave": isSave,
         "IsEdit": isEdit,
         "IsDelete": isDelete,
+        "DeleteStatus": deleteStatus,
       };
 
   GetMenuPermissionModel copyWith({
@@ -41,6 +45,7 @@ class GetMenuPermissionModel {
     int? isSave,
     int? isEdit,
     int? isDelete,
+    int? deleteStatus,
   }) {
     return GetMenuPermissionModel(
       menuId: menuId ?? this.menuId,
@@ -49,6 +54,7 @@ class GetMenuPermissionModel {
       isSave: isSave ?? this.isSave,
       isEdit: isEdit ?? this.isEdit,
       isDelete: isDelete ?? this.isDelete,
+      deleteStatus: deleteStatus ?? this.deleteStatus,
     );
   }
 }

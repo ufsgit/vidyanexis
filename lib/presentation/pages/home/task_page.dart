@@ -375,36 +375,51 @@ class _tasksPageReportState extends State<TaskPage> {
               },
               onChanged: _onSearchChanged,
               searchController: searchController,
-              customActionWidget: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    value: reportsProvider.entryType == 'all' ? 'ALL' : 'ME',
-                    icon: const Icon(Icons.keyboard_arrow_down,
-                        color: AppColors.primaryBlue),
-                    style: const TextStyle(
-                      color: AppColors.primaryBlue,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 14,
-                    ),
-                    onChanged: (String? newValue) {
-                      if (newValue != null) {
-                        reportsProvider
-                            .setEntryType(newValue == 'ALL' ? 'all' : 'myown');
-                        reportsProvider.goToPage(1);
-                        reportsProvider.searchTaskByCustomer(context);
-                      }
-                    },
-                    items: <String>['ME', 'ALL']
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ),
+              showRefresh: true,
+              onRefreshTap: () {
+                reportsProvider.setTaskSearchCriteria(
+                  searchController.text,
+                  reportsProvider.fromDateS,
+                  reportsProvider.toDateS,
+                  reportsProvider.Status,
+                  reportsProvider.AssignedTo,
+                  reportsProvider.TaskType,
+                  reportsProvider.enquiryForS,
+                );
+                reportsProvider.searchTaskByCustomer(context);
+              },
+              customActionWidget: settingsProvider.taskPermissionMeAndAll == 1
+                  ? Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          value: reportsProvider.entryType == 'all' ? 'ALL' : 'ME',
+                          icon: const Icon(Icons.keyboard_arrow_down,
+                              color: AppColors.primaryBlue),
+                          style: const TextStyle(
+                            color: AppColors.primaryBlue,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 14,
+                          ),
+                          onChanged: (String? newValue) {
+                            if (newValue != null) {
+                              reportsProvider
+                                  .setEntryType(newValue == 'ALL' ? 'all' : 'myown');
+                              reportsProvider.goToPage(1);
+                              reportsProvider.searchTaskByCustomer(context);
+                            }
+                          },
+                          items: <String>['ME', 'ALL']
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    )
+                  : const SizedBox.shrink(),
             )
           : null,
       drawer: AppStyles.isWebScreen(context) ? null : const SidebarDrawer(),
@@ -457,84 +472,85 @@ class _tasksPageReportState extends State<TaskPage> {
                           crossAxisAlignment: WrapCrossAlignment.center,
                           children: [
                             // Entry Type Filter
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    reportsProvider.setEntryType('myown');
-                                    reportsProvider.goToPage(1);
-                                    reportsProvider
-                                        .searchTaskByCustomer(context);
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.only(bottom: 2),
-                                    decoration: BoxDecoration(
-                                      border: Border(
-                                        bottom: BorderSide(
+                            if (settingsProvider.taskPermissionMeAndAll == 1)
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      reportsProvider.setEntryType('myown');
+                                      reportsProvider.goToPage(1);
+                                      reportsProvider
+                                          .searchTaskByCustomer(context);
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.only(bottom: 2),
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                          bottom: BorderSide(
+                                            color:
+                                                reportsProvider.entryType != 'all'
+                                                    ? AppColors.primaryBlue
+                                                    : Colors.transparent,
+                                            width: 2.0,
+                                          ),
+                                        ),
+                                      ),
+                                      child: Text(
+                                        'ME',
+                                        style: TextStyle(
                                           color:
                                               reportsProvider.entryType != 'all'
                                                   ? AppColors.primaryBlue
-                                                  : Colors.transparent,
-                                          width: 2.0,
+                                                  : Colors.grey,
+                                          fontWeight:
+                                              reportsProvider.entryType != 'all'
+                                                  ? FontWeight.w500
+                                                  : FontWeight.normal,
+                                          fontSize: 14,
                                         ),
                                       ),
                                     ),
-                                    child: Text(
-                                      'ME',
-                                      style: TextStyle(
-                                        color:
-                                            reportsProvider.entryType != 'all'
-                                                ? AppColors.primaryBlue
-                                                : Colors.grey,
-                                        fontWeight:
-                                            reportsProvider.entryType != 'all'
-                                                ? FontWeight.w500
-                                                : FontWeight.normal,
-                                        fontSize: 14,
-                                      ),
-                                    ),
                                   ),
-                                ),
-                                const SizedBox(width: 16),
-                                GestureDetector(
-                                  onTap: () {
-                                    reportsProvider.setEntryType('all');
-                                    reportsProvider.goToPage(1);
-                                    reportsProvider
-                                        .searchTaskByCustomer(context);
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.only(bottom: 2),
-                                    decoration: BoxDecoration(
-                                      border: Border(
-                                        bottom: BorderSide(
+                                  const SizedBox(width: 16),
+                                  GestureDetector(
+                                    onTap: () {
+                                      reportsProvider.setEntryType('all');
+                                      reportsProvider.goToPage(1);
+                                      reportsProvider
+                                          .searchTaskByCustomer(context);
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.only(bottom: 2),
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                          bottom: BorderSide(
+                                            color:
+                                                reportsProvider.entryType == 'all'
+                                                    ? AppColors.primaryBlue
+                                                    : Colors.transparent,
+                                            width: 2.0,
+                                          ),
+                                        ),
+                                      ),
+                                      child: Text(
+                                        'ALL',
+                                        style: TextStyle(
                                           color:
                                               reportsProvider.entryType == 'all'
                                                   ? AppColors.primaryBlue
-                                                  : Colors.transparent,
-                                          width: 2.0,
+                                                  : Colors.grey,
+                                          fontWeight:
+                                              reportsProvider.entryType == 'all'
+                                                  ? FontWeight.w500
+                                                  : FontWeight.normal,
+                                          fontSize: 14,
                                         ),
                                       ),
                                     ),
-                                    child: Text(
-                                      'ALL',
-                                      style: TextStyle(
-                                        color:
-                                            reportsProvider.entryType == 'all'
-                                                ? AppColors.primaryBlue
-                                                : Colors.grey,
-                                        fontWeight:
-                                            reportsProvider.entryType == 'all'
-                                                ? FontWeight.w500
-                                                : FontWeight.normal,
-                                        fontSize: 14,
-                                      ),
-                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
+                                ],
+                              ),
                             Container(
                               width: 280,
                               height: 38,
@@ -664,6 +680,22 @@ class _tasksPageReportState extends State<TaskPage> {
                                 reportsProvider.toggleFilter();
                               },
                               isFilter: reportsProvider.isFilter,
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.refresh, color: Color(0xFF64748B), size: 20),
+                              onPressed: () {
+                                reportsProvider.setTaskSearchCriteria(
+                                  searchController.text,
+                                  reportsProvider.fromDateS,
+                                  reportsProvider.toDateS,
+                                  reportsProvider.Status,
+                                  reportsProvider.AssignedTo,
+                                  reportsProvider.TaskType,
+                                  reportsProvider.enquiryForS,
+                                );
+                                reportsProvider.searchTaskByCustomer(context);
+                              },
+                              tooltip: 'Refresh',
                             ),
                             if (settingsProvider.menuIsViewMap[156] == 1)
                               ElevatedButton.icon(
