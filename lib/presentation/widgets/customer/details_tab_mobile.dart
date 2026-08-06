@@ -442,7 +442,7 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                                       );
                                     },
                                   ),
-                                 if ((settingsProvider.menuIsViewMap[174] == 1 || settingsProvider.menuIsViewMapPrint[174] == 1) && sideProvider.name != 'Lead /')
+                                 if ((settingsProvider.menuIsViewMap[175] == 1 || settingsProvider.menuIsViewMapPrint[175] == 1) && sideProvider.name != 'Lead /')
                                   _buildActionBtn(
                                     context,
                                     text: 'Status Image',
