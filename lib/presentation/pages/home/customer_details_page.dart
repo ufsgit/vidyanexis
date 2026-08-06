@@ -1527,7 +1527,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                   label: "Place",
                                                   value: customerDetailsProvider
                                                           .leadDetails![0]
-                                                          .address2 ??
+                                                          .address1 ??
                                                       ''),
 
                                               // State
@@ -1536,7 +1536,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                   label: "State",
                                                   value: customerDetailsProvider
                                                           .leadDetails![0]
-                                                          .address4 ??
+                                                          .address3 ??
                                                       ''),
 
                                               // Landmark
@@ -2032,7 +2032,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                     DetailRow(
                                                                         label:
                                                                             "Place",
-                                                                        value: customerDetailsProvider.leadDetails![0].address2 ??
+                                                                        value: customerDetailsProvider.leadDetails![0].address1 ??
                                                                             ''),
 
                                                                     // State
@@ -2042,7 +2042,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                     DetailRow(
                                                                         label:
                                                                             "State",
-                                                                        value: customerDetailsProvider.leadDetails![0].address4 ??
+                                                                        value: customerDetailsProvider.leadDetails![0].address3 ??
                                                                             ''),
 
                                                                     // Landmark
@@ -3065,7 +3065,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                   value: customerDetailsProvider
                                                                           .leadDetails![
                                                                               0]
-                                                                          .address2 ??
+                                                                          .address1 ??
                                                                       ''),
 
                                                               // State
@@ -3077,7 +3077,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                   value: customerDetailsProvider
                                                                           .leadDetails![
                                                                               0]
-                                                                          .address4 ??
+                                                                          .address3 ??
                                                                       ''),
 
                                                               // Landmark
