@@ -46,6 +46,7 @@ class CommonDropdown<T> extends StatefulWidget {
 class _CommonDropdownState<T> extends State<CommonDropdown<T>> {
   late TextEditingController _textController;
   final FocusNode _focusNode = FocusNode();
+  Color? _selectedTextColor;
 
   @override
   void initState() {
@@ -79,15 +80,18 @@ class _CommonDropdownState<T> extends State<CommonDropdown<T>> {
         if (_textController.text != matchingItem.name) {
           _textController.text = matchingItem.name;
         }
+        _selectedTextColor = matchingItem.textColor;
       } else {
         if (_textController.text.isNotEmpty && widget.controller == null) {
           _textController.clear();
         }
+        _selectedTextColor = null;
       }
     } else {
       if (_textController.text.isNotEmpty && widget.controller == null) {
         _textController.clear();
       }
+      _selectedTextColor = null;
     }
   }
 
@@ -128,6 +132,9 @@ class _CommonDropdownState<T> extends State<CommonDropdown<T>> {
             _focusNode.unfocus();
           }
           _textController.text = option.name;
+          setState(() {
+            _selectedTextColor = option.textColor;
+          });
           widget.onItemSelected(option.id);
         },
         fieldViewBuilder: (
@@ -147,7 +154,7 @@ class _CommonDropdownState<T> extends State<CommonDropdown<T>> {
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
-                    color: AppColors.textBlack,
+                    color: _selectedTextColor ?? AppColors.textBlack,
                   ),
                   onTap: () {
                     if (!widget.enabled) return;
@@ -329,7 +336,7 @@ class _CommonDropdownState<T> extends State<CommonDropdown<T>> {
                           style: GoogleFonts.plusJakartaSans(
                             fontSize: 13,
                             fontWeight: FontWeight.w500,
-                            color: AppColors.textBlack,
+                            color: option.textColor ?? AppColors.textBlack,
                           ),
                           maxLines: widget.isMultiLine ? null : 1,
                           overflow: widget.isMultiLine
@@ -356,6 +363,7 @@ class DropdownItem<T> {
   final String? unit;
   final String? category;
   final int? no;
+  final Color? textColor;
 
   DropdownItem({
     required this.id,
@@ -364,5 +372,6 @@ class DropdownItem<T> {
     this.unit,
     this.category,
     this.no,
+    this.textColor,
   });
 }

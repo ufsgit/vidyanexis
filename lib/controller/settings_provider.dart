@@ -547,12 +547,16 @@ class SettingsProvider extends ChangeNotifier {
 
   int _leadPermissionMeAndAll = 0;
   int get leadPermissionMeAndAll => _leadPermissionMeAndAll;
-  String get leadNameLabel => _leadNameChangeToCustomerName == 1 ? 'Customer Name' : 'Lead Name';
+  String get leadNameLabel =>
+      _leadNameChangeToCustomerName == 1 ? 'Customer Name' : 'Lead Name';
 
   String getPermissionCaption(dynamic key, String defaultCaption) {
-    if (_companyDetails.isNotEmpty && _companyDetails[0].permissions.isNotEmpty) {
+    if (_companyDetails.isNotEmpty &&
+        _companyDetails[0].permissions.isNotEmpty) {
       for (var p in _companyDetails[0].permissions) {
-        if (key is int && p.companyPermissionId == key && p.caption.isNotEmpty) {
+        if (key is int &&
+            p.companyPermissionId == key &&
+            p.caption.isNotEmpty) {
           return p.caption;
         }
         if (key is String &&
@@ -651,7 +655,8 @@ class SettingsProvider extends ChangeNotifier {
       _enquiryForMandatory = _companyDetails[0].enquiryForMandatory;
       _enquirySourceMandatory = _companyDetails[0].enquirySourceMandatory;
       _consumerNameMandatory = _companyDetails[0].consumerNameMandatory;
-      _consumerContactNoMandatory = _companyDetails[0].consumerContactNoMandatory;
+      _consumerContactNoMandatory =
+          _companyDetails[0].consumerContactNoMandatory;
       _leadInSales = _companyDetails[0].leadInSales;
       _quotationItem = _companyDetails[0].quotationItemValue;
       _additionalExpense = _companyDetails[0].additionalExpense;
@@ -669,7 +674,8 @@ class SettingsProvider extends ChangeNotifier {
   }
 
   void updateCompanyPermission(int permissionId, int newValue) {
-    if (_companyDetails.isNotEmpty && _companyDetails[0].permissions.isNotEmpty) {
+    if (_companyDetails.isNotEmpty &&
+        _companyDetails[0].permissions.isNotEmpty) {
       final index = _companyDetails[0]
           .permissions
           .indexWhere((p) => p.companyPermissionId == permissionId);
@@ -2008,8 +2014,11 @@ class SettingsProvider extends ChangeNotifier {
           var rawData = data as List<dynamic>;
 
           // Filter out permissions that are hidden by the backend (Menu_Status == 0) or deleted (DeleteStatus == 1)
-          var filteredData =
-              rawData.where((item) => (item['Menu_Status'] ?? 1) != 0 && (item['DeleteStatus'] ?? 0) != 1).toList();
+          var filteredData = rawData
+              .where((item) =>
+                  (item['Menu_Status'] ?? 1) != 0 &&
+                  (item['DeleteStatus'] ?? 0) != 1)
+              .toList();
 
           _getMenuPermission = filteredData
               .map((item) => GetMenuPermissionModel.fromJson(item))
@@ -2178,8 +2187,11 @@ class SettingsProvider extends ChangeNotifier {
           var rawData = data as List<dynamic>;
 
           // Filter out permissions that are hidden by the backend (Menu_Status == 0) or deleted (DeleteStatus == 1)
-          var filteredData =
-              rawData.where((item) => (item['Menu_Status'] ?? 1) != 0 && (item['DeleteStatus'] ?? 0) != 1).toList();
+          var filteredData = rawData
+              .where((item) =>
+                  (item['Menu_Status'] ?? 1) != 0 &&
+                  (item['DeleteStatus'] ?? 0) != 1)
+              .toList();
 
           _getMenuPermission = filteredData
               .map((item) => GetMenuPermissionModel.fromJson(item))
@@ -4367,7 +4379,8 @@ class SettingsProvider extends ChangeNotifier {
             _companyDetails = [Company.fromJson(data)];
             _syncAllCompanyPermissions();
           } catch (e) {
-            print('SettingsProvider.getCompanyDetails (map): Failed to parse Company format - $e');
+            print(
+                'SettingsProvider.getCompanyDetails (map): Failed to parse Company format - $e');
           }
 
           if (newLogo != logo ||
@@ -4594,7 +4607,8 @@ class SettingsProvider extends ChangeNotifier {
               .toList();
 
           // Filter out permissions that are hidden by the backend (Menu_Status == 0) or deleted (DeleteStatus == 1)
-          _showMenu.removeWhere((item) => item.menuStatus == 0 || item.deleteStatus == 1);
+          _showMenu.removeWhere(
+              (item) => item.menuStatus == 0 || item.deleteStatus == 1);
 
           _showMenu
               .removeWhere((item) => item.menuId == 82 || item.menuId == 83);
@@ -4871,7 +4885,8 @@ class SettingsProvider extends ChangeNotifier {
         final data = response.data;
         if (data != null) {
           if (data is List<dynamic>) {
-            _priorities = data.map((item) => PriorityModel.fromJson(item)).toList();
+            _priorities =
+                data.map((item) => PriorityModel.fromJson(item)).toList();
           } else if (data is Map<String, dynamic> && data.containsKey('data')) {
             _priorities = (data['data'] as List<dynamic>)
                 .map((item) => PriorityModel.fromJson(item))
@@ -4889,7 +4904,8 @@ class SettingsProvider extends ChangeNotifier {
     } catch (e) {
       print('Exception occurred: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred while fetching priorities')),
+        const SnackBar(
+            content: Text('An error occurred while fetching priorities')),
       );
     }
   }
@@ -4925,7 +4941,8 @@ class SettingsProvider extends ChangeNotifier {
     } catch (e) {
       print('Exception occurred: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred while saving priority')),
+        const SnackBar(
+            content: Text('An error occurred while saving priority')),
       );
       Loader.stopLoader(context);
     }
@@ -4961,7 +4978,8 @@ class SettingsProvider extends ChangeNotifier {
     } catch (e) {
       print('Exception occurred: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred while deleting priority')),
+        const SnackBar(
+            content: Text('An error occurred while deleting priority')),
       );
       Loader.stopLoader(context);
     }
@@ -6421,10 +6439,11 @@ class SettingsProvider extends ChangeNotifier {
       _subStatusGetModels.clear();
       _uniqueStatuses.clear();
       // DO NOT clear selectedSubIds and selectedTransferIds here, as it breaks Edit mode initialization.
-      
+
       final int viewInIdParam = _formViewInId ?? 0;
       final response = await HttpRequest.httpGetRequest(
-          endPoint: '${HttpUrls.searchStatus}?status_Name=&ViewIn_Id=$viewInIdParam');
+          endPoint:
+              '${HttpUrls.searchStatus}?status_Name=&ViewIn_Id=$viewInIdParam');
 
       if (response.statusCode == 200 && response.data != null) {
         _subStatusGetModels = (response.data as List)
@@ -6505,9 +6524,12 @@ class SettingsProvider extends ChangeNotifier {
   final TextEditingController description1Controller = TextEditingController();
   final TextEditingController description2Controller = TextEditingController();
   final TextEditingController description3Controller = TextEditingController();
-  final TextEditingController advancePercentageController = TextEditingController();
-  final TextEditingController onMaterialDeliveryPercentageController = TextEditingController();
-  final TextEditingController onWorkCompletionPercentageController = TextEditingController();
+  final TextEditingController advancePercentageController =
+      TextEditingController();
+  final TextEditingController onMaterialDeliveryPercentageController =
+      TextEditingController();
+  final TextEditingController onWorkCompletionPercentageController =
+      TextEditingController();
 
   String _warrantyText = '';
   String _termsText = '';
@@ -6525,7 +6547,8 @@ class SettingsProvider extends ChangeNotifier {
   String get description2Text => _description2Text;
   String get description3Text => _description3Text;
   String get advancePercentageText => _advancePercentageText;
-  String get onMaterialDeliveryPercentageText => _onMaterialDeliveryPercentageText;
+  String get onMaterialDeliveryPercentageText =>
+      _onMaterialDeliveryPercentageText;
   String get onWorkCompletionPercentageText => _onWorkCompletionPercentageText;
   int get termsWarrantyId => _termsWarrantyId;
 
@@ -6544,9 +6567,21 @@ class SettingsProvider extends ChangeNotifier {
           _description1Text = data['Description_1']?.toString() ?? '';
           _description2Text = data['Description_2']?.toString() ?? '';
           _description3Text = data['Description_3']?.toString() ?? '';
-          _advancePercentageText = data['Advance_Percentage']?.toString() ?? '';
-          _onMaterialDeliveryPercentageText = data['OnMaterialDelivery_Percentage']?.toString() ?? '';
-          _onWorkCompletionPercentageText = data['OnWorkCompletion_Percentage']?.toString() ?? '';
+          _advancePercentageText =
+              (data['advance_percentage'] ?? data['Advance_Percentage'])
+                      ?.toString() ??
+                  '';
+          _onMaterialDeliveryPercentageText =
+              (data['onmaterialdelivery_percentage'] ??
+                          data['OnMaterialDelivery_Percentage'])
+                      ?.toString() ??
+                  '';
+          _onWorkCompletionPercentageText =
+              (data['onWork_completetion_percentage'] ??
+                          data['onWork_completion_percentage'] ??
+                          data['OnWorkCompletion_Percentage'])
+                      ?.toString() ??
+                  '';
         }
 
         warrantyController.text = _warrantyText;
@@ -6555,8 +6590,10 @@ class SettingsProvider extends ChangeNotifier {
         description2Controller.text = _description2Text;
         description3Controller.text = _description3Text;
         advancePercentageController.text = _advancePercentageText;
-        onMaterialDeliveryPercentageController.text = _onMaterialDeliveryPercentageText;
-        onWorkCompletionPercentageController.text = _onWorkCompletionPercentageText;
+        onMaterialDeliveryPercentageController.text =
+            _onMaterialDeliveryPercentageText;
+        onWorkCompletionPercentageController.text =
+            _onWorkCompletionPercentageText;
         notifyListeners();
       }
     } catch (e) {
@@ -6578,8 +6615,10 @@ class SettingsProvider extends ChangeNotifier {
           "Description_2": description2Controller.text.trim(),
           "Description_3": description3Controller.text.trim(),
           "Advance_Percentage": advancePercentageController.text.trim(),
-          "OnMaterialDelivery_Percentage": onMaterialDeliveryPercentageController.text.trim(),
-          "OnWorkCompletion_Percentage": onWorkCompletionPercentageController.text.trim(),
+          "OnMaterialDelivery_Percentage":
+              onMaterialDeliveryPercentageController.text.trim(),
+          "OnWorkCompletion_Percentage":
+              onWorkCompletionPercentageController.text.trim(),
         },
       );
 
@@ -6627,27 +6666,30 @@ class SettingsProvider extends ChangeNotifier {
   }
 
   // ========== Designation ==========
-final TextEditingController designationNameController = TextEditingController();
-final TextEditingController searchDesignationController = TextEditingController();
+  final TextEditingController designationNameController =
+      TextEditingController();
+  final TextEditingController searchDesignationController =
+      TextEditingController();
 
-List<DesignationModel> _designationList = [];
-List<DesignationModel> get designationList => _designationList;
+  List<DesignationModel> _designationList = [];
+  List<DesignationModel> get designationList => _designationList;
 
-Future<void> searchDesignation(String query, BuildContext context) async {
-  try {
-    final response = await HttpRequest.httpGetRequest(
-      endPoint: '${HttpUrls.getDesignation}?Designation_Name=$query',
-    );
+  Future<void> searchDesignation(String query, BuildContext context) async {
+    try {
+      final response = await HttpRequest.httpGetRequest(
+        endPoint: '${HttpUrls.getDesignation}?Designation_Name=$query',
+      );
 
-    if (response.statusCode == 200 && response.data != null) {
-      final data = response.data;
-      if (data is List) {
-        _designationList = data.map((e) => DesignationModel.fromJson(e)).toList();
-      } else if (data is Map && data['data'] != null) {
-        _designationList = (data['data'] as List)
-            .map((e) => DesignationModel.fromJson(e))
-            .toList();
-      } else {
+      if (response.statusCode == 200 && response.data != null) {
+        final data = response.data;
+        if (data is List) {
+          _designationList =
+              data.map((e) => DesignationModel.fromJson(e)).toList();
+        } else if (data is Map && data['data'] != null) {
+          _designationList = (data['data'] as List)
+              .map((e) => DesignationModel.fromJson(e))
+              .toList();
+        } else {
           _designationList = [];
         }
         notifyListeners();

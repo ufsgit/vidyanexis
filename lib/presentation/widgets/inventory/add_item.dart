@@ -418,10 +418,22 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                       CommonDropdown(
                         hintText: "Select Item Type",
                         items: expenseProvider.itemTypeDropdownList
-                            .map((status) => DropdownItem<int>(
-                                  id: status.itemTypeId,
-                                  name: status.itemTypeName,
-                                ))
+                            .map((status) {
+                              Color? textColor;
+                              final lowerName = status.itemTypeName.toLowerCase();
+                              if (lowerName.contains('primary')) {
+                                textColor = Colors.red;
+                              } else if (lowerName.contains('secondary')) {
+                                textColor = Colors.green;
+                              } else if (lowerName.contains('individual')) {
+                                textColor = Colors.blue;
+                              }
+                              return DropdownItem<int>(
+                                id: status.itemTypeId,
+                                name: status.itemTypeName,
+                                textColor: textColor,
+                              );
+                            })
                             .toList(),
                         controller: expenseProvider.itemTypeController,
                         onItemSelected: (selectedItem) {

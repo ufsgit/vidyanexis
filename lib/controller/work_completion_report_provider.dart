@@ -162,8 +162,14 @@ class WorkCompletionReportProvider extends ChangeNotifier {
       if (response.statusCode == 200) {
         final data = response.data;
         if (data != null && data is List) {
-          _reports =
-              data.map((item) => WorkCompletionReportModel.fromJson(item)).toList();
+          if (data.isNotEmpty && data.first is List) {
+            _reports = (data.first as List)
+                .map((item) => WorkCompletionReportModel.fromJson(item))
+                .toList();
+          } else {
+            _reports =
+                data.map((item) => WorkCompletionReportModel.fromJson(item)).toList();
+          }
         } else if (data != null && data['data'] != null && data['data'] is List) {
           _reports = (data['data'] as List)
               .map((item) => WorkCompletionReportModel.fromJson(item))
