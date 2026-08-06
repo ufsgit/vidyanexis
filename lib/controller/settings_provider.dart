@@ -11,6 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/leads_provider.dart';
 import 'package:vidyanexis/controller/models/department_custom_field_model.dart';
+import 'package:vidyanexis/controller/models/designation_model.dart';
 import 'package:vidyanexis/controller/models/inventory_customer_model.dart';
 import 'package:vidyanexis/controller/models/lead_customer_model.dart';
 import 'package:vidyanexis/controller/models/location_model.dart';
@@ -543,12 +544,19 @@ class SettingsProvider extends ChangeNotifier {
   int get leadNameChangeToCustomerName => _leadNameChangeToCustomerName;
   int get leadCodeWithEnquiryCode => _leadCodeWithEnquiryCode;
   int get documentButtonTaskStatus => _documentButtonTaskStatus;
-  String get leadNameLabel => _leadNameChangeToCustomerName == 1 ? 'Customer Name' : 'Lead Name';
+
+  int _leadPermissionMeAndAll = 0;
+  int get leadPermissionMeAndAll => _leadPermissionMeAndAll;
+  String get leadNameLabel =>
+      _leadNameChangeToCustomerName == 1 ? 'Customer Name' : 'Lead Name';
 
   String getPermissionCaption(dynamic key, String defaultCaption) {
-    if (_companyDetails.isNotEmpty && _companyDetails[0].permissions.isNotEmpty) {
+    if (_companyDetails.isNotEmpty &&
+        _companyDetails[0].permissions.isNotEmpty) {
       for (var p in _companyDetails[0].permissions) {
-        if (key is int && p.companyPermissionId == key && p.caption.isNotEmpty) {
+        if (key is int &&
+            p.companyPermissionId == key &&
+            p.caption.isNotEmpty) {
           return p.caption;
         }
         if (key is String &&
@@ -590,7 +598,39 @@ class SettingsProvider extends ChangeNotifier {
       _leadCodeWithEnquiryCode = value;
     } else if (permissionId == 16) {
       _documentButtonTaskStatus = value;
+    } else if (permissionId == 17) {
+      _leadPermissionMeAndAll = value;
+    } else if (permissionId == 18) {
+      _customerPermissionMeAndAll = value;
+    } else if (permissionId == 19) {
+      _taskPermissionMeAndAll = value;
     }
+  }
+
+  void setDocumentButtonTaskStatus(int value) {
+    _documentButtonTaskStatus = value;
+    notifyListeners();
+  }
+
+  void setLeadPermissionMeAndAll(int value) {
+    _leadPermissionMeAndAll = value;
+    notifyListeners();
+  }
+
+  int _customerPermissionMeAndAll = 0;
+  int get customerPermissionMeAndAll => _customerPermissionMeAndAll;
+
+  int _taskPermissionMeAndAll = 0;
+  int get taskPermissionMeAndAll => _taskPermissionMeAndAll;
+
+  void setCustomerPermissionMeAndAll(int value) {
+    _customerPermissionMeAndAll = value;
+    notifyListeners();
+  }
+
+  void setTaskPermissionMeAndAll(int value) {
+    _taskPermissionMeAndAll = value;
+    notifyListeners();
   }
 
   void _syncStateToPermissionsList(int permissionId, int value) {
@@ -615,7 +655,8 @@ class SettingsProvider extends ChangeNotifier {
       _enquiryForMandatory = _companyDetails[0].enquiryForMandatory;
       _enquirySourceMandatory = _companyDetails[0].enquirySourceMandatory;
       _consumerNameMandatory = _companyDetails[0].consumerNameMandatory;
-      _consumerContactNoMandatory = _companyDetails[0].consumerContactNoMandatory;
+      _consumerContactNoMandatory =
+          _companyDetails[0].consumerContactNoMandatory;
       _leadInSales = _companyDetails[0].leadInSales;
       _quotationItem = _companyDetails[0].quotationItemValue;
       _additionalExpense = _companyDetails[0].additionalExpense;
@@ -633,7 +674,8 @@ class SettingsProvider extends ChangeNotifier {
   }
 
   void updateCompanyPermission(int permissionId, int newValue) {
-    if (_companyDetails.isNotEmpty && _companyDetails[0].permissions.isNotEmpty) {
+    if (_companyDetails.isNotEmpty &&
+        _companyDetails[0].permissions.isNotEmpty) {
       final index = _companyDetails[0]
           .permissions
           .indexWhere((p) => p.companyPermissionId == permissionId);
@@ -652,6 +694,13 @@ class SettingsProvider extends ChangeNotifier {
 
   int? _selectedBranchId = -1;
   int? get selectedBranchId => _selectedBranchId;
+
+  int _selectedDesignationId = 0;
+  int get selectedDesignationId => _selectedDesignationId;
+  set selectedDesignationId(int id) {
+    _selectedDesignationId = id;
+    notifyListeners();
+  }
 
   int _isOTPChecked = 0;
   int get isOTPChecked => _isOTPChecked;
@@ -1971,9 +2020,12 @@ class SettingsProvider extends ChangeNotifier {
         if (data != null) {
           var rawData = data as List<dynamic>;
 
-          // Filter out permissions that are hidden by the backend (Menu_Status == 0)
-          var filteredData =
-              rawData.where((item) => (item['Menu_Status'] ?? 1) != 0).toList();
+          // Filter out permissions that are hidden by the backend (Menu_Status == 0) or deleted (DeleteStatus == 1)
+          var filteredData = rawData
+              .where((item) =>
+                  (item['Menu_Status'] ?? 1) != 0 &&
+                  (item['DeleteStatus'] ?? 0) != 1)
+              .toList();
 
           _getMenuPermission = filteredData
               .map((item) => GetMenuPermissionModel.fromJson(item))
@@ -2141,9 +2193,12 @@ class SettingsProvider extends ChangeNotifier {
         if (data != null) {
           var rawData = data as List<dynamic>;
 
-          // Filter out permissions that are hidden by the backend (Menu_Status == 0)
-          var filteredData =
-              rawData.where((item) => (item['Menu_Status'] ?? 1) != 0).toList();
+          // Filter out permissions that are hidden by the backend (Menu_Status == 0) or deleted (DeleteStatus == 1)
+          var filteredData = rawData
+              .where((item) =>
+                  (item['Menu_Status'] ?? 1) != 0 &&
+                  (item['DeleteStatus'] ?? 0) != 1)
+              .toList();
 
           _getMenuPermission = filteredData
               .map((item) => GetMenuPermissionModel.fromJson(item))
@@ -3060,6 +3115,7 @@ class SettingsProvider extends ChangeNotifier {
             "Allow_App_Login": appLogin,
             "Employee_Code": employeeCodeController.text,
             "Designation": designationController.text,
+            "Designation_Id": _selectedDesignationId,
             "DOJ": dateOfJoinController.text.toyyyymmdd(),
             "Transfer_Departments":
                 _selectedTransferDepartments.map((e) => e.toJson()).toList(),
@@ -4095,6 +4151,7 @@ class SettingsProvider extends ChangeNotifier {
     designationController.clear();
     dateOfJoinController.clear();
     _allowAppLogin = false;
+    _selectedDesignationId = 0;
     notifyListeners();
   }
 
@@ -4331,7 +4388,8 @@ class SettingsProvider extends ChangeNotifier {
             _companyDetails = [Company.fromJson(data)];
             _syncAllCompanyPermissions();
           } catch (e) {
-            print('SettingsProvider.getCompanyDetails (map): Failed to parse Company format - $e');
+            print(
+                'SettingsProvider.getCompanyDetails (map): Failed to parse Company format - $e');
           }
 
           if (newLogo != logo ||
@@ -4536,6 +4594,9 @@ class SettingsProvider extends ChangeNotifier {
     _toggleValue = 0;
     _enquiryForMandatory = 0;
     _enquirySourceMandatory = 0;
+    _leadPermissionMeAndAll = 0;
+    _customerPermissionMeAndAll = 0;
+    _taskPermissionMeAndAll = 0;
   }
 
   Future<void> searchPermission(BuildContext context) async {
@@ -4554,8 +4615,9 @@ class SettingsProvider extends ChangeNotifier {
               .map((item) => MenuPermissionModel.fromJson(item))
               .toList();
 
-          // Filter out permissions that are hidden by the backend (Menu_Status == 0)
-          _showMenu.removeWhere((item) => item.menuStatus == 0);
+          // Filter out permissions that are hidden by the backend (Menu_Status == 0) or deleted (DeleteStatus == 1)
+          _showMenu.removeWhere(
+              (item) => item.menuStatus == 0 || item.deleteStatus == 1);
 
           _showMenu
               .removeWhere((item) => item.menuId == 82 || item.menuId == 83);
@@ -4832,7 +4894,8 @@ class SettingsProvider extends ChangeNotifier {
         final data = response.data;
         if (data != null) {
           if (data is List<dynamic>) {
-            _priorities = data.map((item) => PriorityModel.fromJson(item)).toList();
+            _priorities =
+                data.map((item) => PriorityModel.fromJson(item)).toList();
           } else if (data is Map<String, dynamic> && data.containsKey('data')) {
             _priorities = (data['data'] as List<dynamic>)
                 .map((item) => PriorityModel.fromJson(item))
@@ -4850,7 +4913,8 @@ class SettingsProvider extends ChangeNotifier {
     } catch (e) {
       print('Exception occurred: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred while fetching priorities')),
+        const SnackBar(
+            content: Text('An error occurred while fetching priorities')),
       );
     }
   }
@@ -4886,7 +4950,8 @@ class SettingsProvider extends ChangeNotifier {
     } catch (e) {
       print('Exception occurred: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred while saving priority')),
+        const SnackBar(
+            content: Text('An error occurred while saving priority')),
       );
       Loader.stopLoader(context);
     }
@@ -4922,7 +4987,8 @@ class SettingsProvider extends ChangeNotifier {
     } catch (e) {
       print('Exception occurred: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred while deleting priority')),
+        const SnackBar(
+            content: Text('An error occurred while deleting priority')),
       );
       Loader.stopLoader(context);
     }
@@ -6116,24 +6182,12 @@ class SettingsProvider extends ChangeNotifier {
       Loader.showLoader(context);
 
       final List<DepartmentCustomFieldMapping> list =
-          mapping.entries.map((entry) {
-        // Find enquiry for details
-        final enquiryFor = searchEnquiryFor.firstWhere(
-          (e) => e.enquiryForId == entry.key,
-          orElse: () => EnquiryForModel(
-            enquiryForId: entry.key,
-            enquiryForName: "",
-            deleteStatus: 0,
-            sourceCategoryId: 0,
-            sourceCategoryName: '',
-          ),
-        );
-
+          searchEnquiryFor.map((enquiryFor) {
         return DepartmentCustomFieldMapping(
           departmentId: departmentId,
-          enquiryForId: entry.key,
+          enquiryForId: enquiryFor.enquiryForId,
           enquiryForName: enquiryFor.enquiryForName,
-          customFields: entry.value,
+          customFields: mapping[enquiryFor.enquiryForId] ?? [],
         );
       }).toList();
 
@@ -6239,8 +6293,31 @@ class SettingsProvider extends ChangeNotifier {
   List<SearchLeadStatusModel> get subStatusGetModels => _subStatusGetModels;
 
   List<SubStatus> _uniqueStatuses = [];
-  List<SubStatus> get uniqueSubStatuses => _uniqueStatuses;
-  List<SubStatus> get uniqueTransferStatuses => _uniqueStatuses; // Reuse
+  List<SubStatus> get uniqueSubStatuses {
+    if (_formViewInId == null || _formViewInId == 0) {
+      return _uniqueStatuses;
+    }
+    final validStatusIds = _subStatusGetModels
+        .where((model) => model.viewInId == _formViewInId)
+        .map((model) => model.statusId)
+        .toSet();
+    return _uniqueStatuses
+        .where((subStatus) => validStatusIds.contains(subStatus.subStatusId))
+        .toList();
+  }
+
+  List<SubStatus> get uniqueTransferStatuses {
+    if (_formViewInId == null || _formViewInId == 0) {
+      return _uniqueStatuses;
+    }
+    final validStatusIds = _subStatusGetModels
+        .where((model) => model.viewInId == _formViewInId)
+        .map((model) => model.statusId)
+        .toSet();
+    return _uniqueStatuses
+        .where((subStatus) => validStatusIds.contains(subStatus.subStatusId))
+        .toList();
+  }
 
   Set<int> _selectedSubIds = {};
   Set<int> _selectedTransferIds = {};
@@ -6321,14 +6398,14 @@ class SettingsProvider extends ChangeNotifier {
 
 // Using toJson() - Much cleaner
   List<Map<String, dynamic>> get selectedSubStatusesForApi {
-    return _uniqueStatuses
+    return uniqueSubStatuses
         .where((s) => _selectedSubIds.contains(s.subStatusId))
         .map((s) => s.toJson())
         .toList();
   }
 
   List<Map<String, dynamic>> get selectedTransferStatusesForApi {
-    return _uniqueStatuses
+    return uniqueTransferStatuses
         .where((s) => _selectedTransferIds.contains(s.subStatusId))
         .map((s) => s.toJson())
         .toList();
@@ -6370,11 +6447,12 @@ class SettingsProvider extends ChangeNotifier {
     try {
       _subStatusGetModels.clear();
       _uniqueStatuses.clear();
-      _selectedSubIds.clear();
-      _selectedTransferIds.clear();
+      // DO NOT clear selectedSubIds and selectedTransferIds here, as it breaks Edit mode initialization.
 
+      final int viewInIdParam = _formViewInId ?? 0;
       final response = await HttpRequest.httpGetRequest(
-          endPoint: '${HttpUrls.searchStatus}?status_Name=&ViewIn_Id=0');
+          endPoint:
+              '${HttpUrls.searchStatus}?status_Name=&ViewIn_Id=$viewInIdParam');
 
       if (response.statusCode == 200 && response.data != null) {
         _subStatusGetModels = (response.data as List)
@@ -6455,9 +6533,12 @@ class SettingsProvider extends ChangeNotifier {
   final TextEditingController description1Controller = TextEditingController();
   final TextEditingController description2Controller = TextEditingController();
   final TextEditingController description3Controller = TextEditingController();
-  final TextEditingController advancePercentageController = TextEditingController();
-  final TextEditingController onMaterialDeliveryPercentageController = TextEditingController();
-  final TextEditingController onWorkCompletionPercentageController = TextEditingController();
+  final TextEditingController advancePercentageController =
+      TextEditingController();
+  final TextEditingController onMaterialDeliveryPercentageController =
+      TextEditingController();
+  final TextEditingController onWorkCompletionPercentageController =
+      TextEditingController();
 
   String _warrantyText = '';
   String _termsText = '';
@@ -6475,7 +6556,8 @@ class SettingsProvider extends ChangeNotifier {
   String get description2Text => _description2Text;
   String get description3Text => _description3Text;
   String get advancePercentageText => _advancePercentageText;
-  String get onMaterialDeliveryPercentageText => _onMaterialDeliveryPercentageText;
+  String get onMaterialDeliveryPercentageText =>
+      _onMaterialDeliveryPercentageText;
   String get onWorkCompletionPercentageText => _onWorkCompletionPercentageText;
   int get termsWarrantyId => _termsWarrantyId;
 
@@ -6494,9 +6576,21 @@ class SettingsProvider extends ChangeNotifier {
           _description1Text = data['Description_1']?.toString() ?? '';
           _description2Text = data['Description_2']?.toString() ?? '';
           _description3Text = data['Description_3']?.toString() ?? '';
-          _advancePercentageText = data['Advance_Percentage']?.toString() ?? '';
-          _onMaterialDeliveryPercentageText = data['OnMaterialDelivery_Percentage']?.toString() ?? '';
-          _onWorkCompletionPercentageText = data['OnWorkCompletion_Percentage']?.toString() ?? '';
+          _advancePercentageText =
+              (data['advance_percentage'] ?? data['Advance_Percentage'])
+                      ?.toString() ??
+                  '';
+          _onMaterialDeliveryPercentageText =
+              (data['onmaterialdelivery_percentage'] ??
+                          data['OnMaterialDelivery_Percentage'])
+                      ?.toString() ??
+                  '';
+          _onWorkCompletionPercentageText =
+              (data['onWork_completetion_percentage'] ??
+                          data['onWork_completion_percentage'] ??
+                          data['OnWorkCompletion_Percentage'])
+                      ?.toString() ??
+                  '';
         }
 
         warrantyController.text = _warrantyText;
@@ -6505,8 +6599,10 @@ class SettingsProvider extends ChangeNotifier {
         description2Controller.text = _description2Text;
         description3Controller.text = _description3Text;
         advancePercentageController.text = _advancePercentageText;
-        onMaterialDeliveryPercentageController.text = _onMaterialDeliveryPercentageText;
-        onWorkCompletionPercentageController.text = _onWorkCompletionPercentageText;
+        onMaterialDeliveryPercentageController.text =
+            _onMaterialDeliveryPercentageText;
+        onWorkCompletionPercentageController.text =
+            _onWorkCompletionPercentageText;
         notifyListeners();
       }
     } catch (e) {
@@ -6528,8 +6624,10 @@ class SettingsProvider extends ChangeNotifier {
           "Description_2": description2Controller.text.trim(),
           "Description_3": description3Controller.text.trim(),
           "Advance_Percentage": advancePercentageController.text.trim(),
-          "OnMaterialDelivery_Percentage": onMaterialDeliveryPercentageController.text.trim(),
-          "OnWorkCompletion_Percentage": onWorkCompletionPercentageController.text.trim(),
+          "OnMaterialDelivery_Percentage":
+              onMaterialDeliveryPercentageController.text.trim(),
+          "OnWorkCompletion_Percentage":
+              onWorkCompletionPercentageController.text.trim(),
         },
       );
 
@@ -6574,5 +6672,96 @@ class SettingsProvider extends ChangeNotifier {
     _onWorkCompletionPercentageText = '';
     _termsWarrantyId = 0;
     notifyListeners();
+  }
+
+  // ========== Designation ==========
+  final TextEditingController designationNameController =
+      TextEditingController();
+  final TextEditingController searchDesignationController =
+      TextEditingController();
+
+  List<DesignationModel> _designationList = [];
+  List<DesignationModel> get designationList => _designationList;
+
+  Future<void> searchDesignation(String query, BuildContext context) async {
+    try {
+      final response = await HttpRequest.httpGetRequest(
+        endPoint: '${HttpUrls.getDesignation}?Designation_Name=$query',
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        final data = response.data;
+        if (data is List) {
+          _designationList =
+              data.map((e) => DesignationModel.fromJson(e)).toList();
+        } else if (data is Map && data['data'] != null) {
+          _designationList = (data['data'] as List)
+              .map((e) => DesignationModel.fromJson(e))
+              .toList();
+        } else {
+          _designationList = [];
+        }
+        notifyListeners();
+      }
+    } catch (e) {
+      print('searchDesignation error: $e');
+    }
+  }
+
+  Future<void> addDesignation({
+    required BuildContext context,
+    required Map<String, dynamic> data,
+  }) async {
+    try {
+      Loader.showLoader(context);
+      final response = await HttpRequest.httpPostRequest(
+        endPoint: HttpUrls.saveDesignation, // you need to add this URL
+        bodyData: data,
+      );
+
+      if (response != null && response.statusCode == 200) {
+        designationNameController.clear();
+        searchDesignation('', context);
+        Navigator.pop(context);
+        Loader.stopLoader(context);
+      } else {
+        Loader.stopLoader(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+      }
+    } catch (e) {
+      Loader.stopLoader(context);
+      print('addDesignation error: $e');
+    }
+  }
+
+  void deleteDesignation(BuildContext context, int designationId) async {
+    try {
+      Loader.showLoader(context);
+      final response = await HttpRequest.httpDeleteRequest(
+        endPoint: '${HttpUrls.deleteDesignation}/$designationId',
+      );
+
+      if (response != null && response.statusCode == 200) {
+        final data = response.data;
+        if (data['Designation_Id_'] == -1) {
+          Loader.stopLoader(context);
+          alert(context, "This Designation is currently in use");
+        } else {
+          searchDesignation('', context);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Designation deleted successfully')),
+          );
+          Loader.stopLoader(context);
+        }
+        notifyListeners();
+      } else {
+        Loader.stopLoader(context);
+      }
+    } catch (e) {
+      Loader.stopLoader(context);
+      print(e);
+    }
   }
 }

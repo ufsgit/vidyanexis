@@ -6,6 +6,8 @@ import 'dart:math' as math;
 import 'package:universal_html/html.dart' as html;
 import 'package:flutter/foundation.dart';
 import 'package:printing/printing.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -4909,6 +4911,41 @@ class CustomerDetailsProvider extends ChangeNotifier {
       return null;
     } catch (e) {
       print('Exception occurred: $e');
+      return null;
+    }
+  }
+
+  Future<Uint8List?> getStatusImageBytes(String customerId) async {
+    try {
+      final bytes = await getAnnexurePdfBytes('${HttpUrls.generateStatusImage}$customerId');
+      if (bytes == null || bytes.isEmpty) return null;
+      if (bytes.length >= 4 &&
+          bytes[0] == 0x25 &&
+          bytes[1] == 0x50 &&
+          bytes[2] == 0x44 &&
+          bytes[3] == 0x46) {
+        return bytes;
+      }
+      try {
+        final pdf = pw.Document();
+        final image = pw.MemoryImage(bytes);
+        pdf.addPage(
+          pw.Page(
+            pageFormat: PdfPageFormat.a4,
+            build: (pw.Context context) {
+              return pw.Center(
+                child: pw.Image(image, fit: pw.BoxFit.contain),
+              );
+            },
+          ),
+        );
+        return await pdf.save();
+      } catch (e) {
+        print('Exception converting image to PDF: $e');
+        return bytes;
+      }
+    } catch (e) {
+      print('Exception in getStatusImageBytes: $e');
       return null;
     }
   }

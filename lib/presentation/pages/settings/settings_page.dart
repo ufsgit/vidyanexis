@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:vidyanexis/presentation/pages/settings/designation_content.dart';
 import 'package:vidyanexis/presentation/pages/settings/warrenty_terms_page.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
 import 'package:vidyanexis/presentation/pages/settings/checklist_category_page.dart';
@@ -955,6 +956,8 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
         return const TargetEnquirySourcePage();
       case 'Terms & Warranty':
         return const TermsWarrantyContent();
+      case 'Designation':
+        return const DesignationContent();
       default:
         return const SizedBox.shrink();
     }
@@ -1024,6 +1027,8 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
       if (settingsProvider.menuIsViewMap[161].toString() == '1')
         _buildMenuItem(context, 'Terms & Warranty', Icons.description,
             isMobile: isMobile), //new
+      if (settingsProvider.menuIsViewMap[174].toString() == '1')
+        _buildMenuItem(context, 'Designation', Icons.category, isMobile: isMobile),
     ];
   }
 }

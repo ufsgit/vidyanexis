@@ -71,8 +71,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
     provider.getFollowUpStatus(context, '1');
     settingsProvider.searchsourceCategoryData('', context);
     provider.getDistricts(context);
-provider.getStatesDropdown(context);
-provider.getLandmarks(context);
+    provider.getStatesDropdown(context);
     settingsProvider.searchBranch(context);
     settingsProvider.searchDepartment('', context);
     leadProvider.selectedStatusIds.clear();
@@ -125,8 +124,7 @@ provider.getLandmarks(context);
       provider.getFollowUpStatus(context, '1');
       settingsProvider.searchsourceCategoryData('', context);
       provider.getDistricts(context);
-provider.getStatesDropdown(context);
-provider.getLandmarks(context);
+      provider.getStatesDropdown(context);
       leadProvider.totalCount;
 
       leadProvider.selectedStatusIds.clear();
@@ -269,35 +267,41 @@ provider.getLandmarks(context);
                 );
                 leadProvider.getSearchLeads(context);
               },
+              showRefresh: true,
+              onRefreshTap: () {
+                _refreshData();
+              },
               // onChanged: _onSearchChanged,
               searchController: searchController,
-              customActionWidget: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    value: leadProvider.entryType == 'all' ? 'ALL' : 'ME',
-                    icon: const Icon(Icons.keyboard_arrow_down, color: AppColors.primaryBlue),
-                    style: const TextStyle(
-                      color: AppColors.primaryBlue,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 14,
-                    ),
-                    onChanged: (String? newValue) {
-                      if (newValue != null) {
-                        leadProvider.setEntryType(newValue == 'ALL' ? 'all' : 'myown');
-                        leadProvider.getSearchLeads(context);
-                      }
-                    },
-                    items: <String>['ME', 'ALL']
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ),
+              customActionWidget: settingsProvider.leadPermissionMeAndAll == 1
+                  ? Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          value: leadProvider.entryType == 'all' ? 'ALL' : 'ME',
+                          icon: const Icon(Icons.keyboard_arrow_down, color: AppColors.primaryBlue),
+                          style: const TextStyle(
+                            color: AppColors.primaryBlue,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 14,
+                          ),
+                          onChanged: (String? newValue) {
+                            if (newValue != null) {
+                              leadProvider.setEntryType(newValue == 'ALL' ? 'all' : 'myown');
+                              leadProvider.getSearchLeads(context);
+                            }
+                          },
+                          items: <String>['ME', 'ALL']
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    )
+                  : const SizedBox.shrink(),
             )
           : CustomAppBar(
               onSearchTap: () {
@@ -369,34 +373,40 @@ provider.getLandmarks(context);
                 );
                 leadProvider.getSearchLeads(context);
               },
+              showRefresh: true,
+              onRefreshTap: () {
+                _refreshData();
+              },
               searchController: searchController,
-              customActionWidget: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    value: leadProvider.entryType == 'all' ? 'ALL' : 'ME',
-                    icon: const Icon(Icons.keyboard_arrow_down, color: AppColors.primaryBlue),
-                    style: const TextStyle(
-                      color: AppColors.primaryBlue,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 14,
-                    ),
-                    onChanged: (String? newValue) {
-                      if (newValue != null) {
-                        leadProvider.setEntryType(newValue == 'ALL' ? 'all' : 'myown');
-                        leadProvider.getSearchLeads(context);
-                      }
-                    },
-                    items: <String>['ME', 'ALL']
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ),
+              customActionWidget: settingsProvider.leadPermissionMeAndAll == 1
+                  ? Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          value: leadProvider.entryType == 'all' ? 'ALL' : 'ME',
+                          icon: const Icon(Icons.keyboard_arrow_down, color: AppColors.primaryBlue),
+                          style: const TextStyle(
+                            color: AppColors.primaryBlue,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 14,
+                          ),
+                          onChanged: (String? newValue) {
+                            if (newValue != null) {
+                              leadProvider.setEntryType(newValue == 'ALL' ? 'all' : 'myown');
+                              leadProvider.getSearchLeads(context);
+                            }
+                          },
+                          items: <String>['ME', 'ALL']
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    )
+                  : const SizedBox.shrink(),
             ),
       body: leadProvider.isLoading
           ? const Center(

@@ -576,7 +576,6 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
       final dropDownProvider =
           Provider.of<DropDownProvider>(context, listen: false);
       final leadProvider = Provider.of<LeadsProvider>(context, listen: false);
-      await settingsProvider.fetchSubStatuses();
       final formProvider = Provider.of<FormProvider>(context, listen: false);
       await formProvider.fetchForms(context);
       dropDownProvider.getUserDetails(context);
@@ -704,6 +703,8 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
         leadProvider.searchUserController.clear();
         settingsProvider.selectedDepartmentId = 0;
       }
+      
+      await settingsProvider.fetchSubStatuses();
     });
   }
 
@@ -830,6 +831,7 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
                       controller: settingsProvider.viewInController,
                       onItemSelected: (selectedId) {
                         settingsProvider.setFormViewInId(selectedId);
+                        settingsProvider.fetchSubStatuses();
                       },
                     ),
                   ),

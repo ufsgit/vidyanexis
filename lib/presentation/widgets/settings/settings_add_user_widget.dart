@@ -6,6 +6,7 @@ import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/models/branch_model.dart';
 import 'package:vidyanexis/controller/models/department_model.dart';
+import 'package:vidyanexis/controller/models/designation_model.dart';
 import 'package:vidyanexis/controller/models/search_user_model.dart';
 import 'package:vidyanexis/controller/models/search_working_status_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
@@ -31,6 +32,7 @@ class SettingsAddUserWidget extends StatefulWidget {
   bool? appLogin;
   final String? empCode;
   final String? designation;
+  final int? designationId;
   final String? doj;
   final int? branchId;
   final List<DepartmentModel>? transferDepartments;
@@ -52,6 +54,7 @@ class SettingsAddUserWidget extends StatefulWidget {
       this.appLogin,
       this.empCode,
       this.designation,
+      this.designationId,
       this.doj,
       this.branchId,
       this.transferDepartments});
@@ -69,6 +72,7 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         final settingsProvider =
             Provider.of<SettingsProvider>(context, listen: false);
+        settingsProvider.searchDesignation("", context);
 
         settingsProvider.workingStatusController.text = '';
         settingsProvider.emailIdController.text = widget.email!;
@@ -81,6 +85,7 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
         settingsProvider.employeeCodeController.text = widget.empCode!;
         settingsProvider.dateOfJoinController.text = widget.doj!;
         settingsProvider.designationController.text = widget.designation!;
+        settingsProvider.selectedDesignationId = widget.designationId!;
         settingsProvider.toggleAppLogin(widget.appLogin ?? false);
         final userWorkingStatus =
             settingsProvider.searchWorkingStatus.firstWhere(
@@ -141,6 +146,7 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         final settingsProvider =
             Provider.of<SettingsProvider>(context, listen: false);
+        settingsProvider.searchDesignation("", context);
         settingsProvider.resetStates();
       });
     }
@@ -520,12 +526,29 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                   labelText: '',
                 ),
                 const SizedBox(height: 16),
-                CustomTextField(
-                  readOnly: false,
-                  height: 54,
-                  controller: settingsProvider.designationController,
+                CommonDropdown<int>(
                   hintText: 'Designation',
-                  labelText: '',
+                  selectedValue: settingsProvider.selectedDesignationId,
+                  items: settingsProvider.designationList
+                      .map((source) => DropdownItem<int>(
+                            id: source.designationId,
+                            name: source.designationName,
+                          ))
+                      .toList(),
+                  controller: settingsProvider.designationController,
+                  onItemSelected: (selectedId) {
+                    settingsProvider.selectedDesignationId = selectedId;
+                    final designation =
+                        settingsProvider.designationList.firstWhere(
+                      (status) => status.designationId == selectedId,
+                      orElse: () => DesignationModel(
+                        designationId: 0,
+                        designationName: '',
+                      ),
+                    );
+                    settingsProvider.designationController.text =
+                        designation.designationName;
+                  },
                 ),
                 const SizedBox(height: 16),
                 CommonDropdown<int>(
@@ -765,12 +788,29 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                     ),
                     const SizedBox(width: 10),
                     Expanded(
-                      child: CustomTextField(
-                        readOnly: false,
-                        height: 54,
-                        controller: settingsProvider.designationController,
+                      child: CommonDropdown<int>(
                         hintText: 'Designation',
-                        labelText: '',
+                        selectedValue: settingsProvider.selectedDesignationId,
+                        items: settingsProvider.designationList
+                            .map((source) => DropdownItem<int>(
+                                  id: source.designationId,
+                                  name: source.designationName,
+                                ))
+                            .toList(),
+                        controller: settingsProvider.designationController,
+                        onItemSelected: (selectedId) {
+                          settingsProvider.selectedDesignationId = selectedId;
+                          final designation =
+                              settingsProvider.designationList.firstWhere(
+                            (status) => status.designationId == selectedId,
+                            orElse: () => DesignationModel(
+                              designationId: 0,
+                              designationName: '',
+                            ),
+                          );
+                          settingsProvider.designationController.text =
+                              designation.designationName;
+                        },
                       ),
                     ),
                   ],

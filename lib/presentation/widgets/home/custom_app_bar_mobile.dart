@@ -57,6 +57,8 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final void Function()? onAddTap;
   final Widget? customActionWidget;
   final bool showSearch;
+  final bool showRefresh;
+  final void Function()? onRefreshTap;
 
   const CustomAppBar({
     super.key,
@@ -105,6 +107,8 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
     this.sortOrder,
     this.showOrder = false,
     this.showSort = false,
+    this.showRefresh = false,
+    this.onRefreshTap,
   }) : assert(title != null || customTitle != null,
             'Either title or customTitle must be provided');
 
@@ -303,6 +307,15 @@ class _CustomAppBarState extends State<CustomAppBar> {
                   size: widget.filterIconSize,
                 ),
                 onPressed: onFilterTap,
+              ),
+            if (widget.showRefresh && widget.onRefreshTap != null)
+              IconButton(
+                icon: Icon(
+                  Icons.refresh,
+                  color: widget.iconColor,
+                  size: widget.searchIconSize,
+                ),
+                onPressed: widget.onRefreshTap,
               ),
             if (widget.showSearch)
               IconButton(

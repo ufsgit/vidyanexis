@@ -22,6 +22,7 @@ class _ItemPageState extends State<ItemPage> {
       final expenseProvider =
           Provider.of<ExpenseProvider>(context, listen: false);
       expenseProvider.searchItemList(context: context, isFilter: false);
+      expenseProvider.searchItemTypeDropdownList(context: context);
       expenseProvider.searchitemNameController.clear();
     });
     super.initState();
@@ -56,6 +57,28 @@ class _ItemPageState extends State<ItemPage> {
                       expenseProvider.itemList.asMap().entries.map((entry) {
                     final i = entry.key;
                     final item = entry.value;
+
+                    String itemTypeName = '';
+                    if (item.primaryCheckBox != 0) {
+                      try {
+                        final type = expenseProvider.itemTypeDropdownList.firstWhere(
+                            (element) => element.itemTypeId == item.primaryCheckBox);
+                        itemTypeName = type.itemTypeName;
+                      } catch (e) {
+                        // ignore
+                      }
+                    }
+
+                    Color? itemTypeColor;
+                    final lowerName = itemTypeName.toLowerCase();
+                    if (lowerName.contains('primary')) {
+                      itemTypeColor = Colors.red;
+                    } else if (lowerName.contains('secondary')) {
+                      itemTypeColor = Colors.green;
+                    } else if (lowerName.contains('individual')) {
+                      itemTypeColor = Colors.blue;
+                    }
+
                     return Column(
                       children: [
                         _buildRow(
@@ -63,6 +86,8 @@ class _ItemPageState extends State<ItemPage> {
                           index: i,
                           title: item.itemName,
                           subtitle: 'Code: ${item.itemId}',
+                          itemTypeName: itemTypeName,
+                          itemTypeColor: itemTypeColor,
                           onEdit: settingsProvider.menuIsEditMap[43] == 1
                               ? () {
                                   expenseProvider.getItemMaterialList(
@@ -103,6 +128,8 @@ class _ItemPageState extends State<ItemPage> {
     required int index,
     required String title,
     String? subtitle,
+    String? itemTypeName,
+    Color? itemTypeColor,
     VoidCallback? onEdit,
     VoidCallback? onDelete,
   }) {
@@ -115,16 +142,32 @@ class _ItemPageState extends State<ItemPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: const Color(0xFF1E293B),
-                  ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      title,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: itemTypeColor ?? const Color(0xFF1E293B),
+                      ),
+                    ),
+                    if (itemTypeName != null && itemTypeName.isNotEmpty) ...[
+                      const SizedBox(width: 8),
+                      Text(
+                        itemTypeName,
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: const Color(0xFF64748B),
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
                 if (subtitle != null) ...[
-                  const SizedBox(height: 2),
+                  const SizedBox(height: 4),
                   Text(
                     subtitle,
                     style: GoogleFonts.plusJakartaSans(

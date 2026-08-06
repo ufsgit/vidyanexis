@@ -151,8 +151,7 @@ class _LeadsPageState extends State<LeadPage> {
       settingsProvider.searchDepartment('', context);
       settingsProvider.searchsourceCategoryData('', context);
       provider.getDistricts(context);
-provider.getStatesDropdown(context);
-provider.getLandmarks(context);
+      provider.getStatesDropdown(context);
 
       provider.getEnquiryFor(context);
       provider.getUserDetails(context);
@@ -537,76 +536,77 @@ provider.getLandmarks(context);
                           crossAxisAlignment: WrapCrossAlignment.center,
                           children: [
                             // Entry Type Filter
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    leadProvider.setEntryType('myown');
-                                    leadProvider.getSearchLeads(context);
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.only(bottom: 2),
-                                    decoration: BoxDecoration(
-                                      border: Border(
-                                        bottom: BorderSide(
+                            if (settingsProvider.leadPermissionMeAndAll == 1)
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      leadProvider.setEntryType('myown');
+                                      leadProvider.getSearchLeads(context);
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.only(bottom: 2),
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                          bottom: BorderSide(
+                                            color: leadProvider.entryType != 'all'
+                                                ? AppColors.primaryBlue
+                                                : Colors.transparent,
+                                            width: 2.0,
+                                          ),
+                                        ),
+                                      ),
+                                      child: Text(
+                                        'ME',
+                                        style: TextStyle(
                                           color: leadProvider.entryType != 'all'
                                               ? AppColors.primaryBlue
-                                              : Colors.transparent,
-                                          width: 2.0,
+                                              : Colors.grey,
+                                          fontWeight:
+                                              leadProvider.entryType != 'all'
+                                                  ? FontWeight.w600
+                                                  : FontWeight.normal,
+                                          fontSize: 14,
                                         ),
                                       ),
                                     ),
-                                    child: Text(
-                                      'ME',
-                                      style: TextStyle(
-                                        color: leadProvider.entryType != 'all'
-                                            ? AppColors.primaryBlue
-                                            : Colors.grey,
-                                        fontWeight:
-                                            leadProvider.entryType != 'all'
-                                                ? FontWeight.w600
-                                                : FontWeight.normal,
-                                        fontSize: 14,
-                                      ),
-                                    ),
                                   ),
-                                ),
-                                const SizedBox(width: 16),
-                                GestureDetector(
-                                  onTap: () {
-                                    leadProvider.setEntryType('all');
-                                    leadProvider.getSearchLeads(context);
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.only(bottom: 2),
-                                    decoration: BoxDecoration(
-                                      border: Border(
-                                        bottom: BorderSide(
+                                  const SizedBox(width: 16),
+                                  GestureDetector(
+                                    onTap: () {
+                                      leadProvider.setEntryType('all');
+                                      leadProvider.getSearchLeads(context);
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.only(bottom: 2),
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                          bottom: BorderSide(
+                                            color: leadProvider.entryType == 'all'
+                                                ? AppColors.primaryBlue
+                                                : Colors.transparent,
+                                            width: 2.0,
+                                          ),
+                                        ),
+                                      ),
+                                      child: Text(
+                                        'ALL',
+                                        style: TextStyle(
                                           color: leadProvider.entryType == 'all'
                                               ? AppColors.primaryBlue
-                                              : Colors.transparent,
-                                          width: 2.0,
+                                              : Colors.grey,
+                                          fontWeight:
+                                              leadProvider.entryType == 'all'
+                                                  ? FontWeight.w600
+                                                  : FontWeight.normal,
+                                          fontSize: 14,
                                         ),
                                       ),
                                     ),
-                                    child: Text(
-                                      'ALL',
-                                      style: TextStyle(
-                                        color: leadProvider.entryType == 'all'
-                                            ? AppColors.primaryBlue
-                                            : Colors.grey,
-                                        fontWeight:
-                                            leadProvider.entryType == 'all'
-                                                ? FontWeight.w600
-                                                : FontWeight.normal,
-                                        fontSize: 14,
-                                      ),
-                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
+                                ],
+                              ),
                             Container(
                               width: 280,
                               height: 38,
@@ -654,6 +654,19 @@ provider.getLandmarks(context);
                                 print(leadProvider.isFilter);
                               },
                               isFilter: leadProvider.isFilter,
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.refresh, color: Color(0xFF64748B), size: 20),
+                              onPressed: () {
+                                leadProvider.setSearchCriteria(
+                                  searchController.text,
+                                  leadProvider.fromDateS,
+                                  leadProvider.toDateS,
+                                  leadId: leadIdController.text,
+                                );
+                                leadProvider.getSearchLeads(context);
+                              },
+                              tooltip: 'Refresh',
                             ),
                             if (settingsProvider.menuIsSaveMap[3] == 1)
                               ElevatedButton.icon(

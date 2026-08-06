@@ -210,86 +210,87 @@ class _CustomerPageState extends State<CustomerPage> {
                             crossAxisAlignment: WrapCrossAlignment.center,
                             children: [
                               // Entry Type Filter
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      customerProvider.setEntryType('myown');
-                                      customerProvider.getSearchCustomers(
-                                          context,
-                                          isSilent: true);
-                                    },
-                                    child: Container(
-                                      padding: const EdgeInsets.only(bottom: 2),
-                                      decoration: BoxDecoration(
-                                        border: Border(
-                                          bottom: BorderSide(
+                              if (settingsProvider.customerPermissionMeAndAll == 1)
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        customerProvider.setEntryType('myown');
+                                        customerProvider.getSearchCustomers(
+                                            context,
+                                            isSilent: true);
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.only(bottom: 2),
+                                        decoration: BoxDecoration(
+                                          border: Border(
+                                            bottom: BorderSide(
+                                              color: customerProvider.entryType !=
+                                                      'all'
+                                                  ? AppColors.primaryBlue
+                                                  : Colors.transparent,
+                                              width: 2.0,
+                                            ),
+                                          ),
+                                        ),
+                                        child: Text(
+                                          'ME',
+                                          style: TextStyle(
                                             color: customerProvider.entryType !=
                                                     'all'
                                                 ? AppColors.primaryBlue
-                                                : Colors.transparent,
-                                            width: 2.0,
+                                                : Colors.grey,
+                                            fontWeight:
+                                                customerProvider.entryType !=
+                                                        'all'
+                                                    ? FontWeight.w600
+                                                    : FontWeight.normal,
+                                            fontSize: 14,
                                           ),
                                         ),
                                       ),
-                                      child: Text(
-                                        'ME',
-                                        style: TextStyle(
-                                          color: customerProvider.entryType !=
-                                                  'all'
-                                              ? AppColors.primaryBlue
-                                              : Colors.grey,
-                                          fontWeight:
-                                              customerProvider.entryType !=
-                                                      'all'
-                                                  ? FontWeight.w600
-                                                  : FontWeight.normal,
-                                          fontSize: 14,
-                                        ),
-                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(width: 16),
-                                  GestureDetector(
-                                    onTap: () {
-                                      customerProvider.setEntryType('all');
-                                      customerProvider.getSearchCustomers(
-                                          context,
-                                          isSilent: true);
-                                    },
-                                    child: Container(
-                                      padding: const EdgeInsets.only(bottom: 2),
-                                      decoration: BoxDecoration(
-                                        border: Border(
-                                          bottom: BorderSide(
+                                    const SizedBox(width: 16),
+                                    GestureDetector(
+                                      onTap: () {
+                                        customerProvider.setEntryType('all');
+                                        customerProvider.getSearchCustomers(
+                                            context,
+                                            isSilent: true);
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.only(bottom: 2),
+                                        decoration: BoxDecoration(
+                                          border: Border(
+                                            bottom: BorderSide(
+                                              color: customerProvider.entryType ==
+                                                      'all'
+                                                  ? AppColors.primaryBlue
+                                                  : Colors.transparent,
+                                              width: 2.0,
+                                            ),
+                                          ),
+                                        ),
+                                        child: Text(
+                                          'ALL',
+                                          style: TextStyle(
                                             color: customerProvider.entryType ==
                                                     'all'
                                                 ? AppColors.primaryBlue
-                                                : Colors.transparent,
-                                            width: 2.0,
+                                                : Colors.grey,
+                                            fontWeight:
+                                                customerProvider.entryType ==
+                                                        'all'
+                                                    ? FontWeight.w600
+                                                    : FontWeight.normal,
+                                            fontSize: 14,
                                           ),
                                         ),
                                       ),
-                                      child: Text(
-                                        'ALL',
-                                        style: TextStyle(
-                                          color: customerProvider.entryType ==
-                                                  'all'
-                                              ? AppColors.primaryBlue
-                                              : Colors.grey,
-                                          fontWeight:
-                                              customerProvider.entryType ==
-                                                      'all'
-                                                  ? FontWeight.w600
-                                                  : FontWeight.normal,
-                                          fontSize: 14,
-                                        ),
-                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
+                                  ],
+                                ),
                               Container(
                                 width: 280,
                                 height: 38,
@@ -394,6 +395,20 @@ class _CustomerPageState extends State<CustomerPage> {
                                   customerProvider.toggleFilter();
                                 },
                                 isFilter: customerProvider.isFilter,
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.refresh, color: Color(0xFF64748B), size: 20),
+                                onPressed: () {
+                                  customerProvider.setSearchCriteria(
+                                    searchController.text,
+                                    customerProvider.fromDateS,
+                                    customerProvider.toDateS,
+                                  );
+                                  customerProvider.getSearchCustomers(
+                                      context,
+                                      isSilent: true);
+                                },
+                                tooltip: 'Refresh',
                               ),
                             if (settingsProvider.menuIsSaveMap[167].toString() == '1')
                               ElevatedButton.icon(

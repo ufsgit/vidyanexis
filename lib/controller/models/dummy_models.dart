@@ -34,6 +34,7 @@ class UserMenuSelection {
   int? isSave;
   int? isDelete;
   int? isView;
+  int? deleteStatus;
 
   UserMenuSelection({
     this.menuId,
@@ -41,6 +42,7 @@ class UserMenuSelection {
     this.isSave,
     this.isDelete,
     this.isView,
+    this.deleteStatus,
   });
 
   UserMenuSelection.fromJson(Map<String, dynamic> json) {
@@ -49,6 +51,7 @@ class UserMenuSelection {
     isSave = json['IsSave'];
     isDelete = json['IsDelete'];
     isView = json['IsView'];
+    deleteStatus = json['DeleteStatus'];
   }
 
   Map<String, dynamic> toJson() {
@@ -58,6 +61,7 @@ class UserMenuSelection {
     data['IsSave'] = isSave;
     data['IsDelete'] = isDelete;
     data['IsView'] = isView;
+    data['DeleteStatus'] = deleteStatus ?? 0;
     return data;
   }
 }

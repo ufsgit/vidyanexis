@@ -410,6 +410,7 @@ class HttpUrls {
   static String getPdfWarranty = "lead/get_pdf_warranty/";
   static String getPdfWorkCompletionReport = "lead/get_pdf_work_completion_report/";
   static String getPdfChecklist = "lead/checklist/";
+  static String generateStatusImage = "lead/generate_image/";
   static String getCommissionReport = "lead/Get_Commission_Report";
   static String subContractsReport = "task/Sub_contracts_report";
   static String customerOutstandingReport = "lead/Customer_Outstanding_Report";
@@ -468,5 +469,8 @@ class HttpUrls {
 
   static String getTargetReport = 'lead/Get_Target_Report';
   static String searchAccountsSummaryReport = 'lead/Search_Accounts_Summary_Report';
+  static String saveDesignation = 'settings/Save_Designation_Target';
+  static String getDesignation = 'settings/Get_Designation_Target';
+  static String deleteDesignation = 'settings/Delete_Designation_Target';
 
 }

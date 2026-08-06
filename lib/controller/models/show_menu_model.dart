@@ -9,6 +9,7 @@ class MenuPermissionModel {
   int isView;
   int menuStatus;
   int menuType;
+  int? deleteStatus;
 
   // Constructor
   MenuPermissionModel({
@@ -22,6 +23,7 @@ class MenuPermissionModel {
     required this.isView,
     required this.menuStatus,
     required this.menuType,
+    this.deleteStatus,
   });
 
   // Factory constructor to create the model from JSON data with default values for nulls
@@ -37,6 +39,7 @@ class MenuPermissionModel {
       isView: json['IsView'] ?? 0, // Defaults to 0 if null
       menuStatus: json['Menu_Status'] ?? 0, // Defaults to 0 if null
       menuType: json['Menu_Type'] ?? 0, // Defaults to 0 if null
+      deleteStatus: json['DeleteStatus'] ?? 0, // Defaults to 0 if null
     );
   }
 
@@ -53,6 +56,7 @@ class MenuPermissionModel {
       'IsView': isView, // No need for null check
       'Menu_Status': menuStatus, // No need for null check
       'Menu_Type': menuType, // No need for null check
+      'DeleteStatus': deleteStatus, // No need for null check
     };
   }
 }

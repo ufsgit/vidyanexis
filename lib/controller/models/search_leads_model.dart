@@ -55,7 +55,7 @@ class SearchLeadModel {
   final String priorityColor;
 
   String getDisplayLeadCode(int leadCodeWithEnquiryCodePermission) {
-    if (leadCodeWithEnquiryCodePermission == 1) {
+    if (leadCode2.isNotEmpty) {
       return leadCode2;
     }
     return leadCode;
