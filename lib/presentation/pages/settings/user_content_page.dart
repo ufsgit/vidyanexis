@@ -543,6 +543,7 @@ class _UsersContentState extends State<UsersContent> {
                                                           mobileNo: settingsProvider.searchUserDetails[index].mobile,
                                                           empCode: settingsProvider.searchUserDetails[index].empCode,
                                                           designation: settingsProvider.searchUserDetails[index].designation,
+                                                          designationId: int.tryParse(settingsProvider.searchUserDetails[index].designationId) ?? 0,
                                                           doj: settingsProvider.searchUserDetails[index].doj,
                                                           transferDepartments: settingsProvider.searchUserDetails[index].transferDepartments,
                                                           isEdit: true);
