@@ -24,6 +24,7 @@ class GetUserModel {
   String deleteStatus;
   String empCode;
   String designation;
+  String designationId;
   String doj;
   String? firstName;
   String? lastName;
@@ -61,6 +62,7 @@ class GetUserModel {
       required this.branchName,
       required this.empCode,
       required this.designation,
+      this.designationId = '0',
       required this.doj,
       this.transferDepartments,
       required this.allowAppLogin});
@@ -87,6 +89,7 @@ class GetUserModel {
       allowAppLogin: json["Allow_App_Login"]?.toString() ?? '0',
       empCode: json["Employee_Code"]?.toString() ?? "",
       designation: json["Designation"]?.toString() ?? "",
+      designationId: json["Designation_Id"]?.toString() ?? "0",
       doj: json["DOJ"]?.toString() ?? "",
       branchId: json["Branch_Id"]?.toString() ?? '0',
       branchName: json["Branch_Name"] ?? '',

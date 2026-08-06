@@ -695,6 +695,13 @@ class SettingsProvider extends ChangeNotifier {
   int? _selectedBranchId = -1;
   int? get selectedBranchId => _selectedBranchId;
 
+  int _selectedDesignationId = 0;
+  int get selectedDesignationId => _selectedDesignationId;
+  set selectedDesignationId(int id) {
+    _selectedDesignationId = id;
+    notifyListeners();
+  }
+
   int _isOTPChecked = 0;
   int get isOTPChecked => _isOTPChecked;
   int _isFeedbackChecked = 0;
@@ -3108,6 +3115,7 @@ class SettingsProvider extends ChangeNotifier {
             "Allow_App_Login": appLogin,
             "Employee_Code": employeeCodeController.text,
             "Designation": designationController.text,
+            "Designation_Id": _selectedDesignationId,
             "DOJ": dateOfJoinController.text.toyyyymmdd(),
             "Transfer_Departments":
                 _selectedTransferDepartments.map((e) => e.toJson()).toList(),
@@ -4143,6 +4151,7 @@ class SettingsProvider extends ChangeNotifier {
     designationController.clear();
     dateOfJoinController.clear();
     _allowAppLogin = false;
+    _selectedDesignationId = 0;
     notifyListeners();
   }
 

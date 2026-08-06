@@ -2788,7 +2788,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           );
                                                                         },
                                                                       ),
-                                                                    if ((settingsprovider.menuIsViewMap[174] == 1 || settingsprovider.menuIsViewMapPrint[174] == 1) && sideprovider.name != 'Lead /')
+                                                                    if ((settingsprovider.menuIsViewMap[175] == 1 || settingsprovider.menuIsViewMapPrint[175] == 1) && sideprovider.name != 'Lead /')
                                                                       CustomElevatedButton(
                                                                         radius: 4,
                                                                         backgroundColor: AppColors.whiteColor,
