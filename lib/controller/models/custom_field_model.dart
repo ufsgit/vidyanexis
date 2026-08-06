@@ -88,21 +88,37 @@ class CustomFieldModel {
             (json["events"] != null
                 ? int.tryParse(json["events"].toString())
                 : null),
-        dropDownValues:
-            (json["Dropdown_Values"] ?? json["dropdown_values"]) == null
-                ? []
-                : List<String>.from(
-                    (json["Dropdown_Values"] ?? json["dropdown_values"])!),
-        checkBoxValues:
-            (json["Checkbox_Values"] ?? json["checkbox_values"]) == null
-                ? []
-                : List<String>.from(
-                    (json["Checkbox_Values"] ?? json["checkbox_values"])!),
+        dropDownValues: _parseValuesList(
+            json["Dropdown_Values"] ?? json["dropdown_values"]),
+        checkBoxValues: _parseValuesList(
+            json["Checkbox_Values"] ?? json["checkbox_values"]),
         createdAt: json["created_at"] == null
             ? null
             : DateTime.parse(json["created_at"]),
         quotationTypeId: json["quotation_type_id"] ?? json["Quotation_Type_Id"],
       );
+
+  static List<String> _parseValuesList(dynamic rawList) {
+    if (rawList == null) return [];
+    if (rawList is! List) return [];
+    List<String> result = [];
+    for (var item in rawList) {
+      if (item is String) {
+        result.add(item);
+      } else if (item is Map) {
+        final val = item["dropdown_value"] ??
+            item["checkbox_value"] ??
+            item["value"] ??
+            item["name"];
+        if (val != null) {
+          result.add(val.toString());
+        }
+      } else if (item != null) {
+        result.add(item.toString());
+      }
+    }
+    return result;
+  }
 
   Map<String, dynamic> toJson() => {
         "custom_field_id": customFieldId,
