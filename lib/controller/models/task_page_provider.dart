@@ -922,7 +922,6 @@ class TaskPageProvider extends ChangeNotifier {
           if (isSuccess) {
             descriptionController.clear();
             remarksController.clear();
-            _pageIndex = 1;
             clearTaskUserAssignments();
             try {
               final dbProvider =

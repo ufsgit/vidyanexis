@@ -1548,8 +1548,6 @@ class _tasksPageReportState extends State<TaskPage> {
                                                             .then((value) {
                                                           if (value == true) {
                                                             reportsProvider
-                                                                .goToPage(1);
-                                                            reportsProvider
                                                                 .searchTaskByCustomer(
                                                                     context);
                                                           }
@@ -1558,8 +1556,6 @@ class _tasksPageReportState extends State<TaskPage> {
                                                         statusDialogMobile(task)
                                                             .then((value) {
                                                           if (value == true) {
-                                                            reportsProvider
-                                                                .goToPage(1);
                                                             reportsProvider
                                                                 .searchTaskByCustomer(
                                                                     context);
@@ -1854,8 +1850,6 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                         if (value ==
                                                                             true) {
                                                                           reportsProvider
-                                                                              .goToPage(1);
-                                                                          reportsProvider
                                                                               .searchTaskByCustomer(context);
                                                                         }
                                                                       });
@@ -1884,9 +1878,6 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                     if (value ==
                                                                         true) {
                                                                       reportsProvider
-                                                                          .goToPage(
-                                                                              1);
-                                                                      reportsProvider
                                                                           .searchTaskByCustomer(
                                                                               context);
                                                                     }
@@ -1902,8 +1893,6 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                       if (value ==
                                                                           true) {
                                                                         reportsProvider
-                                                                            .goToPage(1);
-                                                                        reportsProvider
                                                                             .searchTaskByCustomer(context);
                                                                       }
                                                                     });
@@ -1914,8 +1903,6 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                             (value) {
                                                                       if (value ==
                                                                           true) {
-                                                                        reportsProvider
-                                                                            .goToPage(1);
                                                                         reportsProvider
                                                                             .searchTaskByCustomer(context);
                                                                       }
@@ -2427,7 +2414,6 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                               .isEmpty) {
                                                                             updateStatusDialogWithoutTask(task).then((value) {
                                                                               if (value == true) {
-                                                                                reportsProvider.goToPage(1);
                                                                                 reportsProvider.searchTaskByCustomer(context);
                                                                               }
                                                                             });
@@ -2435,14 +2421,12 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                             if (AppStyles.isWebScreen(context)) {
                                                                               statusDialog(task).then((value) {
                                                                                 if (value == true) {
-                                                                                  reportsProvider.goToPage(1);
                                                                                   reportsProvider.searchTaskByCustomer(context);
                                                                                 }
                                                                               });
                                                                             } else {
                                                                               statusDialogMobile(task).then((value) {
                                                                                 if (value == true) {
-                                                                                  reportsProvider.goToPage(1);
                                                                                   reportsProvider.searchTaskByCustomer(context);
                                                                                 }
                                                                               });
