@@ -9,6 +9,7 @@ import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/http/loader.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/presentation/pages/home/homepage.dart';
+import 'package:vidyanexis/presentation/pages/login/login_page.dart';
 import 'package:vidyanexis/utils/util_functions.dart';
 
 class LoginController extends ChangeNotifier {
@@ -104,6 +105,16 @@ class LoginController extends ChangeNotifier {
       print('Exception occurred: $e');
       showErrorSnackBar(context, e);
       Loader.stopLoader(context);
+    }
+  }
+
+  Future<void> logout(
+      {required int userId}) async {
+    try {
+      final response = await HttpRequest.httpPostRequest(
+          endPoint: HttpUrls.logout, bodyData: {"User_Details_Id": userId});
+    } catch (e) {
+      print('Exception occurred: $e');
     }
   }
 }

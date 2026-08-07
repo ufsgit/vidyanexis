@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:vidyanexis/controller/login_controller.dart';
 import 'package:vidyanexis/controller/notification_provider.dart';
 import 'package:vidyanexis/http/socket_io.dart';
 import 'package:vidyanexis/presentation/pages/home/notifications_page.dart';
@@ -123,6 +124,8 @@ class _HomePageState extends State<HomePage> {
             ),
             TextButton(
               onPressed: () async {
+                final loginController =
+                    Provider.of<LoginController>(context, listen: false);
                 Navigator.of(ctx).pop();
                 SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -138,6 +141,8 @@ class _HomePageState extends State<HomePage> {
                   checkInDate = prefs.getString('check_in_date_$userId');
                   checkInTime = prefs.getString('check_in_time_$userId');
                   attendanceId = prefs.getInt('attendance_id_$userId');
+                  await loginController.logout(
+                      userId: int.tryParse(userId) ?? 0);
                 }
 
                 // Backup branding state
