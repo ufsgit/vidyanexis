@@ -756,6 +756,16 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                   icon: const Icon(Icons.arrow_forward_ios,
                                       size: 16),
                                 ),
+                              IconButton(
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                                tooltip: "Refresh",
+                                onPressed: () {
+                                  _fetchDataForCurrentTab();
+                                },
+                                icon: const Icon(Icons.refresh,
+                                    color: AppColors.primaryBlue, size: 20),
+                              ),
                               if (settingsprovider.menuIsSaveMap[13] == 1 &&
                                   _isControllerInitialized &&
                                   _tabs[_tabController.index].text == "Tasks")

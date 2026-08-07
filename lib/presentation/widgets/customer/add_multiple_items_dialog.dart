@@ -531,9 +531,13 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
                                     horizontal: 20, vertical: 5),
                                 decoration: BoxDecoration(
                                     color: AppColors.primaryBlue.withAlpha(50)),
-                                child: Row(
+                                child: Wrap(
+                                  spacing: 10,
+                                  runSpacing: 10,
+                                  crossAxisAlignment: WrapCrossAlignment.center,
                                   children: [
-                                    Expanded(
+                                    SizedBox(
+                                      width: 200,
                                       child: TextField(
                                         controller: _getMainNameController(
                                             itemIndex, item.itemName),
@@ -553,10 +557,7 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
                                       ),
                                     ),
                                     SizedBox(
-                                      width: 10,
-                                    ),
-                                    SizedBox(
-                                      width: 300,
+                                      width: 200,
                                       child: TextField(
                                         controller: _getMainMakeController(
                                             itemIndex, item.make),
@@ -574,9 +575,6 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
                                         onChanged: (val) =>
                                             _updateMainItemMake(itemIndex, val),
                                       ),
-                                    ),
-                                    SizedBox(
-                                      width: 10,
                                     ),
                                     SizedBox(
                                       width: 110,
@@ -650,10 +648,13 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
                                               border: Border.all(
                                                   color: Colors.grey.shade200),
                                             ),
-                                            child: Row(
+                                            child: Wrap(
+                                              spacing: 8,
+                                              runSpacing: 10,
+                                              crossAxisAlignment: WrapCrossAlignment.center,
                                               children: [
-                                                Expanded(
-                                                  flex: 4,
+                                                SizedBox(
+                                                  width: 200,
                                                   child: TextField(
                                                     controller:
                                                         _getMaterialNameController(
@@ -690,7 +691,6 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
                                                     },
                                                   ),
                                                 ),
-                                                const SizedBox(width: 8),
                                                 SizedBox(
                                                   width: 90,
                                                   child: TextField(
@@ -731,9 +731,8 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
                                                             val),
                                                   ),
                                                 ),
-                                                const SizedBox(width: 8),
                                                 SizedBox(
-                                                  width: 180,
+                                                  width: 140,
                                                   child: TextField(
                                                     controller:
                                                         _getMaterialPriceController(
@@ -811,7 +810,6 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
                                                     ),
                                                   ),
                                                 ),
-                                                const SizedBox(width: 12),
                                                 SizedBox(
                                                   width: 100,
                                                   child: Column(
@@ -855,8 +853,11 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
             // Bottom buttons
             Padding(
               padding: const EdgeInsets.all(20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+              child: Wrap(
+                alignment: WrapAlignment.end,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                spacing: 16,
+                runSpacing: 16,
                 children: [
                   Text(
                     'Total : ₹${grandTotal.toStringAsFixed(2)}',
@@ -866,12 +867,10 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
                       color: AppColors.primaryBlue,
                     ),
                   ),
-                  const SizedBox(width: 16),
                   TextButton(
                     onPressed: () => Navigator.pop(context),
                     child: const Text('Cancel'),
                   ),
-                  const SizedBox(width: 16),
                   ElevatedButton(
                     onPressed: _saveAndClose,
                     style: ElevatedButton.styleFrom(

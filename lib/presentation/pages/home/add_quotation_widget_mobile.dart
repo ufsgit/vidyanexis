@@ -748,6 +748,56 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
                                           : MainAxisAlignment.start,
                                   children: [
                                     const Text(
+                                      'Roundoff:   ',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black,
+                                          fontSize: 16),
+                                    ),
+                                    Container(
+                                      width: 140,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8.0, vertical: 0),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(4),
+                                        border: Border.all(
+                                            color: const Color(0xFFCBD5E1),
+                                            width: 1.0),
+                                      ),
+                                      child: TextField(
+                                        controller: customerDetailsProvider
+                                            .roundoffController,
+                                        onChanged: (p0) {
+                                          if (customerDetailsProvider
+                                              .roundoffController
+                                              .text
+                                              .isEmpty) {
+                                            customerDetailsProvider
+                                                .roundoffController.text = '0';
+                                          }
+                                          customerDetailsProvider.updateTotal();
+                                        },
+                                        decoration: const InputDecoration(
+                                            border: InputBorder.none,
+                                            contentPadding: EdgeInsets.zero,
+                                            hintText: '₹'),
+                                        inputFormatters: [
+                                          FilteringTextInputFormatter.allow(
+                                              RegExp(r'^-?\d*\.?\d{0,2}')),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              if (customerDetailsProvider.items.isNotEmpty)
+                                Row(
+                                  mainAxisAlignment:
+                                      AppStyles.isWebScreen(context)
+                                          ? MainAxisAlignment.end
+                                          : MainAxisAlignment.start,
+                                  children: [
+                                    const Text(
                                       'Total:  ₹ ',
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,

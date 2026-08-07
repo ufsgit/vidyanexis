@@ -436,99 +436,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                           ),
                           const SizedBox(height: 16),
                         ],
-                        if (customerDetailsProvider
-                                .isQuotationFieldVisible(45) ||
-                            customerDetailsProvider
-                                .isQuotationFieldVisible(84)) ...[
-                          Row(
-                            children: [
-                              Expanded(
-                                child: CustomTextField(
-                                  readOnly: false,
-                                  height: 54,
-                                  controller:
-                                      customerDetailsProvider.advanceController,
-                                  hintText: customerDetailsProvider
-                                              .selectedQuotationType ==
-                                          1
-                                      ? customerDetailsProvider
-                                          .getQuotationFieldName(84,
-                                              'Advance payment up on conformation')
-                                      : customerDetailsProvider
-                                          .getQuotationFieldName(45,
-                                              'Advance Against Purchase Order %'),
-                                  labelText: '',
-                                  inputFormatters: [
-                                    FilteringTextInputFormatter.digitsOnly
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                        ],
-                        if (customerDetailsProvider
-                                .isQuotationFieldVisible(46) ||
-                            customerDetailsProvider
-                                .isQuotationFieldVisible(85)) ...[
-                          Row(
-                            children: [
-                              Expanded(
-                                child: CustomTextField(
-                                  readOnly: false,
-                                  height: 54,
-                                  controller: customerDetailsProvider
-                                      .deliveryController,
-                                  hintText: customerDetailsProvider
-                                              .selectedQuotationType ==
-                                          1
-                                      ? customerDetailsProvider
-                                          .getQuotationFieldName(85,
-                                              'Upon the material ready for dispatch')
-                                      : customerDetailsProvider
-                                          .getQuotationFieldName(46,
-                                              'On readiness of major material at our warehouse before dispatch along with 100% taxes and against proforma invoice %'),
-                                  labelText: '',
-                                  inputFormatters: [
-                                    FilteringTextInputFormatter.digitsOnly
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                        ],
-                        if (customerDetailsProvider
-                                .isQuotationFieldVisible(47) ||
-                            customerDetailsProvider
-                                .isQuotationFieldVisible(86)) ...[
-                          Row(
-                            children: [
-                              Expanded(
-                                child: CustomTextField(
-                                  readOnly: false,
-                                  height: 54,
-                                  controller: customerDetailsProvider
-                                      .workCompletionController,
-                                  hintText: customerDetailsProvider
-                                              .selectedQuotationType ==
-                                          1
-                                      ? customerDetailsProvider
-                                          .getQuotationFieldName(
-                                              86, 'Installation Completion')
-                                      : customerDetailsProvider
-                                          .getQuotationFieldName(
-                                              47, 'After project completion %'),
-                                  labelText: '',
-                                  inputFormatters: [
-                                    FilteringTextInputFormatter.digitsOnly
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                        ],
+
                         if (customerDetailsProvider
                             .isQuotationFieldVisible(33)) ...[
                           CommonDropdown(
@@ -1063,6 +971,99 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                         const SizedBox(
                           height: 16,
                         ),
+                        if (customerDetailsProvider
+                                .isQuotationFieldVisible(45) ||
+                            customerDetailsProvider
+                                .isQuotationFieldVisible(84)) ...[
+                          Row(
+                            children: [
+                              Expanded(
+                                child: CustomTextField(
+                                  readOnly: false,
+                                  height: 54,
+                                  controller:
+                                      customerDetailsProvider.advanceController,
+                                  hintText: customerDetailsProvider
+                                              .selectedQuotationType ==
+                                          1
+                                      ? customerDetailsProvider
+                                          .getQuotationFieldName(84,
+                                              'Advance payment up on conformation')
+                                      : customerDetailsProvider
+                                          .getQuotationFieldName(45,
+                                              'Advance Against Purchase Order %'),
+                                  labelText: '',
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+                        if (customerDetailsProvider
+                                .isQuotationFieldVisible(46) ||
+                            customerDetailsProvider
+                                .isQuotationFieldVisible(85)) ...[
+                          Row(
+                            children: [
+                              Expanded(
+                                child: CustomTextField(
+                                  readOnly: false,
+                                  height: 54,
+                                  controller: customerDetailsProvider
+                                      .deliveryController,
+                                  hintText: customerDetailsProvider
+                                              .selectedQuotationType ==
+                                          1
+                                      ? customerDetailsProvider
+                                          .getQuotationFieldName(85,
+                                              'Upon the material ready for dispatch')
+                                      : customerDetailsProvider
+                                          .getQuotationFieldName(46,
+                                              'On readiness of major material at our warehouse before dispatch along with 100% taxes and against proforma invoice %'),
+                                  labelText: '',
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+                        if (customerDetailsProvider
+                                .isQuotationFieldVisible(47) ||
+                            customerDetailsProvider
+                                .isQuotationFieldVisible(86)) ...[
+                          Row(
+                            children: [
+                              Expanded(
+                                child: CustomTextField(
+                                  readOnly: false,
+                                  height: 54,
+                                  controller: customerDetailsProvider
+                                      .workCompletionController,
+                                  hintText: customerDetailsProvider
+                                              .selectedQuotationType ==
+                                          1
+                                      ? customerDetailsProvider
+                                          .getQuotationFieldName(
+                                              86, 'Installation Completion')
+                                      : customerDetailsProvider
+                                          .getQuotationFieldName(
+                                              47, 'After project completion %'),
+                                  labelText: '',
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                        ],
                         Row(
                           children: [
                             if (customerDetailsProvider
@@ -2123,11 +2124,6 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                         controller:
                             customerDetailsProvider.qsubsidyAmountController,
                         onChanged: (p0) {
-                          if (customerDetailsProvider
-                              .qsubsidyAmountController.text.isEmpty) {
-                            customerDetailsProvider
-                                .qsubsidyAmountController.text = '0';
-                          }
                           customerDetailsProvider.updateTotal();
                         },
                         decoration: const InputDecoration(
@@ -2176,11 +2172,6 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                       child: TextField(
                         controller: customerDetailsProvider.qDiscountController,
                         onChanged: (p0) {
-                          if (customerDetailsProvider
-                              .qDiscountController.text.isEmpty) {
-                            customerDetailsProvider.qDiscountController.text =
-                                '0';
-                          }
                           customerDetailsProvider.updateTotal();
                         },
                         decoration: const InputDecoration(
@@ -2231,11 +2222,6 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                         controller:
                             customerDetailsProvider.shippingChargesController,
                         onChanged: (p0) {
-                          if (customerDetailsProvider
-                              .shippingChargesController.text.isEmpty) {
-                            customerDetailsProvider
-                                .shippingChargesController.text = '0';
-                          }
                           customerDetailsProvider.updateTotal();
                         },
                         decoration: const InputDecoration(
@@ -2245,6 +2231,54 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                         inputFormatters: [
                           FilteringTextInputFormatter.allow(
                               RegExp(r'^\d*\.?\d{0,2}')),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              if (customerDetailsProvider.items.isNotEmpty &&
+                  !isCommercialProposal)
+                Row(
+                  mainAxisAlignment: AppStyles.isWebScreen(context)
+                      ? MainAxisAlignment.end
+                      : MainAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Roundoff:   ',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                          fontSize: 16),
+                    ),
+                    Container(
+                      width: 140,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8.0, vertical: 0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(
+                            color: const Color(0xFFCBD5E1), width: 1.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.02),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: TextField(
+                        controller: customerDetailsProvider.roundoffController,
+                        onChanged: (p0) {
+                          customerDetailsProvider.updateTotal();
+                        },
+                        decoration: const InputDecoration(
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.zero,
+                            hintText: '₹'),
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(
+                              RegExp(r'^-?\d*\.?\d{0,2}')),
                         ],
                       ),
                     ),

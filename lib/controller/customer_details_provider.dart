@@ -619,9 +619,9 @@ class CustomerDetailsProvider extends ChangeNotifier {
   //quotations
   final TextEditingController qproductnameController = TextEditingController();
   final TextEditingController qsubsidyAmountController =
-      TextEditingController(text: '0');
+      TextEditingController();
   final TextEditingController qDiscountController =
-      TextEditingController(text: '0');
+      TextEditingController();
   bool _isSubsidyChecked = false;
   bool get isSubsidyChecked => _isSubsidyChecked;
   set isSubsidyChecked(bool value) {
@@ -658,7 +658,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
   final TextEditingController totalSgstPerController = TextEditingController();
   final TextEditingController totalAdCESSController = TextEditingController();
   final TextEditingController shippingChargesController =
-      TextEditingController(text: '0');
+      TextEditingController();
+  TextEditingController roundoffController = TextEditingController();
   TextEditingController subtotalController = TextEditingController();
   TextEditingController totalController = TextEditingController();
   final TextEditingController qtermsConditionsController =
@@ -1844,8 +1845,9 @@ class CustomerDetailsProvider extends ChangeNotifier {
         ? (double.tryParse(qsubsidyAmountController.text) ?? 0.0)
         : 0.0;
     double discount = double.tryParse(qDiscountController.text) ?? 0.0;
+    double roundoff = double.tryParse(roundoffController.text) ?? 0.0;
 
-    double finalTotal = subtotal + shipping - subsidy - discount;
+    double finalTotal = subtotal + shipping - subsidy - discount + roundoff;
 
     // Access SettingsProvider using Singleton (No context, No global file)
     final settingsProvider = SettingsProvider();
@@ -3112,6 +3114,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
         "Discount_Amount":
             double.tryParse(qDiscountController.text.toString()) ?? 0,
         "NetTotal": double.tryParse(totalController.text) ?? 0,
+        "Roundoff": double.tryParse(roundoffController.text.toString()) ?? 0,
         "Product_Name": qproductnameController.text.toString(),
         "Warranty": qwarrentyController.text.toString(),
         "Terms_And_Conditions": qtermsConditionsController.text.toString(),
@@ -3304,9 +3307,9 @@ class CustomerDetailsProvider extends ChangeNotifier {
     advanceController.clear();
     deliveryController.clear();
     quotationStatusController.clear();
-    qsubsidyAmountController.text = '0';
+    qsubsidyAmountController.clear();
     _isSubsidyChecked = false;
-    qDiscountController.text = '0';
+    qDiscountController.clear();
     qtermsConditionsController.clear();
     qwarrentyController.clear();
     itemNameController.clear();
@@ -3375,7 +3378,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
     qtendorNumberController.clear();
     paymentTermsController.clear();
     incoTermsController.clear();
-    shippingChargesController.text = '0';
+    shippingChargesController.clear();
+    roundoffController.clear();
     designAndEngineeringController.clear();
     a3SScopeController.clear();
     clientScopeController.clear();
@@ -5072,9 +5076,9 @@ class CustomerDetailsProvider extends ChangeNotifier {
     advanceController.text = quotation.advancePercentage;
     deliveryController.text = quotation.onDeliveryPercentage;
     workCompletionController.text = quotation.workCompletionPercentage;
-    qsubsidyAmountController.text = quotation.subsidyAmount;
+    qsubsidyAmountController.text = (double.tryParse(quotation.subsidyAmount) == 0) ? '' : quotation.subsidyAmount;
     _isSubsidyChecked = quotation.subsidyticked == 1;
-    qDiscountController.text = quotation.discountAmount;
+    qDiscountController.text = (double.tryParse(quotation.discountAmount) == 0) ? '' : quotation.discountAmount;
     qwarrentyController.text = quotation.warranty;
     qtermsConditionsController.text = quotation.termsAndConditions;
     quotationDescriptionController.text = quotation.description;
@@ -5195,7 +5199,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
     qtendorNumberController.text = quotation.tendorNumber;
     paymentTermsController.text = quotation.paymentTermsName;
     incoTermsController.text = quotation.incoTerms;
-    shippingChargesController.text = quotation.shippingCharges;
+    shippingChargesController.text = (double.tryParse(quotation.shippingCharges) == 0) ? '' : quotation.shippingCharges;
+    roundoffController.text = (double.tryParse(quotation.roundoff) == 0) ? '' : quotation.roundoff;
     totalAdCESSController.text = quotation.otherTax;
     totalCgstAmountController.text = quotation.totalCgstAmount;
     totalSgstAmountController.text = quotation.totalSgstAmount;
