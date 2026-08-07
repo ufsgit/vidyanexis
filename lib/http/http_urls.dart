@@ -204,6 +204,8 @@ class HttpUrls {
   static String getVersion = "task/Get_Version";
   static String saveAttendance = "attendance/mark_attendance";
   static String getAttendance = "attendance/attendance_report";
+  static String getAttendanceDashboard = "attendance/Get_Attendance_Dashboard";
+  static String searchAdminDashboard = "attendance/Search_Admin_Dashboard";
   static String saveItem = "item/create_Item";
   static String getItemList = "item/get_all_items";
   static String getItemsDropdown = "item/get_Items_Dropdown";
