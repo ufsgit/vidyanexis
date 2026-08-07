@@ -4622,7 +4622,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                               style: TextStyle(fontSize: 10, color: AppColors.textGrey4),
                                                                               textAlign: TextAlign.center,
                                                                             ),
-                                                                          ] else
+                                                                          ] else if (settingsprovider.menuIsViewMap[176] ==
+                                                                              1)
                                                                             Row(
                                                                               children: [
                                                                                 Expanded(

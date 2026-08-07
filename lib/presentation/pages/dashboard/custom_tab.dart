@@ -219,6 +219,7 @@ class CustomTab extends StatelessWidget {
       if (settingsProvider.menuIsViewMap[152].toString() != '0')
         'Customer Outstanding Summary',
       if (userType == '1') 'User Activity',
+      if (userType == '1') 'Attendance Dashboard',
     ];
 
     //change permissions id in dashBoardPage also ----------------
@@ -266,6 +267,7 @@ class CustomTab extends StatelessWidget {
                       if (settingsProvider.menuIsViewMap[152].toString() != '0')
                         7,
                       if (userType == '1') 8,
+                      if (userType == '1') 9,
                     ];
 
                     if (index >= 0 && index < allowedTabIds.length) {
@@ -334,6 +336,8 @@ class CustomTab extends StatelessWidget {
         return 'Outstanding';
       case 'User Activity':
         return 'Activity';
+      case 'Attendance Dashboard':
+        return 'Attendance';
       default:
         return fullName;
     }

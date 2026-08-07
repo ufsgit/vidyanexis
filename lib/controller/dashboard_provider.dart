@@ -86,6 +86,7 @@ class DashboardProvider extends ChangeNotifier {
   bool isCustomerOutstandingSummaryLoaded = false;
   CustomerOutstandingSummaryModel? customerOutstandingSummary;
   bool isUserActivityLoaded = false;
+  bool isAttendanceDashboardLoaded = false;
   UserActivityReportModel? userActivityReport;
 
   String? selectedTaskFilterType;
@@ -116,9 +117,16 @@ class DashboardProvider extends ChangeNotifier {
   List<TaskAllocationStatusModel> taskAllocationSummaryDataStatus = [];
   List<DashBoardCountModel> dashBoardCountModel = [];
   List<DashBoardCountModel> leadDashboardCountData = [];
+  List<DashBoardCountModel> attendanceDashboardCountData = [];
+
+  List<dynamic> attendanceDetails = [];
+  List<dynamic> loginStatusDetails = []; // Cache to look up original status
+  bool isAttendanceDetailsLoading = false;
+  String? selectedAttendanceKeyword;
 
   /// map from keyword string to count returned by Get_Lead_Dashboard
   final Map<String, int> leadCountMap = {};
+  final Map<String, int> attendanceCountMap = {};
   List<SearchLeadModel> searchCustomer = [];
   List<dynamic> taskCount = [];
   List<dynamic> customersCount = [];
@@ -652,6 +660,11 @@ class DashboardProvider extends ChangeNotifier {
           await fetchUserActivityData(context);
         }
         break;
+      case 9: // Attendance Dashboard
+        if (!isAttendanceDashboardLoaded) {
+          await getAttendanceDashboardCount();
+        }
+        break;
     }
   }
 
@@ -728,6 +741,125 @@ class DashboardProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> getAttendanceDashboardCount({bool shouldNotify = true}) async {
+    try {
+      isDashBoardLoading = true;
+      if (shouldNotify) notifyListeners();
+
+      final body = {
+        "Fromdate": _formattedFromDate,
+        "Todate": _formattedToDate,
+        "Is_Date": _formattedFromDate.isNotEmpty ? "1" : "0",
+      };
+
+      await HttpRequest.httpGetRequest(
+              endPoint: HttpUrls.getAttendanceDashboard, bodyData: body)
+          .then((response) async {
+        if (response.statusCode == 200) {
+          var data = response.data;
+          Map<String, dynamic> counts = {};
+          
+          if (data is List && data.isNotEmpty) {
+            if (data.first is List && data.first.isNotEmpty && data.first.first is Map) {
+              counts = data.first.first as Map<String, dynamic>;
+            } else if (data.first is Map) {
+              counts = data.first as Map<String, dynamic>;
+            }
+          } else if (data is Map) {
+            counts = data as Map<String, dynamic>;
+          }
+
+          if (counts.isNotEmpty) {
+            attendanceCountMap.clear();
+            attendanceDashboardCountData.clear();
+            counts.forEach((key, value) {
+              final intValue = int.tryParse(value.toString()) ?? 0;
+              attendanceCountMap[key] = intValue;
+              attendanceDashboardCountData.add(DashBoardCountModel(
+                tp: 1,
+                title: key,
+                dataCount: intValue,
+              ));
+            });
+          }
+          isAttendanceDashboardLoaded = true;
+          // Fetch login status details to help determine 'Late' vs 'On Time' for 'Present' users
+          getLoginStatusDetails();
+        }
+      });
+    } catch (e) {
+      print(e);
+    } finally {
+      isDashBoardLoading = false;
+      if (shouldNotify) notifyListeners();
+    }
+  }
+
+  Future<void> getLoginStatusDetails() async {
+    try {
+      String endPoint = "${HttpUrls.searchAdminDashboard}/login_status";
+      await HttpRequest.httpGetRequest(
+              endPoint: endPoint, bodyData: {})
+          .then((response) async {
+        if (response.statusCode == 200) {
+          var data = response.data;
+          if (data is List) {
+            if (data.isNotEmpty && data.first is List) {
+              loginStatusDetails = data.first as List;
+            } else {
+              loginStatusDetails = data;
+            }
+          } else {
+            loginStatusDetails = [];
+          }
+        }
+      });
+    } catch (e) {
+      print(e);
+      loginStatusDetails = [];
+    }
+    notifyListeners();
+  }
+
+  Future<void> getSearchAdminDashboard(String keyword,
+      {bool shouldNotify = true}) async {
+    try {
+      selectedAttendanceKeyword = keyword;
+      isAttendanceDetailsLoading = true;
+      if (shouldNotify) notifyListeners();
+
+      if (keyword.toLowerCase().contains('present') && loginStatusDetails.isEmpty) {
+        getLoginStatusDetails(); // Fetch login status to cross-reference late users
+      }
+
+      String pathKeyword = keyword.replaceAll('_Staff', '');
+      String endPoint = "${HttpUrls.searchAdminDashboard}/$pathKeyword";
+
+      await HttpRequest.httpGetRequest(
+              endPoint: endPoint, bodyData: {})
+          .then((response) async {
+        if (response.statusCode == 200) {
+          var data = response.data;
+          if (data is List) {
+            if (data.isNotEmpty && data.first is List) {
+              attendanceDetails = data.first as List;
+            } else {
+              attendanceDetails = data;
+            }
+          } else {
+            attendanceDetails = [];
+          }
+        }
+      });
+    } catch (e) {
+      print(e);
+      attendanceDetails = [];
+    } finally {
+      isAttendanceDetailsLoading = false;
+      if (shouldNotify) notifyListeners();
+    }
+  }
+
   Future<void> getLeadData(
       {String? filterValue, bool shouldNotify = true}) async {
     try {
@@ -785,6 +917,7 @@ class DashboardProvider extends ChangeNotifier {
     isPaymentLoaded = false;
     isCustomerOutstandingSummaryLoaded = false;
     isUserActivityLoaded = false;
+    isAttendanceDashboardLoaded = false;
   }
 
   Future<void> refreshDashboardData(BuildContext context,
