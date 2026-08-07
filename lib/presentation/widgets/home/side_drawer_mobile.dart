@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vidyanexis/controller/login_controller.dart';
 import 'package:vidyanexis/presentation/pages/reports/attendance_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/followup_report_mobile.dart';
 import 'package:vidyanexis/presentation/pages/reports/followup_amount_report_page.dart';
@@ -634,6 +635,8 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
               margin: const EdgeInsets.only(right: 8),
               child: ElevatedButton(
                 onPressed: () async {
+                  final loginController =
+                      Provider.of<LoginController>(context, listen: false);
                   SharedPreferences prefs =
                       await SharedPreferences.getInstance();
 
@@ -649,6 +652,8 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
                     checkInDate = prefs.getString('check_in_date_$userId');
                     checkInTime = prefs.getString('check_in_time_$userId');
                     attendanceId = prefs.getInt('attendance_id_$userId');
+                    await loginController.logout(
+                        userId: int.tryParse(userId) ?? 0);
 
                     try {
                       if (!kIsWeb && userId.isNotEmpty) {

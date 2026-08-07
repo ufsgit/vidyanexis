@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/controller/login_controller.dart';
 import 'package:vidyanexis/controller/models/side_bar_model.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/homepage.dart';
@@ -326,6 +327,9 @@ class _CustomSidebarState extends State<CustomSidebar> {
                     ),
                     TextButton(
                       onPressed: () async {
+                        final loginController = Provider.of<LoginController>(
+                            context,
+                            listen: false);
                         Navigator.of(context).pop();
                         SharedPreferences prefs =
                             await SharedPreferences.getInstance();
@@ -344,6 +348,8 @@ class _CustomSidebarState extends State<CustomSidebar> {
                           checkInTime =
                               prefs.getString('check_in_time_$userId');
                           attendanceId = prefs.getInt('attendance_id_$userId');
+                          await loginController.logout(
+                              userId: int.tryParse(userId) ?? 0);
                         }
 
                         // Backup branding state
