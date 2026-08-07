@@ -26,6 +26,15 @@ class ImageUploadAlert extends StatefulWidget {
 }
 
 class _ImageUploadAlertState extends State<ImageUploadAlert> {
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -49,6 +58,12 @@ class _ImageUploadAlertState extends State<ImageUploadAlert> {
   Widget build(BuildContext context) {
     final provider = Provider.of<ImageUploadProvider>(context);
     final dropDownProvider = Provider.of<DropDownProvider>(context);
+
+    final filteredDocTypes = dropDownProvider.documentType.where((docType) {
+      if (_searchQuery.isEmpty) return true;
+      final name = (docType.documentTypeName ?? '').toLowerCase();
+      return name.contains(_searchQuery.toLowerCase().trim());
+    }).toList();
 
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
@@ -91,18 +106,70 @@ class _ImageUploadAlertState extends State<ImageUploadAlert> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (widget.initialDocumentTypeId == null) ...[
-                      ListView.separated(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: dropDownProvider.documentType.length,
-                        separatorBuilder: (context, index) => Divider(
-                            color: Colors.grey.withOpacity(0.2), height: 1),
-                        itemBuilder: (context, index) {
-                          final docType = dropDownProvider.documentType[index];
-                          final selectedCount = provider.fileInfoList
-                              .where((e) =>
-                                  e['docTypeId'] == docType.documentTypeId)
-                              .length;
+                      Container(
+                        height: 40,
+                        margin: const EdgeInsets.only(bottom: 12),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade100,
+                          borderRadius: BorderRadius.circular(4),
+                          border: Border.all(color: Colors.grey.shade300),
+                        ),
+                        child: TextField(
+                          controller: _searchController,
+                          onChanged: (value) {
+                            setState(() {
+                              _searchQuery = value;
+                            });
+                          },
+                          decoration: InputDecoration(
+                            hintText: 'Search document type...',
+                            hintStyle: TextStyle(
+                                fontSize: 13, color: Colors.grey.shade500),
+                            prefixIcon: const Icon(Icons.search,
+                                size: 20, color: Colors.grey),
+                            suffixIcon: _searchQuery.isNotEmpty
+                                ? IconButton(
+                                    icon: const Icon(Icons.clear,
+                                        size: 18, color: Colors.grey),
+                                    onPressed: () {
+                                      setState(() {
+                                        _searchController.clear();
+                                        _searchQuery = '';
+                                      });
+                                    },
+                                  )
+                                : null,
+                            border: InputBorder.none,
+                            contentPadding:
+                                const EdgeInsets.symmetric(vertical: 10),
+                          ),
+                          style: const TextStyle(fontSize: 13),
+                        ),
+                      ),
+                      if (filteredDocTypes.isEmpty)
+                        Padding(
+                          padding: const EdgeInsets.all(24.0),
+                          child: Center(
+                            child: CustomText(
+                              'No matching document types',
+                              fontSize: 13,
+                              color: AppColors.textGrey3,
+                            ),
+                          ),
+                        )
+                      else
+                        ListView.separated(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: filteredDocTypes.length,
+                          separatorBuilder: (context, index) => Divider(
+                              color: Colors.grey.withOpacity(0.2), height: 1),
+                          itemBuilder: (context, index) {
+                            final docType = filteredDocTypes[index];
+                            final selectedCount = provider.fileInfoList
+                                .where((e) =>
+                                    e['docTypeId'] == docType.documentTypeId)
+                                .length;
 
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
