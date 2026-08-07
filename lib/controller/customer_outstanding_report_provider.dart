@@ -131,7 +131,7 @@ class CustomerOutstandingReportProvider extends ChangeNotifier {
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.customerOutstandingReport}?From_Date=$formattedFromDate&To_Date=$formattedToDate&Customer_Name=$_search&Enquiry_Source_Id_=${_selectedEnquirySourceId ?? 0}',
+              '${HttpUrls.customerOutstandingReport}?From_Date=$formattedFromDate&To_Date=$formattedToDate&Customer_Name=$_search&Enquiry_Source_Id=${_selectedEnquirySourceId ?? ''}',
           bodyData: {});
 
       if (response.statusCode == 200) {

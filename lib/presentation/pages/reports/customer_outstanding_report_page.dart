@@ -53,7 +53,6 @@ class _CustomerOutstandingReportPageState
         children: [
           // Header section
           Container(
-            height: 40,
                               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                               decoration: BoxDecoration(
               color: Colors.white,
@@ -680,7 +679,7 @@ class _CustomerOutstandingReportPageState
                       child: TextButton(
                         onPressed: () {
                           Navigator.pop(contextx);
-                          provider.getReport(contextx);
+                          provider.getReport(context);
                         },
                         style: TextButton.styleFrom(
                           backgroundColor: AppColors.primaryBlue,
@@ -705,7 +704,7 @@ class _CustomerOutstandingReportPageState
                       child: TextButton(
                         onPressed: () {
                           Navigator.pop(contextx);
-                          provider.resetFilters(contextx);
+                          provider.resetFilters(context);
                         },
                         style: TextButton.styleFrom(
                           backgroundColor: AppColors.textRed.withOpacity(0.08),
