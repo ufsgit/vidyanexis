@@ -299,24 +299,25 @@ class _DesignationContentState extends State<DesignationContent> {
             onPressed: () {
               showDialog(
                 context: context,
-                builder: (BuildContext context) {
+                builder: (BuildContext dialogContext) {
                   return AlertDialog(
                     title: const Text('Confirm Delete'),
                     content: const Text(
                         'Are you sure you want to delete this Designation?'),
                     actions: [
                       TextButton(
-                        onPressed: () => Navigator.pop(context),
+                        onPressed: () => Navigator.pop(dialogContext),
                         child: const Text('Cancel'),
                       ),
                       TextButton(
-                        onPressed: () async {
+                        onPressed: () {
+                          Navigator.pop(dialogContext);
                           settingsProvider.deleteDesignation(
                             context,
                             settingsProvider
                                 .designationList[index].designationId,
                           );
-                          Navigator.pop(context);
+                          
                         },
                         child: const Text(
                           'Delete',

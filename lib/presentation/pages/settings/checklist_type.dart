@@ -124,7 +124,7 @@ class _CheckListContentState extends State<CheckListContent> {
                                         onPressed: () {
                                           showDialog(
                                             context: context,
-                                            builder: (BuildContext context) {
+                                            builder: (BuildContext dialogContext) {
                                               return AlertDialog(
                                                 title: const Text(
                                                     'Confirm Delete'),
@@ -137,7 +137,8 @@ class _CheckListContentState extends State<CheckListContent> {
                                                     child: const Text('Cancel'),
                                                   ),
                                                   TextButton(
-                                                    onPressed: () async {
+                                                    onPressed: () {
+                                                      Navigator.pop(dialogContext);
                                                       settingsProvider
                                                           .deleteCheckList(
                                                               context,
@@ -145,7 +146,7 @@ class _CheckListContentState extends State<CheckListContent> {
                                                                   .checkListType[
                                                                       index]
                                                                   .checklistTypeId);
-                                                      Navigator.pop(context);
+                                                      
                                                     },
                                                     child: const Text(
                                                       'Delete',

@@ -1701,20 +1701,20 @@ class StockUseProvider extends ChangeNotifier {
         if (data['Stock_Use_Master_Id_'] == -1) {
           Loader.stopLoader(context);
           alert(context,
-              "You are attempting to delete an Stock use \n that is currently in use on the Stock use page!");
+              "You are attempting to delete a Check list \n that is currently in use on the Check list page!");
         } else {
           searchStockUseList(
               context: context, customerId: customerId.toString());
           notifyListeners();
 
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Stock use deleted successfully')),
+            const SnackBar(content: Text('Check list deleted successfully')),
           );
           Loader.stopLoader(context);
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to delete stock use')),
+          const SnackBar(content: Text('Failed to delete check list')),
         );
       }
     } catch (e) {
@@ -1751,7 +1751,7 @@ class StockUseProvider extends ChangeNotifier {
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to delete stock use')),
+          const SnackBar(content: Text('Failed to delete check list')),
         );
       }
     } catch (e) {

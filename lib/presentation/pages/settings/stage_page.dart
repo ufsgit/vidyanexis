@@ -144,7 +144,7 @@ class _StagePageState extends State<StagePage> {
                                       onPressed: () {
                                         showDialog(
                                           context: context,
-                                          builder: (BuildContext context) {
+                                          builder: (BuildContext dialogContext) {
                                             return AlertDialog(
                                               title:
                                                   const Text('Confirm Delete'),
@@ -157,7 +157,8 @@ class _StagePageState extends State<StagePage> {
                                                   child: const Text('Cancel'),
                                                 ),
                                                 TextButton(
-                                                  onPressed: () async {
+                                                  onPressed: () {
+                                                    Navigator.pop(dialogContext);
                                                     settingsProvider
                                                         .deleteStage(
                                                             context,
@@ -165,7 +166,7 @@ class _StagePageState extends State<StagePage> {
                                                                 .searchStage[
                                                                     index]
                                                                 .stageId);
-                                                    Navigator.pop(context);
+                                                    
                                                   },
                                                   child: const Text(
                                                     'Delete',

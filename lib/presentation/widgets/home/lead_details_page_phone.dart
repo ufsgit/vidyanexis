@@ -190,25 +190,26 @@ class LeadDetailsPagePhoneState extends State<LeadDetailsPagePhone> {
                             onPressed: () {
                               showDialog(
                                 context: context,
-                                builder: (BuildContext context) {
+                                builder: (BuildContext dialogContext) {
                                   return AlertDialog(
                                     title: const Text('Confirm Delete'),
                                     content: const Text(
                                         'Are you sure you want to delete this lead?'),
                                     actions: [
                                       TextButton(
-                                        onPressed: () => Navigator.pop(context),
+                                        onPressed: () => Navigator.pop(dialogContext),
                                         child: const Text('Cancel'),
                                       ),
                                       TextButton(
                                         onPressed: () async {
+                                          Navigator.pop(dialogContext);
                                           final leadsProvider =
                                               Provider.of<LeadsProvider>(
                                                   context,
                                                   listen: false);
                                           await leadsProvider.deleteLead(
                                               context, widget.customerId);
-                                          Navigator.pop(context);
+                                          
                                         },
                                         child: const Text(
                                           'Delete',

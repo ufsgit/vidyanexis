@@ -184,7 +184,7 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
       if (settingsProvider.menuIsViewMap[80].toString() == '1')
         {'title': 'Stock Reports', 'page': const StockReport()},
       if (settingsProvider.menuIsViewMap[121].toString() == '1')
-        {'title': 'Stock Use Reports', 'page': const StockUseReport()},
+        {'title': 'Check list Reports', 'page': const StockUseReport()},
       if (settingsProvider.menuIsViewMap[122].toString() == '1')
         {'title': 'Stock Return Reports', 'page': const StockReturnReport()},
       if (settingsProvider.menuIsViewMap[113].toString() == '1')

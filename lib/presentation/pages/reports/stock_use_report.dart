@@ -66,7 +66,7 @@ class _StockUseReportState extends State<StockUseReport> {
       drawer: isSmallScreen ? const SidebarDrawer() : null,
       appBar: isSmallScreen
           ? CustomAppBar(
-              title: 'Stock Use Report',
+              title: 'Check list Report',
               titleStyle: GoogleFonts.plusJakartaSans(
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
@@ -298,7 +298,7 @@ class _StockUseReportState extends State<StockUseReport> {
           ),
           const SizedBox(width: 8),
           Text(
-            'Stock Use Report',
+            'Check list Report',
             style: GoogleFonts.plusJakartaSans(
               fontSize: 24,
               fontWeight: FontWeight.w700,

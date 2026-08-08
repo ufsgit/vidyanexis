@@ -239,22 +239,22 @@ class _TaskTypeContentState extends State<TaskTypeContent> {
             onPressed: () {
               showDialog(
                 context: context,
-                builder: (BuildContext context) {
+                builder: (BuildContext dialogContext) {
                   return AlertDialog(
                     title: const Text('Confirm Delete'),
                     content: const Text('Are you sure you want to delete?'),
                     actions: [
                       TextButton(
-                        onPressed: () => Navigator.pop(context),
+                        onPressed: () => Navigator.pop(dialogContext),
                         child: const Text('Cancel'),
                       ),
                       TextButton(
-                        onPressed: () async {
+                        onPressed: () {
+                          Navigator.pop(dialogContext);
                           settingsProvider.deleteTaskType(
                             context,
                             settingsProvider.taskType[index].taskTypeId,
                           );
-                          Navigator.pop(context);
                         },
                         child: const Text(
                           'Delete',

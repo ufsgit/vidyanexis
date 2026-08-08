@@ -393,19 +393,20 @@ class _FormContentState extends State<FormContent> {
       BuildContext context, FormModel formModel, FormProvider formProvider) {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext dialogContext) {
         return AlertDialog(
           title: const Text('Confirm Delete'),
           content: const Text('Are you sure you want to delete this form?'),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => Navigator.pop(dialogContext),
               child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () {
+                Navigator.pop(dialogContext);
                 formProvider.deleteForm(formModel.id);
-                Navigator.pop(context);
+                
               },
               child: const Text(
                 'Delete',

@@ -90,7 +90,7 @@ class CustomerOutstandingSummaryTab extends StatelessWidget {
               if (settingsProvider.menuIsViewMap[80].toString() == '1')
                 'Stock Reports',
               if (settingsProvider.menuIsViewMap[121].toString() == '1')
-                'Stock Use Reports',
+                'Check list Reports',
               if (settingsProvider.menuIsViewMap[122].toString() == '1')
                 'Stock Return Reports',
               if (settingsProvider.menuIsViewMap[24].toString() == '1')

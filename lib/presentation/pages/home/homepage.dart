@@ -365,7 +365,7 @@ class _HomePageState extends State<HomePage> {
         ),
       if (settingsProvider.menuIsViewMap[121].toString() == '1')
         SidebarOption(
-          title: 'Stock Use Reports',
+          title: 'Check list Reports',
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: StockUseReport()),
         ),

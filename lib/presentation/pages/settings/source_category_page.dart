@@ -147,7 +147,7 @@ class _SourceCategoryPageState extends State<SourceCategoryPage> {
                                       onPressed: () {
                                         showDialog(
                                           context: context,
-                                          builder: (BuildContext context) {
+                                          builder: (BuildContext dialogContext) {
                                             return AlertDialog(
                                               title:
                                                   const Text('Confirm Delete'),
@@ -160,7 +160,8 @@ class _SourceCategoryPageState extends State<SourceCategoryPage> {
                                                   child: const Text('Cancel'),
                                                 ),
                                                 TextButton(
-                                                  onPressed: () async {
+                                                  onPressed: () {
+                                                    Navigator.pop(dialogContext);
                                                     settingsProvider
                                                         .deleteSourceCategory(
                                                             context,
@@ -168,7 +169,7 @@ class _SourceCategoryPageState extends State<SourceCategoryPage> {
                                                                 .searchSourceCategory[
                                                                     index]
                                                                 .sourceId);
-                                                    Navigator.pop(context);
+                                                    
                                                   },
                                                   child: const Text(
                                                     'Delete',

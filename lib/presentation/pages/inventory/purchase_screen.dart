@@ -605,18 +605,19 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
       BuildContext context, ExpenseProvider provider, dynamic id) {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext dialogContext) {
         return AlertDialog(
           title: const Text('Confirm Delete'),
           content: const Text('Are you sure you want to delete this purchase?'),
           actions: [
             TextButton(
-                onPressed: () => Navigator.pop(context),
+                onPressed: () => Navigator.pop(dialogContext),
                 child: const Text('Cancel')),
             TextButton(
               onPressed: () async {
+                Navigator.pop(dialogContext);
                 await provider.deletePurchaseItem(context, id);
-                Navigator.pop(context);
+                
               },
               child: const Text('Delete', style: TextStyle(color: Colors.red)),
             ),

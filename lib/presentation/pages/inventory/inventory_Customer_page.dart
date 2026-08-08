@@ -169,19 +169,20 @@ class _CustomerPageState extends State<CustomerPage> {
       BuildContext context, SettingsProvider provider, int id) {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext dialogContext) {
         return AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
           title: const Text('Confirm Delete'),
           content: const Text('Are you sure you want to delete this customer?'),
           actions: [
             TextButton(
-                onPressed: () => Navigator.pop(context),
+                onPressed: () => Navigator.pop(dialogContext),
                 child: const Text('Cancel')),
             TextButton(
-              onPressed: () async {
+              onPressed: () {
+                Navigator.pop(dialogContext);
                 provider.deleteInventoryCustomer(context, id);
-                Navigator.pop(context);
+                
               },
               child: const Text('Delete',
                   style: TextStyle(

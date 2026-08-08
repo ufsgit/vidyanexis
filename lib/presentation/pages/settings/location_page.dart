@@ -143,7 +143,7 @@ class _LocationPageState extends State<LocationPage> {
                                 onPressed: () {
                                   showDialog(
                                     context: context,
-                                    builder: (BuildContext context) {
+                                    builder: (BuildContext dialogContext) {
                                       return AlertDialog(
                                         title: const Text('Confirm Delete'),
                                         content: const Text(
@@ -156,6 +156,7 @@ class _LocationPageState extends State<LocationPage> {
                                           ),
                                           TextButton(
                                             onPressed: () async {
+                                              Navigator.pop(dialogContext);
                                               await settingsProvider
                                                   .deleteLocation(
                                                       context,
@@ -163,7 +164,7 @@ class _LocationPageState extends State<LocationPage> {
                                                           .locationModelList[
                                                               index]
                                                           .locationId);
-                                              Navigator.pop(context);
+                                              
                                             },
                                             child: const Text(
                                               'Delete',

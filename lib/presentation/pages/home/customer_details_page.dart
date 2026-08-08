@@ -197,9 +197,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
           sideprovider.name != 'Lead /')
         const Tab(text: "Refund Form"),
       if (settingsprovider.menuIsViewMap[21] == 1) const Tab(text: "Invoice"),
-      if (settingsprovider.menuIsViewMap[78] == 1 &&
-          sideprovider.name != 'Lead /')
-        const Tab(text: "Stock Use "),
+      if (settingsprovider.menuIsViewMap[78] == 1)
+        const Tab(text: "Check list "),
       if (settingsprovider.menuIsViewMap[79] == 1 &&
           sideprovider.name != 'Lead /')
         const Tab(text: "Stock Return"),
@@ -5008,7 +5007,6 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                             if (settingsprovider
                                                     .menuIsViewMap[78] ==
                                                 1)
-                                              if (sideprovider.name != 'Lead /')
                                                 StockUsePage(
                                                     customerId: int.parse(
                                                   widget.customerId,

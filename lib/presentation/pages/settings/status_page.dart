@@ -134,7 +134,7 @@ class _StatusPageState extends State<StatusPage> {
                               onPressed: () {
                                 showDialog(
                                   context: context,
-                                  builder: (BuildContext context) {
+                                  builder: (BuildContext dialogContext) {
                                     return AlertDialog(
                                       title: const Text('Confirm Delete'),
                                       content: const Text(
@@ -146,8 +146,9 @@ class _StatusPageState extends State<StatusPage> {
                                           child: const Text('Cancel'),
                                         ),
                                         TextButton(
-                                          onPressed: () async {
-                                            Navigator.pop(context);
+                                          onPressed: () {
+                                            Navigator.pop(dialogContext);
+                                            
                                             settingsProvider.deleteStatus(
                                                 context,
                                                 settingsProvider

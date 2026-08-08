@@ -129,7 +129,7 @@ class _ProjectTypeScreenState extends State<ProjectTypeScreen> {
                                         onPressed: () {
                                           showDialog(
                                             context: context,
-                                            builder: (BuildContext context) {
+                                            builder: (BuildContext dialogContext) {
                                               return AlertDialog(
                                                 title: const Text(
                                                     'Confirm Delete'),
@@ -142,13 +142,14 @@ class _ProjectTypeScreenState extends State<ProjectTypeScreen> {
                                                     child: const Text('Cancel'),
                                                   ),
                                                   TextButton(
-                                                    onPressed: () async {
+                                                    onPressed: () {
+                                                      Navigator.pop(dialogContext);
                                                       settingsProvider
                                                           .deleteProjectType(
                                                               context,
                                                               projectTypeModel
                                                                   .projectTypeId!);
-                                                      Navigator.pop(context);
+                                                      
                                                     },
                                                     child: const Text(
                                                       'Delete',

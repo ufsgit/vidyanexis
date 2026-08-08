@@ -583,18 +583,19 @@ class _SalesScreenState extends State<SalesScreen> {
       BuildContext context, ExpenseProvider provider, dynamic id) {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext dialogContext) {
         return AlertDialog(
           title: const Text('Confirm Delete'),
           content: const Text('Are you sure you want to delete this sale?'),
           actions: [
             TextButton(
-                onPressed: () => Navigator.pop(context),
+                onPressed: () => Navigator.pop(dialogContext),
                 child: const Text('Cancel')),
             TextButton(
               onPressed: () async {
+                Navigator.pop(dialogContext);
                 await provider.deleteSalesItem(context, id);
-                Navigator.pop(context);
+                
               },
               child: const Text('Delete', style: TextStyle(color: Colors.red)),
             ),
