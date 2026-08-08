@@ -164,7 +164,7 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
         elevation: 0,
         centerTitle: false,
         title: Text(
-          widget.isEdit ? 'Edit Stock Use' : 'Add Stock Use',
+          widget.isEdit ? 'Edit Check list' : 'Add Check list',
           style: GoogleFonts.plusJakartaSans(
             fontSize: 20,
             fontWeight: FontWeight.w700,

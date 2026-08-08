@@ -298,7 +298,7 @@ class _InventoryPageState extends State<InventoryPage> {
     if (settingsProvider.menuIsViewMap[87].toString() == '1')
       items.add('Sales');
     if (settingsProvider.menuIsViewMap[78].toString() == '1')
-      items.add('Stock Use');
+      items.add('Check list');
     if (settingsProvider.menuIsViewMap[79].toString() == '1')
       items.add('Stock Return');
     if (settingsProvider.menuIsViewMap[143].toString() == '1')
@@ -348,7 +348,7 @@ class _InventoryPageState extends State<InventoryPage> {
             return const SupplierPage();
           case 'Sales':
             return const SalesScreen();
-          case 'Stock Use':
+          case 'Check list':
             return const StockUsePage(customerId: 0);
           case 'Stock Return':
             return const StockReturnPage(customerId: 0);
@@ -511,7 +511,7 @@ class _InventoryPageState extends State<InventoryPage> {
             0; // Inventory Customer - skipped permission check to show Add button
         onTap = () => _showAddCustomerDialog(context);
         break;
-      case 'Stock Use':
+      case 'Check list':
         menuId = 78;
         onTap = () => _showAddStockUseDialog(context);
         break;

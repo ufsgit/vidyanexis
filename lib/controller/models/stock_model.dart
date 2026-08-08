@@ -77,7 +77,11 @@ class StockUseItems {
           json['isChecked']?.toString() == '1' ||
           json['isChecked']?.toString() == 'true' ||
           json['ischecked']?.toString() == '1' ||
-          json['ischecked']?.toString() == 'true',
+          json['ischecked']?.toString() == 'true' ||
+          json['is_checked']?.toString() == '1' ||
+          json['is_checked']?.toString() == 'true' ||
+          json['Is_Check_List']?.toString() == '1' ||
+          json['Is_Check_List']?.toString() == 'true',
     );
   }
 
