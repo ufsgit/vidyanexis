@@ -531,13 +531,10 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
                                     horizontal: 20, vertical: 5),
                                 decoration: BoxDecoration(
                                     color: AppColors.primaryBlue.withAlpha(50)),
-                                child: Wrap(
-                                  spacing: 10,
-                                  runSpacing: 10,
-                                  crossAxisAlignment: WrapCrossAlignment.center,
+                                child: Row(
                                   children: [
-                                    SizedBox(
-                                      width: 200,
+                                    Expanded(
+                                      flex: 3,
                                       child: TextField(
                                         controller: _getMainNameController(
                                             itemIndex, item.itemName),
@@ -556,12 +553,13 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
                                             _updateMainItemName(itemIndex, val),
                                       ),
                                     ),
-                                    SizedBox(
-                                      width: 200,
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      flex: 2,
                                       child: TextField(
                                         controller: _getMainMakeController(
                                             itemIndex, item.make),
-                                        textAlign: TextAlign.center,
+                                        textAlign: TextAlign.left,
                                         decoration: InputDecoration(
                                           labelText: 'Make',
                                           isDense: true,
@@ -576,8 +574,9 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
                                             _updateMainItemMake(itemIndex, val),
                                       ),
                                     ),
+                                    const SizedBox(width: 10),
                                     SizedBox(
-                                      width: 110,
+                                      width: 90,
                                       child: TextField(
                                         controller: _getMainQtyController(
                                             itemIndex, item.quantity),
@@ -648,13 +647,9 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
                                               border: Border.all(
                                                   color: Colors.grey.shade200),
                                             ),
-                                            child: Wrap(
-                                              spacing: 8,
-                                              runSpacing: 10,
-                                              crossAxisAlignment: WrapCrossAlignment.center,
+                                            child: Row(
                                               children: [
-                                                SizedBox(
-                                                  width: 200,
+                                                Expanded(
                                                   child: TextField(
                                                     controller:
                                                         _getMaterialNameController(
@@ -691,8 +686,9 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
                                                     },
                                                   ),
                                                 ),
+                                                const SizedBox(width: 8),
                                                 SizedBox(
-                                                  width: 90,
+                                                  width: 80,
                                                   child: TextField(
                                                     controller:
                                                         _getMaterialQtyController(
@@ -731,8 +727,9 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
                                                             val),
                                                   ),
                                                 ),
+                                                const SizedBox(width: 8),
                                                 SizedBox(
-                                                  width: 140,
+                                                  width: 100,
                                                   child: TextField(
                                                     controller:
                                                         _getMaterialPriceController(
@@ -774,7 +771,7 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
                                                 Tooltip(
                                                   message: "Show in Print",
                                                   child: SizedBox(
-                                                    width: 50,
+                                                    width: 40,
                                                     child: Checkbox(
                                                       value:
                                                           _getMaterialChecked(
@@ -794,7 +791,7 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
                                                   message:
                                                       "Quantity as Required",
                                                   child: SizedBox(
-                                                    width: 50,
+                                                    width: 40,
                                                     child: Checkbox(
                                                       value:
                                                           _getMaterialShowQtyChecked(
@@ -811,7 +808,7 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
                                                   ),
                                                 ),
                                                 SizedBox(
-                                                  width: 100,
+                                                  width: 90,
                                                   child: Column(
                                                     crossAxisAlignment:
                                                         CrossAxisAlignment.end,
