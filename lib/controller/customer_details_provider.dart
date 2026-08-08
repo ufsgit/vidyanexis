@@ -4793,7 +4793,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
-  void getQuotationTypes(BuildContext context) async {
+  Future<void> getQuotationTypes(BuildContext context) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";

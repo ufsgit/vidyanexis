@@ -66,8 +66,27 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
       // Always clear first to ensure a clean state
       customerDetailsProvider.clearQuotationDetails();
 
-      settingsProvider.searchBranch(context);
-      customerDetailsProvider.getQuotationTypes(context);
+      await settingsProvider.searchBranch(context);
+      await customerDetailsProvider.getQuotationTypes(context);
+
+      if (!widget.isEdit) {
+        if (settingsProvider.branchModel.isNotEmpty) {
+          customerDetailsProvider.selectedBranchId =
+              settingsProvider.branchModel.first.branchId;
+        }
+
+        if (customerDetailsProvider.quotationTypeData.isNotEmpty) {
+          final residentialType = customerDetailsProvider.quotationTypeData
+              .where((element) => element.quotationTypeName.toLowerCase().contains('residential'))
+              .firstOrNull;
+          if (residentialType != null) {
+            customerDetailsProvider.selectedQuotationType =
+                residentialType.quotationTypeId;
+            customerDetailsProvider.quotationTypeController.text =
+                residentialType.quotationTypeName;
+          }
+        }
+      }
       await customerDetailsProvider.getProfitList(context);
 
       // Fetch custom field definitions for quotations

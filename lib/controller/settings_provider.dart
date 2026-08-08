@@ -894,7 +894,7 @@ class SettingsProvider extends ChangeNotifier {
     branchCampaignController.clear();
   }
 
-  void searchBranch(BuildContext context, {String query = ''}) async {
+  Future<void> searchBranch(BuildContext context, {String query = ''}) async {
     try {
       if (_allBranchModel.isEmpty || query.isEmpty) {
         final response =
