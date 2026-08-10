@@ -8,9 +8,11 @@ import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/models/travel_allowance_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/controller/travel_allowance_provider.dart';
+import 'package:vidyanexis/presentation/pages/travel_allowance/add_ta_dialog.dart';
 import 'package:vidyanexis/presentation/pages/travel_allowance/ta_details_dialog.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
+import 'package:vidyanexis/utils/extensions.dart';
 
 class TAReportScreen extends StatefulWidget {
   static const String route = '/ta_report';
@@ -102,7 +104,12 @@ class _TAReportScreenState extends State<TAReportScreen> {
       // 2. Date Filter
       if (taProvider.fromDate != null && taProvider.toDate != null && (item.travelDate ?? '').isNotEmpty) {
         try {
-          final tDate = DateTime.parse(item.travelDate!);
+          final rawDateStr = item.travelDate!;
+          final datePart = rawDateStr.contains('T')
+              ? rawDateStr.split('T')[0]
+              : (rawDateStr.contains(' ') ? rawDateStr.split(' ')[0] : rawDateStr);
+          final formattedIso = datePart.toUniversalYyyyMmDd();
+          final tDate = DateTime.parse(formattedIso.isNotEmpty ? formattedIso : datePart);
           final fDate = DateTime(taProvider.fromDate!.year, taProvider.fromDate!.month, taProvider.fromDate!.day);
           final tDateEnd = DateTime(taProvider.toDate!.year, taProvider.toDate!.month, taProvider.toDate!.day, 23, 59, 59);
           if (tDate.isBefore(fDate) || tDate.isAfter(tDateEnd)) return false;
@@ -156,74 +163,142 @@ class _TAReportScreenState extends State<TAReportScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header & Main Title
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: AppColors.secondaryBlue.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
+              if (isWeb)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: AppColors.secondaryBlue.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Icon(Icons.assessment_rounded,
+                              color: AppColors.secondaryBlue, size: 28),
                         ),
-                        child: const Icon(Icons.assessment_rounded,
-                            color: AppColors.secondaryBlue, size: 28),
+                        const SizedBox(width: 14),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Monthly Travel Allowance (TA) Report',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            Text(
+                              'Monthly summary metrics, staff breakdown, and approval status analytics',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 12,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        OutlinedButton.icon(
+                          onPressed: () => taProvider.exportToExcelReport(context, itemsToExport: reportItems),
+                          icon: const Icon(Icons.download_rounded, size: 18),
+                          label: const Text('Export Excel'),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: const Color(0xFF15803D),
+                            side: const BorderSide(color: Color(0xFFBBF7D0)),
+                            backgroundColor: const Color(0xFFF0FDF4),
+                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        OutlinedButton.icon(
+                          onPressed: () => taProvider.exportToPDFReport(context, itemsToExport: reportItems),
+                          icon: const Icon(Icons.picture_as_pdf_rounded, size: 18),
+                          label: const Text('Export PDF'),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: const Color(0xFFDC2626),
+                            side: const BorderSide(color: Color(0xFFFECACA)),
+                            backgroundColor: const Color(0xFFFEF2F2),
+                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                )
+              else
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Travel Allowance',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
                       ),
-                      const SizedBox(width: 14),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Monthly Travel Allowance (TA) Report',
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: isWeb ? 22 : 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black87,
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (_) => const AddTADialog(),
+                              );
+                            },
+                            icon: const Icon(Icons.add_rounded, size: 16),
+                            label: Text(
+                              'Add TA',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.secondaryBlue,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                              elevation: 0,
                             ),
                           ),
-                          Text(
-                            'Monthly summary metrics, staff breakdown, and approval status analytics',
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 12,
-                              color: Colors.grey[600],
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: OutlinedButton.icon(
+                            onPressed: () => taProvider.exportToExcelReport(context, itemsToExport: reportItems),
+                            icon: const Icon(Icons.download_rounded, size: 16),
+                            label: Text(
+                              'Export Excel',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: const Color(0xFF15803D),
+                              side: const BorderSide(color: Color(0xFFBBF7D0)),
+                              backgroundColor: const Color(0xFFF0FDF4),
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                             ),
                           ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      OutlinedButton.icon(
-                        onPressed: () => taProvider.exportToExcelReport(context, itemsToExport: reportItems),
-                        icon: const Icon(Icons.download_rounded, size: 18),
-                        label: Text(isWeb ? 'Export Excel' : 'Excel'),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: const Color(0xFF15803D),
-                          side: const BorderSide(color: Color(0xFFBBF7D0)),
-                          backgroundColor: const Color(0xFFF0FDF4),
-                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                         ),
-                      ),
-                      const SizedBox(width: 8),
-                      OutlinedButton.icon(
-                        onPressed: () => taProvider.exportToPDFReport(context, itemsToExport: reportItems),
-                        icon: const Icon(Icons.picture_as_pdf_rounded, size: 18),
-                        label: Text(isWeb ? 'Export PDF' : 'PDF'),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: const Color(0xFFDC2626),
-                          side: const BorderSide(color: Color(0xFFFECACA)),
-                          backgroundColor: const Color(0xFFFEF2F2),
-                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                      ],
+                    ),
+                  ],
+                ),
               const SizedBox(height: 20),
 
               // KPI Summary Cards Grid (6 Metric Summary Cards as requested in Req 9)
@@ -571,7 +646,7 @@ class _TAReportScreenState extends State<TAReportScreen> {
                             style: GoogleFonts.plusJakartaSans(fontSize: 13, fontWeight: FontWeight.w600)),
                       ],
                     )),
-                    DataCell(Text(item.travelDate ?? '-', style: GoogleFonts.plusJakartaSans(fontSize: 12))),
+                    DataCell(Text(item.formattedTravelDate, style: GoogleFonts.plusJakartaSans(fontSize: 12))),
                     DataCell(Row(
                       children: [
                         Icon(item.travelModeIcon, size: 16, color: Colors.grey[700]),
@@ -699,7 +774,7 @@ class _TAReportScreenState extends State<TAReportScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    '${item.travelDate ?? ''} • ${item.computedTotalKm.toStringAsFixed(1)} KM',
+                    '${item.formattedTravelDate} • ${item.computedTotalKm.toStringAsFixed(1)} KM',
                     style: GoogleFonts.plusJakartaSans(fontSize: 12, color: Colors.grey[600]),
                   ),
                   Text(

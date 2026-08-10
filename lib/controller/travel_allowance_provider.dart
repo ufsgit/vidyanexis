@@ -11,6 +11,7 @@ import 'package:vidyanexis/http/loader.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
+import 'package:vidyanexis/utils/extensions.dart';
 import 'package:vidyanexis/utils/pdf_function.dart';
 
 class TravelAllowanceProvider extends ChangeNotifier {
@@ -44,7 +45,8 @@ class TravelAllowanceProvider extends ChangeNotifier {
   final TextEditingController totalKmController = TextEditingController();
   final TextEditingController ratePerKmController = TextEditingController();
   final TextEditingController otherExpensesController = TextEditingController();
-  final TextEditingController otherExpenseRemarkController = TextEditingController();
+  final TextEditingController otherExpenseRemarkController =
+      TextEditingController();
   final TextEditingController totalAmountController = TextEditingController();
   final TextEditingController purposeController = TextEditingController();
   final TextEditingController adminRemarkController = TextEditingController();
@@ -83,9 +85,10 @@ class TravelAllowanceProvider extends ChangeNotifier {
   }
 
   void recalculateTotals() {
-    final startOdo = double.tryParse(startOdometerController.text.trim()) ?? 0.0;
+    final startOdo =
+        double.tryParse(startOdometerController.text.trim()) ?? 0.0;
     final endOdo = double.tryParse(endOdometerController.text.trim()) ?? 0.0;
-    
+
     double totalKm = 0.0;
     if (endOdo > startOdo) {
       totalKm = endOdo - startOdo;
@@ -103,7 +106,7 @@ class TravelAllowanceProvider extends ChangeNotifier {
   }
 
   void resetForm() {
-    dateController.text = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    dateController.text = DateFormat('dd MMM yyyy').format(DateTime.now());
     travelModeController.text = 'Bike';
     fromLocationController.clear();
     toLocationController.clear();
@@ -125,15 +128,21 @@ class TravelAllowanceProvider extends ChangeNotifier {
   void populateFormForEdit(TravelAllowanceModel model) {
     selectedStaffId = model.userId ?? currentUserId;
     selectedStaffName = model.userName ?? currentUserName;
-    dateController.text = model.travelDate ?? DateFormat('yyyy-MM-dd').format(DateTime.now());
+    dateController.text = (model.travelDate ?? '').isNotEmpty
+        ? model.travelDate!.toDayMonthYearFormat()
+        : DateFormat('dd MMM yyyy').format(DateTime.now());
     travelModeController.text = model.travelMode ?? 'Bike';
     fromLocationController.text = model.fromLocation ?? '';
     toLocationController.text = model.toLocation ?? '';
-    startOdometerController.text = model.startOdometer != null ? model.startOdometer.toString() : '';
-    endOdometerController.text = model.endOdometer != null ? model.endOdometer.toString() : '';
+    startOdometerController.text =
+        model.startOdometer != null ? model.startOdometer.toString() : '';
+    endOdometerController.text =
+        model.endOdometer != null ? model.endOdometer.toString() : '';
     totalKmController.text = model.computedTotalKm.toString();
-    ratePerKmController.text = model.ratePerKm != null ? model.ratePerKm.toString() : '3.0';
-    otherExpensesController.text = model.otherExpenses != null ? model.otherExpenses.toString() : '';
+    ratePerKmController.text =
+        model.ratePerKm != null ? model.ratePerKm.toString() : '3.0';
+    otherExpensesController.text =
+        model.otherExpenses != null ? model.otherExpenses.toString() : '';
     otherExpenseRemarkController.text = model.otherExpenseRemark ?? '';
     totalAmountController.text = model.computedTotalAmount.toString();
     purposeController.text = model.purpose ?? '';
@@ -158,7 +167,8 @@ class TravelAllowanceProvider extends ChangeNotifier {
         _isUploadingFile = true;
         notifyListeners();
 
-        final fileType = file.extension == 'pdf' ? 'application/pdf' : 'image/jpeg';
+        final fileType =
+            file.extension == 'pdf' ? 'application/pdf' : 'image/jpeg';
         if (!context.mounted) return;
         final uploadedUrl = await CloudflareUpload.uploadToCloudflare(
           file.bytes!,
@@ -205,11 +215,13 @@ class TravelAllowanceProvider extends ChangeNotifier {
 
       // 2. Status Filter
       bool matchesStatus = selectedStatusFilter == 'All' ||
-          (item.status ?? 'Pending').toLowerCase() == selectedStatusFilter.toLowerCase();
+          (item.status ?? 'Pending').toLowerCase() ==
+              selectedStatusFilter.toLowerCase();
 
       // 3. Travel Mode Filter
       bool matchesMode = selectedTravelModeFilter == 'All' ||
-          (item.travelMode ?? '').toLowerCase() == selectedTravelModeFilter.toLowerCase();
+          (item.travelMode ?? '').toLowerCase() ==
+              selectedTravelModeFilter.toLowerCase();
 
       // 4. User Filter (Admin view filter)
       bool matchesUser = selectedUserFilter == null ||
@@ -218,17 +230,35 @@ class TravelAllowanceProvider extends ChangeNotifier {
 
       // 5. Date Filter
       bool matchesDate = true;
-      if (fromDate != null && toDate != null && item.travelDate != null && item.travelDate!.isNotEmpty) {
+      if (fromDate != null &&
+          toDate != null &&
+          item.travelDate != null &&
+          item.travelDate!.isNotEmpty) {
         try {
-          final tDate = DateTime.parse(item.travelDate!);
-          final fDate = DateTime(fromDate!.year, fromDate!.month, fromDate!.day);
-          final tDateEnd = DateTime(toDate!.year, toDate!.month, toDate!.day, 23, 59, 59);
-          matchesDate = tDate.isAfter(fDate.subtract(const Duration(seconds: 1))) &&
-              tDate.isBefore(tDateEnd);
+          final rawDateStr = item.travelDate!;
+          final datePart = rawDateStr.contains('T')
+              ? rawDateStr.split('T')[0]
+              : (rawDateStr.contains(' ')
+                  ? rawDateStr.split(' ')[0]
+                  : rawDateStr);
+          final formattedIso = datePart.toUniversalYyyyMmDd();
+          final tDate =
+              DateTime.parse(formattedIso.isNotEmpty ? formattedIso : datePart);
+          final fDate =
+              DateTime(fromDate!.year, fromDate!.month, fromDate!.day);
+          final tDateEnd =
+              DateTime(toDate!.year, toDate!.month, toDate!.day, 23, 59, 59);
+          matchesDate =
+              tDate.isAfter(fDate.subtract(const Duration(seconds: 1))) &&
+                  tDate.isBefore(tDateEnd);
         } catch (_) {}
       }
 
-      return matchesSearch && matchesStatus && matchesMode && matchesUser && matchesDate;
+      return matchesSearch &&
+          matchesStatus &&
+          matchesMode &&
+          matchesUser &&
+          matchesDate;
     }).toList();
 
     notifyListeners();
@@ -272,14 +302,17 @@ class TravelAllowanceProvider extends ChangeNotifier {
   }
 
   // KPI Calculations
-  double get totalClaimedAmount => _filteredTaList.fold(0.0, (sum, i) => sum + i.computedTotalAmount);
+  double get totalClaimedAmount =>
+      _filteredTaList.fold(0.0, (sum, i) => sum + i.computedTotalAmount);
   double get totalApprovedAmount => _filteredTaList
       .where((i) => (i.status ?? '').toLowerCase() == 'approved')
       .fold(0.0, (sum, i) => sum + i.computedTotalAmount);
   double get totalPaidAmount => _filteredTaList
       .where((i) => (i.status ?? '').toLowerCase() == 'paid')
       .fold(0.0, (sum, i) => sum + i.computedTotalAmount);
-  int get pendingCount => _filteredTaList.where((i) => (i.status ?? '').toLowerCase() == 'pending').length;
+  int get pendingCount => _filteredTaList
+      .where((i) => (i.status ?? '').toLowerCase() == 'pending')
+      .length;
 
   // Fetch TA Claims
   Future<void> fetchTAList({BuildContext? context}) async {
@@ -288,27 +321,33 @@ class TravelAllowanceProvider extends ChangeNotifier {
 
     try {
       await initUserData();
-      
+
       final Map<String, dynamic> body = {
-        'User_Id': currentUserType == '1' ? (selectedUserFilter ?? 0) : currentUserId,
-        'From_Date': fromDate != null ? DateFormat('yyyy-MM-dd').format(fromDate!) : '',
-        'To_Date': toDate != null ? DateFormat('yyyy-MM-dd').format(toDate!) : '',
+        'User_Id':
+            currentUserType == '1' ? (selectedUserFilter ?? 0) : currentUserId,
+        'From_Date':
+            fromDate != null ? DateFormat('yyyy-MM-dd').format(fromDate!) : '',
+        'To_Date':
+            toDate != null ? DateFormat('yyyy-MM-dd').format(toDate!) : '',
       };
 
-      if (context != null && context.mounted) Loader.showLoader(context);
-
-      final response = await HttpRequest.httpGetRequest(endPoint: HttpUrls.getTravelAllowance, bodyData: body);
-
-      if (context != null && context.mounted) Loader.stopLoader(context);
+      final response = await HttpRequest.httpGetRequest(
+          endPoint: HttpUrls.getTravelAllowance, bodyData: body);
 
       if (response.statusCode == 200) {
         final data = response.data;
         if (data is List) {
-          _taList = data.map((e) => TravelAllowanceModel.fromJson(e as Map<String, dynamic>)).toList();
+          _taList = data
+              .map((e) =>
+                  TravelAllowanceModel.fromJson(e as Map<String, dynamic>))
+              .toList();
         } else if (data is Map<String, dynamic>) {
           final rawList = data['Data'] ?? data['data'];
           if (rawList is List) {
-            _taList = rawList.map((e) => TravelAllowanceModel.fromJson(e as Map<String, dynamic>)).toList();
+            _taList = rawList
+                .map((e) =>
+                    TravelAllowanceModel.fromJson(e as Map<String, dynamic>))
+                .toList();
           } else {
             _taList = [];
           }
@@ -320,7 +359,6 @@ class TravelAllowanceProvider extends ChangeNotifier {
       }
     } catch (e) {
       dev.log('Error fetching TA list: $e', name: 'TravelAllowanceProvider');
-      if (context != null && context.mounted) Loader.stopLoader(context);
       _taList = [];
     } finally {
       _isLoading = false;
@@ -337,7 +375,8 @@ class TravelAllowanceProvider extends ChangeNotifier {
       );
       return false;
     }
-    if (fromLocationController.text.trim().isEmpty || toLocationController.text.trim().isEmpty) {
+    if (fromLocationController.text.trim().isEmpty ||
+        toLocationController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please enter From and To locations.')),
       );
@@ -353,7 +392,9 @@ class TravelAllowanceProvider extends ChangeNotifier {
     final distance = double.tryParse(totalKmController.text.trim());
     if (distance == null || distance < 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Distance Travelled must be a valid non-negative number.')),
+        const SnackBar(
+            content: Text(
+                'Distance Travelled must be a valid non-negative number.')),
       );
       return false;
     }
@@ -361,15 +402,20 @@ class TravelAllowanceProvider extends ChangeNotifier {
     final amount = double.tryParse(totalAmountController.text.trim());
     if (amount == null || amount < 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('TA Amount must be a valid non-negative number.')),
+        const SnackBar(
+            content: Text('TA Amount must be a valid non-negative number.')),
       );
       return false;
     }
 
-    final targetUserId = (currentUserType == '1' && selectedStaffId != null && selectedStaffId != 0)
+    final targetUserId = (currentUserType == '1' &&
+            selectedStaffId != null &&
+            selectedStaffId != 0)
         ? selectedStaffId!
         : currentUserId;
-    final targetUserName = (currentUserType == '1' && selectedStaffName != null && selectedStaffName!.isNotEmpty)
+    final targetUserName = (currentUserType == '1' &&
+            selectedStaffName != null &&
+            selectedStaffName!.isNotEmpty)
         ? selectedStaffName!
         : currentUserName;
 
@@ -380,40 +426,55 @@ class TravelAllowanceProvider extends ChangeNotifier {
         'TA_Master_Id': editId ?? 0,
         'User_Id': targetUserId,
         'User_Name': targetUserName,
-        'Travel_Date': dateController.text.trim(),
+        'Travel_Date': dateController.text.trim().toUniversalYyyyMmDd(),
         'Travel_Mode': travelModeController.text.trim(),
         'From_Location': fromLocationController.text.trim(),
         'To_Location': toLocationController.text.trim(),
-        'Start_Odometer': double.tryParse(startOdometerController.text.trim()) ?? 0.0,
-        'End_Odometer': double.tryParse(endOdometerController.text.trim()) ?? 0.0,
+        'Start_Odometer':
+            double.tryParse(startOdometerController.text.trim()) ?? 0.0,
+        'End_Odometer':
+            double.tryParse(endOdometerController.text.trim()) ?? 0.0,
         'Total_Km': double.tryParse(totalKmController.text.trim()) ?? 0.0,
         'Rate_Per_Km': double.tryParse(ratePerKmController.text.trim()) ?? 0.0,
-        'Other_Expenses': double.tryParse(otherExpensesController.text.trim()) ?? 0.0,
+        'Other_Expenses':
+            double.tryParse(otherExpensesController.text.trim()) ?? 0.0,
         'Other_Expense_Remark': otherExpenseRemarkController.text.trim(),
-        'Total_Amount': double.tryParse(totalAmountController.text.trim()) ?? 0.0,
+        'Total_Amount':
+            double.tryParse(totalAmountController.text.trim()) ?? 0.0,
         'Purpose': purposeController.text.trim(),
-        'Status': editId != null ? (_taList.firstWhere((e) => e.taId == editId, orElse: () => TravelAllowanceModel()).status ?? 'Pending') : 'Pending',
+        'Status': editId != null
+            ? (_taList
+                    .firstWhere((e) => e.taId == editId,
+                        orElse: () => TravelAllowanceModel())
+                    .status ??
+                'Pending')
+            : 'Pending',
         'Attachment_Url': _attachmentUrl,
       };
 
-      final response = await HttpRequest.httpPostRequest(endPoint: HttpUrls.saveTravelAllowance, bodyData: body);
+      final response = await HttpRequest.httpPostRequest(
+          endPoint: HttpUrls.saveTravelAllowance, bodyData: body);
       if (context.mounted) Loader.stopLoader(context);
 
-      if (response != null && (response.statusCode == 200 || response.statusCode == 201)) {
+      if (response != null &&
+          (response.statusCode == 200 || response.statusCode == 201)) {
+        await fetchTAList();
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(editId == null ? 'Travel Entry submitted successfully!' : 'Travel Entry updated successfully!')),
+            SnackBar(
+                content: Text(editId == null
+                    ? 'Travel Entry submitted successfully!'
+                    : 'Travel Entry updated successfully!')),
           );
-          await fetchTAList(context: context);
-        } else {
-          await fetchTAList();
         }
         resetForm();
         return true;
       } else {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Failed to save Travel Entry. Please try again.')),
+            const SnackBar(
+                content:
+                    Text('Failed to save Travel Entry. Please try again.')),
           );
         }
         return false;
@@ -423,7 +484,8 @@ class TravelAllowanceProvider extends ChangeNotifier {
       if (context.mounted) Loader.stopLoader(context);
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Error saving Travel Entry. Please try again.')),
+          const SnackBar(
+              content: Text('Error saving Travel Entry. Please try again.')),
         );
       }
       return false;
@@ -431,21 +493,27 @@ class TravelAllowanceProvider extends ChangeNotifier {
   }
 
   // Update Status (Approve / Reject / Paid)
-  Future<void> updateTAStatus(BuildContext context, int taId, String newStatus, {String? remark}) async {
+  Future<void> updateTAStatus(BuildContext context, int taId, String newStatus,
+      {String? remark}) async {
     // 1. Authorization Guard: Purely permission-driven via existing Report Permission (menuIsViewMap 26/201)
-    final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
-    final bool hasReportPermission = (settingsProvider.menuIsViewMap[26] ?? 0).toString() == '1' ||
-        (settingsProvider.menuIsViewMap[201] ?? 0).toString() == '1';
+    final settingsProvider =
+        Provider.of<SettingsProvider>(context, listen: false);
+    final bool hasReportPermission =
+        (settingsProvider.menuIsViewMap[26] ?? 0).toString() == '1' ||
+            (settingsProvider.menuIsViewMap[201] ?? 0).toString() == '1';
 
     if (!hasReportPermission) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Unauthorized: Only users with Report Permission can approve or reject TA entries.')),
+        const SnackBar(
+            content: Text(
+                'Unauthorized: Only users with Report Permission can approve or reject TA entries.')),
       );
       return;
     }
 
     // 2. Rejection Reason Requirement
-    if (newStatus.toLowerCase() == 'rejected' && (remark == null || remark.trim().isEmpty)) {
+    if (newStatus.toLowerCase() == 'rejected' &&
+        (remark == null || remark.trim().isEmpty)) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please enter a rejection reason.')),
       );
@@ -454,7 +522,8 @@ class TravelAllowanceProvider extends ChangeNotifier {
 
     try {
       Loader.showLoader(context);
-      final timestamp = DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
+      final timestamp =
+          DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
       final body = {
         'TA_Master_Id': taId,
         'Status': newStatus,
@@ -465,18 +534,15 @@ class TravelAllowanceProvider extends ChangeNotifier {
         'User_Type': currentUserType,
       };
 
-      await HttpRequest.httpGetRequest(endPoint: HttpUrls.updateTAStatus, bodyData: body);
+      await HttpRequest.httpGetRequest(
+          endPoint: HttpUrls.updateTAStatus, bodyData: body);
       if (context.mounted) Loader.stopLoader(context);
 
+      await fetchTAList();
       if (context.mounted) {
-        await fetchTAList(context: context);
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Travel Entry $newStatus successfully.')),
-          );
-        }
-      } else {
-        await fetchTAList();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Travel Entry $newStatus successfully.')),
+        );
       }
     } catch (e) {
       dev.log('Error updating TA status: $e', name: 'TravelAllowanceProvider');
@@ -489,18 +555,15 @@ class TravelAllowanceProvider extends ChangeNotifier {
     try {
       Loader.showLoader(context);
       final body = {'TA_Master_Id': taId};
-      await HttpRequest.httpGetRequest(endPoint: HttpUrls.deleteTravelAllowance, bodyData: body);
+      await HttpRequest.httpGetRequest(
+          endPoint: HttpUrls.deleteTravelAllowance, bodyData: body);
       if (context.mounted) Loader.stopLoader(context);
 
+      await fetchTAList();
       if (context.mounted) {
-        await fetchTAList(context: context);
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('TA Claim deleted successfully.')),
-          );
-        }
-      } else {
-        await fetchTAList();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('TA Claim deleted successfully.')),
+        );
       }
     } catch (e) {
       dev.log('Error deleting TA claim: $e', name: 'TravelAllowanceProvider');
@@ -548,7 +611,8 @@ class TravelAllowanceProvider extends ChangeNotifier {
 
     // Appending Summary Totals Row as required by Requirement 10
     final totalKm = exportList.fold(0.0, (sum, i) => sum + i.computedTotalKm);
-    final totalAmount = exportList.fold(0.0, (sum, i) => sum + i.computedTotalAmount);
+    final totalAmount =
+        exportList.fold(0.0, (sum, i) => sum + i.computedTotalAmount);
 
     data.add({
       'Staff Name': 'TOTAL',
@@ -564,7 +628,8 @@ class TravelAllowanceProvider extends ChangeNotifier {
     await exportToExcel(
       headers: headers,
       data: data,
-      fileName: 'TA_Filtered_Report_${DateFormat('yyyyMMdd_HHmmss').format(DateTime.now())}',
+      fileName:
+          'TA_Filtered_Report_${DateFormat('yyyyMMdd_HHmmss').format(DateTime.now())}',
     );
   }
 
@@ -608,7 +673,8 @@ class TravelAllowanceProvider extends ChangeNotifier {
 
     // Appending Summary Totals Row as required by Requirement 11
     final totalKm = exportList.fold(0.0, (sum, i) => sum + i.computedTotalKm);
-    final totalAmount = exportList.fold(0.0, (sum, i) => sum + i.computedTotalAmount);
+    final totalAmount =
+        exportList.fold(0.0, (sum, i) => sum + i.computedTotalAmount);
 
     data.add({
       'Staff Name': 'TOTAL',

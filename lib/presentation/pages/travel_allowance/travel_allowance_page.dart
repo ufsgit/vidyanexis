@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
-import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/controller/travel_allowance_provider.dart';
 import 'package:vidyanexis/presentation/pages/travel_allowance/add_ta_dialog.dart';
 import 'package:vidyanexis/presentation/pages/travel_allowance/ta_details_dialog.dart';
@@ -45,32 +44,40 @@ class _TravelAllowancePageState extends State<TravelAllowancePage> {
         padding: const EdgeInsets.only(top: 8.0),
         child: RefreshIndicator(
           onRefresh: () => taProvider.fetchTAList(context: context),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // KPI Cards Summary
-              _buildKPICardsSummary(taProvider, isWeb),
-              const SizedBox(height: 20),
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (!isWeb)
+                  _buildMobileHeader(context, taProvider)
+                else
+                  _buildEmbeddedWebHeader(context, taProvider),
 
-              // Filter & Search Controls Bar
-              _buildFilterControlsBar(taProvider, isWeb),
-              const SizedBox(height: 16),
+                // KPI Cards Summary
+                _buildKPICardsSummary(taProvider, isWeb),
+                const SizedBox(height: 20),
 
-              // Main List / Data Table Section
-              SizedBox(
-                height: 550,
-                child: taProvider.isLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : taProvider.filteredTaList.isEmpty
-                        ? _buildEmptyState(context)
-                        : isWeb
-                            ? _buildWebDataTable(
-                                context, taProvider, hasReportPermission)
-                            : _buildMobileCardList(
-                                context, taProvider, hasReportPermission),
-              ),
-            ],
+                // Filter & Search Controls Bar
+                _buildFilterControlsBar(taProvider, isWeb),
+                const SizedBox(height: 16),
+
+                // Main List / Data Table Section
+                SizedBox(
+                  height: isWeb ? 550 : 600,
+                  child: taProvider.isLoading
+                      ? const Center(child: CircularProgressIndicator())
+                      : taProvider.filteredTaList.isEmpty
+                          ? _buildEmptyState(context)
+                          : isWeb
+                              ? _buildWebDataTable(
+                                  context, taProvider, hasReportPermission)
+                              : _buildMobileCardList(
+                                  context, taProvider, hasReportPermission),
+                ),
+              ],
+            ),
           ),
         ),
       );
@@ -275,47 +282,139 @@ class _TravelAllowancePageState extends State<TravelAllowancePage> {
     );
   }
 
+  Widget _buildEmbeddedWebHeader(
+      BuildContext context, TravelAllowanceProvider taProvider) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            'Travel Allowance (TA) Management',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ),
+          Row(
+            children: [
+              OutlinedButton.icon(
+                onPressed: () => taProvider.exportToExcelReport(context),
+                icon: const Icon(Icons.download_rounded, size: 18),
+                label: Text(
+                  'Export Excel',
+                  style: GoogleFonts.plusJakartaSans(
+                      fontSize: 13, fontWeight: FontWeight.bold),
+                ),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: const Color(0xFF15803D),
+                  side: const BorderSide(color: Color(0xFFBBF7D0)),
+                  backgroundColor: const Color(0xFFF0FDF4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8)),
+                ),
+              ),
+              const SizedBox(width: 12),
+              ElevatedButton.icon(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (_) => const AddTADialog(),
+                  );
+                },
+                icon: const Icon(Icons.add_rounded, size: 18),
+                label: Text(
+                  'Add Travel Entry',
+                  style: GoogleFonts.plusJakartaSans(
+                      fontSize: 13, fontWeight: FontWeight.bold),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.secondaryBlue,
+                  foregroundColor: Colors.white,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8)),
+                  elevation: 0,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildMobileHeader(
       BuildContext context, TravelAllowanceProvider taProvider) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Text(
+          'Travel Allowance',
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
+        ),
+        const SizedBox(height: 10),
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              'Travel Claims',
-              style: GoogleFonts.plusJakartaSans(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+            Expanded(
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (_) => const AddTADialog(),
+                  );
+                },
+                icon: const Icon(Icons.add_rounded, size: 16),
+                label: Text(
+                  'Add TA',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.secondaryBlue,
+                  foregroundColor: Colors.white,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8)),
+                  elevation: 0,
+                ),
               ),
             ),
-            Row(
-              children: [
-                IconButton(
-                  onPressed: () => taProvider.exportToExcelReport(context),
-                  icon: const Icon(Icons.download_rounded,
-                      color: Color(0xFF15803D)),
-                  tooltip: 'Export Excel',
-                ),
-                ElevatedButton.icon(
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (_) => const AddTADialog(),
-                    );
-                  },
-                  icon: const Icon(Icons.add_rounded, size: 16),
-                  label: const Text('New Claim'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.secondaryBlue,
-                    foregroundColor: Colors.white,
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8)),
+            const SizedBox(width: 8),
+            Expanded(
+              child: OutlinedButton.icon(
+                onPressed: () => taProvider.exportToExcelReport(context),
+                icon: const Icon(Icons.download_rounded, size: 16),
+                label: Text(
+                  'Export Excel',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
                   ),
+                  overflow: TextOverflow.ellipsis,
                 ),
-              ],
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: const Color(0xFF15803D),
+                  side: const BorderSide(color: Color(0xFFBBF7D0)),
+                  backgroundColor: const Color(0xFFF0FDF4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8)),
+                ),
+              ),
             ),
           ],
         ),
@@ -730,7 +829,7 @@ class _TravelAllowancePageState extends State<TravelAllowancePage> {
                           )),
                           DataCell(SizedBox(
                             width: colDate,
-                            child: Text(item.travelDate ?? '-',
+                            child: Text(item.formattedTravelDate,
                                 style:
                                     GoogleFonts.plusJakartaSans(fontSize: 12)),
                           )),
@@ -1018,7 +1117,7 @@ class _TravelAllowancePageState extends State<TravelAllowancePage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    '${item.travelDate ?? ''} • ${item.computedTotalKm.toStringAsFixed(1)} KM',
+                    '${item.formattedTravelDate} • ${item.computedTotalKm.toStringAsFixed(1)} KM',
                     style: GoogleFonts.plusJakartaSans(
                         fontSize: 12, color: Colors.grey[600]),
                   ),
