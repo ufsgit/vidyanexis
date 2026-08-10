@@ -913,6 +913,7 @@ class DashboardProvider extends ChangeNotifier {
   }
 
   void clearDashboardFlags() {
+    _tabIndex = 0;
     isLeadLoaded = false;
     isWorkLoaded = false;
     isCustomerLoaded = false;
