@@ -26,6 +26,7 @@ import 'package:vidyanexis/controller/stockreturn_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/controller/amc_report_provider.dart';
 import 'package:vidyanexis/controller/attendance_report_provider.dart';
+import 'package:vidyanexis/controller/travel_allowance_provider.dart';
 import 'package:vidyanexis/controller/conversion_report_provider.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/customer_provider.dart';
@@ -139,6 +140,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => WorkCompletionReportProvider()),
         ChangeNotifierProvider(create: (context) => InvoiceReportProvider()),
         ChangeNotifierProvider(create: (context) => AttendanceReportProvider()),
+        ChangeNotifierProvider(create: (context) => TravelAllowanceProvider()),
         ChangeNotifierProvider(create: (context) => ExpenseProvider()),
         ChangeNotifierProvider(create: (context) => FeedbackProvider()),
         ChangeNotifierProvider(create: (context) => FeedbackReportProvider()),

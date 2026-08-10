@@ -17,6 +17,7 @@ import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/http/loader.dart';
 
 import 'package:vidyanexis/controller/warrenty_report_provider.dart';
+import 'package:vidyanexis/controller/travel_allowance_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/foundation.dart';
 
@@ -664,6 +665,12 @@ class DashboardProvider extends ChangeNotifier {
         if (!isAttendanceDashboardLoaded) {
           await getAttendanceDashboardCount();
         }
+        break;
+      case 10: // Travel Allowance
+        try {
+          Provider.of<TravelAllowanceProvider>(context, listen: false)
+              .fetchTAList(context: context);
+        } catch (_) {}
         break;
     }
   }

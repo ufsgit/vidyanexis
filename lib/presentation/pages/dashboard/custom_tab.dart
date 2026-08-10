@@ -178,6 +178,7 @@
 //   }
 // }
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/dashboard_provider.dart';
@@ -220,6 +221,9 @@ class CustomTab extends StatelessWidget {
         'Customer Outstanding Summary',
       if (userType == '1') 'User Activity',
       if (userType == '1') 'Attendance Dashboard',
+      if (settingsProvider.menuIsViewMap[26].toString() == '1' ||
+          (settingsProvider.menuIsViewMap[201] ?? 1).toString() == '1')
+        'Travel Allowance',
     ];
 
     //change permissions id in dashBoardPage also ----------------
@@ -268,6 +272,9 @@ class CustomTab extends StatelessWidget {
                         7,
                       if (userType == '1') 8,
                       if (userType == '1') 9,
+                      if (settingsProvider.menuIsViewMap[26].toString() == '1' ||
+                          (settingsProvider.menuIsViewMap[201] ?? 1).toString() == '1')
+                        10,
                     ];
 
                     if (index >= 0 && index < allowedTabIds.length) {
@@ -295,16 +302,31 @@ class CustomTab extends StatelessWidget {
                             ]
                           : null,
                     ),
-                    child: Text(
-                      _getShortTabName(tabOptions[index]),
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 12,
-                        fontWeight:
-                            isSelected ? FontWeight.w700 : FontWeight.w500,
-                        color: isSelected
-                            ? AppColors.secondaryBlue
-                            : const Color(0xFF64748B),
-                      ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (tabOptions[index] == 'Travel Allowance') ...[
+                          Icon(
+                            Icons.directions_car_rounded,
+                            size: 14,
+                            color: isSelected
+                                ? AppColors.secondaryBlue
+                                : const Color(0xFF64748B),
+                          ),
+                          const SizedBox(width: 6),
+                        ],
+                        Text(
+                          _getShortTabName(tabOptions[index]),
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 12,
+                            fontWeight:
+                                isSelected ? FontWeight.w700 : FontWeight.w500,
+                            color: isSelected
+                                ? AppColors.secondaryBlue
+                                : const Color(0xFF64748B),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 );
@@ -338,6 +360,8 @@ class CustomTab extends StatelessWidget {
         return 'Activity';
       case 'Attendance Dashboard':
         return 'Attendance';
+      case 'Travel Allowance':
+        return 'Travel Allowance';
       default:
         return fullName;
     }

@@ -5,6 +5,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vidyanexis/controller/login_controller.dart';
 import 'package:vidyanexis/presentation/pages/reports/attendance_report.dart';
+import 'package:vidyanexis/presentation/pages/reports/ta_report_screen.dart';
+import 'package:vidyanexis/presentation/pages/travel_allowance/travel_allowance_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/followup_report_mobile.dart';
 import 'package:vidyanexis/presentation/pages/reports/followup_amount_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/lead_check_in_report_screen.dart';
@@ -139,6 +141,12 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
         },
       if (settingsProvider.menuIsViewMap[26].toString() == '1')
         {'title': 'Attendance Reports', 'page': const AttendanceReport()},
+      if (settingsProvider.menuIsViewMap[26].toString() == '1' ||
+          (settingsProvider.menuIsViewMap[201] ?? 1).toString() == '1')
+        {'title': 'Travel Allowance', 'page': const TravelAllowancePage()},
+      if (settingsProvider.menuIsViewMap[26].toString() == '1' ||
+          (settingsProvider.menuIsViewMap[201] ?? 1).toString() == '1')
+        {'title': 'TA Reports', 'page': const TAReportScreen()},
       if (settingsProvider.menuIsViewMap[96].toString() == '1')
         {'title': 'Check-in Reports', 'page': const LeadCheckInReportScreen()},
       if (settingsProvider.menuIsViewMap[115].toString() == '1')

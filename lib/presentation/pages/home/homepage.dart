@@ -15,6 +15,8 @@ import 'package:vidyanexis/presentation/pages/reports/quotation_report.dart';
 import 'package:vidyanexis/presentation/pages/home/process_flow_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/out_of_warrenty_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/attendance_report.dart';
+import 'package:vidyanexis/presentation/pages/reports/ta_report_screen.dart';
+import 'package:vidyanexis/presentation/pages/travel_allowance/travel_allowance_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/lead_check_in_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/target_page_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/work_completion_report_screen.dart';
@@ -395,6 +397,20 @@ class _HomePageState extends State<HomePage> {
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: AttendanceReport()),
         ),
+      if (settingsProvider.menuIsViewMap[26].toString() == '1' ||
+          (settingsProvider.menuIsViewMap[201] ?? 1).toString() == '1')
+        SidebarOption(
+          title: 'Travel Allowance',
+          iconPath: 'assets/images/inventory.svg',
+          baseContent: const TravelAllowancePage(),
+        ),
+      if (settingsProvider.menuIsViewMap[26].toString() == '1' ||
+          (settingsProvider.menuIsViewMap[201] ?? 1).toString() == '1')
+        SidebarOption(
+          title: 'TA Reports',
+          iconPath: 'assets/images/Reports.svg',
+          baseContent: const TAReportScreen(),
+        ),
       if (settingsProvider.menuIsViewMap[96].toString() == '1')
         SidebarOption(
           title: 'Check-in Reports',
@@ -425,7 +441,8 @@ class _HomePageState extends State<HomePage> {
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: LeadPageReport()),
         ),
-      if (settingsProvider.menuIsViewMap[56].toString() == '1' || settingsProvider.menuIsViewMap[168].toString() == '1')
+      if (settingsProvider.menuIsViewMap[56].toString() == '1' ||
+          settingsProvider.menuIsViewMap[168].toString() == '1')
         SidebarOption(
           title: 'Deleted Lead Reports',
           iconPath: 'assets/images/Reports.svg',
@@ -543,6 +560,7 @@ class _HomePageState extends State<HomePage> {
             sideProvider.selectedName == 'Inventory' ||
             sideProvider.selectedName == 'Process Flow' ||
             sideProvider.selectedName == 'Expense Management' ||
+            sideProvider.selectedName == 'Travel Allowance' ||
             sideProvider.selectedName == 'Settings' ||
             (AppStyles.isWebScreen(context) &&
                 (sideProvider.selectedName.contains('Report') ||
