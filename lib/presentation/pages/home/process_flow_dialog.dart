@@ -59,9 +59,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
       final dropDownProvider =
           Provider.of<DropDownProvider>(context, listen: false);
       final formProvider = Provider.of<FormProvider>(context, listen: false);
-      final leadProvider = Provider.of<LeadsProvider>(context, listen: false);
-      leadProvider.searchUserController.clear();
-
+      reportsProvider.clearTaskUserAssignments();
       reportsProvider.descriptionController.clear();
       final imageProvider =
           Provider.of<ImageUploadProvider>(context, listen: false);
@@ -510,10 +508,21 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                             Consumer<DropDownProvider>(
                                               builder: (context,
                                                   dropDownProvider, child) {
+                                                int? assignedUserId = reportsProvider.taskTypeToUserMap[task.taskTypeId.toString()];
+                                                String defaultUserName = '';
+                                                if (assignedUserId != null) {
+                                                  try {
+                                                    final matchedStaff = dropDownProvider.staffData.firstWhere(
+                                                      (s) => s.userDetailsId == assignedUserId,
+                                                    );
+                                                    defaultUserName = matchedStaff.userDetailsName;
+                                                  } catch (_) {}
+                                                }
+
                                                 return CustomAutocompleteSearch<
                                                     SearchUserDetails>(
+                                                  key: ValueKey('user_search_mobile_${task.taskTypeId}'),
                                                   showOptionsOnTap: true,
-                                                  focusNode: staffFocusNode,
                                                   maxHeight: 300,
                                                   optionsViewOpenDirection:
                                                       OptionsViewOpenDirection
@@ -523,26 +532,23 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                                   displayStringFunction:
                                                       (staff) =>
                                                           staff.userDetailsName,
-                                                  defaultText: leadProvider
-                                                      .searchUserController
-                                                      .text,
+                                                  defaultText: defaultUserName,
                                                   labelText: 'User',
-                                                  controller: leadProvider
-                                                      .searchUserController,
                                                   suffixIcon:
                                                       const Icon(Icons.search),
+                                                  onTap: () {
+                                                    dropDownProvider
+                                                        .filterStaffByBranchAndDepartment(
+                                                      branchId: task.branchIds,
+                                                      departmentId: task.departmentIds,
+                                                    );
+                                                  },
                                                   onSelected: (SearchUserDetails
                                                       selected) {
                                                     dropDownProvider
                                                         .setSelectedUserId(
                                                       selected.userDetailsId,
                                                     );
-
-                                                    leadProvider
-                                                            .searchUserController
-                                                            .text =
-                                                        selected
-                                                            .userDetailsName;
 
                                                     final taskTypeIdStr = task
                                                         .taskTypeId
