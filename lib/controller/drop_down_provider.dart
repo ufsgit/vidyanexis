@@ -40,6 +40,7 @@ class DropDownProvider extends ChangeNotifier {
   List<FollowUpStatusModel> get followUpStatusList => _followUpStatusList;
 
   List<SearchUserDetails> get searchUserDetails => _searchUserDetails;
+  List<SearchUserDetails> get staffData => _searchUserDetails;
   List<SearchLeadStatusModel> get followUpData => _followUpstatus;
   List<TaskTypeModel> get taskType => _taskType;
   List<DocumentTypeModel> get documentType => _documentType;

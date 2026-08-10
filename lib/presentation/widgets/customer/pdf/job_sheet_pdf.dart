@@ -6,6 +6,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter/services.dart' show rootBundle;
 
 pw.MemoryImage? customer;
 pw.MemoryImage? technician;
@@ -30,17 +31,41 @@ Future<void> generateJobSheetPdf(
     }
   }
 
+  pw.MemoryImage? leftLogo;
+  pw.MemoryImage? rightLogo;
+
+  try {
+    final leftLogoData = await rootBundle.load('assets/images/bodhie.png');
+    leftLogo = pw.MemoryImage(leftLogoData.buffer.asUint8List());
+  } catch (e) {
+    print('Failed to load bodhie.png: $e');
+  }
+
+  try {
+    final rightLogoData = await rootBundle.load('assets/images/bodhie2.png');
+    rightLogo = pw.MemoryImage(rightLogoData.buffer.asUint8List());
+  } catch (e) {
+    print('Failed to load bodhie2.png: $e');
+  }
+
   customer = await _loadImageFromNetwork(
       HttpUrls.imgBaseUrl + jobSheet.customerSignature);
   technician = await _loadImageFromNetwork(
       HttpUrls.imgBaseUrl + jobSheet.technicianSignature);
 
+  final font = await PdfGoogleFonts.robotoRegular();
+  final boldFont = await PdfGoogleFonts.robotoBold();
+
   pdf.addPage(
     pw.MultiPage(
+      theme: pw.ThemeData.withFont(
+        base: font,
+        bold: boldFont,
+      ),
       pageFormat: PdfPageFormat.a4,
       margin: const pw.EdgeInsets.all(60),
       build: (context) => [
-        _buildHeader(companyTitle),
+        _buildHeader(companyTitle, leftLogo, rightLogo),
         pw.SizedBox(height: 20),
         ..._buildCustomerDetails(customerData, jobSheet),
         pw.SizedBox(height: 20),
@@ -73,37 +98,59 @@ Future<void> generateJobSheetPdf(
   }
 }
 
-pw.Widget _buildHeader(String? companyTitle) {
+pw.Widget _buildHeader(String? companyTitle, pw.MemoryImage? leftLogo, pw.MemoryImage? rightLogo) {
   return pw.Column(
-    crossAxisAlignment: pw.CrossAxisAlignment.center,
+    crossAxisAlignment: pw.CrossAxisAlignment.start,
     children: [
-      if (companyLogoImage != null)
-        pw.Container(
-          height: 60,
-          child: pw.Image(companyLogoImage!),
-        ),
-      if (companyLogoImage != null) pw.SizedBox(height: 10),
-      pw.Text(
-        '${companyTitle != null && companyTitle.isNotEmpty ? companyTitle : 'BODHIE SOLAR'} - PERIODICAL SERVICE REPORT',
-        style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold),
-      ),
-      pw.Divider(thickness: 1),
-      pw.Text(
-        'MNRE Empanelled Solar EPC Company, Kerala',
-        style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.normal),
-      ),
-      pw.Text(
-        'Customer Service & Maintenance Department',
-        style: pw.TextStyle(fontSize: 12),
-      ),
       pw.Row(
-        mainAxisAlignment: pw.MainAxisAlignment.center,
+        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
         children: [
-          pw.Text('Support: +91-XXXXXXXXXX  |',
-              style: pw.TextStyle(fontSize: 12)),
-          pw.SizedBox(width: 5),
-          pw.Text('www.bodhiesolar.com', style: pw.TextStyle(fontSize: 12)),
+          // Left Side
+          pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              if (leftLogo != null)
+                pw.Container(
+                  height: 60,
+                  child: pw.Image(leftLogo, fit: pw.BoxFit.contain),
+                )
+              else if (companyLogoImage != null)
+                pw.Container(
+                  height: 60,
+                  child: pw.Image(companyLogoImage!, fit: pw.BoxFit.contain),
+                ),
+              pw.SizedBox(height: 10),
+              pw.Text(
+                'Bodhie Address',
+                style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.normal),
+              ),
+              pw.Text(
+                'Phone: +91-XXXXXXXXXX',
+                style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.normal),
+              ),
+              pw.Text(
+                'Email: info@bodhiesolar.com',
+                style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.normal),
+              ),
+            ],
+          ),
+          // Right Side
+          if (rightLogo != null)
+            pw.Container(
+              height: 60,
+              child: pw.Image(rightLogo, fit: pw.BoxFit.contain),
+            ),
         ],
+      ),
+      pw.SizedBox(height: 10),
+      pw.Divider(thickness: 1, color: PdfColors.grey300),
+      pw.SizedBox(height: 15),
+      pw.Center(
+        child: pw.Text(
+          '${companyTitle != null && companyTitle.isNotEmpty ? companyTitle : 'BODHIE SOLAR'} - PERIODICAL SERVICE REPORT',
+          style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold),
+        ),
       ),
     ],
   );
