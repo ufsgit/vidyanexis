@@ -98,6 +98,9 @@ class _CustomAutocompleteSearchState<T extends Object>
       }
       _textController =
           widget.controller ?? TextEditingController(text: widget.defaultText);
+    } else if (widget.controller == null &&
+        widget.defaultText != oldWidget.defaultText) {
+      _textController.text = widget.defaultText;
     }
     if (widget.focusNode != oldWidget.focusNode) {
       if (oldWidget.focusNode == null) {

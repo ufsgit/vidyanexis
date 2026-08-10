@@ -3477,8 +3477,7 @@ class _tasksPageReportState extends State<TaskPage> {
                           reportsProvider.fetchTaskTypes(tasktypeId, statusId,
                               customerId, enquiryForId, context);
                           dropDownProvider.getUserDetails(context);
-                          dropDownProvider.filteredStaffData.clear();
-                          leadProvider.searchUserController.clear();
+                          reportsProvider.clearTaskUserAssignments();
                           reportsProvider.clearDescription();
 
                           // Also fetch forms for this customer
@@ -3889,12 +3888,22 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                   builder: (context,
                                                                       dropDownProvider,
                                                                       child) {
+                                                                    int? assignedUserId = reportsProvider.taskTypeToUserMap[taskItem.taskTypeId.toString()];
+                                                                    String defaultUserName = '';
+                                                                    if (assignedUserId != null) {
+                                                                      try {
+                                                                        final matchedStaff = dropDownProvider.staffData.firstWhere(
+                                                                          (s) => s.userDetailsId == assignedUserId,
+                                                                        );
+                                                                        defaultUserName = matchedStaff.userDetailsName;
+                                                                      } catch (_) {}
+                                                                    }
+
                                                                     return CustomAutocompleteSearch<
                                                                         SearchUserDetails>(
+                                                                      key: ValueKey('user_search_${taskItem.taskTypeId}'),
                                                                       showOptionsOnTap:
                                                                           true,
-                                                                      focusNode:
-                                                                          staffFocusNode,
                                                                       maxHeight:
                                                                           300,
                                                                       optionsViewOpenDirection:
@@ -3905,14 +3914,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                       displayStringFunction:
                                                                           (staff) =>
                                                                               staff.userDetailsName,
-                                                                      defaultText: leadProvider
-                                                                          .searchUserController
-                                                                          .text,
+                                                                      defaultText: defaultUserName,
                                                                       labelText:
                                                                           'User',
-                                                                      controller:
-                                                                          leadProvider
-                                                                              .searchUserController,
                                                                       suffixIcon:
                                                                           const Icon(
                                                                               Icons.search),
@@ -3930,10 +3934,6 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                           selected
                                                                               .userDetailsId,
                                                                         );
-
-                                                                        leadProvider
-                                                                            .searchUserController
-                                                                            .text = selected.userDetailsName;
 
                                                                         final taskTypeIdStr = taskItem
                                                                             .taskTypeId
@@ -3966,7 +3966,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                     );
                                                                   },
                                                                 )
-                                                              : SizedBox(),
+                                                              : const SizedBox(),
                                                         )
                                                       ],
                                                     ),
