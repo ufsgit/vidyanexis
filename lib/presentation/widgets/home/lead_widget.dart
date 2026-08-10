@@ -7,6 +7,7 @@ import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/leads_provider.dart';
 import 'package:vidyanexis/controller/models/search_leads_model.dart';
+import 'package:vidyanexis/controller/models/search_lead_status_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_task_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_action_widget.dart';
@@ -47,6 +48,13 @@ class LeadCard extends StatefulWidget {
 class _LeadCardState extends State<LeadCard> {
   bool _isNoteClicked = false;
   DateTime? originalFollowUpDate;
+  List<SearchLeadStatusModel> _filteredFollowUpStatuses = [];
+  bool isLoadingStatuses = false;
+  bool showTransferStatus = false;
+  bool showAmountForMain = false;
+  bool showAmountForSecondary = false;
+  bool get showAmount => showAmountForMain || showAmountForSecondary;
+  List<SearchLeadStatusModel> _filteredTransferStatuses = [];
 
   @override
   void didUpdateWidget(covariant LeadCard oldWidget) {
@@ -102,6 +110,31 @@ class _LeadCardState extends State<LeadCard> {
         departmentId: int.tryParse(widget.lead.departmentId.toString()) ?? 0,
       );
     } catch (e) {}
+
+    String targetStatusId = widget.lead.statusId.toString();
+    if (targetStatusId != '0' && targetStatusId != 'null') {
+      if (mounted) {
+        setState(() {
+          isLoadingStatuses = true;
+        });
+      }
+      settingsProvider.getStatusById(context, targetStatusId).then((parentStatuses) {
+        if (mounted) {
+          setState(() {
+            _filteredFollowUpStatuses = parentStatuses.isNotEmpty
+                ? parentStatuses.first.subStatuses
+                        ?.map((s) => SearchLeadStatusModel(
+                              statusId: s.subStatusId,
+                              statusName: s.subStatusName,
+                            ))
+                        .toList() ??
+                    []
+                : [];
+            isLoadingStatuses = false;
+          });
+        }
+      });
+    }
   }
 
   @override
@@ -383,53 +416,58 @@ class _LeadCardState extends State<LeadCard> {
                                           width: 1.0),
                                       borderRadius: BorderRadius.circular(4),
                                     ),
-                                    child: Wrap(
-                                      spacing: 8,
-                                      runSpacing: 8,
-                                      children: dropDownProvider.followUpData
-                                          .map((status) {
-                                        final isSelected =
-                                            dropDownProvider.selectedStatusId ==
+                                    child: isLoadingStatuses
+                                        ? const Center(child: CircularProgressIndicator())
+                                        : Wrap(
+                                            spacing: 8,
+                                            runSpacing: 8,
+                                            children: (_filteredFollowUpStatuses.isNotEmpty
+                                                    ? _filteredFollowUpStatuses
+                                                    : dropDownProvider.followUpData)
+                                                .map((status) {
+                                              final isSelected =
+                                                  dropDownProvider.selectedStatusId ==
                                                 status.statusId;
                                         return GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              dropDownProvider
-                                                  .setSelectedStatusId(
-                                                      status.statusId ?? 0);
-                                              leadsProvider
-                                                  .getCustomFieldsByStatusId(
-                                                      context,
-                                                      leadId: leadsProvider
-                                                          .customerId,
-                                                      statusId:
-                                                          status.statusId ?? 0);
-                                              leadsProvider
-                                                      .statusController.text =
-                                                  status.statusName ?? '';
-                                              if (status.isShowFollowupDate ==
-                                                  1) {
-                                                int durationVal = int.tryParse(
-                                                        status.statusDuration ??
-                                                            '') ??
-                                                    0;
-                                                DateTime baseDate =
-                                                    originalFollowUpDate ??
-                                                        DateTime.now();
-                                                DateTime targetDate =
-                                                    baseDate.add(Duration(
-                                                        days: durationVal));
-                                                leadsProvider
-                                                    .nextFollowUpDateController
-                                                    .text = DateFormat(
-                                                        'dd MMM yyyy')
-                                                    .format(targetDate);
-                                              } else {
-                                                leadsProvider
-                                                    .nextFollowUpDateController
-                                                    .clear();
-                                              }
-                                            });
+                                          onTap: () async {
+                                            final selectedId = status.statusId ?? 0;
+                                            dropDownProvider.setSelectedStatusId(selectedId);
+                                            leadsProvider.getCustomFieldsByStatusId(
+                                                context,
+                                                leadId: leadsProvider.customerId,
+                                                statusId: selectedId);
+                                            leadsProvider.statusController.text = status.statusName ?? '';
+                                            if (status.isShowFollowupDate == 1) {
+                                              int durationVal = int.tryParse(status.statusDuration ?? '') ?? 0;
+                                              DateTime baseDate = originalFollowUpDate ?? DateTime.now();
+                                              DateTime targetDate = baseDate.add(Duration(days: durationVal));
+                                              leadsProvider.nextFollowUpDateController.text = DateFormat('dd MMM yyyy').format(targetDate);
+                                            } else {
+                                              leadsProvider.nextFollowUpDateController.clear();
+                                            }
+
+                                            final statusData = await settingsProvider.getStatusById(context, selectedId.toString());
+                                            final transferStatusesData = await settingsProvider.getTransferStatusById(context, selectedId.toString());
+
+                                            bool mainHasAmount = (statusData.isNotEmpty && statusData.first.isAmount == 1) ||
+                                                (transferStatusesData.isNotEmpty && transferStatusesData.first.isAmount == 1);
+
+                                            if (mounted) {
+                                              setState(() {
+                                                showAmountForMain = mainHasAmount;
+                                                showAmountForSecondary = false;
+                                                showTransferStatus = transferStatusesData.isNotEmpty && transferStatusesData.first.isTransferStatus == 1;
+                                                _filteredTransferStatuses = transferStatusesData.isNotEmpty
+                                                    ? transferStatusesData.first.transferStatuses
+                                                            ?.map((s) => SearchLeadStatusModel(
+                                                                  statusId: s.subStatusId,
+                                                                  statusName: s.subStatusName,
+                                                                ))
+                                                            .toList() ??
+                                                        []
+                                                    : [];
+                                              });
+                                            }
                                           },
                                           child: Container(
                                             padding: const EdgeInsets.symmetric(
@@ -466,7 +504,75 @@ class _LeadCardState extends State<LeadCard> {
                                       }).toList(),
                                     ),
                                   ),
+                                  if (showTransferStatus && _filteredTransferStatuses.isNotEmpty) ...[
+                                    const SizedBox(height: 12),
+                                    Container(
+                                      padding: const EdgeInsets.all(12),
+                                      width: double.infinity,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: const Color(0xFFCBD5E1),
+                                            width: 1.0),
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      child: Wrap(
+                                        spacing: 8,
+                                        runSpacing: 8,
+                                        children: _filteredTransferStatuses.map((status) {
+                                          final isSelected = dropDownProvider.selectedTransferStatusId == status.statusId;
+                                          return GestureDetector(
+                                            onTap: () async {
+                                              final selectedId = status.statusId ?? 0;
+                                              dropDownProvider.setSelectedTransferStatusId(selectedId);
+                                              leadsProvider.transferStatusController.text = status.statusName ?? '';
+
+                                              final statusData = await settingsProvider.getStatusById(context, selectedId.toString());
+                                              final transferStatusesData = await settingsProvider.getTransferStatusById(context, selectedId.toString());
+
+                                              bool secondaryHasAmount = (statusData.isNotEmpty && statusData.first.isAmount == 1) ||
+                                                  (transferStatusesData.isNotEmpty && transferStatusesData.first.isAmount == 1);
+
+                                              if (mounted) {
+                                                setState(() {
+                                                  showAmountForSecondary = secondaryHasAmount;
+                                                });
+                                              }
+                                            },
+                                            child: Container(
+                                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                              decoration: BoxDecoration(
+                                                color: isSelected
+                                                    ? AppColors.bluebutton.withOpacity(0.1)
+                                                    : Colors.grey[100],
+                                                borderRadius: BorderRadius.circular(4),
+                                                border: Border.all(
+                                                    color: isSelected
+                                                        ? AppColors.bluebutton
+                                                        : Colors.transparent),
+                                              ),
+                                              child: Text(
+                                                status.statusName?.toUpperCase() ?? '',
+                                                style: GoogleFonts.plusJakartaSans(
+                                                  fontSize: 11,
+                                                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+                                                  color: isSelected ? AppColors.bluebutton : Colors.grey[600],
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        }).toList(),
+                                      ),
+                                    ),
+                                  ],
                                   const SizedBox(height: 12),
+                                  if (showAmount) ...[
+                                    CustomTextField(
+                                      controller: leadsProvider.followupAmountController,
+                                      hintText: 'Amount',
+                                      keyboardType: TextInputType.number,
+                                    ),
+                                    const SizedBox(height: 12),
+                                  ],
                                   CustomTextField(
                                     readOnly: true,
                                     controller: leadsProvider
