@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer' as dev;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -20,52 +19,6 @@ class TravelAllowanceProvider extends ChangeNotifier {
 
   List<TravelAllowanceModel> _filteredTaList = [];
   List<TravelAllowanceModel> get filteredTaList => _filteredTaList;
-
-  static const String _localClaimsKey = 'local_travel_allowance_claims';
-  static const String _nextTaIdKey = 'local_travel_allowance_next_id';
-
-  Future<List<TravelAllowanceModel>> _loadLocalClaims() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final String? jsonString = prefs.getString(_localClaimsKey);
-      if (jsonString != null && jsonString.isNotEmpty) {
-        final List<dynamic> decoded = jsonDecode(jsonString);
-        return decoded.map((e) => TravelAllowanceModel.fromJson(e as Map<String, dynamic>)).toList();
-      }
-    } catch (e) {
-      dev.log('Error loading local TA claims: $e', name: 'TravelAllowanceProvider');
-    }
-    return [];
-  }
-
-  Future<void> _persistLocalClaims() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final List<Map<String, dynamic>> jsonList = _taList.map((e) => e.toJson()).toList();
-      await prefs.setString(_localClaimsKey, jsonEncode(jsonList));
-    } catch (e) {
-      dev.log('Error persisting local TA claims: $e', name: 'TravelAllowanceProvider');
-    }
-  }
-
-  Future<int> _getNextTaId() async {
-    final prefs = await SharedPreferences.getInstance();
-    int nextId = prefs.getInt(_nextTaIdKey) ?? 1;
-
-    int maxExistingId = 0;
-    for (final claim in _taList) {
-      if (claim.taId != null && claim.taId! > maxExistingId) {
-        maxExistingId = claim.taId!;
-      }
-    }
-
-    if (maxExistingId >= nextId) {
-      nextId = maxExistingId + 1;
-    }
-
-    await prefs.setInt(_nextTaIdKey, nextId + 1);
-    return nextId;
-  }
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
@@ -348,22 +301,27 @@ class TravelAllowanceProvider extends ChangeNotifier {
 
       if (context != null && context.mounted) Loader.stopLoader(context);
 
-      if (response.statusCode == 200 && response.data != null) {
+      if (response.statusCode == 200) {
         final data = response.data;
         if (data is List) {
-          _taList = data.map((e) => TravelAllowanceModel.fromJson(e)).toList();
-        } else if (data is Map<String, dynamic> && data['data'] != null) {
-          final list = data['data'] as List;
-          _taList = list.map((e) => TravelAllowanceModel.fromJson(e)).toList();
+          _taList = data.map((e) => TravelAllowanceModel.fromJson(e as Map<String, dynamic>)).toList();
+        } else if (data is Map<String, dynamic>) {
+          final rawList = data['Data'] ?? data['data'];
+          if (rawList is List) {
+            _taList = rawList.map((e) => TravelAllowanceModel.fromJson(e as Map<String, dynamic>)).toList();
+          } else {
+            _taList = [];
+          }
         } else {
-          _taList = await _loadLocalClaims();
+          _taList = [];
         }
       } else {
-        _taList = await _loadLocalClaims();
+        _taList = [];
       }
     } catch (e) {
       dev.log('Error fetching TA list: $e', name: 'TravelAllowanceProvider');
-      _taList = await _loadLocalClaims();
+      if (context != null && context.mounted) Loader.stopLoader(context);
+      _taList = [];
     } finally {
       _isLoading = false;
       _hasFetched = true;
@@ -418,10 +376,8 @@ class TravelAllowanceProvider extends ChangeNotifier {
     try {
       Loader.showLoader(context);
 
-      final int targetTaId = editId ?? await _getNextTaId();
-
       final Map<String, dynamic> body = {
-        'TA_Master_Id': targetTaId,
+        'TA_Master_Id': editId ?? 0,
         'User_Id': targetUserId,
         'User_Name': targetUserName,
         'Travel_Date': dateController.text.trim(),
@@ -440,75 +396,38 @@ class TravelAllowanceProvider extends ChangeNotifier {
         'Attachment_Url': _attachmentUrl,
       };
 
-      final response = await HttpRequest.httpGetRequest(endPoint: HttpUrls.saveTravelAllowance, bodyData: body);
+      final response = await HttpRequest.httpPostRequest(endPoint: HttpUrls.saveTravelAllowance, bodyData: body);
       if (context.mounted) Loader.stopLoader(context);
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
+      if (response != null && (response.statusCode == 200 || response.statusCode == 201)) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(editId == null ? 'Travel Entry submitted successfully!' : 'Travel Entry updated successfully!')),
           );
+          await fetchTAList(context: context);
+        } else {
+          await fetchTAList();
         }
-        await fetchTAList();
-        await _persistLocalClaims();
         resetForm();
         return true;
       } else {
-        await _saveFallbackClaim(editId, targetUserId, targetUserName);
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Travel Entry submitted successfully!')),
+            const SnackBar(content: Text('Failed to save Travel Entry. Please try again.')),
           );
         }
-        resetForm();
-        return true;
+        return false;
       }
     } catch (e) {
       dev.log('Error saving TA claim: $e', name: 'TravelAllowanceProvider');
       if (context.mounted) Loader.stopLoader(context);
-      await _saveFallbackClaim(editId, targetUserId, targetUserName);
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Travel Entry submitted successfully!')),
+          const SnackBar(content: Text('Error saving Travel Entry. Please try again.')),
         );
       }
-      resetForm();
-      return true;
+      return false;
     }
-  }
-
-  Future<void> _saveFallbackClaim(int? editId, int userId, String userName) async {
-    final int assignedId = editId ?? await _getNextTaId();
-    final newClaim = TravelAllowanceModel(
-      taId: assignedId,
-      userId: userId,
-      userName: userName,
-      travelDate: dateController.text.trim(),
-      travelMode: travelModeController.text.trim(),
-      fromLocation: fromLocationController.text.trim(),
-      toLocation: toLocationController.text.trim(),
-      startOdometer: double.tryParse(startOdometerController.text.trim()) ?? 0.0,
-      endOdometer: double.tryParse(endOdometerController.text.trim()) ?? 0.0,
-      totalKm: double.tryParse(totalKmController.text.trim()) ?? 0.0,
-      ratePerKm: double.tryParse(ratePerKmController.text.trim()) ?? 0.0,
-      otherExpenses: double.tryParse(otherExpensesController.text.trim()) ?? 0.0,
-      otherExpenseRemark: otherExpenseRemarkController.text.trim(),
-      totalAmount: double.tryParse(totalAmountController.text.trim()) ?? 0.0,
-      purpose: purposeController.text.trim(),
-      status: 'Pending',
-      attachmentUrl: _attachmentUrl,
-      createdDate: DateFormat('yyyy-MM-dd HH:mm').format(DateTime.now()),
-    );
-
-    if (editId != null) {
-      final idx = _taList.indexWhere((e) => e.taId == editId);
-      if (idx != -1) _taList[idx] = newClaim;
-    } else {
-      _taList.insert(0, newClaim);
-    }
-
-    await _persistLocalClaims();
-    applyFilters();
   }
 
   // Update Status (Approve / Reject / Paid)
@@ -549,19 +468,15 @@ class TravelAllowanceProvider extends ChangeNotifier {
       await HttpRequest.httpGetRequest(endPoint: HttpUrls.updateTAStatus, bodyData: body);
       if (context.mounted) Loader.stopLoader(context);
 
-      // Locally update
-      final idx = _taList.indexWhere((e) => e.taId == taId);
-      if (idx != -1) {
-        _taList[idx].status = newStatus;
-        if (remark != null) _taList[idx].adminRemark = remark;
-      }
-      await _persistLocalClaims();
-      applyFilters();
-
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Travel Entry $newStatus successfully.')),
-        );
+        await fetchTAList(context: context);
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Travel Entry $newStatus successfully.')),
+          );
+        }
+      } else {
+        await fetchTAList();
       }
     } catch (e) {
       dev.log('Error updating TA status: $e', name: 'TravelAllowanceProvider');
@@ -577,14 +492,15 @@ class TravelAllowanceProvider extends ChangeNotifier {
       await HttpRequest.httpGetRequest(endPoint: HttpUrls.deleteTravelAllowance, bodyData: body);
       if (context.mounted) Loader.stopLoader(context);
 
-      _taList.removeWhere((e) => e.taId == taId);
-      await _persistLocalClaims();
-      applyFilters();
-
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('TA Claim deleted successfully.')),
-        );
+        await fetchTAList(context: context);
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('TA Claim deleted successfully.')),
+          );
+        }
+      } else {
+        await fetchTAList();
       }
     } catch (e) {
       dev.log('Error deleting TA claim: $e', name: 'TravelAllowanceProvider');
