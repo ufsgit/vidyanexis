@@ -56,6 +56,7 @@ import 'package:vidyanexis/presentation/widgets/customer/follow_up_tab_widget.da
 import 'package:vidyanexis/presentation/widgets/customer/payment_schedule_tab_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/task_details_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/upload_image.dart';
+import 'package:vidyanexis/presentation/widgets/customer/edit_history_tab_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/confirmation_dialog_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
@@ -202,6 +203,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
       if (settingsprovider.menuIsViewMap[79] == 1 &&
           sideprovider.name != 'Lead /')
         const Tab(text: "Stock Return"),
+      if (settingsprovider.menuIsViewMap[178] == 1)  
+        const Tab(text: "Edit History"),
     ];
 
     if (!_isControllerInitialized || newTabs.length != _tabs.length) {
@@ -259,6 +262,9 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
         break;
       case "History":
         provider.getFollowUpHistory(widget.customerId, context);
+        break;
+      case "Edit History":
+        provider.getLeadHistoryReport(widget.customerId, context);
         break;
       case "Receipt":
         provider.getRecieptListApi(widget.customerId, context);
@@ -5019,6 +5025,13 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                     customerId: int.parse(
                                                   widget.customerId,
                                                 )),
+
+                                            if (settingsprovider
+                                                    .menuIsViewMap[178] ==
+                                                1) // Edit History Tab
+                                              EditHistoryTabWidget(
+                                                  customerId:
+                                                      widget.customerId),
                                           ],
                                         ),
                                       ),

@@ -69,6 +69,7 @@ import 'package:vidyanexis/controller/models/expense_type_model.dart';
 import 'package:vidyanexis/controller/models/dashboard_task_model.dart';
 import 'package:vidyanexis/controller/models/task_history_model.dart';
 import 'package:vidyanexis/controller/models/structure_material_model.dart';
+import 'package:vidyanexis/controller/models/lead_history_report_model.dart';
 
 class CustomerDetailsProvider extends ChangeNotifier {
   AddTaskModel addTaskModel = AddTaskModel();
@@ -353,6 +354,11 @@ class CustomerDetailsProvider extends ChangeNotifier {
   bool _isHistoryLoading = false;
   bool get isHistoryLoading => _isHistoryLoading;
 
+  List<LeadHistoryReportModel> _leadHistoryReportList = [];
+  List<LeadHistoryReportModel> get leadHistoryReportList => _leadHistoryReportList;
+  bool _isLeadHistoryLoading = false;
+  bool get isLeadHistoryLoading => _isLeadHistoryLoading;
+
   // Multi Items List
   List<AddedMultiItem> _multiItems = [];
   List<AddedMultiItem> get multiItems => _multiItems;
@@ -553,6 +559,35 @@ class CustomerDetailsProvider extends ChangeNotifier {
       _followUpHistory = [];
     } finally {
       _isFollowUpHistoryLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> getLeadHistoryReport(
+      String customerId, BuildContext context) async {
+    try {
+      _isLeadHistoryLoading = true;
+      notifyListeners();
+      final response = await HttpRequest.httpGetRequest(
+          endPoint: '${HttpUrls.searchLeadHistoryReport}?Customer_Id=$customerId');
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        final newData = data["Data"] ?? [];
+        if (newData != null && newData is List) {
+          _leadHistoryReportList =
+              newData.map((e) => LeadHistoryReportModel.fromJson(e)).toList();
+        } else {
+          _leadHistoryReportList = [];
+        }
+      } else {
+        _leadHistoryReportList = [];
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      _leadHistoryReportList = [];
+    } finally {
+      _isLeadHistoryLoading = false;
       notifyListeners();
     }
   }
