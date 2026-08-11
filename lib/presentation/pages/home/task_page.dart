@@ -322,11 +322,6 @@ class _tasksPageReportState extends State<TaskPage> {
               onSortTap: (value) {
                 reportsProvider.setSortOption(value, context);
               },
-              showOrder: true,
-              sortOrder: reportsProvider.sortOrder,
-              onOrderTap: () {
-                reportsProvider.toggleSortOrder(context);
-              },
               onSearchTap: () {
                 reportsProvider.toggleFilter();
 
@@ -643,37 +638,16 @@ class _tasksPageReportState extends State<TaskPage> {
                                 reportsProvider.setSortOption(value, context);
                               },
                               itemBuilder: (BuildContext context) => [
-                                const PopupMenuItem(
-                                  value: 0,
-                                  child: Text('Default'),
-                                ),
-                                const PopupMenuItem(
-                                  value: 1,
-                                  child: Text('ID No'),
-                                ),
-                                const PopupMenuItem(
-                                  value: 2,
-                                  child: Text('Creation Date'),
-                                ),
-                                const PopupMenuItem(
-                                  value: 3,
-                                  child: Text('Followup Date'),
-                                ),
+                                const PopupMenuItem(value: 0, child: Text('Default')),
+                                const PopupMenuItem(value: 1, child: Text('ID No (Descending)')),
+                                const PopupMenuItem(value: 2, child: Text('ID No (Ascending)')),
+                                const PopupMenuItem(value: 3, child: Text('Creation Date (Newest)')),
+                                const PopupMenuItem(value: 4, child: Text('Creation Date (Oldest)')),
+                                const PopupMenuItem(value: 5, child: Text('Followup Date (Newest)')),
+                                const PopupMenuItem(value: 6, child: Text('Followup Date (Oldest)')),
+                                const PopupMenuItem(value: 7, child: Text('Name (A-Z)')),
+                                const PopupMenuItem(value: 8, child: Text('Name (Z-A)')),
                               ],
-                            ),
-                            IconButton(
-                              icon: Icon(
-                                reportsProvider.sortOrder == 'ASC'
-                                    ? Icons.arrow_upward
-                                    : Icons.arrow_downward,
-                                color: const Color(0xFF64748B),
-                                size: 20,
-                              ),
-                              onPressed: () =>
-                                  reportsProvider.toggleSortOrder(context),
-                              tooltip: reportsProvider.sortOrder == 'ASC'
-                                  ? 'Ascending'
-                                  : 'Descending',
                             ),
                             CustomFilterButton(
                               onPressed: () {
@@ -3477,8 +3451,7 @@ class _tasksPageReportState extends State<TaskPage> {
                           reportsProvider.fetchTaskTypes(tasktypeId, statusId,
                               customerId, enquiryForId, context);
                           dropDownProvider.getUserDetails(context);
-                          dropDownProvider.filteredStaffData.clear();
-                          leadProvider.searchUserController.clear();
+                          reportsProvider.clearTaskUserAssignments();
                           reportsProvider.clearDescription();
 
                           // Also fetch forms for this customer
@@ -3889,12 +3862,22 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                   builder: (context,
                                                                       dropDownProvider,
                                                                       child) {
+                                                                    int? assignedUserId = reportsProvider.taskTypeToUserMap[taskItem.taskTypeId.toString()];
+                                                                    String defaultUserName = '';
+                                                                    if (assignedUserId != null) {
+                                                                      try {
+                                                                        final matchedStaff = dropDownProvider.staffData.firstWhere(
+                                                                          (s) => s.userDetailsId == assignedUserId,
+                                                                        );
+                                                                        defaultUserName = matchedStaff.userDetailsName;
+                                                                      } catch (_) {}
+                                                                    }
+
                                                                     return CustomAutocompleteSearch<
                                                                         SearchUserDetails>(
+                                                                      key: ValueKey('user_search_${taskItem.taskTypeId}'),
                                                                       showOptionsOnTap:
                                                                           true,
-                                                                      focusNode:
-                                                                          staffFocusNode,
                                                                       maxHeight:
                                                                           300,
                                                                       optionsViewOpenDirection:
@@ -3905,14 +3888,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                       displayStringFunction:
                                                                           (staff) =>
                                                                               staff.userDetailsName,
-                                                                      defaultText: leadProvider
-                                                                          .searchUserController
-                                                                          .text,
+                                                                      defaultText: defaultUserName,
                                                                       labelText:
                                                                           'User',
-                                                                      controller:
-                                                                          leadProvider
-                                                                              .searchUserController,
                                                                       suffixIcon:
                                                                           const Icon(
                                                                               Icons.search),
@@ -3930,10 +3908,6 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                           selected
                                                                               .userDetailsId,
                                                                         );
-
-                                                                        leadProvider
-                                                                            .searchUserController
-                                                                            .text = selected.userDetailsName;
 
                                                                         final taskTypeIdStr = taskItem
                                                                             .taskTypeId
@@ -3966,7 +3940,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                     );
                                                                   },
                                                                 )
-                                                              : SizedBox(),
+                                                              : const SizedBox(),
                                                         )
                                                       ],
                                                     ),

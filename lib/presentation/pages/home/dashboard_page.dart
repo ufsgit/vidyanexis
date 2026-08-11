@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
@@ -29,6 +30,7 @@ import 'package:vidyanexis/presentation/pages/dashboard/dashboard_count_tab.dart
 import 'package:vidyanexis/presentation/pages/dashboard/customer_outstanding_summary_tab.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/user_activity_tab.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/attendance_dashboard_tab.dart';
+import 'package:vidyanexis/presentation/pages/travel_allowance/travel_allowance_page.dart';
 
 class DashBoardPage extends StatefulWidget {
   const DashBoardPage({super.key});
@@ -45,9 +47,11 @@ class _DashBoardPageState extends State<DashBoardPage> {
   @override
   void initState() {
     super.initState();
+    final dashBoardProvider =
+        Provider.of<DashboardProvider>(context, listen: false);
+    dashBoardProvider.changeTab(0);
+
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final dashBoardProvider =
-          Provider.of<DashboardProvider>(context, listen: false);
       final dropDownProvider =
           Provider.of<DropDownProvider>(context, listen: false);
       final settingsProvider =
@@ -83,6 +87,8 @@ class _DashBoardPageState extends State<DashBoardPage> {
         if ((settingsProvider.menuIsViewMap[152] ?? 1).toString() != '0') 7,
         if (userType == "1") 8,
         if (userType == "1") 9,
+        if (settingsProvider.hasTravelAllowancePermission)
+          10,
       ];
 
       if (allowedTabs.isNotEmpty) {
@@ -121,6 +127,8 @@ class _DashBoardPageState extends State<DashBoardPage> {
       if ((settingsProvider.menuIsViewMap[152] ?? 1).toString() != '0') 7,
       if (userType == "1") 8,
       if (userType == "1") 9,
+      if (settingsProvider.hasTravelAllowancePermission)
+        10,
     ];
 
     Widget dateFilterBtn = Material(
@@ -347,8 +355,9 @@ class _DashBoardPageState extends State<DashBoardPage> {
                       children: [
                         Expanded(
                           flex: 4,
-                          child:
-                              CustomTab(dashBoardProvider: dashBoardProvider, userType: userType),
+                          child: CustomTab(
+                              dashBoardProvider: dashBoardProvider,
+                              userType: userType),
                         ),
                         const SizedBox(width: 12),
                         Expanded(flex: 2, child: dateFilterBtn),
@@ -361,7 +370,9 @@ class _DashBoardPageState extends State<DashBoardPage> {
                   : Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        CustomTab(dashBoardProvider: dashBoardProvider, userType: userType),
+                        CustomTab(
+                            dashBoardProvider: dashBoardProvider,
+                            userType: userType),
                         const SizedBox(height: 12),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -375,7 +386,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
                                 ],
                               ),
                             ),
-                            const SizedBox(width: 10),
+                            const SizedBox(width: 8),
                             attendanceBtn,
                           ],
                         ),
@@ -478,6 +489,16 @@ class _DashBoardPageState extends State<DashBoardPage> {
                           : const Alignment(-100, 0),
                       child: AttendanceDashboardTab(
                         dashBoardProvider: dashBoardProvider,
+                      ),
+                    );
+                  case 10:
+                    return AnimatedAlign(
+                      duration: const Duration(milliseconds: 600),
+                      alignment: safeIndex == allowedTabs.indexOf(10)
+                          ? const Alignment(0, 0)
+                          : const Alignment(-100, 0),
+                      child: const TravelAllowancePage(
+                        isEmbeddedInDashboard: true,
                       ),
                     );
                 }

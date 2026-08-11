@@ -26,6 +26,7 @@ import 'package:vidyanexis/controller/stockreturn_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/controller/amc_report_provider.dart';
 import 'package:vidyanexis/controller/attendance_report_provider.dart';
+import 'package:vidyanexis/controller/travel_allowance_provider.dart';
 import 'package:vidyanexis/controller/conversion_report_provider.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/customer_provider.dart';
@@ -78,6 +79,7 @@ import 'package:vidyanexis/controller/sales_report_provider.dart';
 import 'package:vidyanexis/controller/target_enquiry_source_provider.dart';
 import 'package:vidyanexis/controller/job_sheet_provider.dart';
 import 'package:vidyanexis/controller/work_completion_report_provider.dart';
+import 'package:vidyanexis/controller/duplicate_entry_attempts_provider.dart';
 
 final GlobalKey<ScaffoldMessengerState> navigatorKey =
     GlobalKey<ScaffoldMessengerState>();
@@ -139,6 +141,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => WorkCompletionReportProvider()),
         ChangeNotifierProvider(create: (context) => InvoiceReportProvider()),
         ChangeNotifierProvider(create: (context) => AttendanceReportProvider()),
+        ChangeNotifierProvider(create: (context) => TravelAllowanceProvider()),
         ChangeNotifierProvider(create: (context) => ExpenseProvider()),
         ChangeNotifierProvider(create: (context) => FeedbackProvider()),
         ChangeNotifierProvider(create: (context) => FeedbackReportProvider()),
@@ -199,6 +202,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => JobSheetProvider()),
         ChangeNotifierProvider(create: (_) => TargetReportProvider()),
         ChangeNotifierProvider(create: (_) => AccountsSummaryReportProvider()),
+        ChangeNotifierProvider(
+            create: (_) => DuplicateEntryAttemptsProvider()),
       ],
       child: Consumer<SettingsProvider>(
         builder: (context, settingsProvider, child) {

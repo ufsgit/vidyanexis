@@ -1630,6 +1630,9 @@ class LeadsProvider extends ChangeNotifier {
         } else if (customerIdFlag == -3) {
           Loader.stopLoader(context);
           alert(context, "Consumer No. Already Exists");
+        } else if (customerIdFlag == -4) {
+          Loader.stopLoader(context);
+          alert(context, "Aadhar No. Already Exists");
         } else {
           log('Success');
           leadData.clear();

@@ -23,6 +23,7 @@ import 'package:vidyanexis/presentation/widgets/customer/complaints_page_mobile.
 import 'package:vidyanexis/presentation/widgets/customer/details_tab_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/customer/documents_list_page_phone.dart';
 import 'package:vidyanexis/presentation/widgets/customer/periodic_services_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/customer/edit_history_tab_widget.dart';
 
 import 'package:vidyanexis/presentation/widgets/customer/task_list_page_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/confirmation_dialog_widget.dart';
@@ -165,6 +166,12 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile> {
     if (settingsprovider.menuIsViewMap[21] == 1) {
       tabLabels.add("Invoice");
       tabPages.add(InvoiceTabPage(customerId: widget.customerId.toString()));
+    }
+    
+    if (settingsprovider.menuIsViewMap[178] == 1) {
+      tabLabels.add("Edit History");
+      tabPages
+          .add(EditHistoryTabWidget(customerId: widget.customerId.toString()));
     }
   }
 

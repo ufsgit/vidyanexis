@@ -37,18 +37,18 @@ class HttpUrls {
 //   static String baseUrl = 'https://demo2api.ufstech.net.in/';
   // static String baseUrl = 'https://coopaenergyapi.ufstech.net.in/';
   // static String baseUrl = 'https://bodhieapi.ufstech.net.in/';
-  static String baseUrl = 'https://solarisapi.ufstech.net.in/';
+  // static String baseUrl = 'https://solarisapi.ufstech.net.in/';
 //dev
 
 //  static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
 
+  static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
+
   //static String baseUrl = 'https://2jw4dwnj-3512.inc1.devtunnels.ms/';
 
   // static String baseUrl = 'https://cn1hct1v-3512.inc1.devtunnels.ms/';
-  
+
 //   static String baseUrl = 'https://28tzz0hf-3512.inc1.devtunnels.ms/';
-
-
 
   static String imgBaseUrl =
       'https://pub-b2e3330da2344ea490c08dd119392728.r2.dev/';
@@ -70,6 +70,12 @@ class HttpUrls {
 
   //endpoints
   static String savePayment = "service/Save_payment";
+
+  static String saveTravelAllowance = "travel_allowance/Save_travel_allowance";
+  static String getTravelAllowance = "travel_allowance/Get_travel_allowance";
+  static String deleteTravelAllowance =
+      "travel_allowance/Delete_travel_allowance";
+  static String updateTAStatus = "travel_allowance/Update_ta_status";
 
   static String getPaymentByCustomer = "service/Get_Payment_By_Customer";
   static String deletePayment = "service/Delete_payment";
@@ -103,6 +109,7 @@ class HttpUrls {
   static String getTaskDetails = "task/Get_task";
   static String getTaskOverview = "task/Task_Overview";
   static String searchLeadReports = "lead/Search_lead_Report";
+  static String searchLeadHistoryReport = "lead/Search_Lead_History_Report";
   static String saveTask = "task/Save_task";
   static String saveJobSheet = "task/Save_job_sheet";
   static String getJobSheet = "task/Get_job_sheet";
@@ -410,7 +417,8 @@ class HttpUrls {
   static String getPdfKsebNetMeter = "lead/get_pdf_kseb_net_meter/";
   static String getPdfVendorAgreement = "lead/get_pdf_vendor_agreement/";
   static String getPdfWarranty = "lead/get_pdf_warranty/";
-  static String getPdfWorkCompletionReport = "lead/get_pdf_work_completion_report/";
+  static String getPdfWorkCompletionReport =
+      "lead/get_pdf_work_completion_report/";
   static String getPdfChecklist = "lead/checklist/";
   static String generateStatusImage = "lead/generate_image/";
   static String getCommissionReport = "lead/Get_Commission_Report";
@@ -465,15 +473,19 @@ class HttpUrls {
 
   static String updateTaskPriority = "settings/Change_Task_Priority";
 
-
   static String getAdminDashboard = "lead/Get_Admin_Dashboard";
-  static String getAdminDashboardTaskList = "lead/Get_Admin_Dashboard_Task_List";
+  static String getAdminDashboardTaskList =
+      "lead/Get_Admin_Dashboard_Task_List";
 
   static String getTargetReport = 'lead/Get_Target_Report';
-  static String searchAccountsSummaryReport = 'lead/Search_Accounts_Summary_Report';
+  static String searchAccountsSummaryReport =
+      'lead/Search_Accounts_Summary_Report';
   static String saveDesignation = 'settings/Save_Designation_Target';
   static String getDesignation = 'settings/Get_Designation_Target';
   static String deleteDesignation = 'settings/Delete_Designation_Target';
+
+  static String duplicateEntryAttemptsReport =
+      'lead/Duplicate_Entry_Attempts_Report';
 
   static String logout = 'user_details/User_Logout';
 }
