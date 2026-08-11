@@ -272,8 +272,12 @@ class CustomTab extends StatelessWidget {
                         7,
                       if (userType == '1') 8,
                       if (userType == '1') 9,
-                      if ((settingsProvider.menuIsViewMap[26] ?? 0).toString() == '1' ||
-                          (settingsProvider.menuIsViewMap[201] ?? 0).toString() == '1')
+                      if ((settingsProvider.menuIsViewMap[26] ?? 0)
+                                  .toString() ==
+                              '1' ||
+                          (settingsProvider.menuIsViewMap[201] ?? 0)
+                                  .toString() ==
+                              '1')
                         10,
                     ];
 
@@ -306,14 +310,14 @@ class CustomTab extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         if (tabOptions[index] == 'Travel Allowance') ...[
-                          Icon(
-                            Icons.directions_car_rounded,
-                            size: 14,
-                            color: isSelected
-                                ? AppColors.secondaryBlue
-                                : const Color(0xFF64748B),
-                          ),
-                          const SizedBox(width: 6),
+                          //   Icon(
+                          //     Icons.directions_car_rounded,
+                          //     size: 14,
+                          //     color: isSelected
+                          //         ? AppColors.secondaryBlue
+                          //         : const Color(0xFF64748B),
+                          //   ),
+                          //   const SizedBox(width: 6),
                         ],
                         Text(
                           _getShortTabName(tabOptions[index]),
