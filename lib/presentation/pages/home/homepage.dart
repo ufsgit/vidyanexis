@@ -397,8 +397,7 @@ class _HomePageState extends State<HomePage> {
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: AttendanceReport()),
         ),
-      if (settingsProvider.menuIsViewMap[26].toString() == '1' ||
-          (settingsProvider.menuIsViewMap[201] ?? 0).toString() == '1')
+      if (settingsProvider.hasTravelAllowancePermission)
         SidebarOption(
           title: 'Travel Allowance',
           iconPath: 'assets/images/inventory.svg',

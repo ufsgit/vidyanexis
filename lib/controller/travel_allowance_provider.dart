@@ -316,6 +316,18 @@ class TravelAllowanceProvider extends ChangeNotifier {
 
   // Fetch TA Claims
   Future<void> fetchTAList({BuildContext? context}) async {
+    final settingsProvider = SettingsProvider();
+    if (!settingsProvider.hasTravelAllowancePermission) {
+      dev.log('Travel Allowance permission denied (Menu ID: 166)',
+          name: 'TravelAllowanceProvider');
+      _taList = [];
+      _filteredTaList = [];
+      _isLoading = false;
+      _hasFetched = false;
+      notifyListeners();
+      return;
+    }
+
     _isLoading = true;
     notifyListeners();
 
@@ -369,6 +381,25 @@ class TravelAllowanceProvider extends ChangeNotifier {
 
   // Save TA Claim (Create or Update)
   Future<bool> saveTAClaim(BuildContext context, {int? editId}) async {
+    final settingsProvider = SettingsProvider();
+    final isNew = editId == null || editId == 0;
+    if (isNew && !settingsProvider.hasTravelAllowanceAddPermission) {
+      dev.log('Permission denied: cannot save new TA claim',
+          name: 'TravelAllowanceProvider');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Permission denied: cannot create TA claim.')),
+      );
+      return false;
+    }
+    if (!isNew && !settingsProvider.hasTravelAllowanceEditPermission) {
+      dev.log('Permission denied: cannot edit TA claim',
+          name: 'TravelAllowanceProvider');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Permission denied: cannot edit TA claim.')),
+      );
+      return false;
+    }
+
     if (dateController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please select a valid Travel Date.')),
@@ -602,6 +633,16 @@ class TravelAllowanceProvider extends ChangeNotifier {
 
   // Delete TA Claim
   Future<void> deleteTAClaim(BuildContext context, int taId) async {
+    final settingsProvider = SettingsProvider();
+    if (!settingsProvider.hasTravelAllowanceDeletePermission) {
+      dev.log('Permission denied: cannot delete TA claim',
+          name: 'TravelAllowanceProvider');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Permission denied: cannot delete TA claim.')),
+      );
+      return;
+    }
+
     try {
       Loader.showLoader(context);
       final body = {'TA_Master_Id': taId};

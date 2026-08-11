@@ -221,8 +221,7 @@ class CustomTab extends StatelessWidget {
         'Customer Outstanding Summary',
       if (userType == '1') 'User Activity',
       if (userType == '1') 'Attendance Dashboard',
-      if ((settingsProvider.menuIsViewMap[26] ?? 0).toString() == '1' ||
-          (settingsProvider.menuIsViewMap[201] ?? 0).toString() == '1')
+      if (settingsProvider.hasTravelAllowancePermission)
         'Travel Allowance',
     ];
 
@@ -272,12 +271,7 @@ class CustomTab extends StatelessWidget {
                         7,
                       if (userType == '1') 8,
                       if (userType == '1') 9,
-                      if ((settingsProvider.menuIsViewMap[26] ?? 0)
-                                  .toString() ==
-                              '1' ||
-                          (settingsProvider.menuIsViewMap[201] ?? 0)
-                                  .toString() ==
-                              '1')
+                      if (settingsProvider.hasTravelAllowancePermission)
                         10,
                     ];
 
