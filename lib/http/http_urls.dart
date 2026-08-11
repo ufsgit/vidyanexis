@@ -484,5 +484,8 @@ class HttpUrls {
   static String getDesignation = 'settings/Get_Designation_Target';
   static String deleteDesignation = 'settings/Delete_Designation_Target';
 
+  static String duplicateEntryAttemptsReport =
+      'lead/Duplicate_Entry_Attempts_Report';
+
   static String logout = 'user_details/User_Logout';
 }
