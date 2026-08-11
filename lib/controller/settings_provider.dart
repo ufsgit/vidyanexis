@@ -420,6 +420,16 @@ class SettingsProvider extends ChangeNotifier {
   Map<int, int> get menuIsSaveMap => _menuIsSaveMap;
   final Map<int, int> _menuIsDeleteMap = {};
   Map<int, int> get menuIsDeleteMap => _menuIsDeleteMap;
+
+  /// Travel Allowance Permission Checkers (Menu ID: 166)
+  bool get hasTravelAllowancePermission =>
+      (menuIsViewMap[166] ?? 0).toString() == '1';
+  bool get hasTravelAllowanceAddPermission =>
+      (menuIsSaveMap[166] ?? 0).toString() == '1';
+  bool get hasTravelAllowanceEditPermission =>
+      (menuIsEditMap[166] ?? 0).toString() == '1';
+  bool get hasTravelAllowanceDeletePermission =>
+      (menuIsDeleteMap[166] ?? 0).toString() == '1';
   //show checkbox
   final Map<int, int> _showView = {};
   Map<int, int> get showView => _showView;
@@ -2101,6 +2111,16 @@ class SettingsProvider extends ChangeNotifier {
             _getMenuPermission.add(GetMenuPermissionModel(
                 menuId: 67,
                 menuName: 'Voice Recording',
+                isView: 0,
+                isSave: 0,
+                isEdit: 0,
+                isDelete: 0));
+          }
+
+          if (!_getMenuPermission.any((element) => element.menuId == 166)) {
+            _getMenuPermission.add(GetMenuPermissionModel(
+                menuId: 166,
+                menuName: 'Travel allowance',
                 isView: 0,
                 isSave: 0,
                 isEdit: 0,

@@ -8,6 +8,8 @@ import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/controller/travel_allowance_provider.dart';
 import 'package:vidyanexis/presentation/pages/travel_allowance/add_ta_dialog.dart';
 import 'package:vidyanexis/presentation/pages/travel_allowance/ta_details_dialog.dart';
+import 'package:go_router/go_router.dart';
+import 'package:vidyanexis/presentation/pages/home/homepage.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 
@@ -25,6 +27,14 @@ class _TravelAllowancePageState extends State<TravelAllowancePage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      final settingsProvider =
+          Provider.of<SettingsProvider>(context, listen: false);
+      if (!settingsProvider.hasTravelAllowancePermission) {
+        if (!widget.isEmbeddedInDashboard && mounted) {
+          context.go(HomePage.route);
+        }
+        return;
+      }
       Provider.of<TravelAllowanceProvider>(context, listen: false)
           .fetchTAList(context: context);
     });
@@ -35,6 +45,19 @@ class _TravelAllowancePageState extends State<TravelAllowancePage> {
     final taProvider = Provider.of<TravelAllowanceProvider>(context);
     final settingsProvider = Provider.of<SettingsProvider>(context);
     final isWeb = AppStyles.isWebScreen(context);
+
+    if (!settingsProvider.hasTravelAllowancePermission) {
+      if (widget.isEmbeddedInDashboard) {
+        return const SizedBox.shrink();
+      }
+      return const Scaffold(
+        body: Center(
+          child: Text(
+              'Access Denied: You do not have permission to view Travel Allowance.'),
+        ),
+      );
+    }
+
     final bool hasReportPermission =
         (settingsProvider.menuIsViewMap[26] ?? 0).toString() == '1' ||
             (settingsProvider.menuIsViewMap[201] ?? 0).toString() == '1';
@@ -141,6 +164,7 @@ class _TravelAllowancePageState extends State<TravelAllowancePage> {
   // Full-width purple web header matching reference image
   Widget _buildWebAppBar(
       BuildContext context, TravelAllowanceProvider taProvider) {
+    final settingsProvider = Provider.of<SettingsProvider>(context);
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
@@ -254,27 +278,29 @@ class _TravelAllowancePageState extends State<TravelAllowancePage> {
                       borderRadius: BorderRadius.circular(8)),
                 ),
               ),
-              const SizedBox(width: 12),
-              ElevatedButton.icon(
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (_) => const AddTADialog(),
-                  );
-                },
-                icon: const Icon(Icons.add_rounded, size: 20),
-                label: const Text('New TA Claim'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  side: BorderSide(color: Colors.black),
-                  foregroundColor: Colors.black,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8)),
-                  elevation: 0,
+              if (settingsProvider.hasTravelAllowanceAddPermission) ...[
+                const SizedBox(width: 12),
+                ElevatedButton.icon(
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (_) => const AddTADialog(),
+                    );
+                  },
+                  icon: const Icon(Icons.add_rounded, size: 20),
+                  label: const Text('New TA Claim'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    side: BorderSide(color: Colors.black),
+                    foregroundColor: Colors.black,
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8)),
+                    elevation: 0,
+                  ),
                 ),
-              ),
+              ],
             ],
           ),
         ],
@@ -284,6 +310,7 @@ class _TravelAllowancePageState extends State<TravelAllowancePage> {
 
   Widget _buildEmbeddedWebHeader(
       BuildContext context, TravelAllowanceProvider taProvider) {
+    final settingsProvider = Provider.of<SettingsProvider>(context);
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
       child: Row(
@@ -317,30 +344,32 @@ class _TravelAllowancePageState extends State<TravelAllowancePage> {
                       borderRadius: BorderRadius.circular(8)),
                 ),
               ),
-              const SizedBox(width: 12),
-              ElevatedButton.icon(
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (_) => const AddTADialog(),
-                  );
-                },
-                icon: const Icon(Icons.add_rounded, size: 18),
-                label: Text(
-                  'Add Travel Entry',
-                  style: GoogleFonts.plusJakartaSans(
-                      fontSize: 13, fontWeight: FontWeight.bold),
+              if (settingsProvider.hasTravelAllowanceAddPermission) ...[
+                const SizedBox(width: 12),
+                ElevatedButton.icon(
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (_) => const AddTADialog(),
+                    );
+                  },
+                  icon: const Icon(Icons.add_rounded, size: 18),
+                  label: Text(
+                    'Add Travel Entry',
+                    style: GoogleFonts.plusJakartaSans(
+                        fontSize: 13, fontWeight: FontWeight.bold),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.secondaryBlue,
+                    foregroundColor: Colors.white,
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8)),
+                    elevation: 0,
+                  ),
                 ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.secondaryBlue,
-                  foregroundColor: Colors.white,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8)),
-                  elevation: 0,
-                ),
-              ),
+              ],
             ],
           ),
         ],
@@ -350,6 +379,7 @@ class _TravelAllowancePageState extends State<TravelAllowancePage> {
 
   Widget _buildMobileHeader(
       BuildContext context, TravelAllowanceProvider taProvider) {
+    final settingsProvider = Provider.of<SettingsProvider>(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -364,34 +394,35 @@ class _TravelAllowancePageState extends State<TravelAllowancePage> {
         const SizedBox(height: 10),
         Row(
           children: [
-            Expanded(
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (_) => const AddTADialog(),
-                  );
-                },
-                icon: const Icon(Icons.add_rounded, size: 16),
-                label: Text(
-                  'Add TA',
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
+            if (settingsProvider.hasTravelAllowanceAddPermission)
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (_) => const AddTADialog(),
+                    );
+                  },
+                  icon: const Icon(Icons.add_rounded, size: 16),
+                  label: Text(
+                    'Add TA',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.secondaryBlue,
-                  foregroundColor: Colors.white,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8)),
-                  elevation: 0,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.secondaryBlue,
+                    foregroundColor: Colors.white,
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8)),
+                    elevation: 0,
+                  ),
                 ),
               ),
-            ),
             const SizedBox(width: 8),
             Expanded(
               child: OutlinedButton.icon(
@@ -693,6 +724,7 @@ class _TravelAllowancePageState extends State<TravelAllowancePage> {
   // Web Data Table View stretched across full width
   Widget _buildWebDataTable(BuildContext context,
       TravelAllowanceProvider provider, bool hasReportPermission) {
+    final settingsProvider = Provider.of<SettingsProvider>(context);
     return LayoutBuilder(
       builder: (context, constraints) {
         final double containerWidth = constraints.maxWidth;
@@ -944,9 +976,10 @@ class _TravelAllowancePageState extends State<TravelAllowancePage> {
                                     );
                                   },
                                 ),
-                                if (hasReportPermission ||
-                                    (item.status ?? '').toLowerCase() ==
-                                        'pending') ...[
+                                if (settingsProvider.hasTravelAllowanceEditPermission &&
+                                    (hasReportPermission ||
+                                     (item.status ?? '').toLowerCase() ==
+                                         'pending')) ...[
                                   IconButton(
                                     icon: const Icon(Icons.edit_outlined,
                                         size: 18, color: Colors.grey),
@@ -963,7 +996,8 @@ class _TravelAllowancePageState extends State<TravelAllowancePage> {
                                     },
                                   ),
                                 ],
-                                if (hasReportPermission) ...[
+                                if (settingsProvider.hasTravelAllowanceDeletePermission &&
+                                    hasReportPermission) ...[
                                   IconButton(
                                     icon: const Icon(
                                         Icons.delete_outline_rounded,
@@ -1013,6 +1047,7 @@ class _TravelAllowancePageState extends State<TravelAllowancePage> {
   // Mobile Card List View
   Widget _buildMobileCardList(BuildContext context,
       TravelAllowanceProvider provider, bool hasReportPermission) {
+    final settingsProvider = Provider.of<SettingsProvider>(context);
     return ListView.separated(
       itemCount: provider.filteredTaList.length,
       separatorBuilder: (_, __) => const SizedBox(height: 12),
@@ -1153,8 +1188,9 @@ class _TravelAllowancePageState extends State<TravelAllowancePage> {
                           borderRadius: BorderRadius.circular(8)),
                     ),
                   ),
-                  if (hasReportPermission ||
-                      (item.status ?? '').toLowerCase() == 'pending') ...[
+                  if (settingsProvider.hasTravelAllowanceEditPermission &&
+                      (hasReportPermission ||
+                       (item.status ?? '').toLowerCase() == 'pending')) ...[
                     const SizedBox(width: 8),
                     ElevatedButton.icon(
                       onPressed: () {

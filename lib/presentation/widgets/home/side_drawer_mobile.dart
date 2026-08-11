@@ -141,8 +141,7 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
         },
       if (settingsProvider.menuIsViewMap[26].toString() == '1')
         {'title': 'Attendance Reports', 'page': const AttendanceReport()},
-      if ((settingsProvider.menuIsViewMap[26] ?? 0).toString() == '1' ||
-          (settingsProvider.menuIsViewMap[201] ?? 0).toString() == '1')
+      if (settingsProvider.hasTravelAllowancePermission)
         {'title': 'Travel Allowance', 'page': const TravelAllowancePage()},
       if ((settingsProvider.menuIsViewMap[26] ?? 0).toString() == '1' ||
           (settingsProvider.menuIsViewMap[201] ?? 0).toString() == '1')
