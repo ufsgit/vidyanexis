@@ -33,6 +33,9 @@ class _TADetailsDialogState extends State<TADetailsDialog> {
         (settingsProvider.menuIsViewMap[26] ?? 0).toString() == '1' ||
             (settingsProvider.menuIsViewMap[201] ?? 0).toString() == '1';
     final model = widget.model;
+    final String currentStatus = (model.status ?? 'Pending').toLowerCase();
+    final bool isPending = currentStatus == 'pending';
+    final bool isApproved = currentStatus == 'approved';
 
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -291,8 +294,8 @@ class _TADetailsDialogState extends State<TADetailsDialog> {
                       ],
                     ],
 
-                    // Approval Action Section (If user has Report Permission)
-                    if (canApprove) ...[
+                    // Approval Action Section (If user has Report Permission and status is actionable)
+                    if (canApprove && (isPending || isApproved)) ...[
                       const Divider(height: 24),
                       _buildSectionHeader('Admin Decision & Remarks',
                           Icons.admin_panel_settings_rounded),
@@ -301,8 +304,9 @@ class _TADetailsDialogState extends State<TADetailsDialog> {
                         controller: remarkController,
                         maxLines: 2,
                         decoration: InputDecoration(
-                          hintText:
-                              'Enter approval/rejection remarks or payment reference details...',
+                          hintText: isPending
+                              ? 'Enter approval/rejection remarks...'
+                              : 'Enter payment reference details or remarks...',
                           hintStyle: GoogleFonts.plusJakartaSans(fontSize: 12),
                           filled: true,
                           fillColor: Colors.grey[50],
@@ -314,82 +318,88 @@ class _TADetailsDialogState extends State<TADetailsDialog> {
                       const SizedBox(height: 12),
                       Row(
                         children: [
-                          Expanded(
-                            child: ElevatedButton.icon(
-                              onPressed: () async {
-                                await taProvider.updateTAStatus(
-                                  context,
-                                  model.taId!,
-                                  'Approved',
-                                  remark: remarkController.text.trim(),
-                                );
-                                if (mounted) Navigator.of(context).pop();
-                              },
-                              icon: const Icon(Icons.check_circle_rounded,
-                                  size: 18),
-                              label: const Text('Approve'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF16A34A),
-                                foregroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8)),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: ElevatedButton.icon(
-                              onPressed: () async {
-                                final remarkText = remarkController.text.trim();
-                                if (remarkText.isEmpty) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                        content: Text(
-                                            'Please enter a rejection reason in the remarks field.')),
+                          if (isPending) ...[
+                            Expanded(
+                              child: ElevatedButton.icon(
+                                onPressed: () async {
+                                  final nav = Navigator.of(context);
+                                  final success = await taProvider.updateTAStatus(
+                                    context,
+                                    model.taId!,
+                                    'Approved',
+                                    remark: remarkController.text.trim(),
                                   );
-                                  return;
-                                }
-                                await taProvider.updateTAStatus(
-                                  context,
-                                  model.taId!,
-                                  'Rejected',
-                                  remark: remarkText,
-                                );
-                                if (mounted) Navigator.of(context).pop();
-                              },
-                              icon: const Icon(Icons.cancel_rounded, size: 18),
-                              label: const Text('Reject'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFFDC2626),
-                                foregroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8)),
+                                  if (success && mounted) nav.pop();
+                                },
+                                icon: const Icon(Icons.check_circle_rounded,
+                                    size: 18),
+                                label: const Text('Approve'),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF16A34A),
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8)),
+                                ),
                               ),
                             ),
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: ElevatedButton.icon(
-                              onPressed: () async {
-                                await taProvider.updateTAStatus(
-                                  context,
-                                  model.taId!,
-                                  'Paid',
-                                  remark: remarkController.text.trim(),
-                                );
-                                if (mounted) Navigator.of(context).pop();
-                              },
-                              icon:
-                                  const Icon(Icons.task_alt_rounded, size: 18),
-                              label: const Text('Mark Paid'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF2563EB),
-                                foregroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8)),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: ElevatedButton.icon(
+                                onPressed: () async {
+                                  final nav = Navigator.of(context);
+                                  final remarkText = remarkController.text.trim();
+                                  if (remarkText.isEmpty) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content: Text(
+                                              'Please enter a rejection reason in the remarks field.')),
+                                    );
+                                    return;
+                                  }
+                                  final success = await taProvider.updateTAStatus(
+                                    context,
+                                    model.taId!,
+                                    'Rejected',
+                                    remark: remarkText,
+                                  );
+                                  if (success && mounted) nav.pop();
+                                },
+                                icon: const Icon(Icons.cancel_rounded, size: 18),
+                                label: const Text('Reject'),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFFDC2626),
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8)),
+                                ),
                               ),
                             ),
-                          ),
+                          ],
+                          if (isApproved) ...[
+                            Expanded(
+                              child: ElevatedButton.icon(
+                                onPressed: () async {
+                                  final nav = Navigator.of(context);
+                                  final success = await taProvider.updateTAStatus(
+                                    context,
+                                    model.taId!,
+                                    'Paid',
+                                    remark: remarkController.text.trim(),
+                                  );
+                                  if (success && mounted) nav.pop();
+                                },
+                                icon:
+                                    const Icon(Icons.task_alt_rounded, size: 18),
+                                label: const Text('Mark Paid'),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF2563EB),
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8)),
+                                ),
+                              ),
+                            ),
+                          ],
                         ],
                       ),
                     ],

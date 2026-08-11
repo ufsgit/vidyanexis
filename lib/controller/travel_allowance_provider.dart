@@ -493,7 +493,7 @@ class TravelAllowanceProvider extends ChangeNotifier {
   }
 
   // Update Status (Approve / Reject / Paid)
-  Future<void> updateTAStatus(BuildContext context, int taId, String newStatus,
+  Future<bool> updateTAStatus(BuildContext context, int taId, String newStatus,
       {String? remark}) async {
     // 1. Authorization Guard: Purely permission-driven via existing Report Permission (menuIsViewMap 26/201)
     final settingsProvider =
@@ -508,7 +508,7 @@ class TravelAllowanceProvider extends ChangeNotifier {
             content: Text(
                 'Unauthorized: Only users with Report Permission can approve or reject TA entries.')),
       );
-      return;
+      return false;
     }
 
     // 2. Rejection Reason Requirement
@@ -517,11 +517,14 @@ class TravelAllowanceProvider extends ChangeNotifier {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please enter a rejection reason.')),
       );
-      return;
+      return false;
     }
 
     try {
       Loader.showLoader(context);
+      if (currentUserId == 0) {
+        await initUserData();
+      }
       final timestamp =
           DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
       final body = {
@@ -534,19 +537,66 @@ class TravelAllowanceProvider extends ChangeNotifier {
         'User_Type': currentUserType,
       };
 
-      await HttpRequest.httpGetRequest(
+      final response = await HttpRequest.httpPostRequest(
           endPoint: HttpUrls.updateTAStatus, bodyData: body);
       if (context.mounted) Loader.stopLoader(context);
 
-      await fetchTAList();
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Travel Entry $newStatus successfully.')),
-        );
+      bool isSuccess = false;
+      String message = '';
+
+      if (response != null &&
+          (response.statusCode == 200 || response.statusCode == 201)) {
+        final data = response.data;
+        if (data is Map<String, dynamic>) {
+          final statusVal = data['Status'] ?? data['status'];
+          final msgVal = data['Message'] ?? data['message'] ?? data['msg'];
+
+          if (statusVal == 0 ||
+              statusVal == '0' ||
+              statusVal == false ||
+              statusVal == 'false' ||
+              statusVal == 'Failed') {
+            isSuccess = false;
+            message = msgVal?.toString() ?? 'Failed to update status';
+          } else {
+            isSuccess = true;
+            message =
+                msgVal?.toString() ?? 'Travel Entry $newStatus successfully.';
+          }
+        } else {
+          isSuccess = true;
+          message = 'Travel Entry $newStatus successfully.';
+        }
+      } else {
+        isSuccess = false;
+        message = response?.statusMessage ?? 'Failed to update status';
+      }
+
+      if (isSuccess) {
+        await fetchTAList();
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(message)),
+          );
+        }
+        return true;
+      } else {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(message)),
+          );
+        }
+        return false;
       }
     } catch (e) {
       dev.log('Error updating TA status: $e', name: 'TravelAllowanceProvider');
       if (context.mounted) Loader.stopLoader(context);
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error updating TA status: $e')),
+        );
+      }
+      return false;
     }
   }
 
