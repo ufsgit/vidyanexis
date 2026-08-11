@@ -205,7 +205,7 @@ class _HomePageState extends State<HomePage> {
     String logo = settingsProvider.displayLogo;
 
     final List<SidebarOption> sidebarOptions = [
-      if (settingsProvider.menuIsViewMap[12].toString() == '1')
+      if ((settingsProvider.menuIsViewMap[12] ?? 1).toString() == '1')
         SidebarOption(
           title: 'DashBoard',
           iconPath: 'assets/images/dashboard_icon.svg',
@@ -398,14 +398,14 @@ class _HomePageState extends State<HomePage> {
           baseContent: const Center(child: AttendanceReport()),
         ),
       if (settingsProvider.menuIsViewMap[26].toString() == '1' ||
-          (settingsProvider.menuIsViewMap[201] ?? 1).toString() == '1')
+          (settingsProvider.menuIsViewMap[201] ?? 0).toString() == '1')
         SidebarOption(
           title: 'Travel Allowance',
           iconPath: 'assets/images/inventory.svg',
           baseContent: const TravelAllowancePage(),
         ),
       if (settingsProvider.menuIsViewMap[26].toString() == '1' ||
-          (settingsProvider.menuIsViewMap[201] ?? 1).toString() == '1')
+          (settingsProvider.menuIsViewMap[201] ?? 0).toString() == '1')
         SidebarOption(
           title: 'TA Reports',
           iconPath: 'assets/images/Reports.svg',

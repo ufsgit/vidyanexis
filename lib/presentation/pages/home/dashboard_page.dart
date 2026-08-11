@@ -87,8 +87,9 @@ class _DashBoardPageState extends State<DashBoardPage> {
         if ((settingsProvider.menuIsViewMap[152] ?? 1).toString() != '0') 7,
         if (userType == "1") 8,
         if (userType == "1") 9,
-        if ((settingsProvider.menuIsViewMap[26] ?? 1).toString() != '0' ||
-            (settingsProvider.menuIsViewMap[201] ?? 1).toString() != '0') 10,
+        if ((settingsProvider.menuIsViewMap[26] ?? 0).toString() == '1' ||
+            (settingsProvider.menuIsViewMap[201] ?? 0).toString() == '1')
+          10,
       ];
 
       if (allowedTabs.isNotEmpty) {
@@ -127,8 +128,9 @@ class _DashBoardPageState extends State<DashBoardPage> {
       if ((settingsProvider.menuIsViewMap[152] ?? 1).toString() != '0') 7,
       if (userType == "1") 8,
       if (userType == "1") 9,
-      if ((settingsProvider.menuIsViewMap[26] ?? 1).toString() != '0' ||
-          (settingsProvider.menuIsViewMap[201] ?? 1).toString() != '0') 10,
+      if ((settingsProvider.menuIsViewMap[26] ?? 0).toString() == '1' ||
+          (settingsProvider.menuIsViewMap[201] ?? 0).toString() == '1')
+        10,
     ];
 
     Widget dateFilterBtn = Material(

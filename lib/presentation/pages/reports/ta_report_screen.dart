@@ -48,9 +48,9 @@ class _TAReportScreenState extends State<TAReportScreen> {
 
     // Permission enforcement: using menuIsViewMap (Attendance / Expense report level or fallback)
     final bool hasReportPermission =
-        (settingsProvider.menuIsViewMap[26] ?? 1).toString() == '1' ||
-        (settingsProvider.menuIsViewMap[48] ?? 1).toString() == '1' ||
-        (settingsProvider.menuIsViewMap[201] ?? 1).toString() == '1';
+        (settingsProvider.menuIsViewMap[26] ?? 0).toString() == '1' ||
+        (settingsProvider.menuIsViewMap[48] ?? 0).toString() == '1' ||
+        (settingsProvider.menuIsViewMap[201] ?? 0).toString() == '1';
 
     if (!hasReportPermission) {
       return Scaffold(
