@@ -598,11 +598,11 @@ class SettingsProvider extends ChangeNotifier {
       _leadCodeWithEnquiryCode = value;
     } else if (permissionId == 16) {
       _documentButtonTaskStatus = value;
-    } else if (permissionId == 17) {
+    } else if (permissionId == 40) {
       _leadPermissionMeAndAll = value;
-    } else if (permissionId == 18) {
+    } else if (permissionId == 41) {
       _customerPermissionMeAndAll = value;
-    } else if (permissionId == 19) {
+    } else if (permissionId == 42) {
       _taskPermissionMeAndAll = value;
     }
   }
