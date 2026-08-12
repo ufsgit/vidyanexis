@@ -565,7 +565,13 @@ class SettingsProvider extends ChangeNotifier {
         _companyDetails[0].permissions.isNotEmpty) {
       for (var p in _companyDetails[0].permissions) {
         if (key is int &&
-            p.companyPermissionId == key &&
+            (p.companyPermissionId == key ||
+                (key == 40 && p.companyPermissionId == 17) ||
+                (key == 41 && p.companyPermissionId == 18) ||
+                (key == 42 && p.companyPermissionId == 19) ||
+                (key == 17 && p.companyPermissionId == 40) ||
+                (key == 18 && p.companyPermissionId == 41) ||
+                (key == 19 && p.companyPermissionId == 42)) &&
             p.caption.isNotEmpty) {
           return p.caption;
         }
@@ -579,7 +585,7 @@ class SettingsProvider extends ChangeNotifier {
     return defaultCaption;
   }
 
-  void _syncPermissionValueToState(int permissionId, int value) {
+  void _syncPermissionValueToState(int permissionId, int value, [String? caption]) {
     if (permissionId == 1 || permissionId == 3) {
       _toggleValue = value;
     } else if (permissionId == 4) {
@@ -608,11 +614,11 @@ class SettingsProvider extends ChangeNotifier {
       _leadCodeWithEnquiryCode = value;
     } else if (permissionId == 16) {
       _documentButtonTaskStatus = value;
-    } else if (permissionId == 40) {
+    } else if (permissionId == 17 || permissionId == 40 || (caption != null && caption.toLowerCase().contains('lead permission me and all'))) {
       _leadPermissionMeAndAll = value;
-    } else if (permissionId == 41) {
+    } else if (permissionId == 18 || permissionId == 41 || (caption != null && caption.toLowerCase().contains('customer permission me and all'))) {
       _customerPermissionMeAndAll = value;
-    } else if (permissionId == 42) {
+    } else if (permissionId == 19 || permissionId == 42 || (caption != null && caption.toLowerCase().contains('task permission me and all'))) {
       _taskPermissionMeAndAll = value;
     }
   }
@@ -677,7 +683,7 @@ class SettingsProvider extends ChangeNotifier {
 
       if (_companyDetails[0].permissions.isNotEmpty) {
         for (var p in _companyDetails[0].permissions) {
-          _syncPermissionValueToState(p.companyPermissionId, p.value);
+          _syncPermissionValueToState(p.companyPermissionId, p.value, p.caption);
         }
       }
     }
@@ -686,9 +692,14 @@ class SettingsProvider extends ChangeNotifier {
   void updateCompanyPermission(int permissionId, int newValue) {
     if (_companyDetails.isNotEmpty &&
         _companyDetails[0].permissions.isNotEmpty) {
-      final index = _companyDetails[0]
-          .permissions
-          .indexWhere((p) => p.companyPermissionId == permissionId);
+      final index = _companyDetails[0].permissions.indexWhere((p) =>
+          p.companyPermissionId == permissionId ||
+          (permissionId == 40 && p.companyPermissionId == 17) ||
+          (permissionId == 41 && p.companyPermissionId == 18) ||
+          (permissionId == 42 && p.companyPermissionId == 19) ||
+          (permissionId == 17 && p.companyPermissionId == 40) ||
+          (permissionId == 18 && p.companyPermissionId == 41) ||
+          (permissionId == 19 && p.companyPermissionId == 42));
       if (index != -1) {
         final old = _companyDetails[0].permissions[index];
         _companyDetails[0].permissions[index] = CompanyPermission(
@@ -696,7 +707,7 @@ class SettingsProvider extends ChangeNotifier {
           caption: old.caption,
           value: newValue,
         );
-        _syncPermissionValueToState(permissionId, newValue);
+        _syncPermissionValueToState(old.companyPermissionId, newValue, old.caption);
         notifyListeners();
       }
     }
