@@ -48,40 +48,54 @@ class _ExpenseTabWidgetState extends State<ExpenseTabWidget> {
                     color: const Color(0xFF1E293B),
                   ),
                 ),
-                if (settingsProvider.menuIsSaveMap[48] == 1)
-                  GestureDetector(
-                    onTap: () {
-                      customerDetailsProvider.clearExpenseDetails();
-                      showDialog(
-                        context: context,
-                        builder: (context) => AddExpenseWidget(
-                          customerId: widget.customerId,
-                          expenseId: '0',
-                          isEdit: false,
-                        ),
-                      );
-                    },
-                    child: Container(
-                      width: 44,
-                      height: 44,
-                      decoration: BoxDecoration(
-                        color: AppColors.secondaryBlue,
-                        borderRadius: BorderRadius.circular(4),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.secondaryBlue.withOpacity(0.3),
-                            blurRadius: 8,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: const Icon(
-                        Icons.add_rounded,
-                        color: Colors.white,
-                        size: 26,
-                      ),
+                Row(
+                  children: [
+                    IconButton(
+                      tooltip: 'Refresh Expenses',
+                      icon: const Icon(Icons.refresh),
+                      onPressed: () {
+                        customerDetailsProvider.getExpenseListApi(
+                            widget.customerId, context,
+                            forceRefresh: true);
+                      },
                     ),
-                  ),
+                    const SizedBox(width: 8),
+                    if (settingsProvider.menuIsSaveMap[48] == 1)
+                      GestureDetector(
+                        onTap: () {
+                          customerDetailsProvider.clearExpenseDetails();
+                          showDialog(
+                            context: context,
+                            builder: (context) => AddExpenseWidget(
+                              customerId: widget.customerId,
+                              expenseId: '0',
+                              isEdit: false,
+                            ),
+                          );
+                        },
+                        child: Container(
+                          width: 44,
+                          height: 44,
+                          decoration: BoxDecoration(
+                            color: AppColors.secondaryBlue,
+                            borderRadius: BorderRadius.circular(4),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.secondaryBlue.withOpacity(0.3),
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: const Icon(
+                            Icons.add_rounded,
+                            color: Colors.white,
+                            size: 26,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
               ],
             ),
           ),

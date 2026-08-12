@@ -5587,32 +5587,36 @@ class SettingsProvider extends ChangeNotifier {
       final response = await HttpRequest.httpGetRequest(
           endPoint: '${HttpUrls.getExpenseTypes}?Expense_Type_Name=$query');
 
-      if (response.statusCode == 200) {
-        final data = response.data["data"];
-
-        if (data != null &&
-            data is List &&
-            data.isNotEmpty &&
-            data[0] is List) {
-          List<dynamic> expenseDataList = data[0];
-
-          _expenseTypeList = expenseDataList
-              .map((item) =>
-                  ExpenseTypeModel.fromJson(item as Map<String, dynamic>))
-              .toList();
-
-          notifyListeners();
+      if (response.statusCode == 200 && response.data != null) {
+        List<dynamic> expenseDataList = [];
+        if (response.data is Map && response.data["data"] != null) {
+          final data = response.data["data"];
+          if (data is List && data.isNotEmpty && data[0] is List) {
+            expenseDataList = data[0];
+          } else if (data is List) {
+            expenseDataList = data;
+          }
+        } else if (response.data is List) {
+          if (response.data.isNotEmpty && response.data[0] is List) {
+            expenseDataList = response.data[0];
+          } else {
+            expenseDataList = response.data;
+          }
         }
+
+        _expenseTypeList = expenseDataList
+            .whereType<Map<String, dynamic>>()
+            .map((item) => ExpenseTypeModel.fromJson(item))
+            .where((item) => item.deleteStatus == 0)
+            .toList();
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Server Error')),
-        );
+        _expenseTypeList = [];
       }
-    } catch (e) {
-      print('Exception occurred: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred')),
-      );
+    } catch (e, stack) {
+      debugPrint('Error in SettingsProvider.getExpenseType: $e\n$stack');
+      _expenseTypeList = [];
+    } finally {
+      notifyListeners();
     }
     return _expenseTypeList;
   }

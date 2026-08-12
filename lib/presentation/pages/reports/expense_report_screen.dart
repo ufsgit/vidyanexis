@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/expense_provider.dart';
@@ -18,6 +19,7 @@ import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
+
 
 class ExpenseReportScreen extends StatefulWidget {
   static const String route = "/expense_report";
@@ -559,6 +561,94 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
     );
   }
 
+  void _showAttachmentViewer(BuildContext context, String url) {
+    bool isPdf = url.toLowerCase().endsWith('.pdf');
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 600, maxHeight: 600),
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Expense Attachment',
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () => Navigator.pop(context),
+                    )
+                  ],
+                ),
+                const Divider(),
+                Expanded(
+                  child: Center(
+                    child: isPdf
+                        ? Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.picture_as_pdf,
+                                  size: 64, color: Colors.red),
+                              const SizedBox(height: 16),
+                              ElevatedButton.icon(
+                                onPressed: () async {
+                                  final uri = Uri.parse(url);
+                                  if (await canLaunchUrl(uri)) {
+                                    await launchUrl(uri,
+                                        mode: LaunchMode.externalApplication);
+                                  }
+                                },
+                                icon: const Icon(Icons.open_in_new),
+                                label: const Text('Open PDF Document'),
+                              ),
+                            ],
+                          )
+                        : Image.network(
+                            url,
+                            fit: BoxFit.contain,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Icon(Icons.broken_image,
+                                      size: 48, color: Colors.grey),
+                                  const SizedBox(height: 8),
+                                  const Text('Unable to load receipt image'),
+                                  const SizedBox(height: 8),
+                                  ElevatedButton(
+                                    onPressed: () async {
+                                      final uri = Uri.parse(url);
+                                      if (await canLaunchUrl(uri)) {
+                                        await launchUrl(uri,
+                                            mode:
+                                                LaunchMode.externalApplication);
+                                      }
+                                    },
+                                    child: const Text('Open Link'),
+                                  )
+                                ],
+                              );
+                            },
+                          ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildWebTableHeader() {
     return Container(
       decoration: const BoxDecoration(
@@ -568,16 +658,16 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
       child: const Row(
         children: [
           TableWidget(title: 'No', width: 60, color: Color(0xFF607185)),
-          TableWidget(title: 'User Name', flex: 2, color: Color(0xFF607185)),
+          TableWidget(title: 'User / Lead', flex: 2, color: Color(0xFF607185)),
           TableWidget(
-              title: 'Entry Date', width: 140, color: Color(0xFF607185)),
-          TableWidget(title: 'Expense Head', flex: 3, color: Color(0xFF607185)),
+              title: 'Entry Date', width: 130, color: Color(0xFF607185)),
+          TableWidget(title: 'Expense Head / Description', flex: 3, color: Color(0xFF607185)),
           TableWidget(title: 'Category', flex: 2, color: Color(0xFF607185)),
-          TableWidget(title: 'Project Name', flex: 2, color: Color(0xFF607185)),
-          TableWidget(title: 'Amount', width: 130, color: Color(0xFF607185)),
+          TableWidget(title: 'Amount', width: 120, color: Color(0xFF607185)),
+          TableWidget(title: 'Receipt', width: 110, color: Color(0xFF607185), alignment: Alignment.center),
           TableWidget(
               title: 'Actions',
-              width: 100,
+              width: 90,
               color: Color(0xFF607185),
               alignment: Alignment.center),
         ],
@@ -587,6 +677,11 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
 
   Widget _buildWebTableRow(
       ExpenseModel item, int index, ExpenseProvider provider) {
+    bool hasAttachment = item.filePath != null && item.filePath!.isNotEmpty;
+    String displayUser = (item.userName != null && item.userName!.isNotEmpty)
+        ? item.userName!
+        : (item.entryByName ?? (item.customerName ?? '-'));
+
     return Container(
       decoration: BoxDecoration(
         color: index % 2 == 0 ? Colors.white : const Color(0xFFF6F7F9),
@@ -603,7 +698,7 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
           ),
           TableWidget(
             data: Text(
-              item.userName ?? '-',
+              displayUser,
               style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w500),
             ),
             flex: 2,
@@ -613,11 +708,13 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
               item.entryDate ?? '-',
               style: GoogleFonts.plusJakartaSans(),
             ),
-            width: 140,
+            width: 130,
           ),
           TableWidget(
             data: Text(
-              item.expenseHead ?? '-',
+              (item.description != null && item.description!.isNotEmpty)
+                  ? item.description!
+                  : (item.expenseHead ?? '-'),
               style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600),
             ),
             flex: 3,
@@ -631,20 +728,26 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
           ),
           TableWidget(
             data: Text(
-              item.projectName ?? '-',
-              style: GoogleFonts.plusJakartaSans(),
-            ),
-            flex: 2,
-          ),
-          TableWidget(
-            data: Text(
               '₹ ${item.amount?.toStringAsFixed(2) ?? "0.00"}',
               style: GoogleFonts.plusJakartaSans(
                 fontWeight: FontWeight.bold,
                 color: AppColors.primaryBlue,
               ),
             ),
-            width: 130,
+            width: 120,
+          ),
+          TableWidget(
+            data: hasAttachment
+                ? IconButton(
+                    icon: const Icon(Icons.receipt_long,
+                        color: AppColors.secondaryBlue, size: 20),
+                    tooltip: 'View Receipt',
+                    onPressed: () =>
+                        _showAttachmentViewer(context, item.filePath!),
+                  )
+                : const Text('-', style: TextStyle(color: Colors.grey)),
+            width: 110,
+            alignment: Alignment.center,
           ),
           TableWidget(
             data: IconButton(
@@ -652,13 +755,14 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
                   color: AppColors.textRed, size: 20),
               onPressed: () => _confirmDelete(context, provider, item),
             ),
-            width: 100,
+            width: 90,
             alignment: Alignment.center,
           ),
         ],
       ),
     );
   }
+
 
   Future<void> _handleExport(ExpenseProvider provider) async {
     List<String> headers = [
@@ -965,9 +1069,21 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
                       height: 44,
                       child: TextButton(
                         onPressed: () {
+                          if (reportsProvider.fromDate != null &&
+                              reportsProvider.toDate != null &&
+                              reportsProvider.fromDate!
+                                  .isAfter(reportsProvider.toDate!)) {
+                            ScaffoldMessenger.of(contextx).showSnackBar(
+                              const SnackBar(
+                                  content: Text(
+                                      'From Date cannot be after To Date')),
+                            );
+                            return;
+                          }
                           Navigator.pop(contextx);
                           reportsProvider.getExpenseReport(contextx);
                         },
+
                         style: TextButton.styleFrom(
                           backgroundColor: AppColors.primaryBlue,
                           foregroundColor: Colors.white,

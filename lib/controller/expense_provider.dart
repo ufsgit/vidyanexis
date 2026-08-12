@@ -71,6 +71,10 @@ class ExpenseProvider extends ChangeNotifier {
   List<StockUseItems> get stockUseItems => _stockUseItems;
   List<ExpenseModel> _expenseModelList = [];
   List<ExpenseModel> get expenseModelList => _expenseModelList;
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+  bool _isFetchingReport = false;
+  bool _isSearchingExpense = false;
   int? _selectedUser;
   int? get selectedUser => _selectedUser;
   //item add
@@ -1830,38 +1834,39 @@ class ExpenseProvider extends ChangeNotifier {
 
   Future<void> getExpenseType(BuildContext context) async {
     try {
-      SharedPreferences preferences = await SharedPreferences.getInstance();
-      String userId = preferences.getString('userId') ?? "";
-
       final response =
           await HttpRequest.httpGetRequest(endPoint: HttpUrls.getExpenseTypes);
 
-      if (response.statusCode == 200) {
-        if (response.data != null) {
-          final Map<String, dynamic> responseMap = response.data;
-
-          if (responseMap['success'] == true && responseMap['data'] != null) {
-            final List<dynamic> dataArray = responseMap['data'];
-
-            if (dataArray.isNotEmpty && dataArray[0] is List) {
-              _expenseTypeList = (dataArray[0] as List)
-                  .map((item) =>
-                      ExpenseTypeModel.fromJson(item as Map<String, dynamic>))
-                  .toList();
-              notifyListeners();
-            }
+      if (response.statusCode == 200 && response.data != null) {
+        List<dynamic> dataArray = [];
+        if (response.data is Map && response.data["data"] != null) {
+          final data = response.data["data"];
+          if (data is List && data.isNotEmpty && data[0] is List) {
+            dataArray = data[0];
+          } else if (data is List) {
+            dataArray = data;
+          }
+        } else if (response.data is List) {
+          if (response.data.isNotEmpty && response.data[0] is List) {
+            dataArray = response.data[0];
+          } else {
+            dataArray = response.data;
           }
         }
+
+        _expenseTypeList = dataArray
+            .whereType<Map<String, dynamic>>()
+            .map((item) => ExpenseTypeModel.fromJson(item))
+            .where((item) => item.deleteStatus == 0)
+            .toList();
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Server Error')),
-        );
+        _expenseTypeList = [];
       }
-    } catch (e) {
-      print('Exception occurred: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred')),
-      );
+    } catch (e, stack) {
+      debugPrint('Error in ExpenseProvider.getExpenseType: $e\n$stack');
+      _expenseTypeList = [];
+    } finally {
+      notifyListeners();
     }
   }
 
@@ -2283,8 +2288,11 @@ class ExpenseProvider extends ChangeNotifier {
 
   Future<List<ExpenseModel>> searchExpense(
       String query, BuildContext context) async {
+    if (_isSearchingExpense) return _expenseModelList;
+    _isSearchingExpense = true;
+    _isLoading = true;
     _expenseModelList = [];
-    // isLoading = true;
+    debugPrint('[EXPENSE_LOADING] ExpenseProvider.searchExpense start');
     Loader.showLoader(context);
     notifyListeners();
     SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -2297,7 +2305,6 @@ class ExpenseProvider extends ChangeNotifier {
       assignedTo = selectedUser == null ? userId : selectedUser.toString();
     }
 
-    //Client filter
     String clientId = selectedClient == null ? "0" : selectedClient.toString();
 
     try {
@@ -2307,37 +2314,39 @@ class ExpenseProvider extends ChangeNotifier {
           endPoint:
               '${HttpUrls.getExpenseManagement}?Expense_Head=$query&reference_id=$assignedTo&expense_type_id=$expenseTypeId&project_type_id=$projectTypeId&Customer_Id=$clientId');
 
-      if (response.statusCode == 200) {
-        final data = response.data["data"];
-
-        if (data is List) {
-          if (data.isNotEmpty && data[0] is List) {
-            // Nested list case: [[{}]]
-            final List expenseList = data[0];
-            _expenseModelList =
-                expenseList.map((item) => ExpenseModel.fromJson(item)).toList();
-          } else {
-            // Direct list case: [{}]
-            _expenseModelList =
-                data.map((item) => ExpenseModel.fromJson(item)).toList();
+      if (response.statusCode == 200 && response.data != null) {
+        List<dynamic> rawList = [];
+        if (response.data is Map && response.data["data"] != null) {
+          final data = response.data["data"];
+          if (data is List && data.isNotEmpty && data[0] is List) {
+            rawList = data[0];
+          } else if (data is List) {
+            rawList = data;
           }
-          notifyListeners();
-        } else {
-          _expenseModelList = [];
-          notifyListeners();
+        } else if (response.data is List) {
+          final data = response.data;
+          if (data.isNotEmpty && data[0] is List) {
+            rawList = data[0];
+          } else {
+            rawList = data;
+          }
         }
+
+        _expenseModelList = rawList
+            .whereType<Map<String, dynamic>>()
+            .map((item) => ExpenseModel.fromJson(item))
+            .toList();
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Server Error')),
-        );
+        _expenseModelList = [];
       }
-    } catch (e) {
-      print('Exception occurred: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred')),
-      );
+    } catch (e, stack) {
+      debugPrint('[EXPENSE_LOADING] Error in ExpenseProvider.searchExpense: $e\n$stack');
+      _expenseModelList = [];
     } finally {
+      _isLoading = false;
+      _isSearchingExpense = false;
       Loader.stopLoader(context);
+      debugPrint('[EXPENSE_LOADING] ExpenseProvider.searchExpense finish');
       notifyListeners();
     }
     return _expenseModelList;
@@ -2352,24 +2361,25 @@ class ExpenseProvider extends ChangeNotifier {
       final response = await HttpRequest.httpPostRequest(
           endPoint: HttpUrls.saveExpenseManagement, bodyData: data);
 
-      if (response!.statusCode == 200) {
-        final data = response.data;
-        getExpenseReport(context);
+      if (response != null && response.statusCode == 200) {
+        getExpenseReport(context, forceRefresh: true);
         searchExpense('', context);
-        Navigator.pop(context);
-        Loader.stopLoader(context);
-        print(data);
+        if (context.mounted) Navigator.pop(context);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Server Error')),
-        );
-        Loader.stopLoader(context);
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Server Error')),
+          );
+        }
       }
-    } catch (e) {
-      print('Exception occurred: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred')),
-      );
+    } catch (e, stack) {
+      debugPrint('[EXPENSE_LOADING] Error in saveExpense: $e\n$stack');
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('An error occurred')),
+        );
+      }
+    } finally {
       Loader.stopLoader(context);
     }
   }
@@ -2382,27 +2392,31 @@ class ExpenseProvider extends ChangeNotifier {
       );
 
       if (response != null && response.statusCode == 200) {
-        final data = response.data;
-
         searchExpense('', context);
         searchExpenseController.clear();
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Expense deleted successfully')),
-        );
-        Loader.stopLoader(context);
-
-        notifyListeners();
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Expense deleted successfully')),
+          );
+        }
       } else {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Failed to delete expense')),
+          );
+        }
+      }
+    } catch (e, stack) {
+      debugPrint('[EXPENSE_LOADING] Error in deleteExpense: $e\n$stack');
+      if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to delete expense')),
+          const SnackBar(content: Text('An error occurred')),
         );
       }
-    } catch (e) {
-      print('Exception occurred: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred')),
-      );
+    } finally {
+      Loader.stopLoader(context);
+      notifyListeners();
     }
   }
 
@@ -2411,15 +2425,17 @@ class ExpenseProvider extends ChangeNotifier {
   ExpenseHeaderModel? _limitHeader;
   ExpenseHeaderModel? get limitHeader => _limitHeader;
 
-  Future<void> getExpenseReport(BuildContext context) async {
+  Future<void> getExpenseReport(BuildContext context, {bool forceRefresh = false}) async {
+    if (_isFetchingReport) return;
+    _isFetchingReport = true;
+    _isLoading = true;
     _expenseModelList = [];
+    debugPrint('[EXPENSE_LOADING] ExpenseProvider.getExpenseReport start');
     Loader.showLoader(context);
     notifyListeners();
 
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    String userId = preferences.getString('userId') ?? "";
     String assignedTo = selectedUser == null || selectedUser == 0
-        ? userId
+        ? "0"
         : selectedUser.toString();
 
     String expenseTypeId = (selectedExpenseTypeId ?? 0) == 0
@@ -2441,40 +2457,63 @@ class ExpenseProvider extends ChangeNotifier {
 
       final response = await HttpRequest.httpGetRequest(endPoint: url);
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 && response.data != null) {
         final data = response.data;
 
-        if (data != null) {
+        if (data is Map) {
           if (data["header_data"] != null &&
+              data["header_data"] is List &&
               (data["header_data"] as List).isNotEmpty) {
-            _limitHeader = ExpenseHeaderModel.fromJson(data["header_data"][0]);
+            final headerItem = data["header_data"][0];
+            if (headerItem is Map<String, dynamic>) {
+              _limitHeader = ExpenseHeaderModel.fromJson(headerItem);
+            }
           }
 
-          if (data["expense_data"] != null) {
-            _expenseModelList = (data["expense_data"] as List<dynamic>)
-                .map((item) => ExpenseModel.fromJson(item))
-                .toList();
+          List<dynamic> expenseListRaw = [];
+          if (data["expense_data"] != null && data["expense_data"] is List) {
+            expenseListRaw = data["expense_data"];
+          } else if (data["data"] != null && data["data"] is List) {
+            expenseListRaw = data["data"];
           }
 
-          // Fallback for correlationbox if needed, or update it from limitHeader
+          if (expenseListRaw.isNotEmpty && expenseListRaw[0] is List) {
+            expenseListRaw = expenseListRaw[0];
+          }
+
+          _expenseModelList = expenseListRaw
+              .whereType<Map<String, dynamic>>()
+              .map((item) => ExpenseModel.fromJson(item))
+              .toList();
+
+          double calculatedTotal = _expenseModelList.fold(
+              0.0, (sum, item) => sum + (item.amount ?? 0.0));
+
           if (_limitHeader != null) {
             correlationbox = _limitHeader!;
+            if (correlationbox.totalExpenseAmount == null ||
+                correlationbox.totalExpenseAmount == 0) {
+              correlationbox.totalExpenseAmount = calculatedTotal;
+            }
+          } else {
+            correlationbox = ExpenseHeaderModel(
+              totalExpenseAmount: calculatedTotal,
+              totalBalance: 0.0,
+              receivedAmount: 0.0,
+            );
           }
-
-          notifyListeners();
         }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Server Error')),
-        );
+        _expenseModelList = [];
       }
-    } catch (e) {
-      print('Exception occurred: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred')),
-      );
+    } catch (e, stack) {
+      debugPrint('[EXPENSE_LOADING] Error in ExpenseProvider.getExpenseReport: $e\n$stack');
+      _expenseModelList = [];
     } finally {
+      _isLoading = false;
+      _isFetchingReport = false;
       Loader.stopLoader(context);
+      debugPrint('[EXPENSE_LOADING] ExpenseProvider.getExpenseReport finish');
       notifyListeners();
     }
   }

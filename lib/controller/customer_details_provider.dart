@@ -85,6 +85,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
 
   //expense
+  String? _lastFetchedExpenseCustomerId;
+  bool _isFetchingExpenses = false;
   List<ExpenseModel> _expenseList = [];
   List<ExpenseModel> get expenseList => _expenseList;
   List<ExpenseTypeModel> _expenseTypeList = [];
@@ -95,6 +97,39 @@ class CustomerDetailsProvider extends ChangeNotifier {
   final TextEditingController expenseTypeController = TextEditingController();
   int? _selectedExpenseType;
   int? get selectedExpenseType => _selectedExpenseType;
+  set selectedExpenseType(int? value) {
+    _selectedExpenseType = value;
+    notifyListeners();
+  }
+
+  DateTime _selectedExpenseDate = DateTime.now();
+  DateTime get selectedExpenseDate => _selectedExpenseDate;
+  void setExpenseDate(DateTime date) {
+    _selectedExpenseDate = date;
+    notifyListeners();
+  }
+
+  String? _expenseFilePath;
+  String? get expenseFilePath => _expenseFilePath;
+  void setExpenseFilePath(String? path) {
+    _expenseFilePath = path;
+    notifyListeners();
+  }
+
+  bool _isSavingExpense = false;
+  bool get isSavingExpense => _isSavingExpense;
+
+  void clearExpenseDetails() {
+    expenseDescriptionController.clear();
+    expenseAmountController.clear();
+    expenseTypeController.clear();
+    _selectedExpenseType = null;
+    _selectedExpenseDate = DateTime.now();
+    _expenseFilePath = null;
+    _isSavingExpense = false;
+    notifyListeners();
+  }
+
 
   bool get isLoadingDetails => _isLoadingDetails;
   bool _isDeleteLoading = false;
@@ -1482,11 +1517,6 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
-  set selectedExpenseType(int? value) {
-    _selectedExpenseType = value;
-    notifyListeners();
-  }
-
   void updateAMCCategory(int? value, String categoryName) {
     _selectedAMCCategory = value;
     amcCategoryController.text = categoryName;
@@ -1500,95 +1530,138 @@ class CustomerDetailsProvider extends ChangeNotifier {
   }
 
   Future<void> getExpenseListApi(
-      String customerId, BuildContext context) async {
+      String customerId, BuildContext context, {bool forceRefresh = false}) async {
+    if (!forceRefresh &&
+        _lastFetchedExpenseCustomerId == customerId &&
+        (_expenseList.isNotEmpty || !_isLoading)) {
+      return;
+    }
+    if (_isFetchingExpenses) return;
+    _isFetchingExpenses = true;
+    _lastFetchedExpenseCustomerId = customerId;
+
+    _isLoading = true;
+    debugPrint('[EXPENSE_LOADING] CustomerDetailsProvider.getExpenseListApi start for customerId=$customerId, isLoading=$_isLoading');
+    notifyListeners();
     try {
       final response = await HttpRequest.httpGetRequest(
           endPoint: '${HttpUrls.getExpenseByCustomer}/$customerId');
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 && response.data != null) {
         final data = response.data;
-        if (data != null && data is List) {
-          _expenseList = data.map((e) => ExpenseModel.fromJson(e)).toList();
-        } else {
-          _expenseList = [];
+        List<dynamic> rawList = [];
+        if (data is List) {
+          rawList = data;
+        } else if (data is Map && data["data"] != null) {
+          final dataVal = data["data"];
+          if (dataVal is List) {
+            rawList = dataVal;
+          }
         }
+        _expenseList = rawList
+            .whereType<Map<String, dynamic>>()
+            .map((e) => ExpenseModel.fromJson(e))
+            .toList();
       } else {
         _expenseList = [];
       }
-      notifyListeners();
-    } catch (e) {
-      print('Exception occurred: $e');
+    } catch (e, stack) {
+      debugPrint('[EXPENSE_LOADING] Error in getExpenseListApi: $e\n$stack');
       _expenseList = [];
+    } finally {
+      _isLoading = false;
+      _isFetchingExpenses = false;
+      debugPrint('[EXPENSE_LOADING] CustomerDetailsProvider.getExpenseListApi finish, isLoading=$_isLoading');
       notifyListeners();
     }
   }
 
   Future<void> getExpenseTypeApi(BuildContext context) async {
     try {
-      // Matches logic in SettingsProvider
       final response = await HttpRequest.httpGetRequest(
           endPoint: '${HttpUrls.getExpenseTypes}?Expense_Type_Name=');
-      if (response.statusCode == 200) {
-        final data = response.data["data"];
-        if (data != null &&
-            data is List &&
-            data.isNotEmpty &&
-            data[0] is List) {
-          List<dynamic> expenseDataList = data[0];
-          _expenseTypeList =
-              expenseDataList.map((e) => ExpenseTypeModel.fromJson(e)).toList();
-        } else {
-          _expenseTypeList = [];
+      if (response.statusCode == 200 && response.data != null) {
+        List<dynamic> expenseDataList = [];
+        if (response.data is Map && response.data["data"] != null) {
+          final data = response.data["data"];
+          if (data is List && data.isNotEmpty && data[0] is List) {
+            expenseDataList = data[0];
+          } else if (data is List) {
+            expenseDataList = data;
+          }
+        } else if (response.data is List) {
+          if (response.data.isNotEmpty && response.data[0] is List) {
+            expenseDataList = response.data[0];
+          } else {
+            expenseDataList = response.data;
+          }
         }
+        _expenseTypeList = expenseDataList
+            .whereType<Map<String, dynamic>>()
+            .map((e) => ExpenseTypeModel.fromJson(e))
+            .where((type) => type.deleteStatus == 0)
+            .toList();
       } else {
         _expenseTypeList = [];
       }
-      notifyListeners();
-    } catch (e) {
-      print('Exception occurred: $e');
+    } catch (e, stack) {
+      debugPrint('Error in getExpenseTypeApi: $e\n$stack');
       _expenseTypeList = [];
+    } finally {
       notifyListeners();
     }
   }
 
   Future<void> saveExpenseApi(
       String expenseId, String customerId, BuildContext context) async {
+    if (_isSavingExpense) return;
     try {
+      _isSavingExpense = true;
+      notifyListeners();
       Loader.showLoader(context);
-      Loader.showLoader(context);
-      // final prefs = await SharedPreferences.getInstance();
-      // final userId = prefs.getString('user_id') ??
-      //     prefs.getString('UserId') ??
-      //     prefs.getInt('user_id')?.toString() ??
-      //     '1';
+
+      final prefs = await SharedPreferences.getInstance();
+      final userIdStr = prefs.getString('userId') ??
+          prefs.getString('user_id') ??
+          prefs.getString('UserId') ??
+          '1';
+      final userIdInt = int.tryParse(userIdStr) ?? 1;
 
       if (_selectedExpenseType == null) {
         Loader.stopLoader(context);
+        _isSavingExpense = false;
+        notifyListeners();
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Please select an expense type')),
         );
         return;
       }
 
-      // Find the selected expense type name
       String expenseTypeName = '';
       try {
         expenseTypeName = _expenseTypeList
                 .firstWhere(
                     (element) => element.expenseTypeId == _selectedExpenseType)
-                .expenseTypeName ??
-            '';
+                .expenseTypeName;
       } catch (e) {
         print('Error finding expense type name: $e');
       }
 
+      final formattedDate = DateFormat('yyyy-MM-dd').format(_selectedExpenseDate);
+
       final body = {
-        "Expense_Id": expenseId == 'null' ? 0 : int.parse(expenseId),
-        "Expense_Type_Id": selectedExpenseType,
-        "Customer_Id": int.tryParse(customerId),
+        "Expense_Id": expenseId == 'null' || expenseId.isEmpty ? 0 : (int.tryParse(expenseId) ?? 0),
+        "Expense_Type_Id": _selectedExpenseType,
+        "Customer_Id": int.tryParse(customerId) ?? 0,
+        "Lead_Id": int.tryParse(customerId) ?? 0,
         "Expense_Type_Name": expenseTypeName,
-        "Date": DateFormat('yyyy-MM-dd').format(DateTime.now()),
+        "Date": formattedDate,
+        "Entry_Date": formattedDate,
         "Amount": double.tryParse(expenseAmountController.text) ?? 0,
         "Description": expenseDescriptionController.text,
+        "File_Path": _expenseFilePath ?? "",
+        "User_Details_Id": userIdInt,
+        "Entry_By": userIdInt,
+        "User_Id": userIdInt,
       };
 
       final response = await HttpRequest.httpPostRequest(
@@ -1596,11 +1669,15 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
       if (!context.mounted) return;
       Loader.stopLoader(context);
+      _isSavingExpense = false;
+      notifyListeners();
+
       if (response?.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Expense Saved Successfully')),
         );
-        getExpenseListApi(customerId, context);
+        getExpenseListApi(customerId, context, forceRefresh: true);
+        clearExpenseDetails();
         Navigator.pop(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -1608,6 +1685,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
         );
       }
     } catch (e) {
+      _isSavingExpense = false;
+      notifyListeners();
       if (context.mounted) {
         Loader.stopLoader(context);
         ScaffoldMessenger.of(context).showSnackBar(
@@ -1617,6 +1696,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
       print('Exception occurred: $e');
     }
   }
+
 
   Future<void> deleteExpenseApi(
       String expenseId, String customerId, BuildContext context) async {
@@ -1697,14 +1777,6 @@ class CustomerDetailsProvider extends ChangeNotifier {
         );
       }
     }
-  }
-
-  void clearExpenseDetails() {
-    expenseAmountController.clear();
-    expenseDescriptionController.clear();
-    expenseTypeController.clear();
-    _selectedExpenseType = null;
-    notifyListeners();
   }
 
   set selectedQuotationStatus(int? value) {

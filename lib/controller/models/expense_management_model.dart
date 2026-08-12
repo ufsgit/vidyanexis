@@ -116,36 +116,37 @@ class ExpenseModel {
   factory ExpenseModel.fromJson(Map<String, dynamic> json) {
     return ExpenseModel(
       expenseManagementId: int.tryParse(
-          (json["Expense_Management_Id"] ?? json["Expense_Id"] ?? 0)
+          (json["Expense_Management_Id"] ?? json["Expense_Id"] ?? json["expense_id"] ?? json["expense_management_id"] ?? 0)
               .toString()),
-      projectTypeName: json["Project_Type_Name"],
+      projectTypeName: json["Project_Type_Name"]?.toString(),
       projectTypeId: int.tryParse((json["Project_Type_Id"] ?? 0).toString()),
-      projectName: json["Project_Name"] ?? json["project_Name"],
+      projectName: (json["Project_Name"] ?? json["project_Name"])?.toString(),
       projectId: int.tryParse((json["project_ID"] ?? 0).toString()),
-      customerId: int.tryParse((json["Customer_Id"] ?? 0).toString()),
-      customerName: json["Customer_Name"],
-      amount: double.tryParse((json["Amount"] ?? 0).toString()),
-      entryDate: (json["Entry_Date"] ?? json["Date"])?.toString().trim(),
-      filePath: json["File_Path"],
-      isGst: json["is_gst"] == 1 || json["is_gst"] == "1",
+      customerId: int.tryParse((json["Customer_Id"] ?? json["Lead_Id"] ?? json["customer_id"] ?? 0).toString()),
+      customerName: (json["Customer_Name"] ?? json["Lead_Name"])?.toString(),
+      amount: double.tryParse((json["Amount"] ?? json["amount"] ?? 0).toString()),
+      entryDate: (json["Entry_Date"] ?? json["Date"] ?? json["Created_Date"] ?? json["entry_date"])?.toString().trim(),
+      filePath: (json["File_Path"] ?? json["file_path"] ?? json["Attachment_Url"] ?? json["Attachment"] ?? json["file_url"])?.toString(),
+      isGst: json["is_gst"] == 1 || json["is_gst"] == "1" || json["is_gst"] == true,
       gstPercentage: double.tryParse((json["gst_percentage"] ?? 0).toString()),
       cgstAmount: double.tryParse((json["cgst_amount"] ?? 0).toString()),
       sgstAmount: double.tryParse((json["sgst_amount"] ?? 0).toString()),
       netAmount: double.tryParse((json["net_amount"] ?? 0).toString()),
-      entryBy: int.tryParse((json["Entry_By"] ?? 0).toString()),
-      userDetailsId: int.tryParse((json["User_Details_Id"] ?? 0).toString()),
-      expenseHead: json["Expense_Head"] ?? json["Task"],
-      comment: json["Comment"],
-      expenseTypeId: int.tryParse((json["Expense_Type_Id"] ?? 0).toString()),
-      expenseTypeName: json["Expense_Type_Name"] ?? json["Expense_Type"],
-      userName: json["User_Name"] ?? json["Customer_Name"],
-      entryByName: json["Entry_By_Name"],
-      description: json["Description"] ?? json["description"],
+      entryBy: int.tryParse((json["Entry_By"] ?? json["User_Id"] ?? json["entry_by"] ?? 0).toString()),
+      userDetailsId: int.tryParse((json["User_Details_Id"] ?? json["User_Id"] ?? json["user_details_id"] ?? 0).toString()),
+      expenseHead: (json["Expense_Head"] ?? json["Task"])?.toString(),
+      comment: json["Comment"]?.toString(),
+      expenseTypeId: int.tryParse((json["Expense_Type_Id"] ?? json["expense_type_id"] ?? 0).toString()),
+      expenseTypeName: (json["Expense_Type_Name"] ?? json["Expense_Type"] ?? json["expense_type_name"])?.toString(),
+      userName: (json["User_Name"] ?? json["Entry_By_Name"] ?? json["Created_By"] ?? json["Customer_Name"])?.toString(),
+      entryByName: (json["Entry_By_Name"] ?? json["User_Name"] ?? json["Created_By"])?.toString(),
+      description: (json["Description"] ?? json["description"])?.toString(),
     );
   }
 
   Map<String, dynamic> toJson() => {
         "Expense_Management_Id": expenseManagementId,
+        "Expense_Id": expenseManagementId,
         "Project_Type_Name": projectTypeName,
         "Project_Type_Id": projectTypeId,
         "Project_Name": projectName,
@@ -154,6 +155,7 @@ class ExpenseModel {
         "Customer_Name": customerName,
         "Amount": amount,
         "Entry_Date": entryDate,
+        "Date": entryDate,
         "File_Path": filePath,
         "is_gst": (isGst ?? false) ? 1 : 0,
         "gst_percentage": gstPercentage,
@@ -170,6 +172,7 @@ class ExpenseModel {
         "User_Name": userName,
         "Description": description,
       };
+
 }
 
 class ExpenseHeaderModel {

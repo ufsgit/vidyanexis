@@ -10,6 +10,7 @@ class Loader {
   static Future<void> showLoader(BuildContext context,
       {String? message}) async {
     _loaderCount++;
+    debugPrint('[LOADER_STATE] showLoader count = $_loaderCount');
     if (_loaderCount > 1) return;
 
     showDialog(
@@ -80,9 +81,11 @@ class Loader {
   static void stopLoader(BuildContext context) {
     if (_loaderCount <= 0) {
       _loaderCount = 0;
+      debugPrint('[LOADER_STATE] stopLoader called when count <= 0');
       return;
     }
     _loaderCount--;
+    debugPrint('[LOADER_STATE] stopLoader count = $_loaderCount');
 
     if (_loaderCount == 0) {
       _dismiss();
@@ -90,6 +93,7 @@ class Loader {
   }
 
   static void forceStopAll(BuildContext context) {
+    debugPrint('[LOADER_STATE] forceStopAll count = $_loaderCount -> 0');
     _loaderCount = 0;
     _dismiss();
   }

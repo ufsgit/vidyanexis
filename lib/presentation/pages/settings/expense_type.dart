@@ -5,7 +5,7 @@ import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/pages/settings/add_expense.dart';
-import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class ExpenseType extends StatefulWidget {
   const ExpenseType({super.key});
@@ -55,6 +55,7 @@ class _ExpenseTypeState extends State<ExpenseType> {
     const double minContentWidth = 800.0;
     final settingsProvider = Provider.of<SettingsProvider>(context);
     final isWeb = AppStyles.isWebScreen(context);
+
     return LayoutBuilder(
       builder: (context, constraints) {
         final content = SizedBox(
@@ -66,89 +67,151 @@ class _ExpenseTypeState extends State<ExpenseType> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: AppColors.surfaceGrey,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: ListView.separated(
-                  separatorBuilder: (context, index) {
-                    return const SizedBox(
-                      height: 12,
-                    );
-                  },
-                  shrinkWrap: true,
-                  physics: const ClampingScrollPhysics(),
-                  itemCount: settingsProvider.expenseTypeList.length,
-                  itemBuilder: (context, index) {
-                    return Container(
-                      decoration: BoxDecoration(
-                        color: AppColors.whiteColor,
-                        borderRadius: BorderRadius.circular(4),
+              // Header Row for Admin Expense Types
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Expense Types Master Data',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textBlack,
                       ),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 10),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 12, vertical: 6),
-                                decoration: BoxDecoration(
-                                    color: AppColors.surfaceGrey,
-                                    borderRadius: BorderRadius.circular(4)),
-                                child: Text(
-                                  settingsProvider
-                                      .expenseTypeList[index].expenseTypeName,
-                                  style: GoogleFonts.plusJakartaSans(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.black),
+                    ),
+                    ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.secondaryBlue,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                      onPressed: _openAddDialog,
+                      icon: const Icon(Icons.add, size: 18),
+                      label: const Text('Add Expense Type'),
+                    ),
+                  ],
+                ),
+              ),
+
+              if (settingsProvider.expenseTypeList.isEmpty)
+                const CommonEmptyState(message: 'No expense types found.')
+              else
+                Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.surfaceGrey,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: ListView.separated(
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(height: 8),
+                    shrinkWrap: true,
+                    physics: const ClampingScrollPhysics(),
+                    itemCount: settingsProvider.expenseTypeList.length,
+                    itemBuilder: (context, index) {
+                      final item = settingsProvider.expenseTypeList[index];
+                      bool isActive = item.deleteStatus == 0;
+
+                      return Container(
+                        decoration: BoxDecoration(
+                          color: AppColors.whiteColor,
+                          borderRadius: BorderRadius.circular(4),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.02),
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 12),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            // Expense Type Name
+                            Expanded(
+                              flex: 3,
+                              child: Text(
+                                item.expenseTypeName,
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black87,
                                 ),
                               ),
                             ),
-                          ),
-                          const SizedBox(width: 8),
-                          if (settingsProvider.menuIsEditMap[23] == 1)
-                            TextButton(
+
+                            // Status Chip
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: isActive
+                                    ? Colors.green.withOpacity(0.1)
+                                    : Colors.red.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                isActive ? 'Active' : 'Inactive',
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  color:
+                                      isActive ? Colors.green : Colors.red,
+                                ),
+                              ),
+                            ),
+
+                            const SizedBox(width: 16),
+
+                            // Actions
+                            if (settingsProvider.menuIsEditMap[23] == 1 ||
+                                settingsProvider.menuIsViewMap[23] == 1)
+                              TextButton.icon(
                                 onPressed: () {
                                   showDialog(
                                     barrierDismissible: false,
                                     context: context,
                                     builder: (BuildContext context) {
                                       return AddExpenseType(
-                                        editId: settingsProvider
-                                            .expenseTypeList[index]
-                                            .expenseTypeId
-                                            .toString(),
-                                        status: settingsProvider
-                                            .expenseTypeList[index]
-                                            .expenseTypeName,
+                                        editId:
+                                            item.expenseTypeId.toString(),
+                                        status: item.expenseTypeName,
                                         isEdit: true,
                                       );
                                     },
                                   );
                                 },
-                                child: Text(
+                                icon: const Icon(Icons.edit_outlined,
+                                    size: 16, color: AppColors.primaryBlue),
+                                label: Text(
                                   'Edit',
                                   style: GoogleFonts.plusJakartaSans(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                      color: AppColors.primaryBlue),
-                                )),
-                          if (settingsProvider.menuIsDeleteMap[23] == 1)
-                            TextButton(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.primaryBlue,
+                                  ),
+                                ),
+                              ),
+
+                            if (settingsProvider.menuIsDeleteMap[23] == 1 ||
+                                settingsProvider.menuIsViewMap[23] == 1)
+                              TextButton.icon(
                                 onPressed: () {
                                   showDialog(
                                     context: context,
                                     builder: (BuildContext context) {
                                       return AlertDialog(
-                                        title: const Text('Confirm Delete'),
-                                        content: const Text(
-                                            'Are you sure you want to delete?'),
+                                        title: const Text('Confirm Status Change'),
+                                        content: Text(isActive
+                                            ? 'Are you sure you want to de-activate this expense type? (It will be hidden from new expenses)'
+                                            : 'Are you sure you want to delete this expense type?'),
                                         actions: [
                                           TextButton(
                                             onPressed: () =>
@@ -157,18 +220,14 @@ class _ExpenseTypeState extends State<ExpenseType> {
                                           ),
                                           TextButton(
                                             onPressed: () async {
-                                              settingsProvider
-                                                  .deleteExpenseType(
-                                                      context,
-                                                      settingsProvider
-                                                          .expenseTypeList[
-                                                              index]
-                                                          .expenseTypeId);
+                                              settingsProvider.deleteExpenseType(
+                                                  context,
+                                                  item.expenseTypeId);
                                             },
                                             child: const Text(
-                                              'Delete',
-                                              style:
-                                                  TextStyle(color: Colors.red),
+                                              'Confirm',
+                                              style: TextStyle(
+                                                  color: Colors.red),
                                             ),
                                           ),
                                         ],
@@ -176,19 +235,28 @@ class _ExpenseTypeState extends State<ExpenseType> {
                                     },
                                   );
                                 },
-                                child: Text(
-                                  'Delete',
+                                icon: Icon(
+                                  isActive
+                                      ? Icons.block
+                                      : Icons.delete_outline,
+                                  size: 16,
+                                  color: AppColors.textRed,
+                                ),
+                                label: Text(
+                                  isActive ? 'Deactivate' : 'Delete',
                                   style: GoogleFonts.plusJakartaSans(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                      color: AppColors.textRed),
-                                ))
-                        ],
-                      ),
-                    );
-                  },
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.textRed,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
                 ),
-              ),
             ],
           ),
         );
