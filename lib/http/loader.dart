@@ -20,11 +20,11 @@ class Loader {
       useRootNavigator: true,
       builder: (ctx) {
         _currentLoaderContext = ctx;
-        if (_loaderCount <= 0) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            _dismiss();
-          });
-        }
+        // if (_loaderCount <= 0) {
+        //   WidgetsBinding.instance.addPostFrameCallback((_) {
+        //     _dismiss();
+        //   });
+        // }
         return WillPopScope(
           onWillPop: () async => false,
           child: BackdropFilter(
