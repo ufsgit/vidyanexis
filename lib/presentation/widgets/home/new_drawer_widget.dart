@@ -2397,8 +2397,8 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                               ],
                                             ),
                                           )
-                                        else
-                                          const Expanded(child: SizedBox()),
+                                      else
+                                        const Expanded(child: SizedBox()),
                                       ],
                                     ),
                                     // Row 2 Branch, Department, Staff
@@ -2625,8 +2625,8 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                               labelText: '',
                                             ),
                                           )
-                                        else
-                                          const Expanded(child: SizedBox()),
+                                      else
+                                        const Expanded(child: SizedBox()),
                                       ],
                                     ),
                                     // Custom Fields
@@ -2657,7 +2657,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                 ),
                               ],
                             ),
-                          const SizedBox(height: 8),
+                            const SizedBox(height: 250),
                         ],
                       ),
                     ],

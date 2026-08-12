@@ -276,7 +276,8 @@ class DropDownProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void getDistricts(BuildContext context) async {
+  void getDistricts(BuildContext context, {bool forceRefresh = false}) async {
+    if (!forceRefresh && _districtList.isNotEmpty) return;
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -342,7 +343,8 @@ class DropDownProvider extends ChangeNotifier {
     }
   }
 
-  void getStatesDropdown(BuildContext context) async {
+  void getStatesDropdown(BuildContext context, {bool forceRefresh = false}) async {
+    if (!forceRefresh && _stateList.isNotEmpty) return;
     try {
       final response =
           await HttpRequest.httpGetRequest(endPoint: HttpUrls.getStatesDropdown);
@@ -744,7 +746,8 @@ class DropDownProvider extends ChangeNotifier {
   }
 
   Future<void> getEnquirySource(BuildContext context,
-      {bool fetchUserSpecific = false}) async {
+      {bool fetchUserSpecific = false, bool forceRefresh = false}) async {
+    if (!forceRefresh && _enquiryData.isNotEmpty) return;
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -826,7 +829,8 @@ class DropDownProvider extends ChangeNotifier {
   }
 
   Future<void> getEnquiryFor(BuildContext context,
-      {bool fetchUserSpecific = false}) async {
+      {bool fetchUserSpecific = false, bool forceRefresh = false}) async {
+    if (!forceRefresh && _enquiryForList.isNotEmpty) return;
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -896,7 +900,8 @@ class DropDownProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> getFollowUpStatus(BuildContext context, String viewId) async {
+  Future<void> getFollowUpStatus(BuildContext context, String viewId, {bool forceRefresh = false}) async {
+    if (!forceRefresh && _followUpstatus.isNotEmpty) return;
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -994,7 +999,8 @@ class DropDownProvider extends ChangeNotifier {
   }
 
   void getTaskType(BuildContext context,
-      {String enquiryForId = '0', bool fetchUserSpecific = true}) async {
+      {String enquiryForId = '0', bool fetchUserSpecific = true, bool forceRefresh = false}) async {
+    if (!forceRefresh && _taskType.isNotEmpty) return;
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
