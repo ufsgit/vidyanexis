@@ -141,6 +141,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
     }
 
     return AppBar(
+      titleSpacing: 0,
       surfaceTintColor: AppColors.scaffoldColor,
       backgroundColor: widget.backgroundColor ?? AppColors.whiteColor,
       elevation: widget.appBarElevation,
@@ -186,14 +187,17 @@ class _CustomAppBarState extends State<CustomAppBar> {
   }
 
   Widget _defaultTitle() {
-    return Text(
-      widget.title!,
-      overflow: TextOverflow.ellipsis,
-      style: widget.titleStyle ??
-          const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      alignment: Alignment.centerLeft,
+      child: Text(
+        widget.title!,
+        style: widget.titleStyle ??
+            const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+      ),
     );
   }
 
