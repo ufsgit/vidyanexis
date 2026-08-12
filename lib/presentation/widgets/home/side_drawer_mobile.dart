@@ -51,7 +51,6 @@ import 'package:vidyanexis/presentation/pages/reports/solar_lead_report_page.dar
 import 'package:vidyanexis/presentation/pages/reports/lead_status_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/stock_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/work_completion_report_screen.dart';
-import 'package:vidyanexis/presentation/pages/reports/staff_attendance_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/commission_report_mobile.dart';
 import 'package:vidyanexis/presentation/pages/reports/sub_contract_report_mobile.dart';
 import 'package:vidyanexis/presentation/pages/reports/receipt_report_page.dart';
@@ -59,6 +58,7 @@ import 'package:vidyanexis/presentation/pages/reports/customer_outstanding_repor
 import 'package:vidyanexis/presentation/pages/reports/stock_use_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/sales_report_screen_phone.dart';
 import 'package:vidyanexis/presentation/pages/reports/customer_task_month_report_screen.dart';
+import 'package:vidyanexis/presentation/pages/reports/duplicate_entry_attempts_report_screen.dart';
 
 class SidebarDrawer extends StatefulWidget {
   const SidebarDrawer({super.key});
@@ -141,11 +141,10 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
         },
       if (settingsProvider.menuIsViewMap[26].toString() == '1')
         {'title': 'Attendance Reports', 'page': const AttendanceReport()},
-      if (settingsProvider.menuIsViewMap[26].toString() == '1' ||
-          (settingsProvider.menuIsViewMap[201] ?? 1).toString() == '1')
+      if (settingsProvider.hasTravelAllowancePermission)
         {'title': 'Travel Allowance', 'page': const TravelAllowancePage()},
-      if (settingsProvider.menuIsViewMap[26].toString() == '1' ||
-          (settingsProvider.menuIsViewMap[201] ?? 1).toString() == '1')
+      if ((settingsProvider.menuIsViewMap[26] ?? 0).toString() == '1' ||
+          (settingsProvider.menuIsViewMap[201] ?? 0).toString() == '1')
         {'title': 'TA Reports', 'page': const TAReportScreen()},
       if (settingsProvider.menuIsViewMap[96].toString() == '1')
         {'title': 'Check-in Reports', 'page': const LeadCheckInReportScreen()},
@@ -223,6 +222,10 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
           'title': 'Accounts Summary Reports',
           'page': const AccountsSummaryPageReport()
         },
+      {
+        'title': 'Duplicate Entry Reports',
+        'page': const DuplicateEntryAttemptsReportScreen()
+      },
     ];
 
     Future<String> getUserName() async {
@@ -250,7 +253,6 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
               physics: const BouncingScrollPhysics(),
               children: [
                 const SizedBox(height: 12),
-                _buildSectionTitle('MAIN MENU'),
                 if (settingsProvider.menuIsViewMap[29].toString() == '1')
                   _buildModernMenuItem(
                     context: context,
@@ -281,16 +283,12 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
                     activeColor: const Color(0xFFFF9D6E), // Orange
                     lightColor: const Color(0xFFFFF1E8),
                   ),
-                const SizedBox(height: 16),
-                _buildSectionTitle('ANALYSIS'),
                 if (reportItems.isNotEmpty)
                   _buildReportsExpansionTile(
                     context: context,
                     reportItems: reportItems,
                     sideProvider: sideProvider,
                   ),
-                const SizedBox(height: 16),
-                _buildSectionTitle('OTHERS'),
                 if (settingsProvider.menuIsViewMap[2].toString() == '1')
                   _buildModernMenuItem(
                     context: context,
@@ -301,7 +299,9 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
                     activeColor: const Color(0xFF48BB78), // Green
                     lightColor: const Color(0xFFEDF7ED),
                   ),
-                const SizedBox(height: 32),
+                const SizedBox(height: 8),
+                _buildLogoutButton(context),
+                const SizedBox(height: 24),
               ],
             ),
           ),
@@ -316,12 +316,12 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
   Widget _buildHeader(SettingsProvider settingsProvider,
       Future<String> Function() getUserName) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(24, 60, 24, 24),
+      padding: const EdgeInsets.fromLTRB(20, 48, 20, 14),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(32),
-          bottomRight: Radius.circular(32),
+          bottomLeft: Radius.circular(24),
+          bottomRight: Radius.circular(24),
         ),
         boxShadow: [
           BoxShadow(
@@ -331,102 +331,71 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
           ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
         children: [
-          Row(
-            children: [
-              Container(
-                height: 50,
-                width: 50,
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF7B61FF), Color(0xFF63B3ED)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(4),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xFF7B61FF).withOpacity(0.3),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: const Center(
-                  child:
-                      Icon(Icons.person_rounded, color: Colors.white, size: 28),
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    FutureBuilder<String>(
-                      future: getUserName(),
-                      builder: (context, snapshot) {
-                        return Text(
-                          snapshot.data ?? 'Admin',
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w800,
-                            color: const Color(0xFF172230),
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        );
-                      },
-                    ),
-                    Text(
-                      'Welcome Back!',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.grey[500],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 24),
-          Center(
-            child: Opacity(
-              opacity: 0.8,
-              child: settingsProvider.displayLogo.startsWith('http')
-                  ? Image.network(
-                      settingsProvider.displayLogo,
+          SizedBox(
+            height: 40,
+            width: 40,
+            child: settingsProvider.displayLogo.startsWith('http')
+                ? Image.network(
+                    settingsProvider.displayLogo,
+                    height: 40,
+                    width: 40,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) => Image.asset(
+                      AppStyles.logo(),
                       height: 40,
+                      width: 40,
+                      fit: BoxFit.contain,
+                    ),
+                  )
+                : Image.asset(
+                    settingsProvider.displayLogo,
+                    height: 40,
+                    width: 40,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) => Image.asset(
+                      AppStyles.logo(),
+                      height: 40,
+                      width: 40,
                       fit: BoxFit.contain,
                       errorBuilder: (context, error, stackTrace) =>
-                          Image.asset(AppStyles.logo(), height: 40),
-                    )
-                  : Image.asset(
-                      settingsProvider.displayLogo,
-                      height: 40,
-                      fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) => Container(),
+                          const SizedBox.shrink(),
                     ),
+                  ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                FutureBuilder<String>(
+                  future: getUserName(),
+                  builder: (context, snapshot) {
+                    return Text(
+                      snapshot.data ?? 'Admin',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w800,
+                        color: const Color(0xFF172230),
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    );
+                  },
+                ),
+                Text(
+                  'Welcome Back!',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey[500],
+                  ),
+                ),
+              ],
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildSectionTitle(String title) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 8, bottom: 8, top: 8),
-      child: Text(
-        title,
-        style: GoogleFonts.plusJakartaSans(
-          fontSize: 11,
-          fontWeight: FontWeight.w800,
-          color: Colors.grey[400],
-          letterSpacing: 1.2,
-        ),
       ),
     );
   }
@@ -557,59 +526,59 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
     );
   }
 
+  Widget _buildLogoutButton(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => _handleLogout(context),
+        borderRadius: BorderRadius.circular(4),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          decoration: BoxDecoration(
+            border: Border.all(
+                color: const Color(0xFFFF3B30).withOpacity(0.2)),
+            borderRadius: BorderRadius.circular(4),
+            color: const Color(0xFFFF3B30).withOpacity(0.05),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.logout_rounded,
+                  color: Color(0xFFFF3B30), size: 20),
+              const SizedBox(width: 12),
+              Text(
+                'Logout',
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                  color: const Color(0xFFFF3B30),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildFooter(BuildContext context, PackageInfo? packageInfo) {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
       decoration: BoxDecoration(
         color: Colors.white,
         border: Border(top: BorderSide(color: Colors.grey[100]!)),
       ),
-      child: Column(
-        children: [
-          Material(
-            color: Colors.transparent,
-            child: InkWell(
-              onTap: () => _handleLogout(context),
-              borderRadius: BorderRadius.circular(4),
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                      color: const Color(0xFFFF3B30).withOpacity(0.2)),
-                  borderRadius: BorderRadius.circular(4),
-                  color: const Color(0xFFFF3B30).withOpacity(0.05),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.logout_rounded,
-                        color: Color(0xFFFF3B30), size: 20),
-                    const SizedBox(width: 12),
-                    Text(
-                      'Logout',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
-                        color: const Color(0xFFFF3B30),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+      child: Center(
+        child: Text(
+          packageInfo != null
+              ? "v${packageInfo.version} (${packageInfo.buildNumber})"
+              : "v1.0.0",
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+            color: Colors.grey[400],
           ),
-          const SizedBox(height: 16),
-          Text(
-            packageInfo != null
-                ? "v${packageInfo.version} (${packageInfo.buildNumber})"
-                : "v1.0.0",
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-              color: Colors.grey[400],
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

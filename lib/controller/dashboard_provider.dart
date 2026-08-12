@@ -18,6 +18,7 @@ import 'package:vidyanexis/http/loader.dart';
 
 import 'package:vidyanexis/controller/warrenty_report_provider.dart';
 import 'package:vidyanexis/controller/travel_allowance_provider.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/foundation.dart';
 
@@ -89,6 +90,7 @@ class DashboardProvider extends ChangeNotifier {
   bool isUserActivityLoaded = false;
   bool isAttendanceDashboardLoaded = false;
   UserActivityReportModel? userActivityReport;
+  String userActivityDateType = 'TaskType'; // Default or as per requirement
 
   String? selectedTaskFilterType;
   List<Map<String, dynamic>>? adminDashboardTasks;
@@ -668,8 +670,10 @@ class DashboardProvider extends ChangeNotifier {
         break;
       case 10: // Travel Allowance
         try {
-          Provider.of<TravelAllowanceProvider>(context, listen: false)
-              .fetchTAList(context: context);
+          if (SettingsProvider().hasTravelAllowancePermission) {
+            Provider.of<TravelAllowanceProvider>(context, listen: false)
+                .fetchTAList(context: context);
+          }
         } catch (_) {}
         break;
     }
@@ -913,6 +917,7 @@ class DashboardProvider extends ChangeNotifier {
   }
 
   void clearDashboardFlags() {
+    _tabIndex = 0;
     isLeadLoaded = false;
     isWorkLoaded = false;
     isCustomerLoaded = false;
@@ -1075,9 +1080,12 @@ class DashboardProvider extends ChangeNotifier {
           bodyData: {
             "From_Date": _formattedFromDate,
             "To_Date": _formattedToDate,
+            "Is_Date": _formattedFromDate.isNotEmpty ? 1 : 0,
             "User_Id": _selectedUser == 0 ? null : _selectedUser,
             "Department_Id": null,
             "Task_Status_Id": null,
+            if (userActivityDateType == 'Estimated') "Date_Type": "Estimated_Completion_Date"
+            else "Date_Type": "Task_Date",
           });
 
       if (response.statusCode == 200) {
@@ -1096,6 +1104,17 @@ class DashboardProvider extends ChangeNotifier {
     if (shouldNotify) notifyListeners();
   }
 
+  void setUserActivityDateType(BuildContext context, String type) {
+    if (userActivityDateType != type) {
+      userActivityDateType = type;
+      notifyListeners();
+      fetchUserActivityData(context);
+      if (selectedTaskFilterType != null) {
+        fetchAdminDashboardTaskList(selectedTaskFilterType!);
+      }
+    }
+  }
+
   Future<void> fetchAdminDashboardTaskList(String filterType, {int? userId}) async {
     selectedTaskFilterType = filterType;
     isAdminDashboardTasksLoading = true;
@@ -1107,10 +1126,12 @@ class DashboardProvider extends ChangeNotifier {
           bodyData: {
             "From_Date": _formattedFromDate,
             "To_Date": _formattedToDate,
-            "Is_Date": 1,
+            "Is_Date": _formattedFromDate.isNotEmpty ? 1 : 0,
             "User_Id": userId ?? (_selectedUser == 0 ? 0 : _selectedUser),
             "Department_Id": 0,
             "Filter_Type": filterType,
+            if (userActivityDateType == 'Estimated') "Date_Type": "Estimated_Completion_Date"
+            else "Date_Type": "Task_Date",
           });
 
       if (response.statusCode == 200) {

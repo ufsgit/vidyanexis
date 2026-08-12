@@ -631,10 +631,47 @@ class TaskPageProvider extends ChangeNotifier {
   }
 
   void setSortOption(int option, BuildContext context) {
-    _selectedSortOption = option;
+    switch (option) {
+      case 0:
+        _selectedSortOption = 0;
+        _sortOrder = 'DESC';
+        break;
+      case 1:
+        _selectedSortOption = 1;
+        _sortOrder = 'DESC';
+        break;
+      case 2:
+        _selectedSortOption = 1;
+        _sortOrder = 'ASC';
+        break;
+      case 3:
+        _selectedSortOption = 2;
+        _sortOrder = 'DESC';
+        break;
+      case 4:
+        _selectedSortOption = 2;
+        _sortOrder = 'ASC';
+        break;
+      case 5:
+        _selectedSortOption = 3;
+        _sortOrder = 'DESC';
+        break;
+      case 6:
+        _selectedSortOption = 3;
+        _sortOrder = 'ASC';
+        break;
+      case 7:
+        _selectedSortOption = 4;
+        _sortOrder = 'ASC';
+        break;
+      case 8:
+        _selectedSortOption = 4;
+        _sortOrder = 'DESC';
+        break;
+    }
     _pageIndex = 1;
-    searchTaskByCustomer(context);
     notifyListeners();
+    searchTaskByCustomer(context);
   }
 
   String _sortOrder = 'DESC'; // ASC or DESC
@@ -742,9 +779,11 @@ class TaskPageProvider extends ChangeNotifier {
         _Branch_Id = '0';
       }
 
+      int apiSortOption = _selectedSortOption == 4 ? 0 : _selectedSortOption;
+
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchTaskByCustomer}?Customer_Name=$_Search&Task_Status_Id=$_Status&To_User=$toUserId&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&Task_Type_Id=$_TaskType&Enquiry_For_Id=$_enquiryForS&Branch_Id=$_Branch_Id&Page_Index=$_pageIndex&PageSize=$_pageSize&Order_By_=$_selectedSortOption&Order_Type_=$_sortOrder&Entry_Type_=$_entryType&Priority_Id_=$_selectedPriority');
+              '${HttpUrls.searchTaskByCustomer}?Customer_Name=$_Search&Task_Status_Id=$_Status&To_User=$toUserId&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&Task_Type_Id=$_TaskType&Enquiry_For_Id=$_enquiryForS&Branch_Id=$_Branch_Id&Page_Index=$_pageIndex&PageSize=$_pageSize&Order_By_=$apiSortOption&Order_Type_=$_sortOrder&Entry_Type_=$_entryType&Priority_Id_=$_selectedPriority');
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -778,6 +817,33 @@ class TaskPageProvider extends ChangeNotifier {
           } else {
             // For web or first page load (e.g. filter change), replace the entire list
             _taskReport = newTasks;
+          }
+
+          // Apply local sorting to guarantee proper ordering
+          if (_selectedSortOption == 1) {
+            if (_sortOrder == 'ASC') {
+              _taskReport.sort((a, b) => a.taskId.compareTo(b.taskId));
+            } else {
+              _taskReport.sort((a, b) => b.taskId.compareTo(a.taskId));
+            }
+          } else if (_selectedSortOption == 2) {
+            if (_sortOrder == 'ASC') {
+              _taskReport.sort((a, b) => (a.entryDate).compareTo(b.entryDate));
+            } else {
+              _taskReport.sort((a, b) => (b.entryDate).compareTo(a.entryDate));
+            }
+          } else if (_selectedSortOption == 3) {
+            if (_sortOrder == 'ASC') {
+              _taskReport.sort((a, b) => (a.nextFollowupDate ?? '').compareTo(b.nextFollowupDate ?? ''));
+            } else {
+              _taskReport.sort((a, b) => (b.nextFollowupDate ?? '').compareTo(a.nextFollowupDate ?? ''));
+            }
+          } else if (_selectedSortOption == 4) {
+            if (_sortOrder == 'ASC') {
+              _taskReport.sort((a, b) => a.customerName.toLowerCase().compareTo(b.customerName.toLowerCase()));
+            } else {
+              _taskReport.sort((a, b) => b.customerName.toLowerCase().compareTo(a.customerName.toLowerCase()));
+            }
           }
         }
         if (isShowLoader) Loader.stopLoader(context);

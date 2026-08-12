@@ -29,9 +29,13 @@ class _TADetailsDialogState extends State<TADetailsDialog> {
     final taProvider = Provider.of<TravelAllowanceProvider>(context);
     final settingsProvider = Provider.of<SettingsProvider>(context);
     // TA Approval is strictly controlled by existing Report Permission (menuIsViewMap 26/201)
-    final bool canApprove = (settingsProvider.menuIsViewMap[26] ?? 0).toString() == '1' ||
-        (settingsProvider.menuIsViewMap[201] ?? 0).toString() == '1';
+    final bool canApprove =
+        (settingsProvider.menuIsViewMap[26] ?? 0).toString() == '1' ||
+            (settingsProvider.menuIsViewMap[201] ?? 0).toString() == '1';
     final model = widget.model;
+    final String currentStatus = (model.status ?? 'Pending').toLowerCase();
+    final bool isPending = currentStatus == 'pending';
+    final bool isApproved = currentStatus == 'approved';
 
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -54,7 +58,8 @@ class _TADetailsDialogState extends State<TADetailsDialog> {
                         color: model.statusColor.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: Icon(model.travelModeIcon, color: model.statusColor, size: 24),
+                      child: Icon(model.travelModeIcon,
+                          color: model.statusColor, size: 24),
                     ),
                     const SizedBox(width: 12),
                     Column(
@@ -68,7 +73,7 @@ class _TADetailsDialogState extends State<TADetailsDialog> {
                           ),
                         ),
                         Text(
-                          'Submitted by ${model.userName ?? 'Employee'} on ${model.travelDate ?? ''}',
+                          'Submitted by ${model.userName ?? 'Employee'} on ${model.formattedTravelDate}',
                           style: GoogleFonts.plusJakartaSans(
                             fontSize: 12,
                             color: Colors.grey[600],
@@ -79,11 +84,13 @@ class _TADetailsDialogState extends State<TADetailsDialog> {
                   ],
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
                     color: model.statusColor.withOpacity(0.12),
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: model.statusColor.withOpacity(0.3)),
+                    border:
+                        Border.all(color: model.statusColor.withOpacity(0.3)),
                   ),
                   child: Text(
                     model.status ?? 'Pending',
@@ -117,11 +124,14 @@ class _TADetailsDialogState extends State<TADetailsDialog> {
                       child: Row(
                         children: [
                           Expanded(
-                            child: _buildInfoItem('From', model.fromLocation ?? '-'),
+                            child: _buildInfoItem(
+                                'From', model.fromLocation ?? '-'),
                           ),
-                          const Icon(Icons.arrow_forward_rounded, color: AppColors.secondaryBlue, size: 20),
+                          const Icon(Icons.arrow_forward_rounded,
+                              color: AppColors.secondaryBlue, size: 20),
                           Expanded(
-                            child: _buildInfoItem('To', model.toLocation ?? '-', alignRight: true),
+                            child: _buildInfoItem('To', model.toLocation ?? '-',
+                                alignRight: true),
                           ),
                         ],
                       ),
@@ -129,7 +139,8 @@ class _TADetailsDialogState extends State<TADetailsDialog> {
                     const SizedBox(height: 16),
 
                     // Metrics Grid
-                    _buildSectionHeader('Distance & Expenses Breakdown', Icons.calculate_rounded),
+                    _buildSectionHeader('Distance & Expenses Breakdown',
+                        Icons.calculate_rounded),
                     const SizedBox(height: 8),
                     Wrap(
                       spacing: 12,
@@ -173,7 +184,8 @@ class _TADetailsDialogState extends State<TADetailsDialog> {
                     const SizedBox(height: 16),
 
                     if ((model.otherExpenseRemark ?? '').isNotEmpty) ...[
-                      _buildInfoItem('Other Expense Breakdown', model.otherExpenseRemark!),
+                      _buildInfoItem(
+                          'Other Expense Breakdown', model.otherExpenseRemark!),
                       const SizedBox(height: 12),
                     ],
 
@@ -184,7 +196,8 @@ class _TADetailsDialogState extends State<TADetailsDialog> {
 
                     // Attachment Link
                     if ((model.attachmentUrl ?? '').isNotEmpty) ...[
-                      _buildSectionHeader('Attached Receipt', Icons.attach_file_rounded),
+                      _buildSectionHeader(
+                          'Attached Receipt', Icons.attach_file_rounded),
                       const SizedBox(height: 6),
                       InkWell(
                         onTap: () async {
@@ -202,7 +215,8 @@ class _TADetailsDialogState extends State<TADetailsDialog> {
                           ),
                           child: Row(
                             children: [
-                              const Icon(Icons.description_rounded, color: AppColors.secondaryBlue),
+                              const Icon(Icons.description_rounded,
+                                  color: AppColors.secondaryBlue),
                               const SizedBox(width: 10),
                               Expanded(
                                 child: Text(
@@ -215,7 +229,8 @@ class _TADetailsDialogState extends State<TADetailsDialog> {
                                   ),
                                 ),
                               ),
-                              const Icon(Icons.open_in_new_rounded, size: 16, color: AppColors.secondaryBlue),
+                              const Icon(Icons.open_in_new_rounded,
+                                  size: 16, color: AppColors.secondaryBlue),
                             ],
                           ),
                         ),
@@ -226,28 +241,51 @@ class _TADetailsDialogState extends State<TADetailsDialog> {
                     // Approval History / Decision Audit Trail
                     if ((model.status ?? '').toLowerCase() == 'approved') ...[
                       const Divider(height: 24),
-                      _buildSectionHeader('Approval History', Icons.verified_user_rounded),
+                      _buildSectionHeader(
+                          'Approval History', Icons.verified_user_rounded),
                       const SizedBox(height: 8),
                       Row(
                         children: [
-                          Expanded(child: _buildInfoItem('Approved By', (model.approvedBy ?? '').isNotEmpty ? model.approvedBy! : 'Admin / Manager')),
+                          Expanded(
+                              child: _buildInfoItem(
+                                  'Approved By',
+                                  (model.approvedBy ?? '').isNotEmpty
+                                      ? model.approvedBy!
+                                      : 'Admin / Manager')),
                           const SizedBox(width: 12),
-                          Expanded(child: _buildInfoItem('Approved Date/Time', (model.approvedAt ?? '').isNotEmpty ? model.approvedAt! : (model.createdDate ?? '-'))),
+                          Expanded(
+                              child: _buildInfoItem(
+                                  'Approved Date/Time',
+                                  (model.approvedAt ?? '').isNotEmpty
+                                      ? model.approvedAt!
+                                      : (model.createdDate ?? '-'))),
                         ],
                       ),
                       if ((model.adminRemark ?? '').isNotEmpty) ...[
                         const SizedBox(height: 8),
                         _buildInfoItem('Approval Remarks', model.adminRemark!),
                       ],
-                    ] else if ((model.status ?? '').toLowerCase() == 'rejected') ...[
+                    ] else if ((model.status ?? '').toLowerCase() ==
+                        'rejected') ...[
                       const Divider(height: 24),
-                      _buildSectionHeader('Rejection History', Icons.report_problem_rounded),
+                      _buildSectionHeader(
+                          'Rejection History', Icons.report_problem_rounded),
                       const SizedBox(height: 8),
                       Row(
                         children: [
-                          Expanded(child: _buildInfoItem('Rejected By', (model.approvedBy ?? '').isNotEmpty ? model.approvedBy! : 'Admin / Manager')),
+                          Expanded(
+                              child: _buildInfoItem(
+                                  'Rejected By',
+                                  (model.approvedBy ?? '').isNotEmpty
+                                      ? model.approvedBy!
+                                      : 'Admin / Manager')),
                           const SizedBox(width: 12),
-                          Expanded(child: _buildInfoItem('Rejected Date/Time', (model.approvedAt ?? '').isNotEmpty ? model.approvedAt! : (model.createdDate ?? '-'))),
+                          Expanded(
+                              child: _buildInfoItem(
+                                  'Rejected Date/Time',
+                                  (model.approvedAt ?? '').isNotEmpty
+                                      ? model.approvedAt!
+                                      : (model.createdDate ?? '-'))),
                         ],
                       ),
                       if ((model.adminRemark ?? '').isNotEmpty) ...[
@@ -256,95 +294,112 @@ class _TADetailsDialogState extends State<TADetailsDialog> {
                       ],
                     ],
 
-                    // Approval Action Section (If user has Report Permission)
-                    if (canApprove) ...[
+                    // Approval Action Section (If user has Report Permission and status is actionable)
+                    if (canApprove && (isPending || isApproved)) ...[
                       const Divider(height: 24),
-                      _buildSectionHeader('Admin Decision & Remarks', Icons.admin_panel_settings_rounded),
+                      _buildSectionHeader('Admin Decision & Remarks',
+                          Icons.admin_panel_settings_rounded),
                       const SizedBox(height: 8),
                       TextField(
                         controller: remarkController,
                         maxLines: 2,
                         decoration: InputDecoration(
-                          hintText: 'Enter approval/rejection remarks or payment reference details...',
+                          hintText: isPending
+                              ? 'Enter approval/rejection remarks...'
+                              : 'Enter payment reference details or remarks...',
                           hintStyle: GoogleFonts.plusJakartaSans(fontSize: 12),
                           filled: true,
                           fillColor: Colors.grey[50],
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8)),
                           contentPadding: const EdgeInsets.all(12),
                         ),
                       ),
                       const SizedBox(height: 12),
                       Row(
                         children: [
-                          Expanded(
-                            child: ElevatedButton.icon(
-                              onPressed: () async {
-                                await taProvider.updateTAStatus(
-                                  context,
-                                  model.taId!,
-                                  'Approved',
-                                  remark: remarkController.text.trim(),
-                                );
-                                if (mounted) Navigator.of(context).pop();
-                              },
-                              icon: const Icon(Icons.check_circle_rounded, size: 18),
-                              label: const Text('Approve'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF16A34A),
-                                foregroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: ElevatedButton.icon(
-                              onPressed: () async {
-                                final remarkText = remarkController.text.trim();
-                                if (remarkText.isEmpty) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(content: Text('Please enter a rejection reason in the remarks field.')),
+                          if (isPending) ...[
+                            Expanded(
+                              child: ElevatedButton.icon(
+                                onPressed: () async {
+                                  final nav = Navigator.of(context);
+                                  final success = await taProvider.updateTAStatus(
+                                    context,
+                                    model.taId!,
+                                    'Approved',
+                                    remark: remarkController.text.trim(),
                                   );
-                                  return;
-                                }
-                                await taProvider.updateTAStatus(
-                                  context,
-                                  model.taId!,
-                                  'Rejected',
-                                  remark: remarkText,
-                                );
-                                if (mounted) Navigator.of(context).pop();
-                              },
-                              icon: const Icon(Icons.cancel_rounded, size: 18),
-                              label: const Text('Reject'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFFDC2626),
-                                foregroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                  if (success && mounted) nav.pop();
+                                },
+                                icon: const Icon(Icons.check_circle_rounded,
+                                    size: 18),
+                                label: const Text('Approve'),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF16A34A),
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8)),
+                                ),
                               ),
                             ),
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: ElevatedButton.icon(
-                              onPressed: () async {
-                                await taProvider.updateTAStatus(
-                                  context,
-                                  model.taId!,
-                                  'Paid',
-                                  remark: remarkController.text.trim(),
-                                );
-                                if (mounted) Navigator.of(context).pop();
-                              },
-                              icon: const Icon(Icons.task_alt_rounded, size: 18),
-                              label: const Text('Mark Paid'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF2563EB),
-                                foregroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: ElevatedButton.icon(
+                                onPressed: () async {
+                                  final nav = Navigator.of(context);
+                                  final remarkText = remarkController.text.trim();
+                                  if (remarkText.isEmpty) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content: Text(
+                                              'Please enter a rejection reason in the remarks field.')),
+                                    );
+                                    return;
+                                  }
+                                  final success = await taProvider.updateTAStatus(
+                                    context,
+                                    model.taId!,
+                                    'Rejected',
+                                    remark: remarkText,
+                                  );
+                                  if (success && mounted) nav.pop();
+                                },
+                                icon: const Icon(Icons.cancel_rounded, size: 18),
+                                label: const Text('Reject'),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFFDC2626),
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8)),
+                                ),
                               ),
                             ),
-                          ),
+                          ],
+                          if (isApproved) ...[
+                            Expanded(
+                              child: ElevatedButton.icon(
+                                onPressed: () async {
+                                  final nav = Navigator.of(context);
+                                  final success = await taProvider.updateTAStatus(
+                                    context,
+                                    model.taId!,
+                                    'Paid',
+                                    remark: remarkController.text.trim(),
+                                  );
+                                  if (success && mounted) nav.pop();
+                                },
+                                icon:
+                                    const Icon(Icons.task_alt_rounded, size: 18),
+                                label: const Text('Mark Paid'),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF2563EB),
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8)),
+                                ),
+                              ),
+                            ),
+                          ],
                         ],
                       ),
                     ],
@@ -358,7 +413,9 @@ class _TADetailsDialogState extends State<TADetailsDialog> {
               alignment: Alignment.centerRight,
               child: TextButton(
                 onPressed: () => Navigator.of(context).pop(),
-                child: Text('Close', style: GoogleFonts.plusJakartaSans(fontSize: 13, fontWeight: FontWeight.bold)),
+                child: Text('Close',
+                    style: GoogleFonts.plusJakartaSans(
+                        fontSize: 13, fontWeight: FontWeight.bold)),
               ),
             ),
           ],
@@ -386,16 +443,19 @@ class _TADetailsDialogState extends State<TADetailsDialog> {
 
   Widget _buildInfoItem(String label, String value, {bool alignRight = false}) {
     return Column(
-      crossAxisAlignment: alignRight ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      crossAxisAlignment:
+          alignRight ? CrossAxisAlignment.end : CrossAxisAlignment.start,
       children: [
         Text(
           label,
-          style: GoogleFonts.plusJakartaSans(fontSize: 11, color: Colors.grey[600]),
+          style: GoogleFonts.plusJakartaSans(
+              fontSize: 11, color: Colors.grey[600]),
         ),
         const SizedBox(height: 2),
         Text(
           value,
-          style: GoogleFonts.plusJakartaSans(fontSize: 13, fontWeight: FontWeight.w600),
+          style: GoogleFonts.plusJakartaSans(
+              fontSize: 13, fontWeight: FontWeight.w600),
         ),
       ],
     );
@@ -409,7 +469,8 @@ class _TADetailsDialogState extends State<TADetailsDialog> {
       decoration: BoxDecoration(
         color: (color ?? Colors.grey[700]!).withOpacity(0.06),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: (color ?? Colors.grey[300]!).withOpacity(0.2)),
+        border:
+            Border.all(color: (color ?? Colors.grey[300]!).withOpacity(0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -421,7 +482,8 @@ class _TADetailsDialogState extends State<TADetailsDialog> {
               Expanded(
                 child: Text(
                   label,
-                  style: GoogleFonts.plusJakartaSans(fontSize: 11, color: Colors.grey[600]),
+                  style: GoogleFonts.plusJakartaSans(
+                      fontSize: 11, color: Colors.grey[600]),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),

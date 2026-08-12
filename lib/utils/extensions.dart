@@ -238,36 +238,52 @@ extension DateStringFormatter on String {
   String toDayMonthYearFormat() {
     if (isEmpty) return this;
 
+    final trimmed = trim();
+    if (trimmed.isEmpty) return this;
+
+    // Check if string is already formatted as "dd MMM yyyy" or "d MMM yyyy"
+    try {
+      final parsed = DateFormat('dd MMM yyyy').parseStrict(trimmed);
+      return DateFormat('dd MMM yyyy').format(parsed);
+    } catch (_) {}
+    try {
+      final parsed = DateFormat('d MMM yyyy').parseStrict(trimmed);
+      return DateFormat('dd MMM yyyy').format(parsed);
+    } catch (_) {}
+
     try {
       DateTime date;
 
-      // Check if string contains time component (has a space or 'T' separator)
-      if (contains(' ') || contains('T')) {
-        String dateStr =
-            split(RegExp(r'[ T]'))[0]; // Extract only the date part
-        date = DateTime.parse(dateStr);
+      // Handle strings with time components or ISO T/space separator
+      if (trimmed.contains('T') || (trimmed.contains(' ') && trimmed.contains('-'))) {
+        String dateStr = trimmed.split(RegExp(r'[ T]'))[0];
+        if (RegExp(r'^\d{2}-\d{2}-\d{4}$').hasMatch(dateStr)) {
+          List<String> parts = dateStr.split('-');
+          date = DateTime.parse('${parts[2]}-${parts[1]}-${parts[0]}');
+        } else {
+          date = DateTime.parse(dateStr);
+        }
       }
       // Handle time in format "HH:mm:ss" (just time, no date)
-      else if (contains(':') && !contains('-')) {
-        return this; // Return as it is if it's just a time
+      else if (trimmed.contains(':') && !trimmed.contains('-')) {
+        return this;
       }
       // Handle DD-MM-YYYY format
-      else if (RegExp(r'^\d{2}-\d{2}-\d{4}$').hasMatch(this)) {
-        List<String> parts = split('-');
-        date = DateTime.parse(
-            '${parts[2]}-${parts[1]}-${parts[0]}'); // Convert to YYYY-MM-DD
+      else if (RegExp(r'^\d{2}-\d{2}-\d{4}$').hasMatch(trimmed)) {
+        List<String> parts = trimmed.split('-');
+        date = DateTime.parse('${parts[2]}-${parts[1]}-${parts[0]}');
       }
-      // Parse date from ISO format (YYYY-MM-DD)
-      else if (contains('-')) {
-        date = DateTime.parse(this);
+      // Handle YYYY-MM-DD or other standard ISO format
+      else if (trimmed.contains('-')) {
+        date = DateTime.parse(trimmed);
       } else {
-        return this; // If the format is unknown, return original string
+        return this;
       }
 
-      return DateFormat('dd MMM yyyy').format(date); // Convert to "28 May 2024"
+      return DateFormat('dd MMM yyyy').format(date);
     } catch (e) {
       print('Error formatting date: $e | Input: $this');
-      return this; // Return original string if parsing fails
+      return this;
     }
   }
 

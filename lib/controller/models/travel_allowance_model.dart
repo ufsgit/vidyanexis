@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vidyanexis/utils/extensions.dart';
 
 class TravelAllowanceModel {
   int? taId;
@@ -191,6 +192,11 @@ class TravelAllowanceModel {
       'deleteStatus': deleteStatus ?? '0',
       'Delete_Status': deleteStatus ?? '0',
     };
+  }
+
+  String get formattedTravelDate {
+    if (travelDate == null || travelDate!.trim().isEmpty) return '-';
+    return travelDate!.toDayMonthYearFormat();
   }
 
   double get computedTotalKm {

@@ -43,7 +43,13 @@ class _UserActivityTabState extends State<UserActivityTab> {
             _buildSummarySection(context, report),
             const SizedBox(height: 32),
           ],
-          _buildSectionTitle('Staff Activity Report'),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _buildSectionTitle('Staff Activity Report'),
+              _buildFilterSwitchButton(context),
+            ],
+          ),
           const SizedBox(height: 12),
           _buildUserReportTable(report.userReport ?? []),
         ],
@@ -145,6 +151,48 @@ class _UserActivityTabState extends State<UserActivityTab> {
             ),
           ],
         ),
+      ],
+    );
+  }
+
+  Widget _buildFilterSwitchButton(BuildContext context) {
+    final dashBoardProvider = Provider.of<DashboardProvider>(context);
+    final activeFilter = dashBoardProvider.userActivityDateType;
+
+    Widget buildOption(String title, String value) {
+      final isActive = activeFilter == value;
+      return MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: () {
+            dashBoardProvider.setUserActivityDateType(context, value);
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              border: isActive
+                  ? const Border(bottom: BorderSide(color: Colors.blue, width: 2))
+                  : const Border(bottom: BorderSide(color: Colors.transparent, width: 2)),
+            ),
+            child: Text(
+              title.toUpperCase(),
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 14,
+                fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
+                color: isActive ? Colors.blue : Colors.grey,
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        buildOption('TaskDate', 'TaskDate'),
+        const SizedBox(width: 8),
+        buildOption('Estimated', 'Estimated'),
       ],
     );
   }

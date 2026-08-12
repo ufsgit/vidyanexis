@@ -47,9 +47,11 @@ class _DashBoardPageState extends State<DashBoardPage> {
   @override
   void initState() {
     super.initState();
+    final dashBoardProvider =
+        Provider.of<DashboardProvider>(context, listen: false);
+    dashBoardProvider.changeTab(0);
+
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final dashBoardProvider =
-          Provider.of<DashboardProvider>(context, listen: false);
       final dropDownProvider =
           Provider.of<DropDownProvider>(context, listen: false);
       final settingsProvider =
@@ -85,8 +87,8 @@ class _DashBoardPageState extends State<DashBoardPage> {
         if ((settingsProvider.menuIsViewMap[152] ?? 1).toString() != '0') 7,
         if (userType == "1") 8,
         if (userType == "1") 9,
-        if ((settingsProvider.menuIsViewMap[26] ?? 1).toString() != '0' ||
-            (settingsProvider.menuIsViewMap[201] ?? 1).toString() != '0') 10,
+        if (settingsProvider.hasTravelAllowancePermission)
+          10,
       ];
 
       if (allowedTabs.isNotEmpty) {
@@ -125,8 +127,8 @@ class _DashBoardPageState extends State<DashBoardPage> {
       if ((settingsProvider.menuIsViewMap[152] ?? 1).toString() != '0') 7,
       if (userType == "1") 8,
       if (userType == "1") 9,
-      if ((settingsProvider.menuIsViewMap[26] ?? 1).toString() != '0' ||
-          (settingsProvider.menuIsViewMap[201] ?? 1).toString() != '0') 10,
+      if (settingsProvider.hasTravelAllowancePermission)
+        10,
     ];
 
     Widget dateFilterBtn = Material(
@@ -306,70 +308,6 @@ class _DashBoardPageState extends State<DashBoardPage> {
             ),
           );
         },
-      ),
-    );
-
-    Widget travelAllowanceBtn = ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 155),
-      child: Container(
-        height: AppStyles.isWebScreen(context) ? 38.0 : 74.0,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(4),
-          gradient: LinearGradient(
-            colors: [
-              const Color(0xFF0F766E),
-              const Color(0xFF0F766E).withOpacity(0.85),
-            ],
-          ),
-        ),
-        child: ElevatedButton(
-          onPressed: () {
-            GoRouter.of(context).push('/travel_allowance');
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.transparent,
-            foregroundColor: Colors.white,
-            shadowColor: Colors.transparent,
-            elevation: 0,
-            padding: EdgeInsets.symmetric(
-                horizontal: AppStyles.isWebScreen(context) ? 12 : 8),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-          ),
-          child: AppStyles.isWebScreen(context)
-              ? Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.directions_car_rounded, size: 16),
-                    const SizedBox(width: 6),
-                    Flexible(
-                      child: Text(
-                        'Travel Allowance',
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                )
-              : Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.directions_car_rounded, size: 20),
-                    const SizedBox(height: 2),
-                    Text(
-                      'Travel\nAllowance',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w700,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-        ),
       ),
     );
 

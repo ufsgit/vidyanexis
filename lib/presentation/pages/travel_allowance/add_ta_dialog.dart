@@ -6,6 +6,7 @@ import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/models/travel_allowance_model.dart';
 import 'package:vidyanexis/controller/travel_allowance_provider.dart';
+import 'package:vidyanexis/utils/extensions.dart';
 
 class AddTADialog extends StatefulWidget {
   final TravelAllowanceModel? editModel;
@@ -175,21 +176,33 @@ class _AddTADialogState extends State<AddTADialog> {
                             child: _buildTextField(
                               controller: taProvider.dateController,
                               label: 'Travel Date *',
-                              hint: 'yyyy-MM-dd',
+                              hint: 'dd MMM yyyy',
                               readOnly: true,
                               prefixIcon: Icons.calendar_today_rounded,
                               validator: (val) => val == null || val.trim().isEmpty ? 'Travel Date is required' : null,
                               onTap: () async {
                                 final now = DateTime.now();
+                                DateTime initialDate = now;
+                                if (taProvider.dateController.text.isNotEmpty) {
+                                  try {
+                                    final isoStr = taProvider.dateController.text.toUniversalYyyyMmDd();
+                                    if (isoStr.isNotEmpty) {
+                                      final parsed = DateTime.parse(isoStr);
+                                      if (!parsed.isAfter(now)) {
+                                        initialDate = parsed;
+                                      }
+                                    }
+                                  } catch (_) {}
+                                }
                                 final picked = await showDatePicker(
                                   context: context,
-                                  initialDate: now,
+                                  initialDate: initialDate,
                                   firstDate: DateTime(2020),
                                   lastDate: now, // Restrict future dates
                                 );
                                 if (picked != null) {
                                   taProvider.dateController.text =
-                                      DateFormat('yyyy-MM-dd').format(picked);
+                                      DateFormat('dd MMM yyyy').format(picked);
                                 }
                               },
                             ),

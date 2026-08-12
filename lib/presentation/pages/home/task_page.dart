@@ -323,11 +323,6 @@ class _tasksPageReportState extends State<TaskPage> {
               onSortTap: (value) {
                 reportsProvider.setSortOption(value, context);
               },
-              showOrder: true,
-              sortOrder: reportsProvider.sortOrder,
-              onOrderTap: () {
-                reportsProvider.toggleSortOrder(context);
-              },
               onSearchTap: () {
                 reportsProvider.toggleFilter();
 
@@ -625,37 +620,16 @@ class _tasksPageReportState extends State<TaskPage> {
                                 reportsProvider.setSortOption(value, context);
                               },
                               itemBuilder: (BuildContext context) => [
-                                const PopupMenuItem(
-                                  value: 0,
-                                  child: Text('Default'),
-                                ),
-                                const PopupMenuItem(
-                                  value: 1,
-                                  child: Text('ID No'),
-                                ),
-                                const PopupMenuItem(
-                                  value: 2,
-                                  child: Text('Creation Date'),
-                                ),
-                                const PopupMenuItem(
-                                  value: 3,
-                                  child: Text('Followup Date'),
-                                ),
+                                const PopupMenuItem(value: 0, child: Text('Default')),
+                                const PopupMenuItem(value: 1, child: Text('ID No (Descending)')),
+                                const PopupMenuItem(value: 2, child: Text('ID No (Ascending)')),
+                                const PopupMenuItem(value: 3, child: Text('Creation Date (Newest)')),
+                                const PopupMenuItem(value: 4, child: Text('Creation Date (Oldest)')),
+                                const PopupMenuItem(value: 5, child: Text('Followup Date (Newest)')),
+                                const PopupMenuItem(value: 6, child: Text('Followup Date (Oldest)')),
+                                const PopupMenuItem(value: 7, child: Text('Name (A-Z)')),
+                                const PopupMenuItem(value: 8, child: Text('Name (Z-A)')),
                               ],
-                            ),
-                            IconButton(
-                              icon: Icon(
-                                reportsProvider.sortOrder == 'ASC'
-                                    ? Icons.arrow_upward
-                                    : Icons.arrow_downward,
-                                color: const Color(0xFF64748B),
-                                size: 20,
-                              ),
-                              onPressed: () =>
-                                  reportsProvider.toggleSortOrder(context),
-                              tooltip: reportsProvider.sortOrder == 'ASC'
-                                  ? 'Ascending'
-                                  : 'Descending',
                             ),
                             CustomFilterButton(
                               onPressed: () {
