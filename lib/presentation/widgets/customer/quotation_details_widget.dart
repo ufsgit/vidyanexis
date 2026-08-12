@@ -528,31 +528,34 @@ class QuotationDetailsWidget extends StatelessWidget {
                           color: AppColors.textGrey2.withOpacity(.5),
                         ),
                         // CustomExpansionTile: Warranty
-                        CustomExpansionTile(
-                          title: 'Warranty',
-                          content: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Text(
-                                    customerDetailsProvider
-                                        .quotationListByMaster[0].warranty,
-                                    style: GoogleFonts.plusJakartaSans(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w500,
-                                      color: AppColors.textGrey3,
+                        if (customerDetailsProvider.isQuotationFieldVisible(44)) ...[
+                          CustomExpansionTile(
+                            title: customerDetailsProvider.getQuotationFieldName(
+                                44, 'Warranty'),
+                            content: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      customerDetailsProvider
+                                          .quotationListByMaster[0].warranty,
+                                      style: GoogleFonts.plusJakartaSans(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
+                                        color: AppColors.textGrey3,
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            ],
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                        Divider(
-                          height: 1,
-                          color: AppColors.textGrey2.withOpacity(.5),
-                        ),
+                          Divider(
+                            height: 1,
+                            color: AppColors.textGrey2.withOpacity(.5),
+                          ),
+                        ],
                         // CustomExpansionTile: Bill of Materials
 
                         CustomExpansionTile(

@@ -9,19 +9,73 @@ class CompanyPermission {
     required this.value,
   });
 
+  String get displayCaption {
+    if (caption.isNotEmpty) return caption;
+    switch (companyPermissionId) {
+      case 16:
+        return "Document Button Task Status";
+      case 17:
+      case 40:
+        return "Lead Permission ME and ALL";
+      case 18:
+      case 41:
+        return "Customer Permission ME and ALL";
+      case 19:
+      case 42:
+        return "Task Permission ME and ALL";
+      case 20:
+        return "Hide Warranty";
+      default:
+        return "Permission $companyPermissionId";
+    }
+  }
+
   factory CompanyPermission.fromJson(Map<String, dynamic> json) {
+    int id = json['Company_Permission_Id'] ??
+        json['company_permission_id'] ??
+        json['Company_Permission_ID'] ??
+        json['Permission_Id'] ??
+        json['permission_id'] ??
+        0;
+    String cap = json['Caption'] ??
+        json['caption'] ??
+        json['CAPTION'] ??
+        json['Caption_Name'] ??
+        json['permission_name'] ??
+        '';
+    if (cap.isEmpty) {
+      switch (id) {
+        case 16:
+          cap = "Document Button Task Status";
+          break;
+        case 17:
+        case 40:
+          cap = "Lead Permission ME and ALL";
+          break;
+        case 18:
+        case 41:
+          cap = "Customer Permission ME and ALL";
+          break;
+        case 19:
+        case 42:
+          cap = "Task Permission ME and ALL";
+          break;
+        case 20:
+          cap = "Hide Warranty";
+          break;
+      }
+    }
     return CompanyPermission(
-      companyPermissionId:
-          json['Company_Permission_Id'] ?? json['company_permission_id'] ?? 0,
-      caption: json['Caption'] ?? json['caption'] ?? '',
-      value: json['Value'] ?? json['value'] ?? 0,
+      companyPermissionId: id,
+      caption: cap,
+      value: json['Value'] ?? json['value'] ?? json['VALUE'] ?? json['Status'] ?? json['status'] ?? 0,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'Company_Permission_Id': companyPermissionId,
-      'Caption': caption,
+      'Caption': displayCaption,
       'Value': value,
     };
   }

@@ -777,48 +777,50 @@ class _QuotationDetailsPagePhoneState extends State<QuotationDetailsPagePhone> {
                           ))
                     ],
                   ),
-                  TileWidget(
-                    leading: RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: 'Warranty',
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.textBlack,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    title: '',
-                    children: [
-                      Container(
-                          constraints: const BoxConstraints(
-                            maxHeight: 300,
-                          ),
-                          decoration: BoxDecoration(
-                              color: AppColors.scaffoldColor,
-                              borderRadius: BorderRadius.circular(4)),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: SingleChildScrollView(
-                              child: Row(
-                                children: [
-                                  CustomText(
-                                    customerDetailsProvider
-                                        .quotationListByMaster[0].warranty,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400,
-                                    color: AppColors.textGrey3,
-                                  ),
-                                ],
+                  if (customerDetailsProvider.isQuotationFieldVisible(44))
+                    TileWidget(
+                      leading: RichText(
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: customerDetailsProvider.getQuotationFieldName(
+                                  44, 'Warranty'),
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textBlack,
                               ),
                             ),
-                          ))
-                    ],
-                  ),
+                          ],
+                        ),
+                      ),
+                      title: '',
+                      children: [
+                        Container(
+                            constraints: const BoxConstraints(
+                              maxHeight: 300,
+                            ),
+                            decoration: BoxDecoration(
+                                color: AppColors.scaffoldColor,
+                                borderRadius: BorderRadius.circular(4)),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: SingleChildScrollView(
+                                child: Row(
+                                  children: [
+                                    CustomText(
+                                      customerDetailsProvider
+                                          .quotationListByMaster[0].warranty,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                      color: AppColors.textGrey3,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ))
+                      ],
+                    ),
                   TileWidget(
                     leading: RichText(
                       text: TextSpan(

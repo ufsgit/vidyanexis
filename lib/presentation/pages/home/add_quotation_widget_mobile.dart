@@ -933,24 +933,26 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
                     const SizedBox(height: 16),
                   ],
                 ),
-                //terms
-                Column(
-                  children: [
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    CustomTextfieldWidgetMobile(
-                      focusNode: FocusNode(),
-                      readOnly: false,
-                      controller: customerDetailsProvider.qwarrentyController,
-                      labelText: 'Warranty',
-                      minLines: 4,
-                      maxLines: 5,
-                      keyBoardType: TextInputType.multiline,
-                    ),
-                    const SizedBox(height: 16),
-                  ],
-                ),
+                //warranty
+                if (customerDetailsProvider.isQuotationFieldVisible(44))
+                  Column(
+                    children: [
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      CustomTextfieldWidgetMobile(
+                        focusNode: FocusNode(),
+                        readOnly: false,
+                        controller: customerDetailsProvider.qwarrentyController,
+                        labelText: customerDetailsProvider.getQuotationFieldName(
+                            44, 'Warranty'),
+                        minLines: 4,
+                        maxLines: 5,
+                        keyBoardType: TextInputType.multiline,
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                  ),
                 Column(
                   children: [
                     const SizedBox(

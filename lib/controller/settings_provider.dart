@@ -620,6 +620,8 @@ class SettingsProvider extends ChangeNotifier {
       _customerPermissionMeAndAll = value;
     } else if (permissionId == 19 || permissionId == 42 || (caption != null && caption.toLowerCase().contains('task permission me and all'))) {
       _taskPermissionMeAndAll = value;
+    } else if (permissionId == 20 || (caption != null && caption.toLowerCase().contains('hide warranty'))) {
+      _hideWarranty = value;
     }
   }
 
@@ -639,6 +641,9 @@ class SettingsProvider extends ChangeNotifier {
   int _taskPermissionMeAndAll = 0;
   int get taskPermissionMeAndAll => _taskPermissionMeAndAll;
 
+  int _hideWarranty = 0;
+  int get hideWarranty => _hideWarranty;
+
   void setCustomerPermissionMeAndAll(int value) {
     _customerPermissionMeAndAll = value;
     notifyListeners();
@@ -646,6 +651,12 @@ class SettingsProvider extends ChangeNotifier {
 
   void setTaskPermissionMeAndAll(int value) {
     _taskPermissionMeAndAll = value;
+    notifyListeners();
+  }
+
+  void setHideWarranty(int value) {
+    _hideWarranty = value;
+    _syncStateToPermissionsList(20, value);
     notifyListeners();
   }
 
@@ -710,6 +721,9 @@ class SettingsProvider extends ChangeNotifier {
         _syncPermissionValueToState(old.companyPermissionId, newValue, old.caption);
         notifyListeners();
       }
+    } else {
+      _syncPermissionValueToState(permissionId, newValue);
+      notifyListeners();
     }
   }
 
@@ -4358,16 +4372,96 @@ class SettingsProvider extends ChangeNotifier {
         print('SettingsProvider.getCompanyDetails1 $data');
 
         if (data != null && data is List && data.isNotEmpty) {
-          // If the API returns the classic Company format, still initialize it for other pages
-          try {
-            _companyDetails =
-                data.map((item) => Company.fromJson(item)).toList();
-            if (_companyDetails.isNotEmpty) {
-              _syncAllCompanyPermissions();
+          if (data[0] is Map<String, dynamic> &&
+              (data[0]['Company_Permission_Id'] != null ||
+                  data[0]['company_permission_id'] != null ||
+                  data[0]['Caption'] != null ||
+                  data[0]['caption'] != null)) {
+            List<CompanyPermission> perms = (data as List)
+                .map((item) => CompanyPermission.fromJson(item))
+                .toList();
+
+            if (_companyDetails.isEmpty) {
+              _companyDetails = [
+                Company(
+                  companyId: 0,
+                  companyName: title,
+                  address1: '',
+                  address2: '',
+                  address3: '',
+                  address4: '',
+                  mobileNumber: '',
+                  phoneNumber: '',
+                  email: '',
+                  website: '',
+                  logo: logo,
+                  gstNo: '',
+                  panNo: '',
+                  cinNo: '',
+                  companyCode: '',
+                  deleteStatus: 0,
+                  isLocation: 0,
+                  notificationTopic: notificationTopic,
+                  enquiryForMandatory: 0,
+                  enquirySourceMandatory: 0,
+                  consumerNameMandatory: 0,
+                  consumerContactNoMandatory: 0,
+                  leadInSales: 0,
+                  quotationItemValue: 0,
+                  additionalExpense: 0,
+                  commercialProposal: 0,
+                  districtCityMandatory: 0,
+                  leadMobileExistedCheck: 0,
+                  permissions: perms,
+                )
+              ];
+            } else {
+              Company existing = _companyDetails[0];
+              _companyDetails[0] = Company(
+                companyId: existing.companyId,
+                companyName: existing.companyName,
+                address1: existing.address1,
+                address2: existing.address2,
+                address3: existing.address3,
+                address4: existing.address4,
+                mobileNumber: existing.mobileNumber,
+                phoneNumber: existing.phoneNumber,
+                email: existing.email,
+                website: existing.website,
+                logo: existing.logo,
+                gstNo: existing.gstNo,
+                panNo: existing.panNo,
+                cinNo: existing.cinNo,
+                companyCode: existing.companyCode,
+                deleteStatus: existing.deleteStatus,
+                isLocation: existing.isLocation,
+                notificationTopic: existing.notificationTopic,
+                enquiryForMandatory: existing.enquiryForMandatory,
+                enquirySourceMandatory: existing.enquirySourceMandatory,
+                consumerNameMandatory: existing.consumerNameMandatory,
+                consumerContactNoMandatory: existing.consumerContactNoMandatory,
+                leadInSales: existing.leadInSales,
+                quotationItemValue: existing.quotationItemValue,
+                additionalExpense: existing.additionalExpense,
+                commercialProposal: existing.commercialProposal,
+                districtCityMandatory: existing.districtCityMandatory,
+                leadMobileExistedCheck: existing.leadMobileExistedCheck,
+                permissions: perms,
+              );
             }
-          } catch (e) {
-            print(
-                'SettingsProvider.getCompanyDetails: Failed to parse Company format - $e');
+            _syncAllCompanyPermissions();
+          } else {
+            // If the API returns the classic Company format, still initialize it for other pages
+            try {
+              _companyDetails =
+                  data.map((item) => Company.fromJson(item)).toList();
+              if (_companyDetails.isNotEmpty) {
+                _syncAllCompanyPermissions();
+              }
+            } catch (e) {
+              print(
+                  'SettingsProvider.getCompanyDetails: Failed to parse Company format - $e');
+            }
           }
 
           final item = data[0];

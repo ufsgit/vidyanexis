@@ -343,13 +343,18 @@ class _AddCompanyDetailsState extends State<AddCompanyDetails> {
               if (settingsProvider.companyDetails.isNotEmpty &&
                   settingsProvider.companyDetails[0].permissions.isNotEmpty) ...[
                 ...settingsProvider.companyDetails[0].permissions.map((perm) {
+                  String displayTitle = perm.displayCaption.isNotEmpty
+                      ? perm.displayCaption
+                      : settingsProvider.getPermissionCaption(
+                          perm.companyPermissionId,
+                          'Permission ${perm.companyPermissionId}');
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 10.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Text(
-                          '${perm.caption} :   ${perm.value == 1 ? "On" : "Off"}',
+                          '$displayTitle :   ${perm.value == 1 ? "On" : "Off"}',
                           style: const TextStyle(fontSize: 16),
                         ),
                         const SizedBox(width: 10),
@@ -364,237 +369,6 @@ class _AddCompanyDetailsState extends State<AddCompanyDetails> {
                     ),
                   );
                 }),
-              ] else ...[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text(
-                      '${settingsProvider.getPermissionCaption("Location", "Location Check When End Task")}:   ${settingsProvider.toggleValue == 1 ? "On" : "Off"}',
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                    const SizedBox(width: 10),
-                    Switch(
-                      value: settingsProvider.toggleValue == 1,
-                      onChanged: (bool value) {
-                        settingsProvider.setToggleValue(value ? 1 : 0);
-                      },
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text(
-                      '${settingsProvider.getPermissionCaption("Enquiry For", "Enquiry For Mandatory")}:   ${settingsProvider.enquiryForMandatory == 1 ? "On" : "Off"}',
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                    const SizedBox(width: 10),
-                    Switch(
-                      value: settingsProvider.enquiryForMandatory == 1,
-                      onChanged: (bool value) {
-                        settingsProvider.setEnquiryForMandatory(value ? 1 : 0);
-                      },
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text(
-                      '${settingsProvider.getPermissionCaption("Enquiry Source", "Enquiry Source Mandatory")}:   ${settingsProvider.enquirySourceMandatory == 1 ? "On" : "Off"}',
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                    const SizedBox(width: 10),
-                    Switch(
-                      value: settingsProvider.enquirySourceMandatory == 1,
-                      onChanged: (bool value) {
-                        settingsProvider.setEnquirySourceMandatory(value ? 1 : 0);
-                      },
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text(
-                      '${settingsProvider.getPermissionCaption("Consumer Name", "Consumer Name")} :   ${settingsProvider.consumerNameMandatory == 1 ? "On" : "Off"}',
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                    const SizedBox(width: 10),
-                    Switch(
-                      value: settingsProvider.consumerNameMandatory == 1,
-                      onChanged: (bool value) {
-                        settingsProvider.setConsumerNameMandatory(value ? 1 : 0);
-                      },
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text(
-                      '${settingsProvider.getPermissionCaption("Contact No", "Contact No.")} :   ${settingsProvider.consumerContactNoMandatory == 1 ? "On" : "Off"}',
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                    const SizedBox(width: 10),
-                    Switch(
-                      value: settingsProvider.consumerContactNoMandatory == 1,
-                      onChanged: (bool value) {
-                        settingsProvider
-                            .setConsumerContactNoMandatory(value ? 1 : 0);
-                      },
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text(
-                      '${settingsProvider.getPermissionCaption("Sales", "Lead In Sales")} :   ${settingsProvider.leadInSales == 1 ? "On" : "Off"}',
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                    const SizedBox(width: 10),
-                    Switch(
-                      value: settingsProvider.leadInSales == 1,
-                      onChanged: (bool value) {
-                        settingsProvider.setLeadInSales(value ? 1 : 0);
-                      },
-                    ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text(
-                      '${settingsProvider.getPermissionCaption("Quotation", "Quotation Item")} :   ${settingsProvider.quotationItem == 1 ? "On" : "Off"}',
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                    const SizedBox(width: 10),
-                    Switch(
-                      value: settingsProvider.quotationItem == 1,
-                      onChanged: (bool value) {
-                        settingsProvider.setQuotationItem(value ? 1 : 0);
-                      },
-                    ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text(
-                      '${settingsProvider.getPermissionCaption("Expense", "Additional Expense")} :   ${settingsProvider.additionalExpense == 1 ? "On" : "Off"}',
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                    const SizedBox(width: 10),
-                    Switch(
-                      value: settingsProvider.additionalExpense == 1,
-                      onChanged: (bool value) {
-                        settingsProvider.setAdditionalExpense(value ? 1 : 0);
-                      },
-                    ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text(
-                      '${settingsProvider.getPermissionCaption("Commercial", "Commercial Proposal")} :   ${settingsProvider.commercialProposal == 1 ? "On" : "Off"}',
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                    const SizedBox(width: 10),
-                    Switch(
-                      value: settingsProvider.commercialProposal == 1,
-                      onChanged: (bool value) {
-                        settingsProvider.setCommercialProposal(value ? 1 : 0);
-                      },
-                    ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text(
-                      '${settingsProvider.getPermissionCaption("District", "District & City in Basic Details")} :   ${settingsProvider.districtCityMandatory == 1 ? "On" : "Off"}',
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                    const SizedBox(width: 10),
-                    Switch(
-                      value: settingsProvider.districtCityMandatory == 1,
-                      onChanged: (bool value) {
-                        settingsProvider.setDistrictCityMandatory(value ? 1 : 0);
-                      },
-                    ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text(
-                      '${settingsProvider.getPermissionCaption(2, "Lead Mobile Already Existed Check")} :   ${settingsProvider.leadMobileExistedCheck == 1 ? "On" : "Off"}',
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                    const SizedBox(width: 10),
-                    Switch(
-                      value: settingsProvider.leadMobileExistedCheck == 1,
-                      onChanged: (bool value) {
-                        settingsProvider.setLeadMobileExistedCheck(value ? 1 : 0);
-                      },
-                    ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text(
-                      '${settingsProvider.getPermissionCaption(40, "Lead Permission ME and ALL")} :   ${settingsProvider.leadPermissionMeAndAll == 1 ? "On" : "Off"}',
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                    const SizedBox(width: 10),
-                    Switch(
-                      value: settingsProvider.leadPermissionMeAndAll == 1,
-                      onChanged: (bool value) {
-                        settingsProvider.updateCompanyPermission(40, value ? 1 : 0);
-                      },
-                    ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text(
-                      '${settingsProvider.getPermissionCaption(41, "Customer Permission ME and ALL")} :   ${settingsProvider.customerPermissionMeAndAll == 1 ? "On" : "Off"}',
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                    const SizedBox(width: 10),
-                    Switch(
-                      value: settingsProvider.customerPermissionMeAndAll == 1,
-                      onChanged: (bool value) {
-                        settingsProvider.updateCompanyPermission(41, value ? 1 : 0);
-                      },
-                    ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text(
-                      '${settingsProvider.getPermissionCaption(42, "Task Permission ME and ALL")} :   ${settingsProvider.taskPermissionMeAndAll == 1 ? "On" : "Off"}',
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                    const SizedBox(width: 10),
-                    Switch(
-                      value: settingsProvider.taskPermissionMeAndAll == 1,
-                      onChanged: (bool value) {
-                        settingsProvider.updateCompanyPermission(42, value ? 1 : 0);
-                      },
-                    ),
-                  ],
-                ),
               ],
               const SizedBox(height: 10),
               CustomElevatedButton(
