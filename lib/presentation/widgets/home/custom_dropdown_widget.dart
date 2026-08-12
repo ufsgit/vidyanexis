@@ -47,6 +47,8 @@ class _CommonDropdownState<T> extends State<CommonDropdown<T>> {
   late TextEditingController _textController;
   final FocusNode _focusNode = FocusNode();
   Color? _selectedTextColor;
+  bool _forceShowAll = false;
+  String? _lastQueryForShowAll;
 
   @override
   void initState() {
@@ -116,6 +118,14 @@ class _CommonDropdownState<T> extends State<CommonDropdown<T>> {
         optionsBuilder: (TextEditingValue textEditingValue) {
           if (!widget.enabled) return const Iterable.empty();
           final query = textEditingValue.text.toLowerCase().trim();
+          
+          if (_forceShowAll) {
+            if (query == _lastQueryForShowAll) {
+              return widget.items;
+            } else {
+              _forceShowAll = false;
+            }
+          }
           if (query.isEmpty) {
             return widget.items;
           }
@@ -158,18 +168,15 @@ class _CommonDropdownState<T> extends State<CommonDropdown<T>> {
                   ),
                   onTap: () {
                     if (!widget.enabled) return;
+                    _forceShowAll = true;
+                    _lastQueryForShowAll = textEditingController.text.toLowerCase().trim();
                     if (!fieldFocusNode.hasFocus) {
                       fieldFocusNode.requestFocus();
+                    } else {
+                      if (!textEditingController.text.endsWith(' ')) {
+                        textEditingController.text = '${textEditingController.text} ';
+                      }
                     }
-                    final currentText = textEditingController.text;
-                    textEditingController.text = '$currentText ';
-                    Future.microtask(() {
-                      textEditingController.text = currentText;
-                      textEditingController.selection = TextSelection(
-                        baseOffset: 0,
-                        extentOffset: textEditingController.text.length,
-                      );
-                    });
                   },
                   decoration: InputDecoration(
                     prefixIcon: widget.prefixIcon,
@@ -179,12 +186,12 @@ class _CommonDropdownState<T> extends State<CommonDropdown<T>> {
                               if (fieldFocusNode.hasFocus) {
                                 fieldFocusNode.unfocus();
                               } else {
+                                _forceShowAll = true;
+                                _lastQueryForShowAll = textEditingController.text.toLowerCase().trim();
                                 fieldFocusNode.requestFocus();
-                                final currentText = textEditingController.text;
-                                textEditingController.text = '$currentText ';
-                                Future.microtask(() {
-                                  textEditingController.text = currentText;
-                                });
+                                if (!textEditingController.text.endsWith(' ')) {
+                                  textEditingController.text = '${textEditingController.text} ';
+                                }
                               }
                             }
                           : null,
@@ -293,6 +300,14 @@ class _CommonDropdownState<T> extends State<CommonDropdown<T>> {
           final screenHeight = MediaQuery.of(context).size.height;
           final maxHeight = screenHeight * 0.35;
 
+          double currentWidth = constraints.biggest.width;
+          if (_focusNode.context != null) {
+            final RenderBox? renderBox = _focusNode.context!.findRenderObject() as RenderBox?;
+            if (renderBox != null) {
+              currentWidth = renderBox.size.width;
+            }
+          }
+
           return Align(
             alignment: Alignment.topLeft,
             child: Material(
@@ -300,9 +315,9 @@ class _CommonDropdownState<T> extends State<CommonDropdown<T>> {
               shadowColor: Colors.black26,
               borderRadius: BorderRadius.circular(widget.borderRadius ?? 8),
               child: Container(
+                width: currentWidth,
                 constraints: BoxConstraints(
                   maxHeight: maxHeight,
-                  maxWidth: constraints.biggest.width,
                 ),
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -316,12 +331,13 @@ class _CommonDropdownState<T> extends State<CommonDropdown<T>> {
                   itemBuilder: (BuildContext context, int index) {
                     final option = options.elementAt(index);
                     return InkWell(
+                      hoverColor: Colors.blue.withOpacity(0.05),
                       onTap: () {
                         onSelected(option);
                       },
                       child: Container(
                         padding: const EdgeInsets.symmetric(
-                          vertical: 10,
+                          vertical: 16,
                           horizontal: 16,
                         ),
                         decoration: const BoxDecoration(
@@ -334,8 +350,8 @@ class _CommonDropdownState<T> extends State<CommonDropdown<T>> {
                         child: Text(
                           option.name,
                           style: GoogleFonts.plusJakartaSans(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w500,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
                             color: option.textColor ?? AppColors.textBlack,
                           ),
                           maxLines: widget.isMultiLine ? null : 1,

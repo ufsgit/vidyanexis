@@ -145,21 +145,8 @@ class _LeadsPageState extends State<LeadPage> {
       userId = int.tryParse(preferences.getString('userId') ?? "0") ?? 0;
       userName = preferences.getString('userName') ?? "";
       userType = preferences.getString('userType') ?? "";
-
-      provider.getEnquirySource(context);
-      settingsProvider.searchBranch(context);
-      settingsProvider.searchDepartment('', context);
-      settingsProvider.searchsourceCategoryData('', context);
-      provider.getDistricts(context);
-      provider.getStatesDropdown(context);
-
-      provider.getEnquiryFor(context);
-      provider.getUserDetails(context);
-      provider.getTaskType(context);
-      provider.getFollowUpStatus(context, "1");
       leadProvider.setSearchCriteria('', '', '');
       leadProvider.getSearchLeads(context);
-      settingsProvider.getPriorities(context);
 
       //search
       // searchController.addListener(() {
@@ -651,7 +638,19 @@ class _LeadsPageState extends State<LeadPage> {
                             CustomFilterButton(
                               onPressed: () {
                                 leadProvider.toggleFilter();
-                                print(leadProvider.isFilter);
+                                if (leadProvider.isFilter) {
+                                  provider.getEnquirySource(context);
+                                  settingsProvider.searchBranch(context);
+                                  settingsProvider.searchDepartment('', context);
+                                  settingsProvider.searchsourceCategoryData('', context);
+                                  provider.getDistricts(context);
+                                  provider.getStatesDropdown(context);
+                                  provider.getEnquiryFor(context);
+                                  provider.getUserDetails(context);
+                                  provider.getTaskType(context);
+                                  provider.getFollowUpStatus(context, "1");
+                                  settingsProvider.getPriorities(context);
+                                }
                               },
                               isFilter: leadProvider.isFilter,
                             ),
@@ -838,7 +837,19 @@ class _LeadsPageState extends State<LeadPage> {
                         CustomFilterButton(
                           onPressed: () {
                             leadProvider.toggleFilter();
-                            print(leadProvider.isFilter);
+                            if (leadProvider.isFilter) {
+                              provider.getEnquirySource(context);
+                              settingsProvider.searchBranch(context);
+                              settingsProvider.searchDepartment('', context);
+                              settingsProvider.searchsourceCategoryData('', context);
+                              provider.getDistricts(context);
+                              provider.getStatesDropdown(context);
+                              provider.getEnquiryFor(context);
+                              provider.getUserDetails(context);
+                              provider.getTaskType(context);
+                              provider.getFollowUpStatus(context, "1");
+                              settingsProvider.getPriorities(context);
+                            }
                           },
                           isFilter: leadProvider.isFilter,
                         ),

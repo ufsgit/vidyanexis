@@ -915,7 +915,8 @@ class SettingsProvider extends ChangeNotifier {
     branchCampaignController.clear();
   }
 
-  Future<void> searchBranch(BuildContext context, {String query = ''}) async {
+  Future<void> searchBranch(BuildContext context, {String query = '', bool forceRefresh = false}) async {
+    if (query.isEmpty && !forceRefresh && _allBranchModel.isNotEmpty) return;
     try {
       if (_allBranchModel.isEmpty || query.isEmpty) {
         final response =
@@ -2816,7 +2817,8 @@ class SettingsProvider extends ChangeNotifier {
   }
 
   Future<void> searchsourceCategoryData(
-      String query, BuildContext context) async {
+      String query, BuildContext context, {bool forceRefresh = false}) async {
+    if (query.isEmpty && !forceRefresh && _searchSourceCategory.isNotEmpty) return;
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -3964,7 +3966,8 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  void searchDepartment(String search, BuildContext context) async {
+  void searchDepartment(String search, BuildContext context, {bool forceRefresh = false}) async {
+    if (search.isEmpty && !forceRefresh && _departmentModel.isNotEmpty) return;
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -4915,7 +4918,8 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> getPriorities(BuildContext context) async {
+  Future<void> getPriorities(BuildContext context, {bool forceRefresh = false}) async {
+    if (!forceRefresh && _priorities.isNotEmpty) return;
     try {
       final response = await HttpRequest.httpGetRequest(
         endPoint: HttpUrls.getPriority,
