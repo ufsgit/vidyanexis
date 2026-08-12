@@ -159,10 +159,17 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
         {'title': 'Quotation Reports', 'page': const QuotationReportMobile()},
       if (settingsProvider.menuIsViewMap[56].toString() == '1')
         {'title': 'Lead Reports', 'page': const LeadReportMobile(false)},
-      if (settingsProvider.menuIsViewMap[56].toString() == '1' || settingsProvider.menuIsViewMap[168].toString() == '1')
-        {'title': 'Deleted Lead Reports', 'page': const DeletedLeadReportScreen()},
+      if (settingsProvider.menuIsViewMap[56].toString() == '1' ||
+          settingsProvider.menuIsViewMap[168].toString() == '1')
+        {
+          'title': 'Deleted Lead Reports',
+          'page': const DeletedLeadReportScreen()
+        },
       if (settingsProvider.menuIsViewMap[163].toString() == '1')
-        {'title': 'Work Completion Report', 'page': const WorkCompletionReportScreen()},
+        {
+          'title': 'Work Completion Report',
+          'page': const WorkCompletionReportScreen()
+        },
       if (settingsProvider.menuIsViewMap[97].toString() == '1')
         {'title': 'Solar Lead Reports', 'page': const SolarLeadReportPage()},
       if (settingsProvider.menuIsViewMap[98].toString() == '1')
@@ -400,6 +407,21 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
     );
   }
 
+  Widget _buildSectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 8, bottom: 8, top: 8),
+      child: Text(
+        title,
+        style: GoogleFonts.plusJakartaSans(
+          fontSize: 11,
+          fontWeight: FontWeight.w800,
+          color: Colors.grey[400],
+          letterSpacing: 1.2,
+        ),
+      ),
+    );
+  }
+
   Widget _buildModernMenuItem({
     required BuildContext context,
     required String title,
@@ -535,8 +557,7 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 14),
           decoration: BoxDecoration(
-            border: Border.all(
-                color: const Color(0xFFFF3B30).withOpacity(0.2)),
+            border: Border.all(color: const Color(0xFFFF3B30).withOpacity(0.2)),
             borderRadius: BorderRadius.circular(4),
             color: const Color(0xFFFF3B30).withOpacity(0.05),
           ),
