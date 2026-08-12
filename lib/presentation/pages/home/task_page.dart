@@ -670,15 +670,18 @@ class _tasksPageReportState extends State<TaskPage> {
                                   final settingsProvider =
                                       Provider.of<SettingsProvider>(context,
                                           listen: false);
-                                  await Future.wait([
-                                    leadsProvider.getLeadDropdowns(context),
-                                    dropDownProvider.getFollowUpStatus(
-                                        context, "1"),
-                                    dropDownProvider.getEnquirySource(context),
-                                    dropDownProvider.getEnquiryFor(context),
-                                    settingsProvider.searchsourceCategoryData(
-                                        '', context),
-                                  ]);
+                                      await Future.wait([
+                                        leadsProvider.getLeadDropdowns(context),
+                                        dropDownProvider.getFollowUpStatus(
+                                            context, "1"),
+                                        dropDownProvider.getEnquirySource(context),
+                                        dropDownProvider.getEnquiryFor(context),
+                                        settingsProvider.searchsourceCategoryData(
+                                            '', context),
+                                        // Added missing dropdown fetches
+                                        Future.microtask(() => dropDownProvider.getDistricts(context)),
+                                        Future.microtask(() => dropDownProvider.getStatesDropdown(context)),
+                                      ]);
                                   settingsProvider.searchBranch(context);
                                   settingsProvider.searchDepartment(
                                       '', context);

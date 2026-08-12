@@ -677,7 +677,23 @@ class _LeadsPageState extends State<LeadPage> {
                                       null, '');
                                   dropDownProvider.updateDistrict(null, '');
 
-                                  await leadProvider.getLeadDropdowns(context);
+                                  final settingsProvider =
+                                      Provider.of<SettingsProvider>(context,
+                                          listen: false);
+
+                                  await Future.wait([
+                                    leadProvider.getLeadDropdowns(context),
+                                    dropDownProvider.getFollowUpStatus(
+                                        context, "1"),
+                                    dropDownProvider.getEnquirySource(context),
+                                    dropDownProvider.getEnquiryFor(context),
+                                    settingsProvider.searchsourceCategoryData(
+                                        '', context),
+                                    Future.microtask(() => dropDownProvider.getDistricts(context)),
+                                    Future.microtask(() => dropDownProvider.getStatesDropdown(context)),
+                                  ]);
+                                  settingsProvider.searchBranch(context);
+                                  settingsProvider.searchDepartment('', context);
 
                                   showDialog(
                                     context: context,
@@ -863,7 +879,23 @@ class _LeadsPageState extends State<LeadPage> {
                               dropDownProvider.updateEnquiryForName(null, '');
                               dropDownProvider.updateDistrict(null, '');
 
-                              await leadProvider.getLeadDropdowns(context);
+                              final settingsProvider =
+                                  Provider.of<SettingsProvider>(context,
+                                      listen: false);
+
+                              await Future.wait([
+                                leadProvider.getLeadDropdowns(context),
+                                dropDownProvider.getFollowUpStatus(
+                                    context, "1"),
+                                dropDownProvider.getEnquirySource(context),
+                                dropDownProvider.getEnquiryFor(context),
+                                settingsProvider.searchsourceCategoryData(
+                                    '', context),
+                                Future.microtask(() => dropDownProvider.getDistricts(context)),
+                                Future.microtask(() => dropDownProvider.getStatesDropdown(context)),
+                              ]);
+                              settingsProvider.searchBranch(context);
+                              settingsProvider.searchDepartment('', context);
 
                               showDialog(
                                 context: context,
