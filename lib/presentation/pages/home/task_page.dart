@@ -22,6 +22,7 @@ import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart'
 import 'package:vidyanexis/presentation/widgets/home/custom_field_section_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:provider/provider.dart';
+import 'package:vidyanexis/presentation/widgets/home/me_all_toggle_switch.dart';
 import 'package:vidyanexis/constants/app_colors.dart' hide StatusUtils;
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
@@ -390,33 +391,14 @@ class _tasksPageReportState extends State<TaskPage> {
               },
               customActionWidget: settingsProvider.taskPermissionMeAndAll == 1
                   ? Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                          value: reportsProvider.entryType == 'all' ? 'ALL' : 'ME',
-                          icon: const Icon(Icons.keyboard_arrow_down,
-                              color: AppColors.primaryBlue),
-                          style: const TextStyle(
-                            color: AppColors.primaryBlue,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 14,
-                          ),
-                          onChanged: (String? newValue) {
-                            if (newValue != null) {
-                              reportsProvider
-                                  .setEntryType(newValue == 'ALL' ? 'all' : 'myown');
-                              reportsProvider.goToPage(1);
-                              reportsProvider.searchTaskByCustomer(context);
-                            }
-                          },
-                          items: <String>['ME', 'ALL']
-                              .map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
-                        ),
+                      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                      child: MeAllToggleSwitch(
+                        value: reportsProvider.entryType,
+                        onChanged: (String newValue) {
+                          reportsProvider.setEntryType(newValue);
+                          reportsProvider.goToPage(1);
+                          reportsProvider.searchTaskByCustomer(context);
+                        },
                       ),
                     )
                   : const SizedBox.shrink(),
