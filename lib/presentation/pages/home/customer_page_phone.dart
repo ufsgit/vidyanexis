@@ -20,6 +20,7 @@ import 'package:vidyanexis/utils/extensions.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/presentation/pages/home/bulk_importing_screen.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
+import 'package:vidyanexis/presentation/widgets/home/me_all_toggle_switch.dart';
 
 class CustomerPagePhone extends StatefulWidget {
   const CustomerPagePhone({super.key});
@@ -214,30 +215,13 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
         searchController: searchController,
         customActionWidget: settingsProvider.customerPermissionMeAndAll == 1
             ? Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    value: customerProvider.entryType == 'all' ? 'ALL' : 'ME',
-                    icon: const Icon(Icons.keyboard_arrow_down, color: AppColors.primaryBlue),
-                    style: const TextStyle(
-                      color: AppColors.primaryBlue,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 14,
-                    ),
-                    onChanged: (String? newValue) {
-                      if (newValue != null) {
-                        customerProvider.setEntryType(newValue == 'ALL' ? 'all' : 'myown');
-                        customerProvider.getSearchCustomers(context);
-                      }
-                    },
-                    items: <String>['ME', 'ALL']
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                  ),
+                padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                child: MeAllToggleSwitch(
+                  value: customerProvider.entryType,
+                  onChanged: (String newValue) {
+                    customerProvider.setEntryType(newValue);
+                    customerProvider.getSearchCustomers(context);
+                  },
                 ),
               )
             : const SizedBox.shrink(),

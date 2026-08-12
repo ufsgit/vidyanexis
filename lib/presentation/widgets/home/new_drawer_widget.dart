@@ -872,17 +872,17 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                             const SizedBox(height: 8),
                           ],
 
-                          // Row 2: Reference Name
-                          if (settingsProvider.menuIsViewMap[145] == 1) ...[
-                            ResponsiveRow(
-                              children: [
+                          // Row 2: Reference Name & Priority
+                          ResponsiveRow(
+                            children: [
+                              if (settingsProvider.menuIsViewMap[145] == 1)
                                 Expanded(
                                   child: Row(
                                     children: [
                                       Expanded(
                                         child: Padding(
-                                          padding:
-                                              const EdgeInsets.only(right: 8.0),
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 4.0),
                                           child: CustomTextField(
                                             height: 54,
                                             controller: leadProvider
@@ -901,11 +901,49 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                           width: 48), // Spacer for alignment
                                     ],
                                   ),
+                                )
+                              else
+                                const Expanded(child: SizedBox.shrink()),
+                              Expanded(
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 4.0),
+                                        child: CommonDropdown<int>(
+                                          hintText: 'Priority',
+                                          items: settingsProvider.priorities
+                                              .map((source) => DropdownItem<int>(
+                                                    id: source.priorityId,
+                                                    name: source.priorityName,
+                                                  ))
+                                              .toList(),
+                                          controller: leadProvider
+                                              .priorityNameController,
+                                          onItemSelected: (selectedId) {
+                                            leadProvider.priorityId = selectedId;
+                                            final selectedItem = settingsProvider
+                                                .priorities
+                                                .firstWhere((source) =>
+                                                    source.priorityId ==
+                                                    selectedId);
+                                            leadProvider
+                                                .priorityNameController
+                                                .text = selectedItem.priorityName;
+                                          },
+                                          selectedValue: leadProvider.priorityId,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                        width: 48), // Spacer for alignment
+                                  ],
                                 ),
-                              ],
-                            ),
-                            const SizedBox(height: 8),
-                          ],
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
 
                           // Row 3: Place, Location
                           if (settingsProvider.menuIsViewMap[147] == 1) ...[
@@ -1195,54 +1233,43 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                           ),
                           const SizedBox(height: 8),
 
-                          // Row: Priority
-                          ResponsiveRow(
-                            children: [
-                              Expanded(
-                                child: CommonDropdown<int>(
-                                  hintText: 'Priority',
-                                  items: settingsProvider.priorities
-                                      .map((source) => DropdownItem<int>(
-                                            id: source.priorityId,
-                                            name: source.priorityName,
-                                          ))
-                                      .toList(),
-                                  controller:
-                                      leadProvider.priorityNameController,
-                                  onItemSelected: (selectedId) {
-                                    leadProvider.priorityId = selectedId;
-                                    final selectedItem = settingsProvider
-                                        .priorities
-                                        .firstWhere((source) =>
-                                            source.priorityId == selectedId);
-                                    leadProvider.priorityNameController.text =
-                                        selectedItem.priorityName;
-                                  },
-                                  selectedValue: leadProvider.priorityId,
-                                ),
-                              ),
-                              if (settingsProvider.menuIsViewMap[171] == 1) ...[
+                          // Row: Subsidy Amount (Conditional)
+                          if (settingsProvider.menuIsViewMap[171] == 1) ...[
+                            ResponsiveRow(
+                              children: [
                                 Expanded(
-                                  child: CustomTextField(
-                                    height: 54,
-                                    controller:
-                                        leadProvider.leadSubsidyController,
-                                    hintText: 'Subsidy Amount',
-                                    labelText: '',
-                                    showError:
-                                        dropDownProvider.showValidation &&
-                                            !_isFieldValid(leadProvider
-                                                .leadSubsidyController.text),
-                                    inputFormatters: [
-                                      FilteringTextInputFormatter.allow(
-                                          RegExp(r'^\d+\.?\d{0,2}')),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 4.0),
+                                          child: CustomTextField(
+                                            height: 54,
+                                            controller:
+                                                leadProvider.leadSubsidyController,
+                                            hintText: 'Subsidy Amount',
+                                            labelText: '',
+                                            showError:
+                                                dropDownProvider.showValidation &&
+                                                    !_isFieldValid(leadProvider
+                                                        .leadSubsidyController.text),
+                                            inputFormatters: [
+                                              FilteringTextInputFormatter.allow(
+                                                  RegExp(r'^\d+\.?\d{0,2}')),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 48),
                                     ],
                                   ),
                                 ),
+                                const Expanded(child: SizedBox.shrink()),
                               ],
-                            ],
-                          ),
-                          const SizedBox(height: 8),
+                            ),
+                            const SizedBox(height: 8),
+                          ],
 
                           // Row 6: Total Project Cost, Commission
                           ResponsiveRow(
@@ -2397,8 +2424,8 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                               ],
                                             ),
                                           )
-                                        else
-                                          const Expanded(child: SizedBox()),
+                                      else
+                                        const Expanded(child: SizedBox()),
                                       ],
                                     ),
                                     // Row 2 Branch, Department, Staff
@@ -2625,8 +2652,8 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                               labelText: '',
                                             ),
                                           )
-                                        else
-                                          const Expanded(child: SizedBox()),
+                                      else
+                                        const Expanded(child: SizedBox()),
                                       ],
                                     ),
                                     // Custom Fields
@@ -2657,7 +2684,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                 ),
                               ],
                             ),
-                          const SizedBox(height: 8),
+                            const SizedBox(height: 250),
                         ],
                       ),
                     ],
