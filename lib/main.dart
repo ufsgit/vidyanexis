@@ -79,6 +79,7 @@ import 'package:vidyanexis/controller/sales_report_provider.dart';
 import 'package:vidyanexis/controller/target_enquiry_source_provider.dart';
 import 'package:vidyanexis/controller/job_sheet_provider.dart';
 import 'package:vidyanexis/controller/work_completion_report_provider.dart';
+import 'package:vidyanexis/controller/duplicate_entry_attempts_provider.dart';
 
 final GlobalKey<ScaffoldMessengerState> navigatorKey =
     GlobalKey<ScaffoldMessengerState>();
@@ -201,6 +202,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => JobSheetProvider()),
         ChangeNotifierProvider(create: (_) => TargetReportProvider()),
         ChangeNotifierProvider(create: (_) => AccountsSummaryReportProvider()),
+        ChangeNotifierProvider(
+            create: (_) => DuplicateEntryAttemptsProvider()),
       ],
       child: Consumer<SettingsProvider>(
         builder: (context, settingsProvider, child) {
