@@ -103,7 +103,7 @@ class _tasksPageReportState extends State<TaskPage> {
         reportsProvider.setTaskSearchCriteria('', '', '', '', '', '', '');
       }
 
-      reportsProvider.searchTaskByCustomer(context);
+      reportsProvider.searchTaskByCustomer(context, isShowLoader: false);
       provider = Provider.of<DropDownProvider>(context, listen: false);
       provider.getAMCStatus(context);
       provider.getUserDetails(context);
@@ -1453,14 +1453,17 @@ class _tasksPageReportState extends State<TaskPage> {
                                     ),
                                   ),
                                   Expanded(
-                                    child: reportsProvider.taskReport.isEmpty
+                                    child: reportsProvider.isTaskLoading
                                         ? const Center(
-                                            child: Text("No tasks found"))
-                                        : ListView.builder(
-                                            controller: _scrollController,
-                                            itemCount: reportsProvider
-                                                    .taskReport.length +
-                                                (_isLoadingMore ? 1 : 0),
+                                            child: CircularProgressIndicator())
+                                        : reportsProvider.taskReport.isEmpty
+                                            ? const Center(
+                                                child: Text("No tasks found"))
+                                            : ListView.builder(
+                                                controller: _scrollController,
+                                                itemCount: reportsProvider
+                                                        .taskReport.length +
+                                                    (_isLoadingMore ? 1 : 0),
                                             itemBuilder: (context, index) {
                                               if (index ==
                                                       reportsProvider

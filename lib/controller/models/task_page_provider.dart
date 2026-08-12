@@ -26,6 +26,9 @@ import 'package:vidyanexis/controller/dashboard_provider.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 
 class TaskPageProvider extends ChangeNotifier {
+  bool _isTaskLoading = false;
+  bool get isTaskLoading => _isTaskLoading;
+
   List<TaskReportModel> _taskReport = [];
   List<TaskReportModel> get taskReport => _taskReport;
   List<TaskTypeModel> _taskTypeModel = [];
@@ -737,7 +740,12 @@ class TaskPageProvider extends ChangeNotifier {
   Future<void> searchTaskByCustomer(BuildContext context,
       {bool isShowLoader = true}) async {
     try {
-      if (isShowLoader) Loader.showLoader(context);
+      if (isShowLoader) {
+        Loader.showLoader(context);
+      } else {
+        _isTaskLoading = true;
+        notifyListeners();
+      }
       if (_Status.isEmpty || _Status == 'null') {
         _Status = '0';
       }
@@ -846,16 +854,30 @@ class TaskPageProvider extends ChangeNotifier {
             }
           }
         }
-        if (isShowLoader) Loader.stopLoader(context);
+        if (isShowLoader) {
+          Loader.stopLoader(context);
+        } else {
+          _isTaskLoading = false;
+        }
         notifyListeners();
       } else {
-        if (isShowLoader) Loader.stopLoader(context);
+        if (isShowLoader) {
+          Loader.stopLoader(context);
+        } else {
+          _isTaskLoading = false;
+          notifyListeners();
+        }
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Server Error')),
         );
       }
     } catch (e) {
-      if (isShowLoader) Loader.stopLoader(context);
+      if (isShowLoader) {
+        Loader.stopLoader(context);
+      } else {
+        _isTaskLoading = false;
+        notifyListeners();
+      }
       print('Exception occurred: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('An error occurred')),
