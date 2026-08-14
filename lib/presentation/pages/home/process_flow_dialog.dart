@@ -491,6 +491,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                           .contains(task.taskTypeId.toString());
                                       return Column(
                                         children: [
+                                          const SizedBox(height: 8),
                                           _buildInteractiveCard(
                                             onTap: () => reportsProvider
                                                 .toggleTaskTypeSelection(
@@ -508,75 +509,127 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                             Consumer<DropDownProvider>(
                                               builder: (context,
                                                   dropDownProvider, child) {
-                                                int? assignedUserId = reportsProvider.taskTypeToUserMap[task.taskTypeId.toString()];
+                                                // Compute staff list for this department only
+                                                List<SearchUserDetails>
+                                                    getDepartmentStaff(
+                                                        dynamic departmentId) {
+                                                  if (departmentId == null ||
+                                                      departmentId
+                                                          .toString()
+                                                          .trim()
+                                                          .isEmpty ||
+                                                      departmentId
+                                                              .toString()
+                                                              .trim() ==
+                                                          "0") {
+                                                    return [];
+                                                  }
+
+                                                  final targetDeptList =
+                                                      departmentId
+                                                          .toString()
+                                                          .trim()
+                                                          .split(',')
+                                                          .map((e) => e.trim())
+                                                          .where((e) =>
+                                                              e.isNotEmpty)
+                                                          .toList();
+
+                                                  return dropDownProvider
+                                                      .searchUserDetails
+                                                      .where((staff) {
+                                                    if (staff.workingStatus !=
+                                                        "1") return false;
+
+                                                    final staffDeptList = (staff
+                                                                .departmentId ??
+                                                            '')
+                                                        .toString()
+                                                        .trim()
+                                                        .split(',')
+                                                        .map((e) => e.trim())
+                                                        .where(
+                                                            (e) => e.isNotEmpty)
+                                                        .toList();
+
+                                                    if (staffDeptList.isEmpty ||
+                                                        staffDeptList
+                                                            .contains("0")) {
+                                                      return false;
+                                                    }
+
+                                                    return targetDeptList.any(
+                                                        (dept) => staffDeptList
+                                                            .contains(dept));
+                                                  }).toList();
+                                                }
+
+                                                final departmentStaff =
+                                                    getDepartmentStaff(
+                                                        task.departmentIds);
+
+                                                // Default selected user name
+                                                int? assignedUserId =
+                                                    reportsProvider
+                                                            .taskTypeToUserMap[
+                                                        task.taskTypeId
+                                                            .toString()];
                                                 String defaultUserName = '';
+
                                                 if (assignedUserId != null) {
                                                   try {
-                                                    final matchedStaff = dropDownProvider.staffData.firstWhere(
-                                                      (s) => s.userDetailsId == assignedUserId,
+                                                    final matchedStaff =
+                                                        dropDownProvider
+                                                            .staffData
+                                                            .firstWhere(
+                                                      (s) =>
+                                                          s.userDetailsId ==
+                                                          assignedUserId,
                                                     );
-                                                    defaultUserName = matchedStaff.userDetailsName;
+                                                    defaultUserName = matchedStaff
+                                                            .userDetailsName ??
+                                                        '';
                                                   } catch (_) {}
                                                 }
 
                                                 return CustomAutocompleteSearch<
                                                     SearchUserDetails>(
-                                                  key: ValueKey('user_search_mobile_${task.taskTypeId}'),
+                                                  key: ValueKey(
+                                                      'user_search_${task.taskTypeId}'),
                                                   showOptionsOnTap: true,
                                                   maxHeight: 300,
                                                   optionsViewOpenDirection:
                                                       OptionsViewOpenDirection
                                                           .down,
-                                                  items: dropDownProvider
-                                                      .filteredStaffData,
+                                                  items: departmentStaff,
                                                   displayStringFunction:
                                                       (staff) =>
-                                                          staff.userDetailsName,
+                                                          staff
+                                                              .userDetailsName ??
+                                                          '',
                                                   defaultText: defaultUserName,
                                                   labelText: 'User',
                                                   suffixIcon:
                                                       const Icon(Icons.search),
-                                                  onTap: () {
-                                                    dropDownProvider
-                                                        .filterStaffByBranchAndDepartment(
-                                                      branchId: task.branchIds,
-                                                      departmentId: task.departmentIds,
-                                                    );
-                                                  },
+                                                  onTap: () {},
                                                   onSelected: (SearchUserDetails
                                                       selected) {
                                                     dropDownProvider
                                                         .setSelectedUserId(
+                                                            selected
+                                                                .userDetailsId);
+
+                                                    reportsProvider.setTaskUser(
+                                                      task.taskTypeId
+                                                          .toString(),
                                                       selected.userDetailsId,
                                                     );
-
-                                                    final taskTypeIdStr = task
-                                                        .taskTypeId
-                                                        .toString();
-                                                    reportsProvider.setTaskUser(
-                                                        taskTypeIdStr,
-                                                        selected.userDetailsId);
                                                   },
-                                                  onChanged: (value) {
-                                                    int branchId =
-                                                        task.branchIds ?? 0;
-                                                    int departmentId =
-                                                        task.departmentIds ?? 0;
-                                                    dropDownProvider
-                                                        .filterStaffByBranchAndDepartment(
-                                                            branchId: branchId,
-                                                            departmentId:
-                                                                departmentId);
-                                                    dropDownProvider
-                                                        .filterStaff(value);
-                                                  },
-                                                  onSearch: (query) async {
-                                                    dropDownProvider
-                                                        .filterStaff(query);
-                                                  },
+                                                  onChanged: (_) {},
+                                                  onSearch: (_) async {},
                                                 );
                                               },
-                                            ),
+                                            )
                                         ],
                                       );
                                     }),
