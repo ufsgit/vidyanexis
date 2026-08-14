@@ -7,7 +7,7 @@ class HttpUrls {
   // static String baseUrl = 'https://bay_mentapi.trackbox.net.in/';
   // static String baseUrl = 'https://suryaprabhaapi.trackbox.net.in/';
   // static String baseUrl = 'https://oxysolarapi.trackbox.net.in/';
-  static String baseUrl = 'https://vidyanexisapi.trackbox.net.in/';
+  // static String baseUrl = 'https://vidyanexisapi.trackbox.net.in/';
   // static String baseUrl = 'https://jibinsolarapi.ufstech.net.in/';
   // static String baseUrl = 'https://a3secosaveapi.trackbox.net.in/';
   // static String baseUrl = 'https://risingsunsolarapi.trackbox.net.in/';
@@ -37,7 +37,7 @@ class HttpUrls {
 //   static String baseUrl = 'https://demo2api.ufstech.net.in/';
   // static String baseUrl = 'https://coopaenergyapi.ufstech.net.in/';
   // static String baseUrl = 'https://bodhieapi.ufstech.net.in/';
-  // static String baseUrl = 'https://solarisapi.ufstech.net.in/';
+  static String baseUrl = 'https://solarisapi.ufstech.net.in/';
 //dev
 
 //  static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
