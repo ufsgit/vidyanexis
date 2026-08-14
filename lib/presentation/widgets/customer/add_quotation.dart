@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
@@ -246,13 +247,45 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                             height: 16,
                           ),
                           CustomTextField(
-                            readOnly: false,
+                            readOnly: true,
                             height: 54,
                             controller:
                                 customerDetailsProvider.qEntryDateController,
                             hintText: customerDetailsProvider
                                 .getQuotationFieldName(25, 'Entry Date'),
                             labelText: '',
+                            onTap: () async {
+                              DateTime initialDate = DateTime.now();
+                              if (customerDetailsProvider
+                                  .qEntryDateController.text.isNotEmpty) {
+                                final parsed = DateTime.tryParse(
+                                        customerDetailsProvider
+                                            .qEntryDateController.text) ??
+                                    DateFormat('yyyy-MM-dd').tryParse(
+                                        customerDetailsProvider
+                                            .qEntryDateController.text) ??
+                                    DateFormat('dd-MM-yyyy').tryParse(
+                                        customerDetailsProvider
+                                            .qEntryDateController.text) ??
+                                    DateFormat('dd/MM/yyyy').tryParse(
+                                        customerDetailsProvider
+                                            .qEntryDateController.text);
+                                if (parsed != null) {
+                                  initialDate = parsed;
+                                }
+                              }
+                              final DateTime? pickedDate = await showDatePicker(
+                                context: context,
+                                initialDate: initialDate,
+                                firstDate: DateTime(2000),
+                                lastDate: DateTime(2101),
+                              );
+                              if (pickedDate != null) {
+                                customerDetailsProvider.qEntryDateController
+                                    .text = DateFormat('yyyy-MM-dd').format(pickedDate);
+                              }
+                            },
+                            suffixIcon: const Icon(Icons.calendar_today, size: 20),
                           ),
                         ],
                         if (customerDetailsProvider
