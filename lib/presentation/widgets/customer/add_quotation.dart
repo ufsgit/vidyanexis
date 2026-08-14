@@ -528,45 +528,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                                         vertical: 16),
                                   ),
                                 ),
-                              ),
-                              if (customerDetailsProvider
-                                  .isQuotationFieldVisible(34)) ...[
-                                const SizedBox(width: 16),
-                                Expanded(
-                                  child: CustomTextField(
-                                    readOnly: false,
-                                    height: 54,
-                                    controller: customerDetailsProvider
-                                        .profitController,
-                                    hintText: customerDetailsProvider
-                                            .isPercentage
-                                        ? '${customerDetailsProvider.getQuotationFieldName(34, 'Profit')} %'
-                                        : customerDetailsProvider
-                                            .getQuotationFieldName(
-                                                34, 'Profit'),
-                                    labelText: '',
-                                    onChanged: (value) {
-                                      customerDetailsProvider
-                                          .recalculateCompanyQuotationItem();
-                                    },
-                                    inputFormatters: [
-                                      FilteringTextInputFormatter.allow(
-                                          RegExp(r'^\d*\.?\d{0,2}')),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(width: 16),
-                                Tooltip(
-                                  message: "Is Percentage %",
-                                  child: Checkbox(
-                                    value: customerDetailsProvider.isPercentage,
-                                    onChanged: (value) {
-                                      customerDetailsProvider.isPercentage =
-                                          value ?? false;
-                                    },
-                                  ),
-                                ),
-                              ],
+                              ), 
                             ],
                           ),
                           if (customerDetailsProvider.multiItems.isNotEmpty) ...[
@@ -1902,6 +1864,73 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                   );
                 },
               ),
+              if (customerDetailsProvider.items.isNotEmpty &&
+                  customerDetailsProvider.isQuotationFieldVisible(34)) ...[
+                Row(
+                  mainAxisAlignment: AppStyles.isWebScreen(context)
+                      ? MainAxisAlignment.end
+                      : MainAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          customerDetailsProvider.isPercentage
+                              ? '${customerDetailsProvider.getQuotationFieldName(34, 'Profit')} %'
+                              : customerDetailsProvider.getQuotationFieldName(
+                                  34, 'Profit'),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                              fontSize: 16),
+                        ),
+                        Tooltip(
+                          message: "Is Percentage %",
+                          child: Checkbox(
+                            value: customerDetailsProvider.isPercentage,
+                            onChanged: (value) {
+                              customerDetailsProvider.isPercentage =
+                                  value ?? false;
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    Container(
+                      width: 140,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8.0, vertical: 0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(
+                            color: const Color(0xFFCBD5E1), width: 1.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.02),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: TextField(
+                        controller: customerDetailsProvider.profitController,
+                        onChanged: (value) {
+                          customerDetailsProvider
+                              .recalculateCompanyQuotationItem();
+                        },
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.zero,
+                        ),
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(
+                              RegExp(r'^\d*\.?\d{0,2}')),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
               if (customerDetailsProvider.items.isNotEmpty &&
                   !isCommercialProposal)
                 Row(
