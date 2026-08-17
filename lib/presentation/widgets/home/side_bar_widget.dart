@@ -330,7 +330,10 @@ class _CustomSidebarState extends State<CustomSidebar> {
                         final loginController = Provider.of<LoginController>(
                             context,
                             listen: false);
+                        final router = GoRouter.of(context);
+
                         Navigator.of(context).pop();
+
                         SharedPreferences prefs =
                             await SharedPreferences.getInstance();
 
@@ -394,7 +397,9 @@ class _CustomSidebarState extends State<CustomSidebar> {
                           await prefs.setString('company_base_url', baseUrl);
                         }
 
-                        context.go(LoginPage.route);
+                        if (context.mounted) {
+                          router.go(LoginPage.route);
+                        }
                       },
                       child: const Text(
                         'Confirm',
