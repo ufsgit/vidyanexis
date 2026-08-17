@@ -97,6 +97,7 @@ class Company {
   final String panNo;
   final String cinNo;
   final String companyCode;
+  final String userCount;
   final int deleteStatus;
   final int isLocation;
   final String notificationTopic;
@@ -110,6 +111,7 @@ class Company {
   final int commercialProposal;
   final int districtCityMandatory;
   final int leadMobileExistedCheck;
+  final int taskRemarkMandatory;
   final List<CompanyPermission> permissions;
 
   Company({
@@ -128,6 +130,7 @@ class Company {
     required this.panNo,
     required this.cinNo,
     required this.companyCode,
+    required this.userCount,
     required this.deleteStatus,
     required this.isLocation,
     required this.notificationTopic,
@@ -141,6 +144,7 @@ class Company {
     required this.commercialProposal,
     required this.districtCityMandatory,
     required this.leadMobileExistedCheck,
+    required this.taskRemarkMandatory,
     this.permissions = const [],
   });
 
@@ -162,6 +166,7 @@ class Company {
       panNo: json['Pan_No'] ?? '',
       cinNo: json['Cin_No'] ?? '',
       companyCode: json['Company_Code'] ?? '',
+      userCount: json['User_Count']?.toString() ?? '',
       deleteStatus: json['DeleteStatus'] ?? 0,
       isLocation: json['Is_Location'] ?? 0,
       notificationTopic: json['notification_topic'] ?? '',
@@ -175,6 +180,7 @@ class Company {
       commercialProposal: json['Commercial_Proposal'] ?? 0,
       districtCityMandatory: json['District_City_Mandatory'] ?? 0,
       leadMobileExistedCheck: json['Lead_Mobile_Existed_Check'] ?? 0,
+      taskRemarkMandatory: json['Task_Remark_Mandatory'] ?? 0,
       permissions: (json['permissions'] as List<dynamic>?)
               ?.map((e) => CompanyPermission.fromJson(e))
               .toList() ??
@@ -200,6 +206,7 @@ class Company {
       'Pan_No': panNo,
       'Cin_No': cinNo,
       'Company_Code': companyCode,
+      'User_Count': userCount,
       'DeleteStatus': deleteStatus,
       'Is_Location': isLocation,
       'notification_topic': notificationTopic,
@@ -213,6 +220,7 @@ class Company {
       'Commercial_Proposal': commercialProposal,
       'District_City_Mandatory': districtCityMandatory,
       'Lead_Mobile_Existed_Check': leadMobileExistedCheck,
+      'Task_Remark_Mandatory': taskRemarkMandatory,
       'permissions': permissions.map((e) => e.toJson()).toList(),
     };
   }

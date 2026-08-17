@@ -89,6 +89,8 @@ class _CompanyDetailsState extends State<CompanyDetails> {
                             settingsProvider.companyDetails[0].cinNo.toString();
                         settingsProvider.ccompanyCodeController.text =
                             settingsProvider.companyDetails[0].companyCode.toString();
+                        settingsProvider.cuserCountController.text =
+                            settingsProvider.companyDetails[0].userCount.toString();
                         settingsProvider.saveImagePath(
                             settingsProvider.companyDetails[0].logo.toString());
                         settingsProvider.setToggleValue(
@@ -177,6 +179,9 @@ class _CompanyDetailsState extends State<CompanyDetails> {
                       // Company Code
                       _buildInfoTile(Icons.code, "Company Code",
                           settingsProvider.companyDetails[0].companyCode),
+                      // User Count
+                      _buildInfoTile(Icons.people, "User Count",
+                          settingsProvider.companyDetails[0].userCount),
                       // Website
                       _buildInfoTile(
                         Icons.location_on_sharp,
