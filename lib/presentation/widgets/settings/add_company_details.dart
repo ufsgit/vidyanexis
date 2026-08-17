@@ -194,6 +194,14 @@ class _AddCompanyDetailsState extends State<AddCompanyDetails> {
                   hintText: 'Company Code',
                   labelText: '',
                 ),
+                const SizedBox(height: 10),
+                CustomTextField(
+                  readOnly: false,
+                  height: 54,
+                  controller: settingsProvider.cuserCountController,
+                  hintText: 'User Count',
+                  labelText: '',
+                ),
               ] else ...[
                 Row(
                   children: [
@@ -335,6 +343,24 @@ class _AddCompanyDetailsState extends State<AddCompanyDetails> {
                         hintText: 'Company Code',
                         labelText: '',
                       ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    Expanded(
+                      child: CustomTextField(
+                        readOnly: false,
+                        height: 54,
+                        controller: settingsProvider.cuserCountController,
+                        hintText: 'User Count',
+                        labelText: '',
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Container(),
                     ),
                   ],
                 ),

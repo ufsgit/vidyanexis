@@ -518,6 +518,7 @@ class SettingsProvider extends ChangeNotifier {
   final TextEditingController cpanNoController = TextEditingController();
   final TextEditingController ccinNoController = TextEditingController();
   final TextEditingController ccompanyCodeController = TextEditingController();
+  final TextEditingController cuserCountController = TextEditingController();
 
   final List<Uint8List> _images = [];
   List<Uint8List> get images => _images;
@@ -4399,6 +4400,7 @@ class SettingsProvider extends ChangeNotifier {
                   panNo: '',
                   cinNo: '',
                   companyCode: '',
+                  userCount: '',
                   deleteStatus: 0,
                   isLocation: 0,
                   notificationTopic: notificationTopic,
@@ -4433,6 +4435,7 @@ class SettingsProvider extends ChangeNotifier {
                 panNo: existing.panNo,
                 cinNo: existing.cinNo,
                 companyCode: existing.companyCode,
+                userCount: existing.userCount,
                 deleteStatus: existing.deleteStatus,
                 isLocation: existing.isLocation,
                 notificationTopic: existing.notificationTopic,
@@ -4586,6 +4589,7 @@ class SettingsProvider extends ChangeNotifier {
             "Pan_No": cpanNoController.text.toString(),
             "Cin_No": ccinNoController.text.toString(),
             "Company_Code": ccompanyCodeController.text.toString(),
+            "User_Count": cuserCountController.text.toString(),
             "Is_Location": _toggleValue,
             "Enquiry_For_Mandatory": _enquiryForMandatory,
             "Enquiry_Source_Mandatory": _enquirySourceMandatory,
@@ -4718,6 +4722,7 @@ class SettingsProvider extends ChangeNotifier {
     cpanNoController.clear();
     ccinNoController.clear();
     ccompanyCodeController.clear();
+    cuserCountController.clear();
     uploadedFilePath = '';
     _toggleValue = 0;
     _enquiryForMandatory = 0;
