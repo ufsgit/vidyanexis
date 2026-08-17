@@ -129,7 +129,10 @@ class _HomePageState extends State<HomePage> {
               onPressed: () async {
                 final loginController =
                     Provider.of<LoginController>(context, listen: false);
+                final router = GoRouter.of(context);
+
                 Navigator.of(ctx).pop();
+
                 SharedPreferences prefs = await SharedPreferences.getInstance();
 
                 // Backup attendance state
@@ -183,7 +186,7 @@ class _HomePageState extends State<HomePage> {
                 }
 
                 if (context.mounted) {
-                  context.go(LoginPage.route);
+                  router.go(LoginPage.route);
                 }
               },
               child: const Text(
