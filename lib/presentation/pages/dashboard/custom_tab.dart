@@ -185,15 +185,22 @@ import 'package:vidyanexis/controller/dashboard_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:provider/provider.dart';
 
-class CustomTab extends StatelessWidget {
+class CustomTab extends StatefulWidget {
   const CustomTab({
     super.key,
-    required DashboardProvider dashBoardProvider,
+    required this.dashBoardProvider,
     this.userType = "",
-  }) : _dashBoardProvider = dashBoardProvider;
+  });
 
-  final DashboardProvider _dashBoardProvider;
+  final DashboardProvider dashBoardProvider;
   final String userType;
+
+  @override
+  State<CustomTab> createState() => _CustomTabState();
+}
+
+class _CustomTabState extends State<CustomTab> {
+  final List<GlobalKey> _tabKeys = [];
 
   @override
   Widget build(BuildContext context) {
@@ -219,11 +226,18 @@ class CustomTab extends StatelessWidget {
       if (settingsProvider.menuIsViewMap[52].toString() != '0') 'Task Summary',
       if (settingsProvider.menuIsViewMap[152].toString() != '0')
         'Customer Outstanding Summary',
-      if (userType == '1') 'User Activity',
-      if (userType == '1') 'Attendance Dashboard',
+      if (widget.userType == '1') 'User Activity',
+      if (widget.userType == '1') 'Attendance Dashboard',
       if (settingsProvider.hasTravelAllowancePermission)
         'Travel Allowance',
     ];
+
+    if (_tabKeys.length != tabOptions.length) {
+      _tabKeys.clear();
+      for (int i = 0; i < tabOptions.length; i++) {
+        _tabKeys.add(GlobalKey());
+      }
+    }
 
     //change permissions id in dashBoardPage also ----------------
 
@@ -248,10 +262,11 @@ class CustomTab extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: List.generate(tabOptions.length, (index) {
-                final isSelected = _dashBoardProvider.tabIndex == index;
+                final isSelected = widget.dashBoardProvider.tabIndex == index;
                 return GestureDetector(
+                  key: _tabKeys[index],
                   onTap: () {
-                    _dashBoardProvider.changeTab(index);
+                    widget.dashBoardProvider.changeTab(index);
                     final allowedTabIds = [
                       if (settingsProvider.menuIsViewMap[84].toString() != '0')
                         6,
@@ -269,16 +284,27 @@ class CustomTab extends StatelessWidget {
                         3,
                       if (settingsProvider.menuIsViewMap[152].toString() != '0')
                         7,
-                      if (userType == '1') 8,
-                      if (userType == '1') 9,
+                      if (widget.userType == '1') 8,
+                      if (widget.userType == '1') 9,
                       if (settingsProvider.hasTravelAllowancePermission)
                         10,
                     ];
 
                     if (index >= 0 && index < allowedTabIds.length) {
-                      _dashBoardProvider.loadDataForTab(
+                      widget.dashBoardProvider.loadDataForTab(
                           allowedTabIds[index], context);
                     }
+                    
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (_tabKeys[index].currentContext != null) {
+                        Scrollable.ensureVisible(
+                          _tabKeys[index].currentContext!,
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                          alignment: 0.5,
+                        );
+                      }
+                    });
                   },
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
@@ -365,3 +391,4 @@ class CustomTab extends StatelessWidget {
     }
   }
 }
+
