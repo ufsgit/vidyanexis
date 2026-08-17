@@ -97,6 +97,7 @@ class Company {
   final String panNo;
   final String cinNo;
   final String companyCode;
+  final String userCount;
   final int deleteStatus;
   final int isLocation;
   final String notificationTopic;
@@ -129,6 +130,7 @@ class Company {
     required this.panNo,
     required this.cinNo,
     required this.companyCode,
+    required this.userCount,
     required this.deleteStatus,
     required this.isLocation,
     required this.notificationTopic,
@@ -164,6 +166,7 @@ class Company {
       panNo: json['Pan_No'] ?? '',
       cinNo: json['Cin_No'] ?? '',
       companyCode: json['Company_Code'] ?? '',
+      userCount: json['User_Count']?.toString() ?? '',
       deleteStatus: json['DeleteStatus'] ?? 0,
       isLocation: json['Is_Location'] ?? 0,
       notificationTopic: json['notification_topic'] ?? '',
@@ -203,6 +206,7 @@ class Company {
       'Pan_No': panNo,
       'Cin_No': cinNo,
       'Company_Code': companyCode,
+      'User_Count': userCount,
       'DeleteStatus': deleteStatus,
       'Is_Location': isLocation,
       'notification_topic': notificationTopic,

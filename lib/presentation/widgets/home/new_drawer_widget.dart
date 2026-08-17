@@ -631,7 +631,8 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                           height: 54,
                                           controller:
                                               leadProvider.leadNameController,
-                                          hintText: settingsProvider.leadNameLabel,
+                                          hintText:
+                                              settingsProvider.leadNameLabel,
                                           labelText: '',
                                           focusNode: _leadNameFocusNode,
                                           showError:
@@ -914,7 +915,8 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                         child: CommonDropdown<int>(
                                           hintText: 'Priority',
                                           items: settingsProvider.priorities
-                                              .map((source) => DropdownItem<int>(
+                                              .map((source) =>
+                                                  DropdownItem<int>(
                                                     id: source.priorityId,
                                                     name: source.priorityName,
                                                   ))
@@ -922,17 +924,19 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                           controller: leadProvider
                                               .priorityNameController,
                                           onItemSelected: (selectedId) {
-                                            leadProvider.priorityId = selectedId;
-                                            final selectedItem = settingsProvider
-                                                .priorities
-                                                .firstWhere((source) =>
-                                                    source.priorityId ==
-                                                    selectedId);
-                                            leadProvider
-                                                .priorityNameController
-                                                .text = selectedItem.priorityName;
+                                            leadProvider.priorityId =
+                                                selectedId;
+                                            final selectedItem =
+                                                settingsProvider.priorities
+                                                    .firstWhere((source) =>
+                                                        source.priorityId ==
+                                                        selectedId);
+                                            leadProvider.priorityNameController
+                                                    .text =
+                                                selectedItem.priorityName;
                                           },
-                                          selectedValue: leadProvider.priorityId,
+                                          selectedValue:
+                                              leadProvider.priorityId,
                                         ),
                                       ),
                                     ),
@@ -1181,7 +1185,9 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                                   .getCustomFieldsByEnquiryForId(
                                                 context,
                                                 leadId: widget.isEdit
-                                                    ? (leadProvider.customerId ?? 0)
+                                                    ? (leadProvider
+                                                            .customerId ??
+                                                        0)
                                                     : 0,
                                                 enquiryForId: newValue,
                                               );
@@ -1246,14 +1252,15 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                               horizontal: 4.0),
                                           child: CustomTextField(
                                             height: 54,
-                                            controller:
-                                                leadProvider.leadSubsidyController,
+                                            controller: leadProvider
+                                                .leadSubsidyController,
                                             hintText: 'Subsidy Amount',
                                             labelText: '',
-                                            showError:
-                                                dropDownProvider.showValidation &&
-                                                    !_isFieldValid(leadProvider
-                                                        .leadSubsidyController.text),
+                                            showError: dropDownProvider
+                                                    .showValidation &&
+                                                !_isFieldValid(leadProvider
+                                                    .leadSubsidyController
+                                                    .text),
                                             inputFormatters: [
                                               FilteringTextInputFormatter.allow(
                                                   RegExp(r'^\d+\.?\d{0,2}')),
@@ -1670,30 +1677,30 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                       controller: leadProvider.stateController,
                                       onItemSelected: (int? newValue) {
                                         if (newValue != null) {
-                                          final selectedState =
-                                              dropDownProvider.stateList
-                                                  .firstWhere((task) =>
-                                                      task.stateId ==
-                                                      newValue);
-                                          dropDownProvider.updateState(
-                                              newValue,
+                                          final selectedState = dropDownProvider
+                                              .stateList
+                                              .firstWhere((task) =>
+                                                  task.stateId == newValue);
+                                          dropDownProvider.updateState(newValue,
                                               selectedState.stateName ?? '');
                                           leadProvider.stateController.text =
                                               selectedState.stateName ?? '';
                                         }
                                       },
-                                      selectedValue: dropDownProvider
-                                                      .selectedStateId !=
-                                                  null &&
-                                              dropDownProvider.stateList
-                                                  .any((item) =>
-                                                      item.stateId ==
-                                                      dropDownProvider
-                                                          .selectedStateId)
-                                          ? dropDownProvider.selectedStateId
-                                          : null,
-                                      showError: dropDownProvider.showValidation &&
-                                          !_isFieldValid(leadProvider.stateController.text),
+                                      selectedValue:
+                                          dropDownProvider.selectedStateId !=
+                                                      null &&
+                                                  dropDownProvider.stateList
+                                                      .any((item) =>
+                                                          item.stateId ==
+                                                          dropDownProvider
+                                                              .selectedStateId)
+                                              ? dropDownProvider.selectedStateId
+                                              : null,
+                                      showError:
+                                          dropDownProvider.showValidation &&
+                                              !_isFieldValid(leadProvider
+                                                  .stateController.text),
                                     ),
                                   ),
                                   const SizedBox(width: 8),
@@ -2102,9 +2109,6 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                                   hintText: 'Follow-up Status*',
                                                   items: dropDownProvider
                                                       .followUpData
-                                                      .where((element) =>
-                                                          element.isCreateNew ==
-                                                          1)
                                                       .map((status) =>
                                                           DropdownItem<int>(
                                                             id: status
@@ -2424,8 +2428,8 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                               ],
                                             ),
                                           )
-                                      else
-                                        const Expanded(child: SizedBox()),
+                                        else
+                                          const Expanded(child: SizedBox()),
                                       ],
                                     ),
                                     // Row 2 Branch, Department, Staff
@@ -2652,8 +2656,8 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                               labelText: '',
                                             ),
                                           )
-                                      else
-                                        const Expanded(child: SizedBox()),
+                                        else
+                                          const Expanded(child: SizedBox()),
                                       ],
                                     ),
                                     // Custom Fields
@@ -2684,7 +2688,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 250),
+                          const SizedBox(height: 250),
                         ],
                       ),
                     ],
