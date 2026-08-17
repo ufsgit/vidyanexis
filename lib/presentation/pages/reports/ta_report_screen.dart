@@ -169,6 +169,39 @@ class _TAReportScreenState extends State<TAReportScreen> {
                   children: [
                     Row(
                       children: [
+                        Builder(
+                          builder: (ctx) => IconButton(
+                            onPressed: () {
+                              ScaffoldState? parent;
+                              ctx.visitAncestorElements((element) {
+                                if (element is StatefulElement &&
+                                    element.state is ScaffoldState) {
+                                  ScaffoldState scaffold =
+                                      element.state as ScaffoldState;
+                                  if (scaffold.hasDrawer) {
+                                    parent = scaffold;
+                                    return false;
+                                  }
+                                }
+                                return true;
+                              });
+                              parent?.openDrawer();
+                            },
+                            icon: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: AppColors.secondaryBlue
+                                    .withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: const Icon(
+                                Icons.sort,
+                                size: 20,
+                                color: AppColors.secondaryBlue,
+                              ),
+                            ),
+                          ),
+                        ),
                         Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(

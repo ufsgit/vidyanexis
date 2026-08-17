@@ -5037,7 +5037,7 @@ class SettingsProvider extends ChangeNotifier {
   }
 
   Future<void> getPriorities(BuildContext context, {bool forceRefresh = false}) async {
-    if (!forceRefresh && _priorities.isNotEmpty) return;
+    // if (!forceRefresh && _priorities.isNotEmpty) return;
     try {
       final response = await HttpRequest.httpGetRequest(
         endPoint: HttpUrls.getPriority,

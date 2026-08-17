@@ -635,6 +635,10 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
                 onPressed: () async {
                   final loginController =
                       Provider.of<LoginController>(context, listen: false);
+                  final router = GoRouter.of(context);
+
+                  Navigator.of(context).pop();
+
                   SharedPreferences prefs =
                       await SharedPreferences.getInstance();
 
@@ -673,29 +677,35 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
 
                   // Restore attendance state
                   if (userId != null) {
-                    if (isCheckedIn != null)
+                    if (isCheckedIn != null) {
                       await prefs.setBool('is_checked_in_$userId', isCheckedIn);
-                    if (checkInDate != null)
+                    }
+                    if (checkInDate != null) {
                       await prefs.setString(
                           'check_in_date_$userId', checkInDate);
-                    if (checkInTime != null)
+                    }
+                    if (checkInTime != null) {
                       await prefs.setString(
                           'check_in_time_$userId', checkInTime);
-                    if (attendanceId != null)
+                    }
+                    if (attendanceId != null) {
                       await prefs.setInt('attendance_id_$userId', attendanceId);
+                    }
                   }
 
                   // Restore branding state
-                  if (cachedLogo != null)
+                  if (cachedLogo != null) {
                     await prefs.setString('cached_company_logo', cachedLogo);
-                  if (cachedTitle != null)
+                  }
+                  if (cachedTitle != null) {
                     await prefs.setString('cached_company_title', cachedTitle);
-                  if (baseUrl != null)
+                  }
+                  if (baseUrl != null) {
                     await prefs.setString('company_base_url', baseUrl);
+                  }
 
                   if (context.mounted) {
-                    Navigator.of(context).pop();
-                    context.go(LoginPage.route);
+                    router.go(LoginPage.route);
                   }
                 },
                 style: ElevatedButton.styleFrom(

@@ -110,11 +110,11 @@ class LoginController extends ChangeNotifier {
 
   Future<void> logout(
       {required int userId}) async {
-    try {
-      final response = await HttpRequest.httpPostRequest(
-          endPoint: HttpUrls.logout, bodyData: {"User_Details_Id": userId});
-    } catch (e) {
-      print('Exception occurred: $e');
-    }
+    // try {
+    //   final response = await HttpRequest.httpPostRequest(
+    //       endPoint: HttpUrls.logout, bodyData: {"User_Details_Id": userId});
+    // } catch (e) {
+    //   print('Exception occurred: $e');
+    // }
   }
 }
