@@ -534,6 +534,7 @@ class SettingsProvider extends ChangeNotifier {
   int _commercialProposal = 0;
   int _districtCityMandatory = 0;
   int _leadMobileExistedCheck = 0;
+  int _taskRemarkMandatory = 0;
   int _leadNameChangeToCustomerName = 0;
   int _leadCodeWithEnquiryCode = 0;
   int _documentButtonTaskStatus = 0;
@@ -551,6 +552,7 @@ class SettingsProvider extends ChangeNotifier {
   int get commercialProposal => _commercialProposal;
   int get districtCityMandatory => _districtCityMandatory;
   int get leadMobileExistedCheck => _leadMobileExistedCheck;
+  int get taskRemarkMandatory => _taskRemarkMandatory;
   int get leadNameChangeToCustomerName => _leadNameChangeToCustomerName;
   int get leadCodeWithEnquiryCode => _leadCodeWithEnquiryCode;
   int get documentButtonTaskStatus => _documentButtonTaskStatus;
@@ -622,6 +624,8 @@ class SettingsProvider extends ChangeNotifier {
       _taskPermissionMeAndAll = value;
     } else if (permissionId == 20 || (caption != null && caption.toLowerCase().contains('hide warranty'))) {
       _hideWarranty = value;
+    } else if (permissionId == 21) {
+      _taskRemarkMandatory = value;
     }
   }
 
@@ -690,6 +694,7 @@ class SettingsProvider extends ChangeNotifier {
       _commercialProposal = _companyDetails[0].commercialProposal;
       _districtCityMandatory = _companyDetails[0].districtCityMandatory;
       _leadMobileExistedCheck = _companyDetails[0].leadMobileExistedCheck;
+      _taskRemarkMandatory = _companyDetails[0].taskRemarkMandatory;
       _toggleValue = _companyDetails[0].isLocation;
 
       if (_companyDetails[0].permissions.isNotEmpty) {
@@ -1357,6 +1362,12 @@ class SettingsProvider extends ChangeNotifier {
   void toggleFeedbackCheckbox(bool value) {
     _isFeedbackChecked = value ? 1 : 0;
     print(_isFeedbackChecked.toString());
+    notifyListeners();
+  }
+
+  void setTaskRemarkMandatory(int value) {
+    _taskRemarkMandatory = value;
+    _syncStateToPermissionsList(21, value);
     notifyListeners();
   }
 
@@ -4412,6 +4423,7 @@ class SettingsProvider extends ChangeNotifier {
                   commercialProposal: 0,
                   districtCityMandatory: 0,
                   leadMobileExistedCheck: 0,
+                  taskRemarkMandatory: 0,
                   permissions: perms,
                 )
               ];
@@ -4446,6 +4458,7 @@ class SettingsProvider extends ChangeNotifier {
                 commercialProposal: existing.commercialProposal,
                 districtCityMandatory: existing.districtCityMandatory,
                 leadMobileExistedCheck: existing.leadMobileExistedCheck,
+                taskRemarkMandatory: existing.taskRemarkMandatory,
                 permissions: perms,
               );
             }
@@ -4725,6 +4738,12 @@ class SettingsProvider extends ChangeNotifier {
     _leadPermissionMeAndAll = 0;
     _customerPermissionMeAndAll = 0;
     _taskPermissionMeAndAll = 0;
+    _taskRemarkMandatory = 0;
+    _leadNameChangeToCustomerName = 0;
+    _leadCodeWithEnquiryCode = 0;
+    _documentButtonTaskStatus = 0;
+    _hideWarranty = 0;
+    notifyListeners();
   }
 
   Future<void> searchPermission(BuildContext context) async {

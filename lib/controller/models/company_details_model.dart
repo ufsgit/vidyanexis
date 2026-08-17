@@ -110,6 +110,7 @@ class Company {
   final int commercialProposal;
   final int districtCityMandatory;
   final int leadMobileExistedCheck;
+  final int taskRemarkMandatory;
   final List<CompanyPermission> permissions;
 
   Company({
@@ -141,6 +142,7 @@ class Company {
     required this.commercialProposal,
     required this.districtCityMandatory,
     required this.leadMobileExistedCheck,
+    required this.taskRemarkMandatory,
     this.permissions = const [],
   });
 
@@ -175,6 +177,7 @@ class Company {
       commercialProposal: json['Commercial_Proposal'] ?? 0,
       districtCityMandatory: json['District_City_Mandatory'] ?? 0,
       leadMobileExistedCheck: json['Lead_Mobile_Existed_Check'] ?? 0,
+      taskRemarkMandatory: json['Task_Remark_Mandatory'] ?? 0,
       permissions: (json['permissions'] as List<dynamic>?)
               ?.map((e) => CompanyPermission.fromJson(e))
               .toList() ??
@@ -213,6 +216,7 @@ class Company {
       'Commercial_Proposal': commercialProposal,
       'District_City_Mandatory': districtCityMandatory,
       'Lead_Mobile_Existed_Check': leadMobileExistedCheck,
+      'Task_Remark_Mandatory': taskRemarkMandatory,
       'permissions': permissions.map((e) => e.toJson()).toList(),
     };
   }
