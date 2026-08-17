@@ -640,6 +640,15 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                               return const SizedBox();
                             },
                           ),
+                          if (settingsProvider.taskRemarkMandatory == 1) ...[
+                            _buildFieldLabel('Add Remark'),
+                            _buildInputField(
+                              controller: reportsProvider.remarksController,
+                              hint: 'Enter Remark...',
+                              maxLines: 4,
+                            ),
+                            const SizedBox(height: 16),
+                          ],
 
                           // --- Section: Schedule & Notes ---
                           _buildExpansionCard(
@@ -712,6 +721,16 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                     },
                                   ),
                                   const SizedBox(height: 16),
+                                ],
+                                if (settingsProvider.taskRemarkMandatory ==
+                                    0) ...[
+                                  _buildFieldLabel('Add Remark'),
+                                  _buildInputField(
+                                    controller:
+                                        reportsProvider.remarksController,
+                                    hint: 'Enter Remark...',
+                                    maxLines: 4,
+                                  ),
                                 ],
                                 _buildFieldLabel('Add Notes'),
                                 _buildInputField(
@@ -1058,6 +1077,70 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                     final settingsProvider =
                                         Provider.of<SettingsProvider>(context,
                                             listen: false);
+                                    //Remark Mandatory Check
+                                    int remarkMandatoty =
+                                        settingsProvider.taskRemarkMandatory;
+                                    if (remarkMandatoty == 1 &&
+                                        reportsProvider
+                                            .remarksController.text.isEmpty) {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(4)),
+                                            titlePadding:
+                                                const EdgeInsets.fromLTRB(
+                                                    24, 24, 24, 8),
+                                            contentPadding:
+                                                const EdgeInsets.fromLTRB(
+                                                    24, 0, 24, 16),
+                                            actionsPadding:
+                                                const EdgeInsets.symmetric(
+                                                    horizontal: 16,
+                                                    vertical: 10),
+                                            title: Row(
+                                              children: [
+                                                Icon(
+                                                    Icons.warning_amber_rounded,
+                                                    color: AppColors.darkGreen),
+                                                const SizedBox(width: 10),
+                                                const Text("Unable to Save",
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 20)),
+                                              ],
+                                            ),
+                                            content: const Text(
+                                                "Remark Missing",
+                                                style: TextStyle(fontSize: 16)),
+                                            actions: [
+                                              TextButton(
+                                                style: TextButton.styleFrom(
+                                                  foregroundColor: Colors.white,
+                                                  backgroundColor:
+                                                      AppColors.darkGreen,
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              4)),
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 20,
+                                                      vertical: 10),
+                                                ),
+                                                onPressed: () =>
+                                                    Navigator.of(context).pop(),
+                                                child: const Text("OK"),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                      return;
+                                    }
                                     bool isDocumentButtonEnabled =
                                         settingsProvider.documentButtonTaskStatus == 1;
 
