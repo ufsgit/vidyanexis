@@ -34,7 +34,8 @@ class _CustomerOutstandingReportMobileState
     'Today',
     'Tomorrow',
     'This Week',
-    'This Month'
+    'This Month',
+    'Financial Year',
   ];
 
   void _onSearchChanged(String query) {
