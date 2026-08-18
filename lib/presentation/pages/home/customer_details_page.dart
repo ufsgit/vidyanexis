@@ -669,6 +669,63 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                     }
                                   },
                                 ),
+                              if (settingsprovider.menuIsViewMap[165] == 1 ||
+                                  settingsprovider.menuIsViewMap[165].toString() == '1')
+                                IconButton(
+                                  tooltip: 'Download Image',
+                                  icon: const Icon(Icons.download,
+                                      color: Colors.blue),
+                                  onPressed: () async {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(content: Text('Download started...')),
+                                    );
+                                    final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.generateStatusImage}${widget.customerId}');
+                                    if (bytes != null && bytes.isNotEmpty) {
+                                      String extension = 'png';
+                                      if (bytes.length >= 4 && bytes[0] == 0x25 && bytes[1] == 0x50 && bytes[2] == 0x44 && bytes[3] == 0x46) {
+                                        extension = 'pdf';
+                                      } else if (bytes.length >= 2 && bytes[0] == 0xFF && bytes[1] == 0xD8) {
+                                        extension = 'jpg';
+                                      }
+                                      
+                                      final latestProvider = Provider.of<CustomerDetailsProvider>(context, listen: false);
+                                      String customerName = '';
+                                      if (latestProvider.leadDetails != null && latestProvider.leadDetails!.isNotEmpty) {
+                                        customerName = latestProvider.leadDetails![0].customerName ?? '';
+                                      }
+                                      if (customerName.isEmpty) {
+                                        final leadDetailsProv = Provider.of<LeadDetailsProvider>(context, listen: false);
+                                        if (leadDetailsProv.leadDetails != null && leadDetailsProv.leadDetails!.isNotEmpty) {
+                                          customerName = leadDetailsProv.leadDetails![0].customerName ?? '';
+                                        }
+                                      }
+                                      if (customerName.isEmpty) {
+                                        final leadProv = Provider.of<LeadsProvider>(context, listen: false);
+                                        customerName = leadProv.leadNameController.text;
+                                      }
+                                      
+                                      customerName = customerName.replaceAll(RegExp(r'[^a-zA-Z0-9_\-]'), '_');
+                                      if (customerName.trim().isEmpty) {
+                                        customerName = 'Customer_$widget.customerId';
+                                      }
+                                      
+                                      String fileName = '${customerName}_Image.$extension';
+                                      
+                                      await FileDownloader.saveFile(bytes, fileName);
+                                      if (context.mounted) {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          const SnackBar(content: Text('Download complete!')),
+                                        );
+                                      }
+                                    } else {
+                                      if (context.mounted) {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          const SnackBar(content: Text('Failed to download image')),
+                                        );
+                                      }
+                                    }
+                                  },
+                                ),
                               const SizedBox(width: 20),
                               if (_canScrollLeft)
                                 IconButton(

@@ -83,7 +83,7 @@ import 'package:vidyanexis/controller/duplicate_entry_attempts_provider.dart';
 
 final GlobalKey<ScaffoldMessengerState> navigatorKey =
     GlobalKey<ScaffoldMessengerState>();
-bool isCompanyCode = true; // dont change... code - fathima123 , code - nayan123
+bool isCompanyCode = false; // dont change... code - fathima123 , code - nayan123
 
 Future<void> main() async {
   final bootStart = DateTime.now().millisecondsSinceEpoch;
