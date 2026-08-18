@@ -12,15 +12,24 @@ import 'package:vidyanexis/main.dart';
 
 class MicrotecSocket {
   static IO.Socket? socket;
+  static bool _isConnecting = false;
+
   static Future initSocket() async {
+    final socketStartTime = DateTime.now().millisecondsSinceEpoch;
+    print('[PERF] Socket initialization started');
+
     final prefs = await SharedPreferences.getInstance();
     final String token = prefs.getString('token') ?? "";
     final String userId = prefs.getString('userId') ?? "";
 
-    if (socket != null && socket!.connected) {
-      log('Socket is already initialized and connected');
+    if (socket != null && (socket!.connected || _isConnecting)) {
+      log('Socket is already initialized or connecting');
+      print(
+          '[PERF] Socket already connected or connecting: ${DateTime.now().millisecondsSinceEpoch - socketStartTime} ms');
       return;
     }
+
+    _isConnecting = true;
 
     final optionsBuilder = IO.OptionBuilder()
         .enableReconnection()
@@ -52,6 +61,8 @@ class MicrotecSocket {
     });
 
     socket?.onConnect((_) {
+      print(
+          '[PERF] Socket initialization completed: ${DateTime.now().millisecondsSinceEpoch - socketStartTime} ms');
       log('✅ SUCCESS: Socket connected successfully for userId: $userId');
 
       // Add confirmation listener for registration
@@ -82,7 +93,8 @@ class MicrotecSocket {
     socket?.on('connecting', (_) => log('🔄 Connecting...'));
     socket?.on('connect_failed', (_) => log('❌ Connect Failed'));
 
-    await Future.delayed(const Duration(seconds: 4), () {
+    // Non-blocking timeout check for background logging
+    Future.delayed(const Duration(seconds: 4), () {
       if (socket?.connected == false) {
         log('❌ Socket failed to connect after timeout');
       }
@@ -273,6 +285,7 @@ class MicrotecSocket {
     log('🔌 Disconnecting socket...');
     socket?.disconnect();
     socket = null;
+    _isConnecting = false;
     log('✅ Socket disconnected and nullified');
   }
 }

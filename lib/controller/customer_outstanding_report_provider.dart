@@ -26,9 +26,8 @@ class CustomerOutstandingReportProvider extends ChangeNotifier {
   int? _selectedEnquirySourceId;
   int? get selectedEnquirySourceId => _selectedEnquirySourceId;
 
-  DateTime? _fromDate = DateTime(DateTime.now().year, DateTime.now().month, 1);
-  DateTime? _toDate =
-      DateTime(DateTime.now().year, DateTime.now().month + 1, 0);
+  DateTime? _fromDate;
+  DateTime? _toDate;
 
   DateTime? get fromDate => _fromDate;
   DateTime? get toDate => _toDate;
@@ -38,8 +37,19 @@ class CustomerOutstandingReportProvider extends ChangeNotifier {
   String get formattedToDate =>
       _toDate != null ? DateFormat('yyyy-MM-dd').format(_toDate!) : '';
 
-  int? _selectedDateFilterIndex = -1;
+  int? _selectedDateFilterIndex = 5;
   int? get selectedDateFilterIndex => _selectedDateFilterIndex;
+
+  CustomerOutstandingReportProvider() {
+    _setFinancialYearDates();
+  }
+
+  void _setFinancialYearDates() {
+    final now = DateTime.now();
+    final startYear = now.month >= 4 ? now.year : now.year - 1;
+    _fromDate = DateTime(startYear, 4, 1);
+    _toDate = DateTime(startYear + 1, 3, 31);
+  }
 
   void toggleFilter() {
     _isFilter = !_isFilter;
@@ -58,9 +68,8 @@ class CustomerOutstandingReportProvider extends ChangeNotifier {
 
   void selectDateFilterOption(int? index) {
     if (index == null) {
-      _selectedDateFilterIndex = 1; // Default to Today
-      _fromDate = DateTime.now();
-      _toDate = DateTime.now();
+      _selectedDateFilterIndex = 5; // Default to Financial Year
+      _setFinancialYearDates();
     } else {
       _selectedDateFilterIndex = index;
       setDateFilterByIndex(index);
@@ -91,6 +100,9 @@ class CustomerOutstandingReportProvider extends ChangeNotifier {
         _fromDate = DateTime(now.year, now.month, 1);
         _toDate = DateTime(now.year, now.month + 1, 0);
         break;
+      case 5: // Financial Year
+        _setFinancialYearDates();
+        break;
     }
   }
 
@@ -118,10 +130,8 @@ class CustomerOutstandingReportProvider extends ChangeNotifier {
   void resetFilters(BuildContext context) {
     _search = '';
     _selectedEnquirySourceId = null;
-    _selectedDateFilterIndex = -1;
-    final now = DateTime.now();
-    _fromDate = DateTime(now.year, now.month, 1);
-    _toDate = DateTime(now.year, now.month + 1, 0);
+    _selectedDateFilterIndex = 5;
+    _setFinancialYearDates();
     getReport(context);
   }
 

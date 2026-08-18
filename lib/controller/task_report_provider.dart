@@ -18,9 +18,14 @@ class TaskReportProvider extends ChangeNotifier {
   int get selectedSortOption => _selectedSortOption;
 
   void setSortOption(int option, BuildContext context) {
-    _selectedSortOption = option;
+    if (option == 9) {
+      _selectedSortOption = 2;
+    } else {
+      _selectedSortOption = option;
+    }
+    _pageIndex = 1;
     notifyListeners();
-    getSearchTaskReport(context);
+    getSearchTaskReport(context, resetPage: true);
   }
 
   DateTime? _fromDate = DateTime.now();

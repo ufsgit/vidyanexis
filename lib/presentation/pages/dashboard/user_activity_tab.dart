@@ -26,8 +26,12 @@ class _UserActivityTabState extends State<UserActivityTab> {
   Widget build(BuildContext context) {
     final dashBoardProvider = Provider.of<DashboardProvider>(context);
 
-    if (dashBoardProvider.isLoading || !dashBoardProvider.isUserActivityLoaded) {
-      return const Center(child: CircularProgressIndicator());
+    if (dashBoardProvider.userActivityReport == null &&
+        (dashBoardProvider.isLoading || !dashBoardProvider.isUserActivityLoaded)) {
+      return const SizedBox(
+        height: 300,
+        child: Center(child: CircularProgressIndicator()),
+      );
     }
 
     final report = dashBoardProvider.userActivityReport;

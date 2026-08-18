@@ -44,38 +44,37 @@ class _DashBoardPageState extends State<DashBoardPage> {
   String userName = "";
   String userType = "";
 
+  bool _isFirstBuild = true;
+
   @override
   void initState() {
     super.initState();
+    print('[PERF-BOOT] DashboardPage created');
     final dashBoardProvider =
         Provider.of<DashboardProvider>(context, listen: false);
     dashBoardProvider.changeTab(0);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final dashInitStart = DateTime.now().millisecondsSinceEpoch;
+      print('[PERF-BOOT] Dashboard shell visible');
+      print('[PERF-RELOAD] Dashboard Page initState postFrameCallback started at ${DateTime.now().toIso8601String()}');
+
       final dropDownProvider =
           Provider.of<DropDownProvider>(context, listen: false);
       final settingsProvider =
           Provider.of<SettingsProvider>(context, listen: false);
 
-      // Essential calls
-      dropDownProvider.getUserDetails(context);
-      dropDownProvider.getFollowUpStatus(context, "1");
-      settingsProvider.searchBranch(context);
-      settingsProvider.searchDepartment('', context);
-
       SharedPreferences preferences = await SharedPreferences.getInstance();
+      if (!mounted) return;
       userId = int.tryParse(preferences.getString('userId') ?? "0") ?? 0;
       userName = preferences.getString('userName') ?? "";
       userType = preferences.getString('userType') ?? "";
 
-      if (userType != "1") {
+      if (userType != "1" && dashBoardProvider.selectedUser != userId) {
         dashBoardProvider.setUserFilterStatus(userId);
-      } else {
-        // For admins, also ensure flags are cleared so fresh data is fetched
-        dashBoardProvider.clearDashboardFlags();
       }
 
-      // Load data for the initial tab only
+      // 1. Priority 1: Load data for the active dashboard tab FIRST
       final allowedTabs = <int>[
         if ((settingsProvider.menuIsViewMap[84] ?? 1).toString() != '0') 6,
         if ((settingsProvider.menuIsViewMap[49] ?? 1).toString() != '0') 0,
@@ -96,22 +95,42 @@ class _DashBoardPageState extends State<DashBoardPage> {
         final safeIndex =
             dashBoardProvider.tabIndex.clamp(0, allowedTabs.length - 1);
         final activeTab = allowedTabs[safeIndex];
+        final apiStart = DateTime.now().millisecondsSinceEpoch;
+        print('[PERF-DATA] dashboard API started');
         await dashBoardProvider.loadDataForTab(activeTab, context);
+        print('[PERF-DATA] dashboard API completed: ${DateTime.now().millisecondsSinceEpoch - apiStart} ms');
       }
 
-      if (!mounted) return;
-      final attendanceProvider =
-          Provider.of<AttendanceReportProvider>(context, listen: false);
-      if (userId != 0) {
-        await attendanceProvider.checkIsCheckedIn(userId);
+      // Immediately display dashboard shell & card data
+      if (mounted) {
+        setState(() {});
+        print('[PERF-DATA] dashboard data rendered');
+        print('[PERF-RELOAD] Dashboard UI updated / fully usable: ${DateTime.now().millisecondsSinceEpoch - dashInitStart} ms');
       }
 
-      if (mounted) setState(() {});
+      // 2. Priority 2: Non-critical background requests (Dropdowns & Attendance)
+      dropDownProvider.getUserDetails(context);
+      dropDownProvider.getFollowUpStatus(context, "1");
+      settingsProvider.searchBranch(context);
+      settingsProvider.searchDepartment('', context);
+
+      if (userId != 0 && mounted) {
+        final attendanceProvider =
+            Provider.of<AttendanceReportProvider>(context, listen: false);
+        print('[PERF-RELOAD] Attendance check started in background');
+        attendanceProvider.checkIsCheckedIn(userId).then((_) {
+          print('[PERF-RELOAD] Attendance check completed in background');
+        });
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_isFirstBuild) {
+      print('[PERF-BOOT] DashboardPage first build');
+      _isFirstBuild = false;
+    }
     DashboardProvider dashBoardProvider =
         Provider.of<DashboardProvider>(context);
     final settingsProvider = Provider.of<SettingsProvider>(context);
@@ -638,9 +657,8 @@ class _DashBoardPageState extends State<DashBoardPage> {
                       child: TextButton(
                         onPressed: () {
                           Navigator.pop(context);
-
+                          print('[PERF-RELOAD] Date filter changed (apply clicked)');
                           dashBoardProvider.formatDate();
-
                           dashBoardProvider.loadDataForTab(activeTab, context);
                         },
                         style: ElevatedButton.styleFrom(
@@ -665,6 +683,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
                       child: TextButton(
                         onPressed: () {
                           Navigator.pop(context);
+                          print('[PERF-RELOAD] Date filter cleared');
                           dashBoardProvider.selectDateFilterOption(null);
                           dashBoardProvider.loadDataForTab(activeTab, context);
                         },

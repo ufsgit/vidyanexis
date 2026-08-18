@@ -671,6 +671,10 @@ class TaskPageProvider extends ChangeNotifier {
         _selectedSortOption = 4;
         _sortOrder = 'DESC';
         break;
+      case 9:
+        _selectedSortOption = 2;
+        _sortOrder = 'DESC';
+        break;
     }
     _pageIndex = 1;
     notifyListeners();
