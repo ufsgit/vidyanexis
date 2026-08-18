@@ -91,7 +91,11 @@ class CustomerProvider extends ChangeNotifier {
   String _sortOrder = 'DESC'; // ASC or DESC
   String get sortOrder => _sortOrder;
 
+  int _currentSortOptionIndex = 0;
+  int get currentSortOptionIndex => _currentSortOptionIndex;
+
   void setSortOption(int option, BuildContext context) {
+    _currentSortOptionIndex = option;
     switch (option) {
       case 0:
         _selectedSortOption = 0;
@@ -129,7 +133,15 @@ class CustomerProvider extends ChangeNotifier {
         _selectedSortOption = 4;
         _sortOrder = 'DESC';
         break;
+      case 9:
+        _selectedSortOption = 2;
+        _sortOrder = 'DESC';
+        break;
     }
+    currentPage = 1;
+    _startLimit = 1;
+    _endLimit = 20;
+    _customerData.clear();
     notifyListeners();
     getSearchCustomers(context);
   }
@@ -221,10 +233,23 @@ class CustomerProvider extends ChangeNotifier {
 
             if (_selectedSortOption == 4) {
               if (_sortOrder == 'ASC') {
-                _customerData.sort((a, b) => a.customerName.toLowerCase().compareTo(b.customerName.toLowerCase()));
+                _customerData.sort((a, b) => a.customerName
+                    .toLowerCase()
+                    .compareTo(b.customerName.toLowerCase()));
               } else {
-                _customerData.sort((a, b) => b.customerName.toLowerCase().compareTo(a.customerName.toLowerCase()));
+                _customerData.sort((a, b) => b.customerName
+                    .toLowerCase()
+                    .compareTo(a.customerName.toLowerCase()));
               }
+            } else if (_selectedSortOption == 2 && _sortOrder == 'DESC') {
+              _customerData.sort((a, b) {
+                final dateA = a.parsedCreationDate;
+                final dateB = b.parsedCreationDate;
+                if (dateA == null && dateB == null) return 0;
+                if (dateA == null) return 1;
+                if (dateB == null) return -1;
+                return dateB.compareTo(dateA);
+              });
             }
 
             // Find metadata safely
@@ -528,9 +553,13 @@ class CustomerProvider extends ChangeNotifier {
 
           if (_selectedSortOption == 4) {
             if (_sortOrder == 'ASC') {
-              _customerData.sort((a, b) => a.customerName.toLowerCase().compareTo(b.customerName.toLowerCase()));
+              _customerData.sort((a, b) => a.customerName
+                  .toLowerCase()
+                  .compareTo(b.customerName.toLowerCase()));
             } else {
-              _customerData.sort((a, b) => b.customerName.toLowerCase().compareTo(a.customerName.toLowerCase()));
+              _customerData.sort((a, b) => b.customerName
+                  .toLowerCase()
+                  .compareTo(a.customerName.toLowerCase()));
             }
           }
 

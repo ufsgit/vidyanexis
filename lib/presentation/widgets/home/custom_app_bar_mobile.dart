@@ -368,6 +368,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 onSelected: onSortTap,
                 itemBuilder: (context) => [
                   const PopupMenuItem(value: 0, child: Text('Default')),
+                  const PopupMenuItem(value: 9, child: Text('Latest')),
                   const PopupMenuItem(
                       value: 1, child: Text('ID No (Descending)')),
                   const PopupMenuItem(
