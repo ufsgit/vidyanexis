@@ -436,22 +436,21 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
           leadProvider.priorityNameController.text = first.priorityName;
         }
 
-        // Set default follow-up status to 11 if available
-        final followUpStatus = dropDownProvider.followUpData.firstWhere(
-          (s) => s.statusId == 11,
-          orElse: () => SearchLeadStatusModel(statusId: -1),
-        );
-        if (followUpStatus.statusId == 11) {
-          dropDownProvider.setSelectedFollowUPId(11);
-          leadProvider.followUpStatusController.text =
-              followUpStatus.statusName ?? '';
+        // Set default follow-up status to first available status in dropdown
+        if (dropDownProvider.followUpData.isNotEmpty) {
+          final firstStatus = dropDownProvider.followUpData.first;
+          if (firstStatus.statusId != null) {
+            dropDownProvider.setSelectedFollowUPId(firstStatus.statusId);
+            leadProvider.followUpStatusController.text =
+                firstStatus.statusName ?? '';
 
-          // Also trigger custom fields for this status if needed
-          leadProvider.getCustomFieldsByStatusId(
-            context,
-            leadId: 0,
-            statusId: 11,
-          );
+            // Also trigger custom fields for this status if needed
+            leadProvider.getCustomFieldsByStatusId(
+              context,
+              leadId: 0,
+              statusId: firstStatus.statusId!,
+            );
+          }
         } else {
           dropDownProvider.setSelectedFollowUPId(0);
           leadProvider.followUpStatusController.clear();
