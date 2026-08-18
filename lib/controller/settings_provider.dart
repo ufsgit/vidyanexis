@@ -2057,6 +2057,8 @@ class SettingsProvider extends ChangeNotifier {
 
   Future<void> getMenuPermissionData(
       String userId, BuildContext context) async {
+    final startTime = DateTime.now().millisecondsSinceEpoch;
+    print('[PERF-RELOAD] getMenuPermissionData START for userId = $userId');
     try {
       log(userId);
       final response = await HttpRequest.httpGetRequest(
@@ -2194,44 +2196,38 @@ class SettingsProvider extends ChangeNotifier {
           SharedPreferences preferences = await SharedPreferences.getInstance();
           String loginuserId = preferences.getString('userId') ?? "";
           if (loginuserId == userId) {
-            _menuIsViewMap.clear();
-            _menuIsEditMap.clear();
-            _menuIsDeleteMap.clear();
-            _menuIsSaveMap.clear();
+            final newViewMap = <int, int>{};
+            final newEditMap = <int, int>{};
+            final newDeleteMap = <int, int>{};
+            final newSaveMap = <int, int>{};
 
-            //view
             for (var permission in _getMenuPermission) {
-              menuIsViewMap[permission.menuId] = permission.isView;
-              menuIsEditMap[permission.menuId] = permission.isEdit;
-              menuIsDeleteMap[permission.menuId] = permission.isDelete;
-              menuIsSaveMap[permission.menuId] = permission.isSave;
+              newViewMap[permission.menuId] = int.tryParse(permission.isView.toString()) ?? 0;
+              newEditMap[permission.menuId] = int.tryParse(permission.isEdit.toString()) ?? 0;
+              newDeleteMap[permission.menuId] = int.tryParse(permission.isDelete.toString()) ?? 0;
+              newSaveMap[permission.menuId] = int.tryParse(permission.isSave.toString()) ?? 0;
             }
 
-            // Example: Access IsView dynamically for Menu_Id = 1
-            // log('IsView for Users: ${menuIsViewMap[1]}');
-            // log('IsView for Settings: ${menuIsViewMap[2]}');
-            // log('IsView for Leads: ${menuIsViewMap[3]}');
-            // log('IsView for Customer: ${menuIsViewMap[4]}');
-            // log('IsView for Lead Status: ${menuIsViewMap[5]}');
-            // log('IsView for Enquiry Source: ${menuIsViewMap[6]}');
-            // log('IsView for Reports: ${menuIsViewMap[7]}');
-            // log('IsDelete for Users: ${menuIsDeleteMap[1]}');
-            // log('IsDelete for Settings: ${menuIsDeleteMap[2]}');
-            // log('IsDelete for Leads: ${menuIsDeleteMap[3]}');
-            // log('IsDelete for Customer: ${menuIsDeleteMap[4]}');
-            // log('IsDelete for Lead Status: ${menuIsDeleteMap[5]}');
-            // log('IsDelete for Enquiry Source: ${menuIsDeleteMap[6]}');
-            // log('IsDelete for Reports: ${menuIsDeleteMap[7]}');
+            _menuIsViewMap.clear();
+            _menuIsViewMap.addAll(newViewMap);
+            _menuIsEditMap.clear();
+            _menuIsEditMap.addAll(newEditMap);
+            _menuIsDeleteMap.clear();
+            _menuIsDeleteMap.addAll(newDeleteMap);
+            _menuIsSaveMap.clear();
+            _menuIsSaveMap.addAll(newSaveMap);
           }
+          print('[PERF-RELOAD] getMenuPermissionData COMPLETE: ${DateTime.now().millisecondsSinceEpoch - startTime} ms for userId = $userId');
           notifyListeners();
         }
       } else {
+        print('[PERF-RELOAD] getMenuPermissionData failed with status: ${response.statusCode}');
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Server Error')),
         );
       }
     } catch (e) {
-      print('Exception occurred: $e');
+      print('[PERF-RELOAD] Exception occurred in getMenuPermissionData: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('An error occurred')),
       );
@@ -4371,6 +4367,8 @@ class SettingsProvider extends ChangeNotifier {
   }
 
   Future<void> _performGetCompanyDetails() async {
+    final startTime = DateTime.now().millisecondsSinceEpoch;
+    print('[PERF-RELOAD] getCompanyDetails START');
     _isLogoLoading = true;
     notifyListeners();
     try {

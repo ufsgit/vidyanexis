@@ -738,5 +738,6 @@ class _CustomerOutstandingReportPageState
     'Tomorrow',
     'This Week',
     'This Month',
+    'Financial Year',
   ];
 }

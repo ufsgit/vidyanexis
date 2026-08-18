@@ -86,8 +86,13 @@ final GlobalKey<ScaffoldMessengerState> navigatorKey =
 bool isCompanyCode = true; // dont change... code - fathima123 , code - nayan123
 
 Future<void> main() async {
+  final bootStart = DateTime.now().millisecondsSinceEpoch;
+  print('[PERF-BOOT] main() started');
   WidgetsFlutterBinding.ensureInitialized();
+  print('[PERF-BOOT] Flutter engine initialized');
 
+  print('[PERF-BOOT] initialization started');
+  final initStart = DateTime.now().millisecondsSinceEpoch;
   // Initialize dynamic base URL from storage
   if (isCompanyCode) {
     HttpUrls.updateBaseUrl('');
@@ -97,6 +102,7 @@ Future<void> main() async {
       HttpUrls.updateBaseUrl(storedUrl);
     }
   }
+  print('[PERF-BOOT] initialization completed: ${DateTime.now().millisecondsSinceEpoch - initStart} ms');
 
   if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
     await Firebase.initializeApp(
@@ -106,11 +112,13 @@ Future<void> main() async {
     final notificationService = FirebaseNotificationService();
     await notificationService.initialize();
 
+    print('[PERF-BOOT] runApp()');
     runApp(const MyApp());
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await notificationService.handleInitialMessage();
     });
   } else {
+    print('[PERF-BOOT] runApp()');
     runApp(const MyApp());
   }
 }
@@ -119,6 +127,7 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
+    print('[PERF-BOOT] root widget created');
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => CompanyProvider()),

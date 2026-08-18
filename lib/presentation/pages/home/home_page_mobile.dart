@@ -35,6 +35,7 @@ class _HomePageMobileState extends State<HomePageMobile> {
   @override
   void initState() {
     super.initState();
+    print('[PERF-BOOT] HomePage created (Mobile)');
     initDevicePlugin();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -44,11 +45,9 @@ class _HomePageMobileState extends State<HomePageMobile> {
       String userId = preferences.getString('userId') ?? "0";
       if (!kIsWeb && userId.isNotEmpty) {
         try {
-          //
           String? topicnameLocal =
               preferences.getString('cached_company_notification_topic');
           print("Subscribing to topic12: $topicnameLocal");
-          // final String topicName = '${topicNames}-$userId';
           String topicName = topicnameLocal ?? '';
           topicName = '$topicName-$userId';
           print("Subscribing to topic: $topicName");
@@ -73,15 +72,17 @@ class _HomePageMobileState extends State<HomePageMobile> {
 
   @override
   Widget build(BuildContext context) {
+    print('[PERF-BOOT] HomePage first build (Mobile)');
     final sideProvider = Provider.of<SidebarProvider>(context);
     final settingsProvider = Provider.of<SettingsProvider>(context);
-    // logo = settingsProvider.logo.isNotEmpty ? settingsProvider.logo : AppStyles.logo();
 
     List<Widget> pages = [];
     List<BottomNavigationBarItem> bottomNavItems = [];
 
     void addPage(int menuKey, String iconPath, String label, Widget page) {
-      if (settingsProvider.menuIsViewMap[menuKey].toString() == '1') {
+      final defaultValue = (menuKey == 12 || menuKey == 3 || menuKey == 4 || menuKey == 35) ? 1 : 0;
+      final permStr = (settingsProvider.menuIsViewMap[menuKey] ?? defaultValue).toString();
+      if (permStr != '0') {
         bottomNavItems.add(
           BottomNavigationBarItem(
             icon: Padding(
@@ -106,8 +107,8 @@ class _HomePageMobileState extends State<HomePageMobile> {
       appBar: bottomNavItems.isEmpty ? AppBar() : null,
       body: sideProvider.reportPage != null
           ? sideProvider.reportPage!
-          : (bottomNavItems.isEmpty
-              ? const Center(child: CircularProgressIndicator())
+          : (pages.isEmpty
+              ? const DashBoardPage()
               : pages[
                   sideProvider.selectedIndexMobile.clamp(0, pages.length - 1)]),
       bottomNavigationBar: bottomNavItems.length >= 2

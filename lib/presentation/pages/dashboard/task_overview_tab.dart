@@ -22,7 +22,9 @@ class _TaskOverviewTabState extends State<TaskOverviewTab> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final dashBoardProvider =
           Provider.of<DashboardProvider>(context, listen: false);
-      dashBoardProvider.fetchDashBoardTaskData();
+      if (!dashBoardProvider.isTaskOverviewLoaded) {
+        dashBoardProvider.fetchDashBoardTaskData();
+      }
     });
   }
 
@@ -54,7 +56,7 @@ class _TaskOverviewTabState extends State<TaskOverviewTab> {
   Widget build(BuildContext context) {
     return Consumer<DashboardProvider>(
       builder: (context, dashboardProvider, child) {
-        if (dashboardProvider.isLoading) {
+        if (dashboardProvider.departments == null && dashboardProvider.isLoading) {
           return _buildLoadingState();
         }
 

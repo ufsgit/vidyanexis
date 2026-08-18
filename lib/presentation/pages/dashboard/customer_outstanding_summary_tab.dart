@@ -18,7 +18,8 @@ class CustomerOutstandingSummaryTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<DashboardProvider>(
       builder: (context, dashProvider, child) {
-        if (!dashProvider.isCustomerOutstandingSummaryLoaded) {
+        if (dashProvider.customerOutstandingSummary == null &&
+            !dashProvider.isCustomerOutstandingSummaryLoaded) {
           return const SizedBox(
             height: 200,
             child: Center(

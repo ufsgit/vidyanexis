@@ -124,10 +124,14 @@ class LeadsProvider extends ChangeNotifier {
     _priorityId = id;
     notifyListeners();
   }
-  final TextEditingController priorityNameController =
-      TextEditingController();
+
+  final TextEditingController priorityNameController = TextEditingController();
+
+  int _currentSortOptionIndex = 0;
+  int get currentSortOptionIndex => _currentSortOptionIndex;
 
   void setSortOption(int option, BuildContext context) {
+    _currentSortOptionIndex = option;
     switch (option) {
       case 0:
         _selectedSortOption = 0;
@@ -163,6 +167,10 @@ class LeadsProvider extends ChangeNotifier {
         break;
       case 8:
         _selectedSortOption = 4;
+        _sortOrder = 'DESC';
+        break;
+      case 9:
+        _selectedSortOption = 2;
         _sortOrder = 'DESC';
         break;
     }
@@ -1097,10 +1105,24 @@ class LeadsProvider extends ChangeNotifier {
 
             if (_selectedSortOption == 4) {
               if (_sortOrder == 'ASC') {
-                _leadData.sort((a, b) => a.customerName.toLowerCase().compareTo(b.customerName.toLowerCase()));
+                _leadData.sort((a, b) => a.customerName
+                    .toLowerCase()
+                    .compareTo(b.customerName.toLowerCase()));
               } else {
-                _leadData.sort((a, b) => b.customerName.toLowerCase().compareTo(a.customerName.toLowerCase()));
+                _leadData.sort((a, b) => b.customerName
+                    .toLowerCase()
+                    .compareTo(a.customerName.toLowerCase()));
               }
+            } else if (_selectedSortOption == 2 && _sortOrder == 'DESC') {
+              // Ensure records with missing or null creation dates sit at the bottom gracefully
+              _leadData.sort((a, b) {
+                final dateA = a.parsedCreationDate;
+                final dateB = b.parsedCreationDate;
+                if (dateA == null && dateB == null) return 0;
+                if (dateA == null) return 1;
+                if (dateB == null) return -1;
+                return dateB.compareTo(dateA);
+              });
             }
 
             // Find metadata (tp == 2) safely
@@ -1611,7 +1633,7 @@ class LeadsProvider extends ChangeNotifier {
 
       if (response!.statusCode == 200) {
         final data = response.data;
-        
+
         int? customerIdFlag;
         if (data is Map) {
           customerIdFlag = data['Customer_Id_'];
@@ -2149,22 +2171,28 @@ class LeadsProvider extends ChangeNotifier {
   String getConsumerNameCaption() {
     final match = _captionList.firstWhere(
       (c) => c.captionId == 1 || c.caption.toLowerCase().contains('name'),
-      orElse: () => CaptionModel(captionId: 1, caption: 'Consumer Name', displayOrder: 1),
+      orElse: () =>
+          CaptionModel(captionId: 1, caption: 'Consumer Name', displayOrder: 1),
     );
     return match.caption.isNotEmpty ? match.caption : 'Consumer Name';
   }
 
   String getConsumerNoCaption() {
     final match = _captionList.firstWhere(
-      (c) => c.captionId == 2 || c.caption.toLowerCase().contains('no') || c.caption.toLowerCase().contains('contact'),
-      orElse: () => CaptionModel(captionId: 2, caption: 'Contact No', displayOrder: 2),
+      (c) =>
+          c.captionId == 2 ||
+          c.caption.toLowerCase().contains('no') ||
+          c.caption.toLowerCase().contains('contact'),
+      orElse: () =>
+          CaptionModel(captionId: 2, caption: 'Contact No', displayOrder: 2),
     );
     return match.caption.isNotEmpty ? match.caption : 'Contact No';
   }
 
   Future<void> getCaptionMaster(BuildContext context) async {
     try {
-      final response = await HttpRequest.httpGetRequest(endPoint: HttpUrls.getCaptionMaster);
+      final response =
+          await HttpRequest.httpGetRequest(endPoint: HttpUrls.getCaptionMaster);
       if (response.statusCode == 200) {
         final data = response.data;
         if (data != null && data is List) {

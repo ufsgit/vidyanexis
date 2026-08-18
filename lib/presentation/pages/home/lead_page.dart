@@ -625,6 +625,7 @@ class _LeadsPageState extends State<LeadPage> {
                               },
                               itemBuilder: (BuildContext context) => [
                                 const PopupMenuItem(value: 0, child: Text('Default')),
+                                const PopupMenuItem(value: 9, child: Text('Latest')),
                                 const PopupMenuItem(value: 1, child: Text('ID No (Descending)')),
                                 const PopupMenuItem(value: 2, child: Text('ID No (Ascending)')),
                                 const PopupMenuItem(value: 3, child: Text('Creation Date (Newest)')),
@@ -839,6 +840,7 @@ class _LeadsPageState extends State<LeadPage> {
                           },
                           itemBuilder: (BuildContext context) => [
                             const PopupMenuItem(value: 0, child: Text('Default')),
+                            const PopupMenuItem(value: 9, child: Text('Latest')),
                             const PopupMenuItem(value: 1, child: Text('ID No (Descending)')),
                             const PopupMenuItem(value: 2, child: Text('ID No (Ascending)')),
                             const PopupMenuItem(value: 3, child: Text('Creation Date (Newest)')),

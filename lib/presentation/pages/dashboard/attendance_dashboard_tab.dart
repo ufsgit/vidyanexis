@@ -15,8 +15,8 @@ class AttendanceDashboardTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (dashBoardProvider.isDashBoardLoading &&
-        dashBoardProvider.attendanceCountMap.isEmpty) {
+    if (dashBoardProvider.attendanceCountMap.isEmpty &&
+        dashBoardProvider.isDashBoardLoading) {
       return _buildSkeleton(context);
     }
 

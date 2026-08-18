@@ -610,6 +610,9 @@ class DashboardProvider extends ChangeNotifier {
 
   Future<void> loadDataForTab(int activeTab, BuildContext context,
       {bool isSilent = false}) async {
+    final startTime = DateTime.now().millisecondsSinceEpoch;
+    print('[PERF-RELOAD] loadDataForTab started for activeTab = $activeTab (isSilent = $isSilent)');
+
     // Sync filters with other providers if needed
     final warrantyProvider =
         Provider.of<WarrentyReportProvider>(context, listen: false);
@@ -677,6 +680,7 @@ class DashboardProvider extends ChangeNotifier {
         } catch (_) {}
         break;
     }
+    print('[PERF-RELOAD] loadDataForTab completed for activeTab = $activeTab in ${DateTime.now().millisecondsSinceEpoch - startTime} ms');
   }
 
   void setHover(int index, bool isHovered) {
@@ -711,9 +715,16 @@ class DashboardProvider extends ChangeNotifier {
     }
   }
 
+  int _requestId = 0;
+
   /// like: [{"New_Leads": 1, "Missed_Leads": 117, ...}]
   Future<void> getLeadDashboardCount({bool shouldNotify = true}) async {
+    final currentRequestId = ++_requestId;
+    final startTime = DateTime.now().millisecondsSinceEpoch;
+    print('[PERF-RELOAD] Reload started for getLeadDashboardCount (Req #$currentRequestId)');
+    print('[PERF-RELOAD] Loading state enabled');
     try {
+      isDashBoardLoading = true;
       if (shouldNotify) notifyListeners();
 
       final body = {
@@ -723,36 +734,59 @@ class DashboardProvider extends ChangeNotifier {
         "User": _selectedUser
       };
 
-      await HttpRequest.httpGetRequest(
-              endPoint: HttpUrls.getLeadDashboard, bodyData: body)
-          .then((response) async {
-        if (response.statusCode == 200) {
-          List<dynamic> data = response.data;
-          if (data.isNotEmpty && data.first is Map) {
-            Map<String, dynamic> counts = data.first;
-            leadCountMap.clear();
-            leadDashboardCountData.clear();
-            counts.forEach((key, value) {
-              final intValue = int.tryParse(value.toString()) ?? 0;
-              leadCountMap[key] = intValue;
-              leadDashboardCountData.add(DashBoardCountModel(
-                tp: 1,
-                title: key,
-                dataCount: intValue,
-              ));
-            });
-          }
-          isDashboardCountLoaded = true;
+      print('[PERF-RELOAD] API getLeadDashboardCount started');
+      final response = await HttpRequest.httpGetRequest(
+          endPoint: HttpUrls.getLeadDashboard, bodyData: body);
+
+      final apiTime = DateTime.now().millisecondsSinceEpoch - startTime;
+      print('[PERF-RELOAD] API getLeadDashboardCount completed: $apiTime ms');
+
+      if (currentRequestId != _requestId) {
+        print('[PERF-RELOAD] Stale request ignored (Req #$currentRequestId vs Current #$_requestId)');
+        return;
+      }
+
+      if (response.statusCode == 200) {
+        final parseStart = DateTime.now().millisecondsSinceEpoch;
+        List<dynamic> data = response.data;
+        if (data.isNotEmpty && data.first is Map) {
+          Map<String, dynamic> counts = data.first;
+          final newMap = <String, int>{};
+          final newList = <DashBoardCountModel>[];
+          counts.forEach((key, value) {
+            final intValue = int.tryParse(value.toString()) ?? 0;
+            newMap[key] = intValue;
+            newList.add(DashBoardCountModel(
+              tp: 1,
+              title: key,
+              dataCount: intValue,
+            ));
+          });
+          leadCountMap.clear();
+          leadCountMap.addAll(newMap);
+          leadDashboardCountData.clear();
+          leadDashboardCountData.addAll(newList);
         }
-      });
+        isDashboardCountLoaded = true;
+        print('[PERF-RELOAD] Parsing completed: ${DateTime.now().millisecondsSinceEpoch - parseStart} ms');
+      }
     } catch (e) {
-      print(e);
+      print('[PERF-RELOAD] Error in getLeadDashboardCount: $e');
     } finally {
-      if (shouldNotify) notifyListeners();
+      if (currentRequestId == _requestId) {
+        isDashBoardLoading = false;
+        print('[PERF-RELOAD] Loading state disabled');
+        print('[PERF-RELOAD] Dashboard visible (${DateTime.now().millisecondsSinceEpoch - startTime} ms total)');
+        if (shouldNotify) notifyListeners();
+      }
     }
   }
 
   Future<void> getAttendanceDashboardCount({bool shouldNotify = true}) async {
+    final currentRequestId = ++_requestId;
+    final startTime = DateTime.now().millisecondsSinceEpoch;
+    print('[PERF-RELOAD] Reload started for getAttendanceDashboardCount (Req #$currentRequestId)');
+    print('[PERF-RELOAD] Loading state enabled');
     try {
       isDashBoardLoading = true;
       if (shouldNotify) notifyListeners();
@@ -763,46 +797,61 @@ class DashboardProvider extends ChangeNotifier {
         "Is_Date": _formattedFromDate.isNotEmpty ? "1" : "0",
       };
 
-      await HttpRequest.httpGetRequest(
-              endPoint: HttpUrls.getAttendanceDashboard, bodyData: body)
-          .then((response) async {
-        if (response.statusCode == 200) {
-          var data = response.data;
-          Map<String, dynamic> counts = {};
-          
-          if (data is List && data.isNotEmpty) {
-            if (data.first is List && data.first.isNotEmpty && data.first.first is Map) {
-              counts = data.first.first as Map<String, dynamic>;
-            } else if (data.first is Map) {
-              counts = data.first as Map<String, dynamic>;
-            }
-          } else if (data is Map) {
-            counts = data as Map<String, dynamic>;
-          }
+      print('[PERF-RELOAD] API getAttendanceDashboardCount started');
+      final response = await HttpRequest.httpGetRequest(
+          endPoint: HttpUrls.getAttendanceDashboard, bodyData: body);
 
-          if (counts.isNotEmpty) {
-            attendanceCountMap.clear();
-            attendanceDashboardCountData.clear();
-            counts.forEach((key, value) {
-              final intValue = int.tryParse(value.toString()) ?? 0;
-              attendanceCountMap[key] = intValue;
-              attendanceDashboardCountData.add(DashBoardCountModel(
-                tp: 1,
-                title: key,
-                dataCount: intValue,
-              ));
-            });
+      final apiTime = DateTime.now().millisecondsSinceEpoch - startTime;
+      print('[PERF-RELOAD] API getAttendanceDashboardCount completed: $apiTime ms');
+
+      if (currentRequestId != _requestId) {
+        print('[PERF-RELOAD] Stale request ignored (Req #$currentRequestId vs Current #$_requestId)');
+        return;
+      }
+
+      if (response.statusCode == 200) {
+        var data = response.data;
+        Map<String, dynamic> counts = {};
+
+        if (data is List && data.isNotEmpty) {
+          if (data.first is List && data.first.isNotEmpty && data.first.first is Map) {
+            counts = data.first.first as Map<String, dynamic>;
+          } else if (data.first is Map) {
+            counts = data.first as Map<String, dynamic>;
           }
-          isAttendanceDashboardLoaded = true;
-          // Fetch login status details to help determine 'Late' vs 'On Time' for 'Present' users
-          getLoginStatusDetails();
+        } else if (data is Map) {
+          counts = data as Map<String, dynamic>;
         }
-      });
+
+        if (counts.isNotEmpty) {
+          final newMap = <String, int>{};
+          final newList = <DashBoardCountModel>[];
+          counts.forEach((key, value) {
+            final intValue = int.tryParse(value.toString()) ?? 0;
+            newMap[key] = intValue;
+            newList.add(DashBoardCountModel(
+              tp: 1,
+              title: key,
+              dataCount: intValue,
+            ));
+          });
+          attendanceCountMap.clear();
+          attendanceCountMap.addAll(newMap);
+          attendanceDashboardCountData.clear();
+          attendanceDashboardCountData.addAll(newList);
+        }
+        isAttendanceDashboardLoaded = true;
+        getLoginStatusDetails();
+      }
     } catch (e) {
-      print(e);
+      print('[PERF-RELOAD] Error in getAttendanceDashboardCount: $e');
     } finally {
-      isDashBoardLoading = false;
-      if (shouldNotify) notifyListeners();
+      if (currentRequestId == _requestId) {
+        isDashBoardLoading = false;
+        print('[PERF-RELOAD] Loading state disabled');
+        print('[PERF-RELOAD] Attendance Dashboard visible (${DateTime.now().millisecondsSinceEpoch - startTime} ms total)');
+        if (shouldNotify) notifyListeners();
+      }
     }
   }
 
@@ -840,7 +889,7 @@ class DashboardProvider extends ChangeNotifier {
       if (shouldNotify) notifyListeners();
 
       if (keyword.toLowerCase().contains('present') && loginStatusDetails.isEmpty) {
-        getLoginStatusDetails(); // Fetch login status to cross-reference late users
+        getLoginStatusDetails();
       }
 
       String pathKeyword = keyword.replaceAll('_Staff', '');
@@ -873,51 +922,79 @@ class DashboardProvider extends ChangeNotifier {
 
   Future<void> getLeadData(
       {String? filterValue, bool shouldNotify = true}) async {
+    final currentRequestId = ++_requestId;
+    final startTime = DateTime.now().millisecondsSinceEpoch;
+    print('[PERF-RELOAD] Reload started for getLeadData (Req #$currentRequestId)');
+    print('[PERF-RELOAD] Loading state enabled');
     try {
       if (filterValue != null) {
         setCommonDateFilter(filterValue);
       }
       isDashBoardLoading = true;
       if (shouldNotify) notifyListeners();
-      // Batch API calls and notify only once at the end
+
       await Future.wait<void>([
         getLeadConversionChartData(shouldNotify: false),
         getLeadProgressionReport(shouldNotify: false),
         getLeadEnquiryReport(shouldNotify: false),
       ]);
+
+      if (currentRequestId != _requestId) {
+        print('[PERF-RELOAD] Stale getLeadData request ignored');
+        return;
+      }
       isLeadLoaded = true;
     } finally {
-      isDashBoardLoading = false;
-      if (shouldNotify) notifyListeners();
+      if (currentRequestId == _requestId) {
+        isDashBoardLoading = false;
+        print('[PERF-RELOAD] Loading state disabled');
+        print('[PERF-RELOAD] Lead Data visible (${DateTime.now().millisecondsSinceEpoch - startTime} ms total)');
+        if (shouldNotify) notifyListeners();
+      }
     }
   }
 
   Future<void> getWorkData({bool shouldNotify = true}) async {
+    final currentRequestId = ++_requestId;
+    final startTime = DateTime.now().millisecondsSinceEpoch;
+    print('[PERF-RELOAD] Reload started for getWorkData (Req #$currentRequestId)');
+    print('[PERF-RELOAD] Loading state enabled');
     try {
       isDashBoardLoading = true;
       if (shouldNotify) notifyListeners();
-      // Batch updates
+
       await Future.wait([
         getTaskAllocationSummary(shouldNotify: false),
         getDashBoardCount(shouldNotify: false),
         getWorkSummary(shouldNotify: false),
       ]);
+
+      if (currentRequestId != _requestId) {
+        print('[PERF-RELOAD] Stale getWorkData request ignored');
+        return;
+      }
       isWorkLoaded = true;
     } finally {
-      isDashBoardLoading = false;
-      if (shouldNotify) notifyListeners();
+      if (currentRequestId == _requestId) {
+        isDashBoardLoading = false;
+        print('[PERF-RELOAD] Loading state disabled');
+        print('[PERF-RELOAD] Work Data visible (${DateTime.now().millisecondsSinceEpoch - startTime} ms total)');
+        if (shouldNotify) notifyListeners();
+      }
     }
   }
 
   void setUserFilterStatus(int newStatus) {
     _selectedUser = newStatus;
-    clearDashboardFlags();
-    print(_selectedUser.toString());
-    notifyListeners(); // Notify listeners about the change
+    clearDashboardFlags(resetTabIndex: false);
+    print('[PERF-RELOAD] User filter updated: $_selectedUser');
+    notifyListeners();
   }
 
-  void clearDashboardFlags() {
-    _tabIndex = 0;
+  void clearDashboardFlags({bool resetTabIndex = false}) {
+    if (resetTabIndex) {
+      _tabIndex = 0;
+    }
     isLeadLoaded = false;
     isWorkLoaded = false;
     isCustomerLoaded = false;
@@ -934,7 +1011,8 @@ class DashboardProvider extends ChangeNotifier {
 
   Future<void> refreshDashboardData(BuildContext context,
       {bool isSilent = false}) async {
-    clearDashboardFlags();
+    print('[PERF-RELOAD] Dashboard pull-to-refresh triggered');
+    clearDashboardFlags(resetTabIndex: false);
     await loadDataForTab(tabIndex, context, isSilent: isSilent);
     notifyListeners();
   }

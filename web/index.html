@@ -139,7 +139,7 @@
       console.log('Current version:', APP_VERSION);
 
       if (storedVersion && storedVersion !== APP_VERSION) {
-        console.log('🔄 Version changed from ${storedVersion} to ${APP_VERSION} - clearing cache...');
+        console.log(`🔄 Version changed from ${storedVersion} to ${APP_VERSION} - clearing cache...`);
 
         await clearAllStorage();
 
@@ -149,17 +149,6 @@
         } catch (e) {
           console.log('Could not store new version:', e);
         }
-
-        const userConfirmed = confirm('A new version is available. The page will reload to apply updates. Continue?');
-        if (userConfirmed) {
-          console.log('🔄 User confirmed - reloading page...');
-          setTimeout(() => {
-            window.location.reload();
-          }, 500);
-        } else {
-          console.log('User cancelled reload');
-        }
-
         return true;
       } else if (!storedVersion) {
         try {
@@ -180,6 +169,8 @@
 
   <!-- Cache busting for flutter.js -->
   <script>
+    console.log('[PERF-BOOT] index/bootstrap started');
+    window._perfBootStart = new Date().getTime();
     const timestamp = new Date().getTime();
     const flutterScript = document.createElement('script');
     flutterScript.src = 'flutter.js?v=' + APP_VERSION + '&t=' + timestamp;
@@ -193,21 +184,34 @@
     <div class="loader"></div>
   </div>
   <script>
-    window.addEventListener('load', function () {
-      const version = new Date().getTime();
-
-      _flutter.loader.loadEntrypoint({
-        serviceWorker: {
-          serviceWorkerVersion: serviceWorkerVersion,
-        },
-        entrypointUrl: 'main.dart.js?v=' + APP_VERSION + '&t=' + version,
-        onEntrypointLoaded: function (engineInitializer) {
-          engineInitializer.initializeEngine().then(function (appRunner) {
-            appRunner.runApp();
-          });
-        }
-      });
-    });
+    function loadFlutterEngine() {
+      if (window._flutter && window._flutter.loader) {
+        console.log('[PERF-BOOT] loader.loadEntrypoint starting...');
+        const version = new Date().getTime();
+        _flutter.loader.loadEntrypoint({
+          serviceWorker: {
+            serviceWorkerVersion: serviceWorkerVersion,
+          },
+          entrypointUrl: 'main.dart.js?v=' + APP_VERSION + '&t=' + version,
+          onEntrypointLoaded: function (engineInitializer) {
+            console.log('[PERF-BOOT] Flutter engine loading entrypoint...');
+            engineInitializer.initializeEngine().then(function (appRunner) {
+              const elapsed = new Date().getTime() - (window._perfBootStart || new Date().getTime());
+              console.log('[PERF-BOOT] Flutter engine initialized: ' + elapsed + ' ms');
+              appRunner.runApp();
+              console.log('[PERF-BOOT] runApp called');
+              const loaderEl = document.getElementById('loading-container');
+              if (loaderEl) loaderEl.remove();
+            }).catch(function (err) {
+              console.error('[PERF-BOOT] initializeEngine error:', err);
+            });
+          }
+        });
+      } else {
+        setTimeout(loadFlutterEngine, 10);
+      }
+    }
+    loadFlutterEngine();
   </script>
 </body>
 
