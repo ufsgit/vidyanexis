@@ -210,7 +210,8 @@ class _CustomerPageState extends State<CustomerPage> {
                             crossAxisAlignment: WrapCrossAlignment.center,
                             children: [
                               // Entry Type Filter
-                              if (settingsProvider.customerPermissionMeAndAll == 1)
+                              if (settingsProvider.customerPermissionMeAndAll ==
+                                  1)
                                 Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
@@ -222,14 +223,16 @@ class _CustomerPageState extends State<CustomerPage> {
                                             isSilent: true);
                                       },
                                       child: Container(
-                                        padding: const EdgeInsets.only(bottom: 2),
+                                        padding:
+                                            const EdgeInsets.only(bottom: 2),
                                         decoration: BoxDecoration(
                                           border: Border(
                                             bottom: BorderSide(
-                                              color: customerProvider.entryType !=
-                                                      'all'
-                                                  ? AppColors.primaryBlue
-                                                  : Colors.transparent,
+                                              color:
+                                                  customerProvider.entryType !=
+                                                          'all'
+                                                      ? AppColors.primaryBlue
+                                                      : Colors.transparent,
                                               width: 2.0,
                                             ),
                                           ),
@@ -260,14 +263,16 @@ class _CustomerPageState extends State<CustomerPage> {
                                             isSilent: true);
                                       },
                                       child: Container(
-                                        padding: const EdgeInsets.only(bottom: 2),
+                                        padding:
+                                            const EdgeInsets.only(bottom: 2),
                                         decoration: BoxDecoration(
                                           border: Border(
                                             bottom: BorderSide(
-                                              color: customerProvider.entryType ==
-                                                      'all'
-                                                  ? AppColors.primaryBlue
-                                                  : Colors.transparent,
+                                              color:
+                                                  customerProvider.entryType ==
+                                                          'all'
+                                                      ? AppColors.primaryBlue
+                                                      : Colors.transparent,
                                               width: 2.0,
                                             ),
                                           ),
@@ -379,16 +384,32 @@ class _CustomerPageState extends State<CustomerPage> {
                                       value, context);
                                 },
                                 itemBuilder: (BuildContext context) => [
-                                  const PopupMenuItem(value: 0, child: Text('Default')),
-                                  const PopupMenuItem(value: 9, child: Text('Latest')),
-                                  const PopupMenuItem(value: 1, child: Text('ID No (Descending)')),
-                                  const PopupMenuItem(value: 2, child: Text('ID No (Ascending)')),
-                                  const PopupMenuItem(value: 3, child: Text('Creation Date (Newest)')),
-                                  const PopupMenuItem(value: 4, child: Text('Creation Date (Oldest)')),
-                                  const PopupMenuItem(value: 5, child: Text('Followup Date (Newest)')),
-                                  const PopupMenuItem(value: 6, child: Text('Followup Date (Oldest)')),
-                                  const PopupMenuItem(value: 7, child: Text('Name (A-Z)')),
-                                  const PopupMenuItem(value: 8, child: Text('Name (Z-A)')),
+                                  const PopupMenuItem(
+                                      value: 0, child: Text('Default')),
+                                  const PopupMenuItem(
+                                      value: 9, child: Text('Latest')),
+                                  const PopupMenuItem(
+                                      value: 1,
+                                      child: Text('ID No (Descending)')),
+                                  const PopupMenuItem(
+                                      value: 2,
+                                      child: Text('ID No (Ascending)')),
+                                  const PopupMenuItem(
+                                      value: 3,
+                                      child: Text('Creation Date (Newest)')),
+                                  const PopupMenuItem(
+                                      value: 4,
+                                      child: Text('Creation Date (Oldest)')),
+                                  const PopupMenuItem(
+                                      value: 5,
+                                      child: Text('Followup Date (Newest)')),
+                                  const PopupMenuItem(
+                                      value: 6,
+                                      child: Text('Followup Date (Oldest)')),
+                                  const PopupMenuItem(
+                                      value: 7, child: Text('Name (A-Z)')),
+                                  const PopupMenuItem(
+                                      value: 8, child: Text('Name (Z-A)')),
                                 ],
                               ),
                               CustomFilterButton(
@@ -398,80 +419,94 @@ class _CustomerPageState extends State<CustomerPage> {
                                 isFilter: customerProvider.isFilter,
                               ),
                               IconButton(
-                                icon: const Icon(Icons.refresh, color: Color(0xFF64748B), size: 20),
+                                icon: const Icon(Icons.refresh,
+                                    color: Color(0xFF64748B), size: 20),
                                 onPressed: () {
                                   customerProvider.setSearchCriteria(
                                     searchController.text,
                                     customerProvider.fromDateS,
                                     customerProvider.toDateS,
                                   );
-                                  customerProvider.getSearchCustomers(
-                                      context,
+                                  customerProvider.getSearchCustomers(context,
                                       isSilent: true);
                                 },
                                 tooltip: 'Refresh',
                               ),
-                            if (settingsProvider.menuIsSaveMap[167].toString() == '1')
-                              ElevatedButton.icon(
-                                onPressed: () {
-                                  if (customerProvider.customerData.isNotEmpty) {
-                                    exportToExcel(
-                                      headers: [
-                                        'Customer Code',
-                                        'Customer Name',
-                                        'Mobile No',
-                                        'Email',
-                                        'Enquiry For',
-                                        'Enquiry Source',
-                                        'Assigned To',
-                                        'Next Follow-up Date',
-                                        'Status',
-                                        'Total Project Cost',
-                                      ],
-                                      data: customerProvider.customerData.map((cust) {
-                                        return {
-                                          'Customer Code': cust.getDisplayLeadCode(settingsProvider.leadCodeWithEnquiryCode),
-                                          'Customer Name': cust.customerName,
-                                          'Mobile No': cust.contactNumber,
-                                          'Email': cust.email,
-                                          'Enquiry For': cust.enquiryFor,
-                                          'Enquiry Source': cust.enquirySourceName,
-                                          'Assigned To': cust.toUserName,
-                                          'Next Follow-up Date': cust.nextFollowUpDate,
-                                          'Status': cust.statusName,
-                                          'Total Project Cost': cust.totalProjectCost,
-                                        };
-                                      }).toList(),
-                                      fileName: 'Customers_Export',
-                                    );
-                                  } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(content: Text('No data to export')),
-                                    );
-                                  }
-                                },
-                                icon: const Icon(Icons.file_download, size: 16),
-                                label: Text(
-                                  'Export Excel',
-                                  style: GoogleFonts.plusJakartaSans(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 13,
+                              if (settingsProvider.menuIsSaveMap[167]
+                                      .toString() ==
+                                  '1')
+                                ElevatedButton.icon(
+                                  onPressed: () {
+                                    if (customerProvider
+                                        .customerData.isNotEmpty) {
+                                      exportToExcel(
+                                        headers: [
+                                          'Customer Code',
+                                          'Customer Name',
+                                          'Mobile No',
+                                          'Email',
+                                          'Enquiry For',
+                                          'Enquiry Source',
+                                          'Assigned To',
+                                          'Next Follow-up Date',
+                                          'Status',
+                                          'Total Project Cost',
+                                        ],
+                                        data: customerProvider.customerData
+                                            .map((cust) {
+                                          return {
+                                            'Customer Code':
+                                                cust.getDisplayLeadCode(
+                                                    settingsProvider
+                                                        .leadCodeWithEnquiryCode),
+                                            'Customer Name': cust.customerName,
+                                            'Mobile No': cust.contactNumber,
+                                            'Email': cust.email,
+                                            'Enquiry For': cust.enquiryFor,
+                                            'Enquiry Source':
+                                                cust.enquirySourceName,
+                                            'Assigned To': cust.toUserName,
+                                            'Next Follow-up Date':
+                                                cust.nextFollowUpDate,
+                                            'Status': cust.statusName,
+                                            'Total Project Cost':
+                                                cust.totalProjectCost,
+                                          };
+                                        }).toList(),
+                                        fileName: 'Customers_Export',
+                                      );
+                                    } else {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                            content: Text('No data to export')),
+                                      );
+                                    }
+                                  },
+                                  icon:
+                                      const Icon(Icons.file_download, size: 16),
+                                  label: Text(
+                                    'Export Excel',
+                                    style: GoogleFonts.plusJakartaSans(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.whiteColor,
+                                    foregroundColor: AppColors.secondaryBlue,
+                                    side: const BorderSide(
+                                        color: Color(0xFFE2E8F0)),
+                                    elevation: 0,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 12,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
                                   ),
                                 ),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.whiteColor,
-                                  foregroundColor: AppColors.secondaryBlue,
-                                  side: const BorderSide(color: Color(0xFFE2E8F0)),
-                                  elevation: 0,
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 12,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                ),
-                              ),
                             ],
                           ),
                         ],
@@ -557,16 +592,30 @@ class _CustomerPageState extends State<CustomerPage> {
                               customerProvider.setSortOption(value, context);
                             },
                             itemBuilder: (BuildContext context) => [
-                              const PopupMenuItem(value: 0, child: Text('Default')),
-                              const PopupMenuItem(value: 9, child: Text('Latest')),
-                              const PopupMenuItem(value: 1, child: Text('ID No (Descending)')),
-                              const PopupMenuItem(value: 2, child: Text('ID No (Ascending)')),
-                              const PopupMenuItem(value: 3, child: Text('Creation Date (Newest)')),
-                              const PopupMenuItem(value: 4, child: Text('Creation Date (Oldest)')),
-                              const PopupMenuItem(value: 5, child: Text('Followup Date (Newest)')),
-                              const PopupMenuItem(value: 6, child: Text('Followup Date (Oldest)')),
-                              const PopupMenuItem(value: 7, child: Text('Name (A-Z)')),
-                              const PopupMenuItem(value: 8, child: Text('Name (Z-A)')),
+                              const PopupMenuItem(
+                                  value: 0, child: Text('Default')),
+                              const PopupMenuItem(
+                                  value: 9, child: Text('Latest')),
+                              const PopupMenuItem(
+                                  value: 1, child: Text('ID No (Descending)')),
+                              const PopupMenuItem(
+                                  value: 2, child: Text('ID No (Ascending)')),
+                              const PopupMenuItem(
+                                  value: 3,
+                                  child: Text('Creation Date (Newest)')),
+                              const PopupMenuItem(
+                                  value: 4,
+                                  child: Text('Creation Date (Oldest)')),
+                              const PopupMenuItem(
+                                  value: 5,
+                                  child: Text('Followup Date (Newest)')),
+                              const PopupMenuItem(
+                                  value: 6,
+                                  child: Text('Followup Date (Oldest)')),
+                              const PopupMenuItem(
+                                  value: 7, child: Text('Name (A-Z)')),
+                              const PopupMenuItem(
+                                  value: 8, child: Text('Name (Z-A)')),
                             ],
                           ),
                           const SizedBox(width: 8),
@@ -726,7 +775,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                   ),
                                   TableWidget(
                                       flex: 2,
-                                      title: 'Lead Code',
+                                      title: 'Customer Code',
                                       fontWeight: FontWeight.bold,
                                       padding: EdgeInsets.symmetric(
                                           vertical: 4.0, horizontal: 8.0),
@@ -740,7 +789,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                       color: Color(0xFFFFFFFF)),
                                   TableWidget(
                                       flex: 2,
-                                      title: 'Address',
+                                      title: 'Place',
                                       fontWeight: FontWeight.bold,
                                       padding: EdgeInsets.symmetric(
                                           vertical: 4.0, horizontal: 8.0),
@@ -755,6 +804,13 @@ class _CustomerPageState extends State<CustomerPage> {
                                   TableWidget(
                                       flex: 2,
                                       title: 'Assigned Staff',
+                                      fontWeight: FontWeight.bold,
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 4.0, horizontal: 8.0),
+                                      color: Color(0xFFFFFFFF)),
+                                  TableWidget(
+                                      flex: 2,
+                                      title: 'AMC Date',
                                       fontWeight: FontWeight.bold,
                                       padding: EdgeInsets.symmetric(
                                           vertical: 4.0, horizontal: 8.0),
@@ -844,9 +900,13 @@ class _CustomerPageState extends State<CustomerPage> {
                                                 flex: 2,
                                                 fontSize: 12,
                                                 fontWeight: FontWeight.normal,
-                                                padding: const EdgeInsets.symmetric(
-                                                    vertical: 6.0, horizontal: 8.0),
-                                                title: lead.getDisplayLeadCode(settingsProvider.leadCodeWithEnquiryCode),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 6.0,
+                                                        horizontal: 8.0),
+                                                title: lead.getDisplayLeadCode(
+                                                    settingsProvider
+                                                        .leadCodeWithEnquiryCode),
                                               ),
                                               // TableWidget(title: lead.orderNo),
                                               TableWidget(
@@ -990,109 +1050,109 @@ class _CustomerPageState extends State<CustomerPage> {
                                                                 16] ==
                                                             1)
                                                           (onHover) =>
-                                                                MenuItemButton(
-                                                                  onPressed: () =>
-                                                                      _handleLeadAction(
-                                                                          'quotation',
-                                                                          lead),
-                                                                  child: Row(
-                                                                    children: [
-                                                                      Icon(
-                                                                          Icons
-                                                                              .request_quote,
-                                                                          size:
-                                                                              18,
-                                                                          color: Colors
-                                                                              .orange),
-                                                                      const SizedBox(
-                                                                          width:
-                                                                              8),
-                                                                      const Text(
-                                                                          'Quotation'),
-                                                                    ],
-                                                                  ),
+                                                              MenuItemButton(
+                                                                onPressed: () =>
+                                                                    _handleLeadAction(
+                                                                        'quotation',
+                                                                        lead),
+                                                                child: Row(
+                                                                  children: [
+                                                                    Icon(
+                                                                        Icons
+                                                                            .request_quote,
+                                                                        size:
+                                                                            18,
+                                                                        color: Colors
+                                                                            .orange),
+                                                                    const SizedBox(
+                                                                        width:
+                                                                            8),
+                                                                    const Text(
+                                                                        'Quotation'),
+                                                                  ],
                                                                 ),
-                                                          if (settingsProvider
-                                                                      .menuIsViewMap[
-                                                                  16] ==
-                                                              1)
-                                                            (onHover) =>
-                                                                MenuItemButton(
-                                                                  onPressed: () =>
-                                                                      _handleLeadAction(
-                                                                          'quotation_list_tab',
-                                                                          lead),
-                                                                  child: Row(
-                                                                    children: [
-                                                                      Icon(
-                                                                          Icons
-                                                                              .list_alt,
-                                                                          size:
-                                                                              18,
-                                                                          color: Colors
-                                                                              .orangeAccent),
-                                                                      const SizedBox(
-                                                                          width:
-                                                                              8),
-                                                                      const Text(
-                                                                          'Quotation list'),
-                                                                    ],
-                                                                  ),
+                                                              ),
+                                                        if (settingsProvider
+                                                                    .menuIsViewMap[
+                                                                16] ==
+                                                            1)
+                                                          (onHover) =>
+                                                              MenuItemButton(
+                                                                onPressed: () =>
+                                                                    _handleLeadAction(
+                                                                        'quotation_list_tab',
+                                                                        lead),
+                                                                child: Row(
+                                                                  children: [
+                                                                    Icon(
+                                                                        Icons
+                                                                            .list_alt,
+                                                                        size:
+                                                                            18,
+                                                                        color: Colors
+                                                                            .orangeAccent),
+                                                                    const SizedBox(
+                                                                        width:
+                                                                            8),
+                                                                    const Text(
+                                                                        'Quotation list'),
+                                                                  ],
                                                                 ),
-                                                          if (settingsProvider
-                                                                      .menuIsSaveMap[
-                                                                  19] ==
-                                                              1)
-                                                            (onHover) =>
-                                                                MenuItemButton(
-                                                                  onPressed: () =>
-                                                                      _handleLeadAction(
-                                                                          'document',
-                                                                          lead),
-                                                                  child: Row(
-                                                                    children: [
-                                                                      Icon(
-                                                                          Icons
-                                                                              .description,
-                                                                          size:
-                                                                              18,
-                                                                          color: Colors
-                                                                              .purple),
-                                                                      const SizedBox(
-                                                                          width:
-                                                                              8),
-                                                                      const Text(
-                                                                          'Document'),
-                                                                    ],
-                                                                  ),
+                                                              ),
+                                                        if (settingsProvider
+                                                                    .menuIsSaveMap[
+                                                                19] ==
+                                                            1)
+                                                          (onHover) =>
+                                                              MenuItemButton(
+                                                                onPressed: () =>
+                                                                    _handleLeadAction(
+                                                                        'document',
+                                                                        lead),
+                                                                child: Row(
+                                                                  children: [
+                                                                    Icon(
+                                                                        Icons
+                                                                            .description,
+                                                                        size:
+                                                                            18,
+                                                                        color: Colors
+                                                                            .purple),
+                                                                    const SizedBox(
+                                                                        width:
+                                                                            8),
+                                                                    const Text(
+                                                                        'Document'),
+                                                                  ],
                                                                 ),
-                                                          if (settingsProvider
-                                                                      .menuIsViewMap[
-                                                                  19] ==
-                                                              1)
-                                                            (onHover) =>
-                                                                MenuItemButton(
-                                                                  onPressed: () =>
-                                                                      _handleLeadAction(
-                                                                          'documents_tab',
-                                                                          lead),
-                                                                  child: Row(
-                                                                    children: [
-                                                                      Icon(
-                                                                          Icons
-                                                                              .folder,
-                                                                          size:
-                                                                              18,
-                                                                          color: Colors
-                                                                              .blue),
-                                                                      const SizedBox(
-                                                                          width:
-                                                                              8),
-                                                                      const Text(
-                                                                          'Documents Tab'),
-                                                                    ],
-                                                                  ),
+                                                              ),
+                                                        if (settingsProvider
+                                                                    .menuIsViewMap[
+                                                                19] ==
+                                                            1)
+                                                          (onHover) =>
+                                                              MenuItemButton(
+                                                                onPressed: () =>
+                                                                    _handleLeadAction(
+                                                                        'documents_tab',
+                                                                        lead),
+                                                                child: Row(
+                                                                  children: [
+                                                                    Icon(
+                                                                        Icons
+                                                                            .folder,
+                                                                        size:
+                                                                            18,
+                                                                        color: Colors
+                                                                            .blue),
+                                                                    const SizedBox(
+                                                                        width:
+                                                                            8),
+                                                                    const Text(
+                                                                        'Documents Tab'),
+                                                                  ],
                                                                 ),
+                                                              ),
                                                         if (settingsProvider
                                                                     .menuIsEditMap[
                                                                 4] ==
@@ -1160,9 +1220,9 @@ class _CustomerPageState extends State<CustomerPage> {
                                                         vertical: 6.0,
                                                         horizontal: 8.0),
                                                 data: Tooltip(
-                                                  message: lead.displayAddress,
+                                                  message: lead.address2,
                                                   child: Text(
-                                                    lead.displayAddress,
+                                                    lead.address2,
                                                     maxLines: 1,
                                                     overflow:
                                                         TextOverflow.ellipsis,
@@ -1190,6 +1250,15 @@ class _CustomerPageState extends State<CustomerPage> {
                                                       vertical: 6.0,
                                                       horizontal: 8.0),
                                                   title: lead.toUserName),
+                                              TableWidget(
+                                                  flex: 2,
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.normal,
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      vertical: 6.0,
+                                                      horizontal: 8.0),
+                                                  title: lead.amcDateDisplay),
                                               TableWidget(
                                                   flex: 2,
                                                   fontSize: 12,
@@ -1264,7 +1333,8 @@ class _CustomerPageState extends State<CustomerPage> {
                                                 TableWidget(
                                                     flex: 2,
                                                     fontSize: 12,
-                                                    fontWeight: FontWeight.normal,
+                                                    fontWeight:
+                                                        FontWeight.normal,
                                                     padding: const EdgeInsets
                                                         .symmetric(
                                                         vertical: 4.0,
