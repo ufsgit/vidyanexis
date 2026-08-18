@@ -115,6 +115,35 @@ class SearchLeadModel {
     return parts.join(', ');
   }
 
+  DateTime? get parsedCreationDate {
+    final dateStr = entryDate.trim();
+    if (dateStr.isEmpty || dateStr.toLowerCase() == 'null') return null;
+    final parsed = DateTime.tryParse(dateStr);
+    if (parsed != null) return parsed;
+    try {
+      if (dateStr.contains('/')) {
+        final parts = dateStr.split(' ');
+        final dateParts = parts[0].split('/');
+        if (dateParts.length == 3) {
+          int day = int.parse(dateParts[0]);
+          int month = int.parse(dateParts[1]);
+          int year = int.parse(dateParts[2]);
+          return DateTime(year, month, day);
+        }
+      } else if (dateStr.contains('-')) {
+        final parts = dateStr.split(' ');
+        final dateParts = parts[0].split('-');
+        if (dateParts.length == 3 && dateParts[0].length <= 2) {
+          int day = int.parse(dateParts[0]);
+          int month = int.parse(dateParts[1]);
+          int year = int.parse(dateParts[2]);
+          return DateTime(year, month, day);
+        }
+      }
+    } catch (_) {}
+    return null;
+  }
+
   SearchLeadModel({
     required this.customerId,
     required this.customerName,
@@ -244,7 +273,13 @@ class SearchLeadModel {
       requestCount: parseInt(json['Request_Count']),
       createdBy: parseInt(json['Created_By']),
       createdByName: parseString(json['Created_By_Name']),
-      entryDate: parseString(json['Entry_Date']),
+      entryDate: parseString(json['Entry_Date'] ??
+          json['created_at'] ??
+          json['createdAt'] ??
+          json['created_date'] ??
+          json['createdDate'] ??
+          json['lead_created_date'] ??
+          json['Entry_date']),
       statusId: parseInt(json['Status_Id']),
       statusName: parseString(json['Status_Name']),
       byUserId: parseInt(json['By_User_Id']),

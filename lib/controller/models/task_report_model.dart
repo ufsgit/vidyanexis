@@ -52,6 +52,35 @@ class TaskReportModel {
   final String leadDuration;
 
 
+  DateTime? get parsedCreationDate {
+    final dateStr = entryDate.trim();
+    if (dateStr.isEmpty || dateStr.toLowerCase() == 'null') return null;
+    final parsed = DateTime.tryParse(dateStr);
+    if (parsed != null) return parsed;
+    try {
+      if (dateStr.contains('/')) {
+        final parts = dateStr.split(' ');
+        final dateParts = parts[0].split('/');
+        if (dateParts.length == 3) {
+          int day = int.parse(dateParts[0]);
+          int month = int.parse(dateParts[1]);
+          int year = int.parse(dateParts[2]);
+          return DateTime(year, month, day);
+        }
+      } else if (dateStr.contains('-')) {
+        final parts = dateStr.split(' ');
+        final dateParts = parts[0].split('-');
+        if (dateParts.length == 3 && dateParts[0].length <= 2) {
+          int day = int.parse(dateParts[0]);
+          int month = int.parse(dateParts[1]);
+          int year = int.parse(dateParts[2]);
+          return DateTime(year, month, day);
+        }
+      }
+    } catch (_) {}
+    return null;
+  }
+
   TaskReportModel({
     required this.taskId,
     required this.locationTracking,
@@ -147,7 +176,13 @@ class TaskReportModel {
         return loc;
       }(),
       description: json['Description'] ?? '',
-      entryDate: json['Entry_Date'] ?? '',
+      entryDate: (json['Entry_Date'] ??
+              json['created_at'] ??
+              json['createdAt'] ??
+              json['created_date'] ??
+              json['createdDate'] ??
+              json['Entry_date'])?.toString() ??
+          '',
       taskStatusId: json['Task_Status_Id'] ?? 0,
       taskStatusName: json['Task_Status_Name'] ?? 'Unknown',
       toUserId: json['To_User_Id'] ?? 0,

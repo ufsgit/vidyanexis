@@ -10,6 +10,8 @@ import 'package:vidyanexis/controller/models/attendance_details_model.dart';
 import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/http/loader.dart';
+import 'package:provider/provider.dart';
+import 'package:vidyanexis/controller/dashboard_provider.dart';
 
 class AttendanceReportProvider extends ChangeNotifier {
   List<AttendanceDetails> _taskReport = [];
@@ -482,6 +484,13 @@ class AttendanceReportProvider extends ChangeNotifier {
         log('Success');
         getSearchTaskReport(context, showLoading: false);
         assignToFollowUpController.clear();
+        
+        try {
+          final dashboardProvider = Provider.of<DashboardProvider>(context, listen: false);
+          dashboardProvider.getAttendanceDashboardCount(shouldNotify: true);
+        } catch (e) {
+          log('Error updating dashboard counts: $e');
+        }
 
         // Stop loader immediately to make UI responsive
         if (showLoading) {

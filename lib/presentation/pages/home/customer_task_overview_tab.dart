@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
+import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/models/task_customer_model.dart';
 import 'package:intl/intl.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -96,10 +97,119 @@ class _CustomerTaskOverviewTabState extends State<CustomerTaskOverviewTab> {
   }
 
   Widget _buildSummaryCard(TaskCustomerModel task, {bool isWeb = false}) {
+    return TaskSummaryCardWidget(task: task, isWeb: isWeb);
+  }
+}
+
+class TaskSummaryCardWidget extends StatefulWidget {
+  final TaskCustomerModel task;
+  final bool isWeb;
+  
+  const TaskSummaryCardWidget({super.key, required this.task, this.isWeb = false});
+
+  @override
+  State<TaskSummaryCardWidget> createState() => _TaskSummaryCardWidgetState();
+}
+
+class _TaskSummaryCardWidgetState extends State<TaskSummaryCardWidget> {
+  bool _isLoadingStatus = true;
+  bool _isFollowUp = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchStatus();
+  }
+
+  Future<void> _fetchStatus() async {
+    final dropDownProvider = Provider.of<DropDownProvider>(context, listen: false);
+    final statuses = await dropDownProvider.getStatusByTaskTypeId(context, widget.task.taskTypeId.toString(), '3');
+    
+    bool isFollowUp = false;
+    for (var status in statuses) {
+      if (status.statusId == widget.task.taskStatusId) {
+        if (status.followup == 1) {
+          isFollowUp = true;
+        }
+        break;
+      }
+    }
+    if (mounted) {
+      setState(() {
+        _isFollowUp = isFollowUp;
+        _isLoadingStatus = false;
+      });
+    }
+  }
+
+  Color _getStatusColor(String statusName) {
+    final status = statusName.toLowerCase();
+    if (status.contains('complete') ||
+        status.contains('finish') ||
+        status.contains('done')) {
+      return const Color(0xFF10B981);
+    } else if (status.contains('pending') || status.contains('wait')) {
+      return const Color(0xFFF59E0B);
+    } else if (status.contains('hold') || status.contains('cancel')) {
+      return const Color(0xFFEF4444);
+    } else if (status.contains('progress')) {
+      return const Color(0xFF8B5CF6);
+    }
+    return const Color(0xFF3B82F6);
+  }
+
+  String _formatDate(String dateStr) {
+    try {
+      String cleaned = dateStr
+          .replaceFirst(RegExp(r'00:00:00\.000\s*'), '')
+          .trim()
+          .replaceAll(RegExp(r'\s+'), ' ');
+
+      final dateTime = DateTime.parse(cleaned);
+      return DateFormat('dd/MM/yyyy hh:mm:ss a').format(dateTime);
+    } catch (e) {
+      return dateStr;
+    }
+  }
+
+  String _formatDays(int days) {
+    if (days == 0) return '0 Days';
+    if (days == 1) return '1 Day';
+    return '$days Days';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final task = widget.task;
+    final isWeb = widget.isWeb;
+
+    // Calculate durations
+    String taskTypeDurationStr = '';
+    String actualDurationStr = '';
+
+    if (!_isLoadingStatus) {
+      final now = DateTime.now();
+      final today = DateTime(now.year, now.month, now.day);
+      final taskDate = DateTime(task.taskDate.year, task.taskDate.month, task.taskDate.day);
+      
+      final taskTypeDuration = taskDate.difference(today).inDays;
+      taskTypeDurationStr = _formatDays(taskTypeDuration);
+
+      if (task.entryDate != null) {
+        final entryDate = DateTime(task.entryDate!.year, task.entryDate!.month, task.entryDate!.day);
+        if (_isFollowUp) {
+          final actualDuration = today.difference(entryDate).inDays;
+          actualDurationStr = _formatDays(actualDuration);
+        } else {
+          final actualDuration = taskDate.difference(entryDate).inDays;
+          actualDurationStr = _formatDays(actualDuration);
+        }
+      }
+    }
+
     return InkWell(
       onTap: () {
-        final provider =
-            Provider.of<CustomerDetailsProvider>(context, listen: false);
+        final provider = Provider.of<CustomerDetailsProvider>(context, listen: false);
         provider.fetchTaskHistory(task.taskId.toString());
         showDialog(
           context: context,
@@ -186,42 +296,29 @@ class _CustomerTaskOverviewTabState extends State<CustomerTaskOverviewTab> {
                 overflow: TextOverflow.ellipsis,
               ),
             ],
+            if (!_isLoadingStatus) ...[
+              const SizedBox(height: 6),
+              Text(
+                'Task Type Duration: $taskTypeDurationStr',
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
+                  color: const Color(0xFF64748B),
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                'Actual Duration: $actualDurationStr',
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
+                  color: const Color(0xFF64748B),
+                ),
+              ),
+            ],
           ],
         ),
       ),
     );
-  }
-
-  Color _getStatusColor(String statusName) {
-    final status = statusName.toLowerCase();
-    if (status.contains('complete') ||
-        status.contains('finish') ||
-        status.contains('done')) {
-      return const Color(0xFF10B981);
-    } else if (status.contains('pending') || status.contains('wait')) {
-      return const Color(0xFFF59E0B);
-    } else if (status.contains('hold') || status.contains('cancel')) {
-      return const Color(0xFFEF4444);
-    } else if (status.contains('progress')) {
-      return const Color(0xFF8B5CF6);
-    }
-    return const Color(0xFF3B82F6);
-  }
-
-  String _formatDate(String dateStr) {
-    try {
-      // Clean the input (handles "00:00:00.000" case)
-      String cleaned = dateStr
-          .replaceFirst(RegExp(r'00:00:00\.000\s*'), '')
-          .trim()
-          .replaceAll(RegExp(r'\s+'), ' ');
-
-      final dateTime = DateTime.parse(cleaned);
-
-      // 12-hour format with AM/PM
-      return DateFormat('dd/MM/yyyy hh:mm:ss a').format(dateTime);
-    } catch (e) {
-      return dateStr; // fallback
-    }
   }
 }
