@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/login_controller.dart';
 import 'package:vidyanexis/controller/notification_provider.dart';
 import 'package:vidyanexis/http/socket_io.dart';
@@ -87,20 +88,26 @@ class _HomePageState extends State<HomePage> {
   PackageInfo? packageInfo;
   String logo = '';
 
+  bool _isFirstBuild = true;
+
   @override
   void initState() {
     super.initState();
+    final homeInitStart = DateTime.now().millisecondsSinceEpoch;
+    print('[PERF-BOOT] HomePage created');
     initDevicePlugin();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await MicrotecSocket.initSocket();
-      // Permission.notification.request();
+      MicrotecSocket.initSocket();
 
       final preferences = await SharedPreferences.getInstance();
+      if (!mounted) return;
       String userId = preferences.getString('userId') ?? "0";
       final settingsProvider =
           Provider.of<SettingsProvider>(context, listen: false);
       settingsProvider.getMenuPermissionData(userId, context);
       await settingsProvider.getCompanyDetails();
+      print(
+          '[PERF-BOOT] HomePage postFrameCallback complete: ${DateTime.now().millisecondsSinceEpoch - homeInitStart} ms');
     });
   }
 
@@ -129,9 +136,15 @@ class _HomePageState extends State<HomePage> {
               onPressed: () async {
                 final loginController =
                     Provider.of<LoginController>(context, listen: false);
+                final dropDownProvider =
+                    Provider.of<DropDownProvider>(context, listen: false);
                 final router = GoRouter.of(context);
 
                 Navigator.of(ctx).pop();
+
+                // Clean up socket and user cache on logout
+                MicrotecSocket.disconnect();
+                dropDownProvider.clearUserCache();
 
                 SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -203,6 +216,10 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    if (_isFirstBuild) {
+      print('[PERF-BOOT] HomePage first build');
+      _isFirstBuild = false;
+    }
     final sideProvider = Provider.of<SidebarProvider>(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final settingsProvider = Provider.of<SettingsProvider>(context);
@@ -818,7 +835,7 @@ class _HomePageState extends State<HomePage> {
               builder: (context, provider, child) {
                 // Ensure sidebarOptions is not empty before accessing it
                 if (sidebarOptions.isEmpty) {
-                  return const Center(child: CircularProgressIndicator());
+                  return const DashBoardPage();
                 }
                 // Safely find the selected option with error handling
                 SidebarOption? selectedOption;
@@ -835,23 +852,11 @@ class _HomePageState extends State<HomePage> {
                     selectedOption = sidebarOptions[provider.selectedIndex];
                   }
                 } catch (e) {
-                  // If any error occurs, show empty container
-                  return Container(
-                    color: Colors.grey.shade50,
-                    child: Center(
-                      child: Text(
-                        "No content to display",
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.grey.shade600,
-                        ),
-                      ),
-                    ),
-                  );
+                  return const DashBoardPage();
                 }
 
                 if (selectedOption == null) {
-                  return const Center(child: CircularProgressIndicator());
+                  return const DashBoardPage();
                 }
 
                 // Get the base content for the selected option

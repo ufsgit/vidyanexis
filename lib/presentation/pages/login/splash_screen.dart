@@ -46,14 +46,25 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _checkLoginStatus() async {
-    await Future.delayed(const Duration(seconds: 1)); // Reduced delay from 2s
+    final startTime = DateTime.now().millisecondsSinceEpoch;
+    print('[PERF-BOOT] auth/session started');
+
     final prefs = await SharedPreferences.getInstance();
     bool isLoggedIn = prefs.getBool('IsLoggedIn') ?? false;
-    print('Is Logged $isLoggedIn');
+    final sessionRestoredTime = DateTime.now().millisecondsSinceEpoch - startTime;
+    print('[PERF-BOOT] auth/session completed: $sessionRestoredTime ms (isLoggedIn=$isLoggedIn)');
+
+    print('[PERF-BOOT] route resolution started');
     if (isLoggedIn) {
-      if (mounted) context.go(HomePage.route);
+      if (mounted) {
+        context.go(HomePage.route);
+        print('[PERF-BOOT] route resolution completed: ${DateTime.now().millisecondsSinceEpoch - startTime} ms');
+      }
     } else {
-      if (mounted) context.go(LoginPage.route);
+      if (mounted) {
+        context.go(LoginPage.route);
+        print('[PERF-BOOT] route resolution completed: ${DateTime.now().millisecondsSinceEpoch - startTime} ms');
+      }
     }
   }
 

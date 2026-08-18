@@ -870,7 +870,13 @@ class DropDownProvider extends ChangeNotifier {
     }
   }
 
-  void getUserDetails(BuildContext context) async {
+  void clearUserCache() {
+    _searchUserDetails.clear();
+  }
+
+  Future<void> getUserDetails(BuildContext context, {bool forceRefresh = false}) async {
+    if (!forceRefresh && _searchUserDetails.isNotEmpty) return;
+    final startTime = DateTime.now().millisecondsSinceEpoch;
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -885,6 +891,7 @@ class DropDownProvider extends ChangeNotifier {
           _searchUserDetails = (data as List<dynamic>)
               .map((item) => SearchUserDetails.fromJson(item))
               .toList();
+          print('[PERF] Dropdown getUserDetails completed: ${DateTime.now().millisecondsSinceEpoch - startTime} ms');
           notifyListeners();
         }
       } else {

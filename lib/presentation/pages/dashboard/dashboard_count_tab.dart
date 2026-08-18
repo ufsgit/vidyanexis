@@ -14,8 +14,8 @@ class DashboardCountTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (dashBoardProvider.isDashBoardLoading &&
-        dashBoardProvider.leadCountMap.isEmpty) {
+    if (dashBoardProvider.leadCountMap.isEmpty &&
+        dashBoardProvider.isDashBoardLoading) {
       return _buildSkeleton(context);
     }
 
