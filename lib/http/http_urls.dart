@@ -37,7 +37,7 @@ class HttpUrls {
 //   static String baseUrl = 'https://demo2api.ufstech.net.in/';
   // static String baseUrl = 'https://coopaenergyapi.ufstech.net.in/';
   // static String baseUrl = 'https://bodhieapi.ufstech.net.in/';
-  static String baseUrl = 'https://solarisapi.ufstech.net.in/';
+  // static String baseUrl = 'https://solarisapi.ufstech.net.in/';
 //dev
 
 //  static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
@@ -50,7 +50,7 @@ class HttpUrls {
 
   // static String baseUrl = 'https://cn1hct1v-3512.inc1.devtunnels.ms/';
 
-//   static String baseUrl = 'https://28tzz0hf-3512.inc1.devtunnels.ms/';
+  static String baseUrl = 'https://28tzz0hf-3512.inc1.devtunnels.ms/';
 
   static String imgBaseUrl =
       'https://pub-b2e3330da2344ea490c08dd119392728.r2.dev/';
