@@ -1949,6 +1949,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                       title: task
                                                                               .leadCode ??
                                                                           '-',
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .normal,
                                                                     ),
                                                                     TableWidget(
                                                                       width:
