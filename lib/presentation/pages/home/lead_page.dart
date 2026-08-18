@@ -1714,6 +1714,20 @@ class _LeadsPageState extends State<LeadPage> {
                                               ),
                                             ),
                                             TableWidget(
+                                              width: 150,
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 4.0,
+                                                  horizontal: 12.0),
+                                              alignment: Alignment.centerLeft,
+                                              data: Text(
+                                                'Consumer No.',
+                                                style: TextStyle(
+                                                  fontSize: 13,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ),
+                                            TableWidget(
                                               width: 250,
                                               padding: EdgeInsets.symmetric(
                                                   vertical: 4.0,
@@ -2219,6 +2233,28 @@ class _LeadsPageState extends State<LeadPage> {
                                                               ),
                                                             ),
                                                           ),
+                                                        ),
+                                                      ),
+                                                      TableWidget(
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                                vertical: 4.0,
+                                                                horizontal:
+                                                                    12.0),
+                                                        width: 150,
+                                                        alignment: Alignment
+                                                            .centerLeft,
+                                                        data: Text(
+                                                          lead.consumerNo ??
+                                                              '',
+                                                          maxLines: 1,
+                                                          overflow:
+                                                              TextOverflow
+                                                                  .ellipsis,
+                                                          style:
+                                                              const TextStyle(
+                                                                  fontSize:
+                                                                      13),
                                                         ),
                                                       ),
                                                       TableWidget(

@@ -759,6 +759,13 @@ class _CustomerPageState extends State<CustomerPage> {
                                       color: Color(0xFFFFFFFF)),
                                   TableWidget(
                                       flex: 2,
+                                      title: 'Consumer No.',
+                                      fontWeight: FontWeight.bold,
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 4.0, horizontal: 8.0),
+                                      color: Color(0xFFFFFFFF)),
+                                  TableWidget(
+                                      flex: 2,
                                       title: 'Remarks',
                                       fontWeight: FontWeight.bold,
                                       padding: EdgeInsets.symmetric(
@@ -774,6 +781,13 @@ class _CustomerPageState extends State<CustomerPage> {
                                   TableWidget(
                                       flex: 2,
                                       title: 'Follow Up Date',
+                                      fontWeight: FontWeight.bold,
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 4.0, horizontal: 8.0),
+                                      color: Color(0xFFFFFFFF)),
+                                  TableWidget(
+                                      flex: 2,
+                                      title: 'Duration',
                                       fontWeight: FontWeight.bold,
                                       padding: EdgeInsets.symmetric(
                                           vertical: 4.0, horizontal: 8.0),
@@ -1196,6 +1210,15 @@ class _CustomerPageState extends State<CustomerPage> {
                                                       .symmetric(
                                                       vertical: 6.0,
                                                       horizontal: 8.0),
+                                                  title: lead.consumerNo),
+                                              TableWidget(
+                                                  flex: 2,
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.normal,
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      vertical: 6.0,
+                                                      horizontal: 8.0),
                                                   title: lead.remark),
                                               TableWidget(
                                                 flex: 2,
@@ -1256,6 +1279,15 @@ class _CustomerPageState extends State<CustomerPage> {
                                                       ? lead.nextFollowUpDate
                                                           .toDayMonthYearFormat()
                                                       : ''),
+                                              TableWidget(
+                                                  flex: 2,
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.normal,
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      vertical: 4.0,
+                                                      horizontal: 8.0),
+                                                  title: lead.leadDuration),
                                               if (settingsProvider
                                                       .menuIsViewMap[142] ==
                                                   1)

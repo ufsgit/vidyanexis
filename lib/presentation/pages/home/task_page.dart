@@ -1540,7 +1540,7 @@ class _tasksPageReportState extends State<TaskPage> {
                             Expanded(
                               child: LayoutBuilder(
                                 builder: (context, constraints) {
-                                  double minWidth = 1850;
+                                  double minWidth = 2100;
                                   if (settingsProvider.showView[162] != 1) {
                                     minWidth -= 130;
                                   }
@@ -1646,6 +1646,15 @@ class _tasksPageReportState extends State<TaskPage> {
                                                           horizontal: 12.0),
                                                       color: Colors.white),
                                                   TableWidget(
+                                                      width: 140,
+                                                      title: 'Consumer No',
+                                                      fontSize: 13,
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          vertical: 4.0,
+                                                          horizontal: 12.0),
+                                                      color: Colors.white),
+                                                  TableWidget(
                                                       width: 180,
                                                       title: 'Description',
                                                       fontSize: 13,
@@ -1673,6 +1682,15 @@ class _tasksPageReportState extends State<TaskPage> {
                                                   TableWidget(
                                                       width: 140,
                                                       title: 'Created Date',
+                                                      fontSize: 13,
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          vertical: 4.0,
+                                                          horizontal: 12.0),
+                                                      color: Colors.white),
+                                                  TableWidget(
+                                                      width: 120,
+                                                      title: 'Duration',
                                                       fontSize: 13,
                                                       padding: const EdgeInsets
                                                           .symmetric(
@@ -2135,6 +2153,40 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                     ),
                                                                     TableWidget(
                                                                       width:
+                                                                          140,
+                                                                      padding: const EdgeInsets
+                                                                          .symmetric(
+                                                                          vertical:
+                                                                              4.0,
+                                                                          horizontal:
+                                                                              12.0),
+                                                                      data:
+                                                                          Tooltip(
+                                                                        message:
+                                                                            task.consumerNo ??
+                                                                                '',
+                                                                        child:
+                                                                            Text(
+                                                                          task.consumerNo ??
+                                                                              '',
+                                                                          overflow:
+                                                                              TextOverflow.ellipsis,
+                                                                          maxLines:
+                                                                              1,
+                                                                          style:
+                                                                              const TextStyle(
+                                                                            fontSize:
+                                                                                13,
+                                                                            color:
+                                                                                Color(0xFF334155),
+                                                                            fontWeight:
+                                                                                FontWeight.w500,
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    TableWidget(
+                                                                      width:
                                                                           180,
                                                                       padding: const EdgeInsets
                                                                           .symmetric(
@@ -2290,6 +2342,33 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                           Text(
                                                                         task.entryDate
                                                                             .toDayMonthYearFormat(),
+                                                                        overflow:
+                                                                            TextOverflow.ellipsis,
+                                                                        maxLines:
+                                                                            1,
+                                                                        style:
+                                                                            const TextStyle(
+                                                                          fontSize:
+                                                                              13,
+                                                                          color:
+                                                                              Color(0xFF334155),
+                                                                          fontWeight:
+                                                                              FontWeight.w500,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    TableWidget(
+                                                                      width:
+                                                                          120,
+                                                                      padding: const EdgeInsets
+                                                                          .symmetric(
+                                                                          vertical:
+                                                                              4.0,
+                                                                          horizontal:
+                                                                              12.0),
+                                                                      data:
+                                                                          Text(
+                                                                        task.leadDuration.toString(),
                                                                         overflow:
                                                                             TextOverflow.ellipsis,
                                                                         maxLines:
