@@ -48,6 +48,8 @@ class TaskReportModel {
   final String priorityName;
   final String priorityId;
   final String priorityColor;
+  final String consumerNo;
+  final String leadDuration;
 
 
   DateTime? get parsedCreationDate {
@@ -124,6 +126,8 @@ class TaskReportModel {
     required this.priorityName,
     required this.priorityId,
     required this.priorityColor,
+    required this.consumerNo,
+    required this.leadDuration,
   });
 
   factory TaskReportModel.fromJson(Map<String, dynamic> json) {
@@ -237,6 +241,8 @@ class TaskReportModel {
       priorityName: json['Priority_Name']?.toString() ?? '',
       priorityId: json['Priority_Id']?.toString() ?? '',
       priorityColor: json['Priority_Color']?.toString() ?? '',
+      consumerNo: json['Consumer_Number']?.toString() ?? '',
+      leadDuration: json['Lead_Age_Days']?.toString() ?? '',
     );
   }
 

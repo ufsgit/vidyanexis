@@ -419,6 +419,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
       await dropDownProvider.getEnquirySource(context, fetchUserSpecific: true);
       await dropDownProvider.getEnquiryFor(context, fetchUserSpecific: true);
       await settingsProvider.getPriorities(context);
+      await dropDownProvider.getFollowUpStatus(context, "1", forceRefresh: true);
 
       if (widget.isEdit) {
         leadProvider.getCustomFieldsByEnquiryForId(
@@ -436,9 +437,18 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
           leadProvider.priorityNameController.text = first.priorityName;
         }
 
-        // Set default follow-up status to first available status in dropdown
-        if (dropDownProvider.followUpData.isNotEmpty) {
-          final firstStatus = dropDownProvider.followUpData.first;
+        // Set default follow-up status to first available status with isCreateNew == 1 in dropdown
+        final createNewStatuses = dropDownProvider.followUpData
+            .where((s) => s.isCreateNew == 1)
+            .toList();
+        final availableStatuses = widget.isEdit
+            ? dropDownProvider.followUpData
+            : (createNewStatuses.isNotEmpty
+                ? createNewStatuses
+                : dropDownProvider.followUpData);
+
+        if (availableStatuses.isNotEmpty) {
+          final firstStatus = availableStatuses.first;
           if (firstStatus.statusId != null) {
             dropDownProvider.setSelectedFollowUPId(firstStatus.statusId);
             leadProvider.followUpStatusController.text =
@@ -1027,6 +1037,8 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
                   child: CommonDropdown<int>(
                     hintText: 'Follow-up Status*',
                     items: dropDownProvider.followUpData
+                        .where(
+                            (status) => widget.isEdit ? true : status.isCreateNew == 1)
                         .map((status) => DropdownItem<int>(
                               id: status.statusId ?? 0,
                               name: status.statusName ?? '',
