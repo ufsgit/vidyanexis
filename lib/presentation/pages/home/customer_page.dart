@@ -1,4 +1,5 @@
 import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:async';
 import 'dart:typed_data';
@@ -18,7 +19,6 @@ import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/leads_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
-import 'package:vidyanexis/presentation/pages/home/bulk_importing_screen.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_follow_up_dialog.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_quotation.dart';
@@ -55,7 +55,12 @@ class _CustomerPageState extends State<CustomerPage> {
   TextEditingController searchController = TextEditingController();
   final FocusNode searchFocusNodeWeb = FocusNode();
   final FocusNode searchFocusNodeMobile = FocusNode();
+  final _horizontalScrollController = ScrollController();
+  late final ScrollController _fixedVerticalController;
+  late final ScrollController _scrollableVerticalController;
   Timer? _debounce;
+  bool _isSyncing = false;
+  int? _hoveredRowIndex;
   final sideProvider =
       Provider.of<SidebarProvider>(navigatorKey.currentState!.context);
   int userId = 0;
@@ -66,6 +71,11 @@ class _CustomerPageState extends State<CustomerPage> {
   void initState() {
     super.initState();
     CustomerPage._currentState = this;
+    _fixedVerticalController = ScrollController();
+    _scrollableVerticalController = ScrollController();
+
+    _fixedVerticalController.addListener(_syncScrollFromFixed);
+    _scrollableVerticalController.addListener(_syncScrollFromScrollable);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final customerProvider =
@@ -105,7 +115,28 @@ class _CustomerPageState extends State<CustomerPage> {
   @override
   void dispose() {
     _debounce?.cancel();
+    _fixedVerticalController.dispose();
+    _scrollableVerticalController.dispose();
+    _horizontalScrollController.dispose();
     super.dispose();
+  }
+
+  void _syncScrollFromFixed() {
+    if (_isSyncing) return;
+    _isSyncing = true;
+    if (_scrollableVerticalController.hasClients) {
+      _scrollableVerticalController.jumpTo(_fixedVerticalController.offset);
+    }
+    _isSyncing = false;
+  }
+
+  void _syncScrollFromScrollable() {
+    if (_isSyncing) return;
+    _isSyncing = true;
+    if (_fixedVerticalController.hasClients) {
+      _fixedVerticalController.jumpTo(_scrollableVerticalController.offset);
+    }
+    _isSyncing = false;
   }
 
   void _onSearchChanged(String query) {
@@ -180,13 +211,6 @@ class _CustomerPageState extends State<CustomerPage> {
     const searchBarHeight = 70.0;
     const paginationHeight = 60.0;
     const tableHeaderHeight = 40.0;
-
-    final availableHeight = screenHeight -
-        headerHeight -
-        searchBarHeight -
-        paginationHeight -
-        tableHeaderHeight -
-        40;
     final double rowHeight = AppStyles.isWebScreen(context) ? 36.0 : 48.0;
     return Scaffold(
       key: _scaffoldKey,
@@ -316,6 +340,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                 child: TextField(
                                   controller: searchController,
                                   focusNode: searchFocusNodeWeb,
+                                  onChanged: _onSearchChanged,
                                   textAlignVertical: TextAlignVertical.center,
                                   onTap: () {
                                     Future.microtask(() {
@@ -450,6 +475,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                           'Assigned To',
                                           'AMC Date',
                                           'Next Follow-up Date',
+                                          'Work Completion Date',
                                           'Status',
                                           'Total Project Cost',
                                         ],
@@ -470,6 +496,8 @@ class _CustomerPageState extends State<CustomerPage> {
                                             'AMC Date': cust.amcDateDisplay,
                                             'Next Follow-up Date':
                                                 cust.nextFollowUpDate,
+                                            'Work Completion Date':
+                                                cust.workCompletionDateDisplay,
                                             'Status': cust.statusName,
                                             'Total Project Cost':
                                                 cust.totalProjectCost,
@@ -755,764 +783,21 @@ class _CustomerPageState extends State<CustomerPage> {
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        children: [
-                          // Header Row (Table Column Titles)
-                          if (AppStyles.isWebScreen(context))
-                            Container(
-                              height: tableHeaderHeight,
-                              decoration: BoxDecoration(
-                                color: AppColors.primaryBlue,
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: Row(
-                                children: [
-                                  TableWidget(
-                                    width: 80,
-                                    title: 'Sl No.',
-                                    fontWeight: FontWeight.bold,
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 4.0, horizontal: 12.0),
-                                    color: Color(0xFFFFFFFF),
-                                  ),
-                                  TableWidget(
-                                      flex: 2,
-                                      title: 'Customer Code',
-                                      fontWeight: FontWeight.bold,
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: 4.0, horizontal: 8.0),
-                                      color: Color(0xFFFFFFFF)),
-                                  TableWidget(
-                                      flex: 2,
-                                      title: 'Customer Name',
-                                      fontWeight: FontWeight.bold,
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: 4.0, horizontal: 8.0),
-                                      color: Color(0xFFFFFFFF)),
-                                  TableWidget(
-                                      flex: 2,
-                                      title: 'Place',
-                                      fontWeight: FontWeight.bold,
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: 4.0, horizontal: 8.0),
-                                      color: Color(0xFFFFFFFF)),
-                                  TableWidget(
-                                      flex: 2,
-                                      title: 'Mobile no',
-                                      fontWeight: FontWeight.bold,
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: 4.0, horizontal: 8.0),
-                                      color: Color(0xFFFFFFFF)),
-                                  TableWidget(
-                                      flex: 2,
-                                      title: 'Assigned Staff',
-                                      fontWeight: FontWeight.bold,
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: 4.0, horizontal: 8.0),
-                                      color: Color(0xFFFFFFFF)),
-                                  TableWidget(
-                                      flex: 2,
-                                      title: 'AMC Date',
-                                      fontWeight: FontWeight.bold,
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: 4.0, horizontal: 8.0),
-                                      color: Color(0xFFFFFFFF)),
-                                  TableWidget(
-                                      flex: 2,
-                                      title: 'Consumer No.',
-                                      fontWeight: FontWeight.bold,
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: 4.0, horizontal: 8.0),
-                                      color: Color(0xFFFFFFFF)),
-                                  TableWidget(
-                                      flex: 2,
-                                      title: 'Remarks',
-                                      fontWeight: FontWeight.bold,
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: 4.0, horizontal: 8.0),
-                                      color: Color(0xFFFFFFFF)),
-                                  TableWidget(
-                                      flex: 2,
-                                      title: 'Follow Up Status',
-                                      fontWeight: FontWeight.bold,
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: 4.0, horizontal: 8.0),
-                                      color: Color(0xFFFFFFFF)),
-                                  TableWidget(
-                                      flex: 2,
-                                      title: 'Follow Up Date',
-                                      fontWeight: FontWeight.bold,
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: 4.0, horizontal: 8.0),
-                                      color: Color(0xFFFFFFFF)),
-                                  TableWidget(
-                                      flex: 2,
-                                      title: 'Duration',
-                                      fontWeight: FontWeight.bold,
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: 4.0, horizontal: 8.0),
-                                      color: Color(0xFFFFFFFF)),
-                                  if (settingsProvider.menuIsViewMap[142] == 1)
-                                    TableWidget(
-                                        flex: 2,
-                                        title: 'Location',
-                                        fontWeight: FontWeight.bold,
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 4.0, horizontal: 8.0),
-                                        color: Color(0xFFFFFFFF)),
-                                ],
-                              ),
+                      child: AppStyles.isWebScreen(context)
+                          ? _buildWebTable(
+                              context,
+                              customerProvider,
+                              settingsProvider,
+                              provider,
+                              rowHeight,
+                              tableHeaderHeight,
+                            )
+                          : _buildMobileList(
+                              context,
+                              customerProvider,
+                              settingsProvider,
+                              provider,
                             ),
-                          // Data Rows
-                          Expanded(
-                            child: ListView.builder(
-                              itemCount: customerProvider
-                                  .customerData.length, // Number of leads
-                              itemBuilder: (context, index) {
-                                var lead = customerProvider.customerData[index];
-                                return GestureDetector(
-                                  onTap: () {
-                                    // sideprovider.replaceWidgetCustomer(
-                                    //     false, lead.customerId.toString());
-                                    // context.push(
-                                    //     '${CustomerDetailsScreen.route}${lead.customerId.toString()}');
-                                  },
-                                  child: Container(
-                                    height: rowHeight,
-                                    decoration: BoxDecoration(
-                                      color: index % 2 == 0
-                                          ? Colors.white
-                                          : const Color(0xFFF6F7F9),
-                                      borderRadius: BorderRadius.circular(4),
-                                    ),
-                                    // Alternate row colors
-                                    child: AppStyles.isWebScreen(context)
-                                        ? Row(
-                                            // mainAxisAlignment: MainAxisAlignment.start,
-                                            children: [
-                                              // Padding(
-                                              //   padding: const EdgeInsets.symmetric(
-                                              //       vertical: 12.0, horizontal: 25.0),
-                                              //   child: Text(lead.customerId.toString(),
-                                              //       style: const TextStyle(
-                                              //         fontWeight: FontWeight.bold,
-                                              //       )),
-                                              // ),
-                                              TableWidget(
-                                                width: 80,
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.normal,
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 6.0,
-                                                        horizontal: 12.0),
-                                                title: ((index + 1) +
-                                                        customerProvider
-                                                            .startLimit -
-                                                        1)
-                                                    .toString(),
-                                              ),
-                                              TableWidget(
-                                                flex: 2,
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.normal,
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 6.0,
-                                                        horizontal: 8.0),
-                                                title: lead.getDisplayLeadCode(
-                                                    settingsProvider
-                                                        .leadCodeWithEnquiryCode),
-                                              ),
-                                              // TableWidget(title: lead.orderNo),
-                                              TableWidget(
-                                                flex: 2,
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 10.0,
-                                                        horizontal: 8.0),
-                                                data: Row(
-                                                  children: [
-                                                    Expanded(
-                                                      child: InkWell(
-                                                        onTap: () =>
-                                                            onItemClick(lead
-                                                                .customerId),
-                                                        child: Tooltip(
-                                                          message:
-                                                              lead.customerName,
-                                                          child: Text(
-                                                            lead.customerName,
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
-                                                            maxLines: 1,
-                                                            style:
-                                                                const TextStyle(
-                                                              color:
-                                                                  Colors.blue,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .normal,
-                                                              fontSize: 12,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    _HoverMenuAnchor(
-                                                      builder: (context,
-                                                          controller,
-                                                          onHover,
-                                                          child) {
-                                                        return IconButton(
-                                                          onPressed: () {
-                                                            if (controller
-                                                                .isOpen) {
-                                                              controller
-                                                                  .close();
-                                                            } else {
-                                                              controller.open();
-                                                            }
-                                                          },
-                                                          icon: const Icon(
-                                                              Icons
-                                                                  .keyboard_arrow_down,
-                                                              size: 20,
-                                                              color:
-                                                                  Colors.grey),
-                                                          padding:
-                                                              EdgeInsets.zero,
-                                                          constraints:
-                                                              const BoxConstraints(),
-                                                        );
-                                                      },
-                                                      menuChildren: [
-                                                        if (settingsProvider
-                                                                    .menuIsSaveMap[
-                                                                13] ==
-                                                            1)
-                                                          (onHover) =>
-                                                              MultiLevelHoverMenu(
-                                                                isSubMenu:
-                                                                    false,
-                                                                title:
-                                                                    'Create Task',
-                                                                onHoverChange:
-                                                                    (hovering) {
-                                                                  onHover(
-                                                                      hovering);
-                                                                },
-                                                                leadingIcon: const Icon(
-                                                                    Icons
-                                                                        .add_task,
-                                                                    size: 18,
-                                                                    color: Colors
-                                                                        .teal),
-                                                                children: provider
-                                                                    .taskType
-                                                                    .where((taskType) =>
-                                                                        taskType
-                                                                            .manualCreation ==
-                                                                        1)
-                                                                    .map(
-                                                                        (taskType) {
-                                                                  final users = provider
-                                                                      .searchUserDetails
-                                                                      .where(
-                                                                          (user) {
-                                                                    return user
-                                                                            .departmentId
-                                                                            .toString() ==
-                                                                        taskType
-                                                                            .departmentIds
-                                                                            .toString();
-                                                                  }).toList();
-
-                                                                  if (users
-                                                                      .isEmpty) {
-                                                                    return MenuItemButton(
-                                                                      onPressed:
-                                                                          null,
-                                                                      child: Text(
-                                                                          taskType
-                                                                              .taskTypeName),
-                                                                    );
-                                                                  }
-
-                                                                  return MultiLevelHoverMenu(
-                                                                    title: taskType
-                                                                        .taskTypeName,
-                                                                    children:
-                                                                        users.map(
-                                                                            (user) {
-                                                                      return MenuItemButton(
-                                                                        onPressed:
-                                                                            () {
-                                                                          _quickSaveTask(
-                                                                              lead,
-                                                                              taskType,
-                                                                              user);
-                                                                        },
-                                                                        child: Text(
-                                                                            user.userDetailsName),
-                                                                      );
-                                                                    }).toList(),
-                                                                  );
-                                                                }).toList(),
-                                                              ),
-                                                        if (settingsProvider
-                                                                    .menuIsSaveMap[
-                                                                16] ==
-                                                            1)
-                                                          (onHover) =>
-                                                              MenuItemButton(
-                                                                onPressed: () =>
-                                                                    _handleLeadAction(
-                                                                        'quotation',
-                                                                        lead),
-                                                                child: Row(
-                                                                  children: [
-                                                                    Icon(
-                                                                        Icons
-                                                                            .request_quote,
-                                                                        size:
-                                                                            18,
-                                                                        color: Colors
-                                                                            .orange),
-                                                                    const SizedBox(
-                                                                        width:
-                                                                            8),
-                                                                    const Text(
-                                                                        'Quotation'),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                        if (settingsProvider
-                                                                    .menuIsViewMap[
-                                                                16] ==
-                                                            1)
-                                                          (onHover) =>
-                                                              MenuItemButton(
-                                                                onPressed: () =>
-                                                                    _handleLeadAction(
-                                                                        'quotation_list_tab',
-                                                                        lead),
-                                                                child: Row(
-                                                                  children: [
-                                                                    Icon(
-                                                                        Icons
-                                                                            .list_alt,
-                                                                        size:
-                                                                            18,
-                                                                        color: Colors
-                                                                            .orangeAccent),
-                                                                    const SizedBox(
-                                                                        width:
-                                                                            8),
-                                                                    const Text(
-                                                                        'Quotation list'),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                        if (settingsProvider
-                                                                    .menuIsSaveMap[
-                                                                19] ==
-                                                            1)
-                                                          (onHover) =>
-                                                              MenuItemButton(
-                                                                onPressed: () =>
-                                                                    _handleLeadAction(
-                                                                        'document',
-                                                                        lead),
-                                                                child: Row(
-                                                                  children: [
-                                                                    Icon(
-                                                                        Icons
-                                                                            .description,
-                                                                        size:
-                                                                            18,
-                                                                        color: Colors
-                                                                            .purple),
-                                                                    const SizedBox(
-                                                                        width:
-                                                                            8),
-                                                                    const Text(
-                                                                        'Document'),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                        if (settingsProvider
-                                                                    .menuIsViewMap[
-                                                                19] ==
-                                                            1)
-                                                          (onHover) =>
-                                                              MenuItemButton(
-                                                                onPressed: () =>
-                                                                    _handleLeadAction(
-                                                                        'documents_tab',
-                                                                        lead),
-                                                                child: Row(
-                                                                  children: [
-                                                                    Icon(
-                                                                        Icons
-                                                                            .folder,
-                                                                        size:
-                                                                            18,
-                                                                        color: Colors
-                                                                            .blue),
-                                                                    const SizedBox(
-                                                                        width:
-                                                                            8),
-                                                                    const Text(
-                                                                        'Documents Tab'),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                        if (settingsProvider
-                                                                    .menuIsEditMap[
-                                                                4] ==
-                                                            1)
-                                                          (onHover) =>
-                                                              MenuItemButton(
-                                                                onPressed: () =>
-                                                                    _handleLeadAction(
-                                                                        'edit',
-                                                                        lead),
-                                                                child: Row(
-                                                                  children: [
-                                                                    Icon(
-                                                                        Icons
-                                                                            .edit,
-                                                                        size:
-                                                                            18,
-                                                                        color: Colors
-                                                                            .blue),
-                                                                    const SizedBox(
-                                                                        width:
-                                                                            8),
-                                                                    const Text(
-                                                                        'Edit Customer'),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                        if (settingsProvider
-                                                                    .menuIsDeleteMap[
-                                                                4] ==
-                                                            1)
-                                                          (onHover) =>
-                                                              MenuItemButton(
-                                                                onPressed: () =>
-                                                                    _handleLeadAction(
-                                                                        'delete',
-                                                                        lead),
-                                                                child: Row(
-                                                                  children: [
-                                                                    Icon(
-                                                                        Icons
-                                                                            .delete,
-                                                                        size:
-                                                                            18,
-                                                                        color: Colors
-                                                                            .red),
-                                                                    const SizedBox(
-                                                                        width:
-                                                                            8),
-                                                                    const Text(
-                                                                        'Delete'),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              TableWidget(
-                                                flex: 2,
-                                                fontSize: 12,
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 6.0,
-                                                        horizontal: 8.0),
-                                                data: Tooltip(
-                                                  message: lead.address2,
-                                                  child: Text(
-                                                    lead.address2,
-                                                    maxLines: 1,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: const TextStyle(
-                                                      fontSize: 12,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              TableWidget(
-                                                  flex: 2,
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.normal,
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      vertical: 6.0,
-                                                      horizontal: 8.0),
-                                                  title: lead.contactNumber),
-                                              TableWidget(
-                                                  flex: 2,
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.normal,
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      vertical: 6.0,
-                                                      horizontal: 8.0),
-                                                  title: lead.toUserName),
-                                              TableWidget(
-                                                  flex: 2,
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.normal,
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      vertical: 6.0,
-                                                      horizontal: 8.0),
-                                                  title: lead.amcDateDisplay),
-                                              TableWidget(
-                                                  flex: 2,
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.normal,
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      vertical: 6.0,
-                                                      horizontal: 8.0),
-                                                  title: lead.consumerNo),
-                                              TableWidget(
-                                                  flex: 2,
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.normal,
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      vertical: 6.0,
-                                                      horizontal: 8.0),
-                                                  title: lead.remark),
-                                              TableWidget(
-                                                flex: 2,
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 4.0,
-                                                        horizontal: 8.0),
-                                                data: InkWell(
-                                                  onTap: () => _onStatusClick(
-                                                      context, lead),
-                                                  child: Container(
-                                                    padding: lead.statusName
-                                                            .isNotEmpty
-                                                        ? const EdgeInsets
-                                                            .symmetric(
-                                                            horizontal: 8,
-                                                            vertical: 4)
-                                                        : EdgeInsets.zero,
-                                                    decoration: BoxDecoration(
-                                                      color: parseColor(
-                                                              lead.colorCode)
-                                                          .withOpacity(0.12),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              6),
-                                                      border: Border.all(
-                                                          color: parseColor(lead
-                                                                  .colorCode)
-                                                              .withOpacity(0.5),
-                                                          width: 0.5),
-                                                    ),
-                                                    child: Text(
-                                                      lead.statusName,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      maxLines: 1,
-                                                      style: TextStyle(
-                                                        color: parseColor(
-                                                            lead.colorCode),
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 12,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              TableWidget(
-                                                  flex: 2,
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.normal,
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      vertical: 4.0,
-                                                      horizontal: 8.0),
-                                                  title: lead.nextFollowUpDate
-                                                          .isNotEmpty
-                                                      ? lead.nextFollowUpDate
-                                                          .toDayMonthYearFormat()
-                                                      : ''),
-                                              TableWidget(
-                                                  flex: 2,
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.normal,
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      vertical: 4.0,
-                                                      horizontal: 8.0),
-                                                  title: lead.leadDuration),
-                                              if (settingsProvider
-                                                      .menuIsViewMap[142] ==
-                                                  1)
-                                                TableWidget(
-                                                    flex: 2,
-                                                    fontSize: 12,
-                                                    fontWeight:
-                                                        FontWeight.normal,
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        vertical: 4.0,
-                                                        horizontal: 8.0),
-                                                    title: lead.locationName ??
-                                                        ''),
-                                            ],
-                                          )
-                                        //Mobile Design
-                                        : Expanded(
-                                            child: Container(
-                                              margin: const EdgeInsets.only(
-                                                  bottom: 12),
-                                              padding: const EdgeInsets.all(12),
-                                              decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius:
-                                                    BorderRadius.circular(4),
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: Colors.black
-                                                        .withOpacity(0.05),
-                                                    blurRadius: 10,
-                                                    offset: const Offset(0, 4),
-                                                  ),
-                                                ],
-                                              ),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      Expanded(
-                                                        child: InkWell(
-                                                          onTap: () =>
-                                                              onItemClick(lead
-                                                                  .customerId),
-                                                          child: Text(
-                                                            lead.customerName,
-                                                            style: const TextStyle(
-                                                                fontSize: 14,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold),
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      Text(
-                                                        lead.nextFollowUpDate
-                                                            .toFormattedDate(),
-                                                        style: TextStyle(
-                                                          fontSize: 12,
-                                                          color:
-                                                              lead.lateFollowUp ==
-                                                                      '0'
-                                                                  ? Colors.green
-                                                                  : Colors.red,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  const SizedBox(height: 4),
-                                                  Text(
-                                                    'To: ${lead.toUserName}',
-                                                    style: TextStyle(
-                                                        fontSize: 12,
-                                                        color: Colors
-                                                            .grey.shade600),
-                                                  ),
-                                                  const SizedBox(height: 8),
-                                                  if (lead.remark.isNotEmpty)
-                                                    Text(
-                                                      lead.remark,
-                                                      maxLines: 2,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      style: const TextStyle(
-                                                          fontSize: 12,
-                                                          color:
-                                                              Colors.black87),
-                                                    ),
-                                                  const SizedBox(height: 12),
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.end,
-                                                    children: [
-                                                      InkWell(
-                                                        onTap: () =>
-                                                            _onStatusClick(
-                                                                context, lead),
-                                                        child: Container(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .symmetric(
-                                                                  horizontal:
-                                                                      10,
-                                                                  vertical: 8),
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            color: parseColor(lead
-                                                                    .colorCode)
-                                                                .withOpacity(
-                                                                    0.15),
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        20),
-                                                            border: Border.all(
-                                                                color: parseColor(
-                                                                    lead.colorCode)),
-                                                          ),
-                                                          child: Text(
-                                                            lead.statusName,
-                                                            style: TextStyle(
-                                                              color: parseColor(
-                                                                  lead.colorCode),
-                                                              fontSize: 11,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
                     ),
                   ),
                 ),
@@ -1523,6 +808,820 @@ class _CustomerPageState extends State<CustomerPage> {
       ),
       bottomNavigationBar: _buildPaginationControls(context),
     );
+  }
+
+  Widget _buildWebTable(
+    BuildContext context,
+    CustomerProvider customerProvider,
+    SettingsProvider settingsProvider,
+    DropDownProvider provider,
+    double rowHeight,
+    double tableHeaderHeight,
+  ) {
+    final double fixedWidth = 910.0;
+    final bool showLocation = settingsProvider.menuIsViewMap[142] == 1;
+    final double scrollableWidth = showLocation ? 1220.0 : 1080.0;
+
+    return Scrollbar(
+      controller: _scrollableVerticalController,
+      thumbVisibility: true,
+      trackVisibility: true,
+      interactive: true,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          // Fixed columns section
+          SizedBox(
+            width: fixedWidth,
+            child: Column(
+              children: [
+                // Fixed Header
+                Container(
+                  height: tableHeaderHeight,
+                  decoration: const BoxDecoration(
+                    color: AppColors.primaryBlue,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(8),
+                      bottomLeft: Radius.circular(8),
+                    ),
+                  ),
+                  child: Row(
+                    children: const [
+                      TableWidget(
+                        width: 60,
+                        title: 'Sl No.',
+                        fontWeight: FontWeight.bold,
+                        padding: EdgeInsets.symmetric(
+                            vertical: 4.0, horizontal: 12.0),
+                        color: Color(0xFFFFFFFF),
+                      ),
+                      TableWidget(
+                        width: 150,
+                        title: 'Customer Code',
+                        fontWeight: FontWeight.bold,
+                        padding: EdgeInsets.symmetric(
+                            vertical: 4.0, horizontal: 8.0),
+                        color: Color(0xFFFFFFFF),
+                      ),
+                      TableWidget(
+                        width: 230,
+                        title: 'Customer Name',
+                        fontWeight: FontWeight.bold,
+                        padding: EdgeInsets.symmetric(
+                            vertical: 4.0, horizontal: 8.0),
+                        color: Color(0xFFFFFFFF),
+                      ),
+                      TableWidget(
+                        width: 180,
+                        title: 'Place',
+                        fontWeight: FontWeight.bold,
+                        padding: EdgeInsets.symmetric(
+                            vertical: 4.0, horizontal: 8.0),
+                        color: Color(0xFFFFFFFF),
+                      ),
+                      TableWidget(
+                        width: 140,
+                        title: 'Mobile no',
+                        fontWeight: FontWeight.bold,
+                        padding: EdgeInsets.symmetric(
+                            vertical: 4.0, horizontal: 8.0),
+                        color: Color(0xFFFFFFFF),
+                      ),
+                      TableWidget(
+                        width: 150,
+                        title: 'Assigned Staff',
+                        fontWeight: FontWeight.bold,
+                        padding: EdgeInsets.symmetric(
+                            vertical: 4.0, horizontal: 8.0),
+                        color: Color(0xFFFFFFFF),
+                      ),
+                    ],
+                  ),
+                ),
+                // Fixed Data Rows
+                Expanded(
+                  child: customerProvider.customerData.isEmpty
+                      ? const CommonEmptyState(message: 'No data available')
+                      : ScrollConfiguration(
+                          behavior: ScrollConfiguration.of(context)
+                              .copyWith(scrollbars: false),
+                          child: ListView.builder(
+                            padding: EdgeInsets.zero,
+                            shrinkWrap: false,
+                            controller: _fixedVerticalController,
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            itemCount: customerProvider.customerData.length,
+                            itemBuilder: (context, index) {
+                              if (index >=
+                                  customerProvider.customerData.length) {
+                                return const SizedBox();
+                              }
+                              var lead = customerProvider.customerData[index];
+                              return MouseRegion(
+                                onEnter: (_) {
+                                  if (_hoveredRowIndex != index) {
+                                    setState(() => _hoveredRowIndex = index);
+                                  }
+                                },
+                                onExit: (_) {
+                                  if (_hoveredRowIndex != null) {
+                                    setState(() => _hoveredRowIndex = null);
+                                  }
+                                },
+                                child: Container(
+                                  height: rowHeight,
+                                  decoration: BoxDecoration(
+                                    color: index == _hoveredRowIndex
+                                        ? const Color(0xFFF1F5F9)
+                                        : (index % 2 == 0
+                                            ? Colors.white
+                                            : const Color(0xFFF6F7F9)),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      TableWidget(
+                                        width: 60,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.normal,
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 6.0, horizontal: 12.0),
+                                        title: ((index + 1) +
+                                                customerProvider.startLimit -
+                                                1)
+                                            .toString(),
+                                      ),
+                                      TableWidget(
+                                        width: 150,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.normal,
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 6.0, horizontal: 8.0),
+                                        title: lead.getDisplayLeadCode(
+                                            settingsProvider
+                                                .leadCodeWithEnquiryCode),
+                                      ),
+                                      TableWidget(
+                                        width: 230,
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 10.0, horizontal: 8.0),
+                                        data: Row(
+                                          children: [
+                                            Expanded(
+                                              child: InkWell(
+                                                onTap: () => onItemClick(
+                                                    lead.customerId),
+                                                child: Tooltip(
+                                                  message: lead.customerName,
+                                                  child: Text(
+                                                    lead.customerName,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    maxLines: 1,
+                                                    style: const TextStyle(
+                                                      color: Colors.blue,
+                                                      fontWeight:
+                                                          FontWeight.normal,
+                                                      fontSize: 12,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            _HoverMenuAnchor(
+                                              builder: (context, controller,
+                                                  onHover, child) {
+                                                return IconButton(
+                                                  onPressed: () {
+                                                    if (controller.isOpen) {
+                                                      controller.close();
+                                                    } else {
+                                                      controller.open();
+                                                    }
+                                                  },
+                                                  icon: const Icon(
+                                                    Icons.keyboard_arrow_down,
+                                                    size: 20,
+                                                    color: Colors.grey,
+                                                  ),
+                                                  padding: EdgeInsets.zero,
+                                                  constraints:
+                                                      const BoxConstraints(),
+                                                );
+                                              },
+                                              menuChildren: [
+                                                if (settingsProvider
+                                                        .menuIsSaveMap[13] ==
+                                                    1)
+                                                  (onHover) =>
+                                                      MultiLevelHoverMenu(
+                                                        isSubMenu: false,
+                                                        title: 'Create Task',
+                                                        onHoverChange:
+                                                            (hovering) {
+                                                          onHover(hovering);
+                                                        },
+                                                        leadingIcon: const Icon(
+                                                            Icons.add_task,
+                                                            size: 18,
+                                                            color: Colors.teal),
+                                                        children: provider
+                                                            .taskType
+                                                            .where((taskType) =>
+                                                                taskType
+                                                                    .manualCreation ==
+                                                                1)
+                                                            .map((taskType) {
+                                                          final users = provider
+                                                              .searchUserDetails
+                                                              .where((user) {
+                                                            return user
+                                                                    .departmentId
+                                                                    .toString() ==
+                                                                taskType
+                                                                    .departmentIds
+                                                                    .toString();
+                                                          }).toList();
+
+                                                          if (users.isEmpty) {
+                                                            return MenuItemButton(
+                                                              onPressed: null,
+                                                              child: Text(taskType
+                                                                  .taskTypeName),
+                                                            );
+                                                          }
+
+                                                          return MultiLevelHoverMenu(
+                                                            title: taskType
+                                                                .taskTypeName,
+                                                            children: users
+                                                                .map((user) {
+                                                              return MenuItemButton(
+                                                                onPressed: () {
+                                                                  _quickSaveTask(
+                                                                      lead,
+                                                                      taskType,
+                                                                      user);
+                                                                },
+                                                                child: Text(user
+                                                                    .userDetailsName),
+                                                              );
+                                                            }).toList(),
+                                                          );
+                                                        }).toList(),
+                                                      ),
+                                                if (settingsProvider
+                                                        .menuIsSaveMap[16] ==
+                                                    1)
+                                                  (onHover) => MenuItemButton(
+                                                        onPressed: () =>
+                                                            _handleLeadAction(
+                                                                'quotation',
+                                                                lead),
+                                                        child: const Row(
+                                                          children: [
+                                                            Icon(
+                                                                Icons
+                                                                    .request_quote,
+                                                                size: 18,
+                                                                color: Colors
+                                                                    .orange),
+                                                            SizedBox(width: 8),
+                                                            Text('Quotation'),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                if (settingsProvider
+                                                        .menuIsViewMap[16] ==
+                                                    1)
+                                                  (onHover) => MenuItemButton(
+                                                        onPressed: () =>
+                                                            _handleLeadAction(
+                                                                'quotation_list_tab',
+                                                                lead),
+                                                        child: const Row(
+                                                          children: [
+                                                            Icon(Icons.list_alt,
+                                                                size: 18,
+                                                                color: Colors
+                                                                    .orangeAccent),
+                                                            SizedBox(width: 8),
+                                                            Text(
+                                                                'Quotation list'),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                if (settingsProvider
+                                                        .menuIsSaveMap[19] ==
+                                                    1)
+                                                  (onHover) => MenuItemButton(
+                                                        onPressed: () =>
+                                                            _handleLeadAction(
+                                                                'document',
+                                                                lead),
+                                                        child: const Row(
+                                                          children: [
+                                                            Icon(
+                                                                Icons
+                                                                    .description,
+                                                                size: 18,
+                                                                color: Colors
+                                                                    .purple),
+                                                            SizedBox(width: 8),
+                                                            Text('Document'),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                if (settingsProvider
+                                                        .menuIsViewMap[19] ==
+                                                    1)
+                                                  (onHover) => MenuItemButton(
+                                                        onPressed: () =>
+                                                            _handleLeadAction(
+                                                                'documents_tab',
+                                                                lead),
+                                                        child: const Row(
+                                                          children: [
+                                                            Icon(Icons.folder,
+                                                                size: 18,
+                                                                color: Colors
+                                                                    .blue),
+                                                            SizedBox(width: 8),
+                                                            Text(
+                                                                'Documents Tab'),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                if (settingsProvider
+                                                        .menuIsEditMap[4] ==
+                                                    1)
+                                                  (onHover) => MenuItemButton(
+                                                        onPressed: () =>
+                                                            _handleLeadAction(
+                                                                'edit', lead),
+                                                        child: const Row(
+                                                          children: [
+                                                            Icon(Icons.edit,
+                                                                size: 18,
+                                                                color: Colors
+                                                                    .blue),
+                                                            SizedBox(width: 8),
+                                                            Text(
+                                                                'Edit Customer'),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                if (settingsProvider
+                                                        .menuIsDeleteMap[4] ==
+                                                    1)
+                                                  (onHover) => MenuItemButton(
+                                                        onPressed: () =>
+                                                            _handleLeadAction(
+                                                                'delete', lead),
+                                                        child: const Row(
+                                                          children: [
+                                                            Icon(Icons.delete,
+                                                                size: 18,
+                                                                color:
+                                                                    Colors.red),
+                                                            SizedBox(width: 8),
+                                                            Text('Delete'),
+                                                          ],
+                                                        ),
+                                                      ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      TableWidget(
+                                        width: 180,
+                                        fontSize: 12,
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 6.0, horizontal: 8.0),
+                                        data: Tooltip(
+                                          message: lead.address2,
+                                          child: Text(
+                                            lead.address2,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style:
+                                                const TextStyle(fontSize: 12),
+                                          ),
+                                        ),
+                                      ),
+                                      TableWidget(
+                                        width: 140,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.normal,
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 6.0, horizontal: 8.0),
+                                        title: lead.contactNumber,
+                                      ),
+                                      TableWidget(
+                                        width: 150,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.normal,
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 6.0, horizontal: 8.0),
+                                        title: lead.toUserName,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                ),
+              ],
+            ),
+          ),
+          // Scrollable columns section
+          Expanded(
+            child: Scrollbar(
+              controller: _horizontalScrollController,
+              thumbVisibility: true,
+              trackVisibility: true,
+              interactive: true,
+              child: SingleChildScrollView(
+                controller: _horizontalScrollController,
+                scrollDirection: Axis.horizontal,
+                child: SizedBox(
+                  width: scrollableWidth,
+                  child: Column(
+                    children: [
+                      // Scrollable Header
+                      Container(
+                        height: tableHeaderHeight,
+                        decoration: const BoxDecoration(
+                          color: AppColors.primaryBlue,
+                          borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(8),
+                            bottomRight: Radius.circular(8),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            const TableWidget(
+                              width: 140,
+                              title: 'AMC Date',
+                              fontWeight: FontWeight.bold,
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 4.0, horizontal: 8.0),
+                              color: Color(0xFFFFFFFF),
+                            ),
+                            const TableWidget(
+                              width: 140,
+                              title: 'Follow Up Date',
+                              fontWeight: FontWeight.bold,
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 4.0, horizontal: 8.0),
+                              color: Color(0xFFFFFFFF),
+                            ),
+                            const TableWidget(
+                              width: 160,
+                              title: 'Work Completion Date',
+                              fontWeight: FontWeight.bold,
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 4.0, horizontal: 8.0),
+                              color: Color(0xFFFFFFFF),
+                            ),
+                            const TableWidget(
+                              width: 160,
+                              title: 'Follow Up Status',
+                              fontWeight: FontWeight.bold,
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 4.0, horizontal: 8.0),
+                              color: Color(0xFFFFFFFF),
+                            ),
+                            const TableWidget(
+                              width: 140,
+                              title: 'Consumer No.',
+                              fontWeight: FontWeight.bold,
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 4.0, horizontal: 8.0),
+                              color: Color(0xFFFFFFFF),
+                            ),
+                            const TableWidget(
+                              width: 220,
+                              title: 'Remarks',
+                              fontWeight: FontWeight.bold,
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 4.0, horizontal: 8.0),
+                              color: Color(0xFFFFFFFF),
+                            ),
+                            const TableWidget(
+                              width: 120,
+                              title: 'Duration',
+                              fontWeight: FontWeight.bold,
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 4.0, horizontal: 8.0),
+                              color: Color(0xFFFFFFFF),
+                            ),
+                            if (showLocation)
+                              const TableWidget(
+                                width: 140,
+                                title: 'Location',
+                                fontWeight: FontWeight.bold,
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 4.0, horizontal: 8.0),
+                                color: Color(0xFFFFFFFF),
+                              ),
+                          ],
+                        ),
+                      ),
+                      // Scrollable Data Rows
+                      Expanded(
+                        child: customerProvider.customerData.isEmpty
+                            ? const SizedBox()
+                            : ScrollConfiguration(
+                                behavior: ScrollConfiguration.of(context)
+                                    .copyWith(scrollbars: false),
+                                child: ListView.builder(
+                                  padding: EdgeInsets.zero,
+                                  shrinkWrap: false,
+                                  controller: _scrollableVerticalController,
+                                  physics:
+                                      const AlwaysScrollableScrollPhysics(),
+                                  itemCount:
+                                      customerProvider.customerData.length,
+                                  itemBuilder: (context, index) {
+                                    if (index >=
+                                        customerProvider.customerData.length) {
+                                      return const SizedBox();
+                                    }
+                                    var lead =
+                                        customerProvider.customerData[index];
+                                    return MouseRegion(
+                                      onEnter: (_) {
+                                        if (_hoveredRowIndex != index) {
+                                          setState(
+                                              () => _hoveredRowIndex = index);
+                                        }
+                                      },
+                                      onExit: (_) {
+                                        if (_hoveredRowIndex != null) {
+                                          setState(
+                                              () => _hoveredRowIndex = null);
+                                        }
+                                      },
+                                      child: Container(
+                                        height: rowHeight,
+                                        decoration: BoxDecoration(
+                                          color: index == _hoveredRowIndex
+                                              ? const Color(0xFFF1F5F9)
+                                              : (index % 2 == 0
+                                                  ? Colors.white
+                                                  : const Color(0xFFF6F7F9)),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            TableWidget(
+                                              width: 140,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.normal,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 6.0,
+                                                      horizontal: 8.0),
+                                              title: lead.amcDateDisplay,
+                                            ),
+                                            TableWidget(
+                                              width: 140,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.normal,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 4.0,
+                                                      horizontal: 8.0),
+                                              title: lead.nextFollowUpDate
+                                                      .isNotEmpty
+                                                  ? lead.nextFollowUpDate
+                                                      .toDayMonthYearFormat()
+                                                  : '',
+                                            ),
+                                            TableWidget(
+                                              width: 160,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.normal,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 4.0,
+                                                      horizontal: 8.0),
+                                              title: lead
+                                                  .workCompletionDateDisplay,
+                                            ),
+                                            TableWidget(
+                                              width: 160,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 4.0,
+                                                      horizontal: 8.0),
+                                              data: InkWell(
+                                                onTap: () => _onStatusClick(
+                                                    context, lead),
+                                                child: Container(
+                                                  padding:
+                                                      lead.statusName.isNotEmpty
+                                                          ? const EdgeInsets
+                                                              .symmetric(
+                                                              horizontal: 8,
+                                                              vertical: 4)
+                                                          : EdgeInsets.zero,
+                                                  decoration: BoxDecoration(
+                                                    color: parseColor(
+                                                            lead.colorCode)
+                                                        .withOpacity(0.12),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            6),
+                                                    border: Border.all(
+                                                        color: parseColor(
+                                                                lead.colorCode)
+                                                            .withOpacity(0.5),
+                                                        width: 0.5),
+                                                  ),
+                                                  child: Text(
+                                                    lead.statusName,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    maxLines: 1,
+                                                    style: TextStyle(
+                                                      color: parseColor(
+                                                          lead.colorCode),
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 12,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            TableWidget(
+                                              width: 140,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.normal,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 6.0,
+                                                      horizontal: 8.0),
+                                              title: lead.consumerNo,
+                                            ),
+                                            TableWidget(
+                                              width: 220,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.normal,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 6.0,
+                                                      horizontal: 8.0),
+                                              title: lead.remark,
+                                            ),
+                                            TableWidget(
+                                              width: 120,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.normal,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 4.0,
+                                                      horizontal: 8.0),
+                                              title: lead.leadDuration,
+                                            ),
+                                            if (showLocation)
+                                              TableWidget(
+                                                width: 140,
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.normal,
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 4.0,
+                                                        horizontal: 8.0),
+                                                title: lead.locationName ?? '',
+                                              ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMobileList(
+    BuildContext context,
+    CustomerProvider customerProvider,
+    SettingsProvider settingsProvider,
+    DropDownProvider provider,
+  ) {
+    return customerProvider.customerData.isEmpty
+        ? const CommonEmptyState(message: 'No data available')
+        : ListView.builder(
+            itemCount: customerProvider.customerData.length,
+            itemBuilder: (context, index) {
+              var lead = customerProvider.customerData[index];
+              return Container(
+                margin: const EdgeInsets.only(bottom: 12),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(4),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: InkWell(
+                            onTap: () => onItemClick(lead.customerId),
+                            child: Text(
+                              lead.customerName,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ),
+                        Text(
+                          lead.nextFollowUpDate.toFormattedDate(),
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: lead.lateFollowUp == '0'
+                                ? Colors.green
+                                : Colors.red,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'To: ${lead.toUserName}',
+                      style:
+                          TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                    ),
+                    const SizedBox(height: 8),
+                    if (lead.remark.isNotEmpty)
+                      Text(
+                        lead.remark,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                            fontSize: 12, color: Colors.black87),
+                      ),
+                    const SizedBox(height: 12),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        InkWell(
+                          onTap: () => _onStatusClick(context, lead),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 8),
+                            decoration: BoxDecoration(
+                              color:
+                                  parseColor(lead.colorCode).withOpacity(0.15),
+                              borderRadius: BorderRadius.circular(20),
+                              border:
+                                  Border.all(color: parseColor(lead.colorCode)),
+                            ),
+                            child: Text(
+                              lead.statusName,
+                              style: TextStyle(
+                                color: parseColor(lead.colorCode),
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
   }
 
   Widget _buildPaginationControls(BuildContext context) {
