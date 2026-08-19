@@ -56,9 +56,22 @@ class SearchLeadModel {
   final String priorityId;
   final String priorityColor;
   final String amcDate;
+  final String workCompletionDate;
 
   String get amcDateDisplay {
     final trimmed = amcDate.trim();
+    if (trimmed.isEmpty || trimmed == '-' || trimmed.toLowerCase() == 'null') {
+      return '-';
+    }
+    final formatted = trimmed.toDayMonthYearFormat();
+    if (formatted.isEmpty || formatted == '-' || formatted.toLowerCase() == 'null') {
+      return '-';
+    }
+    return formatted;
+  }
+
+  String get workCompletionDateDisplay {
+    final trimmed = workCompletionDate.trim();
     if (trimmed.isEmpty || trimmed == '-' || trimmed.toLowerCase() == 'null') {
       return '-';
     }
@@ -255,6 +268,7 @@ class SearchLeadModel {
     required this.priorityId,
     required this.priorityColor,
     this.amcDate = '',
+    this.workCompletionDate = '',
   });
 
   factory SearchLeadModel.fromJson(Map<String, dynamic> json) {
@@ -386,6 +400,18 @@ class SearchLeadModel {
           json['amc_validity_date'] ??
           json['amcToDate'] ??
           json['amcDate']),
+      workCompletionDate: parseString(json['Work_Completion_Date'] ??
+          json['Work_Completion_date'] ??
+          json['Work Completion Date'] ??
+          json['Completion_Date'] ??
+          json['Completion_date'] ??
+          json['Completion Date'] ??
+          json['Completed_Date'] ??
+          json['completed_date'] ??
+          json['Work_Completed_Date'] ??
+          json['work_completion_date'] ??
+          json['workCompletionDate'] ??
+          json['completionDate']),
     );
   }
 
@@ -482,6 +508,7 @@ class SearchLeadModel {
       "Lead_Code": leadCode,
       "Lead_Code2": leadCode2,
       "AMC_To_Date": amcDate,
+      "Work_Completion_Date": workCompletionDate,
     };
   }
 
@@ -581,6 +608,7 @@ class SearchLeadModel {
     String? priorityId,
     String? priorityColor,
     String? amcDate,
+    String? workCompletionDate,
   }) {
     return SearchLeadModel(
       amount: amount ?? this.amount,
@@ -679,6 +707,7 @@ class SearchLeadModel {
       priorityId: priorityId ?? this.priorityId,
       priorityColor: priorityColor ?? this.priorityColor,
       amcDate: amcDate ?? this.amcDate,
+      workCompletionDate: workCompletionDate ?? this.workCompletionDate,
     );
   }
 

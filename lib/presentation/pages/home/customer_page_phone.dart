@@ -170,12 +170,14 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
                 'Assigned To',
                 'AMC Date',
                 'Next Follow-up Date',
+                'Work Completion Date',
                 'Status',
                 'Total Project Cost',
               ],
               data: customerProvider.customerData.map((cust) {
                 return {
-                  'Customer Code': cust.getDisplayLeadCode(settingsProvider.leadCodeWithEnquiryCode),
+                  'Customer Code': cust.getDisplayLeadCode(
+                      settingsProvider.leadCodeWithEnquiryCode),
                   'Customer Name': cust.customerName,
                   'Mobile No': cust.contactNumber,
                   'Email': cust.email,
@@ -184,6 +186,7 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
                   'Assigned To': cust.toUserName,
                   'AMC Date': cust.amcDateDisplay,
                   'Next Follow-up Date': cust.nextFollowUpDate,
+                  'Work Completion Date': cust.workCompletionDateDisplay,
                   'Status': cust.statusName,
                   'Total Project Cost': cust.totalProjectCost,
                 };
