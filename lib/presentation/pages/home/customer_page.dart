@@ -448,6 +448,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                           'Enquiry For',
                                           'Enquiry Source',
                                           'Assigned To',
+                                          'AMC Date',
                                           'Next Follow-up Date',
                                           'Status',
                                           'Total Project Cost',
@@ -466,6 +467,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                             'Enquiry Source':
                                                 cust.enquirySourceName,
                                             'Assigned To': cust.toUserName,
+                                            'AMC Date': cust.amcDateDisplay,
                                             'Next Follow-up Date':
                                                 cust.nextFollowUpDate,
                                             'Status': cust.statusName,
@@ -804,6 +806,13 @@ class _CustomerPageState extends State<CustomerPage> {
                                   TableWidget(
                                       flex: 2,
                                       title: 'Assigned Staff',
+                                      fontWeight: FontWeight.bold,
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 4.0, horizontal: 8.0),
+                                      color: Color(0xFFFFFFFF)),
+                                  TableWidget(
+                                      flex: 2,
+                                      title: 'AMC Date',
                                       fontWeight: FontWeight.bold,
                                       padding: EdgeInsets.symmetric(
                                           vertical: 4.0, horizontal: 8.0),
@@ -1257,6 +1266,15 @@ class _CustomerPageState extends State<CustomerPage> {
                                                       vertical: 6.0,
                                                       horizontal: 8.0),
                                                   title: lead.toUserName),
+                                              TableWidget(
+                                                  flex: 2,
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.normal,
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      vertical: 6.0,
+                                                      horizontal: 8.0),
+                                                  title: lead.amcDateDisplay),
                                               TableWidget(
                                                   flex: 2,
                                                   fontSize: 12,

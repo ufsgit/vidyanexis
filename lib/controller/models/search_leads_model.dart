@@ -58,11 +58,12 @@ class SearchLeadModel {
   final String amcDate;
 
   String get amcDateDisplay {
-    if (amcDate.isEmpty || amcDate.toLowerCase() == 'null') {
+    final trimmed = amcDate.trim();
+    if (trimmed.isEmpty || trimmed == '-' || trimmed.toLowerCase() == 'null') {
       return '-';
     }
-    final formatted = amcDate.toDayMonthYearFormat();
-    if (formatted.isEmpty || formatted.toLowerCase() == 'null') {
+    final formatted = trimmed.toDayMonthYearFormat();
+    if (formatted.isEmpty || formatted == '-' || formatted.toLowerCase() == 'null') {
       return '-';
     }
     return formatted;
