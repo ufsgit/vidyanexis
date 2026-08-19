@@ -3655,7 +3655,7 @@ class SettingsProvider extends ChangeNotifier {
             "Is_Transfer_Status": _isTransferStatus ? 1 : 0,
             "Transfer_Status": selectedTransferStatusesForApi,
             "Is_Send_User": _isSendUser ? 1 : 0,
-            "Template_Id": templateIdController.text,
+            "Template_Id": int.tryParse(templateIdController.text) ?? 0,
             "Is_Link_Form": _isLinkForm ? 1 : 0,
             "Form_Id": int.tryParse(_selectedFormId) ?? 0,
             "Form_Name": _selectedFormName,

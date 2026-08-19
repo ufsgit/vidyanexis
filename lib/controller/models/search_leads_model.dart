@@ -1,3 +1,5 @@
+import 'package:vidyanexis/utils/extensions.dart';
+
 class SearchLeadModel {
   // ─────────────────── Core Fields ───────────────────
   final int customerId;
@@ -53,6 +55,32 @@ class SearchLeadModel {
   final String priorityName;
   final String priorityId;
   final String priorityColor;
+  final String amcDate;
+  final String workCompletionDate;
+
+  String get amcDateDisplay {
+    final trimmed = amcDate.trim();
+    if (trimmed.isEmpty || trimmed == '-' || trimmed.toLowerCase() == 'null') {
+      return '-';
+    }
+    final formatted = trimmed.toDayMonthYearFormat();
+    if (formatted.isEmpty || formatted == '-' || formatted.toLowerCase() == 'null') {
+      return '-';
+    }
+    return formatted;
+  }
+
+  String get workCompletionDateDisplay {
+    final trimmed = workCompletionDate.trim();
+    if (trimmed.isEmpty || trimmed == '-' || trimmed.toLowerCase() == 'null') {
+      return '-';
+    }
+    final formatted = trimmed.toDayMonthYearFormat();
+    if (formatted.isEmpty || formatted == '-' || formatted.toLowerCase() == 'null') {
+      return '-';
+    }
+    return formatted;
+  }
 
   String getDisplayLeadCode(int leadCodeWithEnquiryCodePermission) {
     if (leadCode2.isNotEmpty) {
@@ -239,6 +267,8 @@ class SearchLeadModel {
     required this.priorityName,
     required this.priorityId,
     required this.priorityColor,
+    this.amcDate = '',
+    this.workCompletionDate = '',
   });
 
   factory SearchLeadModel.fromJson(Map<String, dynamic> json) {
@@ -358,6 +388,30 @@ class SearchLeadModel {
       priorityName: parseString(json['Priority_Name']),
       priorityId: parseString(json['Priority_Id']),
       priorityColor: parseString(json['Priority_Color']),
+      amcDate: parseString(json['AMC_To_Date'] ??
+          json['AMC_Date'] ??
+          json['AMC_End_Date'] ??
+          json['AMC_Validity_Date'] ??
+          json['To_Date'] ??
+          json['to_date'] ??
+          json['amc_to_date'] ??
+          json['amc_date'] ??
+          json['amc_end_date'] ??
+          json['amc_validity_date'] ??
+          json['amcToDate'] ??
+          json['amcDate']),
+      workCompletionDate: parseString(json['Work_Completion_Date'] ??
+          json['Work_Completion_date'] ??
+          json['Work Completion Date'] ??
+          json['Completion_Date'] ??
+          json['Completion_date'] ??
+          json['Completion Date'] ??
+          json['Completed_Date'] ??
+          json['completed_date'] ??
+          json['Work_Completed_Date'] ??
+          json['work_completion_date'] ??
+          json['workCompletionDate'] ??
+          json['completionDate']),
     );
   }
 
@@ -453,6 +507,8 @@ class SearchLeadModel {
       "Amount": amount,
       "Lead_Code": leadCode,
       "Lead_Code2": leadCode2,
+      "AMC_To_Date": amcDate,
+      "Work_Completion_Date": workCompletionDate,
     };
   }
 
@@ -551,6 +607,8 @@ class SearchLeadModel {
     String? priorityName,
     String? priorityId,
     String? priorityColor,
+    String? amcDate,
+    String? workCompletionDate,
   }) {
     return SearchLeadModel(
       amount: amount ?? this.amount,
@@ -648,6 +706,8 @@ class SearchLeadModel {
       priorityName: priorityName ?? this.priorityName,
       priorityId: priorityId ?? this.priorityId,
       priorityColor: priorityColor ?? this.priorityColor,
+      amcDate: amcDate ?? this.amcDate,
+      workCompletionDate: workCompletionDate ?? this.workCompletionDate,
     );
   }
 
