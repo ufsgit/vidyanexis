@@ -597,6 +597,7 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
           DropdownItem<dynamic>(id: 0, name: 'No'),
           DropdownItem<dynamic>(id: 2, name: 'Lost'),
           DropdownItem<dynamic>(id: 3, name: 'Sales Closed'),
+          DropdownItem<dynamic>(id: 4, name: 'Project Start'),
         ];
 
         settingsProvider.folloupController.text = followUpOptions
@@ -734,6 +735,7 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
       DropdownItem<dynamic>(id: 0, name: 'No'),
       DropdownItem<dynamic>(id: 2, name: 'Lost'),
       DropdownItem<dynamic>(id: 3, name: 'Sales Closed'),
+      DropdownItem<dynamic>(id: 4, name: 'Project Start'),
     ];
     final List<DropdownItem<int>> viewInOptions = [
       DropdownItem<int>(id: 1, name: 'Lead'),
