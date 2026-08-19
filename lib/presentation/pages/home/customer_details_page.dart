@@ -669,8 +669,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                     }
                                   },
                                 ),
-                              if (settingsprovider.menuIsViewMap[165] == 1 ||
-                                  settingsprovider.menuIsViewMap[165].toString() == '1')
+                              if (settingsprovider.menuIsViewMap[179] == 1 ||
+                                  settingsprovider.menuIsViewMap[179].toString() == '1')
                                 IconButton(
                                   tooltip: 'Download Image',
                                   icon: const Icon(Icons.download,
