@@ -822,43 +822,19 @@ class CustomerDetailsProvider extends ChangeNotifier {
       Loader.showLoader(context);
       List<BillOfMaterialItem> combinedMaterials = [];
       _newItemId = selectedItems.isNotEmpty ? selectedItems.first['itemId'] : 0;
-      // aggregatedPriceFrom = 0.0;
-      // aggregatedPriceTo = 0.0;
 
       for (var item in selectedItems) {
-        int itemId = item['itemId'];
-        double userQty = item['quantity'];
+        final int itemId = item['itemId'] as int;
+        final double userQty = (item['quantity'] as num?)?.toDouble() ?? 1.0;
 
         // await expenseProvider.getItemMaterialList(itemId, context);
-
-        // Add to aggregated prices
-        // final selectedData = expenseProvider.itemList
-        //     .firstWhere((element) => element.itemId == itemId);
-        // double priceFrom = double.tryParse(selectedData.priceFrom) ?? 0.0;
-        // double priceTo = double.tryParse(selectedData.priceTo) ?? 0.0;
-        // aggregatedPriceFrom += (priceFrom * userQty);
-        // aggregatedPriceTo += (priceTo * userQty);
 
         final materialsData = item['materials'] as List<dynamic>? ?? [];
         if (materialsData.isNotEmpty) {
           for (var matMap in materialsData) {
             final mat = ItemSettings.fromJson(matMap as Map<String, dynamic>);
-            combinedMaterials.add(BillOfMaterialItem(
-              description: mat.itemMaterialName,
-              brand: mat.specification,
-              quantity: mat.quantity.toStringAsFixed(2),
-              uom: mat.unit,
-              distributor: mat.manufacture,
-              price: mat.price.toString(),
-              amount: mat.amount.toStringAsFixed(2),
-              priceFrom: mat.priceFrom,
-              priceTo: mat.priceTo,
-            ));
-          }
-        } else {
-          var materials = expenseProvider.RealItems;
-          for (var mat in materials) {
-            double totalQty = mat.quantity * userQty;
+            final double totalQty = mat.quantity;
+            final double amount = mat.price * totalQty;
             combinedMaterials.add(BillOfMaterialItem(
               description: mat.itemMaterialName,
               brand: mat.specification,
@@ -866,7 +842,24 @@ class CustomerDetailsProvider extends ChangeNotifier {
               uom: mat.unit,
               distributor: mat.manufacture,
               price: mat.price.toString(),
-              amount: (mat.price * totalQty).toStringAsFixed(2),
+              amount: amount.toStringAsFixed(2),
+              priceFrom: mat.priceFrom,
+              priceTo: mat.priceTo,
+            ));
+          }
+        } else {
+          final materials = expenseProvider.RealItems;
+          for (var mat in materials) {
+            final double totalQty = mat.quantity;
+            final double amount = mat.price * totalQty;
+            combinedMaterials.add(BillOfMaterialItem(
+              description: mat.itemMaterialName,
+              brand: mat.specification,
+              quantity: totalQty.toStringAsFixed(2),
+              uom: mat.unit,
+              distributor: mat.manufacture,
+              price: mat.price.toString(),
+              amount: amount.toStringAsFixed(2),
               priceFrom: mat.priceFrom,
               priceTo: mat.priceTo,
             ));
@@ -955,15 +948,13 @@ class CustomerDetailsProvider extends ChangeNotifier {
   void recalculateCompanyQuotationItem() {
     if (_billOfMaterialsItems.isEmpty) return;
 
-    // 1. Sum BOM amounts
-    final bomTotal = _billOfMaterialsItems.fold(0.0, (sum, item) {
+    final double bomTotal = _billOfMaterialsItems.fold(0.0, (sum, item) {
       final amount = double.tryParse(item.amount ?? '0') ?? 0.0;
       return sum + amount;
     });
     _billTotalAmount = bomTotal;
 
-    // 2. Parse profit % from the profit name (e.g. "15%" → 15.0)
-    double profitValue = double.tryParse(profitController.text) ?? 0.0;
+    final double profitValue = double.tryParse(profitController.text) ?? 0.0;
     double finalTotal = bomTotal;
 
     if (isPercentage) {
@@ -971,7 +962,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     } else {
       finalTotal = bomTotal + profitValue;
     }
-    final itemName = _selectedItemName.isNotEmpty ? _selectedItemName : 'Item';
+    final String itemName = _selectedItemName.isNotEmpty ? _selectedItemName : 'Item';
 
     // 3. Inject exactly one auto-item depending on quotation type
     if (_selectedQuotationType == 1) {
