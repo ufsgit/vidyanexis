@@ -265,6 +265,7 @@ class _CustomTabState extends State<CustomTab> {
                 final isSelected = widget.dashBoardProvider.tabIndex == index;
                 return GestureDetector(
                   key: _tabKeys[index],
+                  behavior: HitTestBehavior.opaque,
                   onTap: () {
                     widget.dashBoardProvider.changeTab(index);
                     final allowedTabIds = [
