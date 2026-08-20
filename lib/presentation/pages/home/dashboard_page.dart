@@ -45,19 +45,25 @@ class _DashBoardPageState extends State<DashBoardPage> {
   String userType = "";
 
   bool _isFirstBuild = true;
+  int _safeTabIndex(List<int> allowedTabs, int tabIndex) {
+    if (allowedTabs.isEmpty) return 0;
+    return tabIndex.clamp(0, allowedTabs.length - 1);
+  }
 
   @override
   void initState() {
     super.initState();
     print('[PERF-BOOT] DashboardPage created');
-    final dashBoardProvider =
-        Provider.of<DashboardProvider>(context, listen: false);
-    dashBoardProvider.changeTab(0);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final dashInitStart = DateTime.now().millisecondsSinceEpoch;
       print('[PERF-BOOT] Dashboard shell visible');
       print('[PERF-RELOAD] Dashboard Page initState postFrameCallback started at ${DateTime.now().toIso8601String()}');
+
+      // Safe to call notifyListeners here — first frame is already committed
+      final dashBoardProvider =
+          Provider.of<DashboardProvider>(context, listen: false);
+      dashBoardProvider.changeTab(0);
 
       final dropDownProvider =
           Provider.of<DropDownProvider>(context, listen: false);
@@ -76,14 +82,14 @@ class _DashBoardPageState extends State<DashBoardPage> {
 
       // 1. Priority 1: Load data for the active dashboard tab FIRST
       final allowedTabs = <int>[
-        if ((settingsProvider.menuIsViewMap[84] ?? 1).toString() != '0') 6,
-        if ((settingsProvider.menuIsViewMap[49] ?? 1).toString() != '0') 0,
-        if ((settingsProvider.menuIsViewMap[50] ?? 1).toString() != '0') 1,
-        if ((settingsProvider.menuIsViewMap[76] ?? 1).toString() != '0') 4,
-        if ((settingsProvider.menuIsViewMap[77] ?? 1).toString() != '0') 5,
-        if ((settingsProvider.menuIsViewMap[51] ?? 1).toString() != '0') 2,
-        if ((settingsProvider.menuIsViewMap[52] ?? 1).toString() != '0') 3,
-        if ((settingsProvider.menuIsViewMap[152] ?? 1).toString() != '0') 7,
+        if ((settingsProvider.menuIsViewMap[84]).toString() == '1') 6,
+        if ((settingsProvider.menuIsViewMap[49]).toString() == '1') 0,
+        if ((settingsProvider.menuIsViewMap[50]).toString() == '1') 1,
+        if ((settingsProvider.menuIsViewMap[76]).toString() == '1') 4,
+        if ((settingsProvider.menuIsViewMap[77]).toString() == '1') 5,
+        if ((settingsProvider.menuIsViewMap[51]).toString() == '1') 2,
+        if ((settingsProvider.menuIsViewMap[52]).toString() == '1') 3,
+        if ((settingsProvider.menuIsViewMap[152]).toString() == '1') 7,
         if (userType == "1") 8,
         if (userType == "1") 9,
         if (settingsProvider.hasTravelAllowancePermission)
@@ -92,8 +98,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
 
       if (allowedTabs.isNotEmpty) {
         if (!mounted) return;
-        final safeIndex =
-            dashBoardProvider.tabIndex.clamp(0, allowedTabs.length - 1);
+        final safeIndex = _safeTabIndex(allowedTabs, dashBoardProvider.tabIndex);
         final activeTab = allowedTabs[safeIndex];
         final apiStart = DateTime.now().millisecondsSinceEpoch;
         print('[PERF-DATA] dashboard API started');
@@ -136,14 +141,14 @@ class _DashBoardPageState extends State<DashBoardPage> {
     final settingsProvider = Provider.of<SettingsProvider>(context);
 
     final allowedTabs = <int>[
-      if ((settingsProvider.menuIsViewMap[84] ?? 1).toString() != '0') 6,
-      if ((settingsProvider.menuIsViewMap[49] ?? 1).toString() != '0') 0,
-      if ((settingsProvider.menuIsViewMap[50] ?? 1).toString() != '0') 1,
-      if ((settingsProvider.menuIsViewMap[76] ?? 1).toString() != '0') 4,
-      if ((settingsProvider.menuIsViewMap[77] ?? 1).toString() != '0') 5,
-      if ((settingsProvider.menuIsViewMap[51] ?? 1).toString() != '0') 2,
-      if ((settingsProvider.menuIsViewMap[52] ?? 1).toString() != '0') 3,
-      if ((settingsProvider.menuIsViewMap[152] ?? 1).toString() != '0') 7,
+      if ((settingsProvider.menuIsViewMap[84]).toString() == '1') 6,
+      if ((settingsProvider.menuIsViewMap[49]).toString() == '1') 0,
+      if ((settingsProvider.menuIsViewMap[50]).toString() == '1') 1,
+      if ((settingsProvider.menuIsViewMap[76]).toString() == '1') 4,
+      if ((settingsProvider.menuIsViewMap[77]).toString() == '1') 5,
+      if ((settingsProvider.menuIsViewMap[51]).toString() == '1') 2,
+      if ((settingsProvider.menuIsViewMap[52]).toString() == '1') 3,
+      if ((settingsProvider.menuIsViewMap[152]).toString() == '1') 7,
       if (userType == "1") 8,
       if (userType == "1") 9,
       if (settingsProvider.hasTravelAllowancePermission)
@@ -153,10 +158,13 @@ class _DashBoardPageState extends State<DashBoardPage> {
     Widget dateFilterBtn = Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () => onClickTopButton(
-            context,
-            allowedTabs[
-                dashBoardProvider.tabIndex.clamp(0, allowedTabs.length - 1)]),
+        onTap: allowedTabs.isEmpty
+            ? null
+            : () => onClickTopButton(
+                  context,
+                  allowedTabs[
+                      _safeTabIndex(allowedTabs, dashBoardProvider.tabIndex)],
+                ),
         borderRadius: BorderRadius.circular(4),
         child: Ink(
           height: AppStyles.isWebScreen(context) ? 38 : 34,
@@ -199,10 +207,13 @@ class _DashBoardPageState extends State<DashBoardPage> {
           color: const Color(0xFFF1F5F9),
           borderRadius: BorderRadius.circular(4),
         ),
-        child: _buildAssignedStaffFilter(
-            dashBoardProvider,
-            allowedTabs[
-                dashBoardProvider.tabIndex.clamp(0, allowedTabs.length - 1)]),
+        child: allowedTabs.isEmpty
+            ? const SizedBox.shrink()
+            : _buildAssignedStaffFilter(
+                dashBoardProvider,
+                allowedTabs[
+                    _safeTabIndex(allowedTabs, dashBoardProvider.tabIndex)],
+              ),
       ),
     );
 
@@ -419,109 +430,61 @@ class _DashBoardPageState extends State<DashBoardPage> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Builder(builder: (context) {
+                if (allowedTabs.isEmpty) {
+                  return const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(32),
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
+                }
+
                 final safeIndex =
-                    dashBoardProvider.tabIndex.clamp(0, allowedTabs.length - 1);
+                    _safeTabIndex(allowedTabs, dashBoardProvider.tabIndex);
                 final activeTab = allowedTabs[safeIndex];
 
                 switch (activeTab) {
                   case 6:
-                    return AnimatedAlign(
-                      duration: const Duration(milliseconds: 600),
-                      alignment: safeIndex == allowedTabs.indexOf(6)
-                          ? const Alignment(0, 0)
-                          : const Alignment(-100, 0),
-                      child: DashboardCountTab(
-                        dashBoardProvider: dashBoardProvider,
-                      ),
-                    );
+                    return DashboardCountTab(
+                        dashBoardProvider: dashBoardProvider);
                   case 0:
-                    return AnimatedAlign(
-                      duration: const Duration(milliseconds: 600),
-                      alignment: safeIndex == allowedTabs.indexOf(0)
-                          ? const Alignment(0, 0)
-                          : const Alignment(-100, 0),
-                      child: LeadsOverViewTab(
-                        dashBoardProvider: dashBoardProvider,
-                        taskAllocationData:
-                            dashBoardProvider.taskAllocationSummaryData,
-                        followUpLeadData: dashBoardProvider.followUpSummaryData,
-                        leadConversionData: dashBoardProvider.conversionData,
-                        countLeadData: dashBoardProvider.conversionCountData,
-                        pieData: dashBoardProvider.leadProgressReport,
-                      ),
+                    return LeadsOverViewTab(
+                      dashBoardProvider: dashBoardProvider,
+                      taskAllocationData:
+                          dashBoardProvider.taskAllocationSummaryData,
+                      followUpLeadData: dashBoardProvider.followUpSummaryData,
+                      leadConversionData: dashBoardProvider.conversionData,
+                      countLeadData: dashBoardProvider.conversionCountData,
+                      pieData: dashBoardProvider.leadProgressReport,
                     );
-
                   case 1:
-                    return AnimatedAlign(
-                      duration: const Duration(milliseconds: 600),
-                      alignment: safeIndex == 1
-                          ? const Alignment(0, 0)
-                          : const Alignment(0, -100),
-                      child: WorkOverViewTab(
-                        dashboardProvider: dashBoardProvider,
-                        taskData: dashBoardProvider.taskAllocationSummaryData,
-                        data: dashBoardProvider.conversionData,
-                        countLeadData: dashBoardProvider.conversionCountData,
-                      ),
+                    return WorkOverViewTab(
+                      dashboardProvider: dashBoardProvider,
+                      taskData: dashBoardProvider.taskAllocationSummaryData,
+                      data: dashBoardProvider.conversionData,
+                      countLeadData: dashBoardProvider.conversionCountData,
                     );
                   case 4:
-                    return AnimatedAlign(
-                      duration: const Duration(milliseconds: 600),
-                      alignment: const Alignment(0, 0),
-                      child: const AmcNotificationTab(),
-                    );
+                    return const AmcNotificationTab();
                   case 5:
-                    return AnimatedAlign(
-                      duration: const Duration(milliseconds: 600),
-                      alignment: const Alignment(0, 0),
-                      child: const PaymentReminderTab(),
-                    );
+                    return const PaymentReminderTab();
                   case 2:
-                    return AnimatedAlign(
-                      duration: const Duration(milliseconds: 600),
-                      alignment: const Alignment(0, 0),
-                      child: const TaskOverviewTab(),
-                    );
+                    return const TaskOverviewTab();
                   case 3:
-                    return AnimatedAlign(
-                      duration: const Duration(milliseconds: 600),
-                      alignment: const Alignment(0, 0),
-                      child: const TaskSummaryPage(),
-                    );
+                    return const TaskSummaryPage();
                   case 7:
-                    return AnimatedAlign(
-                      duration: const Duration(milliseconds: 600),
-                      alignment: const Alignment(0, 0),
-                      child: const CustomerOutstandingSummaryTab(),
-                    );
+                    return const CustomerOutstandingSummaryTab();
                   case 8:
-                    return AnimatedAlign(
-                      duration: const Duration(milliseconds: 600),
-                      alignment: const Alignment(0, 0),
-                      child: const UserActivityTab(),
-                    );
+                    return const UserActivityTab();
                   case 9:
-                    return AnimatedAlign(
-                      duration: const Duration(milliseconds: 600),
-                      alignment: safeIndex == allowedTabs.indexOf(9)
-                          ? const Alignment(0, 0)
-                          : const Alignment(-100, 0),
-                      child: AttendanceDashboardTab(
-                        dashBoardProvider: dashBoardProvider,
-                      ),
-                    );
+                    return AttendanceDashboardTab(
+                        dashBoardProvider: dashBoardProvider);
                   case 10:
-                    return AnimatedAlign(
-                      duration: const Duration(milliseconds: 600),
-                      alignment: safeIndex == allowedTabs.indexOf(10)
-                          ? const Alignment(0, 0)
-                          : const Alignment(-100, 0),
-                      child: const TravelAllowancePage(
-                        isEmbeddedInDashboard: true,
-                      ),
-                    );
+                    return const TravelAllowancePage(
+                        isEmbeddedInDashboard: true);
+                  default:
+                    return const SizedBox.shrink();
                 }
-                return const SizedBox.shrink();
               }),
             ),
           ],
