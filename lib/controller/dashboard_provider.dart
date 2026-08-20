@@ -1159,9 +1159,9 @@ class DashboardProvider extends ChangeNotifier {
             "From_Date": _formattedFromDate,
             "To_Date": _formattedToDate,
             "Is_Date": _formattedFromDate.isNotEmpty ? 1 : 0,
-            "User_Id": _selectedUser == 0 ? null : _selectedUser,
-            "Department_Id": null,
-            "Task_Status_Id": null,
+            "User_Id": _selectedUser == 0 ? 0 : _selectedUser,
+            "Department_Id": 0,
+            "Task_Status_Id": 0,
             if (userActivityDateType == 'Estimated') "Date_Type": "Estimated_Completion_Date"
             else "Date_Type": "Task_Date",
           });
