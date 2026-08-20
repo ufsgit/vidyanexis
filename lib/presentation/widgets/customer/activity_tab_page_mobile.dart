@@ -13,6 +13,7 @@ import 'package:vidyanexis/presentation/widgets/customer/add_follow_up_dialog.da
 import 'package:vidyanexis/presentation/widgets/home/visit_history_widget.dart';
 import 'package:vidyanexis/controller/lead_check_in_provider.dart';
 import 'package:vidyanexis/utils/extensions.dart';
+import 'package:vidyanexis/presentation/widgets/home/edit_remark_dialog.dart';
 
 class ActivityTabPage extends StatefulWidget {
   final SearchLeadModel? lead;
@@ -444,14 +445,65 @@ class _ActivityTabPageState extends State<ActivityTabPage> {
                           ),
                           const SizedBox(height: 8),
                           if (lead.remark.isNotEmpty)
-                            Text(
-                              lead.remark,
-                              softWrap: true,
-                              style: GoogleFonts.plusJakartaSans(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                                color: AppColors.textBlack,
-                              ),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    lead.remark,
+                                    softWrap: true,
+                                    style: GoogleFonts.plusJakartaSans(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                      color: AppColors.textBlack,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                InkWell(
+                                  onTap: () {
+                                    EditRemarkDialog.show(
+                                      context,
+                                      customerId: widget.customerId.toString(),
+                                      followUpId: lead.followUpId,
+                                      initialRemark: lead.remark,
+                                      statusId: lead.statusId,
+                                      statusName: lead.statusName,
+                                      toUserName: lead.toUserName,
+                                      followUpDate: lead.nextFollowUpDate,
+                                    );
+                                  },
+                                  borderRadius: BorderRadius.circular(4),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 3),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.primaryBlue
+                                          .withOpacity(0.08),
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    child: const Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          Icons.edit_outlined,
+                                          size: 12,
+                                          color: AppColors.primaryBlue,
+                                        ),
+                                        SizedBox(width: 4),
+                                        Text(
+                                          'Edit',
+                                          style: TextStyle(
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.w600,
+                                            color: AppColors.primaryBlue,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           if (lead.remark.isNotEmpty) const SizedBox(height: 8),
                           RichText(

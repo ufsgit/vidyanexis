@@ -1,4 +1,5 @@
 class FollowUpHistory {
+  final String followUpId;
   final String statusName;
   final int statusId;
   final String nextFollowUpDate;
@@ -13,6 +14,7 @@ class FollowUpHistory {
   final List<FollowUpAudio> audios;
 
   FollowUpHistory({
+    this.followUpId = '',
     required this.statusName,
     required this.statusId,
     required this.nextFollowUpDate,
@@ -29,14 +31,20 @@ class FollowUpHistory {
 
   factory FollowUpHistory.fromJson(Map<String, dynamic> json) {
     return FollowUpHistory(
+      followUpId: json['FollowUp_Id']?.toString() ??
+          json['Followup_Id']?.toString() ??
+          json['id']?.toString() ??
+          '',
       statusName: json['Status_Name'] ?? '',
       statusId: json['Status'] ?? 0,
       nextFollowUpDate: json['Next_FollowUp_Date'] ?? '',
       entryDate: json['Entry_Date'] ?? '',
       toUserName: json['To_User_Name'] ?? '',
       byUserName: json['By_User_Name'] ?? '',
-      remark: json['Remark'] ?? '',
-      followUp: json['Followup'] ?? '0',
+      remark: json['Remark']?.toString() ?? json['Remarks']?.toString() ?? '',
+      followUp: json['Followup'] is int
+          ? json['Followup']
+          : int.tryParse(json['Followup']?.toString() ?? '0') ?? 0,
       sortColumn: json['Sort_Coloumn'] ?? 0,
       actualFollowUpDate: json['Actual_FollowUp_Date'] ?? '',
       colorCode: json["Color_Code"] ?? "Color(0xff34c759)",

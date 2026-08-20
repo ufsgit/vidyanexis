@@ -7,6 +7,7 @@ import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/lead_details_provider.dart';
 import 'package:vidyanexis/controller/models/follow_up_history.dart';
 import 'package:vidyanexis/presentation/widgets/home/loading_circle.dart';
+import 'package:vidyanexis/presentation/widgets/home/edit_remark_dialog.dart';
 
 class LeadHistoryDialog extends StatefulWidget {
   final String customerId;
@@ -430,6 +431,57 @@ class _LeadHistoryDialogState extends State<LeadHistoryDialog> {
                                                     ? AppColors.textBlack
                                                     : AppColors.textGrey3,
                                                 height: 1.4,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 8),
+                                          InkWell(
+                                            onTap: () {
+                                              EditRemarkDialog.show(
+                                                context,
+                                                customerId: widget.customerId,
+                                                followUpId: entry.followUpId,
+                                                initialRemark: entry.remark,
+                                                statusId: entry.statusId,
+                                                statusName: entry.statusName,
+                                                toUserName: entry.toUserName,
+                                                followUpDate:
+                                                    entry.nextFollowUpDate,
+                                              );
+                                            },
+                                            borderRadius:
+                                                BorderRadius.circular(4),
+                                            child: Container(
+                                              padding: const EdgeInsets.symmetric(
+                                                  horizontal: 8, vertical: 4),
+                                              decoration: BoxDecoration(
+                                                color: AppColors.primaryBlue
+                                                    .withOpacity(0.08),
+                                                borderRadius:
+                                                    BorderRadius.circular(4),
+                                              ),
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  const Icon(
+                                                    Icons.edit_outlined,
+                                                    size: 12,
+                                                    color:
+                                                        AppColors.primaryBlue,
+                                                  ),
+                                                  const SizedBox(width: 4),
+                                                  Text(
+                                                    'Edit',
+                                                    style: GoogleFonts
+                                                        .plusJakartaSans(
+                                                      fontSize: 11,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      color: AppColors
+                                                          .primaryBlue,
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
                                             ),
                                           ),

@@ -3,9 +3,11 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
+import 'package:vidyanexis/presentation/widgets/home/edit_remark_dialog.dart';
 
 class FollowUpTabWidget extends StatelessWidget {
-  const FollowUpTabWidget({super.key});
+  final String? customerId;
+  const FollowUpTabWidget({super.key, this.customerId});
 
   @override
   Widget build(BuildContext context) {
@@ -152,12 +154,69 @@ class FollowUpTabWidget extends StatelessWidget {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text(
-                                      'Remarks',
-                                      style: TextStyle(
-                                          fontSize: 11,
-                                          color: Colors.grey,
-                                          fontWeight: FontWeight.w600),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        const Text(
+                                          'Remarks',
+                                          style: TextStyle(
+                                              fontSize: 11,
+                                              color: Colors.grey,
+                                              fontWeight: FontWeight.w600),
+                                        ),
+                                        InkWell(
+                                          onTap: () {
+                                            EditRemarkDialog.show(
+                                              context,
+                                              customerId: customerId ?? '',
+                                              followUpId:
+                                                  history.followUpId ?? '',
+                                              initialRemark:
+                                                  history.remarks ?? '',
+                                              statusName: history.statusName,
+                                              toUserName:
+                                                  history.assignedToName,
+                                              followUpDate:
+                                                  history.nextFollowUpDate,
+                                            );
+                                          },
+                                          borderRadius:
+                                              BorderRadius.circular(4),
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 8, vertical: 3),
+                                            decoration: BoxDecoration(
+                                              color: AppColors.primaryBlue
+                                                  .withOpacity(0.08),
+                                              borderRadius:
+                                                  BorderRadius.circular(4),
+                                            ),
+                                            child: const Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Icon(
+                                                  Icons.edit_outlined,
+                                                  size: 12,
+                                                  color: AppColors.primaryBlue,
+                                                ),
+                                                SizedBox(width: 4),
+                                                Text(
+                                                  'Edit',
+                                                  style: TextStyle(
+                                                    fontSize: 11,
+                                                    fontWeight: FontWeight.w600,
+                                                    color:
+                                                        AppColors.primaryBlue,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                     const SizedBox(height: 6),
                                     Text(

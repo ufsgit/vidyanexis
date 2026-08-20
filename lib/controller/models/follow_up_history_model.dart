@@ -19,7 +19,9 @@ class FollowUpHistoryModel {
       this.statusId});
 
   FollowUpHistoryModel.fromJson(Map<String, dynamic> json) {
-    followUpId = json['FollowUp_Id']?.toString();
+    followUpId = json['FollowUp_Id']?.toString() ??
+        json['Followup_Id']?.toString() ??
+        json['id']?.toString();
     followUpDate =
         json['FollowUp_Date']?.toString() ?? json['Entry_Date']?.toString();
     nextFollowUpDate = json['Next_FollowUp_Date']?.toString();

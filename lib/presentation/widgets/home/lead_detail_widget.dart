@@ -416,8 +416,10 @@ class LeadDetailsWidgetState extends State<LeadDetailsWidget> {
                                             .followUpHistory!.length,
                                         itemBuilder: (context, index) {
                                           return FollowUpCard(
-                                              entry: leadDetailsProvider
-                                                  .followUpHistory![index]);
+                                            entry: leadDetailsProvider
+                                                .followUpHistory![index],
+                                            customerId: widget.customerId,
+                                          );
                                         },
                                       )
                                     : const Center(
