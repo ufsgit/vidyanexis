@@ -2553,54 +2553,89 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
 
         if (dropDownProvider.selectedSourceId != null &&
             dropDownProvider.selectedSourceId! > 0)
-          Row(
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: CommonDropdown<int>(
-                  hintText:
-                      'Enquiry Source${settingsProvider.enquirySourceMandatory == 1 ? '*' : ''}',
-                  items: dropDownProvider.enquiryData
-                      .map((source) => DropdownItem<int>(
-                            id: source.enquirySourceId,
-                            name: source.enquirySourceName ?? '',
-                          ))
-                      .toList(),
-                  controller: leadProvider.enquirySourceController,
-                  onItemSelected: (selectedId) {
-                    dropDownProvider.setSelectedEnquirySourceId(selectedId);
-                    final selectedItem = dropDownProvider.enquiryData
-                        .firstWhere(
-                            (source) => source.enquirySourceId == selectedId);
-
-                    leadProvider.enquirySourceController.text =
-                        selectedItem.enquirySourceName ?? '';
-                  },
-                  selectedValue: dropDownProvider.selectedEnquirySourceId,
-                ),
-              ),
-              IconButton(
-                tooltip: "Add Enquiry Source",
-                icon: Icon(Icons.add_circle, color: AppColors.primaryViolet),
-                onPressed: () {
-                  showDialog(
-                    barrierDismissible: false,
-                    context: context,
-                    builder: (BuildContext context) {
-                      return const AddEnquirySource(
-                        editId: '0',
-                        isEdit: false,
-                        // sourceId: '0',
-                        // sourceName: '',
-                        status: '',
-                      );
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Enquiry Source${settingsProvider.enquirySourceMandatory == 1 ? '*' : ''}',
+                    style: GoogleFonts.plusJakartaSans(
+                      color: AppColors.textGrey4,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  IconButton(
+                    tooltip: "Add Enquiry Source",
+                    icon: Icon(Icons.add_circle, color: AppColors.primaryViolet),
+                    onPressed: () {
+                      showDialog(
+                        barrierDismissible: false,
+                        context: context,
+                        builder: (BuildContext context) {
+                          return const AddEnquirySource(
+                            editId: '0',
+                            isEdit: false,
+                            status: '',
+                          );
+                        },
+                      ).then((value) {
+                        if (context.mounted) {
+                          dropDownProvider.getEnquirySource(context);
+                        }
+                      });
                     },
-                  ).then((value) {
-                    if (context.mounted) {
-                      dropDownProvider.getEnquirySource(context);
-                    }
-                  });
-                },
+                  ),
+                ],
               ),
+              Wrap(
+                spacing: 8.0,
+                runSpacing: 8.0,
+                children: dropDownProvider.enquiryData.map((source) {
+                  final isSelected = dropDownProvider.selectedEnquirySourceId == source.enquirySourceId;
+                  return ChoiceChip(
+                    showCheckmark: false,
+                    label: Text(source.enquirySourceName ?? ''),
+                    selected: isSelected,
+                    onSelected: (bool selected) {
+                      if (selected) {
+                        dropDownProvider.setSelectedEnquirySourceId(source.enquirySourceId);
+                        leadProvider.enquirySourceController.text = source.enquirySourceName ?? '';
+                      }
+                    },
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+                    selectedColor: AppColors.lightBlueColor,
+                    backgroundColor: Colors.white,
+                    labelStyle: GoogleFonts.plusJakartaSans(
+                      color: isSelected ? AppColors.textBlue800 : AppColors.textGrey3,
+                      fontSize: 14,
+                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                      side: BorderSide(
+                        color: isSelected ? AppColors.textBlue800 : AppColors.grey,
+                        width: 1.0,
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+              if (dropDownProvider.showValidation &&
+                  (dropDownProvider.selectedEnquirySourceId == null ||
+                      dropDownProvider.selectedEnquirySourceId == 0) &&
+                  settingsProvider.enquirySourceMandatory == 1) ...[
+                const SizedBox(height: 4),
+                Padding(
+                  padding: const EdgeInsets.only(left: 4.0),
+                  child: Text(
+                    'Please select Enquiry Source',
+                    style: TextStyle(color: Colors.red, fontSize: 12),
+                  ),
+                ),
+              ],
             ],
           ),
 
