@@ -184,6 +184,7 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
         final mat = item.materials[matIndex];
         mat.quantity = (mat.quantity / oldQty) * qty;
         mat.amount = mat.price * mat.quantity;
+        mat.amount = double.parse(mat.amount.toStringAsFixed(2));
 
         // Sync only material controllers
         final key = '${index}_$matIndex';
@@ -215,6 +216,7 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
       final mat = _addedItems[itemIndex].materials[matIndex];
       mat.price = price;
       mat.amount = price * mat.quantity;
+      mat.amount = double.parse(mat.amount.toStringAsFixed(2));
     });
   }
 
@@ -226,6 +228,7 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
       final mat = _addedItems[itemIndex].materials[matIndex];
       mat.quantity = qty;
       mat.amount = qty * mat.price;
+      mat.amount = double.parse(mat.amount.toStringAsFixed(2));
     });
   }
 
@@ -320,7 +323,7 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
             unit: mat.unit,
             priceFrom: mat.priceFrom,
             priceTo: mat.priceTo,
-            amount: mat.price * scaledQty,
+            amount: double.parse((mat.price * scaledQty).toStringAsFixed(2)),
             includeInTotal: mat.includeInTotal,
             itemTypeId: mat.itemTypeId,
             showQuantity: mat.showQuantity,
@@ -377,7 +380,7 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
       }
     }
 
-    return total;
+    return double.parse(total.toStringAsFixed(2));
   }
 
   @override
