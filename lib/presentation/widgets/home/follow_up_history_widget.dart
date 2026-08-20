@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/models/follow_up_history.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:vidyanexis/presentation/widgets/home/edit_remark_dialog.dart';
 
 class FollowUpCard extends StatefulWidget {
   final FollowUpHistory entry;
+  final String? customerId;
 
-  const FollowUpCard({super.key, required this.entry});
+  const FollowUpCard({
+    super.key,
+    required this.entry,
+    this.customerId,
+  });
 
   @override
   State<FollowUpCard> createState() => _FollowUpCardState();
@@ -432,12 +439,78 @@ class _FollowUpCardState extends State<FollowUpCard> {
                     ),
                   ],
                   const SizedBox(height: 10),
-                  const Text("Remark", style: TextStyle(color: Colors.grey)),
-                  const SizedBox(height: 4),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Text(
+                        "Remark",
+                        style: TextStyle(
+                          color: Color(0xFF8E97A3),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          EditRemarkDialog.show(
+                            context,
+                            customerId: widget.customerId ?? '',
+                            followUpId: widget.entry.followUpId,
+                            initialRemark: widget.entry.remark,
+                            statusId: widget.entry.statusId,
+                            statusName: widget.entry.statusName,
+                            toUserName: widget.entry.toUserName,
+                            followUpDate: widget.entry.nextFollowUpDate,
+                          );
+                        },
+                        borderRadius: BorderRadius.circular(4),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: AppColors.primaryBlue.withOpacity(0.08),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.edit_outlined,
+                                size: 13,
+                                color: AppColors.primaryBlue,
+                              ),
+                              SizedBox(width: 4),
+                              Text(
+                                "Edit",
+                                style: TextStyle(
+                                  fontSize: 11.5,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.primaryBlue,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
                   Text(
-                    widget.entry.remark,
-                    style: const TextStyle(
-                        color: Colors.black, fontWeight: FontWeight.w600),
+                    widget.entry.remark.isNotEmpty
+                        ? widget.entry.remark
+                        : 'No remark added.',
+                    style: TextStyle(
+                      color: widget.entry.remark.isNotEmpty
+                          ? Colors.black
+                          : const Color(0xFF8E97A3),
+                      fontWeight: widget.entry.remark.isNotEmpty
+                          ? FontWeight.w600
+                          : FontWeight.normal,
+                      fontStyle: widget.entry.remark.isNotEmpty
+                          ? FontStyle.normal
+                          : FontStyle.italic,
+                    ),
                   ),
                 ],
               ),

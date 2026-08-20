@@ -26,11 +26,18 @@ class AddFollowupDialog extends StatefulWidget {
   final String customerName;
   final String statusId;
   final String? amount;
+  final bool isEdit;
+  final String? followUpId;
+  final String? initialRemark;
+
   const AddFollowupDialog({
     super.key,
     required this.customerName,
     this.statusId = '0',
     this.amount,
+    this.isEdit = false,
+    this.followUpId,
+    this.initialRemark,
   });
 
   @override
@@ -100,8 +107,12 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
     dropDownProvider.setSelectedTransferStatusId(0);
     leadProvider.followUpTimeController.clear();
 
-    leadProvider.messageController
-        .clear(); // Clear remarks textfield by default
+    if (widget.isEdit && (widget.initialRemark ?? '').isNotEmpty) {
+      leadProvider.messageController.text = widget.initialRemark!;
+    } else {
+      leadProvider.messageController
+          .clear(); // Clear remarks textfield by default
+    }
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _leadNameFocusNode.requestFocus();
@@ -166,7 +177,6 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
             prefillDeptName = transferStatusesData.first.departmentName ?? '';
           }
 
-
           if (mounted) {
             setState(() {
               showTransferStatus =
@@ -192,7 +202,8 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
             });
 
             // Fetch and pre-fill assigned user based on department from API
-            final effectiveDeptId = prefillDeptId ?? settingsProvider.selectedDepartmentId;
+            final effectiveDeptId =
+                prefillDeptId ?? settingsProvider.selectedDepartmentId;
             if (effectiveDeptId != null && effectiveDeptId > 0) {
               dropDownProvider.fetchAndSetAssignedUser(
                 context: context,
@@ -231,7 +242,7 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
             ? Scaffold(
                 backgroundColor: AppColors.whiteColor,
                 appBar: CustomAppBarWidget(
-                  title: 'Add follow up\n',
+                  title: widget.isEdit ? 'Edit follow up\n' : 'Add follow up\n',
                   richText: widget.customerName,
                   isRichTextClickable: true,
                   onRichTextPressed: () {
@@ -289,7 +300,7 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
                     textColor: AppColors.appViolet,
                   ),
                   CustomElevatedButton(
-                    buttonText: 'Add',
+                    buttonText: widget.isEdit ? 'Update' : 'Add',
                     onPressed: () async {
                       await _saveFollowUp(
                         leadProvider,
@@ -409,6 +420,7 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
       followUp: leadProvider.nextFollowUpDateController.text.isNotEmpty ? 1 : 0,
       message: leadProvider.messageController.text,
       amount: amountController.text,
+      followUpId: widget.followUpId,
       audioFiles: uploadedAudioFiles,
     );
 
@@ -541,8 +553,7 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
                   leadProvider.departmentController.text =
                       selectedItem.departmentName ?? '';
                 }
-                if (selectedItem.userId != null &&
-                    selectedItem.userId != 0) {
+                if (selectedItem.userId != null && selectedItem.userId != 0) {
                   dropDownProvider.setSelectedUserId(selectedItem.userId ?? 0);
                   leadProvider.searchUserController.text =
                       selectedItem.userName ?? '';
@@ -578,7 +589,8 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
                     transferStatusesData.first.departmentId != null &&
                     transferStatusesData.first.departmentId! > 0) {
                   prefillDeptId = transferStatusesData.first.departmentId;
-                  prefillDeptName = transferStatusesData.first.departmentName ?? '';
+                  prefillDeptName =
+                      transferStatusesData.first.departmentName ?? '';
                 }
 
                 if (mounted) {
@@ -610,7 +622,8 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
                   });
 
                   // Fetch and pre-fill assigned user after department is set
-                  final effectiveDeptId = prefillDeptId ?? settingsProvider.selectedDepartmentId;
+                  final effectiveDeptId =
+                      prefillDeptId ?? settingsProvider.selectedDepartmentId;
                   if (effectiveDeptId != null && effectiveDeptId > 0) {
                     dropDownProvider.fetchAndSetAssignedUser(
                       context: context,
@@ -622,7 +635,6 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
                   }
                 }
               }
-
             },
 
             // ✅ Only set value if it exists EXACTLY ONCE

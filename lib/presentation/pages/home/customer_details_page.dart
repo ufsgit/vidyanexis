@@ -4944,7 +4944,9 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                             if (settingsprovider
                                                     .menuIsViewMap[100] ==
                                                 1)
-                                              const FollowUpTabWidget(),
+                                              FollowUpTabWidget(
+                                                customerId: widget.customerId,
+                                              ),
 
                                             //Reciepts Tab
                                             if (settingsprovider

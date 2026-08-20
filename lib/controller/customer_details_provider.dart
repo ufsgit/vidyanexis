@@ -630,6 +630,82 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
+  Future<bool> updateRemark({
+    required BuildContext context,
+    required String customerId,
+    required String followUpId,
+    required String updatedRemark,
+    int? statusId,
+    String? statusName,
+    int? toUserId,
+    String? toUserName,
+    String? followUpDate,
+  }) async {
+    if (updatedRemark.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Remark cannot be empty'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return false;
+    }
+
+    try {
+      final bodyData = {
+        "FollowUp": {
+          if (followUpId.isNotEmpty && followUpId != "0")
+            "FollowUp_Id": int.tryParse(followUpId) ?? followUpId,
+          "Remark": updatedRemark.trim(),
+          if (statusId != null && statusId != 0) "Status_Id": statusId,
+          if (statusName != null && statusName.isNotEmpty)
+            "Status_Name": statusName,
+          if (toUserId != null && toUserId != 0) "To_User_Id": toUserId,
+          if (toUserName != null && toUserName.isNotEmpty)
+            "To_User_Name": toUserName,
+          if (followUpDate != null && followUpDate.isNotEmpty)
+            "Next_FollowUp_date": followUpDate,
+        },
+        "Customer_Id": int.tryParse(customerId) ?? customerId,
+      };
+
+      final response = await HttpRequest.httpPostRequest(
+        endPoint: HttpUrls.saveFollowUp,
+        bodyData: bodyData,
+      );
+
+      if (response != null &&
+          (response.statusCode == 200 || response.statusCode == 201)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Remark updated successfully'),
+            backgroundColor: Color(0xFF10B981),
+          ),
+        );
+
+        await getFollowUpHistory(customerId, context);
+        return true;
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Failed to update remark. Please try again.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return false;
+      }
+    } catch (e) {
+      debugPrint('Error updating remark: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return false;
+    }
+  }
+
   Future<void> getLeadHistoryReport(
       String customerId, BuildContext context) async {
     try {

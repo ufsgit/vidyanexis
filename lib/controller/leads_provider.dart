@@ -1716,6 +1716,7 @@ class LeadsProvider extends ChangeNotifier {
     required int departmentId,
     required String departmentName,
     String amount = '0',
+    String? followUpId,
     List<Map<String, String>>? audioFiles, // Add this parameter
   }) async {
     try {
@@ -1745,6 +1746,10 @@ class LeadsProvider extends ChangeNotifier {
           endPoint: HttpUrls.saveFollowUp,
           bodyData: {
             "FollowUp": {
+              if (followUpId != null &&
+                  followUpId.isNotEmpty &&
+                  followUpId != "0")
+                "FollowUp_Id": int.tryParse(followUpId) ?? followUpId,
               "Status_Id": statusId,
               "Status_Name": statusName,
               "Next_FollowUp_date": followUpDate,

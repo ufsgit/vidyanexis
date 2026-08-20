@@ -489,7 +489,8 @@ class LeadDetailsPagePhoneState extends State<LeadDetailsPagePhone> {
                                             itemBuilder: (context, index) {
                                               return FollowUpCard(
                                                   entry: leadDetailsProvider
-                                                      .followUpHistory![index]);
+                                                      .followUpHistory![index],
+                                                  customerId: widget.customerId);
                                             },
                                           )
                                         : const Center(

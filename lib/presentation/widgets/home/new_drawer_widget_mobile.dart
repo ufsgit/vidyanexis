@@ -1191,76 +1191,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
                 ],
               ),
             ],
-            if (showTransfer) ...[
-              const SizedBox(height: 10),
-              Row(
-                children: [
-                  Expanded(
-                    child: CommonDropdown<int>(
-                      hintText: 'Branch*',
-                      selectedValue: settingsProvider.selectedBranchId,
-                      items: settingsProvider.branchModel
-                          .map((source) => DropdownItem<int>(
-                                id: source.branchId ?? 0,
-                                name: source.branchName ?? '',
-                              ))
-                          .toList(),
-                      controller: leadProvider.branchController,
-                      onItemSelected: (selectedId) {
-                        setState(() {
-                          settingsProvider.selectedBranchId = selectedId;
-                          final selectedBranch = settingsProvider.branchModel
-                              .firstWhere((branch) =>
-                                  branch.branchId == selectedId);
-                          leadProvider.branchController.text =
-                              selectedBranch.branchName ?? '';
-                          settingsProvider.setSelectedDepartmentId(0);
-                          leadProvider.departmentController.clear();
-                          dropDownProvider.setSelectedUserId(0);
-                          leadProvider.searchUserController.clear();
-                          dropDownProvider.filterStaffByBranchAndDepartment(
-                            branchId: selectedId,
-                            departmentId: null,
-                          );
-                        });
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: CommonDropdown<int>(
-                      key: ValueKey(settingsProvider.selectedBranchId),
-                      hintText: 'Department*',
-                      selectedValue: settingsProvider.selectedDepartmentId,
-                      items: settingsProvider.departmentModel
-                          .map((source) => DropdownItem<int>(
-                                id: source.departmentId,
-                                name: source.departmentName ?? '',
-                              ))
-                          .toList(),
-                      controller: leadProvider.departmentController,
-                      onItemSelected: (selectedId) {
-                        setState(() {
-                          settingsProvider.selectedDepartmentId = selectedId;
-                          final selectedDepartment = settingsProvider
-                              .departmentModel
-                              .firstWhere((dept) =>
-                                  dept.departmentId == selectedId);
-                          leadProvider.departmentController.text =
-                              selectedDepartment.departmentName ?? '';
-                          dropDownProvider.setSelectedUserId(0);
-                          leadProvider.searchUserController.clear();
-                          dropDownProvider.filterStaffByBranchAndDepartment(
-                            branchId: settingsProvider.selectedBranchId,
-                            departmentId: selectedId,
-                          );
-                        });
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ],
+
             SizedBox(
               height: 10,
             ),
