@@ -3837,14 +3837,14 @@ class _tasksPageReportState extends State<TaskPage> {
                                                     .taskTypeModel[index];
                                                 bool selected = reportsProvider
                                                     .selectedTaskTypeIds
-                                                    .contains(taskItem
+                                                    .contains(taskItem.uniqueId ?? taskItem
                                                         .taskTypeId
                                                         .toString());
                                                 return InkWell(
                                                   onTap: () {
                                                     reportsProvider
                                                         .toggleTaskTypeSelection(
-                                                            taskItem.taskTypeId
+                                                            taskItem.uniqueId ?? taskItem.taskTypeId
                                                                 .toString());
                                                     dropDownProvider
                                                         .filterStaffByBranchAndDepartment(
@@ -3996,7 +3996,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                     // Default selected user name
                                                                     int? assignedUserId = reportsProvider
                                                                             .taskTypeToUserMap[
-                                                                        taskItem
+                                                                        taskItem.uniqueId ?? taskItem
                                                                             .taskTypeId
                                                                             .toString()];
                                                                     String
@@ -4022,7 +4022,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                     return CustomAutocompleteSearch<
                                                                         SearchUserDetails>(
                                                                       key: ValueKey(
-                                                                          'user_search_${taskItem.taskTypeId}'),
+                                                                          'user_search_${taskItem.uniqueId ?? taskItem.taskTypeId}'),
                                                                       showOptionsOnTap:
                                                                           true,
                                                                       maxHeight:
@@ -4053,7 +4053,7 @@ class _tasksPageReportState extends State<TaskPage> {
 
                                                                         reportsProvider
                                                                             .setTaskUser(
-                                                                          taskItem
+                                                                          taskItem.uniqueId ?? taskItem
                                                                               .taskTypeId
                                                                               .toString(),
                                                                           selected
@@ -4068,7 +4068,34 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                   },
                                                                 )
                                                               : const SizedBox(),
-                                                        )
+                                                        ),
+                                                        Consumer<SettingsProvider>(
+                                                          builder: (context,
+                                                              settingsProvider,
+                                                              _) {
+                                                            if (settingsProvider
+                                                                    .taskDuplicateButton !=
+                                                                1) {
+                                                              return const SizedBox
+                                                                  .shrink();
+                                                            }
+                                                            return IconButton(
+                                                              icon: const Icon(
+                                                                  Icons
+                                                                      .add_circle_outline,
+                                                                  color: AppColors
+                                                                      .primaryBlue,
+                                                                  size: 20),
+                                                              onPressed: () {
+                                                                reportsProvider
+                                                                    .duplicateTask(
+                                                                        index);
+                                                              },
+                                                              tooltip:
+                                                                  'Duplicate Task',
+                                                            );
+                                                          },
+                                                        ),
                                                       ],
                                                     ),
                                                   ),

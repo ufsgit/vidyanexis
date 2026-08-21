@@ -962,7 +962,7 @@ class TaskPageProvider extends ChangeNotifier {
       List<Map<String, dynamic>> taskUsers = _taskTypeToUserMap.entries
           .where((entry) => _selectedTaskTypeIds.contains(entry.key))
           .map((entry) => {
-                "task_type_id": int.tryParse(entry.key) ?? 0,
+                "task_type_id": int.tryParse(entry.key.split('_').first) ?? 0,
                 "to_user_id": entry.value,
               })
           .toList();
@@ -995,7 +995,7 @@ class TaskPageProvider extends ChangeNotifier {
                     : "",
             "Followup_Time":
                 statusModel.isTime == 1 ? followUpTimeController.text : "",
-            "Tasks": _selectedTaskTypeIds.join(","),
+            "Tasks": _selectedTaskTypeIds.map((id) => id.split('_').first).join(","),
             "CustomFields": customFieldsData,
             "flow_id": _flowId,
             "Sub_Status_Id": subStatus?.subStatusId,
@@ -1236,14 +1236,26 @@ class TaskPageProvider extends ChangeNotifier {
     }
   }
 
-  void toggleTaskTypeSelection(String taskTypeId) {
-    if (_selectedTaskTypeIds.contains(taskTypeId)) {
-      _selectedTaskTypeIds.remove(taskTypeId);
+  void duplicateTask(int index) {
+    if (index >= 0 && index < _taskTypeModel.length) {
+      final original = _taskTypeModel[index];
+      final duplicate = original.copyWithNewUniqueId();
+      _taskTypeModel.insert(index + 1, duplicate);
+      if (duplicate.uniqueId != null) {
+        _selectedTaskTypeIds.add(duplicate.uniqueId!);
+      }
+      notifyListeners();
+    }
+  }
+
+  void toggleTaskTypeSelection(String uniqueId) {
+    if (_selectedTaskTypeIds.contains(uniqueId)) {
+      _selectedTaskTypeIds.remove(uniqueId);
     } else {
-      _selectedTaskTypeIds.add(taskTypeId);
+      _selectedTaskTypeIds.add(uniqueId);
       try {
         final selectedType = _taskTypeModel.firstWhere(
-          (t) => t.taskTypeId.toString() == taskTypeId,
+          (t) => (t.uniqueId ?? t.taskTypeId.toString()) == uniqueId,
         );
         followUpDateController.text = DateFormat('dd MMM yyyy')
             .format(DateTime.now().add(Duration(days: selectedType.duration)));
@@ -1261,7 +1273,7 @@ class TaskPageProvider extends ChangeNotifier {
 
     // Add all task type IDs to the selected list
     for (var task in _taskTypeModel) {
-      _selectedTaskTypeIds.add(task.taskTypeId.toString());
+      _selectedTaskTypeIds.add(task.uniqueId ?? task.taskTypeId.toString());
     }
 
     notifyListeners();

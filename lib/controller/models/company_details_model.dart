@@ -25,6 +25,8 @@ class CompanyPermission {
         return "Task Permission ME and ALL";
       case 20:
         return "Hide Warranty";
+      case 23:
+        return "Task Duplicate Button";
       default:
         return "Permission $companyPermissionId";
     }
@@ -62,6 +64,9 @@ class CompanyPermission {
           break;
         case 20:
           cap = "Hide Warranty";
+          break;
+        case 23:
+          cap = "Task_Duplicate_Button";
           break;
       }
     }

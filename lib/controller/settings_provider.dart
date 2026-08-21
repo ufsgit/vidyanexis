@@ -539,6 +539,7 @@ class SettingsProvider extends ChangeNotifier {
   int _leadNameChangeToCustomerName = 0;
   int _leadCodeWithEnquiryCode = 0;
   int _documentButtonTaskStatus = 0;
+  int _taskDuplicateButton = 0;
   int? _selectedStatusId;
 
   int get toggleValue => _toggleValue;
@@ -557,6 +558,7 @@ class SettingsProvider extends ChangeNotifier {
   int get leadNameChangeToCustomerName => _leadNameChangeToCustomerName;
   int get leadCodeWithEnquiryCode => _leadCodeWithEnquiryCode;
   int get documentButtonTaskStatus => _documentButtonTaskStatus;
+  int get taskDuplicateButton => _taskDuplicateButton;
 
   int _leadPermissionMeAndAll = 0;
   int get leadPermissionMeAndAll => _leadPermissionMeAndAll;
@@ -627,11 +629,19 @@ class SettingsProvider extends ChangeNotifier {
       _hideWarranty = value;
     } else if (permissionId == 21) {
       _taskRemarkMandatory = value;
+    } else if (permissionId == 23 || (caption != null && (caption.toLowerCase().contains('task_duplicate_button') || caption.toLowerCase().contains('task duplicate button')))) {
+      _taskDuplicateButton = value;
     }
   }
 
   void setDocumentButtonTaskStatus(int value) {
     _documentButtonTaskStatus = value;
+    notifyListeners();
+  }
+
+  void setTaskDuplicateButton(int value) {
+    _taskDuplicateButton = value;
+    _syncStateToPermissionsList(23, value);
     notifyListeners();
   }
 
@@ -4745,6 +4755,7 @@ class SettingsProvider extends ChangeNotifier {
     _leadNameChangeToCustomerName = 0;
     _leadCodeWithEnquiryCode = 0;
     _documentButtonTaskStatus = 0;
+    _taskDuplicateButton = 0;
     _hideWarranty = 0;
     notifyListeners();
   }
