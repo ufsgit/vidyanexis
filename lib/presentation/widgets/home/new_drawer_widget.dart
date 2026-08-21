@@ -160,6 +160,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
       leadtypeName: leadProvider.leadtypeController.text,
       locationId: dropDownProvider.selectedLocationId,
       amount: leadProvider.followupAmountController.text,
+      workCompletionDate: leadProvider.workCompletionDateController.text,
     );
   }
 
@@ -2077,7 +2078,67 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                         ),
                                       ),
                                     ),
-                                    const Spacer()
+                                    Expanded(
+                                      child: Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 8.0),
+                                        child: CustomTextField(
+                                          readOnly: true,
+                                          height: 54,
+                                          controller: leadProvider
+                                              .workCompletionDateController,
+                                          hintText: 'Work Completion Date',
+                                          labelText: '',
+                                          suffixIcon: IconButton(
+                                            icon: const Icon(
+                                                Icons.calendar_today,
+                                                size: 18),
+                                            onPressed: () async {
+                                              final DateTime? picked =
+                                                  await showDatePicker(
+                                                context: context,
+                                                initialDate: DateTime.now(),
+                                                firstDate: DateTime(2000),
+                                                lastDate: DateTime(2101),
+                                              );
+                                              if (picked != null) {
+                                                leadProvider
+                                                    .workCompletionDateController
+                                                    .text = DateFormat(
+                                                        'dd MMM yyyy')
+                                                    .format(picked);
+                                                leadProvider
+                                                    .installationDateController
+                                                    .text = DateFormat(
+                                                        'dd MMM yyyy')
+                                                    .format(picked);
+                                              }
+                                            },
+                                          ),
+                                          onTap: () async {
+                                            final DateTime? picked =
+                                                await showDatePicker(
+                                              context: context,
+                                              initialDate: DateTime.now(),
+                                              firstDate: DateTime(2000),
+                                              lastDate: DateTime(2101),
+                                            );
+                                            if (picked != null) {
+                                              leadProvider
+                                                  .workCompletionDateController
+                                                  .text = DateFormat(
+                                                      'dd MMM yyyy')
+                                                  .format(picked);
+                                              leadProvider
+                                                  .installationDateController
+                                                  .text = DateFormat(
+                                                      'dd MMM yyyy')
+                                                  .format(picked);
+                                            }
+                                          },
+                                        ),
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ],

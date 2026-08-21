@@ -419,17 +419,30 @@ class SearchLeadModel {
           json['amcToDate'] ??
           json['amcDate']),
       workCompletionDate: parseString(json['Work_Completion_Date'] ??
+          json['work_completion_date'] ??
           json['Work_Completion_date'] ??
           json['Work Completion Date'] ??
+          json['Work_completion_date'] ??
+          json['work_completion_Date'] ??
+          json['workCompletionDate'] ??
+          json['WorkCompletionDate'] ??
           json['Completion_Date'] ??
           json['Completion_date'] ??
           json['Completion Date'] ??
+          json['completion_date'] ??
+          json['completionDate'] ??
           json['Completed_Date'] ??
           json['completed_date'] ??
           json['Work_Completed_Date'] ??
-          json['work_completion_date'] ??
-          json['workCompletionDate'] ??
-          json['completionDate']),
+          json['work_completed_date'] ??
+          json['Work_Completion_Date_'] ??
+          json['work_completion_date_'] ??
+          json['Work_completion'] ??
+          json['work_completion'] ??
+          (json['lead'] is Map
+              ? (json['lead']['Work_Completion_Date'] ??
+                  json['lead']['work_completion_date'])
+              : null)),
     );
   }
 
@@ -527,6 +540,8 @@ class SearchLeadModel {
       "Lead_Code2": leadCode2,
       "AMC_To_Date": amcDate,
       "Work_Completion_Date": workCompletionDate,
+      "work_completion_date":
+          workCompletionDate.isNotEmpty ? workCompletionDate : null,
     };
   }
 

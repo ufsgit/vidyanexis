@@ -198,6 +198,12 @@ class LeadDetailsProvider with ChangeNotifier {
               leadProvider.followUpDateController.text =
                   leadData.nextFollowUpDate;
             }
+            if (leadData.workCompletionDateDisplay.isNotEmpty) {
+              leadProvider.workCompletionDateController.text =
+                  leadData.workCompletionDateDisplay;
+              leadProvider.installationDateController.text =
+                  leadData.workCompletionDateDisplay;
+            }
             log(leadProvider.enquirySourceController.text);
             notifyListeners();
           } else {

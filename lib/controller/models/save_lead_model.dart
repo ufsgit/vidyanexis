@@ -75,6 +75,7 @@ class Lead {
   String mapLink;
   String pincode;
   double projectCost;
+  DateTime? workCompletionDate;
 
   Lead({
     required this.customerId,
@@ -104,6 +105,7 @@ class Lead {
     required this.mapLink,
     required this.pincode,
     required this.projectCost,
+    this.workCompletionDate,
   });
 
   factory Lead.fromJson(Map<String, dynamic> json) => Lead(
@@ -134,6 +136,11 @@ class Lead {
         mapLink: json["Map_Link"],
         pincode: json["Pincode"],
         projectCost: json["project_cost"]?.toDouble() ?? 0.0,
+        workCompletionDate: json["Work_Completion_Date"] != null
+            ? DateTime.tryParse(json["Work_Completion_Date"])
+            : (json["work_completion_date"] != null
+                ? DateTime.tryParse(json["work_completion_date"])
+                : null),
       );
 
   Map<String, dynamic> toJson() => {
@@ -165,5 +172,8 @@ class Lead {
         "Map_Link": mapLink,
         "Pincode": pincode,
         "project_cost": projectCost,
+        "work_completion_date": workCompletionDate != null
+            ? "${workCompletionDate!.year.toString().padLeft(4, '0')}-${workCompletionDate!.month.toString().padLeft(2, '0')}-${workCompletionDate!.day.toString().padLeft(2, '0')}"
+            : null,
       };
 }

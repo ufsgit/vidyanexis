@@ -243,7 +243,8 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
         creName: leadProvider.creController.text,
         leadtypeId: dropDownProvider.selectedleadtypeUserId ?? 0,
         leadtypeName: leadProvider.leadtypeController.text,
-        locationId: dropDownProvider.selectedLocationId);
+        locationId: dropDownProvider.selectedLocationId,
+        workCompletionDate: leadProvider.workCompletionDateController.text);
   }
 
   bool _validateForm(
@@ -1410,6 +1411,44 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
           readOnly: false,
           controller: leadProvider.additionalCostControler,
           labelText: 'Any Additional Comments',
+        ),
+        const SizedBox(height: 10),
+        CustomTextfieldWidgetMobile(
+          focusNode: FocusNode(),
+          readOnly: true,
+          controller: leadProvider.workCompletionDateController,
+          labelText: 'Work Completion Date',
+          suffixIcon: IconButton(
+            icon: const Icon(Icons.calendar_today),
+            onPressed: () async {
+              final DateTime? picked = await showDatePicker(
+                context: context,
+                initialDate: DateTime.now(),
+                firstDate: DateTime(2000),
+                lastDate: DateTime(2101),
+              );
+              if (picked != null) {
+                leadProvider.workCompletionDateController.text =
+                    DateFormat('dd MMM yyyy').format(picked);
+                leadProvider.installationDateController.text =
+                    DateFormat('dd MMM yyyy').format(picked);
+              }
+            },
+          ),
+          onTap: () async {
+            final DateTime? picked = await showDatePicker(
+              context: context,
+              initialDate: DateTime.now(),
+              firstDate: DateTime(2000),
+              lastDate: DateTime(2101),
+            );
+            if (picked != null) {
+              leadProvider.workCompletionDateController.text =
+                  DateFormat('dd MMM yyyy').format(picked);
+              leadProvider.installationDateController.text =
+                  DateFormat('dd MMM yyyy').format(picked);
+            }
+          },
         ),
         const SizedBox(height: 10),
         const SizedBox(height: 16),

@@ -268,6 +268,8 @@ class LeadReportProvider extends ChangeNotifier {
   final TextEditingController panelSnController = TextEditingController();
   final TextEditingController installationDateController =
       TextEditingController();
+  final TextEditingController workCompletionDateController =
+      TextEditingController();
   final TextEditingController panelPhaseController = TextEditingController();
 
   final TextEditingController panelCapacityController = TextEditingController();
@@ -517,6 +519,7 @@ class LeadReportProvider extends ChangeNotifier {
     nextFollowUpDateController.clear();
     applicationNumberController.clear();
     installationDateController.clear();
+    workCompletionDateController.clear();
     expiryDateController.clear();
     leadAgeController.clear();
     peController.clear();
@@ -1332,6 +1335,7 @@ class LeadReportProvider extends ChangeNotifier {
     required int leadtypeId,
     required String leadtypeName,
     String amount = '0',
+    String? workCompletionDate,
   }) async {
     try {
       Loader.showLoader(context);
@@ -1399,6 +1403,34 @@ class LeadReportProvider extends ChangeNotifier {
       } else {
         expiryDate = '';
       }
+
+      String rawWcDate = (workCompletionDate != null &&
+              workCompletionDate.isNotEmpty &&
+              workCompletionDate != 'null')
+          ? workCompletionDate
+          : workCompletionDateController.text.isNotEmpty
+              ? workCompletionDateController.text
+              : installationDateController.text;
+      String? formattedWorkCompletionDate;
+      if (rawWcDate.isNotEmpty && rawWcDate != 'null') {
+        try {
+          DateTime parsedDate;
+          try {
+            parsedDate = DateFormat('dd MMM yyyy').parse(rawWcDate);
+          } catch (e) {
+            try {
+              parsedDate = DateTime.parse(rawWcDate);
+            } catch (e) {
+              parsedDate = DateFormat('yyyy-MM-dd').parse(rawWcDate);
+            }
+          }
+          formattedWorkCompletionDate =
+              DateFormat('yyyy-MM-dd').format(parsedDate);
+        } catch (e) {
+          debugPrint('Error parsing work completion date: $e');
+          formattedWorkCompletionDate = null;
+        }
+      }
       print('date$nextFollowUpDate');
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userName = preferences.getString('userName') ?? "";
@@ -1432,9 +1464,7 @@ class LeadReportProvider extends ChangeNotifier {
           ? settingsProvider.companyDetails[0].leadMobileExistedCheck
           : 0;
 
-      final response = await HttpRequest.httpPostRequest(
-          endPoint: HttpUrls.saveLead,
-          bodyData: {
+      final Map<String, dynamic> bodyData = {
             "Lead_Mobile_Existed_Check": leadMobileExistedCheck,
             "Lead_Mobile_Check": leadMobileExistedCheck,
             "lead": {
@@ -1519,6 +1549,7 @@ class LeadReportProvider extends ChangeNotifier {
               "CRE_Name": creName,
               "Lead_Type_Id": leadtypeId,
               "Lead_Type_Name": leadtypeName,
+              "work_completion_date": formattedWorkCompletionDate,
             },
             "followup": {
               "Next_FollowUp_date": nextFollowUpDate,
@@ -1537,7 +1568,13 @@ class LeadReportProvider extends ChangeNotifier {
               "Remark": remark,
               "amount": amount,
             }
-          });
+          };
+
+      debugPrint('SAVE LEAD PAYLOAD: ${jsonEncode(bodyData)}');
+      final response = await HttpRequest.httpPostRequest(
+        endPoint: HttpUrls.saveLead,
+        bodyData: bodyData,
+      );
 
       if (response!.statusCode == 200) {
         final data = response.data;

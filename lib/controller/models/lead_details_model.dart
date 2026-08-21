@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:vidyanexis/controller/models/search_leads_model.dart';
 
 class LeadDetails {
@@ -136,6 +137,18 @@ class LeadDetails {
   final String consumerContactNo;
   final int priorityId;
   final String subsidyAmount;
+  final String workCompletionDate;
+
+  String get workCompletionDateDisplay {
+    final trimmed = workCompletionDate.trim();
+    if (trimmed.isEmpty || trimmed == 'null') return '';
+    try {
+      final parsed = DateTime.parse(trimmed);
+      return DateFormat('dd MMM yyyy').format(parsed);
+    } catch (_) {
+      return trimmed;
+    }
+  }
 
   LeadDetails({
     required this.customerId,
@@ -261,6 +274,7 @@ class LeadDetails {
     required this.consumerContactNo,
     required this.priorityId,
     required this.subsidyAmount,
+    this.workCompletionDate = '',
   });
 
   factory LeadDetails.fromJson(Map<String, dynamic> json) {
@@ -422,6 +436,22 @@ class LeadDetails {
       consumerContactNo: parseString(json['Contact_No']),
       priorityId: parseInt(json['Priority_Id']),
       subsidyAmount: parseString(json['Subsidy_Amount']),
+      workCompletionDate: parseString(json['Work_Completion_Date'] ??
+          json['work_completion_date'] ??
+          json['Work_Completion_date'] ??
+          json['Work Completion Date'] ??
+          json['Completion_Date'] ??
+          json['Completion_date'] ??
+          json['Completion Date'] ??
+          json['Completed_Date'] ??
+          json['completed_date'] ??
+          json['Work_Completed_Date'] ??
+          json['workCompletionDate'] ??
+          json['completionDate'] ??
+          (json['lead'] is Map
+              ? (json['lead']['Work_Completion_Date'] ??
+                  json['lead']['work_completion_date'])
+              : null)),
     );
   }
 
@@ -545,6 +575,10 @@ class LeadDetails {
       'Firestation': firestationName,
       'Location_Id': locationId, // Added locationId
       'commission': commission,
+      'work_completion_date':
+          workCompletionDate.isNotEmpty ? workCompletionDate : null,
+      'Work_Completion_Date':
+          workCompletionDate.isNotEmpty ? workCompletionDate : null,
     };
   }
 
@@ -790,6 +824,7 @@ class LeadDetails {
       consumerContactNo: consumerContactNo ?? this.consumerContactNo,
       priorityId: priorityId ?? this.priorityId,
       subsidyAmount: subsidyAmount ?? this.subsidyAmount,
+      workCompletionDate: workCompletionDate ?? this.workCompletionDate,
     );
   }
 

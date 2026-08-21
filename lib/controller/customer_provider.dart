@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'dart:developer';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
@@ -257,9 +259,23 @@ class CustomerProvider extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         var data = response.data;
+        debugPrint('CUSTOMER API RESPONSE: ${jsonEncode(data)}');
         if (data != null && data is List) {
-          List<SearchLeadModel> allItems =
-              data.map((item) => SearchLeadModel.fromJson(item)).toList();
+          List<SearchLeadModel> allItems = data.map((item) {
+            final jsonMap = item is Map<String, dynamic>
+                ? item
+                : (item is Map
+                    ? Map<String, dynamic>.from(item)
+                    : <String, dynamic>{});
+            debugPrint(
+              'API Work_Completion_Date: ${jsonMap['Work_Completion_Date']}',
+            );
+            final customer = SearchLeadModel.fromJson(jsonMap);
+            debugPrint(
+              'MODEL workCompletionDate: ${customer.workCompletionDate}',
+            );
+            return customer;
+          }).toList();
 
           // Extract real data and metadata
           List<SearchLeadModel> newItems =
@@ -816,9 +832,23 @@ class CustomerProvider extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         var data = response.data;
+        debugPrint('CUSTOMER API RESPONSE: ${jsonEncode(data)}');
         if (data != null && data is List) {
-          List<SearchLeadModel> allItems =
-              data.map((item) => SearchLeadModel.fromJson(item)).toList();
+          List<SearchLeadModel> allItems = data.map((item) {
+            final jsonMap = item is Map<String, dynamic>
+                ? item
+                : (item is Map
+                    ? Map<String, dynamic>.from(item)
+                    : <String, dynamic>{});
+            debugPrint(
+              'API Work_Completion_Date: ${jsonMap['Work_Completion_Date']}',
+            );
+            final customer = SearchLeadModel.fromJson(jsonMap);
+            debugPrint(
+              'MODEL workCompletionDate: ${customer.workCompletionDate}',
+            );
+            return customer;
+          }).toList();
           _customerData = allItems.where((item) => item.tp == 1).toList();
 
           if (_selectedSortOption == 4) {
@@ -898,9 +928,23 @@ class CustomerProvider extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         var data = response.data;
+        debugPrint('CUSTOMER API RESPONSE: ${jsonEncode(data)}');
         if (data != null && data is List) {
-          List<SearchLeadModel> allItems =
-              data.map((item) => SearchLeadModel.fromJson(item)).toList();
+          List<SearchLeadModel> allItems = data.map((item) {
+            final jsonMap = item is Map<String, dynamic>
+                ? item
+                : (item is Map
+                    ? Map<String, dynamic>.from(item)
+                    : <String, dynamic>{});
+            debugPrint(
+              'API Work_Completion_Date: ${jsonMap['Work_Completion_Date']}',
+            );
+            final customer = SearchLeadModel.fromJson(jsonMap);
+            debugPrint(
+              'MODEL workCompletionDate: ${customer.workCompletionDate}',
+            );
+            return customer;
+          }).toList();
 
           _customerData = allItems.where((item) => item.tp == 1).toList();
 
