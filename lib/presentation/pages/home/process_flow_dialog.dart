@@ -485,18 +485,38 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                     _buildSectionHeader('SELECT TASKS'),
                                     const SizedBox(height: 8),
                                     ...reportsProvider.taskTypeModel
-                                        .map((task) {
+                                        .asMap()
+                                        .entries
+                                        .map((entry) {
+                                      int index = entry.key;
+                                      var task = entry.value;
                                       bool isSelected = reportsProvider
                                           .selectedTaskTypeIds
-                                          .contains(task.taskTypeId.toString());
+                                          .contains(task.uniqueId ?? task.taskTypeId.toString());
                                       return Column(
                                         children: [
                                           const SizedBox(height: 8),
                                           _buildInteractiveCard(
                                             onTap: () => reportsProvider
                                                 .toggleTaskTypeSelection(
-                                                    task.taskTypeId.toString()),
+                                                    task.uniqueId ?? task.taskTypeId.toString()),
                                             isSelected: isSelected,
+                                            trailingAction: settingsProvider.taskDuplicateButton == 1
+                                                ? GestureDetector(
+                                                    behavior: HitTestBehavior.opaque,
+                                                    onTap: () {
+                                                      reportsProvider.duplicateTask(index);
+                                                    },
+                                                    child: const Padding(
+                                                      padding: EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                                                      child: Icon(
+                                                        Icons.add_circle_outline,
+                                                        color: AppColors.primaryBlue,
+                                                        size: 22,
+                                                      ),
+                                                    ),
+                                                  )
+                                                : null,
                                             title: task.departmentName !=
                                                         null &&
                                                     task.departmentName!
@@ -572,7 +592,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                                 int? assignedUserId =
                                                     reportsProvider
                                                             .taskTypeToUserMap[
-                                                        task.taskTypeId
+                                                        task.uniqueId ?? task.taskTypeId
                                                             .toString()];
                                                 String defaultUserName = '';
 
@@ -595,7 +615,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                                 return CustomAutocompleteSearch<
                                                     SearchUserDetails>(
                                                   key: ValueKey(
-                                                      'user_search_${task.taskTypeId}'),
+                                                      'user_search_${task.uniqueId ?? task.taskTypeId}'),
                                                   showOptionsOnTap: true,
                                                   maxHeight: 300,
                                                   optionsViewOpenDirection:
@@ -620,7 +640,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                                                 .userDetailsId);
 
                                                     reportsProvider.setTaskUser(
-                                                      task.taskTypeId
+                                                      task.uniqueId ?? task.taskTypeId
                                                           .toString(),
                                                       selected.userDetailsId,
                                                     );
@@ -1299,6 +1319,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
     required bool isSelected,
     required String title,
     String? subtitle,
+    Widget? trailingAction,
   }) {
     return GestureDetector(
       onTap: onTap,
@@ -1344,25 +1365,34 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                       fontSize: 12, color: const Color(0xFF64748B)),
                 )
               : null,
-          trailing: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            width: 22,
-            height: 22,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: isSelected
-                  ? const Color(0xFF1A7AE8).withOpacity(0.6)
-                  : Colors.transparent,
-              border: Border.all(
-                color: isSelected
-                    ? const Color(0xFF1A7AE8).withOpacity(0.4)
-                    : const Color(0xFFCBD5E1),
-                width: 1.2,
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (trailingAction != null) ...[
+                trailingAction,
+                const SizedBox(width: 8),
+              ],
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                width: 22,
+                height: 22,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: isSelected
+                      ? const Color(0xFF1A7AE8).withOpacity(0.6)
+                      : Colors.transparent,
+                  border: Border.all(
+                    color: isSelected
+                        ? const Color(0xFF1A7AE8).withOpacity(0.4)
+                        : const Color(0xFFCBD5E1),
+                    width: 1.2,
+                  ),
+                ),
+                child: isSelected
+                    ? const Icon(Icons.check, size: 14, color: Colors.white)
+                    : null,
               ),
-            ),
-            child: isSelected
-                ? const Icon(Icons.check, size: 14, color: Colors.white)
-                : null,
+            ],
           ),
         ),
       ),
