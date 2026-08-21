@@ -1043,6 +1043,11 @@ class CustomerDetailsProvider extends ChangeNotifier {
         },
       );
 
+      final settingsProvider = SettingsProvider();
+      if (settingsProvider.quotationItem == 1) {
+        recalculateCompanyQuotationItem();
+      }
+
       print('Updated billTotalAmount: $billTotalAmount');
       print(_billOfMaterialsItems.map((item) => item.toJson()).toList());
     } catch (e) {
@@ -1087,6 +1092,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     } else {
       finalTotal = bomTotal + profitValue;
     }
+    _mutipleItemsTotalAmount = finalTotal;
     final String itemName = _selectedItemName.isNotEmpty ? _selectedItemName : 'Item';
 
     // 3. Inject exactly one auto-item depending on quotation type
@@ -1127,6 +1133,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
       _commercialItems = [autoItem];
       totalController.text = finalTotal.toStringAsFixed(2);
     }
+    notifyListeners();
   }
   //
 
