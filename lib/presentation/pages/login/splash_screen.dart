@@ -8,6 +8,7 @@ import 'package:vidyanexis/controller/company_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/main.dart';
 import 'package:vidyanexis/presentation/pages/home/homepage.dart';
+import 'package:vidyanexis/controller/location_tracking_provider.dart';
 import 'package:vidyanexis/presentation/pages/login/company_code_page.dart';
 import 'package:vidyanexis/presentation/pages/login/login_page.dart';
 
@@ -57,6 +58,13 @@ class _SplashScreenState extends State<SplashScreen> {
     print('[PERF-BOOT] route resolution started');
     if (isLoggedIn) {
       if (mounted) {
+        try {
+          final locationProvider =
+              Provider.of<LocationTrackingProvider>(context, listen: false);
+          locationProvider.startTracking(context);
+        } catch (e) {
+          print('Auto-login location tracking note: $e');
+        }
         context.go(HomePage.route);
         print('[PERF-BOOT] route resolution completed: ${DateTime.now().millisecondsSinceEpoch - startTime} ms');
       }

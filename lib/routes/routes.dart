@@ -23,6 +23,7 @@ import 'package:vidyanexis/presentation/pages/reports/stock_use_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/stock_return_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/ta_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/travel_allowance/travel_allowance_page.dart';
+import 'package:vidyanexis/presentation/pages/location/location_tracking_page.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 
 final GoRouter appRouter = GoRouter(
@@ -89,6 +90,12 @@ final GoRouter appRouter = GoRouter(
       path: BulkImportScreen.route,
       pageBuilder: (context, state) {
         return fadeTransition(const BulkImportScreen());
+      },
+    ),
+    GoRoute(
+      path: LocationTrackingPage.route,
+      pageBuilder: (context, state) {
+        return fadeTransition(const LocationTrackingPage());
       },
     ),
     GoRoute(

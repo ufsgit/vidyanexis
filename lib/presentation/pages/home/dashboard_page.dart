@@ -31,6 +31,8 @@ import 'package:vidyanexis/presentation/pages/dashboard/customer_outstanding_sum
 import 'package:vidyanexis/presentation/pages/dashboard/user_activity_tab.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/attendance_dashboard_tab.dart';
 import 'package:vidyanexis/presentation/pages/travel_allowance/travel_allowance_page.dart';
+import 'package:vidyanexis/controller/location_tracking_provider.dart';
+import 'package:vidyanexis/presentation/pages/location/location_tracking_page.dart';
 
 class DashBoardPage extends StatefulWidget {
   const DashBoardPage({super.key});
@@ -58,7 +60,8 @@ class _DashBoardPageState extends State<DashBoardPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final dashInitStart = DateTime.now().millisecondsSinceEpoch;
       print('[PERF-BOOT] Dashboard shell visible');
-      print('[PERF-RELOAD] Dashboard Page initState postFrameCallback started at ${DateTime.now().toIso8601String()}');
+      print(
+          '[PERF-RELOAD] Dashboard Page initState postFrameCallback started at ${DateTime.now().toIso8601String()}');
 
       // Safe to call notifyListeners here — first frame is already committed
       final dashBoardProvider =
@@ -92,8 +95,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
         if ((settingsProvider.menuIsViewMap[152]).toString() == '1') 7,
         if (userType == "1") 8,
         if (userType == "1") 9,
-        if (settingsProvider.hasTravelAllowancePermission)
-          10,
+        if (settingsProvider.hasTravelAllowancePermission) 10,
       ];
 
       if (allowedTabs.isNotEmpty) {
@@ -103,14 +105,16 @@ class _DashBoardPageState extends State<DashBoardPage> {
         final apiStart = DateTime.now().millisecondsSinceEpoch;
         print('[PERF-DATA] dashboard API started');
         await dashBoardProvider.loadDataForTab(activeTab, context);
-        print('[PERF-DATA] dashboard API completed: ${DateTime.now().millisecondsSinceEpoch - apiStart} ms');
+        print(
+            '[PERF-DATA] dashboard API completed: ${DateTime.now().millisecondsSinceEpoch - apiStart} ms');
       }
 
       // Immediately display dashboard shell & card data
       if (mounted) {
         setState(() {});
         print('[PERF-DATA] dashboard data rendered');
-        print('[PERF-RELOAD] Dashboard UI updated / fully usable: ${DateTime.now().millisecondsSinceEpoch - dashInitStart} ms');
+        print(
+            '[PERF-RELOAD] Dashboard UI updated / fully usable: ${DateTime.now().millisecondsSinceEpoch - dashInitStart} ms');
       }
 
       // 2. Priority 2: Non-critical background requests (Dropdowns & Attendance)
@@ -151,8 +155,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
       if ((settingsProvider.menuIsViewMap[152]).toString() == '1') 7,
       if (userType == "1") 8,
       if (userType == "1") 9,
-      if (settingsProvider.hasTravelAllowancePermission)
-        10,
+      if (settingsProvider.hasTravelAllowancePermission) 10,
     ];
 
     Widget dateFilterBtn = Material(
@@ -341,6 +344,135 @@ class _DashBoardPageState extends State<DashBoardPage> {
       ),
     );
 
+    Widget trackingStatusBtn = Consumer<LocationTrackingProvider>(
+      builder: (context, trackingProvider, _) {
+        final isWeb = AppStyles.isWebScreen(context);
+        final btnHeight = isWeb ? 38.0 : 74.0;
+        final isTracking = trackingProvider.isTracking;
+        final pending = trackingProvider.pendingLocationCount;
+        final isSyncing = trackingProvider.isSyncing;
+        final isOnline = trackingProvider.isOnline;
+
+        Color dotColor;
+        String statusLabel;
+        if (isTracking) {
+          dotColor = isSyncing
+              ? AppColors.secondaryBlue
+              : (!isOnline ? Colors.orange : const Color(0xFF16A34A));
+          statusLabel =
+              isSyncing ? 'Syncing' : (!isOnline ? 'Offline' : 'Tracking');
+        } else {
+          dotColor = Colors.grey.shade400;
+          statusLabel = 'GPS Off';
+        }
+
+        return Container(
+          height: btnHeight,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(4),
+            border: Border.all(
+              color: isTracking
+                  ? AppColors.techityfyGrey.withValues(alpha: 0.3)
+                  : Colors.grey.shade300,
+              width: 1,
+            ),
+            color: Colors.white,
+          ),
+          child: InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const LocationTrackingPage()),
+              );
+            },
+            borderRadius: BorderRadius.circular(4),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: isWeb ? 12 : 8),
+              child: isWeb
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color: dotColor,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          'Duty GPS ($statusLabel)',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.textBlack,
+                          ),
+                        ),
+                        if (pending > 0) ...[
+                          const SizedBox(width: 4),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 5, vertical: 1),
+                            decoration: BoxDecoration(
+                              color: Colors.red.shade100,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              '$pending',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.red.shade800,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
+                    )
+                  : Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              width: 8,
+                              height: 8,
+                              decoration: BoxDecoration(
+                                color: dotColor,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            Icon(
+                              Icons.my_location_rounded,
+                              size: 16,
+                              color: isTracking
+                                  ? AppColors.techityfyGrey
+                                  : Colors.grey.shade500,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          statusLabel,
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w700,
+                            color: isTracking
+                                ? AppColors.techityfyGrey
+                                : AppColors.textGrey3,
+                          ),
+                        ),
+                      ],
+                    ),
+            ),
+          ),
+        );
+      },
+    );
+
     return Scaffold(
       drawer: AppStyles.isWebScreen(context) ? null : const SidebarDrawer(),
       appBar: !AppStyles.isWebScreen(context)
@@ -395,6 +527,8 @@ class _DashBoardPageState extends State<DashBoardPage> {
                         Expanded(flex: 2, child: staffFilterBtn),
                         const SizedBox(width: 12),
                         attendanceBtn,
+                        const SizedBox(width: 12),
+                        trackingStatusBtn,
                       ],
                     )
                   : Column(
@@ -418,6 +552,8 @@ class _DashBoardPageState extends State<DashBoardPage> {
                             ),
                             const SizedBox(width: 8),
                             attendanceBtn,
+                            const SizedBox(width: 8),
+                            trackingStatusBtn,
                           ],
                         ),
                       ],
@@ -620,7 +756,8 @@ class _DashBoardPageState extends State<DashBoardPage> {
                       child: TextButton(
                         onPressed: () {
                           Navigator.pop(context);
-                          print('[PERF-RELOAD] Date filter changed (apply clicked)');
+                          print(
+                              '[PERF-RELOAD] Date filter changed (apply clicked)');
                           dashBoardProvider.formatDate();
                           dashBoardProvider.loadDataForTab(activeTab, context);
                         },

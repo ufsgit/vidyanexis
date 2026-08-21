@@ -23,6 +23,7 @@ import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/presentation/pages/home/process_flow_page.dart';
 import 'package:vidyanexis/presentation/pages/inventory/expense_management.dart';
 import 'package:vidyanexis/presentation/pages/inventory/inventory_page.dart';
+import 'package:vidyanexis/presentation/pages/location/location_tracking_page.dart';
 import 'package:vidyanexis/presentation/pages/login/login_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/complaint_page_reports_mobile.dart';
 import 'package:vidyanexis/presentation/pages/reports/enquiry_source_summary_report_screen.dart';
@@ -296,6 +297,15 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
                     reportItems: reportItems,
                     sideProvider: sideProvider,
                   ),
+                _buildModernMenuItem(
+                  context: context,
+                  title: 'Location Tracking',
+                  iconData: Icons.my_location_rounded,
+                  page: const LocationTrackingPage(),
+                  sideProvider: sideProvider,
+                  activeColor: const Color(0xFF005A45),
+                  lightColor: const Color(0xFFE0F2F1),
+                ),
                 if (settingsProvider.menuIsViewMap[2].toString() == '1')
                   _buildModernMenuItem(
                     context: context,
@@ -425,7 +435,8 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
   Widget _buildModernMenuItem({
     required BuildContext context,
     required String title,
-    required String iconPath,
+    String? iconPath,
+    IconData? iconData,
     required Widget page,
     required SidebarProvider sideProvider,
     required Color activeColor,
@@ -454,12 +465,19 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
                     color: lightColor,
                     borderRadius: BorderRadius.circular(4),
                   ),
-                  child: SvgPicture.asset(
-                    iconPath,
-                    width: 18,
-                    height: 18,
-                    colorFilter: ColorFilter.mode(activeColor, BlendMode.srcIn),
-                  ),
+                  child: iconPath != null
+                      ? SvgPicture.asset(
+                          iconPath,
+                          width: 18,
+                          height: 18,
+                          colorFilter:
+                              ColorFilter.mode(activeColor, BlendMode.srcIn),
+                        )
+                      : Icon(
+                          iconData ?? Icons.circle,
+                          size: 18,
+                          color: activeColor,
+                        ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(

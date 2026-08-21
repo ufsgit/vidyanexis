@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -9,7 +10,8 @@ import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/http/loader.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/presentation/pages/home/homepage.dart';
-import 'package:vidyanexis/presentation/pages/login/login_page.dart';
+import 'package:vidyanexis/controller/location_tracking_provider.dart';
+import 'package:vidyanexis/helpers/location_tracking_service.dart';
 import 'package:vidyanexis/utils/util_functions.dart';
 
 class LoginController extends ChangeNotifier {
@@ -82,6 +84,18 @@ class LoginController extends ChangeNotifier {
           preferences.setBool('IsLoggedIn', loggedIn);
           final provider = Provider.of<SidebarProvider>(context, listen: false);
           provider.setMenuId(0, 0);
+
+          // Initiate location tracking for the newly authenticated employee session
+          try {
+            final locationProvider =
+                Provider.of<LocationTrackingProvider>(context, listen: false);
+            locationProvider.startTracking(context);
+          } catch (e) {
+            if (kDebugMode) {
+              print('Location tracking auto-start note on login: $e');
+            }
+          }
+
           context.go(HomePage.route);
           log('Login Success');
         } else {
@@ -108,13 +122,14 @@ class LoginController extends ChangeNotifier {
     }
   }
 
-  Future<void> logout(
-      {required int userId}) async {
-    // try {
-    //   final response = await HttpRequest.httpPostRequest(
-    //       endPoint: HttpUrls.logout, bodyData: {"User_Details_Id": userId});
-    // } catch (e) {
-    //   print('Exception occurred: $e');
-    // }
+  Future<void> logout({required int userId}) async {
+    try {
+      final locationService = LocationTrackingService();
+      await locationService.stopTracking();
+    } catch (e) {
+      if (kDebugMode) {
+        print('Exception stopping location tracking during logout: $e');
+      }
+    }
   }
 }
