@@ -245,10 +245,14 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
                       searchController.text,
                       customerProvider.fromDateS,
                       customerProvider.toDateS,
+                      amcFromDate: customerProvider.amcFromDateS,
+                      amcToDate: customerProvider.amcToDateS,
+                      wcFromDate: customerProvider.wcFromDateS,
+                      wcToDate: customerProvider.wcToDateS,
                     );
                     searchProvider.stopSearch();
                     customerProvider.getSearchCustomers(context);
-                    customerProvider.toggleFilter();
+                    customerProvider.setFilter(false);
                   },
                   backgroundColor: AppColors.darkGreen,
                   label: const CustomText(
@@ -322,6 +326,12 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
                                   decoration: BoxDecoration(
                                     color: AppColors.scaffoldColor,
                                     borderRadius: BorderRadius.circular(4),
+                                    border: Border.all(
+                                      color: customerProvider.fromDate != null ||
+                                              customerProvider.toDate != null
+                                          ? AppColors.primaryBlue
+                                          : Colors.transparent,
+                                    ),
                                   ),
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(
@@ -338,8 +348,110 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
                                                           null &&
                                                       customerProvider.toDate ==
                                                           null
-                                                  ? 'Date'
-                                                  : 'Date : ${customerProvider.formattedFromDate.toString().toDayMonthYearFormat()} - ${customerProvider.formattedToDate.toString().toDayMonthYearFormat()}',
+                                                  ? 'Follow Up Date'
+                                                  : 'Follow Up : ${customerProvider.formattedFromDate.toString().toDayMonthYearFormat()} - ${customerProvider.formattedToDate.toString().toDayMonthYearFormat()}',
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                              color: AppColors.textBlack,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Icon(
+                                          Icons.keyboard_arrow_down,
+                                          color: AppColors.textGrey3,
+                                          size: 18,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  onClickAmcTopButton(context);
+                                },
+                                child: Container(
+                                  height: 32,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.scaffoldColor,
+                                    borderRadius: BorderRadius.circular(4),
+                                    border: Border.all(
+                                      color: customerProvider.amcFromDate != null ||
+                                              customerProvider.amcToDate != null
+                                          ? AppColors.primaryBlue
+                                          : Colors.transparent,
+                                    ),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 12),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Flexible(
+                                          child: ConstrainedBox(
+                                            constraints: const BoxConstraints(
+                                                maxWidth: 200),
+                                            child: CustomText(
+                                              customerProvider.amcFromDate ==
+                                                          null &&
+                                                      customerProvider.amcToDate ==
+                                                          null
+                                                  ? 'AMC Date'
+                                                  : 'AMC : ${customerProvider.formattedAmcFromDate.toString().toDayMonthYearFormat()} - ${customerProvider.formattedAmcToDate.toString().toDayMonthYearFormat()}',
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                              color: AppColors.textBlack,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Icon(
+                                          Icons.keyboard_arrow_down,
+                                          color: AppColors.textGrey3,
+                                          size: 18,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  onClickWcTopButton(context);
+                                },
+                                child: Container(
+                                  height: 32,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.scaffoldColor,
+                                    borderRadius: BorderRadius.circular(4),
+                                    border: Border.all(
+                                      color: customerProvider.wcFromDate != null ||
+                                              customerProvider.wcToDate != null
+                                          ? AppColors.primaryBlue
+                                          : Colors.transparent,
+                                    ),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 12),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Flexible(
+                                          child: ConstrainedBox(
+                                            constraints: const BoxConstraints(
+                                                maxWidth: 200),
+                                            child: CustomText(
+                                              customerProvider.wcFromDate ==
+                                                          null &&
+                                                      customerProvider.wcToDate ==
+                                                          null
+                                                  ? 'Work Completion Date'
+                                                  : 'Work Completion : ${customerProvider.formattedWcFromDate.toString().toDayMonthYearFormat()} - ${customerProvider.formattedWcToDate.toString().toDayMonthYearFormat()}',
                                               fontSize: 14,
                                               fontWeight: FontWeight.w500,
                                               color: AppColors.textBlack,
@@ -363,6 +475,10 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
                           const SizedBox(height: 24),
                           if (customerProvider.fromDate != null ||
                               customerProvider.toDate != null ||
+                              customerProvider.amcFromDate != null ||
+                              customerProvider.amcToDate != null ||
+                              customerProvider.wcFromDate != null ||
+                              customerProvider.wcToDate != null ||
                               !customerProvider.selectedStatusIds
                                   .every((id) => id == 0) ||
                               customerProvider.search.isNotEmpty)
@@ -449,21 +565,20 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
                                         customerProvider.toggleExpansion(index);
                                         if (customerProvider.expandedIndex ==
                                             index) {
-                                          Provider.of<LeadCheckInProvider>(
-                                                  context,
-                                                  listen: false)
-                                              .fetchLeadCheckInReports(
-                                                  context,
-                                                  customer.customerId
-                                                      .toString());
+                                          customerProvider.setCutomerId(
+                                              customer.customerId);
                                         }
+                                      },
+                                      onSaved: () {
+                                        customerProvider
+                                            .getSearchCustomers(context);
                                       },
                                     ),
                                   ],
                                 );
                               },
-                              childCount:
-                                  customerProvider.customerData.length + 1,
+                              childCount: customerProvider.customerData.length +
+                                  (customerProvider.hasMoreData ? 1 : 0),
                             ),
                           ),
                         ],
@@ -480,7 +595,7 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
       barrierDismissible: false,
       context: context,
       builder: (contextx) => Consumer<CustomerProvider>(
-        builder: (contextx, leadProvider, child) {
+        builder: (contextx, customerProvider, child) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(4),
@@ -495,7 +610,7 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
                   children: [
                     const Center(
                       child: Text(
-                        'Choose Date',
+                        'Choose Follow Up Date',
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.w700),
                       ),
@@ -509,19 +624,19 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
                         String title = dateButtonTitles[index];
                         return ActionChip(
                           onPressed: () {
-                            leadProvider.setDateFilter(title);
-                            leadProvider.selectDateFilterOption(index);
+                            customerProvider.setDateFilter(title);
+                            customerProvider.selectDateFilterOption(index);
                           },
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(4),
                           ),
                           label: Text(title),
                           backgroundColor:
-                              leadProvider.selectedDateFilterIndex == index
+                              customerProvider.selectedDateFilterIndex == index
                                   ? AppColors.primaryBlue
                                   : Colors.white,
                           labelStyle: TextStyle(
-                            color: leadProvider.selectedDateFilterIndex == index
+                            color: customerProvider.selectedDateFilterIndex == index
                                 ? Colors.white
                                 : Colors.black,
                           ),
@@ -540,13 +655,13 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
                         Expanded(
                           child: TextField(
                             readOnly: true,
-                            onTap: () => leadProvider.selectDate(context, true),
+                            onTap: () => customerProvider.selectDate(context, true),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(4),
                               ),
-                              hintText: leadProvider.fromDate != null
-                                  ? '${leadProvider.fromDate!.toLocal()}'
+                              hintText: customerProvider.fromDate != null
+                                  ? '${customerProvider.fromDate!.toLocal()}'
                                       .split(' ')[0]
                                   : 'From',
                               suffixIcon: const Icon(Icons.calendar_month),
@@ -558,13 +673,13 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
                           child: TextField(
                             readOnly: true,
                             onTap: () =>
-                                leadProvider.selectDate(context, false),
+                                customerProvider.selectDate(context, false),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(4),
                               ),
-                              hintText: leadProvider.toDate != null
-                                  ? '${leadProvider.toDate!.toLocal()}'
+                              hintText: customerProvider.toDate != null
+                                  ? '${customerProvider.toDate!.toLocal()}'
                                       .split(' ')[0]
                                   : 'To',
                               suffixIcon: const Icon(Icons.calendar_month),
@@ -580,25 +695,7 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
                       child: TextButton(
                         onPressed: () {
                           Navigator.pop(context);
-
-                          leadProvider.formatDate();
-
-                          print(leadProvider.formattedFromDate);
-                          print(leadProvider.formattedToDate);
-                          String status =
-                              leadProvider.selectedStatus.toString();
-                          String fromDate = leadProvider.formattedFromDate;
-                          String toDate = leadProvider.formattedToDate;
-                          // String enquiryFor =
-                          //     leadProvider.selectedEnquiryFor.toString();
-                          print(
-                              'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate');
-                          leadProvider.setSearchCriteria(
-                            searchController.text,
-                            fromDate,
-                            toDate,
-                          );
-                          leadProvider.getSearchCustomers(context);
+                          customerProvider.formatDate();
                         },
                         style: ElevatedButton.styleFrom(
                           shape: RoundedRectangleBorder(
@@ -622,21 +719,319 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
                       child: TextButton(
                         onPressed: () {
                           Navigator.pop(context);
-                          leadProvider.selectDateFilterOption(null);
-                          String status =
-                              leadProvider.selectedStatus.toString();
-                          String fromDate = '';
-                          String toDate = '';
-                          // String enquiryFor =
-                          //     leadProvider.selectedEnquiryFor.toString();
-                          print(
-                              'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate');
-                          leadProvider.setSearchCriteria(
-                            searchController.text,
-                            fromDate,
-                            toDate,
-                          );
-                          leadProvider.getSearchCustomers(context);
+                          customerProvider.selectDateFilterOption(null);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4)),
+                          backgroundColor: AppColors.textRed.withOpacity(0.1),
+                          foregroundColor: AppColors.textRed,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                        ),
+                        child: const Text(
+                          'Clear',
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  void onClickAmcTopButton(BuildContext context) {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (contextx) => Consumer<CustomerProvider>(
+        builder: (contextx, customerProvider, child) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(4),
+            ),
+            contentPadding: const EdgeInsets.all(10),
+            content: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Center(
+                      child: Text(
+                        'Choose AMC Date',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                    const SizedBox(height: 15),
+                    Wrap(
+                      spacing: 12,
+                      runSpacing: 12,
+                      children: List<Widget>.generate(dateButtonTitles.length,
+                          (index) {
+                        String title = dateButtonTitles[index];
+                        return ActionChip(
+                          onPressed: () {
+                            customerProvider.setAmcDateFilter(title);
+                            customerProvider.selectAmcDateFilterOption(index);
+                          },
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          label: Text(title),
+                          backgroundColor:
+                              customerProvider.selectedAmcDateFilterIndex == index
+                                  ? AppColors.primaryBlue
+                                  : Colors.white,
+                          labelStyle: TextStyle(
+                            color: customerProvider.selectedAmcDateFilterIndex == index
+                                ? Colors.white
+                                : Colors.black,
+                          ),
+                        );
+                      }),
+                    ),
+                    const SizedBox(height: 15),
+                    const Text(
+                      'Pick a date',
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                    ),
+                    const SizedBox(height: 15),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            readOnly: true,
+                            onTap: () => customerProvider.selectAmcDate(context, true),
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              hintText: customerProvider.amcFromDate != null
+                                  ? '${customerProvider.amcFromDate!.toLocal()}'
+                                      .split(' ')[0]
+                                  : 'From',
+                              suffixIcon: const Icon(Icons.calendar_month),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: TextField(
+                            readOnly: true,
+                            onTap: () =>
+                                customerProvider.selectAmcDate(context, false),
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              hintText: customerProvider.amcToDate != null
+                                  ? '${customerProvider.amcToDate!.toLocal()}'
+                                      .split(' ')[0]
+                                  : 'To',
+                              suffixIcon: const Icon(Icons.calendar_month),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 15),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 40,
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          customerProvider.formatAmcDate();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4)),
+                          backgroundColor: AppColors.primaryBlue,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                        ),
+                        child: const Text(
+                          'Apply',
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 15),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 40,
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          customerProvider.selectAmcDateFilterOption(null);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4)),
+                          backgroundColor: AppColors.textRed.withOpacity(0.1),
+                          foregroundColor: AppColors.textRed,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                        ),
+                        child: const Text(
+                          'Clear',
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  void onClickWcTopButton(BuildContext context) {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (contextx) => Consumer<CustomerProvider>(
+        builder: (contextx, customerProvider, child) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(4),
+            ),
+            contentPadding: const EdgeInsets.all(10),
+            content: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Center(
+                      child: Text(
+                        'Choose Work Completion Date',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                    const SizedBox(height: 15),
+                    Wrap(
+                      spacing: 12,
+                      runSpacing: 12,
+                      children: List<Widget>.generate(dateButtonTitles.length,
+                          (index) {
+                        String title = dateButtonTitles[index];
+                        return ActionChip(
+                          onPressed: () {
+                            customerProvider.setWcDateFilter(title);
+                            customerProvider.selectWcDateFilterOption(index);
+                          },
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          label: Text(title),
+                          backgroundColor:
+                              customerProvider.selectedWcDateFilterIndex == index
+                                  ? AppColors.primaryBlue
+                                  : Colors.white,
+                          labelStyle: TextStyle(
+                            color: customerProvider.selectedWcDateFilterIndex == index
+                                ? Colors.white
+                                : Colors.black,
+                          ),
+                        );
+                      }),
+                    ),
+                    const SizedBox(height: 15),
+                    const Text(
+                      'Pick a date',
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                    ),
+                    const SizedBox(height: 15),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            readOnly: true,
+                            onTap: () => customerProvider.selectWcDate(context, true),
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              hintText: customerProvider.wcFromDate != null
+                                  ? '${customerProvider.wcFromDate!.toLocal()}'
+                                      .split(' ')[0]
+                                  : 'From',
+                              suffixIcon: const Icon(Icons.calendar_month),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: TextField(
+                            readOnly: true,
+                            onTap: () =>
+                                customerProvider.selectWcDate(context, false),
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              hintText: customerProvider.wcToDate != null
+                                  ? '${customerProvider.wcToDate!.toLocal()}'
+                                      .split(' ')[0]
+                                  : 'To',
+                              suffixIcon: const Icon(Icons.calendar_month),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 15),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 40,
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          customerProvider.formatWcDate();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4)),
+                          backgroundColor: AppColors.primaryBlue,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                        ),
+                        child: const Text(
+                          'Apply',
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 15),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 40,
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          customerProvider.selectWcDateFilterOption(null);
                         },
                         style: ElevatedButton.styleFrom(
                           shape: RoundedRectangleBorder(

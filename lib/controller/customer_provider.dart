@@ -21,6 +21,19 @@ class CustomerProvider extends ChangeNotifier {
   String _formattedFromDate = '';
   String _formattedToDate = '';
   int? _selectedDateFilterIndex;
+
+  DateTime? _amcFromDate;
+  DateTime? _amcToDate;
+  String _formattedAmcFromDate = '';
+  String _formattedAmcToDate = '';
+  int? _selectedAmcDateFilterIndex;
+
+  DateTime? _wcFromDate;
+  DateTime? _wcToDate;
+  String _formattedWcFromDate = '';
+  String _formattedWcToDate = '';
+  int? _selectedWcDateFilterIndex;
+
   int? _selectedUser;
   int? _selectedEnquiryFor;
   int? _selectedEnquirySource;
@@ -60,6 +73,19 @@ class CustomerProvider extends ChangeNotifier {
   DateTime? get fromDate => _fromDate;
   DateTime? get toDate => _toDate;
   int? get selectedDateFilterIndex => _selectedDateFilterIndex;
+
+  DateTime? get amcFromDate => _amcFromDate;
+  DateTime? get amcToDate => _amcToDate;
+  String get formattedAmcFromDate => _formattedAmcFromDate;
+  String get formattedAmcToDate => _formattedAmcToDate;
+  int? get selectedAmcDateFilterIndex => _selectedAmcDateFilterIndex;
+
+  DateTime? get wcFromDate => _wcFromDate;
+  DateTime? get wcToDate => _wcToDate;
+  String get formattedWcFromDate => _formattedWcFromDate;
+  String get formattedWcToDate => _formattedWcToDate;
+  int? get selectedWcDateFilterIndex => _selectedWcDateFilterIndex;
+
   List<int> get selectedStatusIds => _selectedStatusIds;
   int? get selectedStatus => _selectedStatus;
   bool get isFilter => _isFilter;
@@ -68,11 +94,19 @@ class CustomerProvider extends ChangeNotifier {
   String _search = '';
   String _fromDateS = '';
   String _toDateS = '';
+  String _amcFromDateS = '';
+  String _amcToDateS = '';
+  String _wcFromDateS = '';
+  String _wcToDateS = '';
   String _status = '';
 
   String get search => _search;
   String get fromDateS => _fromDateS;
   String get toDateS => _toDateS;
+  String get amcFromDateS => _amcFromDateS;
+  String get amcToDateS => _amcToDateS;
+  String get wcFromDateS => _wcFromDateS;
+  String get wcToDateS => _wcToDateS;
   String get status => _status;
 
   String _entryType = 'myown';
@@ -201,10 +235,15 @@ class CustomerProvider extends ChangeNotifier {
 
       String isDate =
           (_fromDateS.isNotEmpty || _toDateS.isNotEmpty) ? "1" : "0";
+      String isAmcDate =
+          (_amcFromDateS.isNotEmpty || _amcToDateS.isNotEmpty) ? "1" : "0";
+      String isWcDate =
+          (_wcFromDateS.isNotEmpty || _wcToDateS.isNotEmpty) ? "1" : "0";
 
       String toUserId = _selectedUserIds.join(',');
       String enquiryForId = _selectedEnquiryForIds.join(',');
       String enquirySourceId = _selectedEnquirySourceIds.join(',');
+      String branchIds = _selectedBranchIds.join(',');
 
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userIdPref = preferences.getString('userId') ?? "0";
@@ -214,7 +253,7 @@ class CustomerProvider extends ChangeNotifier {
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchCustomer}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$enquiryForId&Enquiry_Source_Id_=$enquirySourceId&User_Details_Id_=$loginUserId&Lead_Id_=0&Order_By_=$apiSortOption&Order_Type_=$_sortOrder&Entry_Type_=$_entryType');
+              '${HttpUrls.searchCustomer}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&Is_AMC_Date_=$isAmcDate&AMC_Fromdate_=$_amcFromDateS&AMC_Todate_=$_amcToDateS&Is_Work_Completion_Date_=$isWcDate&Work_Completion_Fromdate_=$_wcFromDateS&Work_Completion_Todate_=$_wcToDateS&To_User_Id_=$toUserId&Login_User_Id_=$loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$enquiryForId&Enquiry_Source_Id_=$enquirySourceId&Branch_Id_=$branchIds&User_Details_Id_=$loginUserId&Lead_Id_=0&Order_By_=$apiSortOption&Order_Type_=$_sortOrder&Entry_Type_=$_entryType');
 
       if (response.statusCode == 200) {
         var data = response.data;
@@ -272,11 +311,19 @@ class CustomerProvider extends ChangeNotifier {
     }
   }
 
-  void setSearchCriteria(String search, String fromDate, String toDate) {
+  void setSearchCriteria(String search, String fromDate, String toDate,
+      {String? amcFromDate,
+      String? amcToDate,
+      String? wcFromDate,
+      String? wcToDate}) {
     _customerData.clear();
     _search = search;
     _fromDateS = fromDate;
     _toDateS = toDate;
+    if (amcFromDate != null) _amcFromDateS = amcFromDate;
+    if (amcToDate != null) _amcToDateS = amcToDate;
+    if (wcFromDate != null) _wcFromDateS = wcFromDate;
+    if (wcToDate != null) _wcToDateS = wcToDate;
     _status = _selectedStatusIds.join(',');
     _startLimit = 1;
     _endLimit = 20;
@@ -288,6 +335,8 @@ class CustomerProvider extends ChangeNotifier {
   void toggleFilter() {
     _isFilter = !_isFilter;
     selectDateFilterOption(null);
+    selectAmcDateFilterOption(null);
+    selectWcDateFilterOption(null);
     _selectedStatusIds = [0];
     _selectedStatus = 0;
     _selectedUser = null;
@@ -323,10 +372,24 @@ class CustomerProvider extends ChangeNotifier {
     _formattedToDate = '';
     _fromDateS = '';
     _toDateS = '';
+    _selectedDateFilterIndex = null;
+    _amcFromDate = null;
+    _amcToDate = null;
+    _formattedAmcFromDate = '';
+    _formattedAmcToDate = '';
+    _amcFromDateS = '';
+    _amcToDateS = '';
+    _selectedAmcDateFilterIndex = null;
+    _wcFromDate = null;
+    _wcToDate = null;
+    _formattedWcFromDate = '';
+    _formattedWcToDate = '';
+    _wcFromDateS = '';
+    _wcToDateS = '';
+    _selectedWcDateFilterIndex = null;
     _search = '';
     _status = '0';
     _entryType = 'myown';
-    _selectedDateFilterIndex = null;
     _isFilter = false;
     notifyListeners();
   }
@@ -420,6 +483,8 @@ class CustomerProvider extends ChangeNotifier {
       _toDate = null;
       _formattedFromDate = '';
       _formattedToDate = '';
+      _fromDateS = '';
+      _toDateS = '';
     } else {
       _selectedDateFilterIndex = index; // Set the new selected filter index
       formatDate();
@@ -494,6 +559,206 @@ class CustomerProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  // --- AMC Date Filter Methods ---
+  void selectAmcDateFilterOption(int? index) {
+    if (index == null) {
+      _selectedAmcDateFilterIndex = null;
+      _amcFromDate = null;
+      _amcToDate = null;
+      _formattedAmcFromDate = '';
+      _formattedAmcToDate = '';
+      _amcFromDateS = '';
+      _amcToDateS = '';
+    } else {
+      _selectedAmcDateFilterIndex = index;
+      formatAmcDate();
+    }
+    notifyListeners();
+  }
+
+  void setAmcDateFilter(String title) {
+    final now = DateTime.now();
+
+    switch (title) {
+      case 'Yesterday':
+        _amcFromDate = now.subtract(const Duration(days: 1));
+        _amcToDate = now.subtract(const Duration(days: 1));
+        break;
+      case 'Today':
+        _amcFromDate = now;
+        _amcToDate = now;
+        break;
+      case 'Tomorrow':
+        _amcFromDate = now.add(const Duration(days: 1));
+        _amcToDate = now.add(const Duration(days: 1));
+        break;
+      case 'This Week':
+        _amcFromDate = now.subtract(Duration(days: now.weekday - 1));
+        _amcToDate = now.add(Duration(days: 7 - now.weekday));
+        break;
+      case 'This Month':
+        _amcFromDate = DateTime(now.year, now.month, 1);
+        _amcToDate = DateTime(now.year, now.month + 1, 0);
+        break;
+      default:
+        _amcFromDate = null;
+        _amcToDate = null;
+        break;
+    }
+
+    notifyListeners();
+  }
+
+  void setAmcFromDate(DateTime date) {
+    _amcFromDate = date;
+    _selectedAmcDateFilterIndex = -1;
+    formatAmcDate();
+    notifyListeners();
+  }
+
+  void setAmcToDate(DateTime date) {
+    _amcToDate = date;
+    _selectedAmcDateFilterIndex = -1;
+    formatAmcDate();
+    notifyListeners();
+  }
+
+  void formatAmcDate() {
+    if (_amcFromDate != null) {
+      _formattedAmcFromDate = DateFormat('yyyy-MM-dd').format(_amcFromDate!);
+    } else {
+      _formattedAmcFromDate = '';
+    }
+
+    if (_amcToDate != null) {
+      _formattedAmcToDate = DateFormat('yyyy-MM-dd').format(_amcToDate!);
+    } else {
+      _formattedAmcToDate = '';
+    }
+    _amcFromDateS = _formattedAmcFromDate;
+    _amcToDateS = _formattedAmcToDate;
+  }
+
+  Future<void> selectAmcDate(BuildContext context, bool isFromDate) async {
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: isFromDate
+          ? (_amcFromDate ?? DateTime.now())
+          : (_amcToDate ?? DateTime.now()),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+
+    if (pickedDate != null) {
+      if (isFromDate) {
+        setAmcFromDate(pickedDate);
+      } else {
+        setAmcToDate(pickedDate);
+      }
+    }
+    notifyListeners();
+  }
+
+  // --- Work Completion Date Filter Methods ---
+  void selectWcDateFilterOption(int? index) {
+    if (index == null) {
+      _selectedWcDateFilterIndex = null;
+      _wcFromDate = null;
+      _wcToDate = null;
+      _formattedWcFromDate = '';
+      _formattedWcToDate = '';
+      _wcFromDateS = '';
+      _wcToDateS = '';
+    } else {
+      _selectedWcDateFilterIndex = index;
+      formatWcDate();
+    }
+    notifyListeners();
+  }
+
+  void setWcDateFilter(String title) {
+    final now = DateTime.now();
+
+    switch (title) {
+      case 'Yesterday':
+        _wcFromDate = now.subtract(const Duration(days: 1));
+        _wcToDate = now.subtract(const Duration(days: 1));
+        break;
+      case 'Today':
+        _wcFromDate = now;
+        _wcToDate = now;
+        break;
+      case 'Tomorrow':
+        _wcFromDate = now.add(const Duration(days: 1));
+        _wcToDate = now.add(const Duration(days: 1));
+        break;
+      case 'This Week':
+        _wcFromDate = now.subtract(Duration(days: now.weekday - 1));
+        _wcToDate = now.add(Duration(days: 7 - now.weekday));
+        break;
+      case 'This Month':
+        _wcFromDate = DateTime(now.year, now.month, 1);
+        _wcToDate = DateTime(now.year, now.month + 1, 0);
+        break;
+      default:
+        _wcFromDate = null;
+        _wcToDate = null;
+        break;
+    }
+
+    notifyListeners();
+  }
+
+  void setWcFromDate(DateTime date) {
+    _wcFromDate = date;
+    _selectedWcDateFilterIndex = -1;
+    formatWcDate();
+    notifyListeners();
+  }
+
+  void setWcToDate(DateTime date) {
+    _wcToDate = date;
+    _selectedWcDateFilterIndex = -1;
+    formatWcDate();
+    notifyListeners();
+  }
+
+  void formatWcDate() {
+    if (_wcFromDate != null) {
+      _formattedWcFromDate = DateFormat('yyyy-MM-dd').format(_wcFromDate!);
+    } else {
+      _formattedWcFromDate = '';
+    }
+
+    if (_wcToDate != null) {
+      _formattedWcToDate = DateFormat('yyyy-MM-dd').format(_wcToDate!);
+    } else {
+      _formattedWcToDate = '';
+    }
+    _wcFromDateS = _formattedWcFromDate;
+    _wcToDateS = _formattedWcToDate;
+  }
+
+  Future<void> selectWcDate(BuildContext context, bool isFromDate) async {
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: isFromDate
+          ? (_wcFromDate ?? DateTime.now())
+          : (_wcToDate ?? DateTime.now()),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+
+    if (pickedDate != null) {
+      if (isFromDate) {
+        setWcFromDate(pickedDate);
+      } else {
+        setWcToDate(pickedDate);
+      }
+    }
+    notifyListeners();
+  }
+
   Future<void> getSearchCustomers(BuildContext context,
       {bool isSilent = false}) async {
     try {
@@ -524,6 +789,10 @@ class CustomerProvider extends ChangeNotifier {
 
       String isDate =
           (_fromDateS.isNotEmpty || _toDateS.isNotEmpty) ? "1" : "0";
+      String isAmcDate =
+          (_amcFromDateS.isNotEmpty || _amcToDateS.isNotEmpty) ? "1" : "0";
+      String isWcDate =
+          (_wcFromDateS.isNotEmpty || _wcToDateS.isNotEmpty) ? "1" : "0";
 
       String toUserId = _selectedUserIds.join(',');
       String enquiryForId = _selectedEnquiryForIds.join(',');
@@ -542,7 +811,7 @@ class CustomerProvider extends ChangeNotifier {
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchCustomer}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$enquiryForId&Enquiry_Source_Id_=$enquirySourceId&Branch_Id_=$branchIds&User_Details_Id_=$loginUserId&Order_By_=$apiSortOption&Order_Type_=$_sortOrder&Entry_Type_=$_entryType');
+              '${HttpUrls.searchCustomer}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&Is_AMC_Date_=$isAmcDate&AMC_Fromdate_=$_amcFromDateS&AMC_Todate_=$_amcToDateS&Is_Work_Completion_Date_=$isWcDate&Work_Completion_Fromdate_=$_wcFromDateS&Work_Completion_Todate_=$_wcToDateS&To_User_Id_=$toUserId&Login_User_Id_=$loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$enquiryForId&Enquiry_Source_Id_=$enquirySourceId&Branch_Id_=$branchIds&User_Details_Id_=$loginUserId&Lead_Id_=0&Order_By_=$apiSortOption&Order_Type_=$_sortOrder&Entry_Type_=$_entryType');
 
       if (response.statusCode == 200) {
         var data = response.data;
@@ -605,6 +874,10 @@ class CustomerProvider extends ChangeNotifier {
 
       String isDate =
           (_fromDateS.isNotEmpty || _toDateS.isNotEmpty) ? "1" : "0";
+      String isAmcDate =
+          (_amcFromDateS.isNotEmpty || _amcToDateS.isNotEmpty) ? "1" : "0";
+      String isWcDate =
+          (_wcFromDateS.isNotEmpty || _wcToDateS.isNotEmpty) ? "1" : "0";
 
       String toUserId = _selectedUserIds.join(',');
       String enquiryForId = _selectedEnquiryForIds.join(',');
@@ -615,9 +888,11 @@ class CustomerProvider extends ChangeNotifier {
       String userIdPref = preferences.getString('userId') ?? "0";
       int loginUserId = int.parse(userIdPref);
 
+      int apiSortOption = _selectedSortOption == 4 ? 0 : _selectedSortOption;
+
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchCustomer}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$enquiryForId&Enquiry_Source_Id_=$enquirySourceId&Branch_Id_=$branchIds&User_Details_Id_=$loginUserId&Lead_Id_=0&Entry_Type_=$_entryType');
+              '${HttpUrls.searchCustomer}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&Is_AMC_Date_=$isAmcDate&AMC_Fromdate_=$_amcFromDateS&AMC_Todate_=$_amcToDateS&Is_Work_Completion_Date_=$isWcDate&Work_Completion_Fromdate_=$_wcFromDateS&Work_Completion_Todate_=$_wcToDateS&To_User_Id_=$toUserId&Login_User_Id_=$loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$enquiryForId&Enquiry_Source_Id_=$enquirySourceId&Branch_Id_=$branchIds&User_Details_Id_=$loginUserId&Lead_Id_=0&Order_By_=$apiSortOption&Order_Type_=$_sortOrder&Entry_Type_=$_entryType');
 
       if (response.statusCode == 200) {
         var data = response.data;
@@ -655,6 +930,8 @@ class CustomerProvider extends ChangeNotifier {
     } else {
       _formattedToDate = '';
     }
+    _fromDateS = _formattedFromDate;
+    _toDateS = _formattedToDate;
   }
 
   void removeStatus() {

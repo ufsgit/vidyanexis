@@ -276,6 +276,30 @@ extension DateStringFormatter on String {
       // Handle YYYY-MM-DD or other standard ISO format
       else if (trimmed.contains('-')) {
         date = DateTime.parse(trimmed);
+      }
+      // Handle slash formats (DD/MM/YYYY, YYYY/MM/DD, etc.)
+      else if (trimmed.contains('/')) {
+        final datePart = trimmed.split(RegExp(r'[ T]'))[0];
+        final slashFormats = [
+          'dd/MM/yyyy',
+          'd/M/yyyy',
+          'dd/MM/yy',
+          'd/M/yy',
+          'yyyy/MM/dd',
+          'MM/dd/yyyy',
+        ];
+        DateTime? parsed;
+        for (final fmt in slashFormats) {
+          try {
+            parsed = DateFormat(fmt).parseStrict(datePart);
+            break;
+          } catch (_) {}
+        }
+        if (parsed != null) {
+          date = parsed;
+        } else {
+          return this;
+        }
       } else {
         return this;
       }
