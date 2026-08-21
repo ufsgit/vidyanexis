@@ -64,6 +64,7 @@ import 'package:vidyanexis/presentation/widgets/home/customer_profie_widget.dart
 import 'package:vidyanexis/presentation/widgets/customer/forms_tab_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:vidyanexis/utils/extensions.dart';
 import 'package:vidyanexis/utils/file_share_function.dart';
 import 'package:vidyanexis/utils/file_downloader.dart';
 import 'package:vidyanexis/http/loader.dart';
@@ -181,8 +182,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
           sideprovider.name != 'Lead /')
         const Tab(text: "Periodic Service"),
       if (settingsprovider.menuIsViewMap[100] == 1) const Tab(text: "History"),
-      if (settingsprovider.menuIsViewMap[18] == 1)
-        const Tab(text: "Receipt"),
+      if (settingsprovider.menuIsViewMap[18] == 1) const Tab(text: "Receipt"),
       if (settingsprovider.menuIsViewMap[48] == 1) const Tab(text: "Expense"),
       // Payment Tab (New)
 
@@ -203,7 +203,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
       if (settingsprovider.menuIsViewMap[79] == 1 &&
           sideprovider.name != 'Lead /')
         const Tab(text: "Stock Return"),
-      if (settingsprovider.menuIsViewMap[178] == 1)  
+      if (settingsprovider.menuIsViewMap[178] == 1)
         const Tab(text: "Edit History"),
     ];
 
@@ -229,7 +229,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
         }
       });
       _isControllerInitialized = true;
-      
+
       // Fetch data for the initially selected tab
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _fetchDataForCurrentTab();
@@ -238,9 +238,11 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
   }
 
   void _fetchDataForCurrentTab() {
-    if (_tabController.index < 0 || _tabController.index >= _tabs.length) return;
+    if (_tabController.index < 0 || _tabController.index >= _tabs.length)
+      return;
     String currentTabName = _tabs[_tabController.index].text ?? "";
-    final provider = Provider.of<CustomerDetailsProvider>(context, listen: false);
+    final provider =
+        Provider.of<CustomerDetailsProvider>(context, listen: false);
 
     switch (currentTabName) {
       case "Info":
@@ -646,81 +648,133 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                       color: Colors.red),
                                 ),
                               if (settingsprovider.menuIsViewMap[169] == 1 ||
-                                  settingsprovider.menuIsViewMap[169].toString() == '1')
+                                  settingsprovider.menuIsViewMap[169]
+                                          .toString() ==
+                                      '1')
                                 IconButton(
                                   tooltip: 'Export PDF',
                                   icon: const Icon(Icons.picture_as_pdf,
                                       color: Colors.blue),
                                   onPressed: () async {
-                                    if (customerDetailsProvider.leadDetails != null &&
-                                        customerDetailsProvider.leadDetails!.isNotEmpty) {
-                                      final companyName = settingsprovider.companyDetails.isNotEmpty
-                                          ? settingsprovider.companyDetails[0].companyName
+                                    if (customerDetailsProvider.leadDetails !=
+                                            null &&
+                                        customerDetailsProvider
+                                            .leadDetails!.isNotEmpty) {
+                                      final companyName = settingsprovider
+                                              .companyDetails.isNotEmpty
+                                          ? settingsprovider
+                                              .companyDetails[0].companyName
                                           : '3rd Eye Security Systems';
                                       await generateCustomerDetailsPdf(
-                                        customerData: customerDetailsProvider.leadDetails![0],
-                                        customFields: leadProvider.customFieldEnquiryFor ?? [],
+                                        customerData: customerDetailsProvider
+                                            .leadDetails![0],
+                                        customFields: leadProvider
+                                                .customFieldEnquiryFor ??
+                                            [],
                                         companyName: companyName,
                                       );
                                     } else {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(content: Text('No details available to export')),
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                            content: Text(
+                                                'No details available to export')),
                                       );
                                     }
                                   },
                                 ),
                               if (settingsprovider.menuIsViewMap[179] == 1 ||
-                                  settingsprovider.menuIsViewMap[179].toString() == '1')
+                                  settingsprovider.menuIsViewMap[179]
+                                          .toString() ==
+                                      '1')
                                 IconButton(
                                   tooltip: 'Download Image',
                                   icon: const Icon(Icons.download,
                                       color: Colors.blue),
                                   onPressed: () async {
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(content: Text('Download started...')),
+                                      const SnackBar(
+                                          content: Text('Download started...')),
                                     );
-                                    final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.generateStatusImage}${widget.customerId}');
+                                    final bytes = await customerDetailsProvider
+                                        .getAnnexurePdfBytes(
+                                            '${HttpUrls.generateStatusImage}${widget.customerId}');
                                     if (bytes != null && bytes.isNotEmpty) {
                                       String extension = 'png';
-                                      if (bytes.length >= 4 && bytes[0] == 0x25 && bytes[1] == 0x50 && bytes[2] == 0x44 && bytes[3] == 0x46) {
+                                      if (bytes.length >= 4 &&
+                                          bytes[0] == 0x25 &&
+                                          bytes[1] == 0x50 &&
+                                          bytes[2] == 0x44 &&
+                                          bytes[3] == 0x46) {
                                         extension = 'pdf';
-                                      } else if (bytes.length >= 2 && bytes[0] == 0xFF && bytes[1] == 0xD8) {
+                                      } else if (bytes.length >= 2 &&
+                                          bytes[0] == 0xFF &&
+                                          bytes[1] == 0xD8) {
                                         extension = 'jpg';
                                       }
-                                      
-                                      final latestProvider = Provider.of<CustomerDetailsProvider>(context, listen: false);
+
+                                      final latestProvider =
+                                          Provider.of<CustomerDetailsProvider>(
+                                              context,
+                                              listen: false);
                                       String customerName = '';
-                                      if (latestProvider.leadDetails != null && latestProvider.leadDetails!.isNotEmpty) {
-                                        customerName = latestProvider.leadDetails![0].customerName ?? '';
+                                      if (latestProvider.leadDetails != null &&
+                                          latestProvider
+                                              .leadDetails!.isNotEmpty) {
+                                        customerName = latestProvider
+                                                .leadDetails![0].customerName ??
+                                            '';
                                       }
                                       if (customerName.isEmpty) {
-                                        final leadDetailsProv = Provider.of<LeadDetailsProvider>(context, listen: false);
-                                        if (leadDetailsProv.leadDetails != null && leadDetailsProv.leadDetails!.isNotEmpty) {
-                                          customerName = leadDetailsProv.leadDetails![0].customerName ?? '';
+                                        final leadDetailsProv =
+                                            Provider.of<LeadDetailsProvider>(
+                                                context,
+                                                listen: false);
+                                        if (leadDetailsProv.leadDetails !=
+                                                null &&
+                                            leadDetailsProv
+                                                .leadDetails!.isNotEmpty) {
+                                          customerName = leadDetailsProv
+                                                  .leadDetails![0]
+                                                  .customerName ??
+                                              '';
                                         }
                                       }
                                       if (customerName.isEmpty) {
-                                        final leadProv = Provider.of<LeadsProvider>(context, listen: false);
-                                        customerName = leadProv.leadNameController.text;
+                                        final leadProv =
+                                            Provider.of<LeadsProvider>(context,
+                                                listen: false);
+                                        customerName =
+                                            leadProv.leadNameController.text;
                                       }
-                                      
-                                      customerName = customerName.replaceAll(RegExp(r'[^a-zA-Z0-9_\-]'), '_');
+
+                                      customerName = customerName.replaceAll(
+                                          RegExp(r'[^a-zA-Z0-9_\-]'), '_');
                                       if (customerName.trim().isEmpty) {
-                                        customerName = 'Customer_$widget.customerId';
+                                        customerName =
+                                            'Customer_$widget.customerId';
                                       }
-                                      
-                                      String fileName = '${customerName}_Image.$extension';
-                                      
-                                      await FileDownloader.saveFile(bytes, fileName);
+
+                                      String fileName =
+                                          '${customerName}_Image.$extension';
+
+                                      await FileDownloader.saveFile(
+                                          bytes, fileName);
                                       if (context.mounted) {
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          const SnackBar(content: Text('Download complete!')),
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          const SnackBar(
+                                              content:
+                                                  Text('Download complete!')),
                                         );
                                       }
                                     } else {
                                       if (context.mounted) {
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          const SnackBar(content: Text('Failed to download image')),
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          const SnackBar(
+                                              content: Text(
+                                                  'Failed to download image')),
                                         );
                                       }
                                     }
@@ -2751,19 +2805,35 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           );
                                                                         },
                                                                       ),
-                                                                    if ((settingsprovider.menuIsViewMap[163] == 1 || settingsprovider.menuIsViewMapPrint[163] == 1) && sideprovider.name != 'Lead /')
+                                                                    if ((settingsprovider.menuIsViewMap[163] ==
+                                                                                1 ||
+                                                                            settingsprovider.menuIsViewMapPrint[163] ==
+                                                                                1) &&
+                                                                        sideprovider.name !=
+                                                                            'Lead /')
                                                                       CustomElevatedButton(
-                                                                        radius: 4,
-                                                                        backgroundColor: AppColors.whiteColor,
-                                                                        borderColor: AppColors.bluebutton,
-                                                                        textColor: AppColors.bluebutton,
-                                                                        buttonText: 'Work Completion Report',
-                                                                        onPressed: () async {
-                                                                          PdfActionHelper.showPdfOptions(
-                                                                            context: context,
-                                                                            title: 'Work Completion Report',
-                                                                            pdfUrl: '${HttpUrls.getPdfWorkCompletionReport}${widget.customerId}',
-                                                                            onGenerate: () async {
+                                                                        radius:
+                                                                            4,
+                                                                        backgroundColor:
+                                                                            AppColors.whiteColor,
+                                                                        borderColor:
+                                                                            AppColors.bluebutton,
+                                                                        textColor:
+                                                                            AppColors.bluebutton,
+                                                                        buttonText:
+                                                                            'Work Completion Report',
+                                                                        onPressed:
+                                                                            () async {
+                                                                          PdfActionHelper
+                                                                              .showPdfOptions(
+                                                                            context:
+                                                                                context,
+                                                                            title:
+                                                                                'Work Completion Report',
+                                                                            pdfUrl:
+                                                                                '${HttpUrls.getPdfWorkCompletionReport}${widget.customerId}',
+                                                                            onGenerate:
+                                                                                () async {
                                                                               await Loader.showLoader(context);
                                                                               final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfWorkCompletionReport}${widget.customerId}');
                                                                               Loader.stopLoader(context);
@@ -2772,19 +2842,35 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           );
                                                                         },
                                                                       ),
-                                                                    if ((settingsprovider.menuIsViewMap[164] == 1 || settingsprovider.menuIsViewMapPrint[164] == 1) && sideprovider.name != 'Lead /')
+                                                                    if ((settingsprovider.menuIsViewMap[164] ==
+                                                                                1 ||
+                                                                            settingsprovider.menuIsViewMapPrint[164] ==
+                                                                                1) &&
+                                                                        sideprovider.name !=
+                                                                            'Lead /')
                                                                       CustomElevatedButton(
-                                                                        radius: 4,
-                                                                        backgroundColor: AppColors.whiteColor,
-                                                                        borderColor: AppColors.bluebutton,
-                                                                        textColor: AppColors.bluebutton,
-                                                                        buttonText: 'Checklist',
-                                                                        onPressed: () async {
-                                                                          PdfActionHelper.showPdfOptions(
-                                                                            context: context,
-                                                                            title: 'Checklist',
-                                                                            pdfUrl: '${HttpUrls.getPdfChecklist}${widget.customerId}',
-                                                                            onGenerate: () async {
+                                                                        radius:
+                                                                            4,
+                                                                        backgroundColor:
+                                                                            AppColors.whiteColor,
+                                                                        borderColor:
+                                                                            AppColors.bluebutton,
+                                                                        textColor:
+                                                                            AppColors.bluebutton,
+                                                                        buttonText:
+                                                                            'Checklist',
+                                                                        onPressed:
+                                                                            () async {
+                                                                          PdfActionHelper
+                                                                              .showPdfOptions(
+                                                                            context:
+                                                                                context,
+                                                                            title:
+                                                                                'Checklist',
+                                                                            pdfUrl:
+                                                                                '${HttpUrls.getPdfChecklist}${widget.customerId}',
+                                                                            onGenerate:
+                                                                                () async {
                                                                               await Loader.showLoader(context);
                                                                               final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfChecklist}${widget.customerId}');
                                                                               Loader.stopLoader(context);
@@ -2793,19 +2879,35 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           );
                                                                         },
                                                                       ),
-                                                                    if ((settingsprovider.menuIsViewMap[175] == 1 || settingsprovider.menuIsViewMapPrint[175] == 1) && sideprovider.name != 'Lead /')
+                                                                    if ((settingsprovider.menuIsViewMap[175] ==
+                                                                                1 ||
+                                                                            settingsprovider.menuIsViewMapPrint[175] ==
+                                                                                1) &&
+                                                                        sideprovider.name !=
+                                                                            'Lead /')
                                                                       CustomElevatedButton(
-                                                                        radius: 4,
-                                                                        backgroundColor: AppColors.whiteColor,
-                                                                        borderColor: AppColors.bluebutton,
-                                                                        textColor: AppColors.bluebutton,
-                                                                        buttonText: 'Status Image',
-                                                                        onPressed: () async {
-                                                                          PdfActionHelper.showPdfOptions(
-                                                                            context: context,
-                                                                            title: 'Status Image',
-                                                                            pdfUrl: '${HttpUrls.generateStatusImage}${widget.customerId}',
-                                                                            onGenerate: () async {
+                                                                        radius:
+                                                                            4,
+                                                                        backgroundColor:
+                                                                            AppColors.whiteColor,
+                                                                        borderColor:
+                                                                            AppColors.bluebutton,
+                                                                        textColor:
+                                                                            AppColors.bluebutton,
+                                                                        buttonText:
+                                                                            'Status Image',
+                                                                        onPressed:
+                                                                            () async {
+                                                                          PdfActionHelper
+                                                                              .showPdfOptions(
+                                                                            context:
+                                                                                context,
+                                                                            title:
+                                                                                'Status Image',
+                                                                            pdfUrl:
+                                                                                '${HttpUrls.generateStatusImage}${widget.customerId}',
+                                                                            onGenerate:
+                                                                                () async {
                                                                               await Loader.showLoader(context);
                                                                               final bytes = await customerDetailsProvider.getStatusImageBytes(widget.customerId);
                                                                               Loader.stopLoader(context);
@@ -3915,44 +4017,82 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                     );
                                                                   },
                                                                 ),
-                                                              if (sideprovider.name != 'Lead /')
+                                                              if (sideprovider
+                                                                      .name !=
+                                                                  'Lead /')
                                                                 CustomElevatedButton(
                                                                   radius: 4,
-                                                                  backgroundColor: AppColors.whiteColor,
-                                                                  borderColor: AppColors.bluebutton,
-                                                                  textColor: AppColors.bluebutton,
-                                                                  buttonText: 'Work Completion Report',
-                                                                  onPressed: () async {
-                                                                    PdfActionHelper.showPdfOptions(
-                                                                      context: context,
-                                                                      title: 'Work Completion Report',
-                                                                      pdfUrl: '${HttpUrls.getPdfWorkCompletionReport}${widget.customerId}',
-                                                                      onGenerate: () async {
-                                                                        await Loader.showLoader(context);
-                                                                        final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfWorkCompletionReport}${widget.customerId}');
-                                                                        Loader.stopLoader(context);
-                                                                        return bytes ?? Uint8List(0);
+                                                                  backgroundColor:
+                                                                      AppColors
+                                                                          .whiteColor,
+                                                                  borderColor:
+                                                                      AppColors
+                                                                          .bluebutton,
+                                                                  textColor:
+                                                                      AppColors
+                                                                          .bluebutton,
+                                                                  buttonText:
+                                                                      'Work Completion Report',
+                                                                  onPressed:
+                                                                      () async {
+                                                                    PdfActionHelper
+                                                                        .showPdfOptions(
+                                                                      context:
+                                                                          context,
+                                                                      title:
+                                                                          'Work Completion Report',
+                                                                      pdfUrl:
+                                                                          '${HttpUrls.getPdfWorkCompletionReport}${widget.customerId}',
+                                                                      onGenerate:
+                                                                          () async {
+                                                                        await Loader.showLoader(
+                                                                            context);
+                                                                        final bytes =
+                                                                            await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfWorkCompletionReport}${widget.customerId}');
+                                                                        Loader.stopLoader(
+                                                                            context);
+                                                                        return bytes ??
+                                                                            Uint8List(0);
                                                                       },
                                                                     );
                                                                   },
                                                                 ),
-                                                              if (sideprovider.name != 'Lead /')
+                                                              if (sideprovider
+                                                                      .name !=
+                                                                  'Lead /')
                                                                 CustomElevatedButton(
                                                                   radius: 4,
-                                                                  backgroundColor: AppColors.whiteColor,
-                                                                  borderColor: AppColors.bluebutton,
-                                                                  textColor: AppColors.bluebutton,
-                                                                  buttonText: 'Checklist',
-                                                                  onPressed: () async {
-                                                                    PdfActionHelper.showPdfOptions(
-                                                                      context: context,
-                                                                      title: 'Checklist',
-                                                                      pdfUrl: '${HttpUrls.getPdfChecklist}${widget.customerId}',
-                                                                      onGenerate: () async {
-                                                                        await Loader.showLoader(context);
-                                                                        final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfChecklist}${widget.customerId}');
-                                                                        Loader.stopLoader(context);
-                                                                        return bytes ?? Uint8List(0);
+                                                                  backgroundColor:
+                                                                      AppColors
+                                                                          .whiteColor,
+                                                                  borderColor:
+                                                                      AppColors
+                                                                          .bluebutton,
+                                                                  textColor:
+                                                                      AppColors
+                                                                          .bluebutton,
+                                                                  buttonText:
+                                                                      'Checklist',
+                                                                  onPressed:
+                                                                      () async {
+                                                                    PdfActionHelper
+                                                                        .showPdfOptions(
+                                                                      context:
+                                                                          context,
+                                                                      title:
+                                                                          'Checklist',
+                                                                      pdfUrl:
+                                                                          '${HttpUrls.getPdfChecklist}${widget.customerId}',
+                                                                      onGenerate:
+                                                                          () async {
+                                                                        await Loader.showLoader(
+                                                                            context);
+                                                                        final bytes =
+                                                                            await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfChecklist}${widget.customerId}');
+                                                                        Loader.stopLoader(
+                                                                            context);
+                                                                        return bytes ??
+                                                                            Uint8List(0);
                                                                       },
                                                                     );
                                                                   },
@@ -4952,8 +5092,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                             if (settingsprovider
                                                     .menuIsViewMap[18] ==
                                                 1)
-                                                ReceiptScreen(
-                                                    widget.customerId),
+                                              ReceiptScreen(widget.customerId),
 
                                             //Expense Tab
                                             if (settingsprovider
@@ -5005,10 +5144,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                             if (settingsprovider
                                                     .menuIsViewMap[78] ==
                                                 1)
-                                                StockUsePage(
-                                                    customerId: int.parse(
-                                                  widget.customerId,
-                                                )),
+                                              StockUsePage(
+                                                  customerId: int.parse(
+                                                widget.customerId,
+                                              )),
                                             if (settingsprovider
                                                     .menuIsViewMap[79] ==
                                                 1)
@@ -5205,16 +5344,27 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                   amc.amcId,
                                   amc.productName,
                                   amc.serviceName,
-                                  amc.date.toString(),
+                                  amc.date?.toString() ?? '',
                                   amc.amount,
                                   amc.description,
                                   amc.amcStatusName,
                                   amc.customerName,
                                   amc.amcId.toString(),
-                                  DateFormat('dd-MM-yyyy').format(
-                                      DateTime.parse(amc.fromDate.toString())),
-                                  DateFormat('dd-MM-yyyy').format(
-                                      DateTime.parse(amc.toDate.toString())),
+                                  amc.fromDate.isNotEmpty &&
+                                          DateTime.tryParse(
+                                                  amc.fromDate.toString()) !=
+                                              null
+                                      ? DateFormat('dd-MM-yyyy').format(
+                                          DateTime.parse(
+                                              amc.fromDate.toString()))
+                                      : amc.fromDate,
+                                  amc.toDate.isNotEmpty &&
+                                          DateTime.tryParse(
+                                                  amc.toDate.toString()) !=
+                                              null
+                                      ? DateFormat('dd-MM-yyyy').format(
+                                          DateTime.parse(amc.toDate.toString()))
+                                      : amc.toDate,
                                   amc);
                             }
                           },
@@ -5235,8 +5385,12 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                 _buildDataCell("₹${double.parse(amc.amount)}",
                                     flex: 2),
                                 _buildDataCell(
-                                    DateFormat('dd MMM yyyy')
-                                        .format(DateTime.parse(amc.toDate)),
+                                    amc.toDate.isNotEmpty &&
+                                            DateTime.tryParse(amc.toDate) !=
+                                                null
+                                        ? DateFormat('dd MMM yyyy')
+                                            .format(DateTime.parse(amc.toDate))
+                                        : '-',
                                     flex: 2),
                                 _buildWidgetCell(
                                   flex: 2,
@@ -5270,18 +5424,22 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                         amc.productName,
                                                     amcServiceController:
                                                         amc.serviceName,
-                                                    fromDateController:
-                                                        DateFormat('dd-MM-yyyy')
+                                                    fromDateController: amc
+                                                                .fromDate
+                                                                .isNotEmpty &&
+                                                            DateTime.tryParse(amc.fromDate.toString()) !=
+                                                                null
+                                                        ? DateFormat('dd-MM-yyyy')
                                                             .format(DateTime.parse(
                                                                 amc.fromDate
-                                                                    .toString())),
-                                                    toDateController: DateFormat(
-                                                            'dd-MM-yyyy')
-                                                        .format(DateTime.parse(
-                                                            amc.toDate
-                                                                .toString())),
-                                                    customerId:
-                                                        widget.customerId,
+                                                                    .toString()))
+                                                        : amc.fromDate,
+                                                    toDateController: amc.toDate
+                                                                .isNotEmpty &&
+                                                            DateTime.tryParse(amc.toDate.toString()) != null
+                                                        ? DateFormat('dd-MM-yyyy').format(DateTime.parse(amc.toDate.toString()))
+                                                        : amc.toDate,
+                                                    customerId: widget.customerId,
                                                     amc: amc,
                                                     isEdit: true);
                                               },

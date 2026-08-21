@@ -269,6 +269,7 @@ class CustomerProvider extends ChangeNotifier {
             hasMoreData = false;
           } else {
             _customerData.addAll(newItems);
+            fetchAmcDatesForCustomers(newItems);
 
             if (_selectedSortOption == 4) {
               if (_sortOrder == 'ASC') {
@@ -838,6 +839,7 @@ class CustomerProvider extends ChangeNotifier {
           }
 
           hasMoreData = _customerData.length < _totalCount;
+          fetchAmcDatesForCustomers(_customerData);
         } else {
           log('API Error: Data is not a list or is null');
         }
@@ -908,6 +910,7 @@ class CustomerProvider extends ChangeNotifier {
           }
 
           hasMoreData = _customerData.length < _totalCount;
+          fetchAmcDatesForCustomers(_customerData);
         }
       }
     } catch (e) {
@@ -957,6 +960,91 @@ class CustomerProvider extends ChangeNotifier {
     _customerData
         .removeWhere((customer) => customer.customerId.toString() == id);
     notifyListeners();
+  }
+
+  final Map<int, String> _customerAmcDateCache = {};
+
+  Future<void> fetchAmcDatesForCustomers(
+      List<SearchLeadModel> customers) async {
+    final uncachedCustomerIds = customers
+        .where((c) =>
+            (c.amcDate.isEmpty || c.amcDate == '-') &&
+            c.customerId > 0 &&
+            !_customerAmcDateCache.containsKey(c.customerId))
+        .map((c) => c.customerId)
+        .toSet()
+        .toList();
+
+    if (uncachedCustomerIds.isEmpty) {
+      _applyCachedAmcDates();
+      return;
+    }
+
+    await Future.wait(uncachedCustomerIds.map((cid) async {
+      try {
+        final response = await HttpRequest.httpGetRequest(
+          endPoint: '${HttpUrls.getAmc}?Customer_Id=$cid&AMC_Status_Id=0',
+        );
+        if (response.statusCode == 200 &&
+            response.data != null &&
+            response.data is List) {
+          final list = response.data as List;
+          if (list.isNotEmpty) {
+            String latestToDate = '';
+            DateTime? latestDt;
+            for (var amcItem in list) {
+              if (amcItem is Map) {
+                final toDateStr = (amcItem['To_Date'] ??
+                            amcItem['to_date'] ??
+                            amcItem['AMC_To_Date'] ??
+                            amcItem['Date'])
+                        ?.toString() ??
+                    '';
+                if (toDateStr.isNotEmpty) {
+                  final dt = DateTime.tryParse(toDateStr);
+                  if (dt != null) {
+                    if (latestDt == null || dt.isAfter(latestDt)) {
+                      latestDt = dt;
+                      latestToDate = toDateStr;
+                    }
+                  } else if (latestToDate.isEmpty) {
+                    latestToDate = toDateStr;
+                  }
+                }
+              }
+            }
+            _customerAmcDateCache[cid] =
+                latestToDate.isNotEmpty ? latestToDate : '-';
+          } else {
+            _customerAmcDateCache[cid] = '-';
+          }
+        } else {
+          _customerAmcDateCache[cid] = '-';
+        }
+      } catch (e) {
+        _customerAmcDateCache[cid] = '-';
+      }
+    }));
+
+    _applyCachedAmcDates();
+  }
+
+  void _applyCachedAmcDates() {
+    bool hasUpdates = false;
+    for (int i = 0; i < _customerData.length; i++) {
+      final cust = _customerData[i];
+      if ((cust.amcDate.isEmpty || cust.amcDate == '-') &&
+          _customerAmcDateCache.containsKey(cust.customerId)) {
+        final cachedDate = _customerAmcDateCache[cust.customerId]!;
+        if (cachedDate.isNotEmpty && cachedDate != '-') {
+          _customerData[i] = cust.copyWith(amcDate: cachedDate);
+          hasUpdates = true;
+        }
+      }
+    }
+    if (hasUpdates) {
+      notifyListeners();
+    }
   }
 
   Future<void> deleteCustomer(BuildContext context, String custId) async {

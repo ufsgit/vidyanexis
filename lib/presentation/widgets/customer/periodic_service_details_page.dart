@@ -8,6 +8,7 @@ import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/models/amc_report_model.dart';
 import 'package:vidyanexis/controller/amc_report_provider.dart';
 import 'package:vidyanexis/presentation/widgets/customer/task_label_widget.dart';
+import 'package:vidyanexis/utils/extensions.dart';
 
 class PeriodicServiceDetailsPage extends StatefulWidget {
   final String customerId;
@@ -137,17 +138,29 @@ class _PeriodicServiceDetailsPageState
                           TaskLabelValue(
                             colorUser: AppColors.grey,
                             label: 'From Date',
-                            value: DateFormat('MMM dd, yyyy').format(
-                                DateTime.parse(widget.amcReportModeld.fromDate
-                                    .toString())),
+                            value: widget.amcReportModeld.fromDate.isNotEmpty &&
+                                    DateTime.tryParse(
+                                            widget.amcReportModeld.fromDate) !=
+                                        null
+                                ? DateFormat('MMM dd, yyyy').format(
+                                    DateTime.parse(
+                                        widget.amcReportModeld.fromDate),
+                                  )
+                                : '-',
                           ),
                           const SizedBox(height: 16),
                           TaskLabelValue(
                             colorUser: AppColors.grey,
                             label: 'To Date',
-                            value: DateFormat('MMM dd, yyyy').format(
-                                DateTime.parse(
-                                    widget.amcReportModeld.toDate.toString())),
+                            value: widget.amcReportModeld.toDate.isNotEmpty &&
+                                    DateTime.tryParse(
+                                            widget.amcReportModeld.toDate) !=
+                                        null
+                                ? DateFormat('MMM dd, yyyy').format(
+                                    DateTime.parse(
+                                        widget.amcReportModeld.toDate),
+                                  )
+                                : '-',
                           ),
                           const SizedBox(height: 16),
                           TaskLabelValue(

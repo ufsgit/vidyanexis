@@ -114,8 +114,11 @@ class AmcWidget extends StatelessWidget {
                             TaskLabelValue(
                               colorUser: AppColors.grey,
                               label: 'Date',
-                              value: DateFormat('dd-MM-yyyy')
-                                  .format(DateTime.parse(entryDate)),
+                              value: entryDate.isNotEmpty &&
+                                      DateTime.tryParse(entryDate) != null
+                                  ? DateFormat('dd-MM-yyyy')
+                                      .format(DateTime.parse(entryDate))
+                                  : (entryDate.isNotEmpty ? entryDate : '-'),
                               labelFontSize: 14,
                               labelFontWeight: FontWeight.w500,
                               valueFontSize: 14,

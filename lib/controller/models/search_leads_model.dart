@@ -64,7 +64,9 @@ class SearchLeadModel {
       return '-';
     }
     final formatted = trimmed.toDayMonthYearFormat();
-    if (formatted.isEmpty || formatted == '-' || formatted.toLowerCase() == 'null') {
+    if (formatted.isEmpty ||
+        formatted == '-' ||
+        formatted.toLowerCase() == 'null') {
       return '-';
     }
     return formatted;
@@ -76,7 +78,9 @@ class SearchLeadModel {
       return '-';
     }
     final formatted = trimmed.toDayMonthYearFormat();
-    if (formatted.isEmpty || formatted == '-' || formatted.toLowerCase() == 'null') {
+    if (formatted.isEmpty ||
+        formatted == '-' ||
+        formatted.toLowerCase() == 'null') {
       return '-';
     }
     return formatted;
@@ -389,11 +393,25 @@ class SearchLeadModel {
       priorityId: parseString(json['Priority_Id']),
       priorityColor: parseString(json['Priority_Color']),
       amcDate: parseString(json['AMC_To_Date'] ??
+          json['AMC_To_date'] ??
           json['AMC_Date'] ??
+          json['AMC_date'] ??
           json['AMC_End_Date'] ??
+          json['AMC_end_date'] ??
           json['AMC_Validity_Date'] ??
+          json['AMC_validity_date'] ??
+          json['AMC_Expiry_Date'] ??
+          json['AMC_expiry_date'] ??
+          json['amc_expiry_date'] ??
+          json['AMC_Due_Date'] ??
+          json['AMC_due_date'] ??
+          json['amc_due_date'] ??
           json['To_Date'] ??
           json['to_date'] ??
+          json['From_Date'] ??
+          json['from_date'] ??
+          json['AMC_From_Date'] ??
+          json['AMC_From_date'] ??
           json['amc_to_date'] ??
           json['amc_date'] ??
           json['amc_end_date'] ??
