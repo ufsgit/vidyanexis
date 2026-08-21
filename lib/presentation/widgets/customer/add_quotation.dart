@@ -564,6 +564,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                               ), 
                             ],
                           ),
+                          multiItemsWidget(context),
+                          const SizedBox(height: 16),
                           if (customerDetailsProvider.multiItems.isNotEmpty) ...[
                             const SizedBox(height: 16),
                             Container(
@@ -585,8 +587,6 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                               ),
                             ),
                           ],
-                          const SizedBox(height: 16),
-                          multiItemsWidget(context),
                         ],
                         const SizedBox(height: 16),
                         if (customerDetailsProvider

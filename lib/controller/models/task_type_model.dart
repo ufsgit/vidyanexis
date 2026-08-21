@@ -26,6 +26,7 @@ class TaskTypeModel {
   int commissionNumber;
   int manualCreation;
   int orderBy;
+  String? uniqueId;
   String? description;
 
   String? departmentName;
@@ -38,6 +39,7 @@ class TaskTypeModel {
 
   TaskTypeModel(
       {required this.taskTypeId,
+      this.uniqueId,
       required this.taskTypeName,
       required this.taskTypeColor,
       required this.taskTypeImage,
@@ -62,6 +64,7 @@ class TaskTypeModel {
 
   factory TaskTypeModel.fromJson(Map<String, dynamic> json) => TaskTypeModel(
       taskTypeId: json["Task_Type_Id"] ?? 0,
+      uniqueId: (json["Task_Type_Id"] ?? 0).toString(),
       taskTypeName: json["Task_Type_Name"] ?? '',
       taskTypeColor: json["Task_Type_Color"] ?? '',
       taskTypeImage: json["Task_Type_Image"] ?? '',
@@ -144,6 +147,34 @@ class TaskTypeModel {
         "Department_Name": departmentName,
         "Description": description,
       };
+
+  TaskTypeModel copyWithNewUniqueId() {
+    return TaskTypeModel(
+      taskTypeId: taskTypeId,
+      uniqueId: '${taskTypeId}_${DateTime.now().microsecondsSinceEpoch}',
+      taskTypeName: taskTypeName,
+      taskTypeColor: taskTypeColor,
+      taskTypeImage: taskTypeImage,
+      deleteStatus: deleteStatus,
+      departmentIds: departmentIds,
+      branchIds: branchIds,
+      defaultStatusId: defaultStatusId,
+      duration: duration,
+      conversionTask: conversionTask,
+      locationTracking: locationTracking,
+      commissionNumber: commissionNumber,
+      manualCreation: manualCreation,
+      orderBy: orderBy,
+      statuses: List.from(statuses),
+      departmentName: departmentName,
+      enquiryFor: enquiryFor != null ? List.from(enquiryFor!) : null,
+      enquiryForVisible: enquiryForVisible,
+      showUser: showUser,
+      dailyTarget: dailyTarget,
+      monthlyTarget: monthlyTarget,
+      description: description,
+    );
+  }
 }
 
 class EnquiryFor {

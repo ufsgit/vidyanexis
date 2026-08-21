@@ -213,23 +213,22 @@ class _CustomTabState extends State<CustomTab> {
         : 900.0;
 
     final tabOptions = [
-      if (settingsProvider.menuIsViewMap[84].toString() != '0')
+      if (settingsProvider.menuIsViewMap[84].toString() == '1')
         'Dashboard count',
-      if (settingsProvider.menuIsViewMap[49].toString() != '0')
+      if (settingsProvider.menuIsViewMap[49].toString() == '1')
         'Leads Overview',
-      if (settingsProvider.menuIsViewMap[50].toString() != '0') 'Work Overview',
-      if (settingsProvider.menuIsViewMap[76].toString() != '0')
+      if (settingsProvider.menuIsViewMap[50].toString() == '1') 'Work Overview',
+      if (settingsProvider.menuIsViewMap[76].toString() == '1')
         'Amc Notification',
-      if (settingsProvider.menuIsViewMap[77].toString() != '0')
+      if (settingsProvider.menuIsViewMap[77].toString() == '1')
         'Payment Reminders',
-      if (settingsProvider.menuIsViewMap[51].toString() != '0') 'Task Overview',
-      if (settingsProvider.menuIsViewMap[52].toString() != '0') 'Task Summary',
-      if (settingsProvider.menuIsViewMap[152].toString() != '0')
+      if (settingsProvider.menuIsViewMap[51].toString() == '1') 'Task Overview',
+      if (settingsProvider.menuIsViewMap[52].toString() == '1') 'Task Summary',
+      if (settingsProvider.menuIsViewMap[152].toString() == '1')
         'Customer Outstanding Summary',
       if (widget.userType == '1') 'User Activity',
       if (widget.userType == '1') 'Attendance Dashboard',
-      if (settingsProvider.hasTravelAllowancePermission)
-        'Travel Allowance',
+      if (settingsProvider.hasTravelAllowancePermission) 'Travel Allowance',
     ];
 
     if (_tabKeys.length != tabOptions.length) {
@@ -269,33 +268,32 @@ class _CustomTabState extends State<CustomTab> {
                   onTap: () {
                     widget.dashBoardProvider.changeTab(index);
                     final allowedTabIds = [
-                      if (settingsProvider.menuIsViewMap[84].toString() != '0')
+                      if (settingsProvider.menuIsViewMap[84].toString() == '1')
                         6,
-                      if (settingsProvider.menuIsViewMap[49].toString() != '0')
+                      if (settingsProvider.menuIsViewMap[49].toString() == '1')
                         0,
-                      if (settingsProvider.menuIsViewMap[50].toString() != '0')
+                      if (settingsProvider.menuIsViewMap[50].toString() == '1')
                         1,
-                      if (settingsProvider.menuIsViewMap[76].toString() != '0')
+                      if (settingsProvider.menuIsViewMap[76].toString() == '1')
                         4,
-                      if (settingsProvider.menuIsViewMap[77].toString() != '0')
+                      if (settingsProvider.menuIsViewMap[77].toString() == '1')
                         5,
-                      if (settingsProvider.menuIsViewMap[51].toString() != '0')
+                      if (settingsProvider.menuIsViewMap[51].toString() == '1')
                         2,
-                      if (settingsProvider.menuIsViewMap[52].toString() != '0')
+                      if (settingsProvider.menuIsViewMap[52].toString() == '1')
                         3,
-                      if (settingsProvider.menuIsViewMap[152].toString() != '0')
+                      if (settingsProvider.menuIsViewMap[152].toString() == '1')
                         7,
                       if (widget.userType == '1') 8,
                       if (widget.userType == '1') 9,
-                      if (settingsProvider.hasTravelAllowancePermission)
-                        10,
+                      if (settingsProvider.hasTravelAllowancePermission) 10,
                     ];
 
                     if (index >= 0 && index < allowedTabIds.length) {
                       widget.dashBoardProvider.loadDataForTab(
                           allowedTabIds[index], context);
                     }
-                    
+
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       if (_tabKeys[index].currentContext != null) {
                         Scrollable.ensureVisible(
@@ -392,4 +390,3 @@ class _CustomTabState extends State<CustomTab> {
     }
   }
 }
-
