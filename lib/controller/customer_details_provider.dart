@@ -1152,6 +1152,18 @@ class CustomerDetailsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  bool get isResidential {
+    if (_selectedQuotationType == 1) return true;
+    final name = quotationTypeController.text.toLowerCase().trim();
+    return name.contains('residential');
+  }
+
+  bool get isCommercial {
+    if (_selectedQuotationType == 2) return true;
+    final name = quotationTypeController.text.toLowerCase().trim();
+    return name.contains('commercial');
+  }
+
   final TextEditingController quotationDescriptionController =
       TextEditingController();
   final TextEditingController quotationDescription2Controller =

@@ -651,19 +651,18 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                               SizedBox(height: 16),
                             ],
                           ),
-                        if (customerDetailsProvider.selectedQuotationType ==
-                            1) ...[
+                        if (customerDetailsProvider.isResidential) ...[
                           residentialItemWidget(context),
                         ],
-                        if (customerDetailsProvider.selectedQuotationType ==
-                            2) ...[
+                        if (customerDetailsProvider.isCommercial) ...[
                           commercialItemWidget(context),
                         ],
                       ],
                     ),
 
                   if (customerDetailsProvider.isQuotationFieldVisible(57) &&
-                      customerDetailsProvider.selectedQuotationType == 2)
+                      (customerDetailsProvider.isResidential ||
+                          customerDetailsProvider.isCommercial))
                     //solar pv system specification
                     ExpansionTile(
                       shape: const RoundedRectangleBorder(
@@ -686,7 +685,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     ),
 
                   if (customerDetailsProvider.isQuotationFieldVisible(66) &&
-                      customerDetailsProvider.selectedQuotationType == 2)
+                      !customerDetailsProvider.isCommercial &&
+                      !customerDetailsProvider.isResidential)
                     //scope of work
                     ExpansionTile(
                       shape: const RoundedRectangleBorder(
@@ -709,7 +709,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     ),
 
                   if (customerDetailsProvider.isQuotationFieldVisible(70) &&
-                      customerDetailsProvider.selectedQuotationType == 2)
+                      !customerDetailsProvider.isCommercial &&
+                      !customerDetailsProvider.isResidential)
                     //cable details
                     ExpansionTile(
                       shape: const RoundedRectangleBorder(
@@ -997,9 +998,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                                   height: 54,
                                   controller:
                                       customerDetailsProvider.advanceController,
-                                  hintText: customerDetailsProvider
-                                              .selectedQuotationType ==
-                                          1
+                                  hintText: customerDetailsProvider.isResidential
                                       ? customerDetailsProvider
                                           .getQuotationFieldName(84,
                                               'Advance payment up on conformation')
@@ -1028,9 +1027,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                                   height: 54,
                                   controller: customerDetailsProvider
                                       .deliveryController,
-                                  hintText: customerDetailsProvider
-                                              .selectedQuotationType ==
-                                          1
+                                  hintText: customerDetailsProvider.isResidential
                                       ? customerDetailsProvider
                                           .getQuotationFieldName(85,
                                               'Upon the material ready for dispatch')
@@ -1059,9 +1056,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                                   height: 54,
                                   controller: customerDetailsProvider
                                       .workCompletionController,
-                                  hintText: customerDetailsProvider
-                                              .selectedQuotationType ==
-                                          1
+                                  hintText: customerDetailsProvider.isResidential
                                       ? customerDetailsProvider
                                           .getQuotationFieldName(
                                               86, 'Installation Completion')
@@ -1565,7 +1560,9 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                       ],
                     ),
                   //Structure of Material
-                  if (customerDetailsProvider.isQuotationFieldVisible(54))
+                  if (customerDetailsProvider.isQuotationFieldVisible(54) &&
+                      !customerDetailsProvider.isResidential &&
+                      !customerDetailsProvider.isCommercial)
                     ExpansionTile(
                       shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.zero,
