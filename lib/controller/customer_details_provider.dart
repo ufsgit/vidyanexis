@@ -2712,57 +2712,6 @@ class CustomerDetailsProvider extends ChangeNotifier {
     bool dismissDialog = true,
   }) async {
     try {
-      if (!isEdit) {
-        await getTaskList(customerId, context);
-        final targetTaskTypeId = int.tryParse(taskType) ?? 0;
-        final alreadyExists =
-            taskList.any((task) => task.taskTypeId == targetTaskTypeId);
-        if (alreadyExists) {
-          if (context.mounted) {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: const Text(
-                    'Cannot save',
-                    style: TextStyle(
-                      color: AppColors.appViolet,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  content: const Text(
-                    'This task type has already been created for this customer.',
-                    style: TextStyle(
-                      color: Colors.black87,
-                      fontSize: 14,
-                    ),
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: const Text(
-                        'OK',
-                        style: TextStyle(
-                          color: AppColors.appViolet,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              },
-            );
-          }
-          return;
-        }
-      }
-
       if (date.isNotEmpty) {
         DateTime parsedDate;
         try {
@@ -2811,7 +2760,71 @@ class CustomerDetailsProvider extends ChangeNotifier {
       final response = await HttpRequest.httpPostRequest(
           endPoint: HttpUrls.saveTask, bodyData: addTaskModel.toJson());
 
-      if (response!.statusCode == 200) {
+      if (response != null && response.statusCode == 200) {
+        final data = response.data;
+        int? flag;
+        String? message;
+        if (data is Map) {
+          flag = data['Task_Master_Id_'] ??
+              data['Task_Id_'] ??
+              data['status_Id_'] ??
+              data['Status_Id_'] ??
+              data['Customer_Id_'];
+          message = data['message']?.toString() ?? data['msg']?.toString();
+        } else if (data is List && data.isNotEmpty && data[0] is Map) {
+          flag = data[0]['Task_Master_Id_'] ??
+              data[0]['Task_Id_'] ??
+              data[0]['status_Id_'] ??
+              data[0]['Status_Id_'] ??
+              data[0]['Customer_Id_'];
+          message = data[0]['message']?.toString() ?? data[0]['msg']?.toString();
+        }
+
+        if (flag == -1) {
+          if (context.mounted) {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text(
+                    'Cannot save',
+                    style: TextStyle(
+                      color: AppColors.appViolet,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  content: Text(
+                    message ?? 'This task already exists or cannot be saved.',
+                    style: const TextStyle(
+                      color: Colors.black87,
+                      fontSize: 14,
+                    ),
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text(
+                        'OK',
+                        style: TextStyle(
+                          color: AppColors.appViolet,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            );
+          }
+          return;
+        }
+
         clearTaskDetails();
         getTaskList(customerId, context);
         if (isEdit) {
