@@ -28,6 +28,7 @@ import 'package:vidyanexis/presentation/pages/login/login_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/complaint_page_reports_mobile.dart';
 import 'package:vidyanexis/presentation/pages/reports/enquiry_source_summary_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/employee_summary_report_screen.dart';
+import 'package:vidyanexis/presentation/pages/reports/employee_sales_customer_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/enquiry_for_summary_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/periodic_service_report_page_mobile.dart';
 import 'package:vidyanexis/presentation/pages/reports/stock_return_report.dart';
@@ -133,6 +134,12 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
         {
           'title': 'Employee Summary Reports',
           'page': const EmployeeSummaryReportScreen()
+        },
+      if (settingsProvider.menuIsViewMap[119].toString() == '1' ||
+          settingsProvider.menuIsViewMap[89].toString() == '1')
+        {
+          'title': 'Employee Sales Customer Reports',
+          'page': const EmployeeSalesCustomerReportScreen()
         },
       if (settingsProvider.menuIsViewMap[119].toString() == '1' ||
           settingsProvider.menuIsViewMap[89].toString() == '1')

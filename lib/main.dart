@@ -35,6 +35,7 @@ import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/enquiry_report_provider.dart';
 import 'package:vidyanexis/controller/enquiry_source_provider.dart';
 import 'package:vidyanexis/controller/employee_summary_provider.dart';
+import 'package:vidyanexis/controller/employee_sales_report_provider.dart';
 import 'package:vidyanexis/controller/enquiry_for_summary_provider.dart';
 import 'package:vidyanexis/controller/expense_provider.dart';
 import 'package:vidyanexis/controller/feedback_provider.dart';
@@ -103,7 +104,8 @@ Future<void> main() async {
       HttpUrls.updateBaseUrl(storedUrl);
     }
   }
-  print('[PERF-BOOT] initialization completed: ${DateTime.now().millisecondsSinceEpoch - initStart} ms');
+  print(
+      '[PERF-BOOT] initialization completed: ${DateTime.now().millisecondsSinceEpoch - initStart} ms');
 
   if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
     await Firebase.initializeApp(
@@ -148,7 +150,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => ConversionReportProvider()),
         ChangeNotifierProvider(create: (context) => WorkSummaryProvider()),
         ChangeNotifierProvider(create: (context) => WorkReportProvider()),
-        ChangeNotifierProvider(create: (context) => WorkCompletionReportProvider()),
+        ChangeNotifierProvider(
+            create: (context) => WorkCompletionReportProvider()),
         ChangeNotifierProvider(create: (context) => InvoiceReportProvider()),
         ChangeNotifierProvider(create: (context) => AttendanceReportProvider()),
         ChangeNotifierProvider(create: (context) => TravelAllowanceProvider()),
@@ -163,6 +166,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => SettingsProvider()),
         ChangeNotifierProvider(create: (_) => EnquirySourceProvider()),
         ChangeNotifierProvider(create: (_) => EmployeeSummaryProvider()),
+        ChangeNotifierProvider(create: (_) => EmployeeSalesReportProvider()),
         ChangeNotifierProvider(create: (_) => EnquiryForSummaryProvider()),
         ChangeNotifierProvider(create: (_) => EnquiryReportProvider()),
         ChangeNotifierProvider(create: (_) => ProcessFlowProvider()),
@@ -212,8 +216,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => JobSheetProvider()),
         ChangeNotifierProvider(create: (_) => TargetReportProvider()),
         ChangeNotifierProvider(create: (_) => AccountsSummaryReportProvider()),
-        ChangeNotifierProvider(
-            create: (_) => DuplicateEntryAttemptsProvider()),
+        ChangeNotifierProvider(create: (_) => DuplicateEntryAttemptsProvider()),
         ChangeNotifierProvider(create: (_) => LocationTrackingProvider()),
       ],
       child: Consumer<SettingsProvider>(
