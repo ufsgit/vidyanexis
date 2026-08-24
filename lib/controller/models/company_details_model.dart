@@ -117,6 +117,8 @@ class Company {
   final int districtCityMandatory;
   final int leadMobileExistedCheck;
   final int taskRemarkMandatory;
+  final int residentialScopeOfWork;
+  final int commercialScopeOfWork;
   final List<CompanyPermission> permissions;
 
   Company({
@@ -150,6 +152,8 @@ class Company {
     required this.districtCityMandatory,
     required this.leadMobileExistedCheck,
     required this.taskRemarkMandatory,
+    required this.residentialScopeOfWork,
+    required this.commercialScopeOfWork,
     this.permissions = const [],
   });
 
@@ -186,6 +190,8 @@ class Company {
       districtCityMandatory: json['District_City_Mandatory'] ?? 0,
       leadMobileExistedCheck: json['Lead_Mobile_Existed_Check'] ?? 0,
       taskRemarkMandatory: json['Task_Remark_Mandatory'] ?? 0,
+      residentialScopeOfWork: json['Residential_Scope_Of_Work'] ?? 0,
+      commercialScopeOfWork: json['Commercial_Scope_Of_Work'] ?? 0,
       permissions: (json['permissions'] as List<dynamic>?)
               ?.map((e) => CompanyPermission.fromJson(e))
               .toList() ??
@@ -226,6 +232,8 @@ class Company {
       'District_City_Mandatory': districtCityMandatory,
       'Lead_Mobile_Existed_Check': leadMobileExistedCheck,
       'Task_Remark_Mandatory': taskRemarkMandatory,
+      'Residential_Scope_Of_Work': residentialScopeOfWork,
+      'Commercial_Scope_Of_Work': commercialScopeOfWork,
       'permissions': permissions.map((e) => e.toJson()).toList(),
     };
   }

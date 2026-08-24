@@ -37,10 +37,10 @@ class HttpUrls {
 //   static String baseUrl = 'https://demo2api.ufstech.net.in/';
   // static String baseUrl = 'https://coopaenergyapi.ufstech.net.in/';
   // static String baseUrl = 'https://bodhieapi.ufstech.net.in/';
-  // static String baseUrl = 'https://solarisapi.ufstech.net.in/';
+  static String baseUrl = 'https://solarisapi.ufstech.net.in/';
 //dev
 
-  static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
+//   static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
 
   // static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
 
@@ -301,6 +301,7 @@ class HttpUrls {
       "lead/Get_Lead_Report_By_Enquiry_Source";
 
   static String employeeSummaryReport = "lead/Employee_Summary_Report";
+  static String employeeSalesReport = "lead/Employee_Sales_Report";
   static String enquiryForSummaryReport = "lead/Enquiry_For_Summary_Report";
 
   static String searchCategory = "item/Get_All_category";

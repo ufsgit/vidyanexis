@@ -685,8 +685,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     ),
 
                   if (customerDetailsProvider.isQuotationFieldVisible(66) &&
-                      !customerDetailsProvider.isCommercial &&
-                      !customerDetailsProvider.isResidential)
+                      (!customerDetailsProvider.isCommercial || settingsProvider.commercialScopeOfWork == 1) &&
+                      (!customerDetailsProvider.isResidential || settingsProvider.residentialScopeOfWork == 1))
                     //scope of work
                     ExpansionTile(
                       shape: const RoundedRectangleBorder(
