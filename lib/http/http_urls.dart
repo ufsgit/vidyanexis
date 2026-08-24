@@ -423,6 +423,9 @@ class HttpUrls {
   static String getPdfCompletionReport = "lead/get_pdf_completion_report/";
   static String getPdfKsebNetMeter = "lead/get_pdf_kseb_net_meter/";
   static String getPdfVendorAgreement = "lead/get_pdf_vendor_agreement/";
+  static String getPdfVendorFeasibilityReport =
+      "lead/get_pdf_vendor_feasibility_report/";
+  static String Search_Stock_Report = "item/Search_Stock_Report";
   static String getPdfWarranty = "lead/get_pdf_warranty/";
   static String getPdfWorkCompletionReport =
       "lead/get_pdf_work_completion_report/";

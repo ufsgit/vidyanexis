@@ -2768,6 +2768,36 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           );
                                                                         },
                                                                       ),
+                                                                    CustomElevatedButton(
+                                                                      radius: 4,
+                                                                      backgroundColor:
+                                                                          AppColors.whiteColor,
+                                                                      borderColor:
+                                                                          AppColors.bluebutton,
+                                                                      textColor:
+                                                                          AppColors.bluebutton,
+                                                                      buttonText:
+                                                                          'Rts Vender feasibility',
+                                                                      onPressed:
+                                                                          () async {
+                                                                        PdfActionHelper
+                                                                            .showPdfOptions(
+                                                                          context:
+                                                                              context,
+                                                                          title:
+                                                                              'Rts Vender feasibility',
+                                                                          pdfUrl:
+                                                                              '${HttpUrls.getPdfVendorFeasibilityReport}${widget.customerId}',
+                                                                          onGenerate:
+                                                                              () async {
+                                                                            await Loader.showLoader(context);
+                                                                            final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfVendorFeasibilityReport}${widget.customerId}');
+                                                                            Loader.stopLoader(context);
+                                                                            return bytes ?? Uint8List(0);
+                                                                          },
+                                                                        );
+                                                                      },
+                                                                    ),
                                                                     if ((settingsprovider.menuIsViewMap[112] ==
                                                                                 1 ||
                                                                             settingsprovider.menuIsViewMapPrint[112] ==
@@ -3973,6 +4003,43 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                     );
                                                                   },
                                                                 ),
+                                                              CustomElevatedButton(
+                                                                radius: 4,
+                                                                backgroundColor:
+                                                                    AppColors
+                                                                        .whiteColor,
+                                                                borderColor:
+                                                                    AppColors
+                                                                        .bluebutton,
+                                                                textColor:
+                                                                    AppColors
+                                                                        .bluebutton,
+                                                                buttonText:
+                                                                    'Rts Vender feasibility',
+                                                                onPressed:
+                                                                    () async {
+                                                                  PdfActionHelper
+                                                                      .showPdfOptions(
+                                                                    context:
+                                                                        context,
+                                                                    title:
+                                                                        'Rts Vender feasibility',
+                                                                    pdfUrl:
+                                                                        '${HttpUrls.getPdfVendorFeasibilityReport}${widget.customerId}',
+                                                                    onGenerate:
+                                                                        () async {
+                                                                      await Loader.showLoader(
+                                                                          context);
+                                                                      final bytes =
+                                                                          await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfVendorFeasibilityReport}${widget.customerId}');
+                                                                      Loader.stopLoader(
+                                                                          context);
+                                                                      return bytes ??
+                                                                          Uint8List(0);
+                                                                    },
+                                                                  );
+                                                                },
+                                                              ),
                                                               if (settingsprovider
                                                                               .menuIsViewMap[
                                                                           112] ==
