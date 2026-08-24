@@ -748,9 +748,20 @@ class DashboardProvider extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         final parseStart = DateTime.now().millisecondsSinceEpoch;
-        List<dynamic> data = response.data;
-        if (data.isNotEmpty && data.first is Map) {
-          Map<String, dynamic> counts = data.first;
+        var data = response.data;
+        Map<String, dynamic> counts = {};
+
+        if (data is List && data.isNotEmpty) {
+          if (data.first is List && data.first.isNotEmpty && data.first.first is Map) {
+            counts = data.first.first as Map<String, dynamic>;
+          } else if (data.first is Map) {
+            counts = data.first as Map<String, dynamic>;
+          }
+        } else if (data is Map) {
+          counts = data as Map<String, dynamic>;
+        }
+
+        if (counts.isNotEmpty) {
           final newMap = <String, int>{};
           final newList = <DashBoardCountModel>[];
           counts.forEach((key, value) {
@@ -766,6 +777,9 @@ class DashboardProvider extends ChangeNotifier {
           leadCountMap.addAll(newMap);
           leadDashboardCountData.clear();
           leadDashboardCountData.addAll(newList);
+        } else {
+          leadCountMap.clear();
+          leadDashboardCountData.clear();
         }
         isDashboardCountLoaded = true;
         print('[PERF-RELOAD] Parsing completed: ${DateTime.now().millisecondsSinceEpoch - parseStart} ms');

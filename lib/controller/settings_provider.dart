@@ -534,6 +534,8 @@ class SettingsProvider extends ChangeNotifier {
   int _additionalExpense = 0;
   int _commercialProposal = 0;
   int _districtCityMandatory = 0;
+  int _residentialScopeOfWork = 0;
+  int _commercialScopeOfWork = 0;
   int _leadMobileExistedCheck = 0;
   int _taskRemarkMandatory = 0;
   int _leadNameChangeToCustomerName = 0;
@@ -553,6 +555,8 @@ class SettingsProvider extends ChangeNotifier {
   int get additionalExpense => _additionalExpense;
   int get commercialProposal => _commercialProposal;
   int get districtCityMandatory => _districtCityMandatory;
+  int get residentialScopeOfWork => _residentialScopeOfWork;
+  int get commercialScopeOfWork => _commercialScopeOfWork;
   int get leadMobileExistedCheck => _leadMobileExistedCheck;
   int get taskRemarkMandatory => _taskRemarkMandatory;
   int get leadNameChangeToCustomerName => _leadNameChangeToCustomerName;
@@ -629,6 +633,10 @@ class SettingsProvider extends ChangeNotifier {
       _hideWarranty = value;
     } else if (permissionId == 21) {
       _taskRemarkMandatory = value;
+    } else if (permissionId == 22 || (caption != null && (caption.toLowerCase().contains('residential_scope_of_work') || caption.toLowerCase().contains('residential scope of work')))) {
+      _residentialScopeOfWork = value;
+    } else if (permissionId == 24 || (caption != null && (caption.toLowerCase().contains('commercial_scope_of_work') || caption.toLowerCase().contains('commercial scope of work')))) {
+      _commercialScopeOfWork = value;
     } else if (permissionId == 23 || (caption != null && (caption.toLowerCase().contains('task_duplicate_button') || caption.toLowerCase().contains('task duplicate button')))) {
       _taskDuplicateButton = value;
     }
@@ -704,6 +712,8 @@ class SettingsProvider extends ChangeNotifier {
       _additionalExpense = _companyDetails[0].additionalExpense;
       _commercialProposal = _companyDetails[0].commercialProposal;
       _districtCityMandatory = _companyDetails[0].districtCityMandatory;
+      _residentialScopeOfWork = _companyDetails[0].residentialScopeOfWork;
+      _commercialScopeOfWork = _companyDetails[0].commercialScopeOfWork;
       _leadMobileExistedCheck = _companyDetails[0].leadMobileExistedCheck;
       _taskRemarkMandatory = _companyDetails[0].taskRemarkMandatory;
       _toggleValue = _companyDetails[0].isLocation;
@@ -1333,6 +1343,18 @@ class SettingsProvider extends ChangeNotifier {
   void setDistrictCityMandatory(int value) {
     _districtCityMandatory = value;
     _syncStateToPermissionsList(12, value);
+    notifyListeners();
+  }
+
+  void setResidentialScopeOfWork(int value) {
+    _residentialScopeOfWork = value;
+    _syncStateToPermissionsList(22, value);
+    notifyListeners();
+  }
+
+  void setCommercialScopeOfWork(int value) {
+    _commercialScopeOfWork = value;
+    _syncStateToPermissionsList(24, value);
     notifyListeners();
   }
 
@@ -4432,6 +4454,8 @@ class SettingsProvider extends ChangeNotifier {
                   additionalExpense: 0,
                   commercialProposal: 0,
                   districtCityMandatory: 0,
+                  residentialScopeOfWork: 0,
+                  commercialScopeOfWork: 0,
                   leadMobileExistedCheck: 0,
                   taskRemarkMandatory: 0,
                   permissions: perms,
@@ -4468,6 +4492,8 @@ class SettingsProvider extends ChangeNotifier {
                 additionalExpense: existing.additionalExpense,
                 commercialProposal: existing.commercialProposal,
                 districtCityMandatory: existing.districtCityMandatory,
+                residentialScopeOfWork: existing.residentialScopeOfWork,
+                commercialScopeOfWork: existing.commercialScopeOfWork,
                 leadMobileExistedCheck: existing.leadMobileExistedCheck,
                 taskRemarkMandatory: existing.taskRemarkMandatory,
                 permissions: perms,
@@ -4535,6 +4561,8 @@ class SettingsProvider extends ChangeNotifier {
           _additionalExpense = data['Additional_Expense'] ?? 0;
           _commercialProposal = data['Commercial_Proposal'] ?? 0;
           _districtCityMandatory = data['District_City_Mandatory'] ?? 0;
+          _residentialScopeOfWork = data['Residential_Scope_Of_Work'] ?? 0;
+          _commercialScopeOfWork = data['Commercial_Scope_Of_Work'] ?? 0;
           _leadMobileExistedCheck = data['Lead_Mobile_Existed_Check'] ?? 0;
           try {
             _companyDetails = [Company.fromJson(data)];
@@ -4621,6 +4649,8 @@ class SettingsProvider extends ChangeNotifier {
             "Additional_Expense": _additionalExpense,
             "Commercial_Proposal": _commercialProposal,
             "District_City_Mandatory": _districtCityMandatory,
+            "Residential_Scope_Of_Work": _residentialScopeOfWork,
+            "Commercial_Scope_Of_Work": _commercialScopeOfWork,
             "Lead_Mobile_Existed_Check": _leadMobileExistedCheck,
             "permissions": _companyDetails.isNotEmpty &&
                     _companyDetails[0].permissions.isNotEmpty

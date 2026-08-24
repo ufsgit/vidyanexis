@@ -84,7 +84,7 @@ import 'package:vidyanexis/controller/location_tracking_provider.dart';
 
 final GlobalKey<ScaffoldMessengerState> navigatorKey =
     GlobalKey<ScaffoldMessengerState>();
-bool isCompanyCode = true; // dont change... code - fathima123 , code - nayan123
+bool isCompanyCode =true; // dont change... code - fathima123 , code - nayan123
 
 Future<void> main() async {
   final bootStart = DateTime.now().millisecondsSinceEpoch;
