@@ -103,7 +103,8 @@ Future<void> main() async {
       HttpUrls.updateBaseUrl(storedUrl);
     }
   }
-  print('[PERF-BOOT] initialization completed: ${DateTime.now().millisecondsSinceEpoch - initStart} ms');
+  print(
+      '[PERF-BOOT] initialization completed: ${DateTime.now().millisecondsSinceEpoch - initStart} ms');
 
   if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
     await Firebase.initializeApp(
@@ -148,7 +149,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => ConversionReportProvider()),
         ChangeNotifierProvider(create: (context) => WorkSummaryProvider()),
         ChangeNotifierProvider(create: (context) => WorkReportProvider()),
-        ChangeNotifierProvider(create: (context) => WorkCompletionReportProvider()),
+        ChangeNotifierProvider(
+            create: (context) => WorkCompletionReportProvider()),
         ChangeNotifierProvider(create: (context) => InvoiceReportProvider()),
         ChangeNotifierProvider(create: (context) => AttendanceReportProvider()),
         ChangeNotifierProvider(create: (context) => TravelAllowanceProvider()),
@@ -212,8 +214,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => JobSheetProvider()),
         ChangeNotifierProvider(create: (_) => TargetReportProvider()),
         ChangeNotifierProvider(create: (_) => AccountsSummaryReportProvider()),
-        ChangeNotifierProvider(
-            create: (_) => DuplicateEntryAttemptsProvider()),
+        ChangeNotifierProvider(create: (_) => DuplicateEntryAttemptsProvider()),
         ChangeNotifierProvider(create: (_) => LocationTrackingProvider()),
       ],
       child: Consumer<SettingsProvider>(

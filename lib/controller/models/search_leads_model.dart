@@ -86,6 +86,40 @@ class SearchLeadModel {
     return formatted;
   }
 
+  String get displayPlace {
+    if (address2.trim().isNotEmpty &&
+        address2.trim() != 'null' &&
+        address2.trim() != '0') {
+      return address2.trim();
+    }
+    if (address1.trim().isNotEmpty &&
+        address1.trim() != 'null' &&
+        address1.trim() != '0') {
+      return address1.trim();
+    }
+    if (address3.trim().isNotEmpty &&
+        address3.trim() != 'null' &&
+        address3.trim() != '0') {
+      return address3.trim();
+    }
+    if (address4.trim().isNotEmpty &&
+        address4.trim() != 'null' &&
+        address4.trim() != '0') {
+      return address4.trim();
+    }
+    if (subDistrict.trim().isNotEmpty &&
+        subDistrict.trim() != 'null' &&
+        subDistrict.trim() != '0') {
+      return subDistrict.trim();
+    }
+    if (village.trim().isNotEmpty &&
+        village.trim() != 'null' &&
+        village.trim() != '0') {
+      return village.trim();
+    }
+    return '-';
+  }
+
   String getDisplayLeadCode(int leadCodeWithEnquiryCodePermission) {
     if (leadCode2.isNotEmpty) {
       return leadCode2;

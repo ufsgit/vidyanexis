@@ -590,7 +590,8 @@ class SettingsProvider extends ChangeNotifier {
     return defaultCaption;
   }
 
-  void _syncPermissionValueToState(int permissionId, int value, [String? caption]) {
+  void _syncPermissionValueToState(int permissionId, int value,
+      [String? caption]) {
     if (permissionId == 1 || permissionId == 3) {
       _toggleValue = value;
     } else if (permissionId == 4) {
@@ -619,17 +620,30 @@ class SettingsProvider extends ChangeNotifier {
       _leadCodeWithEnquiryCode = value;
     } else if (permissionId == 16) {
       _documentButtonTaskStatus = value;
-    } else if (permissionId == 17 || permissionId == 40 || (caption != null && caption.toLowerCase().contains('lead permission me and all'))) {
+    } else if (permissionId == 17 ||
+        permissionId == 40 ||
+        (caption != null &&
+            caption.toLowerCase().contains('lead permission me and all'))) {
       _leadPermissionMeAndAll = value;
-    } else if (permissionId == 18 || permissionId == 41 || (caption != null && caption.toLowerCase().contains('customer permission me and all'))) {
+    } else if (permissionId == 18 ||
+        permissionId == 41 ||
+        (caption != null &&
+            caption.toLowerCase().contains('customer permission me and all'))) {
       _customerPermissionMeAndAll = value;
-    } else if (permissionId == 19 || permissionId == 42 || (caption != null && caption.toLowerCase().contains('task permission me and all'))) {
+    } else if (permissionId == 19 ||
+        permissionId == 42 ||
+        (caption != null &&
+            caption.toLowerCase().contains('task permission me and all'))) {
       _taskPermissionMeAndAll = value;
-    } else if (permissionId == 20 || (caption != null && caption.toLowerCase().contains('hide warranty'))) {
+    } else if (permissionId == 20 ||
+        (caption != null && caption.toLowerCase().contains('hide warranty'))) {
       _hideWarranty = value;
     } else if (permissionId == 21) {
       _taskRemarkMandatory = value;
-    } else if (permissionId == 23 || (caption != null && (caption.toLowerCase().contains('task_duplicate_button') || caption.toLowerCase().contains('task duplicate button')))) {
+    } else if (permissionId == 23 ||
+        (caption != null &&
+            (caption.toLowerCase().contains('task_duplicate_button') ||
+                caption.toLowerCase().contains('task duplicate button')))) {
       _taskDuplicateButton = value;
     }
   }
@@ -710,7 +724,8 @@ class SettingsProvider extends ChangeNotifier {
 
       if (_companyDetails[0].permissions.isNotEmpty) {
         for (var p in _companyDetails[0].permissions) {
-          _syncPermissionValueToState(p.companyPermissionId, p.value, p.caption);
+          _syncPermissionValueToState(
+              p.companyPermissionId, p.value, p.caption);
         }
       }
     }
@@ -734,7 +749,8 @@ class SettingsProvider extends ChangeNotifier {
           caption: old.caption,
           value: newValue,
         );
-        _syncPermissionValueToState(old.companyPermissionId, newValue, old.caption);
+        _syncPermissionValueToState(
+            old.companyPermissionId, newValue, old.caption);
         notifyListeners();
       }
     } else {
@@ -945,7 +961,8 @@ class SettingsProvider extends ChangeNotifier {
     branchCampaignController.clear();
   }
 
-  Future<void> searchBranch(BuildContext context, {String query = '', bool forceRefresh = false}) async {
+  Future<void> searchBranch(BuildContext context,
+      {String query = '', bool forceRefresh = false}) async {
     if (query.isEmpty && !forceRefresh && _allBranchModel.isNotEmpty) return;
     try {
       if (_allBranchModel.isEmpty || query.isEmpty) {
@@ -2212,10 +2229,14 @@ class SettingsProvider extends ChangeNotifier {
             final newSaveMap = <int, int>{};
 
             for (var permission in _getMenuPermission) {
-              newViewMap[permission.menuId] = int.tryParse(permission.isView.toString()) ?? 0;
-              newEditMap[permission.menuId] = int.tryParse(permission.isEdit.toString()) ?? 0;
-              newDeleteMap[permission.menuId] = int.tryParse(permission.isDelete.toString()) ?? 0;
-              newSaveMap[permission.menuId] = int.tryParse(permission.isSave.toString()) ?? 0;
+              newViewMap[permission.menuId] =
+                  int.tryParse(permission.isView.toString()) ?? 0;
+              newEditMap[permission.menuId] =
+                  int.tryParse(permission.isEdit.toString()) ?? 0;
+              newDeleteMap[permission.menuId] =
+                  int.tryParse(permission.isDelete.toString()) ?? 0;
+              newSaveMap[permission.menuId] =
+                  int.tryParse(permission.isSave.toString()) ?? 0;
             }
 
             _menuIsViewMap.clear();
@@ -2227,11 +2248,13 @@ class SettingsProvider extends ChangeNotifier {
             _menuIsSaveMap.clear();
             _menuIsSaveMap.addAll(newSaveMap);
           }
-          print('[PERF-RELOAD] getMenuPermissionData COMPLETE: ${DateTime.now().millisecondsSinceEpoch - startTime} ms for userId = $userId');
+          print(
+              '[PERF-RELOAD] getMenuPermissionData COMPLETE: ${DateTime.now().millisecondsSinceEpoch - startTime} ms for userId = $userId');
           notifyListeners();
         }
       } else {
-        print('[PERF-RELOAD] getMenuPermissionData failed with status: ${response.statusCode}');
+        print(
+            '[PERF-RELOAD] getMenuPermissionData failed with status: ${response.statusCode}');
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Server Error')),
         );
@@ -2848,9 +2871,10 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> searchsourceCategoryData(
-      String query, BuildContext context, {bool forceRefresh = false}) async {
-    if (query.isEmpty && !forceRefresh && _searchSourceCategory.isNotEmpty) return;
+  Future<void> searchsourceCategoryData(String query, BuildContext context,
+      {bool forceRefresh = false}) async {
+    if (query.isEmpty && !forceRefresh && _searchSourceCategory.isNotEmpty)
+      return;
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -3998,7 +4022,8 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  void searchDepartment(String search, BuildContext context, {bool forceRefresh = false}) async {
+  void searchDepartment(String search, BuildContext context,
+      {bool forceRefresh = false}) async {
     if (search.isEmpty && !forceRefresh && _departmentModel.isNotEmpty) return;
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -4885,6 +4910,7 @@ class SettingsProvider extends ChangeNotifier {
           for (var permission in _showMenu) {
             showView[permission.menuId] = permission.isView;
           }
+          print("showView----->>${showView}");
           //edit
           for (var permission in _showMenu) {
             showEdit[permission.menuId] = permission.isEdit;
@@ -5045,7 +5071,8 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> getPriorities(BuildContext context, {bool forceRefresh = false}) async {
+  Future<void> getPriorities(BuildContext context,
+      {bool forceRefresh = false}) async {
     // if (!forceRefresh && _priorities.isNotEmpty) return;
     try {
       final response = await HttpRequest.httpGetRequest(
