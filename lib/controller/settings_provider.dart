@@ -542,6 +542,7 @@ class SettingsProvider extends ChangeNotifier {
   int _leadCodeWithEnquiryCode = 0;
   int _documentButtonTaskStatus = 0;
   int _taskDuplicateButton = 0;
+  int _solarPvSystemSpecification = 1;
   int? _selectedStatusId;
 
   int get toggleValue => _toggleValue;
@@ -563,6 +564,7 @@ class SettingsProvider extends ChangeNotifier {
   int get leadCodeWithEnquiryCode => _leadCodeWithEnquiryCode;
   int get documentButtonTaskStatus => _documentButtonTaskStatus;
   int get taskDuplicateButton => _taskDuplicateButton;
+  int get solarPvSystemSpecification => _solarPvSystemSpecification;
 
   int _leadPermissionMeAndAll = 0;
   int get leadPermissionMeAndAll => _leadPermissionMeAndAll;
@@ -659,6 +661,11 @@ class SettingsProvider extends ChangeNotifier {
             (caption.toLowerCase().contains('task_duplicate_button') ||
                 caption.toLowerCase().contains('task duplicate button')))) {
       _taskDuplicateButton = value;
+    } else if (permissionId == 25 ||
+        (caption != null &&
+            (caption.toLowerCase().contains('solar_pv_system_specification') ||
+                caption.toLowerCase().contains('solar pv system specification')))) {
+      _solarPvSystemSpecification = value;
     }
   }
 
@@ -670,6 +677,12 @@ class SettingsProvider extends ChangeNotifier {
   void setTaskDuplicateButton(int value) {
     _taskDuplicateButton = value;
     _syncStateToPermissionsList(23, value);
+    notifyListeners();
+  }
+
+  void setSolarPvSystemSpecification(int value) {
+    _solarPvSystemSpecification = value;
+    _syncStateToPermissionsList(25, value);
     notifyListeners();
   }
 
@@ -4818,6 +4831,7 @@ class SettingsProvider extends ChangeNotifier {
     _documentButtonTaskStatus = 0;
     _taskDuplicateButton = 0;
     _hideWarranty = 0;
+    _solarPvSystemSpecification = 1;
     notifyListeners();
   }
 

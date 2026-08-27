@@ -661,6 +661,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     ),
 
                   if (customerDetailsProvider.isQuotationFieldVisible(57) &&
+                      settingsProvider.solarPvSystemSpecification == 1 &&
                       (customerDetailsProvider.isResidential ||
                           customerDetailsProvider.isCommercial))
                     //solar pv system specification

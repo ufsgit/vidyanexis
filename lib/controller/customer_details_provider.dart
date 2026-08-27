@@ -1644,6 +1644,9 @@ class CustomerDetailsProvider extends ChangeNotifier {
     if (fieldId == 44 && SettingsProvider().hideWarranty == 1) {
       return false;
     }
+    if (fieldId == 57 && SettingsProvider().solarPvSystemSpecification == 0) {
+      return false;
+    }
     if (_quotationFields.isEmpty) return true;
     try {
       final field = _quotationFields.firstWhere(

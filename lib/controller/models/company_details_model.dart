@@ -27,6 +27,8 @@ class CompanyPermission {
         return "Hide Warranty";
       case 23:
         return "Task Duplicate Button";
+      case 25:
+        return "solar pv system specification";
       default:
         return "Permission $companyPermissionId";
     }
@@ -67,6 +69,9 @@ class CompanyPermission {
           break;
         case 23:
           cap = "Task_Duplicate_Button";
+          break;
+        case 25:
+          cap = "solar pv system specification";
           break;
       }
     }
