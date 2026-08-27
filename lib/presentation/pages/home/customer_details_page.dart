@@ -108,7 +108,6 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
           Provider.of<CustomerDetailsProvider>(context, listen: false);
       customerDetailsProvider
           .setCustomerId(int.tryParse(widget.customerId) ?? 0);
-      customerDetailsProvider.getTaskList(widget.customerId, context);
       customerDetailsProvider
           .fetchLeadDetails(widget.customerId, context)
           .then((value) {
@@ -120,11 +119,6 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
 
           leadsProvider.getCustomFieldsByEnquiryForId(context,
               enquiryForId: lead.enquiryForId, leadId: lead.customerId);
-
-          final settingsProvider =
-              Provider.of<SettingsProvider>(context, listen: false);
-          settingsProvider.getMenuPermissionDataPrint(
-              lead.enquiryForId.toString(), context);
         }
       });
       // Eager loading removed for lazy tab initialization
@@ -133,7 +127,6 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
           Provider.of<DropDownProvider>(context, listen: false);
       dropDownProvider.getUserDetails(context);
       dropDownProvider.getTaskType(context);
-      dropDownProvider.getAMCStatus(context);
       dropDownProvider.getEnquirySource(context);
       dropDownProvider.getEnquiryFor(context);
     });
@@ -274,6 +267,9 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
       case "Periodic Service":
         provider.getServiceList(widget.customerId, context);
         provider.getAmc(widget.customerId, '0', context);
+        final dropDownProvider =
+            Provider.of<DropDownProvider>(context, listen: false);
+        dropDownProvider.getAMCStatus(context);
         break;
     }
   }
