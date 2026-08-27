@@ -465,10 +465,10 @@ class _tasksPageReportState extends State<TaskPage> {
                                       decoration: BoxDecoration(
                                         border: Border(
                                           bottom: BorderSide(
-                                            color:
-                                                reportsProvider.entryType != 'all'
-                                                    ? AppColors.primaryBlue
-                                                    : Colors.transparent,
+                                            color: reportsProvider.entryType !=
+                                                    'all'
+                                                ? AppColors.primaryBlue
+                                                : Colors.transparent,
                                             width: 2.0,
                                           ),
                                         ),
@@ -502,10 +502,10 @@ class _tasksPageReportState extends State<TaskPage> {
                                       decoration: BoxDecoration(
                                         border: Border(
                                           bottom: BorderSide(
-                                            color:
-                                                reportsProvider.entryType == 'all'
-                                                    ? AppColors.primaryBlue
-                                                    : Colors.transparent,
+                                            color: reportsProvider.entryType ==
+                                                    'all'
+                                                ? AppColors.primaryBlue
+                                                : Colors.transparent,
                                             width: 2.0,
                                           ),
                                         ),
@@ -620,16 +620,31 @@ class _tasksPageReportState extends State<TaskPage> {
                                 reportsProvider.setSortOption(value, context);
                               },
                               itemBuilder: (BuildContext context) => [
-                                const PopupMenuItem(value: 0, child: Text('Default')),
-                                const PopupMenuItem(value: 9, child: Text('Latest')),
-                                const PopupMenuItem(value: 1, child: Text('ID No (Descending)')),
-                                const PopupMenuItem(value: 2, child: Text('ID No (Ascending)')),
-                                const PopupMenuItem(value: 3, child: Text('Creation Date (Newest)')),
-                                const PopupMenuItem(value: 4, child: Text('Creation Date (Oldest)')),
-                                const PopupMenuItem(value: 5, child: Text('Followup Date (Newest)')),
-                                const PopupMenuItem(value: 6, child: Text('Followup Date (Oldest)')),
-                                const PopupMenuItem(value: 7, child: Text('Name (A-Z)')),
-                                const PopupMenuItem(value: 8, child: Text('Name (Z-A)')),
+                                const PopupMenuItem(
+                                    value: 0, child: Text('Default')),
+                                const PopupMenuItem(
+                                    value: 9, child: Text('Latest')),
+                                const PopupMenuItem(
+                                    value: 1,
+                                    child: Text('ID No (Descending)')),
+                                const PopupMenuItem(
+                                    value: 2, child: Text('ID No (Ascending)')),
+                                const PopupMenuItem(
+                                    value: 3,
+                                    child: Text('Creation Date (Newest)')),
+                                const PopupMenuItem(
+                                    value: 4,
+                                    child: Text('Creation Date (Oldest)')),
+                                const PopupMenuItem(
+                                    value: 5,
+                                    child: Text('Followup Date (Newest)')),
+                                const PopupMenuItem(
+                                    value: 6,
+                                    child: Text('Followup Date (Oldest)')),
+                                const PopupMenuItem(
+                                    value: 7, child: Text('Name (A-Z)')),
+                                const PopupMenuItem(
+                                    value: 8, child: Text('Name (Z-A)')),
                               ],
                             ),
                             CustomFilterButton(
@@ -639,7 +654,8 @@ class _tasksPageReportState extends State<TaskPage> {
                               isFilter: reportsProvider.isFilter,
                             ),
                             IconButton(
-                              icon: const Icon(Icons.refresh, color: Color(0xFF64748B), size: 20),
+                              icon: const Icon(Icons.refresh,
+                                  color: Color(0xFF64748B), size: 20),
                               onPressed: () {
                                 reportsProvider.setTaskSearchCriteria(
                                   searchController.text,
@@ -671,18 +687,20 @@ class _tasksPageReportState extends State<TaskPage> {
                                   final settingsProvider =
                                       Provider.of<SettingsProvider>(context,
                                           listen: false);
-                                      await Future.wait([
-                                        leadsProvider.getLeadDropdowns(context),
-                                        dropDownProvider.getFollowUpStatus(
-                                            context, "1"),
-                                        dropDownProvider.getEnquirySource(context),
-                                        dropDownProvider.getEnquiryFor(context),
-                                        settingsProvider.searchsourceCategoryData(
-                                            '', context),
-                                        // Added missing dropdown fetches
-                                        Future.microtask(() => dropDownProvider.getDistricts(context)),
-                                        Future.microtask(() => dropDownProvider.getStatesDropdown(context)),
-                                      ]);
+                                  await Future.wait([
+                                    leadsProvider.getLeadDropdowns(context),
+                                    dropDownProvider.getFollowUpStatus(
+                                        context, "1"),
+                                    dropDownProvider.getEnquirySource(context),
+                                    dropDownProvider.getEnquiryFor(context),
+                                    settingsProvider.searchsourceCategoryData(
+                                        '', context),
+                                    // Added missing dropdown fetches
+                                    Future.microtask(() =>
+                                        dropDownProvider.getDistricts(context)),
+                                    Future.microtask(() => dropDownProvider
+                                        .getStatesDropdown(context)),
+                                  ]);
                                   settingsProvider.searchBranch(context);
                                   settingsProvider.searchDepartment(
                                       '', context);
@@ -1468,69 +1486,76 @@ class _tasksPageReportState extends State<TaskPage> {
                                                 itemCount: reportsProvider
                                                         .taskReport.length +
                                                     (_isLoadingMore ? 1 : 0),
-                                            itemBuilder: (context, index) {
-                                              if (index ==
-                                                      reportsProvider
-                                                          .taskReport.length &&
-                                                  _isLoadingMore) {
-                                                return const Padding(
-                                                  padding: EdgeInsets.all(16),
-                                                  child: Center(
-                                                      child:
-                                                          CircularProgressIndicator()),
-                                                );
-                                              }
-                                              var task = reportsProvider
-                                                  .taskReport[index];
-                                              return Column(
-                                                children: [
-                                                  Divider(
-                                                    height: 1,
-                                                    thickness: 1,
-                                                    color: AppColors.grey,
-                                                  ),
-                                                  TaskCard(
-                                                    task: task,
-                                                    isExpanded: reportsProvider
-                                                            .expandedIndex ==
-                                                        index,
-                                                    onTap: () => reportsProvider
-                                                        .toggleExpansion(index),
-                                                    showStatusUpdate:
-                                                        (context, task) {
-                                                      reportsProvider
-                                                          .selectedTaskTypeIds
-                                                          .clear();
-                                                      reportsProvider
-                                                          .taskTypeModel
-                                                          .clear();
-                                                      if (task.customerName
-                                                          .isEmpty) {
-                                                        updateStatusDialogWithoutTask(
-                                                                task)
-                                                            .then((value) {
-                                                          if (value == true) {
+                                                itemBuilder: (context, index) {
+                                                  if (index ==
+                                                          reportsProvider
+                                                              .taskReport
+                                                              .length &&
+                                                      _isLoadingMore) {
+                                                    return const Padding(
+                                                      padding:
+                                                          EdgeInsets.all(16),
+                                                      child: Center(
+                                                          child:
+                                                              CircularProgressIndicator()),
+                                                    );
+                                                  }
+                                                  var task = reportsProvider
+                                                      .taskReport[index];
+                                                  return Column(
+                                                    children: [
+                                                      Divider(
+                                                        height: 1,
+                                                        thickness: 1,
+                                                        color: AppColors.grey,
+                                                      ),
+                                                      TaskCard(
+                                                        task: task,
+                                                        isExpanded: reportsProvider
+                                                                .expandedIndex ==
+                                                            index,
+                                                        onTap: () =>
                                                             reportsProvider
-                                                                .searchTaskByCustomer(
-                                                                    context);
+                                                                .toggleExpansion(
+                                                                    index),
+                                                        showStatusUpdate:
+                                                            (context, task) {
+                                                          reportsProvider
+                                                              .selectedTaskTypeIds
+                                                              .clear();
+                                                          reportsProvider
+                                                              .taskTypeModel
+                                                              .clear();
+                                                          if (task.customerName
+                                                              .isEmpty) {
+                                                            updateStatusDialogWithoutTask(
+                                                                    task)
+                                                                .then((value) {
+                                                              if (value ==
+                                                                  true) {
+                                                                reportsProvider
+                                                                    .searchTaskByCustomer(
+                                                                        context);
+                                                              }
+                                                            });
+                                                          } else {
+                                                            statusDialogMobile(
+                                                                    task)
+                                                                .then((value) {
+                                                              if (value ==
+                                                                  true) {
+                                                                reportsProvider
+                                                                    .searchTaskByCustomer(
+                                                                        context);
+                                                              }
+                                                            });
                                                           }
-                                                        });
-                                                      } else {
-                                                        statusDialogMobile(task)
-                                                            .then((value) {
-                                                          if (value == true) {
-                                                            reportsProvider
-                                                                .searchTaskByCustomer(
-                                                                    context);
-                                                          }
-                                                        });
-                                                      }
-                                                    },
-                                                  ),
-                                                ],
-                                              );
-                                            },
-                                          ),
+                                                        },
+                                                      ),
+                                                    ],
+                                                  );
+                                                },
+                                              ),
                                   ),
                                 ],
                               ),
@@ -2372,7 +2397,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                               12.0),
                                                                       data:
                                                                           Text(
-                                                                        task.leadDuration.toString(),
+                                                                        task.leadDuration
+                                                                            .toString(),
                                                                         overflow:
                                                                             TextOverflow.ellipsis,
                                                                         maxLines:
@@ -3837,15 +3863,18 @@ class _tasksPageReportState extends State<TaskPage> {
                                                     .taskTypeModel[index];
                                                 bool selected = reportsProvider
                                                     .selectedTaskTypeIds
-                                                    .contains(taskItem.uniqueId ?? taskItem
-                                                        .taskTypeId
-                                                        .toString());
+                                                    .contains(
+                                                        taskItem.uniqueId ??
+                                                            taskItem.taskTypeId
+                                                                .toString());
                                                 return InkWell(
                                                   onTap: () {
                                                     reportsProvider
                                                         .toggleTaskTypeSelection(
-                                                            taskItem.uniqueId ?? taskItem.taskTypeId
-                                                                .toString());
+                                                            taskItem.uniqueId ??
+                                                                taskItem
+                                                                    .taskTypeId
+                                                                    .toString());
                                                     dropDownProvider
                                                         .filterStaffByBranchAndDepartment(
                                                       branchId:
@@ -3995,8 +4024,9 @@ class _tasksPageReportState extends State<TaskPage> {
 
                                                                     // Default selected user name
                                                                     int? assignedUserId = reportsProvider
-                                                                            .taskTypeToUserMap[
-                                                                        taskItem.uniqueId ?? taskItem
+                                                                        .taskTypeToUserMap[taskItem
+                                                                            .uniqueId ??
+                                                                        taskItem
                                                                             .taskTypeId
                                                                             .toString()];
                                                                     String
@@ -4053,9 +4083,8 @@ class _tasksPageReportState extends State<TaskPage> {
 
                                                                         reportsProvider
                                                                             .setTaskUser(
-                                                                          taskItem.uniqueId ?? taskItem
-                                                                              .taskTypeId
-                                                                              .toString(),
+                                                                          taskItem.uniqueId ??
+                                                                              taskItem.taskTypeId.toString(),
                                                                           selected
                                                                               .userDetailsId,
                                                                         );
@@ -4069,7 +4098,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                 )
                                                               : const SizedBox(),
                                                         ),
-                                                        Consumer<SettingsProvider>(
+                                                        Consumer<
+                                                            SettingsProvider>(
                                                           builder: (context,
                                                               settingsProvider,
                                                               _) {

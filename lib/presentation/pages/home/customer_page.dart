@@ -895,9 +895,9 @@ class _CustomerPageState extends State<CustomerPage> {
     double rowHeight,
     double tableHeaderHeight,
   ) {
-    final double fixedWidth = 910.0;
+    final double fixedWidth = 760.0;
     final bool showLocation = settingsProvider.menuIsViewMap[142] == 1;
-    final double scrollableWidth = showLocation ? 1220.0 : 1080.0;
+    final double scrollableWidth = showLocation ? 1370.0 : 1230.0;
 
     return Scrollbar(
       controller: _scrollableVerticalController,
@@ -960,14 +960,6 @@ class _CustomerPageState extends State<CustomerPage> {
                       TableWidget(
                         width: 140,
                         title: 'Mobile no',
-                        fontWeight: FontWeight.bold,
-                        padding: EdgeInsets.symmetric(
-                            vertical: 4.0, horizontal: 8.0),
-                        color: Color(0xFFFFFFFF),
-                      ),
-                      TableWidget(
-                        width: 150,
-                        title: 'Assigned Staff',
                         fontWeight: FontWeight.bold,
                         padding: EdgeInsets.symmetric(
                             vertical: 4.0, horizontal: 8.0),
@@ -1277,9 +1269,9 @@ class _CustomerPageState extends State<CustomerPage> {
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 6.0, horizontal: 8.0),
                                         data: Tooltip(
-                                          message: lead.address2,
+                                          message: lead.displayPlace,
                                           child: Text(
-                                            lead.address2,
+                                            lead.displayPlace,
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
                                             style:
@@ -1294,14 +1286,6 @@ class _CustomerPageState extends State<CustomerPage> {
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 6.0, horizontal: 8.0),
                                         title: lead.contactNumber,
-                                      ),
-                                      TableWidget(
-                                        width: 150,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.normal,
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 6.0, horizontal: 8.0),
-                                        title: lead.toUserName,
                                       ),
                                     ],
                                   ),
@@ -1349,16 +1333,16 @@ class _CustomerPageState extends State<CustomerPage> {
                               color: Color(0xFFFFFFFF),
                             ),
                             const TableWidget(
-                              width: 140,
-                              title: 'Follow Up Date',
+                              width: 160,
+                              title: 'Work Completion Date',
                               fontWeight: FontWeight.bold,
                               padding: EdgeInsets.symmetric(
                                   vertical: 4.0, horizontal: 8.0),
                               color: Color(0xFFFFFFFF),
                             ),
                             const TableWidget(
-                              width: 160,
-                              title: 'Work Completion Date',
+                              width: 220,
+                              title: 'Remarks',
                               fontWeight: FontWeight.bold,
                               padding: EdgeInsets.symmetric(
                                   vertical: 4.0, horizontal: 8.0),
@@ -1374,6 +1358,14 @@ class _CustomerPageState extends State<CustomerPage> {
                             ),
                             const TableWidget(
                               width: 140,
+                              title: 'Follow Up Date',
+                              fontWeight: FontWeight.bold,
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 4.0, horizontal: 8.0),
+                              color: Color(0xFFFFFFFF),
+                            ),
+                            const TableWidget(
+                              width: 140,
                               title: 'Consumer No.',
                               fontWeight: FontWeight.bold,
                               padding: EdgeInsets.symmetric(
@@ -1381,8 +1373,8 @@ class _CustomerPageState extends State<CustomerPage> {
                               color: Color(0xFFFFFFFF),
                             ),
                             const TableWidget(
-                              width: 220,
-                              title: 'Remarks',
+                              width: 150,
+                              title: 'Assigned Staff',
                               fontWeight: FontWeight.bold,
                               padding: EdgeInsets.symmetric(
                                   vertical: 4.0, horizontal: 8.0),
@@ -1465,20 +1457,6 @@ class _CustomerPageState extends State<CustomerPage> {
                                               title: lead.amcDateDisplay,
                                             ),
                                             TableWidget(
-                                              width: 140,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.normal,
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 4.0,
-                                                      horizontal: 8.0),
-                                              title: lead.nextFollowUpDate
-                                                      .isNotEmpty
-                                                  ? lead.nextFollowUpDate
-                                                      .toDayMonthYearFormat()
-                                                  : '',
-                                            ),
-                                            TableWidget(
                                               width: 160,
                                               fontSize: 12,
                                               fontWeight: FontWeight.normal,
@@ -1488,6 +1466,16 @@ class _CustomerPageState extends State<CustomerPage> {
                                                       horizontal: 8.0),
                                               title: lead
                                                   .workCompletionDateDisplay,
+                                            ),
+                                            TableWidget(
+                                              width: 220,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.normal,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 6.0,
+                                                      horizontal: 8.0),
+                                              title: lead.remark,
                                             ),
                                             TableWidget(
                                               width: 160,
@@ -1541,19 +1529,33 @@ class _CustomerPageState extends State<CustomerPage> {
                                               fontWeight: FontWeight.normal,
                                               padding:
                                                   const EdgeInsets.symmetric(
-                                                      vertical: 6.0,
+                                                      vertical: 4.0,
                                                       horizontal: 8.0),
-                                              title: lead.consumerNo,
+                                              title: lead.nextFollowUpDate
+                                                      .isNotEmpty
+                                                  ? lead.nextFollowUpDate
+                                                      .toDayMonthYearFormat()
+                                                  : '',
                                             ),
                                             TableWidget(
-                                              width: 220,
+                                              width: 140,
                                               fontSize: 12,
                                               fontWeight: FontWeight.normal,
                                               padding:
                                                   const EdgeInsets.symmetric(
                                                       vertical: 6.0,
                                                       horizontal: 8.0),
-                                              title: lead.remark,
+                                              title: lead.consumerNo,
+                                            ),
+                                            TableWidget(
+                                              width: 150,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.normal,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 6.0,
+                                                      horizontal: 8.0),
+                                              title: lead.toUserName,
                                             ),
                                             TableWidget(
                                               width: 120,

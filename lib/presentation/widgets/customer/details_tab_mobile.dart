@@ -372,6 +372,28 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                                       );
                                     },
                                   ),
+                                 _buildActionBtn(
+                                   context,
+                                   text: 'Rts Vender feasibility',
+                                   icon: Icons.assessment_outlined,
+                                   onTap: () async {
+                                     PdfActionHelper.showPdfOptions(
+                                       context: context,
+                                       title: 'Rts Vender feasibility',
+                                       pdfUrl:
+                                           '${HttpUrls.getPdfVendorFeasibilityReport}${widget.customerId}',
+                                       onGenerate: () async {
+                                         await Loader.showLoader(context);
+                                         final bytes =
+                                             await customerDetailsProvider
+                                                 .getAnnexurePdfBytes(
+                                                     '${HttpUrls.getPdfVendorFeasibilityReport}${widget.customerId}');
+                                         Loader.stopLoader(context);
+                                         return bytes ?? Uint8List(0);
+                                       },
+                                     );
+                                   },
+                                 ),
                                 if (settingsProvider.menuIsViewMap[112] == 1 &&
                                     sideProvider.name != 'Lead /')
                                   _buildActionBtn(

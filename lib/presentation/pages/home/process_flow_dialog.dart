@@ -124,7 +124,8 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
     int customerId = widget.task.customerId;
     int enquiryForId = widget.task.enquiryForId;
     reportsProvider.fetchTaskTypesWithCustomFields(
-        tasktypeId, statusId, customerId, enquiryForId, context, forceRefresh: true);
+        tasktypeId, statusId, customerId, enquiryForId, context,
+        forceRefresh: true);
   }
 
   @override
@@ -250,7 +251,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                       child: ListView(
                         padding: const EdgeInsets.fromLTRB(16, 8, 16, 80),
                         children: [
-                          if (settingsProvider.showView[162] == 1) ...[
+                          if (settingsProvider.showView[122] == 1) ...[
                             Center(
                               child: SizedBox(
                                 height: 32,
@@ -492,26 +493,37 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                       var task = entry.value;
                                       bool isSelected = reportsProvider
                                           .selectedTaskTypeIds
-                                          .contains(task.uniqueId ?? task.taskTypeId.toString());
+                                          .contains(task.uniqueId ??
+                                              task.taskTypeId.toString());
                                       return Column(
                                         children: [
                                           const SizedBox(height: 8),
                                           _buildInteractiveCard(
                                             onTap: () => reportsProvider
-                                                .toggleTaskTypeSelection(
-                                                    task.uniqueId ?? task.taskTypeId.toString()),
+                                                .toggleTaskTypeSelection(task
+                                                        .uniqueId ??
+                                                    task.taskTypeId.toString()),
                                             isSelected: isSelected,
-                                            trailingAction: settingsProvider.taskDuplicateButton == 1
+                                            trailingAction: settingsProvider
+                                                        .taskDuplicateButton ==
+                                                    1
                                                 ? GestureDetector(
-                                                    behavior: HitTestBehavior.opaque,
+                                                    behavior:
+                                                        HitTestBehavior.opaque,
                                                     onTap: () {
-                                                      reportsProvider.duplicateTask(index);
+                                                      reportsProvider
+                                                          .duplicateTask(index);
                                                     },
                                                     child: const Padding(
-                                                      padding: EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 4,
+                                                              vertical: 4),
                                                       child: Icon(
-                                                        Icons.add_circle_outline,
-                                                        color: AppColors.primaryBlue,
+                                                        Icons
+                                                            .add_circle_outline,
+                                                        color: AppColors
+                                                            .primaryBlue,
                                                         size: 22,
                                                       ),
                                                     ),
@@ -592,8 +604,9 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                                 int? assignedUserId =
                                                     reportsProvider
                                                             .taskTypeToUserMap[
-                                                        task.uniqueId ?? task.taskTypeId
-                                                            .toString()];
+                                                        task.uniqueId ??
+                                                            task.taskTypeId
+                                                                .toString()];
                                                 String defaultUserName = '';
 
                                                 if (assignedUserId != null) {
@@ -640,8 +653,9 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                                                 .userDetailsId);
 
                                                     reportsProvider.setTaskUser(
-                                                      task.uniqueId ?? task.taskTypeId
-                                                          .toString(),
+                                                      task.uniqueId ??
+                                                          task.taskTypeId
+                                                              .toString(),
                                                       selected.userDetailsId,
                                                     );
                                                   },
@@ -683,7 +697,8 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                             children: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                if (selectedStatus.followup == 1 || selectedStatus.viewDateFollowup == 1) ...[
+                                if (selectedStatus.followup == 1 ||
+                                    selectedStatus.viewDateFollowup == 1) ...[
                                   _buildFieldLabel('Next FollowUp Date'),
                                   _buildInputField(
                                     controller:
@@ -857,13 +872,16 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                               if (reportsProvider
                                   .documentTypeModel.isNotEmpty) {
                                 final settingsProvider =
-                                    Provider.of<SettingsProvider>(context, listen: false);
+                                    Provider.of<SettingsProvider>(context,
+                                        listen: false);
                                 bool isDocumentButtonEnabled =
-                                    settingsProvider.documentButtonTaskStatus == 1;
+                                    settingsProvider.documentButtonTaskStatus ==
+                                        1;
 
                                 if (isDocumentButtonEnabled) {
                                   return Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       _buildSectionHeader('PENDING DOCUMENTS'),
                                       const SizedBox(height: 8),
@@ -872,8 +890,10 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                           await showDialog(
                                             barrierDismissible: false,
                                             context: context,
-                                            builder: (context) => ImageUploadAlert(
-                                              customerId: widget.task.customerId.toString(),
+                                            builder: (context) =>
+                                                ImageUploadAlert(
+                                              customerId: widget.task.customerId
+                                                  .toString(),
                                             ),
                                           );
                                         },
@@ -948,9 +968,13 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                                     .uploadAllDocumentsGrouped(
                                                         context,
                                                         shouldPop: false);
-                                                
-                                                if (imageProvider.fileInfoList.isEmpty) {
-                                                  reportsProvider.removePendingDocument(doc.documentTypeId ?? 0);
+
+                                                if (imageProvider
+                                                    .fileInfoList.isEmpty) {
+                                                  reportsProvider
+                                                      .removePendingDocument(
+                                                          doc.documentTypeId ??
+                                                              0);
                                                 }
                                               }
                                             },
@@ -1162,7 +1186,9 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                       return;
                                     }
                                     bool isDocumentButtonEnabled =
-                                        settingsProvider.documentButtonTaskStatus == 1;
+                                        settingsProvider
+                                                .documentButtonTaskStatus ==
+                                            1;
 
                                     if (!isDocumentButtonEnabled &&
                                         reportsProvider

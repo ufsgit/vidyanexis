@@ -40,17 +40,11 @@ class HttpUrls {
   static String baseUrl = 'https://solarisapi.ufstech.net.in/';
 //dev
 
-//   static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
-
+  // Local Backend Server
+  //static String baseUrl = 'http://localhost:3512/';
+  // static String baseUrl =
+  //     'https://ramcoelectronicsapi.trackbox.net.in/'; // Android Emulator
   // static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
-
-  // static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
-
-  //static String baseUrl = 'https://2jw4dwnj-3512.inc1.devtunnels.ms/';
-
-  // static String baseUrl = 'https://cn1hct1v-3512.inc1.devtunnels.ms/';
-
-  // static String baseUrl = 'https://28tzz0hf-3512.inc1.devtunnels.ms/';
 
   static String imgBaseUrl =
       'https://pub-b2e3330da2344ea490c08dd119392728.r2.dev/';
@@ -424,6 +418,10 @@ class HttpUrls {
   static String getPdfCompletionReport = "lead/get_pdf_completion_report/";
   static String getPdfKsebNetMeter = "lead/get_pdf_kseb_net_meter/";
   static String getPdfVendorAgreement = "lead/get_pdf_vendor_agreement/";
+  static String getPdfVendorFeasibilityReport =
+      "lead/get_pdf_vendor_feasibility_report/";
+  static String Search_Stock_Report = "Item/Search_Stock_Report/";
+
   static String getPdfWarranty = "lead/get_pdf_warranty/";
   static String getPdfWorkCompletionReport =
       "lead/get_pdf_work_completion_report/";

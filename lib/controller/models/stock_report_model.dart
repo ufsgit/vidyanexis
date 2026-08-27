@@ -21,14 +21,31 @@ class StockReportModel {
 
   factory StockReportModel.fromJson(Map<String, dynamic> json) {
     return StockReportModel(
-      itemName: json['Item_Name']?.toString() ?? '',
-      categoryName: json['Category_Name']?.toString() ?? '',
-      unitName: json['Unit_Name']?.toString() ?? '',
-      unitPrice: json['Unit_Price']?.toString() ?? '',
-      purchaseRate: json['PurchaseRate']?.toString() ?? '',
-      cgst: json['CGST']?.toString() ?? '',
-      sgst: json['SGST']?.toString() ?? '',
-      quantity: json['Quantity']?.toString() ?? '',
+      itemName: json['Item_Name']?.toString() ?? json['item_name']?.toString() ?? '',
+      categoryName: json['Category_Name']?.toString() ?? json['category_name']?.toString() ?? '',
+      unitName: json['Unit_Name']?.toString() ?? json['unit_name']?.toString() ?? json['Unit']?.toString() ?? '',
+      unitPrice: json['Unit_Price']?.toString() ?? json['unit_price']?.toString() ?? json['Price']?.toString() ?? '',
+      purchaseRate: json['PurchaseRate']?.toString() ??
+          json['Purchase_Rate']?.toString() ??
+          json['purchase_rate']?.toString() ??
+          json['Rate']?.toString() ??
+          json['rate']?.toString() ??
+          '',
+      cgst: json['CGST']?.toString() ?? json['cgst']?.toString() ?? json['Cgst']?.toString() ?? '',
+      sgst: json['SGST']?.toString() ?? json['sgst']?.toString() ?? json['Sgst']?.toString() ?? '',
+      quantity: json['Quantity']?.toString() ??
+          json['quantity']?.toString() ??
+          json['Qty']?.toString() ??
+          json['qty']?.toString() ??
+          json['Stock_Quantity']?.toString() ??
+          json['stock_quantity']?.toString() ??
+          json['Total_Qty']?.toString() ??
+          json['Current_Stock']?.toString() ??
+          json['Stock']?.toString() ??
+          json['stock']?.toString() ??
+          json['Stock_Qty']?.toString() ??
+          json['stock_qty']?.toString() ??
+          '',
     );
   }
 

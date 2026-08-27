@@ -166,40 +166,120 @@ class StockReportProvider extends ChangeNotifier {
   Future<void> getSearchWorkSummary(BuildContext context) async {
     try {
       Loader.showLoader(context);
-      if (_Status.isEmpty || _Status == 'null' || _Status == '0') {
-        _Status = '0';
-      }
-      String isDate = "0";
-      if (_fromDateS.isEmpty && _toDateS.isEmpty) {
-        isDate = "0";
-      } else {
-        isDate = "1";
+      int itemId = 0;
+      if (_selectedStatus != null && _selectedStatus! > 0) {
+        itemId = _selectedStatus!;
+      } else if (_Status.isNotEmpty && _Status != 'null') {
+        itemId = int.tryParse(_Status) ?? 0;
       }
 
-      String toUserId = (_selectedUser ?? 0).toString();
+      int categoryId = 0;
+      if (_selectedUser != null && _selectedUser! > 0) {
+        categoryId = _selectedUser!;
+      } else if (_AssignedTo.isNotEmpty && _AssignedTo != 'null') {
+        categoryId = int.tryParse(_AssignedTo) ?? 0;
+      }
 
-      // Using searchWorkReport endpoint as it seems most relevant for a generic report that might be stock related
-      // or we can use getStockList if we want actual stock data.
-      // However, the snippet suggests it expects a filtered search.
-      final response = await HttpRequest.httpGetRequest(
-          endPoint:
-              '${HttpUrls.searchWorkReport}?Item_Id=$_Status&Category_Id=$toUserId&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS');
+      try {
+        final response = await HttpRequest.httpGetRequest(
+            endPoint:
+                '${HttpUrls.Search_Stock_Report}?Item_Id=$itemId&Category_Id=$categoryId');
 
-      if (response.statusCode == 200) {
-        final data = response.data;
-        if (data != null) {
-          _taskReport = (data as List<dynamic>)
-              .map((item) => StockReportModel.fromJson(item))
-              .toList();
+        if (response.statusCode == 200 && response.data != null) {
+          final resData = response.data;
+          List<dynamic> itemsList = [];
+          if (resData is Map && resData['data'] != null) {
+            final rawData = resData['data'];
+            if (rawData is List && rawData.isNotEmpty) {
+              if (rawData[0] is List) {
+                itemsList = rawData[0] as List<dynamic>;
+              } else {
+                itemsList = rawData;
+              }
+            }
+          } else if (resData is List && resData.isNotEmpty) {
+            if (resData[0] is List) {
+              itemsList = resData[0] as List<dynamic>;
+            } else {
+              itemsList = resData;
+            }
+          }
+
+          if (itemsList.isNotEmpty) {
+            _taskReport = itemsList
+                .whereType<Map<String, dynamic>>()
+                .map((item) => StockReportModel.fromJson(item))
+                .toList();
+            Loader.stopLoader(context);
+            notifyListeners();
+            return;
+          }
         }
-        Loader.stopLoader(context);
-        notifyListeners();
-      } else {
-        Loader.stopLoader(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Server Error')),
-        );
+      } catch (e) {
+        print('Search_Stock_Report parsing error or failure: $e');
       }
+
+      // Fallback: Fetch stock data with quantities from getStockDetails or getStockList or getItemListStock
+      dynamic fallbackResponseData;
+      try {
+        final resDetails = await HttpRequest.httpGetRequest(endPoint: HttpUrls.getStockDetails);
+        if (resDetails.statusCode == 200 && resDetails.data != null) {
+          fallbackResponseData = resDetails.data;
+        }
+      } catch (e) {
+        print('getStockDetails failed: $e');
+      }
+
+      if (fallbackResponseData == null) {
+        try {
+          final resList = await HttpRequest.httpGetRequest(endPoint: HttpUrls.getStockList);
+          if (resList.statusCode == 200 && resList.data != null) {
+            fallbackResponseData = resList.data;
+          }
+        } catch (e) {
+          print('getStockList failed: $e');
+        }
+      }
+
+      if (fallbackResponseData == null) {
+        try {
+          final resItemStock = await HttpRequest.httpGetRequest(endPoint: HttpUrls.getItemListStock);
+          if (resItemStock.statusCode == 200 && resItemStock.data != null) {
+            fallbackResponseData = resItemStock.data;
+          }
+        } catch (e) {
+          print('getItemListStock failed: $e');
+        }
+      }
+
+      if (fallbackResponseData != null) {
+        List<dynamic> itemsList = [];
+        if (fallbackResponseData is List) {
+          itemsList = fallbackResponseData;
+        } else if (fallbackResponseData is Map && fallbackResponseData['data'] != null) {
+          itemsList = fallbackResponseData['data'] as List<dynamic>;
+        }
+
+        List<StockReportModel> list = [];
+        for (var rawItem in itemsList) {
+          if (rawItem is Map<String, dynamic>) {
+            int itemVal = int.tryParse(rawItem['Item_Id']?.toString() ?? rawItem['item_id']?.toString() ?? '0') ?? 0;
+            int catVal = int.tryParse(rawItem['Category_Id']?.toString() ?? rawItem['category_id']?.toString() ?? '0') ?? 0;
+
+            if (itemId > 0 && itemVal != itemId) {
+              continue;
+            }
+            if (categoryId > 0 && catVal != categoryId) {
+              continue;
+            }
+            list.add(StockReportModel.fromJson(rawItem));
+          }
+        }
+        _taskReport = list;
+      }
+
+      Loader.stopLoader(context);
+      notifyListeners();
     } catch (e) {
       Loader.stopLoader(context);
       print('Exception occurred: $e');

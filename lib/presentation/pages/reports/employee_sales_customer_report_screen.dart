@@ -51,16 +51,6 @@ class _EmployeeSalesCustomerReportScreenState
     final reportsProvider = Provider.of<EmployeeSalesReportProvider>(context);
     final isWeb = AppStyles.isWebScreen(context);
 
-    // Calculate dynamic totals for the summary cards
-    int totalQuotations = 0;
-    int totalConverted = 0;
-    double totalKw = 0.0;
-
-    for (var item in reportsProvider.salesReport) {
-      totalQuotations += item.noOfQuotationsGiven ?? 0;
-      totalConverted += item.noOfConvertedLeads ?? 0;
-      totalKw += item.totalKwConverted ?? 0.0;
-    }
 
     return Scaffold(
       backgroundColor: Colors.grey[50],
@@ -68,7 +58,7 @@ class _EmployeeSalesCustomerReportScreenState
       appBar: isWeb
           ? null
           : CustomAppBar(
-              title: 'Employee Sales Customer Report',
+              title: 'Employee Sales Report',
               titleStyle: GoogleFonts.plusJakartaSans(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
@@ -147,17 +137,7 @@ class _EmployeeSalesCustomerReportScreenState
               Expanded(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 40.0),
-                  child: Column(
-                    children: [
-                      _buildReportTable(reportsProvider),
-                      const SizedBox(height: 20),
-                      _buildSummaryDashboard(
-                        totalQuotations,
-                        totalConverted,
-                        totalKw,
-                      ),
-                    ],
-                  ),
+                  child: _buildReportTable(reportsProvider),
                 ),
               ),
           ],
@@ -488,94 +468,7 @@ class _EmployeeSalesCustomerReportScreenState
     );
   }
 
-  Widget _buildSummaryDashboard(
-    int totalQuotations,
-    int totalConverted,
-    double totalKw,
-  ) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(4),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 16,
-            offset: const Offset(0, 4),
-          ),
-        ],
-        border: Border.all(color: Colors.grey[200]!),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CustomText(
-            'Overall Sales Summary',
-            fontSize: 15,
-            fontWeight: FontWeight.bold,
-            color: const Color(0xFF0F172A),
-          ),
-          const SizedBox(height: 16),
-          GridView(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              childAspectRatio: 2.2,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-            ),
-            children: [
-              _buildDashboardItem('Total Quotations', totalQuotations.toString(),
-                  AppColors.primaryBlue, AppColors.primaryBlue.withOpacity(0.05)),
-              _buildDashboardItem('Total Converted', totalConverted.toString(),
-                  const Color(0xFF16A34A), const Color(0xFFDCFCE7).withOpacity(0.5)),
-              _buildDashboardItem('Total Capacity', '${totalKw.toStringAsFixed(1)} kW',
-                  const Color(0xFFCA8A04), const Color(0xFFFEF9C3).withOpacity(0.5)),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
 
-  Widget _buildDashboardItem(
-      String name, String value, Color color, Color bgCol) {
-    return Container(
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: bgCol,
-        borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: color.withOpacity(0.12)),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            name,
-            overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 10,
-              fontWeight: FontWeight.w600,
-              color: const Color(0xFF475569),
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            value,
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 14,
-              fontWeight: FontWeight.w800,
-              color: color,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildEmptyState() {
     return const CommonEmptyState(message: 'No sales records found');

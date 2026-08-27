@@ -51,7 +51,6 @@ class TaskReportModel {
   final String consumerNo;
   final String leadDuration;
 
-
   DateTime? get parsedCreationDate {
     final dateStr = entryDate.trim();
     if (dateStr.isEmpty || dateStr.toLowerCase() == 'null') return null;
@@ -141,7 +140,10 @@ class TaskReportModel {
     }
     return TaskReportModel(
       taskId: json['Task_Id'] ?? json['task_id'] ?? json['taskId'] ?? 0,
-      taskMasterId: json['Task_Master_Id'] ?? json['task_master_id'] ?? json['taskMasterId'] ?? 0,
+      taskMasterId: json['Task_Master_Id'] ??
+          json['task_master_id'] ??
+          json['taskMasterId'] ??
+          0,
       locationTracking: json["Location_Tracking"] ?? 0,
       latitude: parseString(json['Latitude'] ?? json['latitude']),
       longitude: parseString(json['Longitude'] ?? json['longitude']),
@@ -149,16 +151,30 @@ class TaskReportModel {
         String lat = parseString(json['Latitude'] ?? json['latitude']);
         String lng = parseString(json['Longitude'] ?? json['longitude']);
         String loc = [
-          json['Location_Name'], json['location_name'],
-          json['Location'], json['location'],
-          json['Address'], json['address']
-        ].firstWhere(
-          (val) => val != null && val.toString().trim().isNotEmpty && val.toString().trim() != 'null' && val.toString().trim() != 'Unknown Location', 
-          orElse: () => ''
-        )?.toString() ?? '';
+              json['Location_Name'],
+              json['location_name'],
+              json['Location'],
+              json['location'],
+              json['Address'],
+              json['address']
+            ]
+                .firstWhere(
+                    (val) =>
+                        val != null &&
+                        val.toString().trim().isNotEmpty &&
+                        val.toString().trim() != 'null' &&
+                        val.toString().trim() != 'Unknown Location',
+                    orElse: () => '')
+                ?.toString() ??
+            '';
 
         if (loc.isEmpty) {
-          if (lat.isNotEmpty && lng.isNotEmpty && lat != '0.0' && lng != '0.0' && lat != '0' && lng != '0') {
+          if (lat.isNotEmpty &&
+              lng.isNotEmpty &&
+              lat != '0.0' &&
+              lng != '0.0' &&
+              lat != '0' &&
+              lng != '0') {
             return '$lat,$lng';
           }
         }
@@ -166,22 +182,32 @@ class TaskReportModel {
       }(),
       locationName: () {
         String loc = [
-          json['Location_Name'], json['location_name'],
-          json['Location'], json['location'],
-          json['Address'], json['address']
-        ].firstWhere(
-          (val) => val != null && val.toString().trim().isNotEmpty && val.toString().trim() != 'null' && val.toString().trim() != 'Unknown Location', 
-          orElse: () => ''
-        )?.toString() ?? '';
+              json['Location_Name'],
+              json['location_name'],
+              json['Location'],
+              json['location'],
+              json['Address'],
+              json['address']
+            ]
+                .firstWhere(
+                    (val) =>
+                        val != null &&
+                        val.toString().trim().isNotEmpty &&
+                        val.toString().trim() != 'null' &&
+                        val.toString().trim() != 'Unknown Location',
+                    orElse: () => '')
+                ?.toString() ??
+            '';
         return loc;
       }(),
       description: json['Description'] ?? '',
       entryDate: (json['Entry_Date'] ??
-              json['created_at'] ??
-              json['createdAt'] ??
-              json['created_date'] ??
-              json['createdDate'] ??
-              json['Entry_date'])?.toString() ??
+                  json['created_at'] ??
+                  json['createdAt'] ??
+                  json['created_date'] ??
+                  json['createdDate'] ??
+                  json['Entry_date'])
+              ?.toString() ??
           '',
       taskStatusId: json['Task_Status_Id'] ?? 0,
       taskStatusName: json['Task_Status_Name'] ?? 'Unknown',

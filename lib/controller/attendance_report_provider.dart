@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
@@ -364,31 +365,48 @@ class AttendanceReportProvider extends ChangeNotifier {
       }
 
       // High precision settings
-      LocationSettings locationSettings = const LocationSettings(
-        accuracy: LocationAccuracy.high,
-        distanceFilter: 10,
-      );
+      LocationSettings locationSettings;
+      if (kIsWeb) {
+        locationSettings = WebSettings(
+          accuracy: LocationAccuracy.high,
+          maximumAge: Duration.zero,
+        );
+      } else {
+        locationSettings = const LocationSettings(
+          accuracy: LocationAccuracy.high,
+          distanceFilter: 10,
+        );
+      }
 
       Position position;
       try {
         position = await Geolocator.getCurrentPosition(
           locationSettings: locationSettings,
-        ).timeout(const Duration(seconds: 10));
+        ).timeout(const Duration(seconds: 15));
       } catch (e) {
         log('Timeout or error getting current position: $e');
-        // Fallback to last known position
-        position = await Geolocator.getLastKnownPosition() ??
-            Position(
-                longitude: 0,
-                latitude: 0,
-                timestamp: DateTime.now(),
-                accuracy: 0,
-                altitude: 0,
-                heading: 0,
-                speed: 0,
-                speedAccuracy: 0,
-                altitudeAccuracy: 0,
-                headingAccuracy: 0);
+        
+        Position fallbackPosition = Position(
+            longitude: 0,
+            latitude: 0,
+            timestamp: DateTime.now(),
+            accuracy: 0,
+            altitude: 0,
+            heading: 0,
+            speed: 0,
+            speedAccuracy: 0,
+            altitudeAccuracy: 0,
+            headingAccuracy: 0);
+
+        if (kIsWeb) {
+          position = fallbackPosition;
+        } else {
+          try {
+            position = await Geolocator.getLastKnownPosition() ?? fallbackPosition;
+          } catch (_) {
+            position = fallbackPosition;
+          }
+        }
       }
 
       double latVal = position.latitude;
