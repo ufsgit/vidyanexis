@@ -27,7 +27,7 @@ class _ReceiptScreenState extends State<ReceiptScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final cdProvider =
           Provider.of<CustomerDetailsProvider>(context, listen: false);
-      cdProvider.getRecieptListApi(widget.customerId.toString(), context);
+      // cdProvider.getRecieptListApi(widget.customerId.toString(), context); // Fetched by parent tab controller
     });
 
     super.initState();

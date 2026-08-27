@@ -25,7 +25,7 @@ class _BillingDetailsPagePhoneState extends State<BillingDetailsPagePhone> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final customerDetailsProvider =
           Provider.of<CustomerDetailsProvider>(context, listen: false);
-      customerDetailsProvider.getRecieptListApi(widget.customerId, context);
+      // customerDetailsProvider.getRecieptListApi(widget.customerId, context);
       customerDetailsProvider.getInvoiceListApi(widget.customerId, context);
       customerDetailsProvider.getInvoiceRecieptTotal(
           widget.customerId, context);

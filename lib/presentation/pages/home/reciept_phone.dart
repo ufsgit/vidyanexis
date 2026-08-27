@@ -29,7 +29,7 @@ class _RecieptPhoneState extends State<RecieptPhone> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final cdProvider =
           Provider.of<CustomerDetailsProvider>(context, listen: false);
-      cdProvider.getRecieptListApi(widget.customerId.toString(), context);
+      // cdProvider.getRecieptListApi(widget.customerId.toString(), context);
     });
 
     super.initState();
