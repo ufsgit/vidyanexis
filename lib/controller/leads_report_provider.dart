@@ -504,7 +504,7 @@ class LeadReportProvider extends ChangeNotifier {
     dropDownProvider.selectedStatusId = null;
     dropDownProvider.selectedFollowUPId = null;
     settingsProvider.selectedBranchId = null;
-    settingsProvider.setSelectedDepartmentId(0);
+    settingsProvider.selectedDepartmentId = null;
 
     enquiryForController.clear();
     projectCostController.clear();

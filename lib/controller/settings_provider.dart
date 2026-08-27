@@ -4050,12 +4050,8 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-<<<<<<< HEAD
-  void searchDepartment(String search, BuildContext context,
+  Future<void> searchDepartment(String search, BuildContext context,
       {bool forceRefresh = false}) async {
-=======
-  Future<void> searchDepartment(String search, BuildContext context, {bool forceRefresh = false}) async {
->>>>>>> fc6cfc25e0f47873d69581b21de1095516b491a9
     if (search.isEmpty && !forceRefresh && _departmentModel.isNotEmpty) return;
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
