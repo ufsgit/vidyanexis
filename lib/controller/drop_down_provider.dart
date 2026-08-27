@@ -1200,8 +1200,32 @@ class DropDownProvider extends ChangeNotifier {
     }
   }
 
+  final Map<String, List<TaskTypeStatusModel>> _taskTypeStatusCache = {};
+  final Map<String, Future<List<TaskTypeStatusModel>>> _taskTypeStatusPendingFutures = {};
+
   Future<List<TaskTypeStatusModel>> getStatusByTaskTypeId(
-      BuildContext context, String taskTypeId, String viewInId) async {
+      BuildContext context, String taskTypeId, String viewInId,
+      {bool forceRefresh = false}) async {
+    final cacheKey = '$taskTypeId-$viewInId';
+    if (!forceRefresh && _taskTypeStatusCache.containsKey(cacheKey)) {
+      return _taskTypeStatusCache[cacheKey]!;
+    }
+    if (!forceRefresh && _taskTypeStatusPendingFutures.containsKey(cacheKey)) {
+      return await _taskTypeStatusPendingFutures[cacheKey]!;
+    }
+
+    final future = _fetchStatusByTaskTypeIdInternal(context, taskTypeId, viewInId, cacheKey);
+    _taskTypeStatusPendingFutures[cacheKey] = future;
+    try {
+      final result = await future;
+      return result;
+    } finally {
+      _taskTypeStatusPendingFutures.remove(cacheKey);
+    }
+  }
+
+  Future<List<TaskTypeStatusModel>> _fetchStatusByTaskTypeIdInternal(
+      BuildContext context, String taskTypeId, String viewInId, String cacheKey) async {
     List<TaskTypeStatusModel> statusList = [];
 
     try {
@@ -1216,6 +1240,7 @@ class DropDownProvider extends ChangeNotifier {
               .map((item) => TaskTypeStatusModel.fromJson(item))
               .toList();
         }
+        _taskTypeStatusCache[cacheKey] = statusList;
         return statusList;
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
