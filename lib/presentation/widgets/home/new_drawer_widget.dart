@@ -8,6 +8,7 @@ import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/leads_provider.dart';
+import 'package:vidyanexis/controller/models/department_model.dart';
 import 'package:vidyanexis/controller/models/enquiry_source_model.dart';
 import 'package:vidyanexis/controller/models/field_value_model.dart';
 import 'package:vidyanexis/controller/models/search_lead_status_model.dart';
@@ -335,10 +336,18 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
 
       settingsProvider.getCompanyDetails();
       await leadProvider.loadLoginDetails();
+
+      // Load branch and department data if not already cached
+      await settingsProvider.searchBranch(context);
+      await settingsProvider.searchDepartment('', context);
+
       await dropDownProvider.getEnquirySource(context, fetchUserSpecific: true);
       await dropDownProvider.getEnquiryFor(context, fetchUserSpecific: true);
       await settingsProvider.getPriorities(context);
       await dropDownProvider.getFollowUpStatus(context, "1", forceRefresh: true);
+
+      // CRITICAL: Await getUserDetails so filteredStaffData is never empty
+      await dropDownProvider.getUserDetails(context);
 
       if (widget.isEdit) {
         leadProvider.getCustomFieldsByEnquiryForId(
@@ -366,6 +375,9 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                 ? createNewStatuses
                 : dropDownProvider.followUpData);
 
+        int defaultDeptId = leadProvider.loginDepartmentId;
+        String defaultDeptName = leadProvider.loginDepartmentName;
+
         if (availableStatuses.isNotEmpty) {
           final firstStatus = availableStatuses.first;
           if (firstStatus.statusId != null) {
@@ -379,30 +391,87 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
               leadId: 0,
               statusId: firstStatus.statusId!,
             );
+
+            final transferStatusesData = await settingsProvider
+                .getTransferStatusById(context, firstStatus.statusId.toString());
+            final statusData = await settingsProvider
+                .getStatusById(context, firstStatus.statusId.toString());
+
+            bool mainHasAmount = (statusData.isNotEmpty &&
+                    statusData.first.isAmount == 1) ||
+                (transferStatusesData.isNotEmpty &&
+                    transferStatusesData.first.isAmount == 1);
+
+            if (mounted) {
+              setState(() {
+                showAmountForMain = mainHasAmount;
+                showAmountForSecondary = false;
+                showTransferStatus = transferStatusesData.isNotEmpty &&
+                    transferStatusesData.first.isTransferStatus == 1;
+                showTime = transferStatusesData.isNotEmpty &&
+                    transferStatusesData.first.isTime == 1;
+                showDate = transferStatusesData.isNotEmpty &&
+                    transferStatusesData.first.isShowFollowupDate == 1;
+                showTransfer = transferStatusesData.isNotEmpty &&
+                    transferStatusesData.first.isTransfer == 1;
+                _filteredTransferStatuses = transferStatusesData.isNotEmpty
+                    ? transferStatusesData.first.transferStatuses
+                            ?.map((s) => SearchLeadStatusModel(
+                                  statusId: s.subStatusId,
+                                  statusName: s.subStatusName,
+                                ))
+                            .toList() ??
+                        []
+                    : [];
+              });
+            }
+
+            if (transferStatusesData.isNotEmpty &&
+                transferStatusesData.first.departmentId != null &&
+                transferStatusesData.first.departmentId != 0) {
+              defaultDeptId = transferStatusesData.first.departmentId!;
+              defaultDeptName =
+                  transferStatusesData.first.departmentName ?? '';
+            } else if (firstStatus.departmentId != null &&
+                firstStatus.departmentId != 0) {
+              defaultDeptId = firstStatus.departmentId!;
+              defaultDeptName = firstStatus.departmentName ?? '';
+            }
           }
         } else {
           dropDownProvider.setSelectedFollowUPId(0);
           leadProvider.followUpStatusController.clear();
         }
 
-        // Populate defaults from login
+        // Populate defaults
         leadProvider.branchController.text = leadProvider.loginBranchName;
-        leadProvider.departmentController.text =
-            leadProvider.loginDepartmentName;
-        leadProvider.searchUserController.text = leadProvider.loginUserName;
+        leadProvider.departmentController.text = defaultDeptName;
         leadProvider.followUpDateController.text =
             DateFormat('dd MMM yyyy').format(DateTime.now());
 
-        dropDownProvider.setSelectedUserId(leadProvider.loginUserId);
         settingsProvider.selectedBranchId = leadProvider.loginBranchId;
-        settingsProvider
-            .setSelectedDepartmentId(leadProvider.loginDepartmentId);
+        settingsProvider.setSelectedDepartmentId(defaultDeptId);
 
-        // Filter staff initially
-        dropDownProvider.filterStaffByBranchAndDepartment(
+        // Filter staff by department and branch
+        await dropDownProvider.fetchStaffByDepartment(
+          context: context,
           branchId: leadProvider.loginBranchId,
-          departmentId: leadProvider.loginDepartmentId,
+          departmentId: defaultDeptId,
         );
+
+        // Set inside value in assigned staff dropdown
+        if (dropDownProvider.filteredStaffData
+            .any((s) => s.userDetailsId == leadProvider.loginUserId)) {
+          dropDownProvider.setSelectedUserId(leadProvider.loginUserId);
+          leadProvider.searchUserController.text = leadProvider.loginUserName;
+        } else if (dropDownProvider.filteredStaffData.isNotEmpty) {
+          final firstStaff = dropDownProvider.filteredStaffData.first;
+          dropDownProvider.setSelectedUserId(firstStaff.userDetailsId);
+          leadProvider.searchUserController.text = firstStaff.userDetailsName;
+        } else {
+          dropDownProvider.setSelectedUserId(0);
+          leadProvider.searchUserController.clear();
+        }
 
         //default source category
         int? selectedSourceId;
@@ -443,11 +512,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
           );
         }
       }
-      dropDownProvider.getUserDetails(context);
       dropDownProvider.getLocations(context);
-      print(leadProvider.loginUserName);
-      leadProvider.searchUserController.text = leadProvider.loginUserName;
-      dropDownProvider.setSelectedUserId(leadProvider.loginUserId);
 
       if (widget.isEdit &&
           settingsProvider.selectedDepartmentId != null &&
@@ -2315,6 +2380,42 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                                                     .isAmount ==
                                                                 1);
 
+                                                    int? statusDeptId;
+                                                    String? statusDeptName;
+                                                    if (transferStatusesData.isNotEmpty &&
+                                                        transferStatusesData.first.departmentId != null &&
+                                                        transferStatusesData.first.departmentId != 0) {
+                                                      statusDeptId = transferStatusesData.first.departmentId;
+                                                      statusDeptName = transferStatusesData.first.departmentName;
+                                                    } else if (selectedStatus.departmentId != null &&
+                                                        selectedStatus.departmentId != 0) {
+                                                      statusDeptId = selectedStatus.departmentId;
+                                                      statusDeptName = selectedStatus.departmentName;
+                                                    }
+
+                                                    if (statusDeptId != null && statusDeptId != 0) {
+                                                      settingsProvider.selectedDepartmentId = statusDeptId;
+                                                      leadProvider.departmentController.text = statusDeptName ?? '';
+
+                                                      await dropDownProvider.fetchStaffByDepartment(
+                                                        context: context,
+                                                        branchId: settingsProvider.selectedBranchId,
+                                                        departmentId: statusDeptId,
+                                                      );
+
+                                                      if (dropDownProvider.filteredStaffData.any((s) => s.userDetailsId == leadProvider.loginUserId)) {
+                                                        dropDownProvider.setSelectedUserId(leadProvider.loginUserId);
+                                                        leadProvider.searchUserController.text = leadProvider.loginUserName;
+                                                      } else if (dropDownProvider.filteredStaffData.isNotEmpty) {
+                                                        final firstStaff = dropDownProvider.filteredStaffData.first;
+                                                        dropDownProvider.setSelectedUserId(firstStaff.userDetailsId);
+                                                        leadProvider.searchUserController.text = firstStaff.userDetailsName;
+                                                      } else {
+                                                        dropDownProvider.setSelectedUserId(0);
+                                                        leadProvider.searchUserController.clear();
+                                                      }
+                                                    }
+
                                                     if (mounted) {
                                                       setState(() {
                                                         showAmountForMain =
@@ -2557,7 +2658,8 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                                       .searchUserController
                                                       .clear();
                                                   dropDownProvider
-                                                      .filterStaffByBranchAndDepartment(
+                                                      .fetchStaffByDepartment(
+                                                    context: context,
                                                     branchId: selectedId,
                                                     departmentId: null,
                                                   );
@@ -2584,34 +2686,47 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                                   .toList(),
                                               controller: leadProvider
                                                   .departmentController,
-                                              onItemSelected: (selectedId) {
-                                                setState(() {
-                                                  settingsProvider
-                                                          .selectedDepartmentId =
-                                                      selectedId;
-                                                  final selectedDepartment =
-                                                      settingsProvider
-                                                          .departmentModel
-                                                          .firstWhere((dept) =>
-                                                              dept.departmentId ==
-                                                              selectedId);
-                                                  leadProvider
-                                                      .departmentController
-                                                      .text = selectedDepartment
-                                                          .departmentName ??
-                                                      '';
-                                                  dropDownProvider
-                                                      .setSelectedUserId(0);
-                                                  leadProvider
-                                                      .searchUserController
-                                                      .clear();
-                                                  dropDownProvider
-                                                      .filterStaffByBranchAndDepartment(
-                                                    branchId: settingsProvider
-                                                        .selectedBranchId,
-                                                    departmentId: selectedId,
-                                                  );
-                                                });
+                                              onItemSelected: (selectedId) async {
+                                                settingsProvider
+                                                        .selectedDepartmentId =
+                                                    selectedId;
+                                                final selectedDepartment =
+                                                    settingsProvider
+                                                        .departmentModel
+                                                        .firstWhere((dept) =>
+                                                            dept.departmentId ==
+                                                            selectedId,
+                                                        orElse: () =>
+                                                            DepartmentModel(
+                                                                departmentId:
+                                                                    selectedId,
+                                                                departmentName:
+                                                                    ''));
+                                                leadProvider
+                                                    .departmentController
+                                                    .text = selectedDepartment
+                                                        .departmentName ??
+                                                    '';
+                                                await dropDownProvider
+                                                    .fetchStaffByDepartment(
+                                                  context: context,
+                                                  branchId: settingsProvider
+                                                      .selectedBranchId,
+                                                  departmentId: selectedId,
+                                                );
+
+                                                if (dropDownProvider.filteredStaffData.any((s) => s.userDetailsId == leadProvider.loginUserId)) {
+                                                  dropDownProvider.setSelectedUserId(leadProvider.loginUserId);
+                                                  leadProvider.searchUserController.text = leadProvider.loginUserName;
+                                                } else if (dropDownProvider.filteredStaffData.isNotEmpty) {
+                                                  final firstStaff = dropDownProvider.filteredStaffData.first;
+                                                  dropDownProvider.setSelectedUserId(firstStaff.userDetailsId);
+                                                  leadProvider.searchUserController.text = firstStaff.userDetailsName;
+                                                } else {
+                                                  dropDownProvider.setSelectedUserId(0);
+                                                  leadProvider.searchUserController.clear();
+                                                }
+                                                if (mounted) setState(() {});
                                               },
                                             ),
                                           ),

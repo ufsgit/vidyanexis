@@ -1099,17 +1099,27 @@ class StockUseProvider extends ChangeNotifier {
       String userId = preferences.getString('userId') ?? "";
 
       final response =
-          await HttpRequest.httpGetRequest(endPoint: HttpUrls.getItemListStock);
+          await HttpRequest.httpGetRequest(endPoint: HttpUrls.getItemList);
 
       if (response.statusCode == 200) {
         final data = response.data;
 
         if (data != null) {
           final dataitem = data['data'];
-          print('---- ITEM LIST STOCK FROM BACKEND: $dataitem');
-          _itemListStock = (dataitem as List<dynamic>)
-              .map((item) => ItemListStock.fromJson(item))
+          print('---- ITEM LIST FROM BACKEND: $dataitem');
+          final List<ItemListModel> items = (dataitem as List<dynamic>)
+              .map((item) => ItemListModel.fromJson(item))
               .toList();
+
+          _itemListStock = items.map((item) => ItemListStock(
+              stockId: item.stockId,
+              itemId: item.itemId,
+              itemName: item.itemName,
+              categoryId: item.categoryId,
+              categoryName: item.categoryName,
+              unitPrice: item.unitPrice,
+              primaryCheckBox: item.primaryCheckBox,
+          )).toList();
 
           // Reset and Pre-populate stockUseItems
           _stockUseItems = _itemListStock.map((stockItem) {

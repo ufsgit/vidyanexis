@@ -47,6 +47,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
   String userType = "";
 
   bool _isFirstBuild = true;
+  bool _hasLoadedInitialTab = false;
   int _safeTabIndex(List<int> allowedTabs, int tabIndex) {
     if (allowedTabs.isEmpty) return 0;
     return tabIndex.clamp(0, allowedTabs.length - 1);
@@ -98,7 +99,8 @@ class _DashBoardPageState extends State<DashBoardPage> {
         if (settingsProvider.hasTravelAllowancePermission) 10,
       ];
 
-      if (allowedTabs.isNotEmpty) {
+      if (allowedTabs.isNotEmpty && settingsProvider.menuIsViewMap.isNotEmpty) {
+        _hasLoadedInitialTab = true;
         if (!mounted) return;
         final safeIndex = _safeTabIndex(allowedTabs, dashBoardProvider.tabIndex);
         final activeTab = allowedTabs[safeIndex];
@@ -157,6 +159,15 @@ class _DashBoardPageState extends State<DashBoardPage> {
       if (userType == "1") 9,
       if (settingsProvider.hasTravelAllowancePermission) 10,
     ];
+
+    if (allowedTabs.isNotEmpty && !_hasLoadedInitialTab && settingsProvider.menuIsViewMap.isNotEmpty) {
+      _hasLoadedInitialTab = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        final safeIndex = _safeTabIndex(allowedTabs, dashBoardProvider.tabIndex);
+        dashBoardProvider.loadDataForTab(allowedTabs[safeIndex], context);
+      });
+    }
 
     Widget dateFilterBtn = Material(
       color: Colors.transparent,

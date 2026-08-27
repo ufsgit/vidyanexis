@@ -222,13 +222,101 @@ class DropDownProvider extends ChangeNotifier {
             .where((e) => e.isNotEmpty)
             .toList();
 
-        return targetDeptList.any((dept) => staffDeptList.contains(dept));
+        final matchesDept =
+            targetDeptList.any((dept) => staffDeptList.contains(dept));
+        if (!matchesDept) return false;
+
+        if (branchId != null &&
+            branchId.toString().trim().isNotEmpty &&
+            branchId.toString().trim() != "0") {
+          final staffBranchStr = (staff.branchId ?? '').toString().trim();
+          if (staffBranchStr.isNotEmpty && staffBranchStr != "0") {
+            final staffBranchList = staffBranchStr
+                .split(',')
+                .map((e) => e.trim())
+                .where((e) => e.isNotEmpty)
+                .toList();
+            if (!staffBranchList.contains(branchId.toString().trim())) {
+              return false;
+            }
+          }
+        }
+
+        return true;
       }).toList();
     }
     // Print the full list with all fields as maps for clarity
     print(
         "filteredStaffData: ${filteredStaffData.map((staff) => staff.toJson()).toList()}");
     notifyListeners();
+  }
+
+  Future<void> fetchStaffByDepartment({
+    BuildContext? context,
+    required dynamic departmentId,
+    dynamic branchId,
+  }) async {
+    _currentBranchId = branchId;
+    _currentDepartmentId = departmentId;
+
+    if (departmentId == null ||
+        departmentId.toString().trim().isEmpty ||
+        departmentId.toString().trim() == "0") {
+      filteredStaffData = [];
+      notifyListeners();
+      return;
+    }
+
+    try {
+      String endPoint =
+          '${HttpUrls.searchUserDetails}?user_details_Name=&Department_Id=$departmentId';
+      if (branchId != null &&
+          branchId.toString().trim().isNotEmpty &&
+          branchId.toString().trim() != "0") {
+        endPoint += '&Branch_Id=$branchId';
+      }
+
+      final response = await HttpRequest.httpGetRequest(endPoint: endPoint);
+
+      if (response.statusCode == 200 && response.data != null) {
+        List<dynamic> userList = [];
+        final data = response.data;
+        if (data is List) {
+          userList = data;
+        } else if (data is Map && data['data'] != null) {
+          if (data['data'] is List &&
+              (data['data'] as List).isNotEmpty &&
+              data['data'][0] is List) {
+            userList = data['data'][0];
+          } else if (data['data'] is List) {
+            userList = data['data'];
+          }
+        }
+
+        final fetchedStaff = userList
+            .map((item) => SearchUserDetails.fromJson(item))
+            .where((staff) =>
+                staff.workingStatus == "1" ||
+                staff.workingStatus == null ||
+                staff.workingStatus == "")
+            .toList();
+
+        for (var staff in fetchedStaff) {
+          if (!_searchUserDetails
+              .any((u) => u.userDetailsId == staff.userDetailsId)) {
+            _searchUserDetails.add(staff);
+          }
+        }
+      }
+    } catch (e) {
+      print('Exception in fetchStaffByDepartment: $e');
+    }
+
+    // Always filter staff by branch and department to ensure only matching users are in filteredStaffData
+    filterStaffByBranchAndDepartment(
+      branchId: branchId,
+      departmentId: departmentId,
+    );
   }
 
   void filterStaff(String query) {

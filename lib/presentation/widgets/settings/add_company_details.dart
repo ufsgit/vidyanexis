@@ -365,7 +365,6 @@ class _AddCompanyDetailsState extends State<AddCompanyDetails> {
                   ],
                 ),
               ],
-              const SizedBox(height: 10),
               if (settingsProvider.companyDetails.isNotEmpty &&
                   settingsProvider.companyDetails[0].permissions.isNotEmpty) ...[
                 ...settingsProvider.companyDetails[0].permissions.map((perm) {

@@ -83,7 +83,6 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile> {
       leadDetailsProvider.fetchLeadDetails(
           widget.customerId.toString(), context);
       dropDownProvider.getTaskType(context);
-      dropDownProvider.getAMCStatus(context);
     });
   }
 

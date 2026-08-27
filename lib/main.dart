@@ -35,6 +35,7 @@ import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/enquiry_report_provider.dart';
 import 'package:vidyanexis/controller/enquiry_source_provider.dart';
 import 'package:vidyanexis/controller/employee_summary_provider.dart';
+import 'package:vidyanexis/controller/employee_sales_report_provider.dart';
 import 'package:vidyanexis/controller/enquiry_for_summary_provider.dart';
 import 'package:vidyanexis/controller/expense_provider.dart';
 import 'package:vidyanexis/controller/feedback_provider.dart';
@@ -84,7 +85,7 @@ import 'package:vidyanexis/controller/location_tracking_provider.dart';
 
 final GlobalKey<ScaffoldMessengerState> navigatorKey =
     GlobalKey<ScaffoldMessengerState>();
-bool isCompanyCode = true; // dont change... code - fathima123 , code - nayan123
+bool isCompanyCode =true; // dont change... code - fathima123 , code - nayan123
 
 Future<void> main() async {
   final bootStart = DateTime.now().millisecondsSinceEpoch;
@@ -165,6 +166,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => SettingsProvider()),
         ChangeNotifierProvider(create: (_) => EnquirySourceProvider()),
         ChangeNotifierProvider(create: (_) => EmployeeSummaryProvider()),
+        ChangeNotifierProvider(create: (_) => EmployeeSalesReportProvider()),
         ChangeNotifierProvider(create: (_) => EnquiryForSummaryProvider()),
         ChangeNotifierProvider(create: (_) => EnquiryReportProvider()),
         ChangeNotifierProvider(create: (_) => ProcessFlowProvider()),

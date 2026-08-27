@@ -323,83 +323,95 @@ class AttendanceReportProvider extends ChangeNotifier {
 
   Future<void> getLocation(
       {required BuildContext context, bool showLoading = true}) async {
-    // if (!kIsWeb) {
     if (showLoading) {
       Loader.showLoader(context);
     }
-    PermissionStatus locationStatus = await Permission.location.status;
 
-    print(locationStatus.isPermanentlyDenied);
-    if (locationStatus.isDenied) {
-      locationStatus = await Permission.location.request();
-
-      print(locationStatus);
-    }
-
-    if (locationStatus.isPermanentlyDenied) {
-      await openAppSettings();
-    }
-
-    if (!locationStatus.isDenied) {
-      try {
-        // High precision settings
-        // Optimized location settings
-        LocationSettings locationSettings = LocationSettings(
-          accuracy: LocationAccuracy.high,
-          distanceFilter: 10,
+    try {
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        if (showLoading) {
+          Loader.stopLoader(context);
+        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Location services are disabled.')),
         );
+        return;
+      }
 
-        Position position;
-        try {
-          position = await Geolocator.getCurrentPosition(
-            locationSettings: locationSettings,
-          ).timeout(const Duration(seconds: 10));
-        } catch (e) {
-          log('Timeout or error getting current position: $e');
-          // Fallback to last known position
-          position = await Geolocator.getLastKnownPosition() ??
-              Position(
-                  longitude: 0,
-                  latitude: 0,
-                  timestamp: DateTime.now(),
-                  accuracy: 0,
-                  altitude: 0,
-                  heading: 0,
-                  speed: 0,
-                  speedAccuracy: 0,
-                  altitudeAccuracy: 0,
-                  headingAccuracy: 0);
-        }
-
-        double latVal = position.latitude;
-        double lonVal = position.longitude;
-
-        if (latVal != 0.0 && lonVal != 0.0) {
-          print('current');
-          latitude = latVal.toString();
-          longitude = lonVal.toString();
-          location = await getAddressFromCoordinates(latVal, lonVal);
-        }
-        print(location);
-        print(latitude);
-        print(longitude);
-        Loader.stopLoader(context);
-      } catch (e) {
-        if (showLoading) {
-          Loader.stopLoader(context);
-        }
-        print('Error: $e');
-      } finally {
-        if (showLoading) {
-          Loader.stopLoader(context);
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          if (showLoading) {
+            Loader.stopLoader(context);
+          }
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Location permission denied')),
+          );
+          return;
         }
       }
-    } else {
+
+      if (permission == LocationPermission.deniedForever) {
+        if (showLoading) {
+          Loader.stopLoader(context);
+        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Location permissions are permanently denied.')),
+        );
+        return;
+      }
+
+      // High precision settings
+      LocationSettings locationSettings = const LocationSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 10,
+      );
+
+      Position position;
+      try {
+        position = await Geolocator.getCurrentPosition(
+          locationSettings: locationSettings,
+        ).timeout(const Duration(seconds: 10));
+      } catch (e) {
+        log('Timeout or error getting current position: $e');
+        // Fallback to last known position
+        position = await Geolocator.getLastKnownPosition() ??
+            Position(
+                longitude: 0,
+                latitude: 0,
+                timestamp: DateTime.now(),
+                accuracy: 0,
+                altitude: 0,
+                heading: 0,
+                speed: 0,
+                speedAccuracy: 0,
+                altitudeAccuracy: 0,
+                headingAccuracy: 0);
+      }
+
+      double latVal = position.latitude;
+      double lonVal = position.longitude;
+
+      latitude = latVal.toString();
+      longitude = lonVal.toString();
+      
+      if (latVal != 0.0 && lonVal != 0.0) {
+        String addr = await getAddressFromCoordinates(latVal, lonVal);
+        location = addr.isNotEmpty ? addr : "Lat: $latitude, Long: $longitude";
+      } else {
+        location = "Lat: $latitude, Long: $longitude";
+      }
+      
+      print('Captured Location: $location, Lat: $latitude, Long: $longitude');
+    } catch (e) {
+      print('Exception in getLocation: $e');
+    } finally {
       if (showLoading) {
         Loader.stopLoader(context);
       }
     }
-    // }
   }
 
   Future<String> getAddressFromCoordinates(
