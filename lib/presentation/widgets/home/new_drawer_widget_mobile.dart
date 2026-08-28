@@ -24,6 +24,7 @@ import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/presentation/pages/home/add_quotation_widget_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/auto_complete_textfield.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/searchable_bottom_sheet_dropdown.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_textfield_widget_mobile.dart';
@@ -49,10 +50,14 @@ class NewLeadDrawerMobileWidget extends StatefulWidget {
 class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
   bool _isFieldValid(String? value) => value != null && value.isNotEmpty;
   late FocusNode _leadNameFocusNode;
-  List<ExpansibleController> _expansionControllers = [];
 
   ScrollController scrollController = ScrollController();
   final ScrollController _headerScrollController = ScrollController();
+  final GlobalKey _basicDetailsKey = GlobalKey();
+  final GlobalKey _addressDetailsKey = GlobalKey();
+  final GlobalKey _additionalDetailsKey = GlobalKey();
+  final GlobalKey _followupDetailsKey = GlobalKey();
+  bool _isScrollingProgrammatically = false;
   final Map<int, bool> _expandedSections = {0: true, 5: true};
   late FocusNode enquiryNameNode;
   late FocusNode inverterTypeNode;
@@ -72,7 +77,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
   late FocusNode followUpStatusNode;
   late FocusNode assignedStaffNode;
 
-  int? expandedIndex = 0; // Default to the first tab being expanded
+  int expandedIndex = 0; // Default to the first tab being active
   bool _isProcessingClick = false;
   bool validatePhone = false;
   DateTime? originalFollowUpDate;
@@ -84,53 +89,6 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
   bool showDate = false;
   bool showTransfer = false;
   List<SearchLeadStatusModel> _filteredTransferStatuses = [];
-
-  // final GlobalKey<_CustomFieldSectionWidgetState> _customFieldKey =
-  //     GlobalKey<_CustomFieldSectionWidgetState>();
-
-  void _toggleTab(int index) {
-    if (_isProcessingClick) return;
-
-    _isProcessingClick = true;
-
-    // Use a local boolean to track the intended expansion state
-    bool shouldExpand = expandedIndex != index;
-
-    setState(() {
-      if (shouldExpand) {
-        // We want to expand this tab
-        expandedIndex = index;
-        _expansionControllers[index].expand();
-
-        // Collapse all others
-        for (int i = 0; i < _expansionControllers.length; i++) {
-          if (i != index) {
-            _expansionControllers[i].collapse();
-          }
-        }
-      } else {
-        // We want to collapse the currently expanded tab
-        expandedIndex = null;
-        _expansionControllers[index].collapse();
-      }
-    });
-
-    // Your existing scroll code...
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (scrollController.hasClients) {
-        scrollController.animateTo(
-          0,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-        );
-      }
-    });
-
-    // Ensure we release the processing lock after animation completes
-    Future.delayed(const Duration(milliseconds: 300), () {
-      _isProcessingClick = false;
-    });
-  }
   // void _validateAndSubmit() {
   //   final dropDownProvider =
   //       Provider.of<DropDownProvider>(context, listen: false);
@@ -253,57 +211,85 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
     final settingsProvider =
         Provider.of<SettingsProvider>(context, listen: false);
     String? errorMessage;
+    int? errorTab;
     final validation = customFieldLeadStatusKey.currentState?.validateForm();
     final validation2 =
         customFieldEnquirySourceKey.currentState?.validateForm();
 
     if (leadProvider.contactNoController.text.isEmpty) {
       errorMessage = 'Mobile number is required';
+      errorTab = 0;
     } else if (validatePhone &&
         leadProvider.contactNoController.text.length != 10) {
       errorMessage = 'Mobile number must be 10 digits';
+      errorTab = 0;
     } else if (leadProvider.followUpStatusController.text.isEmpty &&
         widget.isEdit == false) {
       errorMessage = 'Please select Follow-up Status';
+      errorTab = 3;
     } else if (leadProvider.branchController.text.isEmpty &&
         widget.isEdit == false) {
       errorMessage = 'Please select Branch';
+      errorTab = 3;
     } else if (leadProvider.departmentController.text.isEmpty &&
         widget.isEdit == false) {
       errorMessage = 'Please select Department';
+      errorTab = 3;
     } else if (leadProvider.searchUserController.text.isEmpty &&
         widget.isEdit == false) {
       errorMessage = 'Please Assign Staff';
+      errorTab = 3;
     } else if (settingsProvider.companyDetails.isNotEmpty &&
         settingsProvider.companyDetails[0].districtCityMandatory == 1 &&
         (dropDownProvider.selectedDistrictId == null ||
             dropDownProvider.selectedDistrictId == 0)) {
       errorMessage = 'Please select District';
+      errorTab = 0;
     } else if (settingsProvider.companyDetails.isNotEmpty &&
         settingsProvider.companyDetails[0].districtCityMandatory == 1 &&
         (settingsProvider.menuIsViewMap[146] ?? 0) == 1 &&
         leadProvider.cityController.text.isEmpty) {
       errorMessage = 'Place is required';
+      errorTab = 0;
     } else if (settingsProvider.enquiryForMandatory == 1 &&
         (dropDownProvider.selectedEnquiryForId == null ||
             dropDownProvider.selectedEnquiryForId == 0) &&
         widget.isEdit == false) {
       errorMessage = 'Please select Enquiry For';
+      errorTab = 0;
     } else if (settingsProvider.enquirySourceMandatory == 1 &&
         (dropDownProvider.selectedEnquirySourceId == null ||
             dropDownProvider.selectedEnquirySourceId == 0) &&
         widget.isEdit == false) {
       errorMessage = 'Please select Enquiry Source';
+      errorTab = 0;
     } else if (dropDownProvider.isFollowupRequired() &&
         leadProvider.followUpDateController.text.isEmpty &&
         widget.isEdit == false) {
       errorMessage = 'Please select Follow-up Date';
+      errorTab = 3;
     } else if (validation?.isValid == false) {
       errorMessage = 'Please Enter mandatory fields';
+      errorTab = 3;
     } else if (validation2?.isValid == false) {
       errorMessage = 'Please Enter mandatory fields';
+      errorTab = 0;
     }
+
     if (errorMessage != null) {
+      final tabsCount = widget.isEdit ? 3 : 4;
+      if (errorTab != null && errorTab < tabsCount) {
+        GlobalKey? targetKey;
+        if (errorTab == 0) targetKey = _basicDetailsKey;
+        else if (errorTab == 1) targetKey = _addressDetailsKey;
+        else if (errorTab == 2) targetKey = _additionalDetailsKey;
+        else if (errorTab == 3) targetKey = _followupDetailsKey;
+
+        if (targetKey != null) {
+          _scrollToSection(targetKey, errorTab);
+        }
+      }
+
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -373,6 +359,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
   @override
   void initState() {
     super.initState();
+    scrollController.addListener(_onScroll);
     sourceCategoryNode = FocusNode();
     _leadNameFocusNode = FocusNode();
     assignedStaffNode = FocusNode();
@@ -614,179 +601,400 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
     });
   }
 
-  @override
-  void dispose() {
-    _leadNameFocusNode.dispose();
-    _headerScrollController.dispose();
+  void _showAllEnquirySourcesBottomSheet(
+      BuildContext context,
+      DropDownProvider dropDownProvider,
+      LeadsProvider leadProvider) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) {
+        String searchQuery = '';
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            final filteredList = dropDownProvider.enquiryData.where((source) {
+              final name = source.enquirySourceName?.toLowerCase() ?? '';
+              return name.contains(searchQuery.toLowerCase());
+            }).toList();
 
-    super.dispose();
-  }
-
-  Widget _buildTabsHeader() {
-    final settingsProvider =
-        Provider.of<SettingsProvider>(context, listen: false);
-    final titles = [
-      Text(
-        'Basic details',
-        style: GoogleFonts.plusJakartaSans(
-          color: expandedIndex == 0 ? AppColors.textBlack : AppColors.textGrey3,
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-      Text(
-        'Address',
-        style: GoogleFonts.plusJakartaSans(
-          color: expandedIndex == 1 ? AppColors.textBlack : AppColors.textGrey3,
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-      if (false) // settingsProvider.menuIsViewMap[33] == 1
-        Text(
-          'Inverter and Panel Details',
-          style: GoogleFonts.plusJakartaSans(
-            color:
-                expandedIndex == 2 ? AppColors.textBlack : AppColors.textGrey3,
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      // Text(
-      //   'Cost details',
-      //   style: GoogleFonts.plusJakartaSans(
-      //     color: expandedIndex == 2 ? AppColors.textBlack : AppColors.textGrey3,
-      //     fontSize: 14,
-      //     fontWeight: FontWeight.w500,
-      //   ),
-      // ),
-      // Text(
-      //   'Documents',
-      //   style: GoogleFonts.plusJakartaSans(
-      //     color: expandedIndex == 3 ? AppColors.textBlack : AppColors.textGrey3,
-      //     fontSize: 14,
-      //     fontWeight: FontWeight.w500,
-      //   ),
-      // ),
-      // Text(
-      //   'Additional details',
-      //   style: GoogleFonts.plusJakartaSans(
-      //     color: expandedIndex == 4 ? AppColors.textBlack : AppColors.textGrey3,
-      //     fontSize: 14,
-      //     fontWeight: FontWeight.w500,
-      //   ),
-      // ),
-      if (!widget.isEdit)
-        Text(
-          'Follow-up Details',
-          style: GoogleFonts.plusJakartaSans(
-            color:
-                expandedIndex == 3 ? AppColors.textBlack : AppColors.textGrey3,
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-    ];
-
-    return SizedBox(
-      height: 60,
-      child: Stack(
-        children: [
-          Scrollbar(
-            trackVisibility: false,
-            interactive: false,
-            controller: _headerScrollController,
-            thumbVisibility: false,
-            thickness: 3,
-            radius: const Radius.circular(10),
-            child: SingleChildScrollView(
-              controller: _headerScrollController,
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: List.generate(
-                  titles.length,
-                  (index) => Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(4),
-                      onTap: () => _toggleTab(index),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16.0, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: expandedIndex == index
-                              ? AppColors.lightBlueColor
-                              : AppColors.scaffoldColor,
-                          borderRadius: BorderRadius.circular(6.0),
-                          border: expandedIndex == index
-                              ? Border.all(
-                                  color: AppColors.bluebutton, width: 1)
-                              : null,
+            return Container(
+              height: MediaQuery.of(context).size.height * 0.7,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
+                ),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Column(
+                children: [
+                  // Drag Handle
+                  Container(
+                    width: 40,
+                    height: 4,
+                    margin: const EdgeInsets.only(bottom: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                  // Title and Close Button
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Select Enquiry Source',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textBlack,
                         ),
-                        child: titles[index],
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  // Search TextField
+                  TextField(
+                    onChanged: (val) {
+                      setModalState(() {
+                        searchQuery = val;
+                      });
+                    },
+                    decoration: InputDecoration(
+                      hintText: 'Search enquiry source...',
+                      prefixIcon: const Icon(Icons.search),
+                      filled: true,
+                      fillColor: Colors.grey[100],
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 0, horizontal: 16),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: BorderSide.none,
                       ),
                     ),
                   ),
-                ),
+                  const SizedBox(height: 16),
+                  // Scrollable List
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: filteredList.length,
+                      itemBuilder: (context, index) {
+                        final source = filteredList[index];
+                        final isSelected =
+                            dropDownProvider.selectedEnquirySourceId ==
+                                source.enquirySourceId;
+                        return ListTile(
+                          title: Text(
+                            source.enquirySourceName ?? '',
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 14,
+                              fontWeight: isSelected
+                                  ? FontWeight.w600
+                                  : FontWeight.w500,
+                              color: isSelected
+                                  ? AppColors.bluebutton
+                                  : AppColors.textBlack,
+                            ),
+                          ),
+                          trailing: isSelected
+                              ? Icon(Icons.check_circle,
+                                  color: AppColors.bluebutton)
+                              : null,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          onTap: () {
+                            dropDownProvider.setSelectedEnquirySourceId(
+                                source.enquirySourceId);
+                            leadProvider.enquirySourceController.text =
+                                source.enquirySourceName ?? '';
+                            Navigator.pop(context);
+                            // Also trigger rebuild on parent widget
+                            setState(() {});
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _onScroll() {
+    if (_isScrollingProgrammatically) return;
+
+    final List<Map<String, dynamic>> sections = [
+      {'key': _basicDetailsKey},
+      {'key': _addressDetailsKey},
+      {'key': _additionalDetailsKey},
+      if (!widget.isEdit) {'key': _followupDetailsKey},
+    ];
+
+    int activeIndex = 0;
+    final threshold = MediaQuery.of(context).padding.top + kToolbarHeight + 60;
+
+    for (int i = sections.length - 1; i >= 0; i--) {
+      final key = sections[i]['key'] as GlobalKey;
+      final context = key.currentContext;
+      if (context != null) {
+        final renderBox = context.findRenderObject() as RenderBox?;
+        if (renderBox != null) {
+          final position = renderBox.localToGlobal(Offset.zero);
+          if (position.dy <= threshold) {
+            activeIndex = i;
+            break;
+          }
+        }
+      }
+    }
+
+    if (activeIndex != expandedIndex) {
+      setState(() {
+        expandedIndex = activeIndex;
+      });
+      _scrollToHeader(activeIndex);
+    }
+  }
+
+  void _scrollToHeader(int index) {
+    if (_headerScrollController.hasClients) {
+      _headerScrollController.animateTo(
+        index * 80.0,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
+
+  void _scrollToSection(GlobalKey key, int index) {
+    setState(() {
+      expandedIndex = index;
+      _isScrollingProgrammatically = true;
+    });
+
+    final context = key.currentContext;
+    if (context != null) {
+      Scrollable.ensureVisible(
+        context,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      ).then((_) {
+        Future.delayed(const Duration(milliseconds: 100), () {
+          _isScrollingProgrammatically = false;
+        });
+      });
+    } else {
+      _isScrollingProgrammatically = false;
+    }
+  }
+
+  Widget _buildSection({
+    required String title,
+    required IconData icon,
+    required Widget child,
+    required GlobalKey key,
+  }) {
+    return Container(
+      key: key,
+      margin: const EdgeInsets.only(bottom: 24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey[200]!),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppColors.bluebutton.withOpacity(0.08),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    icon,
+                    size: 20,
+                    color: AppColors.bluebutton,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  title,
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textBlack,
+                  ),
+                ),
+              ],
             ),
           ),
-          // Scroll arrows if needed
-          if (MediaQuery.of(context).size.width >= 600) ...[
-            Positioned(
-              left: 0,
-              top: 0,
-              bottom: 0,
-              child: _headerScrollController.hasClients &&
-                      _headerScrollController.position.pixels > 10
-                  ? Container(
-                      width: 40,
-                      color: Colors.white.withOpacity(0.8),
-                      child: IconButton(
-                        icon: const Icon(Icons.arrow_back_ios, size: 18),
-                        onPressed: () {
-                          _headerScrollController.animateTo(
-                            _headerScrollController.position.pixels - 100,
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeInOut,
-                          );
-                        },
-                      ),
-                    )
-                  : const SizedBox.shrink(),
-            ),
-            Positioned(
-              right: 0,
-              top: 0,
-              bottom: 0,
-              child: _headerScrollController.hasClients &&
-                      _headerScrollController.position.hasContentDimensions &&
-                      _headerScrollController.position.pixels <
-                          _headerScrollController.position.maxScrollExtent - 10
-                  ? Container(
-                      width: 40,
-                      color: Colors.white.withOpacity(0.8),
-                      child: IconButton(
-                        icon: const Icon(Icons.arrow_forward_ios, size: 18),
-                        onPressed: () {
-                          _headerScrollController.animateTo(
-                            _headerScrollController.position.pixels + 100,
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeInOut,
-                          );
-                        },
-                      ),
-                    )
-                  : const SizedBox.shrink(),
-            ),
-          ],
+          Divider(height: 1, color: Colors.grey[200]),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: child,
+          ),
         ],
       ),
     );
   }
 
   @override
+  void dispose() {
+    scrollController.removeListener(_onScroll);
+    scrollController.dispose();
+    _leadNameFocusNode.dispose();
+    _headerScrollController.dispose();
+    super.dispose();
+  }
+
+  Widget _buildTabsHeader(List<Map<String, dynamic>> tabs) {
+    return SizedBox(
+      height: 48,
+      child: ListView.builder(
+        controller: _headerScrollController,
+        scrollDirection: Axis.horizontal,
+        itemCount: tabs.length,
+        itemBuilder: (context, index) {
+          final isSelected = expandedIndex == index;
+          return Padding(
+            padding: const EdgeInsets.only(right: 8, bottom: 6, top: 4),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(24),
+              onTap: () {
+                _scrollToSection(tabs[index]['key'] as GlobalKey, index);
+              },
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
+                decoration: BoxDecoration(
+                  color: isSelected ? AppColors.bluebutton : Colors.grey[100],
+                  borderRadius: BorderRadius.circular(24.0),
+                  boxShadow: isSelected
+                      ? [
+                          BoxShadow(
+                            color: AppColors.bluebutton.withOpacity(0.3),
+                            blurRadius: 6,
+                            offset: const Offset(0, 2),
+                          )
+                        ]
+                      : [],
+                ),
+                child: Center(
+                  child: Text(
+                    tabs[index]['title'],
+                    style: GoogleFonts.plusJakartaSans(
+                      color: isSelected ? Colors.white : AppColors.textGrey3,
+                      fontSize: 13,
+                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildBottomNavigation() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, -4),
+          )
+        ],
+        border: Border(
+          top: BorderSide(color: Colors.grey[200]!, width: 1),
+        ),
+      ),
+      child: SafeArea(
+        top: false,
+        child: SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: _saveLead,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.bluebutton,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(vertical: 14),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              elevation: 0,
+            ),
+            child: Text(
+              widget.isEdit ? 'Save Changes' : 'Save Lead',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final List<Map<String, dynamic>> tabs = [
+      {
+        'title': 'Basic details',
+        'key': _basicDetailsKey,
+        'widget': buildBasicDetails(),
+      },
+      {
+        'title': 'Address',
+        'key': _addressDetailsKey,
+        'widget': buildAddressDetails(),
+      },
+      {
+        'title': 'Additional details',
+        'key': _additionalDetailsKey,
+        'widget': buildAdditionalDetails(),
+      },
+      if (!widget.isEdit)
+        {
+          'title': 'Follow-up Details',
+          'key': _followupDetailsKey,
+          'widget': buildFollowupDetails(),
+        },
+    ];
+
+    // Safety check for tab range
+    if (expandedIndex >= tabs.length) {
+      expandedIndex = 0;
+    }
+
     final settingsProvider = Provider.of<SettingsProvider>(context);
     final displayLogo = settingsProvider.displayLogo;
 
@@ -814,29 +1022,6 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
             surfaceTintColor: Colors.white,
             title: Row(
               children: [
-                // CircleAvatar(
-                //   radius: 16,
-                //   backgroundColor: Colors.transparent,
-                //   child: ClipOval(
-                //     child: displayLogo.startsWith('http')
-                //         ? Image.network(
-                //             displayLogo,
-                //             height: 32,
-                //             width: 32,
-                //             fit: BoxFit.cover,
-                //             errorBuilder: (context, error, stackTrace) =>
-                //                 const SizedBox.shrink(),
-                //           )
-                //         : Image.asset(
-                //             displayLogo,
-                //             height: 32,
-                //             width: 32,
-                //             fit: BoxFit.cover,
-                //             errorBuilder: (context, error, stackTrace) =>
-                //                 const SizedBox.shrink(),
-                //           ),
-                //   ),
-                // ),
                 const SizedBox(width: 8),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -854,124 +1039,60 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
                 ),
               ],
             ),
-            actions: [
-              if (!widget.isEdit || (settingsProvider.menuIsEditMap[3] == 1))
-                TextButton(
-                  onPressed: _saveLead,
-                  child: Text(
-                    'Save',
-                    style: GoogleFonts.plusJakartaSans(
-                      color: AppColors.bluebutton,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-            ],
+            actions: const [],
             bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(60),
-              child: Column(
-                children: [
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: _buildTabsHeader(),
-                  ),
-                ],
+              preferredSize: const Size.fromHeight(50),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: _buildTabsHeader(tabs),
               ),
             ),
           ),
           body: MediaQuery.removePadding(
             removeTop: true,
             context: context,
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
+            child: Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    controller: scrollController,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                      child: Column(
+                        children: [
+                          _buildSection(
+                            title: 'Basic details',
+                            icon: Icons.assignment_outlined,
+                            key: _basicDetailsKey,
+                            child: buildBasicDetails(),
+                          ),
+                          _buildSection(
+                            title: 'Address',
+                            icon: Icons.location_on_outlined,
+                            key: _addressDetailsKey,
+                            child: buildAddressDetails(),
+                          ),
+                          _buildSection(
+                            title: 'Additional details',
+                            icon: Icons.add_circle_outline,
+                            key: _additionalDetailsKey,
+                            child: buildAdditionalDetails(),
+                          ),
+                          if (!widget.isEdit)
+                            _buildSection(
+                              title: 'Follow-up Details',
+                              icon: Icons.event_note_outlined,
+                              key: _followupDetailsKey,
+                              child: buildFollowupDetails(),
+                            ),
+                          const SizedBox(height: 120),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
-                child: ScrollableMultipleExpansionCard(
-                    onTabToggle: _toggleTab,
-                    showScrollArrows: false,
-                    controllersCallback: (controllers) {
-                      _expansionControllers = controllers;
-                    },
-                    initialExpanded: const {
-                      0: true,
-                      // 3: true
-                    },
-                    titles: [
-                      Text(
-                        'Basic details',
-                        style: GoogleFonts.plusJakartaSans(
-                          color: AppColors.textGrey4,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      Text(
-                        'Address',
-                        style: GoogleFonts.plusJakartaSans(
-                          color: AppColors.textGrey4,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      if (false) // settingsProvider.menuIsViewMap[33] == 1
-                        Text(
-                          'Inverter and Panel Details',
-                          style: GoogleFonts.plusJakartaSans(
-                            color: AppColors.textGrey4,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      // Text(
-                      //   'Cost details',
-                      //   style: GoogleFonts.plusJakartaSans(
-                      //     color: AppColors.textGrey4,
-                      //     fontSize: 14,
-                      //     fontWeight: FontWeight.w600,
-                      //   ),
-                      // ),
-                      // Text(
-                      //   'Documents',
-                      //   style: GoogleFonts.plusJakartaSans(
-                      //     color: AppColors.textGrey3,
-                      //     fontSize: 14,
-                      //     fontWeight: FontWeight.w600,
-                      //   ),
-                      // ),
-                      Text(
-                        'Additional details',
-                        style: GoogleFonts.plusJakartaSans(
-                          color: AppColors.textGrey4,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      if (!widget.isEdit)
-                        Text(
-                          'Follow-up Details',
-                          style: GoogleFonts.plusJakartaSans(
-                            color: AppColors.textGrey4,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                    ],
-                    childrens: [
-                      buildBasicDetails(),
-                      buildAddressDetails(),
-                      if (false) // settingsProvider.menuIsViewMap[33] == 1
-                        buildInverterAndPanelDetails(),
-                      // buildCostDetails(),
-                      // buildDocumentsDetails(),
-                      buildAdditionalDetails(),
-                      if (!widget.isEdit) buildFollowupDetails()
-                    ]),
-              ),
+                _buildBottomNavigation(),
+              ],
             ),
           ),
         );
@@ -1015,7 +1136,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
             // ),
 
             const SizedBox(height: 10),
-            CommonDropdown<int>(
+            SearchableBottomSheetDropdown<int>(
               hintText: 'Branch*',
               selectedValue: settingsProvider.selectedBranchId,
               items: settingsProvider.branchModel
@@ -1028,11 +1149,15 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
               onItemSelected: (selectedId) {
                 settingsProvider.selectedBranchId = selectedId;
 
-                // Update the controller text with the selected branch name
-                final selectedBranch = settingsProvider.branchModel
-                    .firstWhere((branch) => branch.branchId == selectedId);
-                leadProvider.branchController.text =
-                    selectedBranch.branchName ?? '';
+                if (selectedId != null) {
+                  // Update the controller text with the selected branch name
+                  final selectedBranch = settingsProvider.branchModel
+                      .firstWhere((branch) => branch.branchId == selectedId);
+                  leadProvider.branchController.text =
+                      selectedBranch.branchName ?? '';
+                } else {
+                  leadProvider.branchController.clear();
+                }
 
                 // Clear department and staff selections when branch changes
                 settingsProvider.setSelectedDepartmentId(0);
@@ -1051,9 +1176,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
             SizedBox(
               height: 10,
             ),
-            CommonDropdown<int>(
-              key: ValueKey(settingsProvider.selectedBranchId), // Add this line
-
+            SearchableBottomSheetDropdown<int>(
               hintText: 'Department*',
               selectedValue: settingsProvider.selectedDepartmentId,
               items: settingsProvider.departmentModel
@@ -1065,15 +1188,19 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
               controller: leadProvider.departmentController,
               onItemSelected: (selectedId) async {
                 settingsProvider.selectedDepartmentId = selectedId;
-                // Update the controller text with the selected department name
-                final selectedDepartment =
-                    settingsProvider.departmentModel.firstWhere(
-                  (dept) => dept.departmentId == selectedId,
-                  orElse: () => DepartmentModel(
-                      departmentId: selectedId, departmentName: ''),
-                );
-                leadProvider.departmentController.text =
-                    selectedDepartment.departmentName ?? '';
+                if (selectedId != null) {
+                  // Update the controller text with the selected department name
+                  final selectedDepartment =
+                      settingsProvider.departmentModel.firstWhere(
+                    (dept) => dept.departmentId == selectedId,
+                    orElse: () => DepartmentModel(
+                        departmentId: selectedId, departmentName: ''),
+                  );
+                  leadProvider.departmentController.text =
+                      selectedDepartment.departmentName ?? '';
+                } else {
+                  leadProvider.departmentController.clear();
+                }
 
                 // Filter staff based on both branch and department
                 await dropDownProvider.fetchStaffByDepartment(
@@ -1114,7 +1241,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
             Row(
               children: [
                 Expanded(
-                  child: CommonDropdown<int>(
+                  child: SearchableBottomSheetDropdown<int>(
                     hintText: 'Follow-up Status*',
                     items: dropDownProvider.followUpData
                         .where(
@@ -1129,97 +1256,113 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
                       dropDownProvider.setSelectedFollowUPId(selectedId);
                       // Update the controller text
                       leadProvider.customFieldList.clear();
-                      leadProvider.getCustomFieldsByStatusId(context,
-                          leadId: widget.isEdit ? leadProvider.customerId : 0,
-                          statusId: selectedId);
-                      final selectedStatus = dropDownProvider.followUpData
-                          .firstWhere((status) => status.statusId == selectedId,
-                              orElse: () => SearchLeadStatusModel(
-                                  statusId: selectedId, statusName: ''));
-                      leadProvider.followUpStatusController.text =
-                          selectedStatus.statusName ?? '';
-                      if (selectedStatus.isShowFollowupDate == 1) {
-                        int durationVal =
-                            int.tryParse(selectedStatus.statusDuration ?? '') ??
-                                0;
-                        DateTime baseDate =
-                            originalFollowUpDate ?? DateTime.now();
-                        DateTime targetDate =
-                            baseDate.add(Duration(days: durationVal));
-                        leadProvider.followUpDateController.text =
-                            DateFormat('dd MMM yyyy').format(targetDate);
-                      } else {
-                        leadProvider.followUpDateController.clear();
-                      }
-
-                      final statusData = await settingsProvider.getStatusById(
-                          context, selectedId.toString());
-                      final transferStatusesData = await settingsProvider
-                          .getTransferStatusById(context, selectedId.toString());
-
-                      bool mainHasAmount =
-                          (statusData.isNotEmpty && statusData.first.isAmount == 1) ||
-                              (transferStatusesData.isNotEmpty &&
-                                  transferStatusesData.first.isAmount == 1);
-
-                      int? statusDeptId;
-                      String? statusDeptName;
-                      if (transferStatusesData.isNotEmpty &&
-                          transferStatusesData.first.departmentId != null &&
-                          transferStatusesData.first.departmentId != 0) {
-                        statusDeptId = transferStatusesData.first.departmentId;
-                        statusDeptName = transferStatusesData.first.departmentName;
-                      } else if (selectedStatus.departmentId != null &&
-                          selectedStatus.departmentId != 0) {
-                        statusDeptId = selectedStatus.departmentId;
-                        statusDeptName = selectedStatus.departmentName;
-                      }
-
-                      if (statusDeptId != null && statusDeptId != 0) {
-                        settingsProvider.selectedDepartmentId = statusDeptId;
-                        leadProvider.departmentController.text = statusDeptName ?? '';
-
-                        await dropDownProvider.fetchStaffByDepartment(
-                          context: context,
-                          branchId: settingsProvider.selectedBranchId,
-                          departmentId: statusDeptId,
-                        );
-
-                        if (dropDownProvider.filteredStaffData.any((s) => s.userDetailsId == leadProvider.loginUserId)) {
-                          dropDownProvider.setSelectedUserId(leadProvider.loginUserId);
-                          leadProvider.searchUserController.text = leadProvider.loginUserName;
-                        } else if (dropDownProvider.filteredStaffData.isNotEmpty) {
-                          final firstStaff = dropDownProvider.filteredStaffData.first;
-                          dropDownProvider.setSelectedUserId(firstStaff.userDetailsId);
-                          leadProvider.searchUserController.text = firstStaff.userDetailsName;
+                      if (selectedId != null) {
+                        leadProvider.getCustomFieldsByStatusId(context,
+                            leadId: widget.isEdit ? leadProvider.customerId : 0,
+                            statusId: selectedId);
+                        final selectedStatus = dropDownProvider.followUpData
+                            .firstWhere((status) => status.statusId == selectedId,
+                                orElse: () => SearchLeadStatusModel(
+                                    statusId: selectedId, statusName: ''));
+                        leadProvider.followUpStatusController.text =
+                            selectedStatus.statusName ?? '';
+                        if (selectedStatus.isShowFollowupDate == 1) {
+                          int durationVal =
+                              int.tryParse(selectedStatus.statusDuration ?? '') ??
+                                  0;
+                          DateTime baseDate =
+                              originalFollowUpDate ?? DateTime.now();
+                          DateTime targetDate =
+                              baseDate.add(Duration(days: durationVal));
+                          leadProvider.followUpDateController.text =
+                              DateFormat('dd MMM yyyy').format(targetDate);
                         } else {
-                          dropDownProvider.setSelectedUserId(0);
-                          leadProvider.searchUserController.clear();
+                          leadProvider.followUpDateController.clear();
                         }
-                      }
 
-                      if (mounted) {
-                        setState(() {
-                          showAmountForMain = mainHasAmount;
-                          showAmountForSecondary = false;
-                          showTransferStatus = transferStatusesData.isNotEmpty &&
-                              transferStatusesData.first.isTransferStatus == 1;
-                          showTime = transferStatusesData.isNotEmpty &&
-                              transferStatusesData.first.isTime == 1;
-                          showDate = transferStatusesData.isNotEmpty &&
-                              transferStatusesData.first.isShowFollowupDate == 1;
-                          showTransfer = transferStatusesData.isNotEmpty &&
-                              transferStatusesData.first.isTransfer == 1;
-                          _filteredTransferStatuses = transferStatusesData.isNotEmpty
-                              ? transferStatusesData.first.transferStatuses
-                                      ?.map((s) => SearchLeadStatusModel(
-                                            statusId: s.subStatusId,
-                                            statusName: s.subStatusName,
-                                          ))
-                                      .toList() ??
-                                  []
-                              : [];
-                        });
+                        final statusData = await settingsProvider.getStatusById(
+                            context, selectedId.toString());
+                        final transferStatusesData = await settingsProvider
+                            .getTransferStatusById(context, selectedId.toString());
+
+                        bool mainHasAmount =
+                            (statusData.isNotEmpty && statusData.first.isAmount == 1) ||
+                                (transferStatusesData.isNotEmpty &&
+                                    transferStatusesData.first.isAmount == 1);
+
+                        int? statusDeptId;
+                        String? statusDeptName;
+                        if (transferStatusesData.isNotEmpty &&
+                            transferStatusesData.first.departmentId != null &&
+                            transferStatusesData.first.departmentId != 0) {
+                          statusDeptId = transferStatusesData.first.departmentId;
+                          statusDeptName = transferStatusesData.first.departmentName;
+                        } else if (selectedStatus.departmentId != null &&
+                            selectedStatus.departmentId != 0) {
+                          statusDeptId = selectedStatus.departmentId;
+                          statusDeptName = selectedStatus.departmentName;
+                        }
+
+                        if (statusDeptId != null && statusDeptId != 0) {
+                          settingsProvider.selectedDepartmentId = statusDeptId;
+                          leadProvider.departmentController.text = statusDeptName ?? '';
+
+                          await dropDownProvider.fetchStaffByDepartment(
+                            context: context,
+                            branchId: settingsProvider.selectedBranchId,
+                            departmentId: statusDeptId,
+                          );
+
+                          if (dropDownProvider.filteredStaffData.any((s) => s.userDetailsId == leadProvider.loginUserId)) {
+                            dropDownProvider.setSelectedUserId(leadProvider.loginUserId);
+                            leadProvider.searchUserController.text = leadProvider.loginUserName;
+                          } else if (dropDownProvider.filteredStaffData.isNotEmpty) {
+                            final firstStaff = dropDownProvider.filteredStaffData.first;
+                            dropDownProvider.setSelectedUserId(firstStaff.userDetailsId);
+                            leadProvider.searchUserController.text = firstStaff.userDetailsName;
+                          } else {
+                            dropDownProvider.setSelectedUserId(0);
+                            leadProvider.searchUserController.clear();
+                          }
+                        }
+
+                        if (mounted) {
+                          setState(() {
+                            showAmountForMain = mainHasAmount;
+                            showAmountForSecondary = false;
+                            showTransferStatus = transferStatusesData.isNotEmpty &&
+                                transferStatusesData.first.isTransferStatus == 1;
+                            showTime = transferStatusesData.isNotEmpty &&
+                                transferStatusesData.first.isTime == 1;
+                            showDate = transferStatusesData.isNotEmpty &&
+                                transferStatusesData.first.isShowFollowupDate == 1;
+                            showTransfer = transferStatusesData.isNotEmpty &&
+                                transferStatusesData.first.isTransfer == 1;
+                            _filteredTransferStatuses = transferStatusesData.isNotEmpty
+                                ? transferStatusesData.first.transferStatuses
+                                        ?.map((s) => SearchLeadStatusModel(
+                                              statusId: s.subStatusId,
+                                              statusName: s.subStatusName,
+                                            ))
+                                        .toList() ??
+                                    []
+                                : [];
+                          });
+                        }
+                      } else {
+                        leadProvider.followUpStatusController.clear();
+                        leadProvider.followUpDateController.clear();
+                        if (mounted) {
+                          setState(() {
+                            showAmountForMain = false;
+                            showAmountForSecondary = false;
+                            showTransferStatus = false;
+                            showTime = false;
+                            showDate = false;
+                            showTransfer = false;
+                            _filteredTransferStatuses = [];
+                          });
+                        }
                       }
                     },
                     selectedValue: dropDownProvider.selectedFollowUpId,
@@ -1253,7 +1396,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
             ),
             if (showTransferStatus && _filteredTransferStatuses.isNotEmpty) ...[
               const SizedBox(height: 10),
-              CommonDropdown<int>(
+              SearchableBottomSheetDropdown<int>(
                 hintText: 'Secondary Status',
                 items: _filteredTransferStatuses
                     .where((status) => status.statusId != null)
@@ -1288,6 +1431,13 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
                         showAmountForSecondary = secondaryHasAmount;
                       });
                     }
+                  } else {
+                    leadProvider.transferStatusController.clear();
+                    if (mounted) {
+                      setState(() {
+                        showAmountForSecondary = false;
+                      });
+                    }
                   }
                 },
                 selectedValue: dropDownProvider.selectedTransferStatusId ?? 0,
@@ -1311,7 +1461,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
             SizedBox(
               height: 10,
             ),
-            CommonDropdown<int>(
+            SearchableBottomSheetDropdown<int>(
               hintText: 'Assigned Staff*',
               // Use filtered staff data instead of all staff data
               items: dropDownProvider.filteredStaffData
@@ -1324,11 +1474,15 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
               onItemSelected: (selectedId) {
                 dropDownProvider.setSelectedUserId(selectedId);
 
-                // Update the controller text with the selected staff name
-                final selectedStaff = dropDownProvider.filteredStaffData
-                    .firstWhere((staff) => staff.userDetailsId == selectedId);
-                leadProvider.searchUserController.text =
-                    selectedStaff.userDetailsName;
+                if (selectedId != null) {
+                  // Update the controller text with the selected staff name
+                  final selectedStaff = dropDownProvider.filteredStaffData
+                      .firstWhere((staff) => staff.userDetailsId == selectedId);
+                  leadProvider.searchUserController.text =
+                      selectedStaff.userDetailsName;
+                } else {
+                  leadProvider.searchUserController.clear();
+                }
               },
               selectedValue: dropDownProvider.selectedUserId,
               // Disable if branch or department is not selected
@@ -1465,60 +1619,48 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
           labelText: 'Lead By',
         ),
         const SizedBox(height: 10),
-        Row(
-          children: [
-            Expanded(
-              child: CustomAutocomplete<WorkType>(
-                focusNode: workTypeNode,
-                showOptionsOnTap: true,
-                optionsViewOpenDirection: OptionsViewOpenDirection.down,
-                items: leadProvider.leadDropdownData!.workType,
-                displayStringFunction: (model) => model.workTypeName ?? '',
-                defaultText: leadProvider.workTypeController.text ?? '',
-                labelText: 'Work Type',
-                controller: leadProvider.workTypeController,
-                onSelected: (WorkType selectedTaskType) {
-                  leadProvider.setWorkTypeId(selectedTaskType.workTypeId);
-
-                  final selectedItem =
-                      leadProvider.leadDropdownData!.workType.firstWhere(
-                    (status) =>
-                        status.workTypeId == selectedTaskType.workTypeId,
-                  );
-                  leadProvider.workTypeController.text =
-                      selectedItem.workTypeName;
-                },
-                onChanged: (value) {},
-              ),
-            ),
-            SizedBox(
-              width: 8,
-            ),
-            Expanded(
-              child: CustomAutocomplete<RoofType>(
-                focusNode: roofTypeNode,
-                showOptionsOnTap: true,
-                optionsViewOpenDirection: OptionsViewOpenDirection.down,
-                items: leadProvider.leadDropdownData!.roofType,
-                displayStringFunction: (model) => model.roofTypeName ?? '',
-                defaultText: leadProvider.roofTypeController.text ?? '',
-                labelText: 'Roof Type',
-                controller: leadProvider.roofTypeController,
-                onSelected: (RoofType selectedTaskType) {
-                  leadProvider.setRoofTypeId(selectedTaskType.roofTypeId);
-
-                  final selectedItem =
-                      leadProvider.leadDropdownData!.roofType.firstWhere(
-                    (status) =>
-                        status.roofTypeId == selectedTaskType.roofTypeId,
-                  );
-                  leadProvider.roofTypeController.text =
-                      selectedItem.roofTypeName;
-                },
-                onChanged: (value) {},
-              ),
-            )
-          ],
+        SearchableBottomSheetDropdown<int>(
+          hintText: 'Work Type',
+          items: leadProvider.leadDropdownData!.workType
+              .map((item) => DropdownItem<int>(
+                    id: item.workTypeId,
+                    name: item.workTypeName ?? '',
+                  ))
+              .toList(),
+          controller: leadProvider.workTypeController,
+          selectedValue: leadProvider.selectedWorkTypeId,
+          onItemSelected: (selectedId) {
+            if (selectedId != null) {
+              leadProvider.setWorkTypeId(selectedId);
+              final selectedItem = leadProvider.leadDropdownData!.workType
+                  .firstWhere((item) => item.workTypeId == selectedId);
+              leadProvider.workTypeController.text =
+                  selectedItem.workTypeName ?? '';
+            }
+          },
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        SearchableBottomSheetDropdown<int>(
+          hintText: 'Roof Type',
+          items: leadProvider.leadDropdownData!.roofType
+              .map((item) => DropdownItem<int>(
+                    id: item.roofTypeId,
+                    name: item.roofTypeName ?? '',
+                  ))
+              .toList(),
+          controller: leadProvider.roofTypeController,
+          selectedValue: leadProvider.selectedRoofId,
+          onItemSelected: (selectedId) {
+            if (selectedId != null) {
+              leadProvider.setRoofTypeId(selectedId);
+              final selectedItem = leadProvider.leadDropdownData!.roofType
+                  .firstWhere((item) => item.roofTypeId == selectedId);
+              leadProvider.roofTypeController.text =
+                  selectedItem.roofTypeName ?? '';
+            }
+          },
         ),
         const SizedBox(height: 10),
         CustomTextfieldWidgetMobile(
@@ -2069,7 +2211,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
         const SizedBox(height: 8),
         if (settingsProvider.companyDetails.isEmpty ||
             settingsProvider.companyDetails[0].districtCityMandatory == 0) ...[
-          CommonDropdown<int>(
+          SearchableBottomSheetDropdown<int>(
             hintText: 'District',
             items: dropDownProvider.districtList
                 .map((status) => DropdownItem<int>(
@@ -2106,7 +2248,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
               !_isFieldValid(leadProvider.pincodeController.text),
         ),
         const SizedBox(height: 8),
-        CommonDropdown<int>(
+        SearchableBottomSheetDropdown<int>(
           hintText: 'State',
           items: dropDownProvider.stateList
               .map((status) => DropdownItem<int>(
@@ -2188,31 +2330,28 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
             ),
             const SizedBox(width: 8),
             Expanded(
-              child: CustomAutocomplete<AmountPaidThrough>(
-                focusNode: amuntPaidNode,
-                showOptionsOnTap: true,
-                optionsViewOpenDirection: OptionsViewOpenDirection.down,
-                items: leadProvider.leadDropdownData!.amountPaidThrough,
-                displayStringFunction: (model) =>
-                    model.amountPaidThroughName ?? '',
-                defaultText: leadProvider.amountPaidController.text ?? '',
-                labelText: 'Amount Paid through',
+              child: SearchableBottomSheetDropdown<int>(
+                hintText: 'Amount Paid through',
+                items: leadProvider.leadDropdownData!.amountPaidThrough
+                    .map((item) => DropdownItem<int>(
+                          id: item.amountPaidThroughId,
+                          name: item.amountPaidThroughName ?? '',
+                        ))
+                    .toList(),
                 controller: leadProvider.amountPaidController,
-                onSelected: (AmountPaidThrough selectedTaskType) {
-                  leadProvider
-                      .setAmountPaidId(selectedTaskType.amountPaidThroughId);
-
-                  final selectedItem = leadProvider
-                      .leadDropdownData!.amountPaidThrough
-                      .firstWhere(
-                    (status) =>
-                        status.amountPaidThroughId ==
-                        selectedTaskType.amountPaidThroughId,
-                  );
-                  leadProvider.amountPaidController.text =
-                      selectedItem.amountPaidThroughName;
+                selectedValue: leadProvider.selectedAmountPaidId,
+                onItemSelected: (selectedId) {
+                  if (selectedId != null) {
+                    leadProvider.setAmountPaidId(selectedId);
+                    final selectedItem = leadProvider
+                        .leadDropdownData!.amountPaidThrough
+                        .firstWhere(
+                      (status) => status.amountPaidThroughId == selectedId,
+                    );
+                    leadProvider.amountPaidController.text =
+                        selectedItem.amountPaidThroughName ?? '';
+                  }
                 },
-                onChanged: (value) {},
               ),
             ),
           ],
@@ -2223,28 +2362,28 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
         Row(
           children: [
             Expanded(
-              child: CustomAutocomplete<CostInclude>(
-                focusNode: costIncludesNode,
-                showOptionsOnTap: true,
-                optionsViewOpenDirection: OptionsViewOpenDirection.down,
-                items: leadProvider.leadDropdownData!.costIncludes,
-                displayStringFunction: (model) => model.costIncludesName ?? '',
-                defaultText: leadProvider.costIncludesController.text ?? '',
-                labelText: 'Cost Includes',
+              child: SearchableBottomSheetDropdown<int>(
+                hintText: 'Cost Includes',
+                items: leadProvider.leadDropdownData!.costIncludes
+                    .map((item) => DropdownItem<int>(
+                          id: item.costIncludesId,
+                          name: item.costIncludesName ?? '',
+                        ))
+                    .toList(),
                 controller: leadProvider.costIncludesController,
-                onSelected: (CostInclude selectedTaskType) {
-                  leadProvider.setCostIncId(selectedTaskType.costIncludesId);
-
-                  final selectedItem =
-                      leadProvider.leadDropdownData!.costIncludes.firstWhere(
-                    (status) =>
-                        status.costIncludesId ==
-                        selectedTaskType.costIncludesId,
-                  );
-                  leadProvider.costIncludesController.text =
-                      selectedItem.costIncludesName;
+                selectedValue: leadProvider.selectedCostIncId,
+                onItemSelected: (selectedId) {
+                  if (selectedId != null) {
+                    leadProvider.setCostIncId(selectedId);
+                    final selectedItem = leadProvider
+                        .leadDropdownData!.costIncludes
+                        .firstWhere(
+                      (status) => status.costIncludesId == selectedId,
+                    );
+                    leadProvider.costIncludesController.text =
+                        selectedItem.costIncludesName ?? '';
+                  }
                 },
-                onChanged: (value) {},
               ),
             ),
             const SizedBox(width: 8),
@@ -2394,22 +2533,26 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
-              child: CustomAutocomplete<InverterType>(
-                focusNode: inverterTypeNode,
-                showOptionsOnTap: true,
-                optionsViewOpenDirection: OptionsViewOpenDirection.down,
-                items: leadProvider.leadDropdownData!.inverterType,
-                displayStringFunction: (model) => model.inverterTypeName ?? '',
-                defaultText: leadProvider.inverterTypeController.text ?? '',
-                labelText: 'Inverter Type',
+              child: SearchableBottomSheetDropdown<int>(
+                hintText: 'Inverter Type',
+                items: leadProvider.leadDropdownData!.inverterType
+                    .map((item) => DropdownItem<int>(
+                          id: item.inverterTypeId,
+                          name: item.inverterTypeName ?? '',
+                        ))
+                    .toList(),
                 controller: leadProvider.inverterTypeController,
-                onSelected: (InverterType selectedTaskType) {
-                  leadProvider.setInverterId(selectedTaskType.inverterTypeId);
-
-                  leadProvider.inverterTypeController.text =
-                      selectedTaskType.inverterTypeName ?? '';
+                selectedValue: leadProvider.selectedInverterId,
+                onItemSelected: (selectedId) {
+                  if (selectedId != null) {
+                    leadProvider.setInverterId(selectedId);
+                    final selectedItem = leadProvider
+                        .leadDropdownData!.inverterType
+                        .firstWhere((item) => item.inverterTypeId == selectedId);
+                    leadProvider.inverterTypeController.text =
+                        selectedItem.inverterTypeName ?? '';
+                  }
                 },
-                onChanged: (value) {},
               ),
             ),
             const SizedBox(width: 8),
@@ -2463,27 +2606,26 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
-              child: CustomAutocomplete<PanelType>(
-                focusNode: panelBrandNode,
-                showOptionsOnTap: true,
-                optionsViewOpenDirection: OptionsViewOpenDirection.down,
-                items: leadProvider.leadDropdownData!.panelType,
-                displayStringFunction: (model) => model.panelTypeName ?? '',
-                defaultText: leadProvider.panelBrandController.text ?? '',
-                labelText: 'Panel Brand',
+              child: SearchableBottomSheetDropdown<int>(
+                hintText: 'Panel Brand',
+                items: leadProvider.leadDropdownData!.panelType
+                    .map((item) => DropdownItem<int>(
+                          id: item.panelTypeId,
+                          name: item.panelTypeName ?? '',
+                        ))
+                    .toList(),
                 controller: leadProvider.panelBrandController,
-                onSelected: (PanelType selectedTaskType) {
-                  leadProvider.setPanelId(selectedTaskType.panelTypeId);
-
-                  final selectedItem =
-                      leadProvider.leadDropdownData!.panelType.firstWhere(
-                    (status) =>
-                        status.panelTypeId == selectedTaskType.panelTypeId,
-                  );
-                  leadProvider.panelBrandController.text =
-                      selectedItem.panelTypeName ?? '';
+                selectedValue: leadProvider.selectedPanelId,
+                onItemSelected: (selectedId) {
+                  if (selectedId != null) {
+                    leadProvider.setPanelId(selectedId);
+                    final selectedItem = leadProvider
+                        .leadDropdownData!.panelType
+                        .firstWhere((item) => item.panelTypeId == selectedId);
+                    leadProvider.panelBrandController.text =
+                        selectedItem.panelTypeName ?? '';
+                  }
                 },
-                onChanged: (value) {},
               ),
             ),
             const SizedBox(width: 8),
@@ -2607,26 +2749,25 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
         //     ),
         //   ],
         // ),
-        CustomAutocomplete<Phase>(
-          focusNode: phaseNode,
-          showOptionsOnTap: true,
-          optionsViewOpenDirection: OptionsViewOpenDirection.down,
-          items: leadProvider.leadDropdownData!.phase,
-          displayStringFunction: (model) => model.phaseName ?? '',
-          defaultText: leadProvider.panelPhaseController.text ?? '',
-          labelText: 'Panel Phase',
+        SearchableBottomSheetDropdown<int>(
+          hintText: 'Panel Phase',
+          items: leadProvider.leadDropdownData!.phase
+              .map((item) => DropdownItem<int>(
+                    id: item.phaseId,
+                    name: item.phaseName ?? '',
+                  ))
+              .toList(),
           controller: leadProvider.panelPhaseController,
-          onSelected: (Phase selectedTaskType) {
-            leadProvider.setPhaseId(selectedTaskType.phaseId);
-
-            final selectedItem =
-                leadProvider.leadDropdownData!.phase.firstWhere(
-              (status) => status.phaseId == selectedTaskType.phaseId,
-            );
-            leadProvider.panelPhaseController.text =
-                selectedItem.phaseName ?? '';
+          selectedValue: leadProvider.selectedPhaseId,
+          onItemSelected: (selectedId) {
+            if (selectedId != null) {
+              leadProvider.setPhaseId(selectedId);
+              final selectedItem = leadProvider.leadDropdownData!.phase
+                  .firstWhere((item) => item.phaseId == selectedId);
+              leadProvider.panelPhaseController.text =
+                  selectedItem.phaseName ?? '';
+            }
           },
-          onChanged: (value) {},
         ),
       ],
     );
@@ -2663,7 +2804,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
           const SizedBox(height: 10),
         ],
         if (settingsProvider.menuIsViewMap[146] == 1) ...[
-          CommonDropdown<int>(
+          SearchableBottomSheetDropdown<int>(
             hintText: 'Location',
             items: dropDownProvider.locationList
                 .map((loc) => DropdownItem<int>(
@@ -2680,7 +2821,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
         ],
 
         if (settingsProvider.menuIsViewMap[149] == 1) ...[
-          CommonDropdown<int>(
+          SearchableBottomSheetDropdown<int>(
             hintText: 'Source',
             items: settingsProvider.searchSourceCategory
                 .map((source) => DropdownItem<int>(
@@ -2691,14 +2832,18 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
             controller: leadProvider.sourceCategoryController,
             onItemSelected: (selectedId) {
               dropDownProvider.setSourceCategoryId(selectedId);
-              final selectedItem = settingsProvider.searchSourceCategory
-                  .firstWhere((source) => source.sourceId == selectedId);
-              leadProvider.sourceCategoryController.text =
-                  selectedItem.sourceName ?? '';
+              if (selectedId != null) {
+                final selectedItem = settingsProvider.searchSourceCategory
+                    .firstWhere((source) => source.sourceId == selectedId);
+                leadProvider.sourceCategoryController.text =
+                    selectedItem.sourceName ?? '';
+              } else {
+                leadProvider.sourceCategoryController.clear();
+              }
               dropDownProvider.updateEnquiryForName(0, '');
               leadProvider.enquiryForController.clear();
 
-              dropDownProvider.filterEnquiryForByCategory(selectedId);
+              dropDownProvider.filterEnquiryForByCategory(selectedId ?? 0);
             },
             selectedValue: dropDownProvider.selectedSourceId,
           ),
@@ -2744,39 +2889,102 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
                   ),
                 ],
               ),
-              Wrap(
-                spacing: 8.0,
-                runSpacing: 8.0,
-                children: dropDownProvider.enquiryData.map((source) {
-                  final isSelected = dropDownProvider.selectedEnquirySourceId == source.enquirySourceId;
-                  return ChoiceChip(
-                    showCheckmark: false,
-                    label: Text(source.enquirySourceName ?? ''),
-                    selected: isSelected,
-                    onSelected: (bool selected) {
-                      if (selected) {
-                        dropDownProvider.setSelectedEnquirySourceId(source.enquirySourceId);
-                        leadProvider.enquirySourceController.text = source.enquirySourceName ?? '';
-                      }
-                    },
-                    padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-                    selectedColor: AppColors.lightBlueColor,
-                    backgroundColor: Colors.white,
-                    labelStyle: GoogleFonts.plusJakartaSans(
-                      color: isSelected ? AppColors.textBlue800 : AppColors.textGrey3,
-                      fontSize: 14,
-                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      side: BorderSide(
-                        color: isSelected ? AppColors.textBlue800 : AppColors.grey,
-                        width: 1.0,
+              () {
+                final selectedSourceId = dropDownProvider.selectedEnquirySourceId;
+                final List<Enquirysourcemodel> displaySources = dropDownProvider.enquiryData.take(5).toList();
+                if (selectedSourceId != null && selectedSourceId > 0) {
+                  final hasSelected = displaySources.any((s) => s.enquirySourceId == selectedSourceId);
+                  if (!hasSelected) {
+                    final selectedSourceObj = dropDownProvider.enquiryData.firstWhere(
+                      (s) => s.enquirySourceId == selectedSourceId,
+                      orElse: () => Enquirysourcemodel(
+                        enquirySourceId: selectedSourceId,
+                        enquirySourceName: leadProvider.enquirySourceController.text,
+                        sourceCategoryId: dropDownProvider.selectedSourceId ?? 0,
+                        sourceCategoryName: leadProvider.sourceCategoryController.text,
+                        deleteStatus: 0,
                       ),
-                    ),
-                  );
-                }).toList(),
-              ),
+                    );
+                    if (selectedSourceObj.enquirySourceName != null &&
+                        selectedSourceObj.enquirySourceName!.isNotEmpty) {
+                      displaySources.insert(0, selectedSourceObj);
+                    }
+                  }
+                }
+
+                return SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      ...displaySources.map((source) {
+                        final isSelected = selectedSourceId == source.enquirySourceId;
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: ChoiceChip(
+                            showCheckmark: false,
+                            label: Text(source.enquirySourceName ?? ''),
+                            selected: isSelected,
+                            onSelected: (bool selected) {
+                              if (selected) {
+                                dropDownProvider.setSelectedEnquirySourceId(source.enquirySourceId);
+                                leadProvider.enquirySourceController.text = source.enquirySourceName ?? '';
+                              }
+                            },
+                            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+                            selectedColor: AppColors.lightBlueColor,
+                            backgroundColor: Colors.white,
+                            labelStyle: GoogleFonts.plusJakartaSans(
+                              color: isSelected ? AppColors.textBlue800 : AppColors.textGrey3,
+                              fontSize: 14,
+                              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              side: BorderSide(
+                                color: isSelected ? AppColors.textBlue800 : AppColors.grey,
+                                width: 1.0,
+                              ),
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                      if (dropDownProvider.enquiryData.length > 5)
+                        Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: ChoiceChip(
+                            showCheckmark: false,
+                            label: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text('More'),
+                                const SizedBox(width: 4),
+                                Icon(Icons.keyboard_arrow_down, size: 16, color: AppColors.textGrey3),
+                              ],
+                            ),
+                            selected: false,
+                            onSelected: (bool selected) {
+                              _showAllEnquirySourcesBottomSheet(context, dropDownProvider, leadProvider);
+                            },
+                            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+                            backgroundColor: Colors.grey[100],
+                            labelStyle: GoogleFonts.plusJakartaSans(
+                              color: AppColors.textGrey3,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              side: BorderSide(
+                                color: Colors.grey[300]!,
+                                width: 1.0,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                );
+              }(),
               if (dropDownProvider.showValidation &&
                   (dropDownProvider.selectedEnquirySourceId == null ||
                       dropDownProvider.selectedEnquirySourceId == 0) &&
@@ -2870,7 +3078,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
 
         if (settingsProvider.companyDetails.isNotEmpty &&
             settingsProvider.companyDetails[0].districtCityMandatory == 1) ...[
-          CommonDropdown<int>(
+          SearchableBottomSheetDropdown<int>(
             hintText: 'District*',
             items: dropDownProvider.districtList
                 .map((status) => DropdownItem<int>(
@@ -2908,7 +3116,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
         Row(
           children: [
             Expanded(
-              child: CommonDropdown<int>(
+              child: SearchableBottomSheetDropdown<int>(
                 hintText:
                     'Enquiry For${settingsProvider.enquiryForMandatory == 1 ? '*' : ''}',
                 enabled: dropDownProvider.selectedSourceId != null,
@@ -2968,7 +3176,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
         const SizedBox(
           height: 10,
         ),
-        CommonDropdown<int>(
+        SearchableBottomSheetDropdown<int>(
           hintText: 'Priority',
           items: settingsProvider.priorities
               .map((source) => DropdownItem<int>(
@@ -2978,11 +3186,15 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
               .toList(),
           controller: leadProvider.priorityNameController,
           onItemSelected: (selectedId) {
-            leadProvider.priorityId = selectedId;
-            final selectedItem = settingsProvider.priorities
-                .firstWhere((source) => source.priorityId == selectedId);
-            leadProvider.priorityNameController.text =
-                selectedItem.priorityName;
+            leadProvider.priorityId = selectedId ?? 0;
+            if (selectedId != null) {
+              final selectedItem = settingsProvider.priorities
+                  .firstWhere((source) => source.priorityId == selectedId);
+              leadProvider.priorityNameController.text =
+                  selectedItem.priorityName;
+            } else {
+              leadProvider.priorityNameController.clear();
+            }
           },
           selectedValue: leadProvider.priorityId,
         ),
