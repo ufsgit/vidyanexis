@@ -88,11 +88,11 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
           }
         }
       }
+      await customerDetailsProvider.getQuotationFieldsApi();
       await customerDetailsProvider.getProfitList(context);
 
       // Fetch custom field definitions for quotations
       // await customerDetailsProvider.getCustomFieldsByQuotationId(context);
-      await customerDetailsProvider.getQuotationFieldsApi();
       await customerDetailsProvider.getCommercialCustomFieldsApi(context);
 
       settingsProvider.clearTermsFields();
@@ -522,6 +522,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
 
                               customerDetailsProvider
                                   .getCustomFieldsByQuotationId(context);
+                              customerDetailsProvider.getQuotationFieldsApi();
                             },
                             selectedValue:
                                 customerDetailsProvider.selectedQuotationType,
@@ -660,10 +661,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                       ],
                     ),
 
-                  if (customerDetailsProvider.isQuotationFieldVisible(57) &&
-                      settingsProvider.solarPvSystemSpecification == 1 &&
-                      (customerDetailsProvider.isResidential ||
-                          customerDetailsProvider.isCommercial))
+                  if (customerDetailsProvider.isQuotationFieldVisible(57))
                     //solar pv system specification
                     ExpansionTile(
                       shape: const RoundedRectangleBorder(
@@ -685,9 +683,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                       ],
                     ),
 
-                  if (customerDetailsProvider.isQuotationFieldVisible(66) &&
-                      (!customerDetailsProvider.isCommercial || settingsProvider.commercialScopeOfWork == 1) &&
-                      (!customerDetailsProvider.isResidential || settingsProvider.residentialScopeOfWork == 1))
+                  if (customerDetailsProvider.isQuotationFieldVisible(66))
                     //scope of work
                     ExpansionTile(
                       shape: const RoundedRectangleBorder(
@@ -709,9 +705,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                       ],
                     ),
 
-                  if (customerDetailsProvider.isQuotationFieldVisible(70) &&
-                      !customerDetailsProvider.isCommercial &&
-                      !customerDetailsProvider.isResidential)
+                  if (customerDetailsProvider.isQuotationFieldVisible(70))
                     //cable details
                     ExpansionTile(
                       shape: const RoundedRectangleBorder(
@@ -1561,9 +1555,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                       ],
                     ),
                   //Structure of Material
-                  if (customerDetailsProvider.isQuotationFieldVisible(54) &&
-                      !customerDetailsProvider.isResidential &&
-                      !customerDetailsProvider.isCommercial)
+                  if (customerDetailsProvider.isQuotationFieldVisible(54))
                     ExpansionTile(
                       shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.zero,

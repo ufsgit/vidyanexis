@@ -1607,7 +1607,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
   Future<void> getQuotationFieldsApi() async {
     try {
       final response = await HttpRequest.httpGetRequest(
-          endPoint: HttpUrls.getQuotationFields);
+          endPoint: "${HttpUrls.getQuotationFields}/$_selectedQuotationType");
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -1641,12 +1641,12 @@ class CustomerDetailsProvider extends ChangeNotifier {
   }
 
   bool isQuotationFieldVisible(int fieldId) {
-    if (fieldId == 44 && SettingsProvider().hideWarranty == 1) {
-      return false;
-    }
-    if (fieldId == 57 && SettingsProvider().solarPvSystemSpecification == 0) {
-      return false;
-    }
+    // if (fieldId == 44 && SettingsProvider().hideWarranty == 1) {
+    //   return false;
+    // }
+    // if (fieldId == 57 && SettingsProvider().solarPvSystemSpecification == 0) {
+    //   return false;
+    // }
     if (_quotationFields.isEmpty) return true;
     try {
       final field = _quotationFields.firstWhere(
@@ -1654,7 +1654,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
       );
       return field.isVisibility == 1;
     } catch (e) {
-      return true;
+      return false;
     }
   }
 
