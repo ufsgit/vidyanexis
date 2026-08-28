@@ -994,7 +994,7 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
             isMobile: isMobile),
       if (settingsProvider.menuIsViewMap[57].toString() == '1')
         _buildMenuItem(context, 'Branch', Icons.category, isMobile: isMobile),
-      if (settingsProvider.menuIsViewMap[58].toString() == '1')
+      if (settingsProvider.menuIsViewMap[180].toString() == '1')
         _buildMenuItem(context, 'Stage', Icons.category, isMobile: isMobile),
       if (settingsProvider.menuIsViewMap[59].toString() == '1')
         _buildMenuItem(context, 'Source Category', Icons.category,

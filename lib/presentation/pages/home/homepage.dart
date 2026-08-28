@@ -10,6 +10,9 @@ import 'package:vidyanexis/http/socket_io.dart';
 import 'package:vidyanexis/presentation/pages/home/notifications_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/followup_reports.dart';
 import 'package:vidyanexis/presentation/pages/reports/followup_amount_report_page.dart';
+import 'package:vidyanexis/presentation/pages/reports/solar_lead_report_page.dart';
+import 'package:vidyanexis/presentation/pages/reports/lead_status_report_screen.dart';
+import 'package:vidyanexis/presentation/pages/reports/lead_stage_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/lead_page_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/deleted_lead_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/quotation_report.dart';
@@ -58,6 +61,7 @@ import 'package:vidyanexis/presentation/pages/settings/settings_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/task_summary_report_screen.dart';
 import 'package:vidyanexis/presentation/widgets/home/side_bar_widget.dart';
 import 'package:vidyanexis/presentation/pages/reports/lead_status_report_screen.dart';
+import 'package:vidyanexis/presentation/pages/reports/lead_stage_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/commission_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/sub_contract_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/customer_outstanding_report_page.dart';
@@ -505,6 +509,12 @@ class _HomePageState extends State<HomePage> {
           title: 'Sales Pipeline',
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: LeadStatusReportScreen()),
+        ),
+      if (settingsProvider.menuIsViewMap[181].toString() == '1')
+        SidebarOption(
+          title: 'Stage Report',
+          iconPath: 'assets/images/Reports.svg',
+          baseContent: const Center(child: LeadStageReportScreen()),
         ),
       if (settingsProvider.menuIsViewMap[99].toString() == '1')
         SidebarOption(

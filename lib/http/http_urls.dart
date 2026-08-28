@@ -176,6 +176,7 @@ class HttpUrls {
   static String getLeadDashboard = "lead/Get_Lead_Dashboard";
   static String searchLeadDashboard = "lead/Search_lead_Dashboard";
   static String workSummary = "lead/Customer_Work_Summary";
+  static String getLeadStageReport = "lead/Get_Lead_Stage_Report";
   static String searchDocumentType = "settings/Search_document_type";
   static String saveImage = "lead/Save_Image";
   static String getDocumentList = "lead/Get_Images_By_Customer";
@@ -408,6 +409,7 @@ class HttpUrls {
   static String deleteInventoryCustomer = "item/Delete_Customer";
   static String taskSummary = "task/Task_Summary";
   static String getLeadStatusReport = "Lead/Get_Lead_Status_Report";
+  static String getLeadsByStage = "lead/Get_Leads_By_Stage";
   static String getPdfAnnexure1 = "lead/get_pdf_annexure1/";
   static String getPdfAnnexure2 = "lead/get_pdf_annexure2/";
   static String getPdfAnnexure3 = "lead/get_pdf_annexure3/";

@@ -895,9 +895,9 @@ class _CustomerPageState extends State<CustomerPage> {
     double rowHeight,
     double tableHeaderHeight,
   ) {
-    final double fixedWidth = 760.0;
+    final double fixedWidth = 780.0;
     final bool showLocation = settingsProvider.menuIsViewMap[142] == 1;
-    final double scrollableWidth = showLocation ? 1370.0 : 1230.0;
+    final double scrollableWidth = showLocation ? 1400.0 : 1260.0;
 
     return Scrollbar(
       controller: _scrollableVerticalController,
@@ -926,9 +926,9 @@ class _CustomerPageState extends State<CustomerPage> {
                   child: Row(
                     children: const [
                       TableWidget(
-                        width: 60,
+                        width: 80,
                         title: 'Sl No.',
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.normal,
                         padding: EdgeInsets.symmetric(
                             vertical: 4.0, horizontal: 12.0),
                         color: Color(0xFFFFFFFF),
@@ -936,7 +936,7 @@ class _CustomerPageState extends State<CustomerPage> {
                       TableWidget(
                         width: 150,
                         title: 'Customer Code',
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.normal,
                         padding: EdgeInsets.symmetric(
                             vertical: 4.0, horizontal: 8.0),
                         color: Color(0xFFFFFFFF),
@@ -944,7 +944,7 @@ class _CustomerPageState extends State<CustomerPage> {
                       TableWidget(
                         width: 230,
                         title: 'Customer Name',
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.normal,
                         padding: EdgeInsets.symmetric(
                             vertical: 4.0, horizontal: 8.0),
                         color: Color(0xFFFFFFFF),
@@ -952,7 +952,7 @@ class _CustomerPageState extends State<CustomerPage> {
                       TableWidget(
                         width: 180,
                         title: 'Place',
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.normal,
                         padding: EdgeInsets.symmetric(
                             vertical: 4.0, horizontal: 8.0),
                         color: Color(0xFFFFFFFF),
@@ -960,7 +960,7 @@ class _CustomerPageState extends State<CustomerPage> {
                       TableWidget(
                         width: 140,
                         title: 'Mobile no',
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.normal,
                         padding: EdgeInsets.symmetric(
                             vertical: 4.0, horizontal: 8.0),
                         color: Color(0xFFFFFFFF),
@@ -1010,7 +1010,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                   child: Row(
                                     children: [
                                       TableWidget(
-                                        width: 60,
+                                        width: 80,
                                         fontSize: 12,
                                         fontWeight: FontWeight.normal,
                                         padding: const EdgeInsets.symmetric(
@@ -1327,15 +1327,15 @@ class _CustomerPageState extends State<CustomerPage> {
                             const TableWidget(
                               width: 140,
                               title: 'AMC Date',
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.normal,
                               padding: EdgeInsets.symmetric(
                                   vertical: 4.0, horizontal: 8.0),
                               color: Color(0xFFFFFFFF),
                             ),
                             const TableWidget(
-                              width: 160,
+                              width: 190,
                               title: 'Work Completion Date',
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.normal,
                               padding: EdgeInsets.symmetric(
                                   vertical: 4.0, horizontal: 8.0),
                               color: Color(0xFFFFFFFF),
@@ -1343,7 +1343,7 @@ class _CustomerPageState extends State<CustomerPage> {
                             const TableWidget(
                               width: 220,
                               title: 'Remarks',
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.normal,
                               padding: EdgeInsets.symmetric(
                                   vertical: 4.0, horizontal: 8.0),
                               color: Color(0xFFFFFFFF),
@@ -1351,7 +1351,7 @@ class _CustomerPageState extends State<CustomerPage> {
                             const TableWidget(
                               width: 160,
                               title: 'Follow Up Status',
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.normal,
                               padding: EdgeInsets.symmetric(
                                   vertical: 4.0, horizontal: 8.0),
                               color: Color(0xFFFFFFFF),
@@ -1359,7 +1359,7 @@ class _CustomerPageState extends State<CustomerPage> {
                             const TableWidget(
                               width: 140,
                               title: 'Follow Up Date',
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.normal,
                               padding: EdgeInsets.symmetric(
                                   vertical: 4.0, horizontal: 8.0),
                               color: Color(0xFFFFFFFF),
@@ -1367,7 +1367,7 @@ class _CustomerPageState extends State<CustomerPage> {
                             const TableWidget(
                               width: 140,
                               title: 'Consumer No.',
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.normal,
                               padding: EdgeInsets.symmetric(
                                   vertical: 4.0, horizontal: 8.0),
                               color: Color(0xFFFFFFFF),
@@ -1375,7 +1375,7 @@ class _CustomerPageState extends State<CustomerPage> {
                             const TableWidget(
                               width: 150,
                               title: 'Assigned Staff',
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.normal,
                               padding: EdgeInsets.symmetric(
                                   vertical: 4.0, horizontal: 8.0),
                               color: Color(0xFFFFFFFF),
@@ -1383,7 +1383,7 @@ class _CustomerPageState extends State<CustomerPage> {
                             const TableWidget(
                               width: 120,
                               title: 'Duration',
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.normal,
                               padding: EdgeInsets.symmetric(
                                   vertical: 4.0, horizontal: 8.0),
                               color: Color(0xFFFFFFFF),
@@ -1392,7 +1392,7 @@ class _CustomerPageState extends State<CustomerPage> {
                               const TableWidget(
                                 width: 140,
                                 title: 'Location',
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.normal,
                                 padding: EdgeInsets.symmetric(
                                     vertical: 4.0, horizontal: 8.0),
                                 color: Color(0xFFFFFFFF),
@@ -1457,7 +1457,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                               title: lead.amcDateDisplay,
                                             ),
                                             TableWidget(
-                                              width: 160,
+                                              width: 190,
                                               fontSize: 12,
                                               fontWeight: FontWeight.normal,
                                               padding:

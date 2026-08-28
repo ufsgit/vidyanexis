@@ -457,6 +457,11 @@ class _LeadsPageState extends State<LeadPage> {
     final settingsProvider = Provider.of<SettingsProvider>(context);
     final sideProvider = Provider.of<SidebarProvider>(context);
 
+    double scrollableTableWidth = 2055.0;
+    if (settingsProvider.menuIsViewMap[142] == 1) scrollableTableWidth += 150.0;
+    if (settingsProvider.consumerNameMandatory == 1) scrollableTableWidth += 150.0;
+    if (settingsProvider.consumerContactNoMandatory == 1) scrollableTableWidth += 150.0;
+
     // Calculate dynamic heights for table
     final double screenHeight = MediaQuery.of(context).size.height;
     final double headerHeight = 60.0;
@@ -1673,7 +1678,7 @@ class _LeadsPageState extends State<LeadPage> {
                                 controller: _horizontalScrollController,
                                 scrollDirection: Axis.horizontal,
                                 child: SizedBox(
-                                  width: 2120,
+                                  width: scrollableTableWidth,
                                   child: Column(
                                     children: [
                                       // Header row

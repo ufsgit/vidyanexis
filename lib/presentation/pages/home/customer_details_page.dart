@@ -2767,11 +2767,14 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                     CustomElevatedButton(
                                                                       radius: 4,
                                                                       backgroundColor:
-                                                                          AppColors.whiteColor,
+                                                                          AppColors
+                                                                              .whiteColor,
                                                                       borderColor:
-                                                                          AppColors.bluebutton,
+                                                                          AppColors
+                                                                              .bluebutton,
                                                                       textColor:
-                                                                          AppColors.bluebutton,
+                                                                          AppColors
+                                                                              .bluebutton,
                                                                       buttonText:
                                                                           'Rts Vender feasibility',
                                                                       onPressed:
@@ -2787,9 +2790,11 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           onGenerate:
                                                                               () async {
                                                                             await Loader.showLoader(context);
-                                                                            final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfVendorFeasibilityReport}${widget.customerId}');
+                                                                            final bytes =
+                                                                                await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfVendorFeasibilityReport}${widget.customerId}');
                                                                             Loader.stopLoader(context);
-                                                                            return bytes ?? Uint8List(0);
+                                                                            return bytes ??
+                                                                                Uint8List(0);
                                                                           },
                                                                         );
                                                                       },
@@ -4007,9 +4012,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                 borderColor:
                                                                     AppColors
                                                                         .bluebutton,
-                                                                textColor:
-                                                                    AppColors
-                                                                        .bluebutton,
+                                                                textColor: AppColors
+                                                                    .bluebutton,
                                                                 buttonText:
                                                                     'Rts Vender feasibility',
                                                                 onPressed:
@@ -4024,14 +4028,17 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                         '${HttpUrls.getPdfVendorFeasibilityReport}${widget.customerId}',
                                                                     onGenerate:
                                                                         () async {
-                                                                      await Loader.showLoader(
-                                                                          context);
+                                                                      await Loader
+                                                                          .showLoader(
+                                                                              context);
                                                                       final bytes =
-                                                                          await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfVendorFeasibilityReport}${widget.customerId}');
+                                                                          await customerDetailsProvider
+                                                                              .getAnnexurePdfBytes('${HttpUrls.getPdfVendorFeasibilityReport}${widget.customerId}');
                                                                       Loader.stopLoader(
                                                                           context);
                                                                       return bytes ??
-                                                                          Uint8List(0);
+                                                                          Uint8List(
+                                                                              0);
                                                                     },
                                                                   );
                                                                 },

@@ -16,6 +16,7 @@ import 'package:vidyanexis/presentation/pages/reports/stock_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/task_summary_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/work_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/lead_status_report_screen.dart';
+import 'package:vidyanexis/presentation/pages/reports/lead_stage_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_detail_page_mobile.dart';
 import 'package:vidyanexis/presentation/pages/reports/customer_outstanding_report_page.dart';
 import 'package:vidyanexis/presentation/pages/customer/lead_search_page.dart';
@@ -173,6 +174,12 @@ final GoRouter appRouter = GoRouter(
       path: LeadStatusReportScreen.route,
       pageBuilder: (context, state) {
         return fadeTransition(const LeadStatusReportScreen());
+      },
+    ),
+    GoRoute(
+      path: LeadStageReportScreen.route,
+      pageBuilder: (context, state) {
+        return fadeTransition(const LeadStageReportScreen());
       },
     ),
     GoRoute(
