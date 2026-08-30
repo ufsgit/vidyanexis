@@ -130,7 +130,6 @@ class CustomerDetailsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-
   bool get isLoadingDetails => _isLoadingDetails;
   bool _isDeleteLoading = false;
   bool get isDeleteLoading => _isDeleteLoading;
@@ -390,7 +389,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
   bool get isHistoryLoading => _isHistoryLoading;
 
   List<LeadHistoryReportModel> _leadHistoryReportList = [];
-  List<LeadHistoryReportModel> get leadHistoryReportList => _leadHistoryReportList;
+  List<LeadHistoryReportModel> get leadHistoryReportList =>
+      _leadHistoryReportList;
   bool _isLeadHistoryLoading = false;
   bool get isLeadHistoryLoading => _isLeadHistoryLoading;
 
@@ -432,7 +432,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
           .fold<double>(0.0, (a, b) => a + b);
 
       _multiItems.removeAt(index);
-      mutipleItemsTotalAmount = double.parse((mutipleItemsTotalAmount - totalAmount).toStringAsFixed(2));
+      mutipleItemsTotalAmount = double.parse(
+          (mutipleItemsTotalAmount - totalAmount).toStringAsFixed(2));
 
       // Rebuild combined materials from the remaining items
       List<BillOfMaterialItem> combinedMaterials = [];
@@ -712,7 +713,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
       _isLeadHistoryLoading = true;
       notifyListeners();
       final response = await HttpRequest.httpGetRequest(
-          endPoint: '${HttpUrls.searchLeadHistoryReport}?Customer_Id=$customerId');
+          endPoint:
+              '${HttpUrls.searchLeadHistoryReport}?Customer_Id=$customerId');
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -798,8 +800,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
   final TextEditingController qproductnameController = TextEditingController();
   final TextEditingController qsubsidyAmountController =
       TextEditingController();
-  final TextEditingController qDiscountController =
-      TextEditingController();
+  final TextEditingController qDiscountController = TextEditingController();
   bool _isSubsidyChecked = false;
   bool get isSubsidyChecked => _isSubsidyChecked;
   set isSubsidyChecked(bool value) {
@@ -1093,7 +1094,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
       finalTotal = bomTotal + profitValue;
     }
     _mutipleItemsTotalAmount = finalTotal;
-    final String itemName = _selectedItemName.isNotEmpty ? _selectedItemName : 'Item';
+    final String itemName =
+        _selectedItemName.isNotEmpty ? _selectedItemName : 'Item';
 
     // 3. Inject exactly one auto-item depending on quotation type
     if (_selectedQuotationType == 1) {
@@ -1652,6 +1654,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
       final field = _quotationFields.firstWhere(
         (element) => element.quotationFieldsId == fieldId,
       );
+      print('field.isVisibility ${field.isVisibility == 1}'
+          'field.id ${fieldId}');
       return field.isVisibility == 1;
     } catch (e) {
       return false;
@@ -1670,8 +1674,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getExpenseListApi(
-      String customerId, BuildContext context, {bool forceRefresh = false}) async {
+  Future<void> getExpenseListApi(String customerId, BuildContext context,
+      {bool forceRefresh = false}) async {
     if (!forceRefresh &&
         _lastFetchedExpenseCustomerId == customerId &&
         (_expenseList.isNotEmpty || !_isLoading)) {
@@ -1682,7 +1686,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
     _lastFetchedExpenseCustomerId = customerId;
 
     _isLoading = true;
-    debugPrint('[EXPENSE_LOADING] CustomerDetailsProvider.getExpenseListApi start for customerId=$customerId, isLoading=$_isLoading');
+    debugPrint(
+        '[EXPENSE_LOADING] CustomerDetailsProvider.getExpenseListApi start for customerId=$customerId, isLoading=$_isLoading');
     notifyListeners();
     try {
       final response = await HttpRequest.httpGetRequest(
@@ -1711,7 +1716,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
     } finally {
       _isLoading = false;
       _isFetchingExpenses = false;
-      debugPrint('[EXPENSE_LOADING] CustomerDetailsProvider.getExpenseListApi finish, isLoading=$_isLoading');
+      debugPrint(
+          '[EXPENSE_LOADING] CustomerDetailsProvider.getExpenseListApi finish, isLoading=$_isLoading');
       notifyListeners();
     }
   }
@@ -1780,17 +1786,20 @@ class CustomerDetailsProvider extends ChangeNotifier {
       String expenseTypeName = '';
       try {
         expenseTypeName = _expenseTypeList
-                .firstWhere(
-                    (element) => element.expenseTypeId == _selectedExpenseType)
-                .expenseTypeName;
+            .firstWhere(
+                (element) => element.expenseTypeId == _selectedExpenseType)
+            .expenseTypeName;
       } catch (e) {
         print('Error finding expense type name: $e');
       }
 
-      final formattedDate = DateFormat('yyyy-MM-dd').format(_selectedExpenseDate);
+      final formattedDate =
+          DateFormat('yyyy-MM-dd').format(_selectedExpenseDate);
 
       final body = {
-        "Expense_Id": expenseId == 'null' || expenseId.isEmpty ? 0 : (int.tryParse(expenseId) ?? 0),
+        "Expense_Id": expenseId == 'null' || expenseId.isEmpty
+            ? 0
+            : (int.tryParse(expenseId) ?? 0),
         "Expense_Type_Id": _selectedExpenseType,
         "Customer_Id": int.tryParse(customerId) ?? 0,
         "Lead_Id": int.tryParse(customerId) ?? 0,
@@ -1837,7 +1846,6 @@ class CustomerDetailsProvider extends ChangeNotifier {
       print('Exception occurred: $e');
     }
   }
-
 
   Future<void> deleteExpenseApi(
       String expenseId, String customerId, BuildContext context) async {
@@ -2780,7 +2788,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
               data[0]['status_Id_'] ??
               data[0]['Status_Id_'] ??
               data[0]['Customer_Id_'];
-          message = data[0]['message']?.toString() ?? data[0]['msg']?.toString();
+          message =
+              data[0]['message']?.toString() ?? data[0]['msg']?.toString();
         }
 
         if (flag == -1) {
@@ -5182,7 +5191,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
   Future<Uint8List?> getStatusImageBytes(String customerId) async {
     try {
-      final bytes = await getAnnexurePdfBytes('${HttpUrls.generateStatusImage}$customerId');
+      final bytes = await getAnnexurePdfBytes(
+          '${HttpUrls.generateStatusImage}$customerId');
       if (bytes == null || bytes.isEmpty) return null;
       if (bytes.length >= 4 &&
           bytes[0] == 0x25 &&
@@ -5337,9 +5347,14 @@ class CustomerDetailsProvider extends ChangeNotifier {
     advanceController.text = quotation.advancePercentage;
     deliveryController.text = quotation.onDeliveryPercentage;
     workCompletionController.text = quotation.workCompletionPercentage;
-    qsubsidyAmountController.text = (double.tryParse(quotation.subsidyAmount) == 0) ? '' : quotation.subsidyAmount;
+    qsubsidyAmountController.text =
+        (double.tryParse(quotation.subsidyAmount) == 0)
+            ? ''
+            : quotation.subsidyAmount;
     _isSubsidyChecked = quotation.subsidyticked == 1;
-    qDiscountController.text = (double.tryParse(quotation.discountAmount) == 0) ? '' : quotation.discountAmount;
+    qDiscountController.text = (double.tryParse(quotation.discountAmount) == 0)
+        ? ''
+        : quotation.discountAmount;
     qwarrentyController.text = quotation.warranty;
     qtermsConditionsController.text = quotation.termsAndConditions;
     quotationDescriptionController.text = quotation.description;
@@ -5460,8 +5475,12 @@ class CustomerDetailsProvider extends ChangeNotifier {
     qtendorNumberController.text = quotation.tendorNumber;
     paymentTermsController.text = quotation.paymentTermsName;
     incoTermsController.text = quotation.incoTerms;
-    shippingChargesController.text = (double.tryParse(quotation.shippingCharges) == 0) ? '' : quotation.shippingCharges;
-    roundoffController.text = (double.tryParse(quotation.roundoff) == 0) ? '' : quotation.roundoff;
+    shippingChargesController.text =
+        (double.tryParse(quotation.shippingCharges) == 0)
+            ? ''
+            : quotation.shippingCharges;
+    roundoffController.text =
+        (double.tryParse(quotation.roundoff) == 0) ? '' : quotation.roundoff;
     totalAdCESSController.text = quotation.otherTax;
     totalCgstAmountController.text = quotation.totalCgstAmount;
     totalSgstAmountController.text = quotation.totalSgstAmount;

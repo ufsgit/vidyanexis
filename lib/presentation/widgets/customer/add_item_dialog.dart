@@ -194,7 +194,7 @@ class _AddItemDialogState extends State<AddItemDialog> {
                 const SizedBox(height: 16),
               ],
 
-              // Other Tax (Ad CESS)
+              // Other Tax (Ad CESS)//if (1 > 0) ...
               if (provider.isQuotationFieldVisible(8)) ...[
                 CustomTextField(
                   controller: provider.itemAdCessController,

@@ -59,7 +59,7 @@ class _AddCommercialItemDialogState extends State<AddCommercialItemDialog> {
                 ],
               ),
               const Divider(height: 24),
-              if (provider.isQuotationFieldVisible(88)) ...[
+              if (provider.isQuotationFieldVisible(1)) ...[
                 CustomTextField(
                   controller: provider.commercialDescriptionController,
                   labelText: provider.getQuotationFieldName(88, 'Description'),
@@ -73,7 +73,7 @@ class _AddCommercialItemDialogState extends State<AddCommercialItemDialog> {
               ],
               Row(
                 children: [
-                  if (provider.isQuotationFieldVisible(89)) ...[
+                  if (provider.isQuotationFieldVisible(2)) ...[
                     Expanded(
                       child: CustomTextField(
                         controller: provider.commercialDCCapacityController,
@@ -89,7 +89,7 @@ class _AddCommercialItemDialogState extends State<AddCommercialItemDialog> {
                     ),
                     const SizedBox(width: 16),
                   ],
-                  if (provider.isQuotationFieldVisible(90)) ...[
+                  if (provider.isQuotationFieldVisible(3)) ...[
                     Expanded(
                       child: CustomTextField(
                         controller: provider.commercialACCapacityController,
@@ -109,7 +109,7 @@ class _AddCommercialItemDialogState extends State<AddCommercialItemDialog> {
               const SizedBox(height: 16),
               Row(
                 children: [
-                  if (provider.isQuotationFieldVisible(91)) ...[
+                  if (provider.isQuotationFieldVisible(4)) ...[
                     Expanded(
                       child: CustomTextField(
                         controller: provider.commercialUnitPriceController,
@@ -130,7 +130,7 @@ class _AddCommercialItemDialogState extends State<AddCommercialItemDialog> {
                     ),
                     const SizedBox(width: 16),
                   ],
-                  if (provider.isQuotationFieldVisible(92)) ...[
+                  if (provider.isQuotationFieldVisible(9)) ...[
                     Expanded(
                       child: CustomTextField(
                         controller: provider.commercialTotalController,
@@ -150,8 +150,8 @@ class _AddCommercialItemDialogState extends State<AddCommercialItemDialog> {
                   ],
                 ],
               ),
-              const SizedBox(height: 16),
-              if (provider.isQuotationFieldVisible(93)) ...[
+              const SizedBox(height: 4),
+              if (provider.isQuotationFieldVisible(5)) ...[
                 CustomTextField(
                   controller: provider.commercialQtyController,
                   labelText: provider.getQuotationFieldName(93, 'Quantity'),
@@ -173,7 +173,7 @@ class _AddCommercialItemDialogState extends State<AddCommercialItemDialog> {
               const SizedBox(height: 16),
               Row(
                 children: [
-                  if (provider.isQuotationFieldVisible(95)) ...[
+                  if (provider.isQuotationFieldVisible(6)) ...[
                     Expanded(
                       child: CustomTextField(
                         controller: provider.commercialGSTPercController,
@@ -195,7 +195,7 @@ class _AddCommercialItemDialogState extends State<AddCommercialItemDialog> {
                     ),
                     const SizedBox(width: 16),
                   ],
-                  if (provider.isQuotationFieldVisible(94)) ...[
+                  if (provider.isQuotationFieldVisible(7)) ...[
                     Expanded(
                       child: CustomTextField(
                         controller: provider.commercialGSTController,

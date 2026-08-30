@@ -78,7 +78,9 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
 
         if (customerDetailsProvider.quotationTypeData.isNotEmpty) {
           final residentialType = customerDetailsProvider.quotationTypeData
-              .where((element) => element.quotationTypeName.toLowerCase().contains('residential'))
+              .where((element) => element.quotationTypeName
+                  .toLowerCase()
+                  .contains('residential'))
               .firstOrNull;
           if (residentialType != null) {
             customerDetailsProvider.selectedQuotationType =
@@ -88,7 +90,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
           }
         }
       }
-      await customerDetailsProvider.getQuotationFieldsApi();
+
       await customerDetailsProvider.getProfitList(context);
 
       // Fetch custom field definitions for quotations
@@ -140,6 +142,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
         }
       }
       customerDetailsProvider.getCustomFieldsByQuotationId(context);
+      await customerDetailsProvider.getQuotationFieldsApi();
     });
   }
 
@@ -281,11 +284,13 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                                 lastDate: DateTime(2101),
                               );
                               if (pickedDate != null) {
-                                customerDetailsProvider.qEntryDateController
-                                    .text = DateFormat('yyyy-MM-dd').format(pickedDate);
+                                customerDetailsProvider
+                                        .qEntryDateController.text =
+                                    DateFormat('yyyy-MM-dd').format(pickedDate);
                               }
                             },
-                            suffixIcon: const Icon(Icons.calendar_today, size: 20),
+                            suffixIcon:
+                                const Icon(Icons.calendar_today, size: 20),
                           ),
                         ],
                         if (customerDetailsProvider
@@ -488,7 +493,6 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                           ),
                           const SizedBox(height: 16),
                         ],
-
                         if (customerDetailsProvider
                             .isQuotationFieldVisible(33)) ...[
                           CommonDropdown(
@@ -562,20 +566,24 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                                         vertical: 16),
                                   ),
                                 ),
-                              ), 
+                              ),
                             ],
                           ),
                           multiItemsWidget(context),
                           const SizedBox(height: 16),
-                          if (customerDetailsProvider.multiItems.isNotEmpty) ...[
+                          if (customerDetailsProvider
+                              .multiItems.isNotEmpty) ...[
                             const SizedBox(height: 16),
                             Container(
                               width: double.infinity,
-                              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 12, horizontal: 16),
                               decoration: BoxDecoration(
                                 color: AppColors.primaryBlue.withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(4),
-                                border: Border.all(color: AppColors.primaryBlue.withOpacity(0.3)),
+                                border: Border.all(
+                                    color:
+                                        AppColors.primaryBlue.withOpacity(0.3)),
                               ),
                               child: Text(
                                 "Total Amount : ${customerDetailsProvider.mutipleItemsTotalAmount}",
@@ -615,8 +623,11 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                                     showEditButton: true,
                                     onFieldValuesChanged: (values) {
                                       for (final fv in values) {
-                                        final match = nonCommercialFields.firstWhere(
-                                          (e) => e.customFieldId == fv.customFieldId,
+                                        final match =
+                                            nonCommercialFields.firstWhere(
+                                          (e) =>
+                                              e.customFieldId ==
+                                              fv.customFieldId,
                                           orElse: () => CustomFieldByStatusId(),
                                         );
                                         if (match.customFieldId != null) {
@@ -787,49 +798,49 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                         ],
                         if (customerDetailsProvider
                             .isQuotationFieldVisible(39)) ...[
-                        CustomTextField(
-                          readOnly: false,
-                          height: 54,
-                          controller: customerDetailsProvider
-                              .feasibilityFeeController,
-                          hintText:
-                              customerDetailsProvider.getQuotationFieldName(
-                                  39, 'Fee in KSEB for Feasibility study'),
-                          labelText: '',
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly
-                          ],
-                          onChanged: (p0) {
-                            if (settingsProvider.additionalExpense == 1) {
-                              customerDetailsProvider.updateTotal();
-                            }
-                          },
-                        ),
-                        const SizedBox(height: 16),
-                         ],
+                          CustomTextField(
+                            readOnly: false,
+                            height: 54,
+                            controller: customerDetailsProvider
+                                .feasibilityFeeController,
+                            hintText:
+                                customerDetailsProvider.getQuotationFieldName(
+                                    39, 'Fee in KSEB for Feasibility study'),
+                            labelText: '',
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
+                            onChanged: (p0) {
+                              if (settingsProvider.additionalExpense == 1) {
+                                customerDetailsProvider.updateTotal();
+                              }
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                        ],
                         if (customerDetailsProvider
                             .isQuotationFieldVisible(40)) ...[
-                        CustomTextField(
-                          readOnly: false,
-                          height: 54,
-                          controller: customerDetailsProvider
-                              .registrationFeeController,
-                          keyboardType: TextInputType.number,
-                          onChanged: (p0) {
-                            if (settingsProvider.additionalExpense == 1) {
-                              customerDetailsProvider.updateTotal();
-                            }
-                          },
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly
-                          ],
-                          hintText: customerDetailsProvider.getQuotationFieldName(
-                              40,
-                              'Registration Fee in KSEB - 1000/- per kW (80% refundable)'),
-                          labelText: '',
-                        ),
-                        const SizedBox(height: 16),
+                          CustomTextField(
+                            readOnly: false,
+                            height: 54,
+                            controller: customerDetailsProvider
+                                .registrationFeeController,
+                            keyboardType: TextInputType.number,
+                            onChanged: (p0) {
+                              if (settingsProvider.additionalExpense == 1) {
+                                customerDetailsProvider.updateTotal();
+                              }
+                            },
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
+                            hintText: customerDetailsProvider.getQuotationFieldName(
+                                40,
+                                'Registration Fee in KSEB - 1000/- per kW (80% refundable)'),
+                            labelText: '',
+                          ),
+                          const SizedBox(height: 16),
                         ],
                         if (settingsProvider.menuIsViewMap[154] == 1) ...[
                           CustomTextField(
@@ -993,7 +1004,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                                   height: 54,
                                   controller:
                                       customerDetailsProvider.advanceController,
-                                  hintText: customerDetailsProvider.isResidential
+                                  hintText: customerDetailsProvider
+                                          .isResidential
                                       ? customerDetailsProvider
                                           .getQuotationFieldName(84,
                                               'Advance payment up on conformation')
@@ -1022,7 +1034,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                                   height: 54,
                                   controller: customerDetailsProvider
                                       .deliveryController,
-                                  hintText: customerDetailsProvider.isResidential
+                                  hintText: customerDetailsProvider
+                                          .isResidential
                                       ? customerDetailsProvider
                                           .getQuotationFieldName(85,
                                               'Upon the material ready for dispatch')
@@ -1051,7 +1064,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                                   height: 54,
                                   controller: customerDetailsProvider
                                       .workCompletionController,
-                                  hintText: customerDetailsProvider.isResidential
+                                  hintText: customerDetailsProvider
+                                          .isResidential
                                       ? customerDetailsProvider
                                           .getQuotationFieldName(
                                               86, 'Installation Completion')
@@ -1071,7 +1085,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                         Row(
                           children: [
                             if (customerDetailsProvider
-                                .isQuotationFieldVisible(48)) ...[
+                                .isQuotationFieldVisible(87)) ...[
                               Expanded(
                                 child: CustomTextField(
                                   readOnly: false,
@@ -1080,7 +1094,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                                       .paymentTermsController,
                                   hintText: customerDetailsProvider
                                       .getQuotationFieldName(
-                                          48, 'Payment Terms'),
+                                          87, 'Payment Term'),
                                   labelText: '',
                                 ),
                               ),
@@ -1839,7 +1853,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                       );
                     },
                     icon: const Icon(Icons.add),
-                    label: const Text('Add Item'),
+                    label: const Text('Add Item1'),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: AppColors.primaryBlue,
                       backgroundColor: Colors.white,
@@ -2433,7 +2447,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                 );
               },
               icon: const Icon(Icons.add),
-              label: const Text('Add item'),
+              label: const Text('Add item3'),
               style: OutlinedButton.styleFrom(
                 foregroundColor:
                     AppColors.primaryBlue, // Change foreground color
@@ -2825,7 +2839,6 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
               );
             },
           ),
-
       ],
     );
   }
@@ -2898,7 +2911,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
               customerDetailsProvider.addOrEditScopeOfWorkItem(context);
             },
             icon: const Icon(Icons.add),
-            label: const Text('Add item'),
+            label: const Text('Add item2'),
             style: OutlinedButton.styleFrom(
               foregroundColor: AppColors.primaryBlue, // Change foreground color
               backgroundColor: Colors.white, // Change background color
