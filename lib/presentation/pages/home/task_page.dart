@@ -108,7 +108,7 @@ class _tasksPageReportState extends State<TaskPage> {
       provider.getAMCStatus(context);
       provider.getUserDetails(context);
       provider.getTaskType(context);
-      provider.getFollowUpStatus(context, "3");
+      provider.getFollowUpStatus(context, "3", forceRefresh: true);
       provider.getEnquiryFor(context);
 
       final settingsProvider =

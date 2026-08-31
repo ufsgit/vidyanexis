@@ -11,6 +11,9 @@ import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:vidyanexis/controller/models/custom_field_by_status.dart';
 import 'package:vidyanexis/controller/models/lead_report_model.dart';
+import 'package:vidyanexis/controller/models/location_model.dart';
+import 'package:vidyanexis/controller/models/priority_model.dart';
+import 'package:vidyanexis/controller/models/search_lead_status_model.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_field_section_widget.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
@@ -2250,7 +2253,6 @@ class LeadsProvider extends ChangeNotifier {
 
   Future<void> getLeadDropdowns(BuildContext context) async {
     try {
-      await getCaptionMaster(context);
       final response =
           await HttpRequest.httpGetRequest(endPoint: HttpUrls.getLeadDropdowns);
 
@@ -2258,6 +2260,33 @@ class LeadsProvider extends ChangeNotifier {
         final data = response.data;
 
         if (data != null && data is Map<String, dynamic>) {
+          if (data['caption_master'] != null) {
+            _captionList = (data['caption_master'] as List)
+                .map((e) => CaptionModel.fromJson(e))
+                .toList();
+          }
+          if (data['priority'] != null) {
+            final settingsProvider =
+                Provider.of<SettingsProvider>(context, listen: false);
+            settingsProvider.setPriorities((data['priority'] as List)
+                .map((e) => PriorityModel.fromJson(e))
+                .toList());
+          }
+          if (data['locations'] != null) {
+            final dropDownProvider =
+                Provider.of<DropDownProvider>(context, listen: false);
+            dropDownProvider.setLocations((data['locations'] as List)
+                .map((e) => LocationModel.fromJson(e))
+                .toList());
+          }
+          if (data['status'] != null) {
+            final dropDownProvider =
+                Provider.of<DropDownProvider>(context, listen: false);
+            dropDownProvider.setFollowUpStatuses((data['status'] as List)
+                .map((e) => SearchLeadStatusModel.fromJson(e))
+                .toList());
+          }
+
           _leadDropdownData =
               SaveLeadDropdownModel.fromJson(data); // Assign directly
           notifyListeners();
