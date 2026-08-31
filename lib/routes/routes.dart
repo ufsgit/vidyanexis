@@ -25,6 +25,7 @@ import 'package:vidyanexis/presentation/pages/reports/stock_return_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/ta_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/travel_allowance/travel_allowance_page.dart';
 import 'package:vidyanexis/presentation/pages/location/location_tracking_page.dart';
+import 'package:vidyanexis/presentation/pages/reports/task_aging_report_screen.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 
 final GoRouter appRouter = GoRouter(
@@ -168,6 +169,12 @@ final GoRouter appRouter = GoRouter(
       path: '/taskSummaryReport',
       pageBuilder: (context, state) {
         return fadeTransition(const TaskSummaryReportScreen());
+      },
+    ),
+    GoRoute(
+      path: '/taskAgingReport',
+      pageBuilder: (context, state) {
+        return fadeTransition(const TaskAgingReportScreen());
       },
     ),
     GoRoute(

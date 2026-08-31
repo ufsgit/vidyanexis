@@ -66,6 +66,7 @@ import 'package:vidyanexis/controller/lead_stage_detail_report_provider.dart';
 import 'package:vidyanexis/controller/lead_status_report_provider.dart';
 import 'package:vidyanexis/controller/task_summary_provider.dart';
 import 'package:vidyanexis/controller/job_sheet_provider.dart';
+import 'package:vidyanexis/controller/task_aging_report_provider.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/controller/company_provider.dart';
 import 'package:vidyanexis/firebase_options.dart';
@@ -196,6 +197,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => LeadStatusReportProvider()),
         ChangeNotifierProvider(create: (context) => LeadStageReportProvider()),
         ChangeNotifierProvider(create: (context) => LeadStageDetailReportProvider()),
+        ChangeNotifierProvider(create: (context) => TaskAgingReportProvider()),
         ChangeNotifierProvider(
             create: (context) => LeadCheckInReportProvider()),
         ChangeNotifierProvider(create: (context) => TaskSummaryProvider()),

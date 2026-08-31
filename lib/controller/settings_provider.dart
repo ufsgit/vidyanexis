@@ -2250,6 +2250,7 @@ class SettingsProvider extends ChangeNotifier {
             77: 'Payment Reminders',
             84: 'Dashboard count',
             120: 'Lead Search',
+            182: 'Task Aging Report',
           };
 
           for (var entry in customPermissions.entries) {

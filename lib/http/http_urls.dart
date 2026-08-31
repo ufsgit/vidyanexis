@@ -495,5 +495,7 @@ class HttpUrls {
   static String duplicateEntryAttemptsReport =
       'lead/Duplicate_Entry_Attempts_Report';
 
+  static String taskAgingReport = "task/Search_Task_Aging_Report";
+
   static String logout = 'user_details/User_Logout';
 }
