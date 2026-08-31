@@ -446,6 +446,10 @@ class SettingsProvider extends ChangeNotifier {
 
   List<PriorityModel> _priorities = [];
   List<PriorityModel> get priorities => _priorities;
+  void setPriorities(List<PriorityModel> list) {
+    _priorities = list;
+    notifyListeners();
+  }
   final Map<int, int> _menuIsEditMapPrint = {};
   Map<int, int> get menuIsEditMapPrint => _menuIsEditMapPrint;
   final Map<int, int> _menuIsSaveMapPrint = {};

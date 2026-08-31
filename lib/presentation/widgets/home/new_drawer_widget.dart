@@ -343,8 +343,8 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
 
       await dropDownProvider.getEnquirySource(context, fetchUserSpecific: true);
       await dropDownProvider.getEnquiryFor(context, fetchUserSpecific: true);
-      await settingsProvider.getPriorities(context);
-      await dropDownProvider.getFollowUpStatus(context, "1", forceRefresh: true);
+      // await settingsProvider.getPriorities(context);
+      // await dropDownProvider.getFollowUpStatus(context, "1", forceRefresh: true);
 
       // CRITICAL: Await getUserDetails so filteredStaffData is never empty
       await dropDownProvider.getUserDetails(context);
@@ -512,7 +512,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
           );
         }
       }
-      dropDownProvider.getLocations(context);
+      // dropDownProvider.getLocations(context);
 
       if (widget.isEdit &&
           settingsProvider.selectedDepartmentId != null &&

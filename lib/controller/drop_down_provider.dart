@@ -46,6 +46,14 @@ class DropDownProvider extends ChangeNotifier {
   List<DocumentTypeModel> get documentType => _documentType;
   List<AMCStatusModel> get amcStatus => _amcStatus;
   List<LocationModel> get locationList => _locationList;
+  void setLocations(List<LocationModel> locations) {
+    _locationList = locations;
+    notifyListeners();
+  }
+  void setFollowUpStatuses(List<SearchLeadStatusModel> statuses) {
+    _followUpstatus = statuses;
+    notifyListeners();
+  }
 
   String getEnquiryForNameById(int id, String fallback) {
     if (id <= 0) return fallback;
