@@ -568,6 +568,8 @@ class _AddEnquiryForState extends State<AddEnquiryFor> {
         settingsProvider.enquiryForController.text = widget.status;
         settingsProvider.enquiryCodeController.text =
             widget.data?.enquiryCode ?? '';
+        settingsProvider.projectDurationController.text =
+            widget.data?.projectDuration ?? '';
         settingsProvider.sourceCategoryEnquiryController.text =
             widget.sourceName;
         settingsProvider.setSourceId(int.parse(widget.sourceId));
@@ -604,6 +606,7 @@ class _AddEnquiryForState extends State<AddEnquiryFor> {
       } else {
         settingsProvider.enquiryForController.clear();
         settingsProvider.enquiryCodeController.clear();
+        settingsProvider.projectDurationController.clear();
         settingsProvider.sourceCategoryEnquiryController.clear();
         settingsProvider.setSourceId(0);
       }
@@ -634,6 +637,7 @@ class _AddEnquiryForState extends State<AddEnquiryFor> {
             onPressed: () {
               settingsProvider.enquiryForController.clear();
               settingsProvider.enquiryCodeController.clear();
+              settingsProvider.projectDurationController.clear();
               Navigator.pop(context);
             },
             icon: const Icon(Icons.close),
@@ -749,6 +753,22 @@ class _AddEnquiryForState extends State<AddEnquiryFor> {
                           suffixIcon: const Icon(Icons.keyboard_arrow_down),
                         ),
                       ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  Expanded(
+                    child: CustomTextField(
+                      readOnly: false,
+                      height: 54,
+                      controller: settingsProvider.projectDurationController,
+                      hintText: 'Project Duration',
+                      labelText: '',
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     ),
                   ),
                 ],
@@ -880,6 +900,7 @@ class _AddEnquiryForState extends State<AddEnquiryFor> {
                 onPressed: () {
                   settingsProvider.enquiryForController.clear();
                   settingsProvider.enquiryCodeController.clear();
+                  settingsProvider.projectDurationController.clear();
                   Navigator.pop(context);
                 },
                 radius: 4,
@@ -905,6 +926,7 @@ class _AddEnquiryForState extends State<AddEnquiryFor> {
                     forId: widget.editId,
                     forName: settingsProvider.enquiryForController.text,
                     enquiryCode: settingsProvider.enquiryCodeController.text,
+                    projectDuration: settingsProvider.projectDurationController.text,
                     customFields: selectedFields,
                     taskTypes: selectedTaskTypes,
                   );

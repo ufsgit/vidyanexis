@@ -140,7 +140,7 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
       if (settingsProvider.menuIsViewMap[119].toString() == '1' ||
           settingsProvider.menuIsViewMap[89].toString() == '1')
         {
-          'title': 'Employee Sales Customer Reports',
+          'title': 'Employee Sales Reports',
           'page': const EmployeeSalesCustomerReportScreen()
         },
       if (settingsProvider.menuIsViewMap[119].toString() == '1' ||

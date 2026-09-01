@@ -232,17 +232,17 @@ class _HomePageState extends State<HomePage> {
     String logo = settingsProvider.displayLogo;
 
     final List<SidebarOption> sidebarOptions = [
-      if ((settingsProvider.menuIsViewMap[12] ?? 1).toString() == '1')
-        SidebarOption(
-          title: 'DashBoard',
-          iconPath: 'assets/images/dashboard_icon.svg',
-          baseContent: const DashBoardPage(),
-        ),
       if (settingsProvider.menuIsViewMap[3].toString() == '1')
         SidebarOption(
           title: 'Leads',
           iconPath: 'assets/images/Leads.svg',
           baseContent: const LeadPage(),
+        ),
+      if ((settingsProvider.menuIsViewMap[12] ?? 1).toString() == '1')
+        SidebarOption(
+          title: 'DashBoard',
+          iconPath: 'assets/images/dashboard_icon.svg',
+          baseContent: const DashBoardPage(),
         ),
       if (settingsProvider.menuIsViewMap[4].toString() == '1')
         SidebarOption(
@@ -427,7 +427,7 @@ class _HomePageState extends State<HomePage> {
       if (settingsProvider.menuIsViewMap[119].toString() == '1' ||
           settingsProvider.menuIsViewMap[89].toString() == '1')
         SidebarOption(
-          title: 'Employee Sales Customer Reports',
+          title: 'Employee Sales Reports',
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: EmployeeSalesCustomerReportScreen()),
         ),

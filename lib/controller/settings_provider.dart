@@ -247,6 +247,7 @@ class SettingsProvider extends ChangeNotifier {
   //enquiry for
   final TextEditingController enquiryForController = TextEditingController();
   final TextEditingController enquiryCodeController = TextEditingController();
+  final TextEditingController projectDurationController = TextEditingController();
 
   //document type
   final TextEditingController documentTypeController = TextEditingController();
@@ -570,6 +571,9 @@ class SettingsProvider extends ChangeNotifier {
   int get taskDuplicateButton => _taskDuplicateButton;
   int get solarPvSystemSpecification => _solarPvSystemSpecification;
 
+  int _jobSheet = 0;
+  int get jobSheet => _jobSheet;
+
   int _leadPermissionMeAndAll = 0;
   int get leadPermissionMeAndAll => _leadPermissionMeAndAll;
   String get leadNameLabel =>
@@ -652,8 +656,12 @@ class SettingsProvider extends ChangeNotifier {
       _taskRemarkMandatory = value;
     } else if (permissionId == 22 ||
         (caption != null &&
-            (caption.toLowerCase().contains('residential_scope_of_work') ||
-                caption.toLowerCase().contains('residential scope of work')))) {
+            (caption.toLowerCase().contains('job_sheet') ||
+                caption.toLowerCase().contains('job sheet')))) {
+      _jobSheet = value;
+    } else if (caption != null &&
+        (caption.toLowerCase().contains('residential_scope_of_work') ||
+            caption.toLowerCase().contains('residential scope of work'))) {
       _residentialScopeOfWork = value;
     } else if (permissionId == 24 ||
         (caption != null &&
@@ -687,6 +695,12 @@ class SettingsProvider extends ChangeNotifier {
   void setSolarPvSystemSpecification(int value) {
     _solarPvSystemSpecification = value;
     _syncStateToPermissionsList(25, value);
+    notifyListeners();
+  }
+
+  void setJobSheet(int value) {
+    _jobSheet = value;
+    _syncStateToPermissionsList(22, value);
     notifyListeners();
   }
 
@@ -3918,6 +3932,7 @@ class SettingsProvider extends ChangeNotifier {
     required String forId,
     required String forName,
     String enquiryCode = '',
+    String projectDuration = '',
     required final customFields,
     required final taskTypes,
   }) async {
@@ -3928,6 +3943,7 @@ class SettingsProvider extends ChangeNotifier {
         "Enquiry_For_Name": forName,
         "Enquiry_Code": enquiryCode,
         "enquiry_code": enquiryCode,
+        "Project_Duration": projectDuration,
         "Source_Category_Id": sourceCategoryId,
         "Source_Category_Name": sourceCategoryEnquiryController.text,
         "Custom_Fields": customFields,
@@ -3943,6 +3959,7 @@ class SettingsProvider extends ChangeNotifier {
         sourceCategoryEnquiryController.clear();
         enquiryForController.clear();
         enquiryCodeController.clear();
+        projectDurationController.clear();
         setSourceId(0);
         final data = response.data;
         searchEnquiryForData('', context);

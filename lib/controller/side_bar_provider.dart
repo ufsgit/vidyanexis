@@ -100,14 +100,14 @@ class SidebarProvider extends ChangeNotifier {
   }
 
   int _selectedIndex = 0;
-  int _menuId = 12; // setting dashboard as default screen
+  int _menuId = 3; // setting leads as default screen
   int _subMenuId = 0;
 
   bool _replaceLead = true;
   bool _replaceCustomer = true;
   String _customerId = '';
   String _name = '/';
-  String _selectedName = 'DashBoard';
+  String _selectedName = 'Leads';
   // int _selectedBottomIndex = 0;
   // String _currentTitle =
   //     'Leads'; // Changed default to 'Leads' since Home might not be available

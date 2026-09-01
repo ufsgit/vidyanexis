@@ -266,6 +266,7 @@ class _CustomTabState extends State<CustomTab> {
                   key: _tabKeys[index],
                   behavior: HitTestBehavior.opaque,
                   onTap: () {
+                    final previousTabIndex = widget.dashBoardProvider.tabIndex;
                     widget.dashBoardProvider.changeTab(index);
                     final allowedTabIds = [
                       if (settingsProvider.menuIsViewMap[84].toString() == '1')
@@ -290,8 +291,17 @@ class _CustomTabState extends State<CustomTab> {
                     ];
 
                     if (index >= 0 && index < allowedTabIds.length) {
+                      final activeTab = allowedTabIds[index];
+                      
+                      if (activeTab == 4) {
+                        widget.dashBoardProvider.setDateFilter('This Month');
+                        widget.dashBoardProvider.formatDate();
+                      } else if (previousTabIndex >= 0 && previousTabIndex < allowedTabIds.length && allowedTabIds[previousTabIndex] == 4) {
+                        widget.dashBoardProvider.selectDateFilterOption(null);
+                      }
+
                       widget.dashBoardProvider.loadDataForTab(
-                          allowedTabIds[index], context);
+                          activeTab, context);
                     }
 
                     WidgetsBinding.instance.addPostFrameCallback((_) {

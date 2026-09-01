@@ -616,7 +616,7 @@ class AttendanceReportProvider extends ChangeNotifier {
           elevation: 0,
           backgroundColor: Colors.white,
           child: Container(
-            constraints: const BoxConstraints(maxWidth: 400),
+            constraints: const BoxConstraints(maxWidth: 300),
             padding: const EdgeInsets.fromLTRB(24, 32, 24, 24),
             child: Column(
               mainAxisSize: MainAxisSize.min,

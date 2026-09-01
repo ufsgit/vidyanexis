@@ -96,8 +96,8 @@ class _HomePageMobileState extends State<HomePageMobile> {
       }
     }
 
-    addPage(12, 'assets/images/home-page.png', 'Home', const DashBoardPage());
     addPage(3, 'assets/images/leader.png', 'Leads', const LeadPagePhone());
+    addPage(12, 'assets/images/home-page.png', 'Home', const DashBoardPage());
     addPage(4, 'assets/images/consumer.png', 'Customers',
         const CustomerPagePhone());
     addPage(35, 'assets/images/checklist.png', 'Tasks', const TaskPage());
