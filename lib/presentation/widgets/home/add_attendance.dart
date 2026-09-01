@@ -239,7 +239,7 @@ class _AddAttendanceWidgetState extends State<AddAttendanceWidget> {
       content: Container(
         color: Colors.white,
         width: AppStyles.isWebScreen(context)
-            ? MediaQuery.sizeOf(context).width / 2
+            ? MediaQuery.sizeOf(context).width / 3.5
             : MediaQuery.sizeOf(context).width,
         // height: MediaQuery.sizeOf(context).height / 4,
         child: SingleChildScrollView(

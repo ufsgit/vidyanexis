@@ -427,7 +427,7 @@ class _HomePageState extends State<HomePage> {
       if (settingsProvider.menuIsViewMap[119].toString() == '1' ||
           settingsProvider.menuIsViewMap[89].toString() == '1')
         SidebarOption(
-          title: 'Employee Sales Customer Reports',
+          title: 'Employee Sales Reports',
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: EmployeeSalesCustomerReportScreen()),
         ),
