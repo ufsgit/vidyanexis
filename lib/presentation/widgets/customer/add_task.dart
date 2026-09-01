@@ -77,10 +77,22 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
 
         setState(() {
           _filteredUsers = dropDownProvider.searchUserDetails
-              .where((user) =>
-                  user.workingStatus == "1" &&
-                  user.departmentId.toString() ==
-                      selectedTaskTypeModel.departmentIds.toString())
+              .where((user) {
+                if (user.workingStatus != "1") return false;
+                final taskDeptList = selectedTaskTypeModel.departmentIds
+                    .toString()
+                    .split(',')
+                    .map((e) => e.trim())
+                    .where((e) => e.isNotEmpty)
+                    .toList();
+                final userDeptList = (user.departmentId ?? '')
+                    .toString()
+                    .split(',')
+                    .map((e) => e.trim())
+                    .where((e) => e.isNotEmpty)
+                    .toList();
+                return taskDeptList.any((dept) => userDeptList.contains(dept));
+              })
               .toList();
 
           if (_filteredUsers.length == 1) {

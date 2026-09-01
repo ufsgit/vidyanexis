@@ -1390,8 +1390,8 @@ class _LeadsPageState extends State<LeadPage> {
                                                                   controller,
                                                                   onHoverNotify,
                                                                   child) {
-                                                                return IconButton(
-                                                                  onPressed:
+                                                                return InkWell(
+                                                                  onTap:
                                                                       () {
                                                                     if (controller
                                                                         .isOpen) {
@@ -1402,15 +1402,15 @@ class _LeadsPageState extends State<LeadPage> {
                                                                           .open();
                                                                     }
                                                                   },
-                                                                  icon: const Icon(
-                                                                      Icons
-                                                                          .keyboard_arrow_down,
-                                                                      size: 20,
-                                                                      color: Colors
-                                                                          .grey),
-                                                                  padding:
-                                                                      EdgeInsets
-                                                                          .zero,
+                                                                  child: const Padding(
+                                                                    padding: EdgeInsets.symmetric(horizontal: 4.0),
+                                                                    child: Icon(
+                                                                        Icons
+                                                                            .keyboard_arrow_down,
+                                                                        size: 20,
+                                                                        color: Colors
+                                                                            .grey),
+                                                                  ),
                                                                 );
                                                               },
                                                               menuChildren: [
@@ -1441,24 +1441,16 @@ class _LeadsPageState extends State<LeadPage> {
                                                                         children: provider
                                                                             .taskType
                                                                             .where((taskType) =>
-                                                                                taskType.manualCreation ==
-                                                                                1)
-                                                                            .map((taskType) {
-                                                                          // Find users for this task type based on department
+                                                                                taskType.manualCreation == 1)
+                                                                        .map((taskType) {
                                                                           final users = provider
                                                                               .searchUserDetails
                                                                               .where((user) {
-                                                                            return user.departmentId.toString() ==
-                                                                                taskType.departmentIds.toString();
+                                                                            if (user.workingStatus != "1") return false;
+                                                                            final taskDeptList = taskType.departmentIds.toString().split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
+                                                                            final userDeptList = (user.departmentId ?? '').toString().split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
+                                                                            return taskDeptList.any((dept) => userDeptList.contains(dept));
                                                                           }).toList();
-
-                                                                          if (users
-                                                                              .isEmpty) {
-                                                                            return MenuItemButton(
-                                                                              onPressed: null,
-                                                                              child: Text(taskType.taskTypeName),
-                                                                            );
-                                                                          }
 
                                                                           return MultiLevelHoverMenu(
                                                                             title:

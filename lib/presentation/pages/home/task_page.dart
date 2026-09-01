@@ -131,6 +131,79 @@ class _tasksPageReportState extends State<TaskPage> {
     reportsProvider = Provider.of<TaskPageProvider>(context, listen: false);
   }
 
+  void _handleCustomerAction(String action, int customerId) async {
+    final leadsProvider = Provider.of<LeadsProvider>(context, listen: false);
+    
+    if (action == 'edit') {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+      );
+
+      final leadDetailsProvider = Provider.of<LeadDetailsProvider>(context, listen: false);
+      await leadDetailsProvider.fetchLeadDetails(customerId.toString(), context);
+
+      leadsProvider.setCutomerId(customerId);
+      final dropDownProvider = Provider.of<DropDownProvider>(context, listen: false);
+
+      if (leadDetailsProvider.leadDetails != null && leadDetailsProvider.leadDetails!.isNotEmpty) {
+        final leadDetails = leadDetailsProvider.leadDetails![0];
+        leadsProvider.enquirySourceController.text = leadDetails.enquirySourceName.toString();
+        dropDownProvider.selectedEnquirySourceId = leadDetails.enquirySourceId;
+        await leadsProvider.getLeadDropdowns(context);
+      }
+      Navigator.pop(context); // Close loading dialog
+
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return const NewLeadDrawerWidget(
+            isEdit: true,
+          );
+        },
+      );
+    } else if (action == 'quotation') {
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (_) => QuotationCreationWidget(
+          isEdit: false,
+          customerId: customerId.toString(),
+          quotationId: '0',
+        ),
+      );
+    } else if (action == 'quotation_list_tab') {
+      CustomerDetailsProvider customerDetailsProvider = Provider.of<CustomerDetailsProvider>(context, listen: false);
+      customerDetailsProvider.setCustomerId(customerId);
+      customerDetailsProvider.setInitialTabName("Quotations");
+      final sideProvider = Provider.of<SidebarProvider>(context, listen: false);
+      sideProvider.name = 'Customers /';
+
+      context.push('/customerDetails/\/false');
+    } else if (action == 'document') {
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (_) => ImageUploadAlert(
+          customerId: customerId.toString(),
+        ),
+      );
+    } else if (action == 'documents_tab') {
+      CustomerDetailsProvider customerDetailsProvider = Provider.of<CustomerDetailsProvider>(context, listen: false);
+      customerDetailsProvider.setCustomerId(customerId);
+      customerDetailsProvider.setInitialTabName("Documents");
+      final sideProvider = Provider.of<SidebarProvider>(context, listen: false);
+      sideProvider.name = 'Customers /';
+
+      context.push('/customerDetails/\/false');
+    }
+  }
+
   void _openTaskDialog(
       TaskReportModel task, TaskTypeModel taskType, SearchUserDetails user) {
     final customerDetailsProvider =
@@ -2001,24 +2074,25 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                                 onTap: () {
                                                                                   context.push('${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
                                                                                 },
-                                                                                child: Text(
-                                                                                  task.customerName.isNotEmpty ? task.customerName : 'Unknown',
-                                                                                  overflow: TextOverflow.ellipsis,
-                                                                                  maxLines: 1,
-                                                                                  style: const TextStyle(
-                                                                                    color: Colors.blue,
-                                                                                    fontWeight: FontWeight.w500,
-                                                                                    fontSize: 13,
+                                                                                child: Tooltip(
+                                                                                  message: task.customerName.isNotEmpty ? task.customerName : 'Unknown',
+                                                                                  child: Text(
+                                                                                    task.customerName.isNotEmpty ? task.customerName : 'Unknown',
+                                                                                    overflow: TextOverflow.ellipsis,
+                                                                                    maxLines: 1,
+                                                                                    style: const TextStyle(
+                                                                                      color: Colors.blue,
+                                                                                      fontWeight: FontWeight.w500,
+                                                                                      fontSize: 13,
+                                                                                    ),
                                                                                   ),
                                                                                 ),
                                                                               ),
                                                                             ),
                                                                           ),
                                                                           _HoverMenuAnchor(
-                                                                            builder: (context,
-                                                                                controller,
-                                                                                onHover,
-                                                                                child) {
+                                                                            builder: (context, controller,
+                                                                                onHover, child) {
                                                                               return InkWell(
                                                                                 onTap: () {
                                                                                   if (controller.isOpen) {
@@ -2027,23 +2101,118 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                                     controller.open();
                                                                                   }
                                                                                 },
-                                                                                onHover: onHover,
-                                                                                child: Container(
-                                                                                  padding: const EdgeInsets.all(4),
-                                                                                  decoration: BoxDecoration(
-                                                                                    color: Colors.transparent,
-                                                                                    borderRadius: BorderRadius.circular(8),
-                                                                                  ),
+                                                                                child: const Padding(
+                                                                                  padding: EdgeInsets.symmetric(horizontal: 4.0),
                                                                                   child: Icon(
-                                                                                    Icons.keyboard_arrow_down_rounded,
+                                                                                    Icons.keyboard_arrow_down,
                                                                                     size: 20,
-                                                                                    color: Colors.grey[500],
+                                                                                    color: Colors.grey,
                                                                                   ),
                                                                                 ),
                                                                               );
                                                                             },
                                                                             menuChildren: [
-                                                                              // Add your menu items here (Create Task, Edit Lead, etc.)
+                                                                              if (settingsProvider
+                                                                                      .menuIsSaveMap[16] ==
+                                                                                  1)
+                                                                                (onHover) => MenuItemButton(onHover: onHover, 
+                                                                                      onPressed: () =>
+                                                                                          _handleCustomerAction(
+                                                                                              'quotation',
+                                                                                              task.customerId ?? 0),
+                                                                                      child: const Row(
+                                                                                        children: [
+                                                                                          Icon(
+                                                                                              Icons
+                                                                                                  .request_quote,
+                                                                                              size: 18,
+                                                                                              color: Colors
+                                                                                                  .orange),
+                                                                                          SizedBox(width: 8),
+                                                                                          Text('Quotation'),
+                                                                                        ],
+                                                                                      ),
+                                                                                    ),
+                                                                              if (settingsProvider
+                                                                                      .menuIsViewMap[16] ==
+                                                                                  1)
+                                                                                (onHover) => MenuItemButton(onHover: onHover, 
+                                                                                      onPressed: () =>
+                                                                                          _handleCustomerAction(
+                                                                                              'quotation_list_tab',
+                                                                                              task.customerId ?? 0),
+                                                                                      child: const Row(
+                                                                                        children: [
+                                                                                          Icon(Icons.list_alt,
+                                                                                              size: 18,
+                                                                                              color: Colors
+                                                                                                  .orangeAccent),
+                                                                                          SizedBox(width: 8),
+                                                                                          Text(
+                                                                                              'Quotation list'),
+                                                                                        ],
+                                                                                      ),
+                                                                                    ),
+                                                                              if (settingsProvider
+                                                                                      .menuIsSaveMap[19] ==
+                                                                                  1)
+                                                                                (onHover) => MenuItemButton(onHover: onHover, 
+                                                                                      onPressed: () =>
+                                                                                          _handleCustomerAction(
+                                                                                              'document',
+                                                                                              task.customerId ?? 0),
+                                                                                      child: const Row(
+                                                                                        children: [
+                                                                                          Icon(
+                                                                                              Icons
+                                                                                                  .description,
+                                                                                              size: 18,
+                                                                                              color: Colors
+                                                                                                  .purple),
+                                                                                          SizedBox(width: 8),
+                                                                                          Text('Document'),
+                                                                                        ],
+                                                                                      ),
+                                                                                    ),
+                                                                              if (settingsProvider
+                                                                                      .menuIsViewMap[19] ==
+                                                                                  1)
+                                                                                (onHover) => MenuItemButton(onHover: onHover, 
+                                                                                      onPressed: () =>
+                                                                                          _handleCustomerAction(
+                                                                                              'documents_tab',
+                                                                                              task.customerId ?? 0),
+                                                                                      child: const Row(
+                                                                                        children: [
+                                                                                          Icon(Icons.folder,
+                                                                                              size: 18,
+                                                                                              color: Colors
+                                                                                                  .blue),
+                                                                                          SizedBox(width: 8),
+                                                                                          Text(
+                                                                                              'Documents Tab'),
+                                                                                        ],
+                                                                                      ),
+                                                                                    ),
+                                                                              if (settingsProvider
+                                                                                      .menuIsEditMap[4] ==
+                                                                                  1)
+                                                                                (onHover) => MenuItemButton(onHover: onHover, 
+                                                                                      onPressed: () =>
+                                                                                          _handleCustomerAction(
+                                                                                              'edit', task.customerId ?? 0),
+                                                                                      child: const Row(
+                                                                                        children: [
+                                                                                          Icon(Icons.edit,
+                                                                                              size: 18,
+                                                                                              color: Colors
+                                                                                                  .blue),
+                                                                                          SizedBox(width: 8),
+                                                                                          Text(
+                                                                                              'Edit Customer'),
+                                                                                        ],
+                                                                                      ),
+                                                                                    ),
                                                                             ],
                                                                           ),
                                                                         ],

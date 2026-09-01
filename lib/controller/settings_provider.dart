@@ -5509,6 +5509,10 @@ class SettingsProvider extends ChangeNotifier {
         _selectedDepartmentId = -1;
         final data = response.data;
         searchTaskType('', context);
+        try {
+          Provider.of<DropDownProvider>(context, listen: false)
+              .getTaskType(context, forceRefresh: true);
+        } catch (_) {}
         Navigator.pop(context);
         Loader.stopLoader(context);
         print(data);
