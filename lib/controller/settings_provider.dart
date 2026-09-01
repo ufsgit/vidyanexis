@@ -247,6 +247,7 @@ class SettingsProvider extends ChangeNotifier {
   //enquiry for
   final TextEditingController enquiryForController = TextEditingController();
   final TextEditingController enquiryCodeController = TextEditingController();
+  final TextEditingController projectDurationController = TextEditingController();
 
   //document type
   final TextEditingController documentTypeController = TextEditingController();
@@ -3918,6 +3919,7 @@ class SettingsProvider extends ChangeNotifier {
     required String forId,
     required String forName,
     String enquiryCode = '',
+    String projectDuration = '',
     required final customFields,
     required final taskTypes,
   }) async {
@@ -3928,6 +3930,7 @@ class SettingsProvider extends ChangeNotifier {
         "Enquiry_For_Name": forName,
         "Enquiry_Code": enquiryCode,
         "enquiry_code": enquiryCode,
+        "Project_Duration": projectDuration,
         "Source_Category_Id": sourceCategoryId,
         "Source_Category_Name": sourceCategoryEnquiryController.text,
         "Custom_Fields": customFields,
@@ -3943,6 +3946,7 @@ class SettingsProvider extends ChangeNotifier {
         sourceCategoryEnquiryController.clear();
         enquiryForController.clear();
         enquiryCodeController.clear();
+        projectDurationController.clear();
         setSourceId(0);
         final data = response.data;
         searchEnquiryForData('', context);

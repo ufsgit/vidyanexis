@@ -232,17 +232,17 @@ class _HomePageState extends State<HomePage> {
     String logo = settingsProvider.displayLogo;
 
     final List<SidebarOption> sidebarOptions = [
-      if ((settingsProvider.menuIsViewMap[12] ?? 1).toString() == '1')
-        SidebarOption(
-          title: 'DashBoard',
-          iconPath: 'assets/images/dashboard_icon.svg',
-          baseContent: const DashBoardPage(),
-        ),
       if (settingsProvider.menuIsViewMap[3].toString() == '1')
         SidebarOption(
           title: 'Leads',
           iconPath: 'assets/images/Leads.svg',
           baseContent: const LeadPage(),
+        ),
+      if ((settingsProvider.menuIsViewMap[12] ?? 1).toString() == '1')
+        SidebarOption(
+          title: 'DashBoard',
+          iconPath: 'assets/images/dashboard_icon.svg',
+          baseContent: const DashBoardPage(),
         ),
       if (settingsProvider.menuIsViewMap[4].toString() == '1')
         SidebarOption(

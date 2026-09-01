@@ -139,16 +139,17 @@ class _PaymentReminderTabState extends State<PaymentReminderTab> {
               .replaceAll('₹', '')
               .trim()) ??
           0.0;
-      final invAmt = double.tryParse(reminder.totalProjectCost
-              .replaceAll(',', '')
-              .replaceAll('₹', '')
-              .trim()) ??
-          0.0;
       final recAmt = double.tryParse(reminder.receiptAmount
               .replaceAll(',', '')
               .replaceAll('₹', '')
               .trim()) ??
           0.0;
+      final invAmtRaw = double.tryParse(reminder.totalProjectCost
+              .replaceAll(',', '')
+              .replaceAll('₹', '')
+              .trim()) ??
+          0.0;
+      final invAmt = invAmtRaw > 0 ? invAmtRaw : (recAmt + balAmt);
 
       try {
         DateTime parsedDate;

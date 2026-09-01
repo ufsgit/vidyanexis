@@ -4,6 +4,7 @@ class EnquiryForModel {
   final int enquiryForId;
   final String enquiryForName;
   final String enquiryCode;
+  final String projectDuration;
   final int deleteStatus;
   final int sourceCategoryId;
   final String sourceCategoryName;
@@ -15,6 +16,7 @@ class EnquiryForModel {
     required this.enquiryForId,
     required this.enquiryForName,
     this.enquiryCode = '',
+    this.projectDuration = '',
     required this.deleteStatus,
     required this.sourceCategoryId,
     required this.sourceCategoryName,
@@ -41,6 +43,7 @@ class EnquiryForModel {
           json['Enquiry_For_Code']?.toString() ??
           json['enquiryCode']?.toString() ??
           '',
+      projectDuration: json['Project_Duration']?.toString() ?? '',
       deleteStatus: json['DeleteStatus'] ?? 0,
       parsedCustomFields: customFieldsList,
       taskTypes: json['Task_Types'] != null
@@ -56,6 +59,7 @@ class EnquiryForModel {
       'Enquiry_For_Name': enquiryForName,
       'Enquiry_Code': enquiryCode,
       'enquiry_code': enquiryCode,
+      'Project_Duration': projectDuration,
       'DeleteStatus': deleteStatus,
       'Source_Category_Id': sourceCategoryId,
       'Source_Category_Name': sourceCategoryName,
