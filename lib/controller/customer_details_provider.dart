@@ -1649,7 +1649,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     // if (fieldId == 57 && SettingsProvider().solarPvSystemSpecification == 0) {
     //   return false;
     // }
-    if (_quotationFields.isEmpty) return true;
+    if (_quotationFields.isEmpty) return false;
     try {
       final field = _quotationFields.firstWhere(
         (element) => element.quotationFieldsId == fieldId,

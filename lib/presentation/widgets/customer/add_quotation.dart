@@ -54,6 +54,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      Loader.showLoader(context);
       final customerDetailsProvider =
           Provider.of<CustomerDetailsProvider>(context, listen: false);
       final settingsProvider =
@@ -143,6 +144,9 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
       }
       customerDetailsProvider.getCustomFieldsByQuotationId(context);
       await customerDetailsProvider.getQuotationFieldsApi();
+      if (mounted) {
+        Loader.stopLoader(context);
+      }
     });
   }
 

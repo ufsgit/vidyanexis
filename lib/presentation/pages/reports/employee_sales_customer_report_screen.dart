@@ -111,7 +111,7 @@ class _EmployeeSalesCustomerReportScreenState
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      'Employee Sales Customer Report',
+                      'Employee Sales Report',
                       style: GoogleFonts.plusJakartaSans(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,

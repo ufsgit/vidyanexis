@@ -1742,9 +1742,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                           vertical: 4.0,
                                                           horizontal: 12.0),
                                                       color: Colors.white),
-                                                  if (settingsProvider
-                                                          .showView[162] ==
-                                                      1)
+                                                  if (settingsProvider.jobSheet == 1)
                                                     TableWidget(
                                                         width: 130,
                                                         title: 'Job Sheet',
@@ -2535,9 +2533,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                         ),
                                                                       ),
                                                                     ),
-                                                                    if (settingsProvider
-                                                                            .showView[162] ==
-                                                                        1)
+                                                                    if (settingsProvider.jobSheet == 1)
                                                                       TableWidget(
                                                                         width:
                                                                             130,
