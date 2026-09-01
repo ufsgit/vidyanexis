@@ -25,6 +25,8 @@ class CompanyPermission {
         return "Task Permission ME and ALL";
       case 20:
         return "Hide Warranty";
+      case 22:
+        return "Job Sheet";
       case 23:
         return "Task Duplicate Button";
       case 25:
@@ -66,6 +68,9 @@ class CompanyPermission {
           break;
         case 20:
           cap = "Hide Warranty";
+          break;
+        case 22:
+          cap = "Job Sheet";
           break;
         case 23:
           cap = "Task_Duplicate_Button";
