@@ -880,8 +880,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
 
                                 if (isDocumentButtonEnabled) {
                                   return Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       _buildSectionHeader('PENDING DOCUMENTS'),
                                       const SizedBox(height: 8),
@@ -902,6 +901,76 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                         borderColor: AppColors.appViolet,
                                         textColor: Colors.white,
                                         radius: 4,
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(4),
+                                          border: Border.all(
+                                              color: const Color(0xFFE2E8F0)),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color:
+                                                  Colors.black.withOpacity(0.02),
+                                              blurRadius: 10,
+                                              offset: const Offset(0, 4),
+                                            ),
+                                          ],
+                                        ),
+                                        child: ListView.separated(
+                                          shrinkWrap: true,
+                                          padding: EdgeInsets.zero,
+                                          physics:
+                                              const NeverScrollableScrollPhysics(),
+                                          itemCount: reportsProvider
+                                              .documentTypeModel.length,
+                                          separatorBuilder: (context, index) =>
+                                              const Divider(
+                                                  height: 1,
+                                                  indent: 16,
+                                                  endIndent: 16,
+                                                  color: Color(0xFFF1F5F9)),
+                                          itemBuilder: (context, index) {
+                                            var doc = reportsProvider
+                                                .documentTypeModel[index];
+                                            return _buildDocumentTile(
+                                              title: doc.documentTypeName,
+                                              onTap: () async {
+                                                final imageProvider = Provider.of<
+                                                        ImageUploadProvider>(
+                                                    context,
+                                                    listen: false);
+                                                imageProvider.clearFiles();
+                                                imageProvider.setCutomerId(widget
+                                                    .task.customerId
+                                                    .toString());
+                                                imageProvider.updateDocumentType(
+                                                    doc.documentTypeId,
+                                                    doc.documentTypeName);
+
+                                                await _showPickOptions(
+                                                    context, imageProvider);
+
+                                                if (imageProvider
+                                                    .fileInfoList.isNotEmpty) {
+                                                  await imageProvider
+                                                      .uploadAllDocumentsGrouped(
+                                                          context,
+                                                          shouldPop: false);
+
+                                                  if (imageProvider
+                                                      .fileInfoList.isEmpty) {
+                                                    reportsProvider
+                                                        .removePendingDocument(
+                                                            doc.documentTypeId ??
+                                                                0);
+                                                  }
+                                                }
+                                              },
+                                            );
+                                          },
+                                        ),
                                       ),
                                       const SizedBox(height: 8),
                                     ],
@@ -1190,8 +1259,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                                 .documentButtonTaskStatus ==
                                             1;
 
-                                    if (!isDocumentButtonEnabled &&
-                                        reportsProvider
+                                    if (reportsProvider
                                             .documentTypeModel.isNotEmpty) {
                                       showDialog(
                                         context: context,
