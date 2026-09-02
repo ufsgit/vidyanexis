@@ -41,7 +41,7 @@ class HttpUrls {
 //dev
 
   // Local Backend Server
-  //static String baseUrl = 'http://localhost:3512/';
+  // static String baseUrl = 'https://cn1hct1v-3512.inc1.devtunnels.ms/';
   // static String baseUrl =
   //     'https://ramcoelectronicsapi.trackbox.net.in/'; // Android Emulator
   // static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
@@ -496,6 +496,7 @@ class HttpUrls {
       'lead/Duplicate_Entry_Attempts_Report';
 
   static String taskAgingReport = "task/Search_Task_Aging_Report";
+  static String getProjectDurationReport = "lead/Get_Project_Duration_Report";
 
   static String logout = 'user_details/User_Logout';
 }

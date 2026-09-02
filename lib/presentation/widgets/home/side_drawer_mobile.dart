@@ -63,6 +63,7 @@ import 'package:vidyanexis/presentation/pages/reports/stock_use_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/sales_report_screen_phone.dart';
 import 'package:vidyanexis/presentation/pages/reports/customer_task_month_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/duplicate_entry_attempts_report_screen.dart';
+import 'package:vidyanexis/presentation/pages/reports/project_duration_report_screen.dart';
 
 class SidebarDrawer extends StatefulWidget {
   const SidebarDrawer({super.key});
@@ -250,6 +251,11 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
         'title': 'Duplicate Entry Reports',
         'page': const DuplicateEntryAttemptsReportScreen()
       },
+      if (settingsProvider.menuIsViewMap[183].toString() == '1')
+        {
+          'title': 'Project Duration Reports',
+          'page': const ProjectDurationReportScreen()
+        },
     ];
 
     Future<String> getUserName() async {

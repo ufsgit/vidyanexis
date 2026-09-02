@@ -4414,8 +4414,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                             radius: 4,
                                                           ),
                                                         ),
-                                                      if (hasDocs &&
-                                                          !isDocumentButtonEnabled)
+                                                      if (hasDocs)
                                                         ...reportsProvider
                                                             .documentTypeModel
                                                             .map(
@@ -5421,8 +5420,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                       return;
                                                     }
 
-                                                    if (isDocumentButtonEnabled ||
-                                                        provider
+                                                    if (provider
                                                             .documentTypeModel
                                                             .isEmpty) {
                                                       isSaving.value = true;
