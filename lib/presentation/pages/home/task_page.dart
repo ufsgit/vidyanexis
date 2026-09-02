@@ -1154,8 +1154,8 @@ class _tasksPageReportState extends State<TaskPage> {
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(4),
                         border: Border.all(
-                            color: reportsProvider.selectedBranch != null &&
-                                    reportsProvider.selectedBranch != 0
+                            color: reportsProvider.selectedDepartment != null &&
+                                    reportsProvider.selectedDepartment != 0
                                 ? AppColors.primaryBlue
                                 : Colors.grey[300]!),
                       ),
@@ -1165,7 +1165,7 @@ class _tasksPageReportState extends State<TaskPage> {
                           const Text('Department: ',
                               style: TextStyle(fontSize: 14)),
                           DropdownButton<int>(
-                            value: reportsProvider.selectedBranch,
+                            value: reportsProvider.selectedDepartment,
                             hint: const Text('All',
                                 style: TextStyle(fontSize: 14)),
                             items: [
@@ -1175,14 +1175,14 @@ class _tasksPageReportState extends State<TaskPage> {
                                         style: TextStyle(fontSize: 14)),
                                   ),
                                 ] +
-                                settingsProvider.branchModel
+                                settingsProvider.departmentModel
                                     .map((branch) => DropdownMenuItem<int>(
-                                          value: branch.branchId,
+                                          value: branch.departmentId,
                                           child: ConstrainedBox(
                                             constraints: const BoxConstraints(
                                                 maxWidth: 150),
                                             child: Text(
-                                              branch.branchName ?? '',
+                                              branch.departmentName ?? '',
                                               overflow: TextOverflow.ellipsis,
                                               style:
                                                   const TextStyle(fontSize: 14),
@@ -1192,7 +1192,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                     .toList(),
                             onChanged: (int? newValue) {
                               if (newValue != null) {
-                                reportsProvider.setBranchFilter(newValue);
+                                reportsProvider.setDepartmentFilter(newValue);
                                 reportsProvider.goToPage(1);
                                 reportsProvider.searchTaskByCustomer(context);
                               }
@@ -1219,8 +1219,8 @@ class _tasksPageReportState extends State<TaskPage> {
                             reportsProvider.selectedTaskType != 0) ||
                         (reportsProvider.selectedEnquiryFor != null &&
                             reportsProvider.selectedEnquiryFor != 0) ||
-                        (reportsProvider.selectedBranch != null &&
-                            reportsProvider.selectedBranch != 0) ||
+                        (reportsProvider.selectedDepartment != null &&
+                            reportsProvider.selectedDepartment != 0) ||
                         (reportsProvider.selectedPriority != null &&
                             reportsProvider.selectedPriority != 0) ||
                         reportsProvider.Search.isNotEmpty)

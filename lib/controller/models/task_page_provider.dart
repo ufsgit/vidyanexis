@@ -66,7 +66,7 @@ class TaskPageProvider extends ChangeNotifier {
   String _AssignedTo = '';
   String _TaskType = '';
   String _enquiryForS = '';
-  String _Branch_Id = '';
+  String _Department_Id = '';
 
   String get Search => _Search;
   String get fromDateS => _fromDateS;
@@ -75,7 +75,7 @@ class TaskPageProvider extends ChangeNotifier {
   String get AssignedTo => _AssignedTo;
   String get TaskType => _TaskType;
   String get enquiryForS => _enquiryForS;
-  String get Branch_Id => _Branch_Id;
+  String get Department_Id => _Department_Id;
 
   String _entryType = 'myown';
   String get entryType => _entryType;
@@ -89,7 +89,7 @@ class TaskPageProvider extends ChangeNotifier {
   int? _selectedUser;
   int? _selectedTaskType;
   int? _selectedEnquiryFor;
-  int? _selectedBranch;
+  int? _selectedDepartment;
   int _selectedSortOption = 0;
   int get selectedSortOption => _selectedSortOption;
 
@@ -100,13 +100,13 @@ class TaskPageProvider extends ChangeNotifier {
   int? get selectedUser => _selectedUser;
   int? get selectedTaskType => _selectedTaskType;
   int? get selectedEnquiryFor => _selectedEnquiryFor;
-  int? get selectedBranch => _selectedBranch;
+  int? get selectedDepartment => _selectedDepartment;
 
   List<int> _selectedStatusIds = [0];
   List<int> _selectedUserIds = [0];
   List<int> _selectedTaskTypeFilterIds = [0];
   List<int> _selectedEnquiryForIds = [0];
-  List<int> _selectedBranchIds = [0];
+  List<int> _selectedDepartmentIds = [0];
 
   String _lastFetchPayload = "";
 
@@ -114,7 +114,7 @@ class TaskPageProvider extends ChangeNotifier {
   List<int> get selectedUserIds => _selectedUserIds;
   List<int> get selectedTaskTypeFilterIds => _selectedTaskTypeFilterIds;
   List<int> get selectedEnquiryForIds => _selectedEnquiryForIds;
-  List<int> get selectedBranchIds => _selectedBranchIds;
+  List<int> get selectedDepartmentIds => _selectedDepartmentIds;
   int? _expandedIndex;
   int? get expandedIndex => _expandedIndex;
   int _flowId = 0;
@@ -531,10 +531,10 @@ class TaskPageProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setBranchFilter(int newId) {
-    _selectedBranch = newId;
-    _selectedBranchIds = [newId];
-    print(_selectedBranch.toString());
+  void setDepartmentFilter(int newId) {
+    _selectedDepartment = newId;
+    _selectedDepartmentIds = [newId];
+    print(_selectedDepartment.toString());
     notifyListeners();
   }
 
@@ -614,22 +614,22 @@ class TaskPageProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void toggleBranchFilter(int value) {
+  void toggleDepartmentFilter(int value) {
     if (value == 0) {
-      _selectedBranchIds = [0];
+      _selectedDepartmentIds = [0];
     } else {
-      _selectedBranchIds.remove(0);
-      if (_selectedBranchIds.contains(value)) {
-        _selectedBranchIds.remove(value);
+      _selectedDepartmentIds.remove(0);
+      if (_selectedDepartmentIds.contains(value)) {
+        _selectedDepartmentIds.remove(value);
       } else {
-        _selectedBranchIds.add(value);
+        _selectedDepartmentIds.add(value);
       }
-      if (_selectedBranchIds.isEmpty) {
-        _selectedBranchIds = [0];
+      if (_selectedDepartmentIds.isEmpty) {
+        _selectedDepartmentIds = [0];
       }
     }
-    _selectedBranch =
-        _selectedBranchIds.isNotEmpty ? _selectedBranchIds.first : null;
+    _selectedDepartment =
+        _selectedDepartmentIds.isNotEmpty ? _selectedDepartmentIds.first : null;
     notifyListeners();
   }
 
@@ -698,12 +698,12 @@ class TaskPageProvider extends ChangeNotifier {
   void clearAllFilters() {
     _selectedTaskType = null;
     _selectedEnquiryFor = null;
-    _selectedBranch = null;
+    _selectedDepartment = null;
     _selectedStatusIds = [0];
     _selectedUserIds = [0];
     _selectedTaskTypeFilterIds = [0];
     _selectedEnquiryForIds = [0];
-    _selectedBranchIds = [0];
+    _selectedDepartmentIds = [0];
     _fromDate = null;
     _toDate = null;
     _formattedFromDate = '';
@@ -715,7 +715,7 @@ class TaskPageProvider extends ChangeNotifier {
     _AssignedTo = '';
     _TaskType = '';
     _enquiryForS = '';
-    _Branch_Id = '';
+    _Department_Id = '';
     _entryType = 'myown';
     _isFilter = false;
     _pageIndex = 1;
@@ -733,7 +733,7 @@ class TaskPageProvider extends ChangeNotifier {
     _AssignedTo = assignedTo;
     _TaskType = taskType;
     _enquiryForS = enquiryFor;
-    _Branch_Id = branchId;
+    _Department_Id = branchId;
     _pageIndex = 1;
     _pageSize = 20;
     notifyListeners(); // Notify listeners so that UI can rebuild
@@ -773,7 +773,7 @@ class TaskPageProvider extends ChangeNotifier {
       _Status = _selectedStatusIds.join(',');
       _TaskType = _selectedTaskTypeFilterIds.join(',');
       _enquiryForS = _selectedEnquiryForIds.join(',');
-      _Branch_Id = _selectedBranchIds.join(',');
+      _Department_Id = _selectedDepartmentIds.join(',');
 
       if (_Status.isEmpty || _Status == 'null') {
         _Status = '0';
@@ -787,15 +787,15 @@ class TaskPageProvider extends ChangeNotifier {
         _enquiryForS = '0';
       }
 
-      if (_Branch_Id.isEmpty || _Branch_Id == 'null') {
-        _Branch_Id = '0';
+      if (_Department_Id.isEmpty || _Department_Id == 'null') {
+        _Department_Id = '0';
       }
 
       int apiSortOption = _selectedSortOption == 4 ? 0 : _selectedSortOption;
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchTaskByCustomer}?Customer_Name=$_Search&Task_Status_Id=$_Status&To_User=$toUserId&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&Task_Type_Id=$_TaskType&Enquiry_For_Id=$_enquiryForS&Branch_Id=$_Branch_Id&Page_Index=$_pageIndex&PageSize=$_pageSize&Order_By_=$apiSortOption&Order_Type_=$_sortOrder&Entry_Type_=$_entryType&Priority_Id_=$_selectedPriority');
+              '${HttpUrls.searchTaskByCustomer}?Customer_Name=$_Search&Task_Status_Id=$_Status&To_User=$toUserId&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&Task_Type_Id=$_TaskType&Enquiry_For_Id=$_enquiryForS&Department_Id=$_Department_Id&Page_Index=$_pageIndex&PageSize=$_pageSize&Order_By_=$apiSortOption&Order_Type_=$_sortOrder&Entry_Type_=$_entryType&Priority_Id_=$_selectedPriority');
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -905,16 +905,16 @@ class TaskPageProvider extends ChangeNotifier {
       _Status = _selectedStatusIds.join(',');
       _TaskType = _selectedTaskTypeFilterIds.join(',');
       _enquiryForS = _selectedEnquiryForIds.join(',');
-      _Branch_Id = _selectedBranchIds.join(',');
+      _Department_Id = _selectedDepartmentIds.join(',');
 
       if (_Status.isEmpty || _Status == 'null') _Status = '0';
       if (_TaskType.isEmpty || _TaskType == 'null') _TaskType = '0';
       if (_enquiryForS.isEmpty || _enquiryForS == 'null') _enquiryForS = '0';
-      if (_Branch_Id.isEmpty || _Branch_Id == 'null') _Branch_Id = '0';
+      if (_Department_Id.isEmpty || _Department_Id == 'null') _Department_Id = '0';
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.exportTaskByCustomer}?Customer_Name=$_Search&Task_Status_Id=$_Status&To_User=$toUserId&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&Task_Type_Id=$_TaskType&Enquiry_For_Id=$_enquiryForS&Branch_Id=$_Branch_Id&Entry_Type_=$_entryType',
+              '${HttpUrls.exportTaskByCustomer}?Customer_Name=$_Search&Task_Status_Id=$_Status&To_User=$toUserId&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&Task_Type_Id=$_TaskType&Enquiry_For_Id=$_enquiryForS&Department_Id=$_Department_Id&Entry_Type_=$_entryType',
           returnBytes: true);
 
       Loader.stopLoader(context);
