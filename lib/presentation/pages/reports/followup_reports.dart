@@ -890,7 +890,7 @@ class _FollowupReports extends State<FollowupReports> {
                                       ),
                                     ),
                                     TableWidget(
-                                        flex: 2,
+                                        flex: 1,
                                         title: 'Customer Name',
                                         color: Color(0xFF607185)),
                                     TableWidget(
@@ -902,12 +902,16 @@ class _FollowupReports extends State<FollowupReports> {
                                         title: 'Staff',
                                         color: Color(0xFF607185)),
                                     TableWidget(
-                                        flex: 3,
+                                        flex: 1,
                                         title: 'Description',
                                         color: Color(0xFF607185)),
                                     TableWidget(
                                         flex: 1,
-                                        title: 'Date',
+                                        title: 'Next Follow-Up Date',
+                                        color: Color(0xFF607185)),
+                                    TableWidget(
+                                        flex: 1,
+                                        title: 'Entry Date',
                                         color: Color(0xFF607185)),
                                     TableWidget(
                                         flex: 1,
@@ -970,7 +974,7 @@ class _FollowupReports extends State<FollowupReports> {
                                             ),
                                             // TableWidget(title: task.orderNo),
                                             TableWidget(
-                                              flex: 2,
+                                              flex: 1,
                                               data: InkWell(
                                                 onTap: () {
                                                   context.push(
@@ -1066,17 +1070,16 @@ class _FollowupReports extends State<FollowupReports> {
                                                 flex: 1,
                                                 title: task.toUserName ?? ''),
                                             TableWidget(
-                                                flex: 3,
+                                                flex: 1,
                                                 title: task.remark ?? ''),
                                             TableWidget(
                                                 flex: 1,
-                                                title: (task.nextFollowUpDate!
-                                                        .isNotEmpty)
-                                                    ? DateFormat('dd MMM yyyy')
-                                                        .format(DateTime.parse(
-                                                            task.nextFollowUpDate ??
-                                                                ''))
-                                                    : ''),
+                                                title: task.nextFollowUpDate ??
+                                                    ''),
+                                            TableWidget(
+                                                flex: 1,
+                                                title: task.entryDate ??
+                                                    ''),
                                             TableWidget(
                                                 flex: 1,
                                                 title: task.statusName ?? ''),

@@ -25,6 +25,7 @@ class FollowUpReportModel {
   String? remark;
   int? status;
   String? statusName;
+  String? entryDate;
 
   FollowUpReportModel({
     this.customerId,
@@ -40,6 +41,7 @@ class FollowUpReportModel {
     this.remark,
     this.status,
     this.statusName,
+    this.entryDate,
   });
 
   FollowUpReportModel copyWith({
@@ -56,6 +58,7 @@ class FollowUpReportModel {
     String? remark,
     int? status,
     String? statusName,
+    String? entryDate,
   }) =>
       FollowUpReportModel(
         customerId: customerId ?? this.customerId,
@@ -71,6 +74,7 @@ class FollowUpReportModel {
         remark: remark ?? this.remark,
         status: status ?? this.status,
         statusName: statusName ?? this.statusName,
+        entryDate: entryDate ?? this.entryDate,
       );
 
   factory FollowUpReportModel.fromJson(Map<String, dynamic> json) =>
@@ -78,7 +82,7 @@ class FollowUpReportModel {
         customerId: json["Customer_Id"],
         customerName: json["Customer_Name"],
         phoneNumber: json["Phone_Number"],
-        nextFollowUpDate: json["Next_FollowUp_date"],
+        nextFollowUpDate: json["Next_FollowUp_date"]?.toString() ?? '',
         email: json["Email"],
         followUp: json["FollowUp"],
         userId: json["User_Id"],
@@ -88,6 +92,7 @@ class FollowUpReportModel {
         remark: json["Remark"],
         status: json["Status"],
         statusName: json["Status_Name"],
+        entryDate: json["Entry_date"]?.toString() ?? '',
       );
 
   Map<String, dynamic> toJson() => {
@@ -104,5 +109,6 @@ class FollowUpReportModel {
         "Remark": remark,
         "Status": status,
         "Status_Name": statusName,
+        "Entry_date": entryDate,
       };
 }
