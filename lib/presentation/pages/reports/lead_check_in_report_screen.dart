@@ -15,6 +15,8 @@ import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.da
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
+import 'package:vidyanexis/controller/models/search_user_details_model.dart';
+import 'package:vidyanexis/presentation/widgets/home/auto_complete_textfield_search.dart';
 
 class LeadCheckInReportScreen extends StatefulWidget {
   const LeadCheckInReportScreen({super.key});
@@ -26,6 +28,7 @@ class LeadCheckInReportScreen extends StatefulWidget {
 
 class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
   TextEditingController searchController = TextEditingController();
+  TextEditingController staffSearchController = TextEditingController();
   final FocusNode searchFocusNodeWeb = FocusNode();
   final FocusNode searchFocusNodeMobile = FocusNode();
 
@@ -205,6 +208,7 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
 
       // Initialize with login user before fetching
       reportProvider.initializeWithLoginUser().then((_) {
+        staffSearchController.text = reportProvider.selectedUserName ?? '';
         reportProvider.fetchReports(context);
       });
     });
@@ -419,57 +423,30 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
       child: Row(
         children: [
           Container(
-            height: 40,
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                              decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(4),
-              border: Border.all(
-                  color: reportProvider.selectedUserId != null
-                      ? AppColors.primaryBlue
-                      : Colors.grey[300]!),
-            ),
-            child: Row(
-              children: [
-                const Text('Staff: '),
-                DropdownButtonHideUnderline(
-                  child: DropdownButton<int>(
-                    value: reportProvider.selectedUserId,
-                    hint: Text('All'),
-                    items: [
-                      if (reportProvider.userType != "1")
-                        DropdownMenuItem<int>(
-                          value: null,
-                          child: Text('All', style: GoogleFonts.plusJakartaSans(fontSize: 14)),
-                        ),
-                      ...dropdownProvider.searchUserDetails
-                          .where((staff) =>
-                              reportProvider.userType != "1" ||
-                              staff.userDetailsId ==
-                                  reportProvider.selectedUserId)
-                          .map((staff) {
-                        return DropdownMenuItem<int>(
-                          value: staff.userDetailsId,
-                          child: Text(staff.userDetailsName,
-                              style: GoogleFonts.plusJakartaSans(fontSize: 14)),
-                        );
-                      }),
-                    ],
-                    onChanged: (val) {
-                      String? name;
-                      if (val != null) {
-                        name = dropdownProvider.searchUserDetails
-                            .firstWhere((s) => s.userDetailsId == val)
-                            .userDetailsName;
-                      }
-                      reportProvider.setUserId(val, userName: name);
-                      reportProvider.fetchReports(context);
-                    },
-                    isDense: true,
-                    iconSize: 18,
-                  ),
-                ),
-              ],
+            height: 50,
+            width: 250,
+            // decoration: BoxDecoration(
+            //   color: Colors.white,
+            //   borderRadius: BorderRadius.circular(10),
+            //   border: Border.all(
+            //       color: reportProvider.selectedUserId != null
+            //           ? AppColors.primaryBlue
+            //           : Colors.grey[300]!),
+            // ),
+            child: CustomAutocompleteSearch<SearchUserDetails>(
+              items: dropdownProvider.searchUserDetails,
+              displayStringFunction: (staff) => staff.userDetailsName ?? '',
+              defaultText: reportProvider.selectedUserName ?? '',
+              labelText: 'Staff',
+              controller: staffSearchController,
+              onSelected: (SearchUserDetails selected) {
+                reportProvider.setUserId(selected.userDetailsId,
+                    userName: selected.userDetailsName);
+                staffSearchController.text = selected.userDetailsName ?? '';
+                reportProvider.fetchReports(context);
+              },
+              onChanged: (value) {},
+              
             ),
           ),
           const SizedBox(width: 10),
@@ -490,6 +467,7 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
                 reportProvider.clearFilters();
                 reportProvider.setLeadSearch('');
                 searchController.clear();
+                staffSearchController.clear();
                 reportProvider.fetchReports(context);
               },
               style: ElevatedButton.styleFrom(
