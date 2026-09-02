@@ -211,22 +211,13 @@ class _CustomAutocompleteSearchState<T extends Object>
                           WidgetsBinding.instance.addPostFrameCallback((_) {
                             _forceOptionsOpen();
                           });
-                        } else if (_textController.text.isNotEmpty) {
-                          _textController.clear();
                         }
                       },
                       child: widget.suffixIcon ??
-                          (_textController.text.isEmpty
-                              ? Image.asset(
-                                  "assets/icons/arrow_down_icon.png",
-                                  width: 22,
-                                  height: 22,
-                                )
-                              : Icon(
-                                  Icons.clear_outlined,
-                                  color: AppColors.textBlack,
-                                  size: 16,
-                                )),
+                          const Icon(
+                            Icons.arrow_drop_down,
+                            color: AppColors.textGrey2,
+                          ),
                     ),
                     hintStyle: GoogleFonts.plusJakartaSans(
                       fontSize: 12,
