@@ -73,6 +73,7 @@ import 'package:vidyanexis/presentation/pages/reports/sales_report_screen_phone.
 import 'package:vidyanexis/presentation/pages/reports/customer_task_month_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/accounts_summary_page_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/duplicate_entry_attempts_report_screen.dart';
+import 'package:vidyanexis/presentation/pages/reports/project_duration_report_screen.dart';
 import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vidyanexis/presentation/pages/login/login_page.dart';
@@ -601,6 +602,12 @@ class _HomePageState extends State<HomePage> {
         iconPath: 'assets/images/Reports.svg',
         baseContent: const Center(child: DuplicateEntryAttemptsReportScreen()),
       ),
+      if (settingsProvider.menuIsViewMap[183].toString() == '1')
+        SidebarOption(
+          title: 'Project Duration Reports',
+          iconPath: 'assets/images/Reports.svg',
+          baseContent: const Center(child: ProjectDurationReportScreen()),
+        ),
     ];
 
     bool hideMainAppBar =
