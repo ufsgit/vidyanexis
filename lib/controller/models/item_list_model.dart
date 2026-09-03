@@ -22,6 +22,7 @@ class ItemListModel {
   String priceTo;
   List<ItemSettings> multiItemMaterials;
   String itemDescription;
+  String total;
 
   // Constructor
   ItemListModel({
@@ -45,6 +46,7 @@ class ItemListModel {
     this.priceFrom = '',
     this.priceTo = '',
     this.multiItemMaterials = const [],
+    this.total = '0',
   });
 
   // Factory method to create an instance from a JSON object
@@ -73,6 +75,7 @@ class ItemListModel {
               ItemSettings.fromJson(material as Map<String, dynamic>))
           .toList(),
       itemDescription: json['Description']?.toString() ?? '',
+      total: (double.tryParse(json['Total']?.toString() ?? '0') ?? 0).toInt().toString(),
     );
   }
 
@@ -97,6 +100,7 @@ class ItemListModel {
       'Price_Range_To': priceTo,
       'itemMaterials': multiItemMaterials.map((m) => m.toJson()).toList(),
       "Description": itemDescription,
+      'Total': total,
     };
   }
 }

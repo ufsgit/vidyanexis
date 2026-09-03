@@ -85,7 +85,7 @@ class _ItemPageState extends State<ItemPage> {
                           context: context,
                           index: i,
                           title: item.itemName,
-                          subtitle: 'Code: ${item.itemId}',
+                          subtitle: 'Code: ${item.itemId}  |  Total Qty: ${item.total}',
                           itemTypeName: itemTypeName,
                           itemTypeColor: itemTypeColor,
                           onEdit: settingsProvider.menuIsEditMap[43] == 1

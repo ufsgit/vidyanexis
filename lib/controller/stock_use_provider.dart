@@ -1023,7 +1023,7 @@ class StockUseProvider extends ChangeNotifier {
 
   void updateItemQuantity(int index, String quantityStr) {
     if (index >= 0 && index < stockUseItems.length) {
-      final quantity = double.tryParse(quantityStr) ?? 1.0;
+      final quantity = double.tryParse(quantityStr) ?? 0.0;
       stockUseItems[index].quantity = quantity;
       stockUseItems[index].amount = stockUseItems[index].unitPrice * quantity;
       notifyListeners();
@@ -1119,6 +1119,7 @@ class StockUseProvider extends ChangeNotifier {
               categoryName: item.categoryName,
               unitPrice: item.unitPrice,
               primaryCheckBox: item.primaryCheckBox,
+              total: item.total,
           )).toList();
 
           // Reset and Pre-populate stockUseItems
@@ -1129,10 +1130,11 @@ class StockUseProvider extends ChangeNotifier {
               itemName: stockItem.itemName,
               categoryId: stockItem.categoryId,
               categoryName: stockItem.categoryName,
-              quantity: 1.0, // Default quantity
+              quantity: 0.0, // Default quantity
               unitPrice: double.tryParse(stockItem.unitPrice) ?? 0.0,
-              amount: double.tryParse(stockItem.unitPrice) ?? 0.0,
+              amount: 0.0,
               isChecked: false,
+              total: double.tryParse(stockItem.total) ?? 0.0,
             );
           }).toList();
 
@@ -1933,6 +1935,7 @@ class StockUseProvider extends ChangeNotifier {
               // Also update other fields if needed, like unitPrice
               _stockUseItems[i].unitPrice = matchingSavedItem.unitPrice;
               _stockUseItems[i].stockId = matchingSavedItem.stockId;
+              _stockUseItems[i].total = matchingSavedItem.total;
             } else {
               _stockUseItems[i].isChecked = false;
             }
