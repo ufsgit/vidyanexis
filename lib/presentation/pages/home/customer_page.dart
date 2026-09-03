@@ -919,7 +919,8 @@ class _CustomerPageState extends State<CustomerPage> {
     double rowHeight,
     double tableHeaderHeight,
   ) {
-    final double fixedWidth = 780.0;
+    final bool showCustomerCode = settingsProvider.menuIsViewMap[184] == 1;
+    final double fixedWidth = showCustomerCode ? 780.0 : 630.0;
     final bool showLocation = settingsProvider.menuIsViewMap[142] == 1;
     final double scrollableWidth = showLocation ? 1400.0 : 1260.0;
 
@@ -948,8 +949,8 @@ class _CustomerPageState extends State<CustomerPage> {
                     ),
                   ),
                   child: Row(
-                    children: const [
-                      TableWidget(
+                    children: [
+                      const TableWidget(
                         width: 80,
                         title: 'Sl No.',
                         fontWeight: FontWeight.normal,
@@ -957,15 +958,16 @@ class _CustomerPageState extends State<CustomerPage> {
                             vertical: 4.0, horizontal: 12.0),
                         color: Color(0xFFFFFFFF),
                       ),
-                      TableWidget(
-                        width: 150,
-                        title: 'Customer Code',
-                        fontWeight: FontWeight.normal,
-                        padding: EdgeInsets.symmetric(
-                            vertical: 4.0, horizontal: 8.0),
-                        color: Color(0xFFFFFFFF),
-                      ),
-                      TableWidget(
+                      if (showCustomerCode)
+                        const TableWidget(
+                          width: 150,
+                          title: 'Customer Code',
+                          fontWeight: FontWeight.normal,
+                          padding: EdgeInsets.symmetric(
+                              vertical: 4.0, horizontal: 8.0),
+                          color: Color(0xFFFFFFFF),
+                        ),
+                      const TableWidget(
                         width: 230,
                         title: 'Customer Name',
                         fontWeight: FontWeight.normal,
@@ -973,7 +975,7 @@ class _CustomerPageState extends State<CustomerPage> {
                             vertical: 4.0, horizontal: 8.0),
                         color: Color(0xFFFFFFFF),
                       ),
-                      TableWidget(
+                      const TableWidget(
                         width: 180,
                         title: 'Place',
                         fontWeight: FontWeight.normal,
@@ -981,7 +983,7 @@ class _CustomerPageState extends State<CustomerPage> {
                             vertical: 4.0, horizontal: 8.0),
                         color: Color(0xFFFFFFFF),
                       ),
-                      TableWidget(
+                      const TableWidget(
                         width: 140,
                         title: 'Mobile no',
                         fontWeight: FontWeight.normal,
@@ -1044,16 +1046,15 @@ class _CustomerPageState extends State<CustomerPage> {
                                                 1)
                                             .toString(),
                                       ),
-                                      TableWidget(
-                                        width: 150,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.normal,
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 6.0, horizontal: 8.0),
-                                        title: lead.getDisplayLeadCode(
-                                            settingsProvider
-                                                .leadCodeWithEnquiryCode),
-                                      ),
+                                      if (showCustomerCode)
+                                        TableWidget(
+                                          width: 150,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.normal,
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 6.0, horizontal: 8.0),
+                                          title: lead.registrationNo,
+                                        ),
                                       TableWidget(
                                         width: 230,
                                         padding: const EdgeInsets.symmetric(
@@ -1644,6 +1645,8 @@ class _CustomerPageState extends State<CustomerPage> {
     SettingsProvider settingsProvider,
     DropDownProvider provider,
   ) {
+    final bool showCustomerCode = settingsProvider.menuIsViewMap[184] == 1;
+
     return customerProvider.customerData.isEmpty
         ? const CommonEmptyState(message: 'No data available')
         : ListView.builder(
@@ -1700,6 +1703,14 @@ class _CustomerPageState extends State<CustomerPage> {
                       style:
                           TextStyle(fontSize: 12, color: Colors.grey.shade600),
                     ),
+                    if (showCustomerCode && lead.registrationNo.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4.0),
+                        child: Text(
+                          'Reg No: ${lead.registrationNo}',
+                          style: TextStyle(fontSize: 12, color: Colors.grey.shade700),
+                        ),
+                      ),
                     const SizedBox(height: 8),
                     if (lead.remark.isNotEmpty)
                       Text(
