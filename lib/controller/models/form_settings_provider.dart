@@ -601,6 +601,7 @@ class FormProvider extends ChangeNotifier {
 
                 final dataValue =
                     f['datavalue'] ?? f['DataValue'] ?? f['value'];
+                final remarkValue = f['remark'] ?? f['Remarks'] ?? f['Remark'];
                 final orderBy = f['Order_By'] ?? f['order_by'] ?? 0;
 
                 return FieldModel(
@@ -613,6 +614,7 @@ class FormProvider extends ChangeNotifier {
                   options: availableField.options,
                   checkBoxOptions: availableField.checkBoxOptions,
                   value: dataValue?.toString(),
+                  remark: remarkValue?.toString(),
                   isMandatory: (isMandatoryValue == 1 ||
                       isMandatoryValue == true ||
                       isMandatoryValue == "1"),

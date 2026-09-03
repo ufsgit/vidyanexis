@@ -14,6 +14,7 @@ import 'package:vidyanexis/main.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:vidyanexis/controller/customer_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/leads_provider.dart';
@@ -58,6 +59,29 @@ class _CustomerPageState extends State<CustomerPage> {
   final _horizontalScrollController = ScrollController();
   late final ScrollController _fixedVerticalController;
   late final ScrollController _scrollableVerticalController;
+
+  Future<void> _openMaps(String location) async {
+    if (location.isEmpty || location == 'null' || location == '-') return;
+    String cleanLocation = location.trim();
+    if (cleanLocation.startsWith('http://') || cleanLocation.startsWith('https://')) {
+      try {
+        await launchUrl(Uri.parse(cleanLocation), mode: LaunchMode.externalApplication);
+        return;
+      } catch (e) {
+        debugPrint('Error launching existing URL: $e');
+        RegExp coordRegex = RegExp(r'q=(-?\d+\.?\d*),(-?\d+\.?\d*)');
+        Match? match = coordRegex.firstMatch(cleanLocation);
+        if (match != null) {
+          String coords = '${match.group(1)},${match.group(2)}';
+          String newUrl = 'https://www.google.com/maps/search/$coords';
+          await launchUrl(Uri.parse(newUrl), mode: LaunchMode.externalApplication);
+        }
+      }
+    } else {
+      String newUrl = 'https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(cleanLocation)}';
+      await launchUrl(Uri.parse(newUrl), mode: LaunchMode.externalApplication);
+    }
+  }
   Timer? _debounce;
   bool _isSyncing = false;
   int? _hoveredRowIndex;
@@ -1371,7 +1395,7 @@ class _CustomerPageState extends State<CustomerPage> {
                             ),
                             const TableWidget(
                               width: 120,
-                              title: 'Duration',
+                              title: 'Location',
                               fontWeight: FontWeight.normal,
                               padding: EdgeInsets.symmetric(
                                   vertical: 4.0, horizontal: 8.0),
@@ -1546,15 +1570,43 @@ class _CustomerPageState extends State<CustomerPage> {
                                                       horizontal: 8.0),
                                               title: lead.toUserName,
                                             ),
-                                            TableWidget(
+                                            SizedBox(
                                               width: 120,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.normal,
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 4.0,
-                                                      horizontal: 8.0),
-                                              title: lead.leadDuration,
+                                              child: Padding(
+                                                padding: const EdgeInsets.symmetric(
+                                                    vertical: 4.0, horizontal: 8.0),
+                                                child: InkWell(
+                                                  onTap: () {
+                                                    String? validLink;
+                                                    if (lead.location != null && lead.location != 'null' && lead.location!.trim().isNotEmpty) validLink = lead.location;
+                                                    else if (lead.mapLink != null && lead.mapLink != 'null' && lead.mapLink!.trim().isNotEmpty) validLink = lead.mapLink;
+                                                    else if (lead.latitude != null && lead.latitude != 'null' && lead.latitude!.trim().isNotEmpty && lead.longitude != null && lead.longitude != 'null' && lead.longitude!.trim().isNotEmpty) {
+                                                      validLink = 'https://www.google.com/maps?q=${lead.latitude},${lead.longitude}';
+                                                    }
+                                                    
+                                                    if (validLink != null) {
+                                                      _openMaps(validLink);
+                                                    }
+                                                  },
+                                                  child: Builder(
+                                                    builder: (context) {
+                                                      bool hasLink = (lead.location != null && lead.location != 'null' && lead.location!.trim().isNotEmpty) ||
+                                                                     (lead.mapLink != null && lead.mapLink != 'null' && lead.mapLink!.trim().isNotEmpty) ||
+                                                                     (lead.latitude != null && lead.latitude != 'null' && lead.latitude!.trim().isNotEmpty && lead.longitude != null && lead.longitude != 'null' && lead.longitude!.trim().isNotEmpty);
+                                                      return Text(
+                                                        hasLink ? 'View Map' : '-',
+                                                        style: TextStyle(
+                                                          fontSize: 12,
+                                                          color: hasLink ? Colors.blue : Colors.black87,
+                                                          decoration: hasLink ? TextDecoration.underline : TextDecoration.none,
+                                                        ),
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow.ellipsis,
+                                                      );
+                                                    }
+                                                  ),
+                                                ),
+                                              ),
                                             ),
                                             if (showLocation)
                                               TableWidget(
