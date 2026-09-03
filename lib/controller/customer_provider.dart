@@ -286,6 +286,7 @@ class CustomerProvider extends ChangeNotifier {
           } else {
             _customerData.addAll(newItems);
             fetchAmcDatesForCustomers(newItems);
+            fetchWorkCompletionDatesForCustomers(newItems);
 
             if (_selectedSortOption == 4) {
               if (_sortOrder == 'ASC') {
@@ -870,6 +871,7 @@ class CustomerProvider extends ChangeNotifier {
 
           hasMoreData = _customerData.length < _totalCount;
           fetchAmcDatesForCustomers(_customerData);
+          fetchWorkCompletionDatesForCustomers(_customerData);
         } else {
           log('API Error: Data is not a list or is null');
         }
@@ -1082,6 +1084,74 @@ class CustomerProvider extends ChangeNotifier {
         final cachedDate = _customerAmcDateCache[cust.customerId]!;
         if (cachedDate.isNotEmpty && cachedDate != '-') {
           _customerData[i] = cust.copyWith(amcDate: cachedDate);
+          hasUpdates = true;
+        }
+      }
+    }
+    if (hasUpdates) {
+      notifyListeners();
+    }
+  }
+
+  final Map<int, String> _customerWcDateCache = {};
+
+  Future<void> fetchWorkCompletionDatesForCustomers(
+      List<SearchLeadModel> customers) async {
+    final uncachedCustomerIds = customers
+        .where((c) =>
+            (c.workCompletionDate.isEmpty || c.workCompletionDate == '-') &&
+            c.customerId > 0 &&
+            !_customerWcDateCache.containsKey(c.customerId))
+        .toList();
+
+    if (uncachedCustomerIds.isEmpty) {
+      _applyCachedWcDates();
+      return;
+    }
+
+    await Future.wait(uncachedCustomerIds.map((c) async {
+      try {
+        final response = await HttpRequest.httpGetRequest(
+          endPoint:
+              '${HttpUrls.getCustomFieldByEnquiryForId}?enquiry_for_id=${c.enquiryForId}&lead_id=${c.customerId}',
+        );
+        if (response.statusCode == 200 &&
+            response.data != null &&
+            response.data is List) {
+          final list = response.data as List;
+          String wcDate = '';
+          for (var field in list) {
+            if (field is Map) {
+              final fieldName =
+                  field['custom_field_name']?.toString().toLowerCase() ?? '';
+              if (fieldName.contains('work completion date') ||
+                  fieldName.contains('completion date')) {
+                wcDate = field['datavalue']?.toString() ?? '';
+                break;
+              }
+            }
+          }
+          _customerWcDateCache[c.customerId] = wcDate.isNotEmpty ? wcDate : '-';
+        } else {
+          _customerWcDateCache[c.customerId] = '-';
+        }
+      } catch (e) {
+        _customerWcDateCache[c.customerId] = '-';
+      }
+    }));
+
+    _applyCachedWcDates();
+  }
+
+  void _applyCachedWcDates() {
+    bool hasUpdates = false;
+    for (int i = 0; i < _customerData.length; i++) {
+      final cust = _customerData[i];
+      if ((cust.workCompletionDate.isEmpty || cust.workCompletionDate == '-') &&
+          _customerWcDateCache.containsKey(cust.customerId)) {
+        final cachedDate = _customerWcDateCache[cust.customerId]!;
+        if (cachedDate.isNotEmpty && cachedDate != '-') {
+          _customerData[i] = cust.copyWith(workCompletionDate: cachedDate);
           hasUpdates = true;
         }
       }

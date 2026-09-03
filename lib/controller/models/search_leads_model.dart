@@ -170,6 +170,9 @@ class SearchLeadModel {
   int? locationId;
   String? locationName;
   String? closedDate;
+  String? latitude;
+  String? longitude;
+  String? mapLink;
 
   String get displayAddress {
     final List<String> parts = [
@@ -307,6 +310,9 @@ class SearchLeadModel {
     required this.priorityColor,
     this.amcDate = '',
     this.workCompletionDate = '',
+    this.latitude,
+    this.longitude,
+    this.mapLink,
   });
 
   factory SearchLeadModel.fromJson(Map<String, dynamic> json) {
@@ -410,6 +416,9 @@ class SearchLeadModel {
       locationId: parseInt(json["Location_Id"]),
       locationName: parseString(json["Location_Name"]),
       closedDate: json["Closed_Date"]?.toString() ?? "",
+      latitude: json["latitude"]?.toString() ?? json["Latitude"]?.toString(),
+      longitude: json["longitude"]?.toString() ?? json["Longitude"]?.toString(),
+      mapLink: json["map_link"]?.toString() ?? json["mapLink"]?.toString(),
       audioFiles: (json['Audio_Files'] != null && json['Audio_Files'] is List)
           ? (json['Audio_Files'] as List<dynamic>)
               .map((item) => AudioFileLead.fromJson(item))

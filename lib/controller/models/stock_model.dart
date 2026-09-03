@@ -48,6 +48,7 @@ class StockUseItems {
   double unitPrice;
   double amount;
   bool isChecked;
+  double total;
 
   StockUseItems({
     this.stockId,
@@ -59,6 +60,7 @@ class StockUseItems {
     required this.unitPrice,
     required this.amount,
     this.isChecked = false,
+    this.total = 0.0,
   });
 
   // Optional: for JSON serialization if needed
@@ -82,6 +84,7 @@ class StockUseItems {
           json['is_checked']?.toString() == 'true' ||
           json['Is_Check_List']?.toString() == '1' ||
           json['Is_Check_List']?.toString() == 'true',
+      total: double.tryParse(json['Total']?.toString() ?? '0') ?? 0.0,
     );
   }
 
@@ -97,6 +100,7 @@ class StockUseItems {
       'Amount': amount,
       'Is_Checked': isChecked ? 1 : 0,
       'ischecked': isChecked ? 1 : 0,
+      'Total': total,
     };
   }
 }

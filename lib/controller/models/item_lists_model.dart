@@ -6,6 +6,7 @@ class ItemListStock {
   final String categoryName;
   final String unitPrice;
   int primaryCheckBox; // IGST value
+  final String total;
 
   ItemListStock(
       {required this.stockId,
@@ -14,6 +15,7 @@ class ItemListStock {
       required this.categoryId,
       required this.categoryName,
       required this.unitPrice,
+      required this.total,
       required this.primaryCheckBox});
 
   factory ItemListStock.fromJson(Map<String, dynamic> json) {
@@ -24,6 +26,7 @@ class ItemListStock {
         categoryId: json['Category_Id'],
         categoryName: json['Category_Name'],
         unitPrice: json['Unit_Price']?.toString() ?? "0.0",
+        total: (double.tryParse(json['Total']?.toString() ?? '0') ?? 0).toInt().toString(),
         primaryCheckBox: json["Is_Primary"] ?? 0);
   }
 

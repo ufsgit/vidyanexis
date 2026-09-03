@@ -251,7 +251,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                       child: ListView(
                         padding: const EdgeInsets.fromLTRB(16, 8, 16, 80),
                         children: [
-                          if (settingsProvider.showView[122] == 1) ...[
+                          if (settingsProvider.jobSheet == 1) ...[
                             Center(
                               child: SizedBox(
                                 height: 32,

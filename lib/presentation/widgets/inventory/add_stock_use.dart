@@ -351,6 +351,15 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
                                   ),
                                 ),
                                 const SizedBox(width: 12),
+                                Text(
+                                  'Total: ${(item.total)}',
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                    color: const Color(0xFF64748B),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
                                 SizedBox(
                                   width: 70,
                                   child: TextFormField(
