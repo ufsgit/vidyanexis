@@ -372,11 +372,12 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                                       );
                                     },
                                   ),
-                                 _buildActionBtn(
-                                   context,
-                                   text: 'Rts Vender feasibility',
-                                   icon: Icons.assessment_outlined,
-                                   onTap: () async {
+                                 if ((settingsProvider.menuIsViewMap[184] == 1 || settingsProvider.menuIsViewMapPrint[184] == 1) && sideProvider.name != 'Lead /')
+                                   _buildActionBtn(
+                                     context,
+                                     text: 'Rts Vender feasibility',
+                                     icon: Icons.assessment_outlined,
+                                     onTap: () async {
                                      PdfActionHelper.showPdfOptions(
                                        context: context,
                                        title: 'Rts Vender feasibility',
@@ -487,6 +488,50 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                                       );
                                     },
                                   ),
+                                  if ((settingsProvider.menuIsViewMap[185] == 1 || settingsProvider.menuIsViewMapPrint[185] == 1) && sideProvider.name != 'Lead /')
+                                    _buildActionBtn(
+                                      context,
+                                      text: 'Margin Voucher',
+                                      icon: Icons.receipt_long,
+                                      onTap: () async {
+                                        PdfActionHelper.showPdfOptions(
+                                          context: context,
+                                          title: 'Margin Voucher',
+                                          pdfUrl:
+                                              '${HttpUrls.getPdfMarginVoucher}${widget.customerId}',
+                                          onGenerate: () async {
+                                            await Loader.showLoader(context);
+                                            final bytes =
+                                                await customerDetailsProvider
+                                                    .getAnnexurePdfBytes('${HttpUrls.getPdfMarginVoucher}${widget.customerId}');
+                                            Loader.stopLoader(context);
+                                            return bytes ?? Uint8List(0);
+                                          },
+                                        );
+                                      },
+                                    ),
+                                  if ((settingsProvider.menuIsViewMap[184] == 1 || settingsProvider.menuIsViewMapPrint[184] == 1) && sideProvider.name != 'Lead /')
+                                    _buildActionBtn(
+                                      context,
+                                      text: 'Vendor Feasibility Report',
+                                      icon: Icons.description_outlined,
+                                      onTap: () async {
+                                        PdfActionHelper.showPdfOptions(
+                                          context: context,
+                                          title: 'Vendor Feasibility Report',
+                                          pdfUrl:
+                                              '${HttpUrls.getPdfVendorFeasibilityReport}${widget.customerId}',
+                                          onGenerate: () async {
+                                            await Loader.showLoader(context);
+                                            final bytes =
+                                                await customerDetailsProvider
+                                                    .getAnnexurePdfBytes('${HttpUrls.getPdfVendorFeasibilityReport}${widget.customerId}');
+                                            Loader.stopLoader(context);
+                                            return bytes ?? Uint8List(0);
+                                          },
+                                        );
+                                      },
+                                    ),
                               ],
                             ),
                           ),

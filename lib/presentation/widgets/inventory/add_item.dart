@@ -132,6 +132,7 @@ class _AddItemWidgetState extends State<AddItemWidget> {
         expenseProvider.itemHSNController.text = widget.item!.hsnCode;
         expenseProvider.priceRangeFromController.text = widget.item!.priceFrom;
         expenseProvider.priceRangeToController.text = widget.item!.priceTo;
+        expenseProvider.itemTotalController.text = widget.item!.total;
         expenseProvider.setItemCategory(widget.item!.categoryId);
         expenseProvider.setItemUnit(widget.item!.unitId);
         expenseProvider
@@ -268,6 +269,20 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                               controller: expenseProvider.itemHSNController,
                               hintText: 'Make',
                               labelText: '',
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: CustomTextField(
+                              readOnly: false,
+                              height: 56,
+                              controller: expenseProvider.itemTotalController,
+                              hintText: 'Total Quantity',
+                              labelText: '',
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(
+                                    RegExp(r'^\d*\.?\d{0,2}')),
+                              ],
                             ),
                           ),
                         ],

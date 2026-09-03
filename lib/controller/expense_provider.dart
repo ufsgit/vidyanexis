@@ -110,6 +110,7 @@ class ExpenseProvider extends ChangeNotifier {
   final TextEditingController itemVolumeController = TextEditingController();
   final TextEditingController itemKindsController = TextEditingController();
   final TextEditingController itemModelController = TextEditingController();
+  final TextEditingController itemTotalController = TextEditingController();
   // Price range text fields
   final TextEditingController priceRangeFromController =
       TextEditingController();
@@ -1519,6 +1520,7 @@ class ExpenseProvider extends ChangeNotifier {
     itemCategoryController.clear();
     itemUnitController.clear();
     itemUnitPriceController.clear();
+    itemTotalController.clear();
     cgstController.clear();
     sgstController.clear();
     igstController.clear();
@@ -1927,6 +1929,7 @@ class ExpenseProvider extends ChangeNotifier {
             "HSNCode": itemHSNController.text.toString(),
             "Price_Range_From": priceRangeFromController.text.toString(),
             "Price_Range_To": priceRangeToController.text.toString(),
+            "total": int.tryParse(itemTotalController.text) ?? 0,
             "itemMaterials": _items.map((item) => item.toJson()).toList(),
             "Description": itemDescriptionController.text.toString(),
           });
