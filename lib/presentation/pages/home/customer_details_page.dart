@@ -2764,21 +2764,24 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           );
                                                                         },
                                                                       ),
-                                                                    CustomElevatedButton(
-                                                                      radius: 4,
-                                                                      backgroundColor:
-                                                                          AppColors
-                                                                              .whiteColor,
-                                                                      borderColor:
-                                                                          AppColors
-                                                                              .bluebutton,
-                                                                      textColor:
-                                                                          AppColors
-                                                                              .bluebutton,
-                                                                      buttonText:
-                                                                          'Rts Vender feasibility',
-                                                                      onPressed:
-                                                                          () async {
+                                                                    if ((settingsprovider.menuIsViewMap[184] == 1 ||
+                                                                            settingsprovider.menuIsViewMapPrint[184] == 1) &&
+                                                                        sideprovider.name != 'Lead /')
+                                                                      CustomElevatedButton(
+                                                                        radius: 4,
+                                                                        backgroundColor:
+                                                                            AppColors
+                                                                                .whiteColor,
+                                                                        borderColor:
+                                                                            AppColors
+                                                                                .bluebutton,
+                                                                        textColor:
+                                                                            AppColors
+                                                                                .bluebutton,
+                                                                        buttonText:
+                                                                            'Rts Vender feasibility',
+                                                                        onPressed:
+                                                                            () async {
                                                                         PdfActionHelper
                                                                             .showPdfOptions(
                                                                           context:
@@ -2947,6 +2950,52 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           );
                                                                         },
                                                                       ),
+                                                                      if ((settingsprovider.menuIsViewMap[185] == 1 ||
+                                                                              settingsprovider.menuIsViewMapPrint[185] == 1) &&
+                                                                          sideprovider.name != 'Lead /')
+                                                                        CustomElevatedButton(
+                                                                          radius: 4,
+                                                                          backgroundColor: AppColors.whiteColor,
+                                                                          borderColor: AppColors.bluebutton,
+                                                                          textColor: AppColors.bluebutton,
+                                                                          buttonText: 'Margin Voucher',
+                                                                          onPressed: () async {
+                                                                            PdfActionHelper.showPdfOptions(
+                                                                              context: context,
+                                                                              title: 'Margin Voucher',
+                                                                              pdfUrl: '${HttpUrls.getPdfMarginVoucher}${widget.customerId}',
+                                                                              onGenerate: () async {
+                                                                                await Loader.showLoader(context);
+                                                                                final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfMarginVoucher}${widget.customerId}');
+                                                                                Loader.stopLoader(context);
+                                                                                return bytes ?? Uint8List(0);
+                                                                              },
+                                                                            );
+                                                                          },
+                                                                        ),
+                                                                      if ((settingsprovider.menuIsViewMap[184] == 1 ||
+                                                                              settingsprovider.menuIsViewMapPrint[184] == 1) &&
+                                                                          sideprovider.name != 'Lead /')
+                                                                        CustomElevatedButton(
+                                                                          radius: 4,
+                                                                          backgroundColor: AppColors.whiteColor,
+                                                                          borderColor: AppColors.bluebutton,
+                                                                          textColor: AppColors.bluebutton,
+                                                                          buttonText: 'Vendor Feasibility Report',
+                                                                          onPressed: () async {
+                                                                            PdfActionHelper.showPdfOptions(
+                                                                              context: context,
+                                                                              title: 'Vendor Feasibility Report',
+                                                                              pdfUrl: '${HttpUrls.getPdfVendorFeasibilityReport}${widget.customerId}',
+                                                                              onGenerate: () async {
+                                                                                await Loader.showLoader(context);
+                                                                                final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfVendorFeasibilityReport}${widget.customerId}');
+                                                                                Loader.stopLoader(context);
+                                                                                return bytes ?? Uint8List(0);
+                                                                              },
+                                                                            );
+                                                                          },
+                                                                        ),
                                                                   ],
                                                                 ),
                                                                 const SizedBox(
@@ -4004,20 +4053,23 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                     );
                                                                   },
                                                                 ),
-                                                              CustomElevatedButton(
-                                                                radius: 4,
-                                                                backgroundColor:
-                                                                    AppColors
-                                                                        .whiteColor,
-                                                                borderColor:
-                                                                    AppColors
-                                                                        .bluebutton,
-                                                                textColor: AppColors
-                                                                    .bluebutton,
-                                                                buttonText:
-                                                                    'Rts Vender feasibility',
-                                                                onPressed:
-                                                                    () async {
+                                                              if ((settingsprovider.menuIsViewMap[184] == 1 ||
+                                                                      settingsprovider.menuIsViewMapPrint[184] == 1) &&
+                                                                  sideprovider.name != 'Lead /')
+                                                                CustomElevatedButton(
+                                                                  radius: 4,
+                                                                  backgroundColor:
+                                                                      AppColors
+                                                                          .whiteColor,
+                                                                  borderColor:
+                                                                      AppColors
+                                                                          .bluebutton,
+                                                                  textColor: AppColors
+                                                                      .bluebutton,
+                                                                  buttonText:
+                                                                      'Rts Vender feasibility',
+                                                                  onPressed:
+                                                                      () async {
                                                                   PdfActionHelper
                                                                       .showPdfOptions(
                                                                     context:

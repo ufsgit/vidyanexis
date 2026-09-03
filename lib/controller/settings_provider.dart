@@ -2615,6 +2615,31 @@ class SettingsProvider extends ChangeNotifier {
           //   recordingMenu.isDelete = 1;
           // }
 
+          // Force enable checkboxes for 184 and 185
+          for (var menuId in [184, 185]) {
+            var menu = _showMenu.firstWhere((e) => e.menuId == menuId,
+                orElse: () => MenuPermissionModel(
+                    menuId: menuId,
+                    menuName: menuId == 184 ? 'Rts_Vendor_Feasibility' : 'MarginVoucher',
+                    menuOrder: 0,
+                    menuOrderSub: 0,
+                    isEdit: 1,
+                    isSave: 1,
+                    isDelete: 1,
+                    isView: 1,
+                    menuStatus: 1,
+                    menuType: 1));
+            
+            if (!_showMenu.contains(menu)) {
+              _showMenu.add(menu);
+            } else {
+              menu.isView = 1;
+              menu.isEdit = 1;
+              menu.isSave = 1;
+              menu.isDelete = 1;
+            }
+          }
+
           _showViewPrint.clear();
           _showEditPrint.clear();
           _showDeletePrint.clear();
@@ -4971,6 +4996,31 @@ class SettingsProvider extends ChangeNotifier {
             recordingMenu.isEdit = 1;
             recordingMenu.isSave = 1;
             recordingMenu.isDelete = 1;
+          }
+
+          // Force enable checkboxes for 184 and 185
+          for (var menuId in [184, 185]) {
+            var menu = _showMenu.firstWhere((e) => e.menuId == menuId,
+                orElse: () => MenuPermissionModel(
+                    menuId: menuId,
+                    menuName: menuId == 184 ? 'Rts_Vendor_Feasibility' : 'MarginVoucher',
+                    menuOrder: 0,
+                    menuOrderSub: 0,
+                    isEdit: 1,
+                    isSave: 1,
+                    isDelete: 1,
+                    isView: 1,
+                    menuStatus: 1,
+                    menuType: 1));
+            
+            if (!_showMenu.contains(menu)) {
+              _showMenu.add(menu);
+            } else {
+              menu.isView = 1;
+              menu.isEdit = 1;
+              menu.isSave = 1;
+              menu.isDelete = 1;
+            }
           }
 
           _showView.clear();
