@@ -1085,14 +1085,14 @@ class CustomerDetailsProvider extends ChangeNotifier {
     });
     _billTotalAmount = bomTotal;
 
-    final double profitValue = double.tryParse(profitController.text) ?? 0.0;
+    // final double profitValue = double.tryParse(profitController.text) ?? 0.0;
     double finalTotal = bomTotal;
 
-    if (isPercentage) {
-      finalTotal = bomTotal + (bomTotal * profitValue / 100);
-    } else {
-      finalTotal = bomTotal + profitValue;
-    }
+    // if (isPercentage) {
+    //   finalTotal = bomTotal + (bomTotal * profitValue / 100);
+    // } else {
+    //   finalTotal = bomTotal + profitValue;
+    // }
     _mutipleItemsTotalAmount = finalTotal;
     final String itemName =
         _selectedItemName.isNotEmpty ? _selectedItemName : 'Item';
@@ -2102,8 +2102,14 @@ class CustomerDetailsProvider extends ChangeNotifier {
         : 0.0;
     double discount = double.tryParse(qDiscountController.text) ?? 0.0;
     double roundoff = double.tryParse(roundoffController.text) ?? 0.0;
+    double profit = double.tryParse(profitController.text) ?? 0.0;
+    if (isPercentage) {
+      profit = subtotal * profit / 100;
+    } else {
+      profit = profit;
+    }
 
-    double finalTotal = subtotal + shipping - subsidy - discount + roundoff;
+    double finalTotal = subtotal + profit + shipping - subsidy - discount + roundoff;
 
     // Access SettingsProvider using Singleton (No context, No global file)
     final settingsProvider = SettingsProvider();

@@ -1956,8 +1956,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                       child: TextField(
                         controller: customerDetailsProvider.profitController,
                         onChanged: (value) {
-                          customerDetailsProvider
-                              .recalculateCompanyQuotationItem();
+                          customerDetailsProvider.updateTotal();
                         },
                         decoration: const InputDecoration(
                           border: InputBorder.none,
