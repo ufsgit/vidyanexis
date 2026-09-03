@@ -20,6 +20,7 @@ class ReportListItem extends StatelessWidget {
   final VoidCallback? onEdit;
   final EdgeInsetsGeometry? padding;
   final bool showArrow;
+  final int? descriptionMaxLines;
 
   const ReportListItem({
     super.key,
@@ -40,6 +41,7 @@ class ReportListItem extends StatelessWidget {
     this.onEdit,
     this.padding,
     this.showArrow = true,
+    this.descriptionMaxLines = 1,
   });
 
   @override
@@ -132,7 +134,7 @@ class ReportListItem extends StatelessWidget {
                             const SizedBox(height: 2),
                             Text(
                               description!,
-                              maxLines: 1,
+                              maxLines: descriptionMaxLines,
                               overflow: TextOverflow.ellipsis,
                               style: GoogleFonts.plusJakartaSans(
                                 fontSize: 12,

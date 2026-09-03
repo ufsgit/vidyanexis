@@ -170,6 +170,10 @@ class _CustomerOutstandingReportPageState
                             'Customer Name',
                             'Enquiry Source',
                             'Phone no',
+                            'Project Start Date',
+                            'Expected Duration',
+                            'Actual Duration',
+                            'Difference',
                             'Project Cost',
                             'Received',
                             'Balance',
@@ -179,6 +183,10 @@ class _CustomerOutstandingReportPageState
                               'Customer Name': item.customerName,
                               'Enquiry Source': item.enquirySource,
                               'Phone no': item.phone,
+                              'Project Start Date': item.projectStartDate ?? '',
+                              'Expected Duration': item.expectedDuration,
+                              'Actual Duration': item.actualDuration ?? '',
+                              'Difference': item.difference ?? '',
                               'Project Cost': item.projectCost,
                               'Received': item.received,
                               'Balance': item.balance,
@@ -254,10 +262,14 @@ class _CustomerOutstandingReportPageState
                             _buildTableHeader('No.', flex: 1),
                             _buildTableHeader('Customer Name', flex: 3),
                             _buildTableHeader('Enquiry Source', flex: 2),
-                            _buildTableHeader('Phone no', flex: 3),
-                            _buildTableHeader('Project Cost', flex: 3),
-                            _buildTableHeader('Received', flex: 3),
-                            _buildTableHeader('Balance', flex: 3),
+                            _buildTableHeader('Phone no', flex: 2),
+                            _buildTableHeader('Start Date', flex: 2),
+                            _buildTableHeader('Exp. Duration', flex: 2),
+                            _buildTableHeader('Act. Duration', flex: 2),
+                            _buildTableHeader('Difference', flex: 2),
+                            _buildTableHeader('Project Cost', flex: 2),
+                            _buildTableHeader('Received', flex: 2),
+                            _buildTableHeader('Balance', flex: 2),
                           ],
                         ),
                       ),
@@ -341,23 +353,43 @@ class _CustomerOutstandingReportPageState
                                                 style: const TextStyle(
                                                     fontSize: 13))),
                                         Expanded(
-                                            flex: 3,
+                                            flex: 2,
                                             child: Text(item.phone,
                                                 style: const TextStyle(
                                                     fontSize: 13))),
                                         Expanded(
-                                            flex: 3,
+                                            flex: 2,
+                                            child: Text(item.projectStartDate ?? '-',
+                                                style: const TextStyle(
+                                                    fontSize: 13))),
+                                        Expanded(
+                                            flex: 2,
+                                            child: Text('${item.expectedDuration}',
+                                                style: const TextStyle(
+                                                    fontSize: 13))),
+                                        Expanded(
+                                            flex: 2,
+                                            child: Text(item.actualDuration?.toString() ?? '-',
+                                                style: const TextStyle(
+                                                    fontSize: 13))),
+                                        Expanded(
+                                            flex: 2,
+                                            child: Text(item.difference?.toString() ?? '-',
+                                                style: const TextStyle(
+                                                    fontSize: 13))),
+                                        Expanded(
+                                            flex: 2,
                                             child: Text('₹${item.projectCost}',
                                                 style: const TextStyle(
                                                     fontSize: 13))),
                                         Expanded(
-                                            flex: 3,
+                                            flex: 2,
                                             child: Text('₹${item.received}',
                                                 style: const TextStyle(
                                                     fontSize: 13,
                                                     color: Colors.green))),
                                         Expanded(
-                                          flex: 3,
+                                          flex: 2,
                                           child: Text(
                                             '₹${item.balance}',
                                             style: const TextStyle(
@@ -389,24 +421,24 @@ class _CustomerOutstandingReportPageState
                           children: [
                             const Expanded(flex: 1, child: SizedBox()),
                             const Expanded(
-                                flex: 5,
+                                flex: 3,
                                 child: Text('TOTAL',
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold))),
-                            const Expanded(flex: 3, child: SizedBox()),
+                            const Expanded(flex: 10, child: SizedBox()),
                             Expanded(
-                                flex: 3,
+                                flex: 2,
                                 child: Text('₹${provider.totalProjectCost}',
                                     style: const TextStyle(
                                         fontWeight: FontWeight.bold))),
                             Expanded(
-                                flex: 3,
+                                flex: 2,
                                 child: Text('₹${provider.totalReceived}',
                                     style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: Colors.green))),
                             Expanded(
-                                flex: 3,
+                                flex: 2,
                                 child: Text('₹${provider.totalBalance}',
                                     style: const TextStyle(
                                         fontWeight: FontWeight.bold,

@@ -10,6 +10,7 @@ import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/homepage.dart';
 import 'package:vidyanexis/presentation/pages/reports/customer_outstanding_report_mobile.dart';
+import 'package:vidyanexis/presentation/pages/dashboard/customer_outstanding_dashboard_list.dart';
 
 class CustomerOutstandingSummaryTab extends StatelessWidget {
   const CustomerOutstandingSummaryTab({super.key});
@@ -204,26 +205,35 @@ class CustomerOutstandingSummaryTab extends StatelessWidget {
             final double itemHeight = 135.0;
             final double aspectRatio = itemWidth / itemHeight;
 
-            return GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: items.length,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: crossAxisCount,
-                crossAxisSpacing: spacing,
-                mainAxisSpacing: spacing,
-                childAspectRatio: aspectRatio,
+            return SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: items.length,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: crossAxisCount,
+                      crossAxisSpacing: spacing,
+                      mainAxisSpacing: spacing,
+                      childAspectRatio: aspectRatio,
+                    ),
+                    itemBuilder: (context, index) {
+                      final item = items[index];
+                      return _OutstandingCard(
+                        title: item.title,
+                        value: item.value,
+                        icon: item.icon,
+                        gradient: item.gradient,
+                        onTap: navigateToReport,
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  const CustomerOutstandingDashboardList(),
+                ],
               ),
-              itemBuilder: (context, index) {
-                final item = items[index];
-                return _OutstandingCard(
-                  title: item.title,
-                  value: item.value,
-                  icon: item.icon,
-                  gradient: item.gradient,
-                  onTap: navigateToReport,
-                );
-              },
             );
           },
         );
