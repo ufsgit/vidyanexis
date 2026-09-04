@@ -1397,11 +1397,11 @@ class CustomerDetailsProvider extends ChangeNotifier {
   // Task Overview Tab Data
   List<Department> _customerTaskDepartments = [];
   List<Department> get customerTaskDepartments => _customerTaskDepartments;
+  
   List<TaskCustomerModel> _customerTaskOverviewTasks = [];
   List<TaskCustomerModel> get customerTaskOverviewTasks =>
-      _customerTaskOverviewTasks.isNotEmpty
-          ? _customerTaskOverviewTasks
-          : _taskList;
+      _customerTaskOverviewTasks;
+
   bool _isTaskOverviewLoading = false;
   bool get isTaskOverviewLoading => _isTaskOverviewLoading;
 
@@ -1416,84 +1416,45 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         final data = response.data;
-        if (data != null && (data is List && data.isNotEmpty)) {
-          // Use DashBoardTaskModel for parsing the department-based structure
-          final dashBoardModel =
-              DashBoardTaskModel.fromJson({'data': data, 'success': true});
-          final departments = dashBoardModel.getDepartments();
 
-          _customerTaskDepartments = departments;
+        if (data != null && data is List && data.isNotEmpty) {
+          // Use the existing fromJson – this is the correct way
+          _customerTaskOverviewTasks = data
+              .map<TaskCustomerModel>(
+                  (json) => TaskCustomerModel.fromJson(json))
+              .toList();
 
-          // Flatten tasks for the Gantt chart/Timeline view
-          List<TaskCustomerModel> flatTasks = [];
-          for (var dept in departments) {
-            if (dept.tasks != null) {
-              for (var t in dept.tasks!) {
-                flatTasks.add(TaskCustomerModel(
-                  taskId: t.taskTypeId ?? 0,
-                  taskMasterId: 0,
-                  description: '',
-                  entryDate: DateTime.now(),
-                  taskStatusId: 0,
-                  taskStatusName: '',
-                  toUsername: '',
-                  toUserId: 0,
-                  customerId: int.tryParse(customerId) ?? 0,
-                  createdBy: 0,
-                  createdByName: '',
-                  taskTypeId: t.taskTypeId ?? 0,
-                  taskTypeName: t.taskTypeName ?? 'Unknown',
-                  taskTime: '',
-                  taskDate: DateTime
-                      .now(), // Fallback if no specific date in this summary API
-                  deleteStatus: 0,
-                  taskUser: [],
-                  taskFiles: [],
-                  commissionNumber: 0,
-                ));
-              }
-            }
+          // Create simple departments (optional – for Gantt/Timeline if needed)
+          final Map<String, List<TaskCustomerModel>> groups = {};
+          for (var t in _customerTaskOverviewTasks) {
+            groups.putIfAbsent(t.taskTypeName, () => []).add(t);
           }
-          _customerTaskOverviewTasks = flatTasks;
+
+          _customerTaskDepartments = groups.entries.map((entry) {
+            return Department(
+              departmentName: 'Overview',
+              taskCount: entry.value.length,
+              tasks: [
+                Task(
+                  taskTypeName: entry.key,
+                  subTaskCount: entry.value.length,
+                  taskTypeId: entry.value.first.taskTypeId,
+                )
+              ],
+            );
+          }).toList();
         } else {
-          // Fallback logic: If Task_Overview is empty, use the regular taskList
-          print(
-              "Task_Overview is empty, falling back to _taskList which has ${_taskList.length} items");
-          if (_taskList.isNotEmpty) {
-            _customerTaskOverviewTasks = _taskList;
-
-            // Group tasks by type to create virtual "Overview" departments
-            Map<String, List<TaskCustomerModel>> groups = {};
-            for (var t in _taskList) {
-              groups.putIfAbsent(t.taskTypeName, () => []).add(t);
-            }
-
-            _customerTaskDepartments = groups.entries.map((entry) {
-              return Department(
-                departmentName: 'Overview',
-                taskCount: entry.value.length,
-                tasks: [
-                  Task(
-                    taskTypeName: entry.key,
-                    subTaskCount: entry.value.length,
-                    taskTypeId: entry.value.first.taskTypeId,
-                  )
-                ],
-              );
-            }).toList();
-          } else {
-            _customerTaskDepartments = [];
-            _customerTaskOverviewTasks = [];
-          }
+          _customerTaskOverviewTasks = [];
+          _customerTaskDepartments = [];
         }
       } else {
-        _customerTaskDepartments = [];
         _customerTaskOverviewTasks = [];
+        _customerTaskDepartments = [];
       }
     } catch (e) {
       print('Exception occurred in getCustomerTaskOverview: $e');
-      _customerTaskDepartments = [];
       _customerTaskOverviewTasks = [];
+      _customerTaskDepartments = [];
     } finally {
       _isTaskOverviewLoading = false;
       notifyListeners();
