@@ -60,7 +60,24 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
                     .map((e) => e.trim())
                     .where((e) => e.isNotEmpty)
                     .toList();
-                return taskDeptList.any((dept) => userDeptList.contains(dept));
+                    
+                List<String> transferDeptList = [];
+                if (user.transferDepartments != null) {
+                  if (user.transferDepartments is Iterable) {
+                    for (var t in user.transferDepartments) {
+                      if (t is Map) {
+                        final tId = t["Department_Id"]?.toString() ?? t["department_id"]?.toString();
+                        if (tId != null) transferDeptList.add(tId.trim());
+                      } else if (t != null) {
+                        transferDeptList.addAll(t.toString().split(',').map((e) => e.trim()));
+                      }
+                    }
+                  } else {
+                    transferDeptList.addAll(user.transferDepartments.toString().split(',').map((e) => e.trim()));
+                  }
+                }
+                
+                return taskDeptList.any((dept) => userDeptList.contains(dept) || transferDeptList.contains(dept));
               })
               .toList();
 

@@ -25,6 +25,7 @@ class SearchUserDetails {
   String? doj;
   String? firstName;
   String? lastName;
+  dynamic transferDepartments;
 
   SearchUserDetails(
       {required this.userDetailsId,
@@ -52,6 +53,7 @@ class SearchUserDetails {
       this.empCode,
       this.designation,
       this.doj,
+      this.transferDepartments,
       this.allowAppLogin});
 
   factory SearchUserDetails.fromJson(Map<String, dynamic> json) =>
@@ -80,6 +82,7 @@ class SearchUserDetails {
           doj: json["DOJ"]?.toString() ?? "",
           branchId: json["Branch_Id"]?.toString() ?? '0',
           branchName: json["Branch_Name"] ?? '',
+          transferDepartments: json["Transfer_Departments"] ?? json["transfer_departments"],
           departmentId: json["Department_Id"]?.toString() ?? '0',
           departmentName: json["Department_Name"]?.toString() ?? '');
 
