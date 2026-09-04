@@ -1826,14 +1826,24 @@ class LeadsProvider extends ChangeNotifier {
         log('Success');
 
         if (!AppStyles.isWebScreen(context)) {
-          customerProvider.setLimit();
-          _startLimit = 1;
-          _endLimit = 10;
-          customerProvider.customerData.clear();
-          _leadData.clear();
+          if (custId == 0) {
+            customerProvider.setLimit();
+            _startLimit = 1;
+            _endLimit = 10;
+            customerProvider.customerData.clear();
+            _leadData.clear();
+          }
         }
 
-        await getSearchLeads(context, isSilent: true);
+        if (custId == 0) {
+          await getSearchLeads(context, isSilent: true);
+        } else {
+          if (AppStyles.isWebScreen(context)) {
+            await getSearchLeads(context, isSilent: true, isWebPagination: true);
+          } else {
+            await getSearchLeads(context, isSilent: true); // Mobile behavior resets list
+          }
+        }
         leadDetailsProvider.fetchLeadDetails(custId.toString(), context);
         leadDetailsProvider.fetchFollowUpHistory(custId.toString());
         await customerProvider.getSearchCustomers(context, isSilent: true);

@@ -6,6 +6,10 @@ class CustomerOutstandingReportModel {
   final String projectCost;
   final String received;
   final String balance;
+  final String? projectStartDate;
+  final int expectedDuration;
+  final int? actualDuration;
+  final int? difference;
 
   CustomerOutstandingReportModel({
     required this.customerId,
@@ -15,6 +19,10 @@ class CustomerOutstandingReportModel {
     required this.projectCost,
     required this.received,
     required this.balance,
+    this.projectStartDate,
+    required this.expectedDuration,
+    this.actualDuration,
+    this.difference,
   });
 
   factory CustomerOutstandingReportModel.fromJson(Map<String, dynamic> json) {
@@ -28,6 +36,10 @@ class CustomerOutstandingReportModel {
       projectCost: json["Project_Cost"]?.toString() ?? '0.00',
       received: json["Total_Received"]?.toString() ?? '0.00',
       balance: json["Balance"]?.toString() ?? '0.00',
+      projectStartDate: json["Project_Start_Date"]?.toString(),
+      expectedDuration: int.tryParse(json["Expected_Duration"]?.toString() ?? "0") ?? 0,
+      actualDuration: int.tryParse(json["Actual_Duration"]?.toString() ?? ""),
+      difference: int.tryParse(json["Difference"]?.toString() ?? ""),
     );
   }
 
@@ -40,5 +52,9 @@ class CustomerOutstandingReportModel {
         "Project_Cost": projectCost,
         "Received": received,
         "Balance": balance,
+        "Project_Start_Date": projectStartDate,
+        "Expected_Duration": expectedDuration,
+        "Actual_Duration": actualDuration,
+        "Difference": difference,
       };
 }

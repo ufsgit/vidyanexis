@@ -481,13 +481,13 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                   sideprovider.replaceWidget(true, '');
                                   sideprovider.replaceWidgetCustomer(true, '');
                                   AppStyles.isWebScreen(context)
-                                      ? leadProvider.getSearchLeadsNoContext()
-                                      : leadProvider.getSearchLeads(context);
+                                      ? leadProvider.getSearchLeads(context, isSilent: true, isWebPagination: true)
+                                      : leadProvider.getSearchLeads(context, isSilent: true);
                                   AppStyles.isWebScreen(context)
                                       ? customerProvider
-                                          .getSearchCustomersNoContext()
+                                          .getSearchCustomers(context, isSilent: true)
                                       : customerProvider
-                                          .getSearchCustomers(context);
+                                          .getSearchCustomers(context, isSilent: true);
                                   leadDetailsProvider.fetchLeadDetailsNoContext(
                                       widget.customerId);
                                 },
@@ -635,7 +635,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
 
                                           // Refresh the list silently on the previous page
                                           customerProvider
-                                              .getSearchCustomersNoContext();
+                                              .getSearchCustomers(context, isSilent: true);
                                         }
                                       },
                                     );

@@ -265,7 +265,8 @@ class _CustomerOutstandingReportMobileState
                                 status: item.enquirySource,
                                 statusColor: AppColors.primaryBlue,
                                 description:
-                                    'Cost: ₹${item.projectCost} | Recv: ₹${item.received}',
+                                    'Cost: ₹${item.projectCost} | Recv: ₹${item.received}\nStart: ${item.projectStartDate ?? '-'} | Exp. Dur: ${item.expectedDuration}\nAct. Dur: ${item.actualDuration ?? '-'} | Diff: ${item.difference ?? '-'}',
+                                descriptionMaxLines: 3,
                                 bottomRightText: 'Bal: ₹${item.balance}',
                                 onTap: () {},
                               );

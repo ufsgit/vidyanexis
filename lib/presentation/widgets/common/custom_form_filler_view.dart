@@ -39,6 +39,7 @@ class CustomFormFillerView extends StatefulWidget {
 
 class _CustomFormFillerViewState extends State<CustomFormFillerView> {
   final Map<String, dynamic> _fieldValues = {};
+  final Map<String, TextEditingController> _fieldRemarks = {};
 
   @override
   void initState() {
@@ -49,6 +50,10 @@ class _CustomFormFillerViewState extends State<CustomFormFillerView> {
       } else {
         _fieldValues[field.id] = field.value;
       }
+
+      if (field.type == FieldType.checkbox) {
+        _fieldRemarks[field.id] = TextEditingController(text: field.remark ?? '');
+      }
     }
   }
 
@@ -58,6 +63,9 @@ class _CustomFormFillerViewState extends State<CustomFormFillerView> {
       if (value is TextEditingController) {
         value.dispose();
       }
+    });
+    _fieldRemarks.forEach((key, value) {
+      value.dispose();
     });
     super.dispose();
   }
@@ -131,6 +139,9 @@ class _CustomFormFillerViewState extends State<CustomFormFillerView> {
           "custom_field_name": field.label,
           "custom_field_type_id": typeId,
           "datavalue": finalValue,
+          "Remark": (field.type == FieldType.checkbox) 
+              ? (_fieldRemarks[field.id]?.text ?? "")
+              : "",
         });
       }
 
@@ -396,6 +407,10 @@ class _CustomFormFillerViewState extends State<CustomFormFillerView> {
   }
 
   Widget _buildCheckbox(FieldModel field) {
+    if (!_fieldRemarks.containsKey(field.id)) {
+      _fieldRemarks[field.id] = TextEditingController(text: field.remark ?? '');
+    }
+
     List<String> options = field.checkBoxOptions ?? [];
     List<String> selected = (_fieldValues[field.id] ?? "")
         .toString()
@@ -404,26 +419,49 @@ class _CustomFormFillerViewState extends State<CustomFormFillerView> {
         .toList();
 
     return Column(
-      children: options.map((opt) {
-        bool isChecked = selected.contains(opt);
-        return CheckboxListTile(
-          title: Text(opt, style: const TextStyle(fontSize: 14)),
-          value: isChecked,
-          dense: true,
-          controlAffinity: ListTileControlAffinity.leading,
-          contentPadding: EdgeInsets.zero,
-          onChanged: (val) {
-            setState(() {
-              if (val == true) {
-                selected.add(opt);
-              } else {
-                selected.remove(opt);
-              }
-              _fieldValues[field.id] = selected.join(',');
-            });
-          },
-        );
-      }).toList(),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ...options.map((opt) {
+          bool isChecked = selected.contains(opt);
+          return CheckboxListTile(
+            title: Text(opt, style: const TextStyle(fontSize: 14)),
+            value: isChecked,
+            dense: true,
+            controlAffinity: ListTileControlAffinity.leading,
+            contentPadding: EdgeInsets.zero,
+            onChanged: (val) {
+              setState(() {
+                if (val == true) {
+                  selected.add(opt);
+                } else {
+                  selected.remove(opt);
+                }
+                _fieldValues[field.id] = selected.join(',');
+              });
+            },
+          );
+        }),
+        if (selected.isNotEmpty) ...[
+          const SizedBox(height: 8),
+          Container(
+            decoration: BoxDecoration(
+              color: const Color(0xFFF8FAFC),
+              borderRadius: BorderRadius.circular(4),
+              border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+            ),
+            child: TextFormField(
+              controller: _fieldRemarks[field.id],
+              decoration: const InputDecoration(
+                hintText: 'Enter Remark',
+                hintStyle: TextStyle(color: Color(0xFF94A3B8), fontSize: 13),
+                border: InputBorder.none,
+                contentPadding:
+                    EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              ),
+            ),
+          ),
+        ]
+      ],
     );
   }
 
