@@ -213,6 +213,35 @@ class SearchLeadModel {
     return null;
   }
 
+  DateTime? get parsedRegistrationDate {
+    final dateStr = (registeredDate ?? '').trim();
+    if (dateStr.isEmpty || dateStr.toLowerCase() == 'null') return null;
+    final parsed = DateTime.tryParse(dateStr);
+    if (parsed != null) return parsed;
+    try {
+      if (dateStr.contains('/')) {
+        final parts = dateStr.split(' ');
+        final dateParts = parts[0].split('/');
+        if (dateParts.length == 3) {
+          int day = int.parse(dateParts[0]);
+          int month = int.parse(dateParts[1]);
+          int year = int.parse(dateParts[2]);
+          return DateTime(year, month, day);
+        }
+      } else if (dateStr.contains('-')) {
+        final parts = dateStr.split(' ');
+        final dateParts = parts[0].split('-');
+        if (dateParts.length == 3 && dateParts[0].length <= 2) {
+          int day = int.parse(dateParts[0]);
+          int month = int.parse(dateParts[1]);
+          int year = int.parse(dateParts[2]);
+          return DateTime(year, month, day);
+        }
+      }
+    } catch (_) {}
+    return null;
+  }
+
   SearchLeadModel({
     required this.customerId,
     required this.customerName,

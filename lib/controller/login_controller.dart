@@ -13,6 +13,7 @@ import 'package:vidyanexis/presentation/pages/home/homepage.dart';
 import 'package:vidyanexis/controller/location_tracking_provider.dart';
 import 'package:vidyanexis/helpers/location_tracking_service.dart';
 import 'package:vidyanexis/utils/util_functions.dart';
+import 'package:vidyanexis/main.dart';
 
 class LoginController extends ChangeNotifier {
   String _userName = '';
@@ -44,13 +45,16 @@ class LoginController extends ChangeNotifier {
           endPoint: HttpUrls.loginCheck,
           bodyData: {"userName": userName, "password": passWord});
 
+      final BuildContext safeContext = navigatorKey.currentContext ?? context;
+      if (!safeContext.mounted) return;
+
       if (response != null && response.statusCode == 200) {
         final data = response.data;
 
-        if (!AppStyles.isWebScreen(context)) {
+        if (!AppStyles.isWebScreen(safeContext)) {
           final allowAppLogin = data['Allow_App_Login']?.toString() ?? '0';
           if (allowAppLogin == '0' || allowAppLogin == 'false') {
-            ScaffoldMessenger.of(context).showSnackBar(
+            navigatorKey.currentState?.showSnackBar(
               SnackBar(
                 content: const Center(
                     child: Text('App access is disabled for your account')),
@@ -58,7 +62,7 @@ class LoginController extends ChangeNotifier {
                 duration: const Duration(seconds: 3),
               ),
             );
-            Loader.stopLoader(context);
+            Loader.stopLoader(safeContext);
             return;
           }
         }
@@ -82,14 +86,14 @@ class LoginController extends ChangeNotifier {
         if (data['User_Details_Id'] != null) {
           _loggedIn = true;
           preferences.setBool('IsLoggedIn', loggedIn);
-          final provider = Provider.of<SidebarProvider>(context, listen: false);
+          final provider = Provider.of<SidebarProvider>(safeContext, listen: false);
           provider.setMenuId(0, 0);
 
           // Initiate location tracking for the newly authenticated employee session
           try {
             final locationProvider =
-                Provider.of<LocationTrackingProvider>(context, listen: false);
-            locationProvider.startTracking(context);
+                Provider.of<LocationTrackingProvider>(safeContext, listen: false);
+            locationProvider.startTracking(safeContext);
           } catch (e) {
             if (kDebugMode) {
               print('Location tracking auto-start note on login: $e');
@@ -99,7 +103,7 @@ class LoginController extends ChangeNotifier {
           context.go(HomePage.route);
           log('Login Success');
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
+          navigatorKey.currentState?.showSnackBar(
             SnackBar(
               content: const Center(child: Text('Invalid Login')),
               backgroundColor: Colors.red.shade400,
@@ -107,18 +111,21 @@ class LoginController extends ChangeNotifier {
             ),
           );
         }
-        Loader.stopLoader(context);
+        Loader.stopLoader(safeContext);
         notifyListeners();
         print(data);
       } else {
-        showErrorSnackBar(context,
+        showErrorSnackBar(safeContext,
             response?.statusCode == 0 ? response?.statusMessage : response);
-        Loader.stopLoader(context);
+        Loader.stopLoader(safeContext);
       }
     } catch (e) {
       print('Exception occurred: $e');
-      showErrorSnackBar(context, e);
-      Loader.stopLoader(context);
+      final BuildContext safeContext = navigatorKey.currentContext ?? context;
+      if (safeContext.mounted) {
+        showErrorSnackBar(safeContext, e);
+        Loader.stopLoader(safeContext);
+      }
     }
   }
 

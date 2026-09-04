@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/main.dart';
 
 void showToastInDialog(String message, BuildContext context) {
   OverlayEntry overlayEntry;
@@ -37,9 +38,10 @@ void showToastInDialog(String message, BuildContext context) {
   });
 }
 
+
 void showFriendlySnackBar(BuildContext context, String message,
     {bool isError = false}) {
-  ScaffoldMessenger.of(context).showSnackBar(
+  navigatorKey.currentState?.showSnackBar(
     SnackBar(
       content: Row(
         children: [

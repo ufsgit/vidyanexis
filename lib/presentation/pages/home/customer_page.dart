@@ -459,6 +459,10 @@ class _CustomerPageState extends State<CustomerPage> {
                                       value: 7, child: Text('Name (A-Z)')),
                                   const PopupMenuItem(
                                       value: 8, child: Text('Name (Z-A)')),
+                                  const PopupMenuItem(
+                                      value: 10, child: Text('Registration Date (ASC)')),
+                                  const PopupMenuItem(
+                                      value: 11, child: Text('Registration Date (DESC)')),
                                 ],
                               ),
                               CustomFilterButton(
@@ -670,6 +674,10 @@ class _CustomerPageState extends State<CustomerPage> {
                                   value: 7, child: Text('Name (A-Z)')),
                               const PopupMenuItem(
                                   value: 8, child: Text('Name (Z-A)')),
+                              const PopupMenuItem(
+                                  value: 10, child: Text('Registration Date (ASC)')),
+                              const PopupMenuItem(
+                                  value: 11, child: Text('Registration Date (DESC)')),
                             ],
                           ),
                           const SizedBox(width: 8),

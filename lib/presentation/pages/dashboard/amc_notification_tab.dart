@@ -29,7 +29,7 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
           Provider.of<DropDownProvider>(context, listen: false);
 
       dropdownProvider.getUserDetails(context);
-      dropdownProvider.getTaskType(context);
+      dropdownProvider.getTaskType(context, fetchUserSpecific: false, forceRefresh: true);
       provider.getAmcNotification(context);
     });
   }
@@ -62,6 +62,14 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
       WarrentyReportProvider provider) async {
     int? selectedTaskTypeId;
     String? selectedTaskTypeName;
+
+    try {
+      final amcTask = dropdownProvider.taskType.firstWhere(
+          (t) => t.taskTypeName.toLowerCase().trim() == 'amc service task');
+      selectedTaskTypeId = amcTask.taskTypeId;
+      selectedTaskTypeName = amcTask.taskTypeName;
+    } catch (_) {}
+
     int? selectedUserId;
     String? selectedUserName;
     final remarksController = TextEditingController();
@@ -86,7 +94,15 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
                       decoration: const InputDecoration(
                           labelText: 'AMC Service Task Type'),
                       value: selectedTaskTypeId,
-                      items: dropdownProvider.taskType.map((taskType) {
+                      items: dropdownProvider.taskType
+                          .where((t) => t.taskTypeName.toLowerCase().trim() == 'amc service task')
+                          .fold<List<dynamic>>([], (prev, element) {
+                            if (!prev.any((e) => e.taskTypeId == element.taskTypeId)) {
+                              prev.add(element);
+                            }
+                            return prev;
+                          })
+                          .map((taskType) {
                         return DropdownMenuItem<int>(
                           value: taskType.taskTypeId,
                           child: Text(taskType.taskTypeName),
@@ -117,7 +133,14 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
                       decoration:
                           const InputDecoration(labelText: 'Assigned Staff'),
                       value: selectedUserId,
-                      items: dropdownProvider.searchUserDetails.map((user) {
+                      items: dropdownProvider.searchUserDetails
+                          .fold<List<dynamic>>([], (prev, element) {
+                            if (!prev.any((e) => e.userDetailsId == element.userDetailsId)) {
+                              prev.add(element);
+                            }
+                            return prev;
+                          })
+                          .map((user) {
                         return DropdownMenuItem<int>(
                           value: user.userDetailsId,
                           child: Text(user.userDetailsName ?? 'Unknown'),

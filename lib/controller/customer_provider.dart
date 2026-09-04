@@ -173,6 +173,14 @@ class CustomerProvider extends ChangeNotifier {
         _selectedSortOption = 2;
         _sortOrder = 'DESC';
         break;
+      case 10:
+        _selectedSortOption = 5;
+        _sortOrder = 'ASC';
+        break;
+      case 11:
+        _selectedSortOption = 5;
+        _sortOrder = 'DESC';
+        break;
     }
     currentPage = 1;
     _startLimit = 1;
@@ -306,6 +314,17 @@ class CustomerProvider extends ChangeNotifier {
                 if (dateA == null) return 1;
                 if (dateB == null) return -1;
                 return dateB.compareTo(dateA);
+              });
+            } else if (_selectedSortOption == 5) {
+              _customerData.sort((a, b) {
+                final dateA = a.parsedRegistrationDate;
+                final dateB = b.parsedRegistrationDate;
+                if (dateA == null && dateB == null) return 0;
+                if (dateA == null) return 1;
+                if (dateB == null) return -1;
+                return _sortOrder == 'ASC'
+                    ? dateA.compareTo(dateB)
+                    : dateB.compareTo(dateA);
               });
             }
 
