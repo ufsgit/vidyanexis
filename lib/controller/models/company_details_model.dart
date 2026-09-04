@@ -31,6 +31,8 @@ class CompanyPermission {
         return "Task Duplicate Button";
       case 25:
         return "solar pv system specification";
+      case 31:
+        return "New Dashboard Count";
       default:
         return "Permission $companyPermissionId";
     }
@@ -77,6 +79,9 @@ class CompanyPermission {
           break;
         case 25:
           cap = "solar pv system specification";
+          break;
+        case 31:
+          cap = "New Dashboard Count";
           break;
       }
     }
