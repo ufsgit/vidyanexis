@@ -4214,6 +4214,39 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> deleteRefund(
+      String refundId, String customerId, BuildContext context) async {
+    try {
+      Loader.showLoader(context);
+
+      final response = await HttpRequest.httpDeleteRequest(
+          endPoint: '${HttpUrls.deleteRefund}/$refundId');
+
+      if (!context.mounted) return;
+      Loader.stopLoader(context);
+      if (response?.statusCode == 200) {
+        getRefundDetails(customerId, context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Refund Deleted Successfully')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text(
+                  'Failed to delete refund: ${response?.statusCode} ${response?.statusMessage}')),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        Loader.stopLoader(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('An error occurred: $e')),
+        );
+      }
+      print('Exception occurred: $e');
+    }
+  }
+
   Future<void> getInvoiceListApi(
       String customerId, BuildContext context) async {
     _isLoading = true;

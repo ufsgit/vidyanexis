@@ -134,6 +134,11 @@ class RefundCard extends StatelessWidget {
                               try {
                                 if (context.mounted) {
                                   Navigator.of(context).pop();
+                                  customerDetailsProvider.deleteRefund(
+                                    refund.refundId?.toString() ?? '0',
+                                    customerId,
+                                    context,
+                                  );
                                 }
                               } catch (e) {
                                 print('Error closing dialog: $e');

@@ -341,6 +341,7 @@ class HttpUrls {
       "lead/Get_CustomFields_On_EnquiryFor";
   static String saveRefund = "service/Save_Refund_Details";
   static String getRefundDetails = "service/Get_Refund_Details";
+  static String deleteRefund = "service/Delete_Refund";
   static String getAllLeadDropDown = "lead/Get_All_Lead_Dropdown";
   static String getAllTax = "tax/Get_Tax";
   static String saveTaskData = "task_data/Save_Task_Data";
