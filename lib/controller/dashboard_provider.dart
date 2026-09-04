@@ -654,9 +654,9 @@ class DashboardProvider extends ChangeNotifier {
         isPaymentLoaded = true;
         break;
       case 6: // Dashboard count
-        if (!isDashboardCountLoaded) {
-          await getLeadDashboardCount();
-        }
+        // if (!isDashboardCountLoaded) {
+          await getLeadDashboardCount(context:context);
+        // }
         break;
       case 7: // Customer Outstanding Summary
         await getCustomerOutstandingSummary();
@@ -718,12 +718,14 @@ class DashboardProvider extends ChangeNotifier {
   int _requestId = 0;
 
   /// like: [{"New_Leads": 1, "Missed_Leads": 117, ...}]
-  Future<void> getLeadDashboardCount({bool shouldNotify = true}) async {
+  Future<void> getLeadDashboardCount(
+      {required BuildContext context, bool shouldNotify = true}) async {
     final currentRequestId = ++_requestId;
     final startTime = DateTime.now().millisecondsSinceEpoch;
     print('[PERF-RELOAD] Reload started for getLeadDashboardCount (Req #$currentRequestId)');
     print('[PERF-RELOAD] Loading state enabled');
     try {
+      final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
       isDashBoardLoading = true;
       if (shouldNotify) notifyListeners();
 
@@ -736,7 +738,10 @@ class DashboardProvider extends ChangeNotifier {
 
       print('[PERF-RELOAD] API getLeadDashboardCount started');
       final response = await HttpRequest.httpGetRequest(
-          endPoint: HttpUrls.getLeadDashboard, bodyData: body);
+          endPoint: settingsProvider.newDashboardCount == 1
+              ? HttpUrls.getNewLeadDashboard // only for comorin project
+              : HttpUrls.getLeadDashboard,
+          bodyData: body);
 
       final apiTime = DateTime.now().millisecondsSinceEpoch - startTime;
       print('[PERF-RELOAD] API getLeadDashboardCount completed: $apiTime ms');

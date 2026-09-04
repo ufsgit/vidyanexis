@@ -111,10 +111,25 @@ class DashboardCountTab extends StatelessWidget {
               final int count = item.value;
               final theme = _getCardTheme(index);
 
+              // Special text/count colors when newDashboardCount == 1
+              Color? countColor;
+              Color? titleColor;
+              if (settingsProvider.newDashboardCount == 1) {
+                if (keyword == 'Missed_Leads') {
+                  countColor = Colors.red;
+                  titleColor = Colors.red;
+                } else if (keyword == 'Upcoming_Followup') {
+                  countColor = Colors.amber.shade700; // yellow-ish
+                  titleColor = Colors.amber.shade700;
+                }
+              }
+
               return _DashboardCard(
                 keyword: keyword,
                 count: count,
                 theme: theme,
+                countColor: countColor,
+                titleColor: titleColor,
                 onTap: () {
                   Navigator.push(
                     context,
@@ -233,12 +248,16 @@ class _DashboardCard extends StatefulWidget {
   final String keyword;
   final int count;
   final _CardTheme theme;
+  final Color? countColor;
+  final Color? titleColor;
   final VoidCallback onTap;
 
   const _DashboardCard({
     required this.keyword,
     required this.count,
     required this.theme,
+    this.countColor,
+    this.titleColor,
     required this.onTap,
   });
 
@@ -310,7 +329,8 @@ class _DashboardCardState extends State<_DashboardCard> {
                         style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.w900,
-                          color: Colors.black.withOpacity(0.8),
+                          color: widget.countColor ??
+                              Colors.black.withOpacity(0.8),
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -319,7 +339,8 @@ class _DashboardCardState extends State<_DashboardCard> {
                         style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
-                          color: Colors.black.withOpacity(0.5),
+                          color: widget.titleColor ??
+                              Colors.black.withOpacity(0.5),
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,

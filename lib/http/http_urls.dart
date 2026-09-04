@@ -500,4 +500,6 @@ class HttpUrls {
   static String getProjectDurationReport = "lead/Get_Project_Duration_Report";
 
   static String logout = 'user_details/User_Logout';
+  static String getNewLeadDashboard = "lead/Get_Lead_Dashboard_comorin";
+  static String searchNewLeadDashboard = "lead/Search_lead_dashboard_comorin";
 }

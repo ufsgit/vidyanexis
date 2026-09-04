@@ -548,6 +548,7 @@ class SettingsProvider extends ChangeNotifier {
   int _documentButtonTaskStatus = 0;
   int _taskDuplicateButton = 0;
   int _solarPvSystemSpecification = 1;
+  int _newDashboardCount = 0;
   int? _selectedStatusId;
 
   int get toggleValue => _toggleValue;
@@ -570,6 +571,7 @@ class SettingsProvider extends ChangeNotifier {
   int get documentButtonTaskStatus => _documentButtonTaskStatus;
   int get taskDuplicateButton => _taskDuplicateButton;
   int get solarPvSystemSpecification => _solarPvSystemSpecification;
+  int get newDashboardCount => _newDashboardCount;
 
   int _jobSheet = 0;
   int get jobSheet => _jobSheet;
@@ -678,6 +680,11 @@ class SettingsProvider extends ChangeNotifier {
             (caption.toLowerCase().contains('solar_pv_system_specification') ||
                 caption.toLowerCase().contains('solar pv system specification')))) {
       _solarPvSystemSpecification = value;
+    } else if (permissionId == 31 ||
+        (caption != null &&
+            (caption.toLowerCase().contains('new_dashboard_count') ||
+                caption.toLowerCase().contains('new dashboard count')))) {
+      _newDashboardCount = value;
     }
   }
 
@@ -706,6 +713,12 @@ class SettingsProvider extends ChangeNotifier {
 
   void setLeadPermissionMeAndAll(int value) {
     _leadPermissionMeAndAll = value;
+    notifyListeners();
+  }
+
+  void setNewDashboardCount(int value) {
+    _newDashboardCount = value;
+    _syncStateToPermissionsList(31, value);
     notifyListeners();
   }
 
@@ -4879,6 +4892,7 @@ class SettingsProvider extends ChangeNotifier {
     _taskDuplicateButton = 0;
     _hideWarranty = 0;
     _solarPvSystemSpecification = 1;
+    _newDashboardCount = 0;
     notifyListeners();
   }
 

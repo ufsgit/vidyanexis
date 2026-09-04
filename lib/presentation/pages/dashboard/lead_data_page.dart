@@ -316,6 +316,7 @@ class _LeadDataPageState extends State<LeadDataPage> {
   }
 
   Future<void> _fetchLeads({bool isPagination = false}) async {
+    final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
     if (!isPagination) {
       setState(() {
         _isLoading = true;
@@ -337,7 +338,9 @@ class _LeadDataPageState extends State<LeadDataPage> {
 
     try {
       final response = await HttpRequest.httpGetRequest(
-        endPoint: HttpUrls.searchLeadDashboard,
+        endPoint: settingsProvider.newDashboardCount == 1
+            ? HttpUrls.searchNewLeadDashboard
+            : HttpUrls.searchLeadDashboard,
         bodyData: {
           "lead_Name": "",
           "Is_Date": widget.fromDate.isNotEmpty ? "1" : "0",
