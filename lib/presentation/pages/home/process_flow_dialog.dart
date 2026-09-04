@@ -291,12 +291,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                           // Status Segmented Control (Wrap instead of horizontal scroll)
                           Container(
                             width: double.infinity,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(4),
-                              border: Border.all(
-                                  color: const Color(0xFFCBD5E1), width: 1.0),
-                            ),
+
                             padding: const EdgeInsets.all(12),
                             child: Wrap(
                               spacing: 8,
@@ -342,26 +337,22 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                         horizontal: 14, vertical: 8),
                                     decoration: BoxDecoration(
                                       color: isSelected
-                                          ? const Color(0xFF1A7AE8)
-                                              .withOpacity(0.1)
-                                          : const Color(0xFFF1F5F9),
+                                          ? const Color(0xFFF8FAFC)
+                                          : Colors.white,
                                       borderRadius: BorderRadius.circular(4),
                                       border: Border.all(
                                         color: isSelected
-                                            ? const Color(0xFF1A7AE8)
-                                            : Colors.transparent,
+                                            ? const Color.fromARGB(255, 82, 145, 245)
+                                            : const Color(0xFFCBD5E1),
+                                        width: isSelected ? 1.5 : 1.0,
                                       ),
                                     ),
                                     child: Text(
-                                      (status.statusName ?? '').toUpperCase(),
+                                      status.statusName ?? '',
                                       style: GoogleFonts.plusJakartaSans(
-                                        color: isSelected
-                                            ? const Color(0xFF1A7AE8)
-                                            : const Color(0xFF64748B),
-                                        fontWeight: isSelected
-                                            ? FontWeight.w700
-                                            : FontWeight.w600,
-                                        fontSize: 11,
+                                        color: const Color(0xFF1E293B),
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 14,
                                       ),
                                     ),
                                   ),
@@ -1424,16 +1415,12 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(4),
           border: Border.all(
-            color: isSelected
-                ? const Color(0xFF1A7AE8).withOpacity(0.4)
-                : const Color(0xFFF1F5F9),
-            width: 1.2,
+            color: const Color(0xFFCBD5E1),
+            width: 1.0,
           ),
           boxShadow: [
             BoxShadow(
-              color: isSelected
-                  ? const Color(0xFF1A7AE8).withOpacity(0.08)
-                  : Colors.black.withOpacity(0.02),
+              color: Colors.black.withOpacity(0.02),
               blurRadius: isSelected ? 12 : 6,
               offset: const Offset(0, 4),
             )
@@ -1447,9 +1434,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
             style: GoogleFonts.plusJakartaSans(
               fontSize: 13,
               fontWeight: FontWeight.w700,
-              color: isSelected
-                  ? const Color(0xFF1A7AE8).withOpacity(0.8)
-                  : const Color(0xFF1E293B),
+              color: const Color(0xFF1E293B),
             ),
           ),
           subtitle: subtitle != null
@@ -1473,11 +1458,11 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: isSelected
-                      ? const Color(0xFF1A7AE8).withOpacity(0.6)
+                      ? const Color(0xFF1E293B)
                       : Colors.transparent,
                   border: Border.all(
                     color: isSelected
-                        ? const Color(0xFF1A7AE8).withOpacity(0.4)
+                        ? const Color(0xFF1E293B)
                         : const Color(0xFFCBD5E1),
                     width: 1.2,
                   ),

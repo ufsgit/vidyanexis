@@ -67,37 +67,7 @@ class _ExpenseTypeState extends State<ExpenseType> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header Row for Admin Expense Types
-              Padding(
-                padding: const EdgeInsets.only(bottom: 16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Expense Types Master Data',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textBlack,
-                      ),
-                    ),
-                    ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.secondaryBlue,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                      ),
-                      onPressed: _openAddDialog,
-                      icon: const Icon(Icons.add, size: 18),
-                      label: const Text('Add Expense Type'),
-                    ),
-                  ],
-                ),
-              ),
+
 
               if (settingsProvider.expenseTypeList.isEmpty)
                 const CommonEmptyState(message: 'No expense types found.')
