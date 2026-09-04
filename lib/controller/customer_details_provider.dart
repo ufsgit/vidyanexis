@@ -1079,21 +1079,21 @@ class CustomerDetailsProvider extends ChangeNotifier {
       return;
     }
 
-    final double bomTotal = _billOfMaterialsItems.fold(0.0, (sum, item) {
-      final amount = double.tryParse(item.amount ?? '0') ?? 0.0;
-      return sum + amount;
-    });
-    _billTotalAmount = bomTotal;
+    // final double bomTotal = _billOfMaterialsItems.fold(0.0, (sum, item) {
+    //   final amount = double.tryParse(item.amount ?? '0') ?? 0.0;
+    //   return sum + amount;
+    // });
+    // _billTotalAmount = bomTotal;
 
     // final double profitValue = double.tryParse(profitController.text) ?? 0.0;
-    double finalTotal = bomTotal;
+    double finalTotal = _mutipleItemsTotalAmount;
 
     // if (isPercentage) {
     //   finalTotal = bomTotal + (bomTotal * profitValue / 100);
     // } else {
     //   finalTotal = bomTotal + profitValue;
     // }
-    _mutipleItemsTotalAmount = finalTotal;
+    // _mutipleItemsTotalAmount = finalTotal;
     final String itemName =
         _selectedItemName.isNotEmpty ? _selectedItemName : 'Item';
 
