@@ -5671,7 +5671,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                             _buildHeaderCell('Action Required', flex: 3),
                             _buildHeaderCell('Schedule', flex: 2),
                             _buildHeaderCell('Created Date', flex: 2),
-                            _buildHeaderCell('Status', flex: 1),
+                            _buildHeaderCell('Status', flex: 2),
                             _buildHeaderCell('Options', flex: 1),
                           ],
                         ),
@@ -5800,7 +5800,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                             : '',
                                         flex: 2),
                                     _buildWidgetCell(
-                                      flex: 1,
+                                      flex: 2,
                                       child: Align(
                                         alignment: Alignment.centerLeft,
                                         child: Container(
