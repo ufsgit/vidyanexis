@@ -677,32 +677,7 @@ class _LeadsPageState extends State<LeadPage> {
                             ),
                             if (settingsProvider.menuIsSaveMap[3] == 1)
                               ElevatedButton.icon(
-                                onPressed: () async {
-                                  final dropDownProvider =
-                                      Provider.of<DropDownProvider>(context,
-                                          listen: false);
-                                  dropDownProvider.updateEnquiryForName(
-                                      null, '');
-                                  dropDownProvider.updateDistrict(null, '');
-
-                                  final settingsProvider =
-                                      Provider.of<SettingsProvider>(context,
-                                          listen: false);
-
-                                  await Future.wait([
-                                    leadProvider.getLeadDropdowns(context),
-                                    dropDownProvider.getFollowUpStatus(
-                                        context, "1"),
-                                    dropDownProvider.getEnquirySource(context),
-                                    dropDownProvider.getEnquiryFor(context),
-                                    settingsProvider.searchsourceCategoryData(
-                                        '', context),
-                                    Future.microtask(() => dropDownProvider.getDistricts(context)),
-                                    Future.microtask(() => dropDownProvider.getStatesDropdown(context)),
-                                  ]);
-                                  settingsProvider.searchBranch(context);
-                                  settingsProvider.searchDepartment('', context);
-
+                                onPressed: () {
                                   showDialog(
                                     context: context,
                                     builder: (BuildContext context) {
@@ -881,31 +856,7 @@ class _LeadsPageState extends State<LeadPage> {
                         const SizedBox(width: 16),
                         if (settingsProvider.menuIsSaveMap[3] == 1)
                           ElevatedButton.icon(
-                            onPressed: () async {
-                              final dropDownProvider =
-                                  Provider.of<DropDownProvider>(context,
-                                      listen: false);
-                              dropDownProvider.updateEnquiryForName(null, '');
-                              dropDownProvider.updateDistrict(null, '');
-
-                              final settingsProvider =
-                                  Provider.of<SettingsProvider>(context,
-                                      listen: false);
-
-                              await Future.wait([
-                                leadProvider.getLeadDropdowns(context),
-                                dropDownProvider.getFollowUpStatus(
-                                    context, "1"),
-                                dropDownProvider.getEnquirySource(context),
-                                dropDownProvider.getEnquiryFor(context),
-                                settingsProvider.searchsourceCategoryData(
-                                    '', context),
-                                Future.microtask(() => dropDownProvider.getDistricts(context)),
-                                Future.microtask(() => dropDownProvider.getStatesDropdown(context)),
-                              ]);
-                              settingsProvider.searchBranch(context);
-                              settingsProvider.searchDepartment('', context);
-
+                            onPressed: ()  {                       
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
@@ -3596,7 +3547,7 @@ class _LeadsPageState extends State<LeadPage> {
             leadDetails.enquirySourceName.toString();
 
         dropDownProvider.selectedEnquirySourceId = leadDetails.enquirySourceId;
-        await leadsProvider.getLeadDropdowns(context);
+        // await leadsProvider.getLeadDropdowns(context);
         if (!mounted) return;
       }
       Navigator.pop(context); // Close loading dialog

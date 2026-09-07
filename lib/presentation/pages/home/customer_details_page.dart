@@ -537,8 +537,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                       await leadDetailsProvider
                                           .fetchLeadDetails(
                                               widget.customerId, context);
-                                      await leadProvider
-                                          .getLeadDropdowns(context);
+                                      // await leadProvider
+                                      //     .getLeadDropdowns(context);
                                       leadProvider.setCutomerId(
                                           int.parse(widget.customerId));
                                       leadProvider

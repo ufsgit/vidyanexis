@@ -270,7 +270,7 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile> {
                     onPressed: () async {
                       final leadsProvider =
                           Provider.of<LeadsProvider>(context, listen: false);
-                      await leadsProvider.getLeadDropdowns(context);
+                      // await leadsProvider.getLeadDropdowns(context);
                       final dropDownProvider =
                           Provider.of<DropDownProvider>(context, listen: false);
                       if (leadDetailsProvider.leadDetails != null &&

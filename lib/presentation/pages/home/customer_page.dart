@@ -2355,7 +2355,7 @@ class _CustomerPageState extends State<CustomerPage> {
         leadsProvider.enquirySourceController.text =
             leadDetails.enquirySourceName.toString();
         dropDownProvider.selectedEnquirySourceId = leadDetails.enquirySourceId;
-        await leadsProvider.getLeadDropdowns(context);
+        // await leadsProvider.getLeadDropdowns(context);
       }
       Navigator.pop(context); // Close loading dialog
 

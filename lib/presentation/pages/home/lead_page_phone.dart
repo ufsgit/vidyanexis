@@ -781,12 +781,12 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                     elevation: 0,
                     backgroundColor: AppColors.bluebutton,
                     onPressed: () async {
-                      final dropDownProvider =
-                          Provider.of<DropDownProvider>(context, listen: false);
-                      dropDownProvider.updateEnquiryForName(null, '');
-                      dropDownProvider.updateDistrict(null, '');
+                      // final dropDownProvider =
+                      //     Provider.of<DropDownProvider>(context, listen: false);
+                      // dropDownProvider.updateEnquiryForName(null, '');
+                      // dropDownProvider.updateDistrict(null, '');
 
-                      await leadProvider.getLeadDropdowns(context);
+                      // await leadProvider.getLeadDropdowns(context);
                       Navigator.push(
                         context,
                         MaterialPageRoute(
