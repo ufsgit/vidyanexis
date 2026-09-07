@@ -239,7 +239,7 @@ class _HomePageState extends State<HomePage> {
           iconPath: 'assets/images/Leads.svg',
           baseContent: const LeadPage(),
         ),
-      if ((settingsProvider.menuIsViewMap[12] ?? 1).toString() == '1')
+      if (settingsProvider.menuIsViewMap[12].toString() == '1')
         SidebarOption(
           title: 'DashBoard',
           iconPath: 'assets/images/dashboard_icon.svg',
@@ -597,11 +597,13 @@ class _HomePageState extends State<HomePage> {
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: AccountsSummaryPageReport()),
         ),
-      SidebarOption(
-        title: 'Duplicate Entry Reports',
-        iconPath: 'assets/images/Reports.svg',
-        baseContent: const Center(child: DuplicateEntryAttemptsReportScreen()),
-      ),
+      if (settingsProvider.menuIsViewMap[186].toString() == '1')
+        SidebarOption(
+          title: 'Duplicate Entry Reports',
+          iconPath: 'assets/images/Reports.svg',
+          baseContent:
+              const Center(child: DuplicateEntryAttemptsReportScreen()),
+        ),
       if (settingsProvider.menuIsViewMap[183].toString() == '1')
         SidebarOption(
           title: 'Project Duration Reports',
@@ -646,7 +648,7 @@ class _HomePageState extends State<HomePage> {
                   onPressed: () => Scaffold.of(context).openDrawer(),
                 ),
               ),
-              title: ['DashBoard', 'Leads', 'Customers', 'Lead Search', 'Task']
+              title: ['Leads', 'DashBoard', 'Customers', 'Lead Search', 'Task']
                       .contains(sideProvider.selectedName)
                   ? Text(
                       sideProvider.selectedName == 'Task'
@@ -867,7 +869,7 @@ class _HomePageState extends State<HomePage> {
               builder: (context, provider, child) {
                 // Ensure sidebarOptions is not empty before accessing it
                 if (sidebarOptions.isEmpty) {
-                  return const DashBoardPage();
+                  return const LeadPage();
                 }
                 // Safely find the selected option with error handling
                 SidebarOption? selectedOption;
@@ -884,11 +886,11 @@ class _HomePageState extends State<HomePage> {
                     selectedOption = sidebarOptions[provider.selectedIndex];
                   }
                 } catch (e) {
-                  return const DashBoardPage();
+                  return const LeadPage();
                 }
 
                 if (selectedOption == null) {
-                  return const DashBoardPage();
+                  return const LeadPage();
                 }
 
                 // Get the base content for the selected option
