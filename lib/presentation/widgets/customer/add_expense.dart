@@ -48,7 +48,7 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
     try {
       final result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
-        allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf'],
+        allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'csv'],
       );
 
       if (result != null && result.files.isNotEmpty) {
@@ -68,8 +68,10 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
           });
 
           String ext = file.extension?.toLowerCase() ?? '';
-          String mimeType = ext == 'pdf' ? 'application/pdf' : 'image/$ext';
-          if (ext == 'jpg') mimeType = 'image/jpeg';
+          String mimeType = 'application/octet-stream';
+          if (ext == 'pdf') mimeType = 'application/pdf';
+          else if (['jpg', 'jpeg', 'png'].contains(ext)) mimeType = ext == 'jpg' ? 'image/jpeg' : 'image/$ext';
+          else if (ext.isNotEmpty) mimeType = ext;
 
           String? uploadedPath = await CloudflareUpload.uploadToCloudflare(
               fileData, mimeType, widget.customerId, context);

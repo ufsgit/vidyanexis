@@ -46,7 +46,7 @@ class ImageUploadProvider extends ChangeNotifier {
     final result = await FilePicker.platform.pickFiles(
       allowMultiple: true,
       type: FileType.custom,
-      allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf'],
+      allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'csv'],
     );
 
     if (result != null) {
@@ -102,7 +102,7 @@ class ImageUploadProvider extends ChangeNotifier {
     final result = await FilePicker.platform.pickFiles(
       allowMultiple: false,
       type: FileType.custom,
-      allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf'],
+      allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'csv'],
     );
 
     if (result == null || result.files.isEmpty) {
@@ -147,7 +147,7 @@ class ImageUploadProvider extends ChangeNotifier {
     final result = await FilePicker.platform.pickFiles(
       allowMultiple: true,
       type: FileType.custom,
-      allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf'],
+      allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'csv'],
     );
 
     if (result != null) {
@@ -172,30 +172,45 @@ class ImageUploadProvider extends ChangeNotifier {
             fileType =
                 lookupMimeType(platformFile.path!, headerBytes: fileData) ?? '';
           }
-          print(fileType);
+          print('Detected fileType: $fileType');
+          String ext = platformFile.extension?.toLowerCase() ?? '';
 
-          if (fileType == 'application/pdf') {
+          if (fileType == 'application/pdf' || ext == 'pdf') {
             _pdfs.add(fileData);
             // Add file info to the list
             _fileInfoList.add({
               'name': platformFile.name,
               'type': 'pdf',
+              'mimeType': 'application/pdf',
               'data': fileData,
               'docTypeId': _selectedDocumentType,
               'docTypeName': _selectedDocumentTypeName,
             });
             print('PDF file added: ${platformFile.name}');
-          } else if (fileType.startsWith('image/')) {
+          } else if (fileType.startsWith('image/') || ['jpg', 'jpeg', 'png'].contains(ext)) {
             _images.add(fileData);
             // Add file info to the list
             _fileInfoList.add({
               'name': platformFile.name,
               'type': 'image',
+              'mimeType': 'image/${ext.isEmpty ? 'jpeg' : ext}',
               'data': fileData,
               'docTypeId': _selectedDocumentType,
               'docTypeName': _selectedDocumentTypeName,
             });
             print('Image file added: ${platformFile.name}');
+          } else if (['doc', 'docx', 'xls', 'xlsx', 'csv'].contains(ext)) {
+            _pdfs.add(fileData);
+            // Add file info to the list
+            _fileInfoList.add({
+              'name': platformFile.name,
+              'type': 'document',
+              'mimeType': ext,
+              'data': fileData,
+              'docTypeId': _selectedDocumentType,
+              'docTypeName': _selectedDocumentTypeName,
+            });
+            print('Document file added: ${platformFile.name}');
           } else {
             print('Unsupported file type: ${platformFile.name}');
           }
@@ -521,8 +536,8 @@ class ImageUploadProvider extends ChangeNotifier {
 
         for (var file in files) {
           Uint8List fileData = file['data'];
-          String mimeType =
-              file['type'] == 'pdf' ? 'application/pdf' : 'image/jpeg';
+          String mimeType = file['mimeType'] ??
+              (file['type'] == 'pdf' ? 'application/pdf' : 'image/jpeg');
 
           String? uploadedPath =
               await saveToAws(fileData, mimeType, userId, context);
