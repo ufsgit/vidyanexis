@@ -155,7 +155,7 @@ class _tasksPageReportState extends State<TaskPage> {
         final leadDetails = leadDetailsProvider.leadDetails![0];
         leadsProvider.enquirySourceController.text = leadDetails.enquirySourceName.toString();
         dropDownProvider.selectedEnquirySourceId = leadDetails.enquirySourceId;
-        await leadsProvider.getLeadDropdowns(context);
+        // await leadsProvider.getLeadDropdowns(context);
       }
       Navigator.pop(context); // Close loading dialog
 
@@ -745,42 +745,8 @@ class _tasksPageReportState extends State<TaskPage> {
                             ),
                             if (settingsProvider.menuIsViewMap[156] == 1)
                               ElevatedButton.icon(
-                                onPressed: () async {
-                                  final dropDownProvider =
-                                      Provider.of<DropDownProvider>(context,
-                                          listen: false);
-                                  final leadsProvider =
-                                      Provider.of<LeadsProvider>(context,
-                                          listen: false);
-
-                                  dropDownProvider.updateEnquiryForName(
-                                      null, '');
-                                  dropDownProvider.updateDistrict(null, '');
-
-                                  final settingsProvider =
-                                      Provider.of<SettingsProvider>(context,
-                                          listen: false);
-                                  await Future.wait([
-                                    leadsProvider.getLeadDropdowns(context),
-                                    dropDownProvider.getFollowUpStatus(
-                                        context, "1"),
-                                    dropDownProvider.getEnquirySource(context),
-                                    dropDownProvider.getEnquiryFor(context),
-                                    settingsProvider.searchsourceCategoryData(
-                                        '', context),
-                                    // Added missing dropdown fetches
-                                    Future.microtask(() =>
-                                        dropDownProvider.getDistricts(context)),
-                                    Future.microtask(() => dropDownProvider
-                                        .getStatesDropdown(context)),
-                                  ]);
-                                  settingsProvider.searchBranch(context);
-                                  settingsProvider.searchDepartment(
-                                      '', context);
-
-                                  if (!context.mounted) return;
-
-                                  await showDialog(
+                                onPressed: () {
+                                  showDialog(
                                     context: context,
                                     barrierDismissible: true,
                                     builder: (BuildContext context) {
@@ -789,11 +755,6 @@ class _tasksPageReportState extends State<TaskPage> {
                                       );
                                     },
                                   );
-
-                                  if (context.mounted) {
-                                    dropDownProvider.getFollowUpStatus(
-                                        context, "3");
-                                  }
                                 },
                                 icon: const Icon(Icons.add, size: 16),
                                 label: Text(
@@ -2845,43 +2806,6 @@ class _tasksPageReportState extends State<TaskPage> {
                                               fontWeight: FontWeight.w500)),
                                       onTap: () async {
                                         Navigator.pop(sheetContext);
-
-                                        final dropDownProvider =
-                                            Provider.of<DropDownProvider>(
-                                                context,
-                                                listen: false);
-                                        final leadsProvider =
-                                            Provider.of<LeadsProvider>(context,
-                                                listen: false);
-
-                                        dropDownProvider.updateEnquiryForName(
-                                            null, '');
-                                        dropDownProvider.updateDistrict(
-                                            null, '');
-                                        final settingsProvider =
-                                            Provider.of<SettingsProvider>(
-                                                context,
-                                                listen: false);
-
-                                        await Future.wait([
-                                          leadsProvider
-                                              .getLeadDropdowns(context),
-                                          dropDownProvider.getFollowUpStatus(
-                                              context, "1"),
-                                          dropDownProvider
-                                              .getEnquirySource(context),
-                                          dropDownProvider
-                                              .getEnquiryFor(context),
-                                          settingsProvider
-                                              .searchsourceCategoryData(
-                                                  '', context),
-                                        ]);
-                                        settingsProvider.searchBranch(context);
-                                        settingsProvider.searchDepartment(
-                                            '', context);
-
-                                        if (!context.mounted) return;
-
                                         await Navigator.push(
                                           context,
                                           MaterialPageRoute(
@@ -2892,11 +2816,6 @@ class _tasksPageReportState extends State<TaskPage> {
                                             ),
                                           ),
                                         );
-
-                                        if (context.mounted) {
-                                          dropDownProvider.getFollowUpStatus(
-                                              context, "3");
-                                        }
                                       },
                                     ),
                                   ],

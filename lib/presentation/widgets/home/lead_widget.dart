@@ -1173,7 +1173,7 @@ class _LeadCardState extends State<LeadCard> {
                                     leadDetails.enquirySourceName.toString();
                                 dropDownProvider.selectedEnquirySourceId =
                                     leadDetails.enquirySourceId;
-                                await leadsProvider.getLeadDropdowns(context);
+                                // await leadsProvider.getLeadDropdowns(context);
                                 Navigator.pop(context);
                                 showDialog(
                                     context: context,

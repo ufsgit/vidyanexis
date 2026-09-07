@@ -101,7 +101,7 @@ class LeadDetailsWidgetState extends State<LeadDetailsWidget> {
                               leadDetails.enquirySourceName.toString();
                           dropDownProvider.selectedEnquirySourceId =
                               leadDetails.enquirySourceId;
-                          await leadsProvider.getLeadDropdowns(context);
+                          // await leadsProvider.getLeadDropdowns(context);
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {

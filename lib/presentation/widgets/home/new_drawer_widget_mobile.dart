@@ -403,20 +403,66 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
       final settingsProvider =
           Provider.of<SettingsProvider>(context, listen: false);
 
-      settingsProvider.getCompanyDetails();
+      // Reset selection state for new lead (moved from button onPressed)
+      if (!widget.isEdit) {
+        dropDownProvider.updateEnquiryForName(null, '');
+        dropDownProvider.updateDistrict(null, '');
+      }
+
+      // ---------- Static APIs: call only when not already loaded ----------
+      // Providers also guard internally (forceRefresh / isNotEmpty).
+
+      // Company details – already deduped inside provider
+      if (settingsProvider.companyDetails.isEmpty) {
+        settingsProvider.getCompanyDetails();
+      }
+
       await leadProvider.loadLoginDetails();
 
-      // Load branch and department data if not already cached
-      await settingsProvider.searchBranch(context);
-      await settingsProvider.searchDepartment('', context);
+      // Lead dropdowns (work type, roof type, etc.) – static, no id
+      if (leadProvider.leadDropdownData == null) {
+        await leadProvider.getLeadDropdowns(context);
+      }
 
-      await dropDownProvider.getEnquirySource(context, fetchUserSpecific: true);
-      await dropDownProvider.getEnquiryFor(context, fetchUserSpecific: true);
-      // await settingsProvider.getPriorities(context);
-      // await dropDownProvider.getFollowUpStatus(context, "1", forceRefresh: true);
+      // Follow-up statuses – has ViewIn_Id, so refresh for new lead when empty
+      // Provider skips network if _followUpstatus is already filled
+      if (dropDownProvider.followUpData.isEmpty) {
+        await dropDownProvider.getFollowUpStatus(context, "1");
+      }
 
-      // CRITICAL: Await getUserDetails so filteredStaffData is never empty
-      await dropDownProvider.getUserDetails(context);
+      // Enquiry source / enquiry for – static lists (no id filter changes data set)
+      if (dropDownProvider.enquiryData.isEmpty) {
+        await dropDownProvider.getEnquirySource(context);
+      }
+      if (dropDownProvider.enquiryForList.isEmpty) {
+        await dropDownProvider.getEnquiryFor(context);
+      }
+
+      // Source category – static
+      if (settingsProvider.searchSourceCategory.isEmpty) {
+        await settingsProvider.searchsourceCategoryData('', context);
+      }
+
+      // Districts & states – static (void methods; provider skips if already loaded)
+      if (dropDownProvider.districtList.isEmpty) {
+        dropDownProvider.getDistricts(context);
+      }
+      if (dropDownProvider.stateList.isEmpty) {
+        dropDownProvider.getStatesDropdown(context);
+      }
+
+      // Branch & department – static (provider skips if already loaded)
+      if (settingsProvider.branchModel.isEmpty) {
+        await settingsProvider.searchBranch(context);
+      }
+      if (settingsProvider.departmentModel.isEmpty) {
+        await settingsProvider.searchDepartment('', context);
+      }
+
+      // User/staff list – static master list (provider skips if already loaded)
+      if (dropDownProvider.searchUserDetails.isEmpty) {
+        await dropDownProvider.getUserDetails(context);
+      }
 
       if (widget.isEdit) {
         leadProvider.getCustomFieldsByEnquiryForId(

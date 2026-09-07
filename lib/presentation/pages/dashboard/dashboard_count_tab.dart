@@ -40,7 +40,9 @@ class DashboardCountTab extends StatelessWidget {
         'Fresh_Leads',
       if (settingsProvider.menuIsViewMap[132] == 1 ||
           settingsProvider.menuIsViewMap[141] == 1)
-        'Upcoming_Followup',
+        settingsProvider.newDashboardCount == 1
+            ? 'Confirmed_Leads' // only for comorin
+            : 'Upcoming_Followup',
       if (settingsProvider.menuIsViewMap[124] == 1 ||
           settingsProvider.menuIsViewMap[133] == 1)
         'New_Leads',
@@ -118,7 +120,7 @@ class DashboardCountTab extends StatelessWidget {
                 if (keyword == 'Missed_Leads') {
                   countColor = Colors.red;
                   titleColor = Colors.red;
-                } else if (keyword == 'Upcoming_Followup') {
+                } else if (keyword == 'Followup_Leads') {
                   countColor = Colors.amber.shade700; // yellow-ish
                   titleColor = Colors.amber.shade700;
                 }
