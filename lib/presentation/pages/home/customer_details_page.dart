@@ -4781,13 +4781,36 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                                             color: Colors.grey[200],
                                                                                             width: imageSize,
                                                                                             height: imageSize,
-                                                                                            child: const Column(
-                                                                                              mainAxisAlignment: MainAxisAlignment.center,
-                                                                                              children: [
-                                                                                                Icon(Icons.picture_as_pdf, color: Colors.red, size: 40),
-                                                                                                SizedBox(height: 2),
-                                                                                                Text('Open PDF', style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, fontSize: 10)),
-                                                                                              ],
+                                                                                            child: Builder(
+                                                                                              builder: (context) {
+                                                                                                final urlStr = image.filePath.toLowerCase();
+                                                                                                IconData iconData = Icons.insert_drive_file;
+                                                                                                Color iconColor = Colors.grey;
+                                                                                                String openText = 'Open File';
+
+                                                                                                if (urlStr.endsWith('.pdf')) {
+                                                                                                  iconData = Icons.picture_as_pdf;
+                                                                                                  iconColor = Colors.red;
+                                                                                                  openText = 'Open PDF';
+                                                                                                } else if (urlStr.endsWith('.doc') || urlStr.endsWith('.docx')) {
+                                                                                                  iconData = Icons.description;
+                                                                                                  iconColor = Colors.blue;
+                                                                                                  openText = 'Open Word';
+                                                                                                } else if (urlStr.endsWith('.xls') || urlStr.endsWith('.xlsx') || urlStr.endsWith('.csv')) {
+                                                                                                  iconData = Icons.table_chart;
+                                                                                                  iconColor = Colors.green;
+                                                                                                  openText = 'Open Excel';
+                                                                                                }
+
+                                                                                                return Column(
+                                                                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                                                                  children: [
+                                                                                                    Icon(iconData, color: iconColor, size: 40),
+                                                                                                    const SizedBox(height: 2),
+                                                                                                    Text(openText, style: const TextStyle(color: Colors.blue, decoration: TextDecoration.underline, fontSize: 10)),
+                                                                                                  ],
+                                                                                                );
+                                                                                              },
                                                                                             ),
                                                                                           ),
                                                                                         );
