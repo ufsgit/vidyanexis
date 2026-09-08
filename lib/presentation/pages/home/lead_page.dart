@@ -146,7 +146,7 @@ class _LeadsPageState extends State<LeadPage> {
       userName = preferences.getString('userName') ?? "";
       userType = preferences.getString('userType') ?? "";
       leadProvider.setSearchCriteria('', '', '');
-      leadProvider.getSearchLeads(context);
+      await leadProvider.getSearchLeads(context);
       provider.getUserDetails(context);
       provider.getTaskType(context);
 

@@ -4333,7 +4333,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                             radius: 4,
                                                           ),
                                                         ),
-                                                      if (hasDocs)
+                                                      if (hasDocs && !isDocumentButtonEnabled)
                                                         ...reportsProvider
                                                             .documentTypeModel
                                                             .map(
