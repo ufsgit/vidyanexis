@@ -1093,7 +1093,7 @@ class LeadsProvider extends ChangeNotifier {
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchLead}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$_loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$_enquiryForS&Enquiry_Source_Id_=$enquirySourceIds&Branch_Id_=$branchIds&User_Details_Id_=$_loginUserId&Lead_Id_=$_leadId&Order_By_=$apiSortOption&Order_Type_=$_sortOrder&Entry_Type_=$_entryType&Priority_Id_=$_selectedPriority');
+              '${HttpUrls.searchLead}?Customer_Name_=$_search&Phone_Number_=$_search&Consumer_Number_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$_loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$_enquiryForS&Enquiry_Source_Id_=$enquirySourceIds&Branch_Id_=$branchIds&User_Details_Id_=$_loginUserId&Lead_Id_=$_leadId&Order_By_=$apiSortOption&Order_Type_=$_sortOrder&Entry_Type_=$_entryType&Priority_Id_=$_selectedPriority');
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -1200,7 +1200,7 @@ class LeadsProvider extends ChangeNotifier {
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchLead}?Customer_Name_=$query&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$loginUserId&Status_Id_=$statusStr&Page_Index1_=1&Page_Index2_=10&Enquiry_For_Id_=$enquiryForStr&Enquiry_Source_Id_=$enquirySourceIds&Branch_Id_=$branchIds&User_Details_Id_=$loginUserId&Lead_Id_=0&Order_By_=0&Order_Type_=DESC&Entry_Type_=$_entryType');
+              '${HttpUrls.searchLead}?Customer_Name_=$query&Phone_Number_=$query&Consumer_Number_=$query&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$loginUserId&Status_Id_=$statusStr&Page_Index1_=1&Page_Index2_=10&Enquiry_For_Id_=$enquiryForStr&Enquiry_Source_Id_=$enquirySourceIds&Branch_Id_=$branchIds&User_Details_Id_=$loginUserId&Lead_Id_=0&Order_By_=0&Order_Type_=DESC&Entry_Type_=$_entryType');
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -1339,7 +1339,7 @@ class LeadsProvider extends ChangeNotifier {
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchLead}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$_loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$_enquiryForS&User_Details_Id_=$_loginUserId&Lead_Id_=$_leadId&Entry_Type_=$_entryType');
+              '${HttpUrls.searchLead}?Customer_Name_=$_search&Phone_Number_=$_search&Consumer_Number_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$_loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$_enquiryForS&User_Details_Id_=$_loginUserId&Lead_Id_=$_leadId&Entry_Type_=$_entryType');
 
       if (response.statusCode == 200) {
         final data = response.data;

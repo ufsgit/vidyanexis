@@ -848,7 +848,7 @@ class CustomerProvider extends ChangeNotifier {
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchCustomer}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&Is_AMC_Date_=$isAmcDate&AMC_Fromdate_=$_amcFromDateS&AMC_Todate_=$_amcToDateS&Is_Work_Completion_Date_=$isWcDate&Work_Completion_Fromdate_=$_wcFromDateS&Work_Completion_Todate_=$_wcToDateS&To_User_Id_=$toUserId&Login_User_Id_=$loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$enquiryForId&Enquiry_Source_Id_=$enquirySourceId&Branch_Id_=$branchIds&User_Details_Id_=$loginUserId&Lead_Id_=0&Order_By_=$apiSortOption&Order_Type_=$_sortOrder&Entry_Type_=$_entryType');
+              '${HttpUrls.searchCustomer}?Customer_Name_=$_search&Phone_Number_=$_search&Consumer_Number_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&Is_AMC_Date_=$isAmcDate&AMC_Fromdate_=$_amcFromDateS&AMC_Todate_=$_amcToDateS&Is_Work_Completion_Date_=$isWcDate&Work_Completion_Fromdate_=$_wcFromDateS&Work_Completion_Todate_=$_wcToDateS&To_User_Id_=$toUserId&Login_User_Id_=$loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$enquiryForId&Enquiry_Source_Id_=$enquirySourceId&Branch_Id_=$branchIds&User_Details_Id_=$loginUserId&Lead_Id_=0&Order_By_=$apiSortOption&Order_Type_=$_sortOrder&Entry_Type_=$_entryType');
 
       if (response.statusCode == 200) {
         var data = response.data;
@@ -945,7 +945,7 @@ class CustomerProvider extends ChangeNotifier {
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchCustomer}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&Is_AMC_Date_=$isAmcDate&AMC_Fromdate_=$_amcFromDateS&AMC_Todate_=$_amcToDateS&Is_Work_Completion_Date_=$isWcDate&Work_Completion_Fromdate_=$_wcFromDateS&Work_Completion_Todate_=$_wcToDateS&To_User_Id_=$toUserId&Login_User_Id_=$loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$enquiryForId&Enquiry_Source_Id_=$enquirySourceId&Branch_Id_=$branchIds&User_Details_Id_=$loginUserId&Lead_Id_=0&Order_By_=$apiSortOption&Order_Type_=$_sortOrder&Entry_Type_=$_entryType');
+              '${HttpUrls.searchCustomer}?Customer_Name_=$_search&Phone_Number_=$_search&Consumer_Number_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&Is_AMC_Date_=$isAmcDate&AMC_Fromdate_=$_amcFromDateS&AMC_Todate_=$_amcToDateS&Is_Work_Completion_Date_=$isWcDate&Work_Completion_Fromdate_=$_wcFromDateS&Work_Completion_Todate_=$_wcToDateS&To_User_Id_=$toUserId&Login_User_Id_=$loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$enquiryForId&Enquiry_Source_Id_=$enquirySourceId&Branch_Id_=$branchIds&User_Details_Id_=$loginUserId&Lead_Id_=0&Order_By_=$apiSortOption&Order_Type_=$_sortOrder&Entry_Type_=$_entryType');
 
       if (response.statusCode == 200) {
         var data = response.data;

@@ -795,7 +795,7 @@ class TaskPageProvider extends ChangeNotifier {
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchTaskByCustomer}?Customer_Name=$_Search&Task_Status_Id=$_Status&To_User=$toUserId&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&Task_Type_Id=$_TaskType&Enquiry_For_Id=$_enquiryForS&Department_Id=$_Department_Id&Page_Index=$_pageIndex&PageSize=$_pageSize&Order_By_=$apiSortOption&Order_Type_=$_sortOrder&Entry_Type_=$_entryType&Priority_Id_=$_selectedPriority');
+              '${HttpUrls.searchTaskByCustomer}?Customer_Name=$_Search&Phone_Number=$_Search&Consumer_Number=$_Search&Task_Status_Id=$_Status&To_User=$toUserId&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&Task_Type_Id=$_TaskType&Enquiry_For_Id=$_enquiryForS&Department_Id=$_Department_Id&Page_Index=$_pageIndex&PageSize=$_pageSize&Order_By_=$apiSortOption&Order_Type_=$_sortOrder&Entry_Type_=$_entryType&Priority_Id_=$_selectedPriority');
 
       if (response.statusCode == 200) {
         final data = response.data;
