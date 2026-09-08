@@ -112,7 +112,7 @@ class _HomePageState extends State<HomePage> {
       final settingsProvider =
           Provider.of<SettingsProvider>(context, listen: false);
       settingsProvider.getMenuPermissionData(userId, context);
-      await settingsProvider.getCompanyDetails();
+      settingsProvider.getCompanyDetails();
       print(
           '[PERF-BOOT] HomePage postFrameCallback complete: ${DateTime.now().millisecondsSinceEpoch - homeInitStart} ms');
     });
@@ -867,38 +867,32 @@ class _HomePageState extends State<HomePage> {
           Expanded(
             child: Consumer<SidebarProvider>(
               builder: (context, provider, child) {
-                // Ensure sidebarOptions is not empty before accessing it
-                if (sidebarOptions.isEmpty) {
-                  return const LeadPage();
-                }
-                // Safely find the selected option with error handling
-                SidebarOption? selectedOption;
-                try {
-                  // First try to find by name
-                  var matchingOptions = sidebarOptions
-                      .where((option) => option.title == provider.selectedName)
-                      .toList();
+                Widget baseContent = const LeadPage();
+                Widget? overlayContent;
 
-                  if (matchingOptions.isNotEmpty) {
-                    selectedOption = matchingOptions.first;
-                  } else if (provider.selectedIndex < sidebarOptions.length) {
-                    // Fallback to index if name match fails
-                    selectedOption = sidebarOptions[provider.selectedIndex];
+                if (sidebarOptions.isNotEmpty) {
+                  SidebarOption? selectedOption;
+                  try {
+                    // First try to find by name
+                    var matchingOptions = sidebarOptions
+                        .where(
+                            (option) => option.title == provider.selectedName)
+                        .toList();
+
+                    if (matchingOptions.isNotEmpty) {
+                      selectedOption = matchingOptions.first;
+                    } else if (provider.selectedIndex < sidebarOptions.length) {
+                      // Fallback to index if name match fails
+                      selectedOption = sidebarOptions[provider.selectedIndex];
+                    }
+                  } catch (e) {
+                    // ignore
                   }
-                } catch (e) {
-                  return const LeadPage();
-                }
 
-                if (selectedOption == null) {
-                  return const LeadPage();
-                }
-
-                // Get the base content for the selected option
-                final baseContent = selectedOption.baseContent;
-
-                // Determine the overlay content based on the selected index and state flags
-                final overlayContent =
-                    selectedOption.title == "Leads" // For 'Leads' section
+                  if (selectedOption != null) {
+                    baseContent = selectedOption.baseContent;
+                    overlayContent = selectedOption.title ==
+                            "Leads" // For 'Leads' section
                         ? (provider.replaceLead
                             ? null // No overlay if replaceLead is true
                             : CustomerDetailsScreen(
@@ -914,6 +908,8 @@ class _HomePageState extends State<HomePage> {
                                     report: 'false',
                                   )) // Overlay for 'Customers'
                             : null; // Default case, no overlay
+                  }
+                }
 
                 return Container(
                   color: Colors.grey.shade50,
