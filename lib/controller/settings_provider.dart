@@ -3627,6 +3627,7 @@ class SettingsProvider extends ChangeNotifier {
             const SnackBar(content: Text('Failed to save')),
           );
         } else {
+          Provider.of<DropDownProvider>(context, listen: false).getTaskType(context, forceRefresh: true);
           Navigator.pop(context);
         }
       } else {
@@ -3676,6 +3677,7 @@ class SettingsProvider extends ChangeNotifier {
             const SnackBar(content: Text('Failed to save')),
           );
         } else {
+          Provider.of<DropDownProvider>(context, listen: false).getEnquiryFor(context, forceRefresh: true);
           Navigator.pop(context);
         }
       } else {
@@ -3725,6 +3727,7 @@ class SettingsProvider extends ChangeNotifier {
             const SnackBar(content: Text('Failed to save')),
           );
         } else {
+          Provider.of<DropDownProvider>(context, listen: false).getEnquirySource(context, forceRefresh: true);
           Navigator.pop(context);
         }
       } else {

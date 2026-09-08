@@ -5341,7 +5341,8 @@ class _tasksPageReportState extends State<TaskPage> {
 
                                                     if (provider
                                                             .documentTypeModel
-                                                            .isEmpty) {
+                                                            .isEmpty ||
+                                                        isDocumentButtonEnabled) {
                                                       isSaving.value = true;
                                                       try {
                                                         bool isSuccess = await provider
