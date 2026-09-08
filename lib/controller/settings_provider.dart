@@ -984,7 +984,7 @@ class SettingsProvider extends ChangeNotifier {
         bankBranchController.clear();
         ifscCodeController.clear();
         final data = response.data;
-        searchBranch(context);
+        searchBranch(context, forceRefresh: true);
         Navigator.pop(context);
         Loader.stopLoader(context);
         print(data);
@@ -1325,7 +1325,7 @@ class SettingsProvider extends ChangeNotifier {
           alert(context,
               "You are attempting to delete an branch Type \n that is currently in use");
         } else {
-          searchBranch(context);
+          searchBranch(context, forceRefresh: true);
           branchController.clear();
           addressController.clear();
           phoneController.clear();
@@ -4107,7 +4107,7 @@ class SettingsProvider extends ChangeNotifier {
         departmentController.clear();
 
         final data = response.data;
-        searchDepartment('', context);
+        searchDepartment('', context, forceRefresh: true);
         Loader.stopLoader(context);
         Navigator.pop(context);
         print(data);
@@ -4178,7 +4178,7 @@ class SettingsProvider extends ChangeNotifier {
           alert(context,
               "You are attempting to delete an Department \n that is currently in use");
         } else {
-          searchDepartment('', context);
+          searchDepartment('', context, forceRefresh: true);
           departmentController.clear();
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Department deleted successfully')),
