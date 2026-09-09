@@ -59,6 +59,8 @@ class _LeadsOverViewTabState extends State<LeadsOverViewTab> {
         return const Color(0xFFC5BAE0);
       case 'upcoming_followup':
         return const Color(0xFFF5D6B3);
+      case 'total_task':
+        return const Color(0xFFD3D8E8);
       default:
         return Colors.grey.shade300;
     }
@@ -167,9 +169,9 @@ class _LeadsOverViewTabState extends State<LeadsOverViewTab> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          const Text(
-                            "View Leads",
-                            style: TextStyle(
+                          Text(
+                            item.title.toLowerCase() == 'total_task' ? "View Tasks" : "View Leads",
+                            style: const TextStyle(
                               fontSize: 13,
                               color: Colors.black87,
                               fontWeight: FontWeight.w500,

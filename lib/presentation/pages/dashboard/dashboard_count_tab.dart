@@ -61,6 +61,8 @@ class DashboardCountTab extends StatelessWidget {
       if (settingsProvider.menuIsViewMap[129] == 1 ||
           settingsProvider.menuIsViewMap[138] == 1)
         'Completed_Leads',
+      if (settingsProvider.menuIsViewMap[187] == 1)
+        'Total_Task',
     ];
     final items = dashBoardProvider.leadCountMap.entries
         .where((e) => allowedKeys.contains(e.key))
