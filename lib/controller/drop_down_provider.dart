@@ -222,33 +222,36 @@ class DropDownProvider extends ChangeNotifier {
         if (staff.workingStatus != "1") return false;
 
         final staffDeptStr = (staff.departmentId ?? '').toString().trim();
-        if (staffDeptStr.isEmpty || staffDeptStr == "0") return false;
 
-        final staffDeptList = staffDeptStr
-            .split(',')
-            .map((e) => e.trim())
-            .where((e) => e.isNotEmpty)
-            .toList();
-
-        final matchesDept =
-            targetDeptList.any((dept) => staffDeptList.contains(dept));
-        if (!matchesDept) return false;
-
-        if (branchId != null &&
-            branchId.toString().trim().isNotEmpty &&
-            branchId.toString().trim() != "0") {
-          final staffBranchStr = (staff.branchId ?? '').toString().trim();
-          if (staffBranchStr.isNotEmpty && staffBranchStr != "0") {
-            final staffBranchList = staffBranchStr
+        final staffDeptList = (staffDeptStr.isEmpty || staffDeptStr == "0")
+            ? <String>[]
+            : staffDeptStr
                 .split(',')
                 .map((e) => e.trim())
                 .where((e) => e.isNotEmpty)
                 .toList();
-            if (!staffBranchList.contains(branchId.toString().trim())) {
-              return false;
+
+        List<String> transferDeptList = [];
+        if (staff.transferDepartments != null) {
+          if (staff.transferDepartments is Iterable) {
+            for (var t in staff.transferDepartments) {
+              if (t is Map) {
+                final tId = t["Department_Id"]?.toString() ?? t["department_id"]?.toString();
+                if (tId != null) transferDeptList.add(tId.trim());
+              } else if (t != null) {
+                transferDeptList.addAll(t.toString().split(',').map((e) => e.trim()));
+              }
             }
+          } else {
+            transferDeptList.addAll(staff.transferDepartments.toString().split(',').map((e) => e.trim()));
           }
         }
+
+        final matchesDept = targetDeptList.any((dept) =>
+            staffDeptList.contains(dept) || transferDeptList.contains(dept));
+        if (!matchesDept) return false;
+
+
 
         return true;
       }).toList();
@@ -278,11 +281,7 @@ class DropDownProvider extends ChangeNotifier {
     try {
       String endPoint =
           '${HttpUrls.searchUserDetails}?user_details_Name=&Department_Id=$departmentId';
-      if (branchId != null &&
-          branchId.toString().trim().isNotEmpty &&
-          branchId.toString().trim() != "0") {
-        endPoint += '&Branch_Id=$branchId';
-      }
+
 
       final response = await HttpRequest.httpGetRequest(endPoint: endPoint);
 

@@ -4092,13 +4092,24 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                             .where((e) => e.isNotEmpty)
                                                                             .toList();
 
-                                                                        if (staffDeptList.isEmpty ||
-                                                                            staffDeptList.contains("0")) {
-                                                                          return false;
+                                                                        List<String> transferDeptList = [];
+                                                                        if (staff.transferDepartments != null) {
+                                                                          if (staff.transferDepartments is Iterable) {
+                                                                            for (var t in staff.transferDepartments) {
+                                                                              if (t is Map) {
+                                                                                final tId = t["Department_Id"]?.toString() ?? t["department_id"]?.toString();
+                                                                                if (tId != null) transferDeptList.add(tId.trim());
+                                                                              } else if (t != null) {
+                                                                                transferDeptList.addAll(t.toString().split(',').map((e) => e.trim()));
+                                                                              }
+                                                                            }
+                                                                          } else {
+                                                                            transferDeptList.addAll(staff.transferDepartments.toString().split(',').map((e) => e.trim()));
+                                                                          }
                                                                         }
 
                                                                         return targetDeptList.any((dept) =>
-                                                                            staffDeptList.contains(dept));
+                                                                            staffDeptList.contains(dept) || transferDeptList.contains(dept));
                                                                       }).toList();
                                                                     }
 
