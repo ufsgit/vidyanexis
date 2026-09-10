@@ -92,7 +92,11 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
               }
 
               if (context.mounted) {
-                _showPrintQuotationDialog(context, masterId);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Saved Successfully')),
+                );
+                              //  _showPrintQuotationDialog(context, masterId);
+                Navigator.pop(context);
               }
             }
           } else {

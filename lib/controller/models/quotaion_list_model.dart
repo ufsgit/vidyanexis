@@ -38,6 +38,9 @@ class QuatationListModel {
   List<ProductionChartModel>? productionChartModel;
   int quotationTypeId;
   int branchId;
+  int adminApproval;
+  String? approvedBy;
+  String? approvedByName;
 
   double get calculatedNetCost {
     double systemPrice = double.tryParse(totalAmount) ?? 0.0;
@@ -90,6 +93,9 @@ class QuatationListModel {
     this.productionChartModel,
     required this.quotationTypeId,
     required this.branchId,
+    this.adminApproval = 0,
+    this.approvedBy,
+    this.approvedByName,
   });
 
   factory QuatationListModel.fromMap(Map<String, dynamic> json) =>
@@ -150,6 +156,9 @@ class QuatationListModel {
             : List<ProductionChartModel>.from((json["production_chart"] as List)
                 .map((x) => ProductionChartModel.fromJson(Map<String, dynamic>.from(x)))),
         branchId: int.tryParse(json["Branch_Id"]?.toString() ?? '') ?? 0,
+        adminApproval: int.tryParse(json["admin_approval"]?.toString() ?? json["Admin_Approval"]?.toString() ?? '') ?? 0,
+        approvedBy: json["approved_by"]?.toString() ?? json["Approved_By"]?.toString(),
+        approvedByName: json["approved_by_name"]?.toString() ?? json["Approved_By_Name"]?.toString(),
       );
 
   Map<String, dynamic> toMap() => {
@@ -193,6 +202,9 @@ class QuatationListModel {
             ? []
             : List<dynamic>.from(productionChartModel!.map((x) => x.toJson())),
         "Branch_Id": branchId,
+        "admin_approval": adminApproval,
+        "approved_by": approvedBy,
+        "Approved_By_Name": approvedByName,
       };
 }
 

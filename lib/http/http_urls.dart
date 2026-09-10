@@ -134,6 +134,8 @@ class HttpUrls {
   static String searchFollowupReports = "lead/Search_Pending_Followup_Report";
   static String searchQuotationReports =
       "quotation_master/Search_Quotaion_Report";
+  static String updateQuotationApproval =
+      "quotation_master/Update_Quotation_Approval";
 
   static String searchTaskByCustomer = "task/Search_task_by_customer";
   static String changeTaskStatus = "task/Change_Task_Status";

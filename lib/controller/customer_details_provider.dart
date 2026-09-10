@@ -5649,6 +5649,34 @@ class CustomerDetailsProvider extends ChangeNotifier {
       log('Error saving structure materials: $e');
     }
   }
+
+  Future<bool> updateQuotationApprovalStatus(
+      String masterId, int approvedValue, BuildContext context, String customerId) async {
+    try {
+      Loader.showLoader(context);
+      final bodyData = {
+        "Quotation_Master_Id": int.tryParse(masterId) ?? masterId,
+      };
+
+      final response = await HttpRequest.httpPostRequest(
+        endPoint: HttpUrls.updateQuotationApproval,
+        bodyData: bodyData,
+      );
+
+      if (!context.mounted) return false;
+      Loader.stopLoader(context);
+
+      if (response?.statusCode == 200 || response?.statusCode == 201) {
+        await getQuatationList(customerId, context);
+        return true;
+      }
+      return false;
+    } catch (e) {
+      debugPrint('Error updating approval status: $e');
+      if (context.mounted) Loader.stopLoader(context);
+      return false;
+    }
+  }
 }
 
 class ProfitModel {

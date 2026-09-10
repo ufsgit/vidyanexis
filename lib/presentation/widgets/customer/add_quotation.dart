@@ -1715,7 +1715,11 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                       }
 
                       if (context.mounted) {
-                        _showPrintQuotationDialog(context, masterId);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Saved Successfully')),
+                        );
+                        //        _showPrintQuotationDialog(context, masterId);
+                        Navigator.pop(context);
                       }
                     }
                   } catch (e) {

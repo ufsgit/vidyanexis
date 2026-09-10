@@ -113,33 +113,8 @@ class QuotationCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: statusColor.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        CircleAvatar(
-                          radius: 3,
-                          backgroundColor: statusColor,
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          status,
-                          style: TextStyle(
-                            color: statusColor,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  if (quotation != null)
+                  const SizedBox.shrink(),
+                  if (quotation != null && quotation!.adminApproval == 1)
                     Row(
                       children: [
                         // Actions Group
@@ -871,6 +846,85 @@ class QuotationCard extends StatelessWidget {
                   ),
                 ],
               ),
+              if (quotation != null) ...[
+                const SizedBox(height: 16),
+                if (quotation!.adminApproval == 1)
+                  Builder(
+                    builder: (context) {
+                      String approverName = "admin";
+                      if (quotation!.approvedByName?.isNotEmpty == true) {
+                        approverName = quotation!.approvedByName!;
+                      }
+                      return Row(
+                        children: [
+                          const Icon(Icons.check, color: Colors.green, size: 20),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Approved by $approverName',
+                            style: const TextStyle(
+                              color: Colors.black87,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      );
+                    }
+                  )
+                else
+                  Row(
+                    children: [
+                      const Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Approval',
+                            style: TextStyle(
+                              color: Colors.black54,
+                              fontSize: 12,
+                            ),
+                          ),
+                          Text(
+                            'Pending',
+                            style: TextStyle(
+                              color: Colors.black87,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                      if (settingsprovider.menuIsViewMap[189] == 1) ...[
+                        const SizedBox(width: 16),
+                        ElevatedButton(
+                          onPressed: () async {
+                            final success = await customerDetailsProvider
+                                .updateQuotationApprovalStatus(
+                                    taskId, 1, context, customerId);
+                            if (success && context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text('Status updated to Approved')),
+                              );
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            elevation: 0,
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            minimumSize: Size.zero,
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          ),
+                          child: const Text('Approve'),
+                        ),
+                      ],
+                    ],
+                  ),
+              ],
               const Divider(height: 32),
               // Footer
               Row(
