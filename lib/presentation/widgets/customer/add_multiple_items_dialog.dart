@@ -367,6 +367,7 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
 
     await customerDetailsProvider.fetchAndSetMaterialsForMultipleItems(
         itemsForApi, expenseProvider, context);
+    customerDetailsProvider.updateTotal();
 
     if (mounted) Navigator.of(context).pop();
   }
