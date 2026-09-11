@@ -505,4 +505,5 @@ class HttpUrls {
   static String logout = 'user_details/User_Logout';
   static String getNewLeadDashboard = "lead/Get_Lead_Dashboard_comorin";
   static String searchNewLeadDashboard = "lead/Search_lead_dashboard_comorin";
+  static String searchTaskDashboard = "lead/Search_task_Dashboard";
 }
