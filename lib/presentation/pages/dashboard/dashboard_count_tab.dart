@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:vidyanexis/controller/dashboard_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/lead_data_page.dart';
+import 'package:vidyanexis/presentation/pages/dashboard/task_data_page.dart';
 
 class DashboardCountTab extends StatelessWidget {
   final DashboardProvider dashBoardProvider;
@@ -135,17 +136,30 @@ class DashboardCountTab extends StatelessWidget {
                 countColor: countColor,
                 titleColor: titleColor,
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => LeadDataPage(
-                        source: keyword,
-                        fromDate: dashBoardProvider.formattedFromDate,
-                        toDate: dashBoardProvider.formattedToDate,
-                        user: dashBoardProvider.selectedUser,
+                  if (keyword == 'Total_Task') {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => TotalTaskDataPage(
+                          fromDate: dashBoardProvider.formattedFromDate,
+                          toDate: dashBoardProvider.formattedToDate,
+                          user: dashBoardProvider.selectedUser,
+                        ),
                       ),
-                    ),
-                  );
+                    );
+                  } else {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => LeadDataPage(
+                          source: keyword,
+                          fromDate: dashBoardProvider.formattedFromDate,
+                          toDate: dashBoardProvider.formattedToDate,
+                          user: dashBoardProvider.selectedUser,
+                        ),
+                      ),
+                    );
+                  }
                 },
               );
             },
