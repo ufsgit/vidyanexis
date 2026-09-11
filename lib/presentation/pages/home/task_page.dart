@@ -1601,7 +1601,7 @@ class _tasksPageReportState extends State<TaskPage> {
                             Expanded(
                               child: LayoutBuilder(
                                 builder: (context, constraints) {
-                                  double minWidth = 2100;
+                                  double minWidth = 2200;
                                   if (settingsProvider.showView[162] != 1) {
                                     minWidth -= 130;
                                   }
@@ -1689,6 +1689,15 @@ class _tasksPageReportState extends State<TaskPage> {
                                                           horizontal: 12.0),
                                                       color: Colors.white),
                                                   TableWidget(
+                                                      width: 120,
+                                                      title: 'Status',
+                                                      fontSize: 13,
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          vertical: 4.0,
+                                                          horizontal: 12.0),
+                                                      color: Colors.white),
+                                                  TableWidget(
                                                       width: 150,
                                                       title: 'Enquiry for',
                                                       fontSize: 13,
@@ -1759,6 +1768,15 @@ class _tasksPageReportState extends State<TaskPage> {
                                                           horizontal: 12.0),
                                                       color: Colors.white),
                                                   TableWidget(
+                                                      width: 120,
+                                                      title: 'Overdue',
+                                                      fontSize: 13,
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          vertical: 4.0,
+                                                          horizontal: 12.0),
+                                                      color: Colors.white),
+                                                  TableWidget(
                                                       width: 160,
                                                       title:
                                                           'Followup Date&Time',
@@ -1767,16 +1785,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                           .symmetric(
                                                           vertical: 4.0,
                                                           horizontal: 12.0),
-                                                      color: Colors.white),
-                                                  TableWidget(
-                                                      width: 120,
-                                                      title: 'Status',
-                                                      fontSize: 13,
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          vertical: 4.0,
-                                                          horizontal: 12.0),
-                                                      color: Colors.white),
+                                                      color: Colors.white), 
                                                   if (settingsProvider.jobSheet == 1)
                                                     TableWidget(
                                                         width: 130,
@@ -2248,6 +2257,80 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                     ),
                                                                     TableWidget(
                                                                       width:
+                                                                          120,
+                                                                      padding: const EdgeInsets
+                                                                          .symmetric(
+                                                                          vertical:
+                                                                              4.0,
+                                                                          horizontal:
+                                                                              12.0),
+                                                                      data:
+                                                                          InkWell(
+                                                                        onTap:
+                                                                            () {
+                                                                          reportsProvider
+                                                                              .selectedTaskTypeIds
+                                                                              .clear();
+                                                                          reportsProvider
+                                                                              .taskTypeModel
+                                                                              .clear();
+                                                                          if (task
+                                                                              .customerName
+                                                                              .isEmpty) {
+                                                                            updateStatusDialogWithoutTask(task).then((value) {
+                                                                              if (value == true) {
+                                                                                reportsProvider.searchTaskByCustomer(context);
+                                                                              }
+                                                                            });
+                                                                          } else {
+                                                                            if (AppStyles.isWebScreen(context)) {
+                                                                              statusDialog(task).then((value) {
+                                                                                if (value == true) {
+                                                                                  reportsProvider.searchTaskByCustomer(context);
+                                                                                }
+                                                                              });
+                                                                            } else {
+                                                                              statusDialogMobile(task).then((value) {
+                                                                                if (value == true) {
+                                                                                  reportsProvider.searchTaskByCustomer(context);
+                                                                                }
+                                                                              });
+                                                                            }
+                                                                          }
+                                                                        },
+                                                                        child:
+                                                                            Container(
+                                                                          height:
+                                                                              30,
+                                                                          decoration:
+                                                                              BoxDecoration(
+                                                                            borderRadius:
+                                                                                BorderRadius.circular(30),
+                                                                            color:
+                                                                                (task.colorCode ?? const Color(0xFF3B82F6)).withOpacity(0.2),
+                                                                          ),
+                                                                          child:
+                                                                              Center(
+                                                                            child:
+                                                                                Padding(
+                                                                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                                                              child: Text(
+                                                                                task.taskStatusName,
+                                                                                overflow: TextOverflow.ellipsis,
+                                                                                maxLines: 1,
+                                                                                style: TextStyle(
+                                                                                  fontSize: 13,
+                                                                                  fontWeight: FontWeight.w600,
+                                                                                  color: task.colorCode ?? const Color(0xFF3B82F6),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    TableWidget(
+                                                                      width:
                                                                           150,
                                                                       padding: const EdgeInsets
                                                                           .symmetric(
@@ -2546,6 +2629,34 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                     ),
                                                                     TableWidget(
                                                                       width:
+                                                                          120,
+                                                                      padding: const EdgeInsets
+                                                                          .symmetric(
+                                                                          vertical:
+                                                                              4.0,
+                                                                          horizontal:
+                                                                              12.0),
+                                                                      data:
+                                                                          Text(
+                                                                        task.overdue
+                                                                            .toString(),
+                                                                        overflow:
+                                                                            TextOverflow.ellipsis,
+                                                                        maxLines:
+                                                                            1,
+                                                                        style:
+                                                                            const TextStyle(
+                                                                          fontSize:
+                                                                              13,
+                                                                          color:
+                                                                              Color(0xFF334155),
+                                                                          fontWeight:
+                                                                              FontWeight.w500,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    TableWidget(
+                                                                      width:
                                                                           160,
                                                                       padding: const EdgeInsets
                                                                           .symmetric(
@@ -2588,80 +2699,6 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                               Color(0xFF334155),
                                                                           fontWeight:
                                                                               FontWeight.w500,
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                    TableWidget(
-                                                                      width:
-                                                                          120,
-                                                                      padding: const EdgeInsets
-                                                                          .symmetric(
-                                                                          vertical:
-                                                                              4.0,
-                                                                          horizontal:
-                                                                              12.0),
-                                                                      data:
-                                                                          InkWell(
-                                                                        onTap:
-                                                                            () {
-                                                                          reportsProvider
-                                                                              .selectedTaskTypeIds
-                                                                              .clear();
-                                                                          reportsProvider
-                                                                              .taskTypeModel
-                                                                              .clear();
-                                                                          if (task
-                                                                              .customerName
-                                                                              .isEmpty) {
-                                                                            updateStatusDialogWithoutTask(task).then((value) {
-                                                                              if (value == true) {
-                                                                                reportsProvider.searchTaskByCustomer(context);
-                                                                              }
-                                                                            });
-                                                                          } else {
-                                                                            if (AppStyles.isWebScreen(context)) {
-                                                                              statusDialog(task).then((value) {
-                                                                                if (value == true) {
-                                                                                  reportsProvider.searchTaskByCustomer(context);
-                                                                                }
-                                                                              });
-                                                                            } else {
-                                                                              statusDialogMobile(task).then((value) {
-                                                                                if (value == true) {
-                                                                                  reportsProvider.searchTaskByCustomer(context);
-                                                                                }
-                                                                              });
-                                                                            }
-                                                                          }
-                                                                        },
-                                                                        child:
-                                                                            Container(
-                                                                          height:
-                                                                              30,
-                                                                          decoration:
-                                                                              BoxDecoration(
-                                                                            borderRadius:
-                                                                                BorderRadius.circular(30),
-                                                                            color:
-                                                                                (task.colorCode ?? const Color(0xFF3B82F6)).withOpacity(0.2),
-                                                                          ),
-                                                                          child:
-                                                                              Center(
-                                                                            child:
-                                                                                Padding(
-                                                                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                                                                              child: Text(
-                                                                                task.taskStatusName,
-                                                                                overflow: TextOverflow.ellipsis,
-                                                                                maxLines: 1,
-                                                                                style: TextStyle(
-                                                                                  fontSize: 13,
-                                                                                  fontWeight: FontWeight.w600,
-                                                                                  color: task.colorCode ?? const Color(0xFF3B82F6),
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          ),
                                                                         ),
                                                                       ),
                                                                     ),
