@@ -50,6 +50,7 @@ class TaskReportModel {
   final String priorityColor;
   final String consumerNo;
   final String leadDuration;
+  final String overdue;
 
   DateTime? get parsedCreationDate {
     final dateStr = entryDate.trim();
@@ -127,6 +128,7 @@ class TaskReportModel {
     required this.priorityColor,
     required this.consumerNo,
     required this.leadDuration,
+    required this.overdue,
   });
 
   factory TaskReportModel.fromJson(Map<String, dynamic> json) {
@@ -269,6 +271,7 @@ class TaskReportModel {
       priorityColor: json['Priority_Color']?.toString() ?? '',
       consumerNo: json['Consumer_Number']?.toString() ?? '',
       leadDuration: json['Lead_Age_Days']?.toString() ?? '',
+      overdue: json['Overdue']?.toString() ?? '',
     );
   }
 
