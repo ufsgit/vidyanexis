@@ -110,6 +110,9 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
   // }
 
   void _saveLead() async {
+    if (_isProcessingClick) return;
+    setState(() => _isProcessingClick = true);
+    try {
     final dropDownProvider =
         Provider.of<DropDownProvider>(context, listen: false);
     final leadProvider = Provider.of<LeadsProvider>(context, listen: false);
@@ -118,6 +121,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
 
     // Validation checks
     if (!_validateForm(leadProvider, dropDownProvider)) {
+      setState(() => _isProcessingClick = false);
       return;
     }
 
@@ -204,6 +208,9 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
         leadtypeName: leadProvider.leadtypeController.text,
         locationId: dropDownProvider.selectedLocationId,
         workCompletionDate: leadProvider.workCompletionDateController.text);
+    } finally {
+      if (mounted) setState(() => _isProcessingClick = false);
+    }
   }
 
   bool _validateForm(
@@ -987,7 +994,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
         child: SizedBox(
           width: double.infinity,
           child: ElevatedButton(
-            onPressed: _saveLead,
+            onPressed: _isProcessingClick ? null : _saveLead,
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.bluebutton,
               foregroundColor: Colors.white,

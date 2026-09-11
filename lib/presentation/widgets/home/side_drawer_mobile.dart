@@ -74,6 +74,7 @@ class SidebarDrawer extends StatefulWidget {
 
 class _SidebarDrawerState extends State<SidebarDrawer> {
   PackageInfo? packageInfo;
+  bool _isLoggingOut = false;
 
   @override
   void initState() {
@@ -646,6 +647,8 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
   }
 
   void _handleLogout(BuildContext context) {
+    if (_isLoggingOut) return;
+    setState(() => _isLoggingOut = true);
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -766,6 +769,8 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
           ],
         );
       },
-    );
+    ).whenComplete(() {
+      if (mounted) setState(() => _isLoggingOut = false);
+    });
   }
 }

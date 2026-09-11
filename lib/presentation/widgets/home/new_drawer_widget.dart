@@ -39,7 +39,8 @@ class NewLeadDrawerWidget extends StatefulWidget {
 class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
   bool _isFieldValid(String? value) => value != null && value.isNotEmpty;
   late FocusNode _leadNameFocusNode;
-  final FocusNode _leadAgeFocusNode = FocusNode();
+
+  bool _isProcessingClick = false;
   ScrollController scrollController = ScrollController();
   bool validatePhone = false;
   DateTime? originalFollowUpDate;
@@ -55,6 +56,9 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
   bool get showAmount => showAmountForMain || showAmountForSecondary;
 
   void _saveLead() async {
+    if (_isProcessingClick) return;
+    setState(() => _isProcessingClick = true);
+    try {
     final fieldValues =
         customFieldLeadStatusKey.currentState?.getFieldValues() ?? [];
     final jsonData =
@@ -75,6 +79,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
 
     // Validation checks
     if (!_validateForm(leadProvider, dropDownProvider)) {
+      setState(() => _isProcessingClick = false);
       return;
     }
 
@@ -104,7 +109,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
       orElse: () => SearchUserDetails(userDetailsId: 0, userDetailsName: ''),
     );
 
-    leadProvider.saveLead(
+    await leadProvider.saveLead(
       custId: widget.isEdit ? leadProvider.customerId : 0,
       context: context,
       address1: leadProvider.addressController.text,
@@ -163,6 +168,9 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
       amount: leadProvider.followupAmountController.text,
       workCompletionDate: leadProvider.workCompletionDateController.text,
     );
+    } finally {
+      if (mounted) setState(() => _isProcessingClick = false);
+    }
   }
 
   bool _validateForm(
@@ -691,7 +699,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 24, vertical: 12),
                                 ),
-                                onPressed: () async {
+                                onPressed: _isProcessingClick ? null : () {
                                   print('Lead save');
                                   _saveLead();
                                 },

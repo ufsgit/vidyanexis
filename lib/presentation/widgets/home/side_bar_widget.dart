@@ -40,6 +40,7 @@ class CustomSidebar extends StatefulWidget {
 
 class _CustomSidebarState extends State<CustomSidebar> {
   bool isReportsExpanded = false;
+  bool _isLoggingOut = false;
 
   List<SidebarOption> getNonReportOptions() {
     return widget.options
@@ -316,105 +317,115 @@ class _CustomSidebarState extends State<CustomSidebar> {
             ),
           ),
           child: const Text('Logout'),
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: const Text('Logout'),
-                  content: const Text('Are you sure you want to log out?'),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      child: const Text('Cancel'),
-                    ),
-                    TextButton(
-                      onPressed: () async {
-                        final loginController = Provider.of<LoginController>(
-                            context,
-                            listen: false);
-                        final router = GoRouter.of(context);
+          onPressed: _isLoggingOut
+              ? null
+              : () {
+                  setState(() => _isLoggingOut = true);
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text('Logout'),
+                        content: const Text('Are you sure you want to log out?'),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: const Text('Cancel'),
+                          ),
+                          TextButton(
+                            onPressed: () async {
+                              final loginController =
+                                  Provider.of<LoginController>(context,
+                                      listen: false);
+                              final router = GoRouter.of(context);
 
-                        Navigator.of(context).pop();
+                              Navigator.of(context).pop();
 
-                        SharedPreferences prefs =
-                            await SharedPreferences.getInstance();
+                              SharedPreferences prefs =
+                                  await SharedPreferences.getInstance();
 
-                        // Backup attendance state
-                        String? userId = prefs.getString('userId');
-                        bool? isCheckedIn;
-                        String? checkInDate;
-                        String? checkInTime;
-                        int? attendanceId;
+                              // Backup attendance state
+                              String? userId = prefs.getString('userId');
+                              bool? isCheckedIn;
+                              String? checkInDate;
+                              String? checkInTime;
+                              int? attendanceId;
 
-                        if (userId != null) {
-                          isCheckedIn = prefs.getBool('is_checked_in_$userId');
-                          checkInDate =
-                              prefs.getString('check_in_date_$userId');
-                          checkInTime =
-                              prefs.getString('check_in_time_$userId');
-                          attendanceId = prefs.getInt('attendance_id_$userId');
-                          await loginController.logout(
-                              userId: int.tryParse(userId) ?? 0);
-                        }
+                              if (userId != null) {
+                                isCheckedIn =
+                                    prefs.getBool('is_checked_in_$userId');
+                                checkInDate =
+                                    prefs.getString('check_in_date_$userId');
+                                checkInTime =
+                                    prefs.getString('check_in_time_$userId');
+                                attendanceId =
+                                    prefs.getInt('attendance_id_$userId');
+                                await loginController.logout(
+                                    userId: int.tryParse(userId) ?? 0);
+                              }
 
-                        // Backup branding state
-                        String? cachedLogo =
-                            prefs.getString('cached_company_logo');
-                        String? cachedTitle =
-                            prefs.getString('cached_company_title');
-                        String? baseUrl = prefs.getString('company_base_url');
+                              // Backup branding state
+                              String? cachedLogo =
+                                  prefs.getString('cached_company_logo');
+                              String? cachedTitle =
+                                  prefs.getString('cached_company_title');
+                              String? baseUrl =
+                                  prefs.getString('company_base_url');
 
-                        await prefs.clear();
+                              await prefs.clear();
 
-                        // Restore attendance state
-                        if (userId != null) {
-                          if (isCheckedIn != null) {
-                            await prefs.setBool(
-                                'is_checked_in_$userId', isCheckedIn);
-                          }
-                          if (checkInDate != null) {
-                            await prefs.setString(
-                                'check_in_date_$userId', checkInDate);
-                          }
-                          if (checkInTime != null) {
-                            await prefs.setString(
-                                'check_in_time_$userId', checkInTime);
-                          }
-                          if (attendanceId != null) {
-                            await prefs.setInt(
-                                'attendance_id_$userId', attendanceId);
-                          }
-                        }
+                              // Restore attendance state
+                              if (userId != null) {
+                                if (isCheckedIn != null) {
+                                  await prefs.setBool(
+                                      'is_checked_in_$userId', isCheckedIn);
+                                }
+                                if (checkInDate != null) {
+                                  await prefs.setString(
+                                      'check_in_date_$userId', checkInDate);
+                                }
+                                if (checkInTime != null) {
+                                  await prefs.setString(
+                                      'check_in_time_$userId', checkInTime);
+                                }
+                                if (attendanceId != null) {
+                                  await prefs.setInt(
+                                      'attendance_id_$userId', attendanceId);
+                                }
+                              }
 
-                        // Restore branding state
-                        if (cachedLogo != null) {
-                          await prefs.setString(
-                              'cached_company_logo', cachedLogo);
-                        }
-                        if (cachedTitle != null) {
-                          await prefs.setString(
-                              'cached_company_title', cachedTitle);
-                        }
-                        if (baseUrl != null) {
-                          await prefs.setString('company_base_url', baseUrl);
-                        }
+                              // Restore branding state
+                              if (cachedLogo != null) {
+                                await prefs.setString(
+                                    'cached_company_logo', cachedLogo);
+                              }
+                              if (cachedTitle != null) {
+                                await prefs.setString(
+                                    'cached_company_title', cachedTitle);
+                              }
+                              if (baseUrl != null) {
+                                await prefs.setString(
+                                    'company_base_url', baseUrl);
+                              }
 
-                        if (context.mounted) {
-                          router.go(LoginPage.route);
-                        }
-                      },
-                      child: const Text(
-                        'Confirm',
-                        style: TextStyle(
-                            color: Colors.red, fontWeight: FontWeight.w500),
-                      ),
-                    ),
-                  ],
-                );
-              },
-            );
-          },
+                              if (context.mounted) {
+                                router.go(LoginPage.route);
+                              }
+                            },
+                            child: const Text(
+                              'Confirm',
+                              style: TextStyle(
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ).whenComplete(() {
+                    if (mounted) setState(() => _isLoggingOut = false);
+                  });
+                },
         ),
       ),
     );

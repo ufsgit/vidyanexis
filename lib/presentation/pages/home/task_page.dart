@@ -2391,6 +2391,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                               12.0),
                                                                       data: PopupMenuButton<
                                                                           PriorityModel>(
+                                                                        enabled: settingsProvider.showEdit[190] == 1,
                                                                         tooltip:
                                                                             task.priorityName,
                                                                         constraints:
