@@ -74,7 +74,7 @@ class CustomerOutstandingSummaryTab extends StatelessWidget {
               if (settingsProvider.menuIsViewMap[89].toString() == '1')
                 'Task Summary Reports',
               if (settingsProvider.menuIsViewMap[123].toString() == '1')
-                'Customer Task Month Report',
+                'Task Calendar',
               if (settingsProvider.menuIsViewMap[8].toString() == '1')
                 'Complaint Reports',
               if (settingsProvider.menuIsViewMap[9].toString() == '1')

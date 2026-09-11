@@ -138,25 +138,25 @@ class CustomerTaskMonthProvider extends ChangeNotifier {
     }
   }
 
-  // Helper to group data by customer and date for the UI
+  // Helper to group data by staff and date for the UI
   Map<String, Map<String, List<CustomerTaskMonthModel>>> groupedDataInRange(
       List<DateTime> range) {
     Map<String, Map<String, List<CustomerTaskMonthModel>>> grouped = {};
     for (var item in _taskData) {
-      if (item.customerName == null || item.taskDate == null) continue;
+      if (item.staffName == null || item.taskDate == null) continue;
 
       // Extract only the date part for comparison
       String itemDateStr = item.taskDate!.split(' ')[0];
 
-      if (!grouped.containsKey(item.customerName)) {
-        grouped[item.customerName!] = {};
+      if (!grouped.containsKey(item.staffName)) {
+        grouped[item.staffName!] = {};
       }
 
-      if (!grouped[item.customerName]!.containsKey(itemDateStr)) {
-        grouped[item.customerName]![itemDateStr] = [];
+      if (!grouped[item.staffName]!.containsKey(itemDateStr)) {
+        grouped[item.staffName]![itemDateStr] = [];
       }
 
-      grouped[item.customerName]![itemDateStr]!.add(item);
+      grouped[item.staffName]![itemDateStr]!.add(item);
     }
     return grouped;
   }

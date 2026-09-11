@@ -45,14 +45,17 @@ class _CustomSidebarState extends State<CustomSidebar> {
     return widget.options
         .where((option) =>
             !option.title.contains('Report') &&
-            option.title != 'Sales Pipeline')
+            option.title != 'Sales Pipeline' &&
+            option.title != 'Task Calendar')
         .toList();
   }
 
   List<SidebarOption> getReportOptions() {
     return widget.options
         .where((option) =>
-            option.title.contains('Report') || option.title == 'Sales Pipeline')
+            option.title.contains('Report') ||
+            option.title == 'Sales Pipeline' ||
+            option.title == 'Task Calendar')
         .toList();
   }
 

@@ -95,14 +95,14 @@ class _CustomerTaskMonthReportScreenState
       appBar: isWeb
           ? null
           : CustomAppBar(
-              title: 'Customer Task Report',
+              title: 'Task Calendar',
               titleStyle: GoogleFonts.plusJakartaSans(
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
                 color: AppColors.textBlack,
               ),
               showFilterIcon: false,
-              searchHintText: 'Search by customer...',
+              searchHintText: 'Search by staff...',
               searchController: searchController,
               onSearchTap: () {
                 searchProvider.startSearch();
@@ -175,7 +175,7 @@ class _CustomerTaskMonthReportScreenState
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        'Customer Task Report',
+                        'Task Calendar',
                         style: GoogleFonts.plusJakartaSans(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -245,7 +245,7 @@ class _CustomerTaskMonthReportScreenState
               else ...[
                 if (isMobile && filteredCustomers.isNotEmpty)
                   CommonReportSummaryBar(
-                    totalLabel: 'Total Customers',
+                    totalLabel: 'Total Staff',
                     totalCount: customers.length,
                     showingLabel: 'Showing',
                     showingCount: filteredCustomers.length,
@@ -463,7 +463,7 @@ class _CustomerTaskMonthReportScreenState
             padding: const EdgeInsets.symmetric(horizontal: 16),
             alignment: Alignment.centerLeft,
             child: Text(
-              'Customer Name',
+              'Staff Name',
               style: GoogleFonts.plusJakartaSans(
                 color: const Color(0xFF495057),
                 fontWeight: FontWeight.w700,
@@ -546,7 +546,7 @@ class _CustomerTaskMonthReportScreenState
     Map<String, Map<String, List<CustomerTaskMonthModel>>> groupedData,
   ) {
     return Container(
-      width: (dates.length * 50).toDouble(),
+      width: (dates.length * 50).toDouble() + 1,
       decoration: BoxDecoration(
         border: Border(right: BorderSide(color: Colors.grey[200]!)),
       ),
@@ -805,46 +805,90 @@ class _CustomerTaskMonthReportScreenState
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Task Details - ${tasks.first.taskDate}'),
+        title: Text(
+          'Task Details - ${tasks.first.taskDate}',
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 18,
+            fontWeight: FontWeight.w500,
+            color: const Color(0xFF334155),
+          ),
+        ),
+        backgroundColor: const Color(0xFFEEF2F0), // Matches the subtle greenish-grey background
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
         content: SizedBox(
           width: double.maxFinite,
           child: ListView.separated(
             shrinkWrap: true,
             itemCount: tasks.length,
-            separatorBuilder: (context, index) => const Divider(),
+            separatorBuilder: (context, index) => const Divider(color: Colors.transparent, height: 16),
             itemBuilder: (context, index) {
               final task = tasks[index];
-              return ListTile(
-                title: Text(task.taskTypeName ?? 'No Task Name'),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Status: ${task.taskStatusName ?? 'N/A'}'),
-                    if (task.staffName != null)
-                      Text('Assigned To: ${task.staffName}'),
-                    if (task.projectWing != null)
-                      Text('Project Wing: ${task.projectWing}'),
-                  ],
-                ),
-                trailing: Container(
-                  height: 40,
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                              decoration: BoxDecoration(
-                    color:
-                        _getStatusColor(task.taskStatusName).withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(4),
-                    border:
-                        Border.all(color: _getStatusColor(task.taskStatusName)),
-                  ),
-                  child: Text(
-                    task.taskStatusName ?? 'N/A',
-                    style: TextStyle(
-                      color: _getStatusColor(task.taskStatusName),
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          task.taskTypeName ?? 'No Task Name',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 14,
+                            color: const Color(0xFF334155),
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Status: ${task.taskStatusName ?? 'N/A'}',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 12,
+                            color: const Color(0xFF64748B),
+                          ),
+                        ),
+                        if (task.staffName != null) ...[
+                          const SizedBox(height: 2),
+                          Text(
+                            'Assigned To: ${task.staffName}',
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 12,
+                              color: const Color(0xFF64748B),
+                            ),
+                          ),
+                        ],
+                        if (task.projectWing != null) ...[
+                          const SizedBox(height: 2),
+                          Text(
+                            'Project Wing: ${task.projectWing}',
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 12,
+                              color: const Color(0xFF64748B),
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
                   ),
-                ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: _getStatusColor(task.taskStatusName).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(4),
+                      border: Border.all(color: _getStatusColor(task.taskStatusName)),
+                    ),
+                    child: Text(
+                      task.taskStatusName ?? 'N/A',
+                      style: GoogleFonts.plusJakartaSans(
+                        color: _getStatusColor(task.taskStatusName),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
               );
             },
           ),
@@ -852,7 +896,16 @@ class _CustomerTaskMonthReportScreenState
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            ),
+            child: Text(
+              'Close',
+              style: GoogleFonts.plusJakartaSans(
+                color: const Color(0xFF0F766E), // Teal text color matching image
+                fontWeight: FontWeight.w500,
+              ),
+            ),
           ),
         ],
       ),

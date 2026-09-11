@@ -345,7 +345,7 @@ class _HomePageState extends State<HomePage> {
         ),
       if (settingsProvider.menuIsViewMap[123].toString() == '1')
         SidebarOption(
-          title: 'Customer Task Month Report',
+          title: 'Task Calendar',
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: CustomerTaskMonthReportScreen()),
         ),
@@ -623,7 +623,8 @@ class _HomePageState extends State<HomePage> {
             sideProvider.selectedName == 'Settings' ||
             (AppStyles.isWebScreen(context) &&
                 (sideProvider.selectedName.contains('Report') ||
-                    sideProvider.selectedName == 'Sales Pipeline'));
+                    sideProvider.selectedName == 'Sales Pipeline' ||
+                    sideProvider.selectedName == 'Task Calendar'));
     return Scaffold(
       appBar: hideMainAppBar
           ? null
