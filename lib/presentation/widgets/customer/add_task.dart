@@ -37,6 +37,7 @@ class TaskCreationWidget extends StatefulWidget {
   TaskDetails? taskDetails;
   TaskReportModel? taskReportModel;
   bool showDocument;
+  bool isFromTaskPage;
 
   TaskCreationWidget({
     super.key,
@@ -46,6 +47,7 @@ class TaskCreationWidget extends StatefulWidget {
     this.taskDetails,
     this.taskReportModel,
     this.showDocument = false,
+    this.isFromTaskPage = false,
   });
 
   @override
@@ -637,12 +639,37 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
                           spacing: 10,
                           runSpacing: 10,
                           children: dropDownProvider.taskType
-                              .where((taskType) =>
-                                  taskType.manualCreation == 1 ||
-                                  (widget.isEdit &&
-                                      customerDetailsProvider
-                                              .selectedTaskType ==
-                                          taskType.taskTypeId))
+                              .where((taskType) {
+                                if (!(taskType.manualCreation == 1 || (widget.isEdit && customerDetailsProvider.selectedTaskType == taskType.taskTypeId))) return false;
+                                
+                                if (widget.isFromTaskPage) return true;
+
+                                final users = dropDownProvider.searchUserDetails.where((user) {
+                                  if (user.workingStatus != "1") return false;
+                                  final taskDeptList = taskType.departmentIds.toString().split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
+                                  final userDeptList = (user.departmentId ?? '').toString().split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
+                                  
+                                  List<String> transferDeptList = [];
+                                  if (user.transferDepartments != null) {
+                                    if (user.transferDepartments is Iterable) {
+                                      for (var t in user.transferDepartments) {
+                                        if (t is Map) {
+                                          final tId = t["Department_Id"]?.toString() ?? t["department_id"]?.toString();
+                                          if (tId != null) transferDeptList.add(tId.trim());
+                                        } else if (t != null) {
+                                          transferDeptList.addAll(t.toString().split(',').map((e) => e.trim()));
+                                        }
+                                      }
+                                    } else {
+                                      transferDeptList.addAll(user.transferDepartments.toString().split(',').map((e) => e.trim()));
+                                    }
+                                  }
+                                  
+                                  return taskDeptList.any((dept) => userDeptList.contains(dept) || transferDeptList.contains(dept));
+                                }).toList();
+                                
+                                return users.isNotEmpty;
+                              })
                               .map((taskType) {
                             bool isSelected =
                                 customerDetailsProvider.selectedTaskType ==

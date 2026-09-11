@@ -1395,7 +1395,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                                             .taskType
                                                                             .where((taskType) =>
                                                                                 taskType.manualCreation == 1)
-                                                                        .map((taskType) {
+                                                                        .expand<Widget>((taskType) {
                                                                           final users = provider
                                                                               .searchUserDetails
                                                                               .where((user) {
@@ -1422,7 +1422,9 @@ class _LeadsPageState extends State<LeadPage> {
                                                                             return taskDeptList.any((dept) => userDeptList.contains(dept) || transferDeptList.contains(dept));
                                                                           }).toList();
 
-                                                                          return MultiLevelHoverMenu(
+                                                                          if (users.isEmpty) return <Widget>[];
+
+                                                                          return [MultiLevelHoverMenu(
                                                                             title: taskType.taskTypeName,
                                                                             children: users.map((user) {
                                                                               return MenuItemButton(
@@ -1432,7 +1434,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                                                 child: Text(user.userDetailsName),
                                                                               );
                                                                             }).toList(),
-                                                                          );
+                                                                          )];
                                                                         }).toList(),
                                                                       ),
                                                                 if (settingsProvider

@@ -226,14 +226,14 @@ class _tasksPageReportState extends State<TaskPage> {
         context: context,
         builder: (context) => Dialog(
           backgroundColor: Colors.transparent,
-          child: TaskCreationWidget(isEdit: false, taskId: '0'),
+          child: TaskCreationWidget(isEdit: false, taskId: '0', isFromTaskPage: true),
         ),
       );
     } else {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => AddTaskMobile(isEdit: false, taskId: '0')));
+              builder: (context) => AddTaskMobile(isEdit: false, taskId: '0', isFromTaskPage: true)));
     }
   }
 
@@ -791,6 +791,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                         isEdit: false,
                                         taskId: '0',
                                         showDocument: true,
+                                        isFromTaskPage: true,
                                       );
                                     },
                                   );
@@ -2790,6 +2791,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                             isEdit: false,
                                             taskId: '0',
                                             showDocument: true,
+                                            isFromTaskPage: true,
                                           );
                                         },
                                       );

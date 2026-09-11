@@ -1132,7 +1132,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                                             .where((taskType) =>
                                                                 taskType
                                                                     .manualCreation == 1)
-                                                            .map((taskType) {
+                                                            .expand<Widget>((taskType) {
                                                           final users = provider
                                                               .searchUserDetails
                                                               .where((user) {
@@ -1159,7 +1159,9 @@ class _CustomerPageState extends State<CustomerPage> {
                                                             return taskDeptList.any((dept) => userDeptList.contains(dept) || transferDeptList.contains(dept));
                                                           }).toList();
 
-                                                          return MultiLevelHoverMenu(
+                                                          if (users.isEmpty) return <Widget>[];
+
+                                                          return [MultiLevelHoverMenu(
                                                             title: taskType
                                                                 .taskTypeName,
                                                             children: users
@@ -1175,7 +1177,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                                                     .userDetailsName),
                                                               );
                                                             }).toList(),
-                                                          );
+                                                          )];
                                                         }).toList(),
                                                       ),
                                                 if (settingsProvider
