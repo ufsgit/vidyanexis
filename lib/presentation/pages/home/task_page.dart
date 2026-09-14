@@ -76,9 +76,18 @@ class _tasksPageReportState extends State<TaskPage> {
   bool _isLoadingMore = false;
   late bool _isMobile;
   Timer? _debounce;
+  late final ScrollController _fixedVerticalController;
+  late final ScrollController _scrollableVerticalController;
+  bool _isSyncing = false;
+
   @override
   void initState() {
     super.initState();
+    _fixedVerticalController = ScrollController();
+    _scrollableVerticalController = ScrollController();
+    _fixedVerticalController.addListener(_syncScrollFromFixed);
+    _scrollableVerticalController.addListener(_syncScrollFromScrollable);
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final customerProvider =
           Provider.of<CustomerProvider>(context, listen: false);
@@ -122,6 +131,24 @@ class _tasksPageReportState extends State<TaskPage> {
       provider.getStatesDropdown(context);
       settingsProvider.getPriorities(context);
     });
+  }
+
+  void _syncScrollFromFixed() {
+    if (_isSyncing) return;
+    _isSyncing = true;
+    if (_scrollableVerticalController.hasClients) {
+      _scrollableVerticalController.jumpTo(_fixedVerticalController.offset);
+    }
+    _isSyncing = false;
+  }
+
+  void _syncScrollFromScrollable() {
+    if (_isSyncing) return;
+    _isSyncing = true;
+    if (_fixedVerticalController.hasClients) {
+      _fixedVerticalController.jumpTo(_scrollableVerticalController.offset);
+    }
+    _isSyncing = false;
   }
 
   @override
@@ -345,6 +372,8 @@ class _tasksPageReportState extends State<TaskPage> {
     _debounce?.cancel();
     _scrollController.dispose();
     _horizontalScrollController.dispose();
+    _fixedVerticalController.dispose();
+    _scrollableVerticalController.dispose();
     super.dispose();
   }
 
@@ -1601,56 +1630,75 @@ class _tasksPageReportState extends State<TaskPage> {
                             Expanded(
                               child: LayoutBuilder(
                                 builder: (context, constraints) {
-                                  double minWidth = 2200;
-                                  if (settingsProvider.showView[162] != 1) {
-                                    minWidth -= 130;
+                                  // Fixed columns: No. + Lead Code + Customer + Mobile No. + Task + Status
+                                  const double fixedWidth =
+                                      60 + 120 + 180 + 110 + 180 + 120; // 770
+
+                                  double scrollableMinWidth = 150 +
+                                      120 +
+                                      140 +
+                                      180 +
+                                      150 +
+                                      140 +
+                                      120 +
+                                      120 +
+                                      160; // 1280
+                                  if (settingsProvider.jobSheet == 1) {
+                                    scrollableMinWidth += 130;
                                   }
-                                  double tableWidth =
-                                      minWidth > constraints.maxWidth
-                                          ? minWidth
-                                          : constraints.maxWidth;
+                                  if (settingsProvider.showView[162] != 1) {
+                                    scrollableMinWidth -= 130;
+                                  }
+
                                   return Scrollbar(
-                                    controller: _horizontalScrollController,
+                                    controller: _scrollableVerticalController,
                                     thumbVisibility: true,
                                     trackVisibility: true,
-                                    child: SingleChildScrollView(
-                                      scrollDirection: Axis.horizontal,
-                                      controller: _horizontalScrollController,
-                                      child: SizedBox(
-                                        width: tableWidth,
-                                        child: Column(
-                                          children: [
-                                            // Header
-                                            Container(
-                                              decoration: BoxDecoration(
-                                                color: AppColors.primaryBlue,
-                                                borderRadius:
-                                                    BorderRadius.circular(4),
-                                              ),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  SizedBox(
-                                                    width: 60,
-                                                    child: Padding(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          vertical: 4.0,
-                                                          horizontal: 12.0),
-                                                      child: Text('No.',
+                                    interactive: true,
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        // ==================== FIXED COLUMNS ====================
+                                        SizedBox(
+                                          width: fixedWidth,
+                                          child: Column(
+                                            children: [
+                                              // Fixed Header
+                                              Container(
+                                                height: 40,
+                                                decoration: BoxDecoration(
+                                                  color: AppColors.primaryBlue,
+                                                  borderRadius:
+                                                      const BorderRadius.only(
+                                                    topLeft: Radius.circular(4),
+                                                    bottomLeft:
+                                                        Radius.circular(4),
+                                                  ),
+                                                ),
+                                                child: Row(
+                                                  children: [
+                                                    SizedBox(
+                                                      width: 60,
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                vertical: 4.0,
+                                                                horizontal:
+                                                                    12.0),
+                                                        child: Text(
+                                                          'No.',
                                                           style:
                                                               const TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  color: Colors
-                                                                      .white)),
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color: Colors.white,
+                                                          ),
+                                                        ),
+                                                      ),
                                                     ),
-                                                  ),
-                                                  TableWidget(
+                                                    TableWidget(
                                                       width: 120,
                                                       title: 'Lead Code',
                                                       padding: const EdgeInsets
@@ -1659,8 +1707,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                                           horizontal: 12.0),
                                                       alignment:
                                                           Alignment.centerLeft,
-                                                      color: Colors.white),
-                                                  TableWidget(
+                                                      color: Colors.white,
+                                                    ),
+                                                    TableWidget(
                                                       width: 180,
                                                       title: 'Customer',
                                                       padding: const EdgeInsets
@@ -1669,8 +1718,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                                           horizontal: 12.0),
                                                       alignment:
                                                           Alignment.centerLeft,
-                                                      color: Colors.white),
-                                                  TableWidget(
+                                                      color: Colors.white,
+                                                    ),
+                                                    TableWidget(
                                                       width: 110,
                                                       title: 'Mobile No.',
                                                       fontSize: 13,
@@ -1678,8 +1728,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                                           .symmetric(
                                                           vertical: 4.0,
                                                           horizontal: 12.0),
-                                                      color: Colors.white),
-                                                  TableWidget(
+                                                      color: Colors.white,
+                                                    ),
+                                                    TableWidget(
                                                       width: 180,
                                                       title: 'Task',
                                                       fontSize: 13,
@@ -1687,8 +1738,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                                           .symmetric(
                                                           vertical: 4.0,
                                                           horizontal: 12.0),
-                                                      color: Colors.white),
-                                                  TableWidget(
+                                                      color: Colors.white,
+                                                    ),
+                                                    TableWidget(
                                                       width: 120,
                                                       title: 'Status',
                                                       fontSize: 13,
@@ -1696,124 +1748,29 @@ class _tasksPageReportState extends State<TaskPage> {
                                                           .symmetric(
                                                           vertical: 4.0,
                                                           horizontal: 12.0),
-                                                      color: Colors.white),
-                                                  TableWidget(
-                                                      width: 150,
-                                                      title: 'Enquiry for',
-                                                      fontSize: 13,
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          vertical: 4.0,
-                                                          horizontal: 12.0),
-                                                      color: Colors.white),
-                                                  TableWidget(
-                                                      width: 120,
-                                                      title: 'Staff',
-                                                      fontSize: 13,
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          vertical: 4.0,
-                                                          horizontal: 12.0),
-                                                      color: Colors.white),
-                                                  TableWidget(
-                                                      width: 140,
-                                                      title: 'Consumer No',
-                                                      fontSize: 13,
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          vertical: 4.0,
-                                                          horizontal: 12.0),
-                                                      color: Colors.white),
-                                                  TableWidget(
-                                                      width: 180,
-                                                      title: 'Description',
-                                                      fontSize: 13,
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          vertical: 4.0,
-                                                          horizontal: 12.0),
-                                                      color: Colors.white),
-                                                  TableWidget(
-                                                    width: 150,
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        vertical: 4.0,
-                                                        horizontal: 12.0),
-                                                    alignment:
-                                                        Alignment.centerLeft,
-                                                    data: const Text(
-                                                      'Priority',
-                                                      style: TextStyle(
-                                                        fontSize: 13,
-                                                        color: Colors.white,
-                                                      ),
+                                                      color: Colors.white,
                                                     ),
-                                                  ),
-                                                  TableWidget(
-                                                      width: 140,
-                                                      title: 'Created Date',
-                                                      fontSize: 13,
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          vertical: 4.0,
-                                                          horizontal: 12.0),
-                                                      color: Colors.white),
-                                                  TableWidget(
-                                                      width: 120,
-                                                      title: 'Duration',
-                                                      fontSize: 13,
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          vertical: 4.0,
-                                                          horizontal: 12.0),
-                                                      color: Colors.white),
-                                                  TableWidget(
-                                                      width: 120,
-                                                      title: 'Overdue',
-                                                      fontSize: 13,
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          vertical: 4.0,
-                                                          horizontal: 12.0),
-                                                      color: Colors.white),
-                                                  TableWidget(
-                                                      width: 160,
-                                                      title:
-                                                          'Followup Date&Time',
-                                                      fontSize: 13,
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          vertical: 4.0,
-                                                          horizontal: 12.0),
-                                                      color: Colors.white), 
-                                                  if (settingsProvider.jobSheet == 1)
-                                                    TableWidget(
-                                                        width: 130,
-                                                        title: 'Job Sheet',
-                                                        fontSize: 13,
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                                vertical: 4.0,
-                                                                horizontal:
-                                                                    12.0),
-                                                        color: Colors.white),
-                                                ],
+                                                  ],
+                                                ),
                                               ),
-                                            ),
 
-                                            // Data Rows
-                                            Expanded(
-                                              child:
-                                                  reportsProvider
-                                                          .taskReport.isEmpty
-                                                      ? const Center(
-                                                          child: Text(
-                                                              "No tasks found"))
-                                                      : ListView.builder(
+                                              // Fixed Data Rows
+                                              Expanded(
+                                                child: reportsProvider
+                                                        .taskReport.isEmpty
+                                                    ? const Center(
+                                                        child: Text(
+                                                            "No tasks found"))
+                                                    : ScrollConfiguration(
+                                                        behavior:
+                                                            ScrollConfiguration
+                                                                    .of(context)
+                                                                .copyWith(
+                                                                    scrollbars:
+                                                                        false),
+                                                        child: ListView.builder(
                                                           controller:
-                                                              _scrollController,
-                                                          shrinkWrap: false,
+                                                              _fixedVerticalController,
                                                           physics:
                                                               const AlwaysScrollableScrollPhysics(),
                                                           itemCount: reportsProvider
@@ -1827,7 +1784,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                   : 0),
                                                           itemBuilder:
                                                               (context, index) {
-                                                            // Loading indicator for mobile
+                                                            // Loading indicator (mobile)
                                                             if (!AppStyles
                                                                     .isWebScreen(
                                                                         context) &&
@@ -1842,9 +1799,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                         .all(
                                                                             16),
                                                                 child: Center(
-                                                                  child:
-                                                                      CircularProgressIndicator(),
-                                                                ),
+                                                                    child:
+                                                                        CircularProgressIndicator()),
                                                               );
                                                             }
 
@@ -1861,19 +1817,18 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                     index +
                                                                     1;
 
+                                                            // Mobile card
                                                             if (!AppStyles
                                                                 .isWebScreen(
                                                                     context)) {
                                                               return Column(
                                                                 children: [
                                                                   Divider(
-                                                                    height: 1,
-                                                                    thickness:
-                                                                        1,
-                                                                    color:
-                                                                        AppColors
-                                                                            .grey,
-                                                                  ),
+                                                                      height: 1,
+                                                                      thickness:
+                                                                          1,
+                                                                      color: AppColors
+                                                                          .grey),
                                                                   TaskCard(
                                                                     task: task,
                                                                     isExpanded:
@@ -1907,7 +1862,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                               );
                                                             }
 
-                                                            // === WEB ROW ===
+                                                            // ===== WEB FIXED ROW =====
                                                             return InkWell(
                                                               onTap: () {
                                                                 reportsProvider
@@ -1962,10 +1917,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                   const Color(
                                                                       0xFFF8FAFC),
                                                               child: Container(
-                                                                constraints:
-                                                                    BoxConstraints(
-                                                                        minHeight:
-                                                                            rowHeight),
+                                                                height: rowHeight,
                                                                 decoration:
                                                                     BoxDecoration(
                                                                   color: index %
@@ -1978,6 +1930,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                 ),
                                                                 child: Row(
                                                                   children: [
+                                                                    // No.
                                                                     SizedBox(
                                                                       width: 60,
                                                                       child:
@@ -2002,6 +1955,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                         ),
                                                                       ),
                                                                     ),
+                                                                    // Lead Code
                                                                     TableWidget(
                                                                       width:
                                                                           120,
@@ -2020,6 +1974,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                           FontWeight
                                                                               .normal,
                                                                     ),
+                                                                    // Customer
                                                                     TableWidget(
                                                                       width:
                                                                           180,
@@ -2060,8 +2015,10 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                             ),
                                                                           ),
                                                                           _HoverMenuAnchor(
-                                                                            builder: (context, controller,
-                                                                                onHover, child) {
+                                                                            builder: (context,
+                                                                                controller,
+                                                                                onHover,
+                                                                                child) {
                                                                               return InkWell(
                                                                                 onTap: () {
                                                                                   if (controller.isOpen) {
@@ -2081,104 +2038,63 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                               );
                                                                             },
                                                                             menuChildren: [
-                                                                              if (settingsProvider
-                                                                                      .menuIsSaveMap[16] ==
-                                                                                  1)
-                                                                                (onHover) => MenuItemButton(onHover: onHover, 
-                                                                                      onPressed: () =>
-                                                                                          _handleCustomerAction(
-                                                                                              'quotation',
-                                                                                              task.customerId ?? 0),
+                                                                              if (settingsProvider.menuIsSaveMap[16] == 1)
+                                                                                (onHover) => MenuItemButton(
+                                                                                      onHover: onHover,
+                                                                                      onPressed: () => _handleCustomerAction('quotation', task.customerId ?? 0),
                                                                                       child: const Row(
                                                                                         children: [
-                                                                                          Icon(
-                                                                                              Icons
-                                                                                                  .request_quote,
-                                                                                              size: 18,
-                                                                                              color: Colors
-                                                                                                  .orange),
+                                                                                          Icon(Icons.request_quote, size: 18, color: Colors.orange),
                                                                                           SizedBox(width: 8),
                                                                                           Text('Quotation'),
                                                                                         ],
                                                                                       ),
                                                                                     ),
-                                                                              if (settingsProvider
-                                                                                      .menuIsViewMap[16] ==
-                                                                                  1)
-                                                                                (onHover) => MenuItemButton(onHover: onHover, 
-                                                                                      onPressed: () =>
-                                                                                          _handleCustomerAction(
-                                                                                              'quotation_list_tab',
-                                                                                              task.customerId ?? 0),
+                                                                              if (settingsProvider.menuIsViewMap[16] == 1)
+                                                                                (onHover) => MenuItemButton(
+                                                                                      onHover: onHover,
+                                                                                      onPressed: () => _handleCustomerAction('quotation_list_tab', task.customerId ?? 0),
                                                                                       child: const Row(
                                                                                         children: [
-                                                                                          Icon(Icons.list_alt,
-                                                                                              size: 18,
-                                                                                              color: Colors
-                                                                                                  .orangeAccent),
+                                                                                          Icon(Icons.list_alt, size: 18, color: Colors.orangeAccent),
                                                                                           SizedBox(width: 8),
-                                                                                          Text(
-                                                                                              'Quotation list'),
+                                                                                          Text('Quotation list'),
                                                                                         ],
                                                                                       ),
                                                                                     ),
-                                                                              if (settingsProvider
-                                                                                      .menuIsSaveMap[19] ==
-                                                                                  1)
-                                                                                (onHover) => MenuItemButton(onHover: onHover, 
-                                                                                      onPressed: () =>
-                                                                                          _handleCustomerAction(
-                                                                                              'document',
-                                                                                              task.customerId ?? 0),
+                                                                              if (settingsProvider.menuIsSaveMap[19] == 1)
+                                                                                (onHover) => MenuItemButton(
+                                                                                      onHover: onHover,
+                                                                                      onPressed: () => _handleCustomerAction('document', task.customerId ?? 0),
                                                                                       child: const Row(
                                                                                         children: [
-                                                                                          Icon(
-                                                                                              Icons
-                                                                                                  .description,
-                                                                                              size: 18,
-                                                                                              color: Colors
-                                                                                                  .purple),
+                                                                                          Icon(Icons.description, size: 18, color: Colors.purple),
                                                                                           SizedBox(width: 8),
                                                                                           Text('Document'),
                                                                                         ],
                                                                                       ),
                                                                                     ),
-                                                                              if (settingsProvider
-                                                                                      .menuIsViewMap[19] ==
-                                                                                  1)
-                                                                                (onHover) => MenuItemButton(onHover: onHover, 
-                                                                                      onPressed: () =>
-                                                                                          _handleCustomerAction(
-                                                                                              'documents_tab',
-                                                                                              task.customerId ?? 0),
+                                                                              if (settingsProvider.menuIsViewMap[19] == 1)
+                                                                                (onHover) => MenuItemButton(
+                                                                                      onHover: onHover,
+                                                                                      onPressed: () => _handleCustomerAction('documents_tab', task.customerId ?? 0),
                                                                                       child: const Row(
                                                                                         children: [
-                                                                                          Icon(Icons.folder,
-                                                                                              size: 18,
-                                                                                              color: Colors
-                                                                                                  .blue),
+                                                                                          Icon(Icons.folder, size: 18, color: Colors.blue),
                                                                                           SizedBox(width: 8),
-                                                                                          Text(
-                                                                                              'Documents Tab'),
+                                                                                          Text('Documents Tab'),
                                                                                         ],
                                                                                       ),
                                                                                     ),
-                                                                              if (settingsProvider
-                                                                                      .menuIsEditMap[4] ==
-                                                                                  1)
-                                                                                (onHover) => MenuItemButton(onHover: onHover, 
-                                                                                      onPressed: () =>
-                                                                                          _handleCustomerAction(
-                                                                                              'edit', task.customerId ?? 0),
+                                                                              if (settingsProvider.menuIsEditMap[4] == 1)
+                                                                                (onHover) => MenuItemButton(
+                                                                                      onHover: onHover,
+                                                                                      onPressed: () => _handleCustomerAction('edit', task.customerId ?? 0),
                                                                                       child: const Row(
                                                                                         children: [
-                                                                                          Icon(Icons.edit,
-                                                                                              size: 18,
-                                                                                              color: Colors
-                                                                                                  .blue),
+                                                                                          Icon(Icons.edit, size: 18, color: Colors.blue),
                                                                                           SizedBox(width: 8),
-                                                                                          Text(
-                                                                                              'Edit Customer'),
+                                                                                          Text('Edit Customer'),
                                                                                         ],
                                                                                       ),
                                                                                     ),
@@ -2187,6 +2103,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                         ],
                                                                       ),
                                                                     ),
+                                                                    // Mobile No.
                                                                     TableWidget(
                                                                       width:
                                                                           110,
@@ -2221,6 +2138,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                         ),
                                                                       ),
                                                                     ),
+                                                                    // Task
                                                                     TableWidget(
                                                                       width:
                                                                           180,
@@ -2255,6 +2173,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                         ),
                                                                       ),
                                                                     ),
+                                                                    // Status
                                                                     TableWidget(
                                                                       width:
                                                                           120,
@@ -2329,6 +2248,315 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                         ),
                                                                       ),
                                                                     ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            );
+                                                          },
+                                                        ),
+                                                      ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+
+                                        // ==================== SCROLLABLE COLUMNS ====================
+                                        Expanded(
+                                          child: Scrollbar(
+                                            controller:
+                                                _horizontalScrollController,
+                                            thumbVisibility: true,
+                                            trackVisibility: true,
+                                            interactive: true,
+                                            child: SingleChildScrollView(
+                                              controller:
+                                                  _horizontalScrollController,
+                                              scrollDirection: Axis.horizontal,
+                                              child: SizedBox(
+                                                width: scrollableMinWidth,
+                                                child: Column(
+                                                  children: [
+                                                    // Scrollable Header
+                                                    Container(
+                                                      height: 40,
+                                                      decoration: BoxDecoration(
+                                                        color: AppColors
+                                                            .primaryBlue,
+                                                        borderRadius:
+                                                            const BorderRadius
+                                                                .only(
+                                                          topRight:
+                                                              Radius.circular(
+                                                                  4),
+                                                          bottomRight:
+                                                              Radius.circular(
+                                                                  4),
+                                                        ),
+                                                      ),
+                                                      child: Row(
+                                                        children: [
+                                                          TableWidget(
+                                                            width: 150,
+                                                            title:
+                                                                'Enquiry for',
+                                                            fontSize: 13,
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    vertical:
+                                                                        4.0,
+                                                                    horizontal:
+                                                                        12.0),
+                                                            color: Colors.white,
+                                                          ),
+                                                          TableWidget(
+                                                            width: 120,
+                                                            title: 'Staff',
+                                                            fontSize: 13,
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    vertical:
+                                                                        4.0,
+                                                                    horizontal:
+                                                                        12.0),
+                                                            color: Colors.white,
+                                                          ),
+                                                          TableWidget(
+                                                            width: 140,
+                                                            title:
+                                                                'Consumer No',
+                                                            fontSize: 13,
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    vertical:
+                                                                        4.0,
+                                                                    horizontal:
+                                                                        12.0),
+                                                            color: Colors.white,
+                                                          ),
+                                                          TableWidget(
+                                                            width: 180,
+                                                            title:
+                                                                'Description',
+                                                            fontSize: 13,
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    vertical:
+                                                                        4.0,
+                                                                    horizontal:
+                                                                        12.0),
+                                                            color: Colors.white,
+                                                          ),
+                                                          TableWidget(
+                                                            width: 150,
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    vertical:
+                                                                        4.0,
+                                                                    horizontal:
+                                                                        12.0),
+                                                            alignment: Alignment
+                                                                .centerLeft,
+                                                            data: const Text(
+                                                              'Priority',
+                                                              style: TextStyle(
+                                                                  fontSize: 13,
+                                                                  color: Colors
+                                                                      .white),
+                                                            ),
+                                                          ),
+                                                          TableWidget(
+                                                            width: 140,
+                                                            title:
+                                                                'Created Date',
+                                                            fontSize: 13,
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    vertical:
+                                                                        4.0,
+                                                                    horizontal:
+                                                                        12.0),
+                                                            color: Colors.white,
+                                                          ),
+                                                          TableWidget(
+                                                            width: 120,
+                                                            title: 'Duration',
+                                                            fontSize: 13,
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    vertical:
+                                                                        4.0,
+                                                                    horizontal:
+                                                                        12.0),
+                                                            color: Colors.white,
+                                                          ),
+                                                          TableWidget(
+                                                            width: 120,
+                                                            title: 'Overdue',
+                                                            fontSize: 13,
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    vertical:
+                                                                        4.0,
+                                                                    horizontal:
+                                                                        12.0),
+                                                            color: Colors.white,
+                                                          ),
+                                                          TableWidget(
+                                                            width: 160,
+                                                            title:
+                                                                'Followup Date&Time',
+                                                            fontSize: 13,
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    vertical:
+                                                                        4.0,
+                                                                    horizontal:
+                                                                        12.0),
+                                                            color: Colors.white,
+                                                          ),
+                                                          if (settingsProvider
+                                                                  .jobSheet ==
+                                                              1)
+                                                            TableWidget(
+                                                              width: 130,
+                                                              title:
+                                                                  'Job Sheet',
+                                                              fontSize: 13,
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .symmetric(
+                                                                      vertical:
+                                                                          4.0,
+                                                                      horizontal:
+                                                                          12.0),
+                                                              color:
+                                                                  Colors.white,
+                                                            ),
+                                                        ],
+                                                      ),
+                                                    ),
+
+                                                    // Scrollable Data Rows
+                                                    Expanded(
+                                                      child:
+                                                          ScrollConfiguration(
+                                                        behavior:
+                                                            ScrollConfiguration
+                                                                    .of(context)
+                                                                .copyWith(
+                                                                    scrollbars:
+                                                                        false),
+                                                        child: ListView.builder(
+                                                          controller:
+                                                              _scrollableVerticalController,
+                                                          physics:
+                                                              const AlwaysScrollableScrollPhysics(),
+                                                          itemCount: reportsProvider
+                                                                  .taskReport
+                                                                  .length +
+                                                              (_isLoadingMore &&
+                                                                      !AppStyles
+                                                                          .isWebScreen(
+                                                                              context)
+                                                                  ? 1
+                                                                  : 0),
+                                                          itemBuilder:
+                                                              (context, index) {
+                                                            // Loading / mobile already handled on fixed side
+                                                            if (!AppStyles
+                                                                .isWebScreen(
+                                                                    context)) {
+                                                              return const SizedBox
+                                                                  .shrink();
+                                                            }
+
+                                                            if (index >=
+                                                                reportsProvider
+                                                                    .taskReport
+                                                                    .length) {
+                                                              return const SizedBox
+                                                                  .shrink();
+                                                            }
+
+                                                            var task =
+                                                                reportsProvider
+                                                                        .taskReport[
+                                                                    index];
+
+                                                            return InkWell(
+                                                              onTap: () {
+                                                                reportsProvider
+                                                                    .selectedTaskTypeIds
+                                                                    .clear();
+                                                                reportsProvider
+                                                                    .taskTypeModel
+                                                                    .clear();
+                                                                if (task
+                                                                    .customerName
+                                                                    .isEmpty) {
+                                                                  updateStatusDialogWithoutTask(
+                                                                          task)
+                                                                      .then(
+                                                                          (value) {
+                                                                    if (value ==
+                                                                        true) {
+                                                                      reportsProvider
+                                                                          .searchTaskByCustomer(
+                                                                              context);
+                                                                    }
+                                                                  });
+                                                                } else {
+                                                                  if (AppStyles
+                                                                      .isWebScreen(
+                                                                          context)) {
+                                                                    statusDialog(
+                                                                            task)
+                                                                        .then(
+                                                                            (value) {
+                                                                      if (value ==
+                                                                          true) {
+                                                                        reportsProvider
+                                                                            .searchTaskByCustomer(context);
+                                                                      }
+                                                                    });
+                                                                  } else {
+                                                                    statusDialogMobile(
+                                                                            task)
+                                                                        .then(
+                                                                            (value) {
+                                                                      if (value ==
+                                                                          true) {
+                                                                        reportsProvider
+                                                                            .searchTaskByCustomer(context);
+                                                                      }
+                                                                    });
+                                                                  }
+                                                                }
+                                                              },
+                                                              hoverColor:
+                                                                  const Color(
+                                                                      0xFFF8FAFC),
+                                                              child: Container(
+                                                                height: rowHeight,
+                                                                color: index %
+                                                                            2 ==
+                                                                        0
+                                                                    ? Colors
+                                                                        .white
+                                                                    : const Color(
+                                                                        0xFFF6F7F9),
+                                                                child: Row(
+                                                                  children: [
+                                                                    // Enquiry for
                                                                     TableWidget(
                                                                       width:
                                                                           150,
@@ -2364,6 +2592,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                         ),
                                                                       ),
                                                                     ),
+                                                                    // Staff
                                                                     TableWidget(
                                                                       width:
                                                                           120,
@@ -2392,6 +2621,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                         ),
                                                                       ),
                                                                     ),
+                                                                    // Consumer No
                                                                     TableWidget(
                                                                       width:
                                                                           140,
@@ -2426,6 +2656,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                         ),
                                                                       ),
                                                                     ),
+                                                                    // Description
                                                                     TableWidget(
                                                                       width:
                                                                           180,
@@ -2460,6 +2691,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                         ),
                                                                       ),
                                                                     ),
+                                                                    // Priority
                                                                     TableWidget(
                                                                       width:
                                                                           150,
@@ -2474,7 +2706,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                               12.0),
                                                                       data: PopupMenuButton<
                                                                           PriorityModel>(
-                                                                        enabled: settingsProvider.showEdit[190] == 1,
+                                                                        enabled:
+                                                                            settingsProvider.showEdit[190] ==
+                                                                                1,
                                                                         tooltip:
                                                                             task.priorityName,
                                                                         constraints:
@@ -2571,6 +2805,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                         ),
                                                                       ),
                                                                     ),
+                                                                    // Created Date
                                                                     TableWidget(
                                                                       width:
                                                                           140,
@@ -2599,6 +2834,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                         ),
                                                                       ),
                                                                     ),
+                                                                    // Duration
                                                                     TableWidget(
                                                                       width:
                                                                           120,
@@ -2627,6 +2863,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                         ),
                                                                       ),
                                                                     ),
+                                                                    // Overdue
                                                                     TableWidget(
                                                                       width:
                                                                           120,
@@ -2655,6 +2892,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                         ),
                                                                       ),
                                                                     ),
+                                                                    // Followup Date&Time
                                                                     TableWidget(
                                                                       width:
                                                                           160,
@@ -2702,7 +2940,10 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                         ),
                                                                       ),
                                                                     ),
-                                                                    if (settingsProvider.jobSheet == 1)
+                                                                    // Job Sheet
+                                                                    if (settingsProvider
+                                                                            .jobSheet ==
+                                                                        1)
                                                                       TableWidget(
                                                                         width:
                                                                             130,
@@ -2720,7 +2961,13 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                                 32,
                                                                             child:
                                                                                 ElevatedButton(
-                                                                              style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryBlue, foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6), minimumSize: const Size(80, 32), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4))),
+                                                                              style: ElevatedButton.styleFrom(
+                                                                                backgroundColor: AppColors.primaryBlue,
+                                                                                foregroundColor: Colors.white,
+                                                                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                                                                                minimumSize: const Size(80, 32),
+                                                                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                                                                              ),
                                                                               onPressed: () async {
                                                                                 Navigator.push(
                                                                                   context,
@@ -2743,10 +2990,15 @@ class _tasksPageReportState extends State<TaskPage> {
                                                             );
                                                           },
                                                         ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
                                             ),
-                                          ],
+                                          ),
                                         ),
-                                      ),
+                                      ],
                                     ),
                                   );
                                 },
