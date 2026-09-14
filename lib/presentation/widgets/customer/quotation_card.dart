@@ -113,6 +113,14 @@ class QuotationCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  Text(
+                    "Quotation No : ${quotation?.quotationNo ?? ""}",
+                    style: GoogleFonts.inter(
+                      fontWeight: FontWeight.normal,
+                      color: AppColors.textGrey3,
+                      fontSize: 14,
+                    ),
+                  ),
                   const SizedBox.shrink(),
                   if (quotation != null && quotation!.adminApproval == 1)
                     Row(

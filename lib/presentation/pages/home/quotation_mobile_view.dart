@@ -211,6 +211,15 @@ class _QuotationMobileViewState extends State<QuotationMobileView>
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
+                                 Text(
+                                  "Quotation No : ${item.quotationNo ?? ""}",
+                                  style: GoogleFonts.inter(
+                                    fontWeight: FontWeight.normal,
+                                    color: AppColors.textGrey3,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
                                 Row(
                                   children: [
                                     Container(

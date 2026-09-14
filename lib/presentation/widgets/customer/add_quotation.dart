@@ -1698,16 +1698,21 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     if (responseData != null) {
                       // Extract quotation master id from response
                       String masterId = '';
+                      String quotationNo = '';
                       if (responseData is Map &&
                           responseData.containsKey('Quotation_Master_Id')) {
                         masterId =
                             responseData['Quotation_Master_Id'].toString();
+                        quotationNo =
+                            responseData['Quotation_No']?.toString() ?? '';
                       } else if (responseData is List &&
                           responseData.isNotEmpty &&
                           responseData[0] is Map &&
                           responseData[0].containsKey('Quotation_Master_Id')) {
                         masterId =
                             responseData[0]['Quotation_Master_Id'].toString();
+                        quotationNo =
+                            responseData[0]['Quotation_No']?.toString() ?? '';
                       }
 
                       if (masterId.isEmpty || masterId == '0') {
@@ -1716,7 +1721,10 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
 
                       if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Saved Successfully')),
+                          SnackBar(
+                            content: Text(
+                                'Saved Successfully! Quotation No: $quotationNo'),
+                          ),
                         );
                         //        _showPrintQuotationDialog(context, masterId);
                         Navigator.pop(context);
