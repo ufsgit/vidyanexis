@@ -565,6 +565,68 @@ class _CustomerPageState extends State<CustomerPage> {
                                     ),
                                   ),
                                 ),
+                              if (settingsProvider.menuIsSaveMap[167].toString() == '1' && settingsProvider.menuIsSaveMap[191].toString() == '1')
+                                const SizedBox(width: 8),
+                              if (settingsProvider.menuIsSaveMap[191]
+                                      .toString() ==
+                                  '1')
+                                ElevatedButton.icon(
+                                  onPressed: () {
+                                    if (customerProvider
+                                        .customerData.isNotEmpty) {
+                                      exportToExcel(
+                                        headers: [
+                                          'Customer Name',
+                                          'Place',
+                                          'Mobile Number',
+                                          'AMC Date',
+                                          'Work Completion Date',
+                                        ],
+                                        data: customerProvider.customerData
+                                            .map((cust) {
+                                          return {
+                                            'Customer Name': cust.customerName,
+                                            'Place': cust.displayPlace,
+                                            'Mobile Number': cust.contactNumber,
+                                            'AMC Date': cust.amcDateDisplay,
+                                            'Work Completion Date':
+                                                cust.workCompletionDateDisplay,
+                                          };
+                                        }).toList(),
+                                        fileName: 'Customers_Selected_Columns_Export',
+                                      );
+                                    } else {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                            content: Text('No data to export')),
+                                      );
+                                    }
+                                  },
+                                  icon:
+                                      const Icon(Icons.file_download, size: 16),
+                                  label: Text(
+                                    'Export Basic',
+                                    style: GoogleFonts.plusJakartaSans(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.whiteColor,
+                                    foregroundColor: AppColors.secondaryBlue,
+                                    side: const BorderSide(
+                                        color: Color(0xFFE2E8F0)),
+                                    elevation: 0,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 12,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                  ),
+                                ),
                             ],
                           ),
                         ],
