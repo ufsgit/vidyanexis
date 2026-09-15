@@ -152,6 +152,9 @@ class CustomerDetailsProvider extends ChangeNotifier {
   List<CustomFieldByStatusId> _customFieldQuotation = [];
   List<CustomFieldByStatusId> get customFieldQuotation => _customFieldQuotation;
 
+  List<CustomFieldByStatusId> _additionalCustomFieldsQuotation = [];
+  List<CustomFieldByStatusId> get additionalCustomFieldsQuotation => _additionalCustomFieldsQuotation;
+
   List<Map<String, dynamic>> _savedMasterCustomFields = [];
 
   List<CustomFieldByStatusId> _commercialCustomFields = [];
@@ -1525,6 +1528,46 @@ class CustomerDetailsProvider extends ChangeNotifier {
     } finally {
       _isLoadingQuotationCustomFields = false;
       notifyListeners();
+    }
+  }
+
+  Future<void> getAdditionalCustomFields(BuildContext context) async {
+    try {
+      final response = await HttpRequest.httpGetRequest(
+          endPoint: HttpUrls.getAllCustomField);
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data != null) {
+          List<dynamic> fieldsData = [];
+          if (data is Map<String, dynamic> && data.containsKey('data')) {
+            fieldsData = data['data'] as List<dynamic>;
+          } else if (data is List) {
+            fieldsData = data;
+          }
+
+          if (fieldsData.isNotEmpty) {
+            final allFields = fieldsData.map((e) => CustomFieldByStatusId.fromJson(e)).toList();
+            _additionalCustomFieldsQuotation = allFields
+                .where((f) => f.customFieldId == 361 || f.customFieldId == 362)
+                .toList();
+            print("Successfully loaded additional custom fields: ${_additionalCustomFieldsQuotation.length}");
+          } else {
+            _additionalCustomFieldsQuotation = [];
+          }
+        } else {
+          _additionalCustomFieldsQuotation = [];
+        }
+
+        if (quotationListByMaster.isNotEmpty) {
+           final quotation = quotationListByMaster.first;
+           populateCustomFieldsFromMaster(quotation.quotationCustomFields);
+        }
+
+        notifyListeners();
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
     }
   }
 
@@ -3443,16 +3486,41 @@ class CustomerDetailsProvider extends ChangeNotifier {
         "Shipping_Charges":
             double.tryParse(shippingChargesController.text) ?? 0.0,
         "ScopeOfWorkItems": scopeOfWorkItems.map((e) => e.toJson()).toList(),
-        "customFields": [
-          ...?customFieldQuotationKey.currentState?.getFieldValuesAsJson(),
-          ..._selectedCommercialFields.map((field) {
-            int vId = field.customFieldId!;
-            return {
-              "custom_field_id": virtualToRealCommercialFieldId[vId] ?? vId,
-              "value": field.datavalue ?? ''
-            };
-          }),
-        ],
+        "customFields": () {
+          final additionalFieldsJson = customFieldAdditionalQuotationKey.currentState?.getFieldValuesAsJson() ?? [];
+          final allFields = [
+            ...?customFieldQuotationKey.currentState?.getFieldValuesAsJson(),
+            ..._additionalCustomFieldsQuotation.map((field) {
+              return {
+                "custom_field_id": field.customFieldId,
+                "value": field.datavalue ?? ''
+              };
+            }),
+            ..._selectedCommercialFields.map((field) {
+              int vId = field.customFieldId!;
+              return {
+                "custom_field_id": virtualToRealCommercialFieldId[vId] ?? vId,
+                "value": field.datavalue ?? ''
+              };
+            }),
+          ];
+          
+          // Ensure 361 and 362 are ALWAYS present, even if API load failed
+          for (int id in [361, 362]) {
+             if (!allFields.any((f) => f['custom_field_id'] == id)) {
+                // Try to get from widget state first, else empty string
+                final fromWidget = additionalFieldsJson.firstWhere(
+                   (f) => f['custom_field_id'] == id, 
+                   orElse: () => <String, dynamic>{}
+                );
+                allFields.add({
+                   "custom_field_id": id,
+                   "value": fromWidget.isNotEmpty ? fromWidget['value'] : ''
+                });
+             }
+          }
+          return allFields;
+        }(),
         "Description_2": quotationDescription2Controller.text.toString(),
         "Description_3": quotationDescription3Controller.text.toString(),
         "Purchase_Total": _billTotalAmount.toStringAsFixed(2),
@@ -5536,6 +5604,12 @@ class CustomerDetailsProvider extends ChangeNotifier {
         for (var i = 0; i < _customFieldQuotation.length; i++) {
           if (_customFieldQuotation[i].customFieldId == fieldId) {
             _customFieldQuotation[i].datavalue = value;
+          }
+        }
+        
+        for (var i = 0; i < _additionalCustomFieldsQuotation.length; i++) {
+          if (_additionalCustomFieldsQuotation[i].customFieldId == fieldId) {
+            _additionalCustomFieldsQuotation[i].datavalue = value;
           }
         }
 
