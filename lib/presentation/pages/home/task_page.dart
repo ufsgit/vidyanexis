@@ -1639,7 +1639,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                 builder: (context, constraints) {
                                   // Fixed columns: No. + Lead Code + Customer + Mobile No. + Task + Status
                                   const double fixedWidth =
-                                      60 + 120 + 180 + 110 + 180 + 120; // 770
+                                      60 + 120 + 180 + 150 + 180 + 120; // 810
 
                                   double scrollableMinWidth = 150 +
                                       120 +
@@ -1728,7 +1728,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                       color: Colors.white,
                                                     ),
                                                     TableWidget(
-                                                      width: 110,
+                                                      width: 150,
                                                       title: 'Mobile No.',
                                                       fontSize: 13,
                                                       padding: const EdgeInsets
@@ -2113,7 +2113,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                     // Mobile No.
                                                                     TableWidget(
                                                                       width:
-                                                                          110,
+                                                                          150,
                                                                       padding: const EdgeInsets
                                                                           .symmetric(
                                                                           vertical:
