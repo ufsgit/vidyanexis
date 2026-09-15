@@ -138,6 +138,8 @@ class HttpUrls {
       "quotation_master/Update_Quotation_Approval";
   static String updateQuotationRejection =
       "quotation_master/Update_Quotation_Rejection";
+  static String checkQuotationConvert =
+      "quotation_master/Check_Quotation_Convert";
 
   static String searchTaskByCustomer = "task/Search_task_by_customer";
   static String changeTaskStatus = "task/Change_Task_Status";

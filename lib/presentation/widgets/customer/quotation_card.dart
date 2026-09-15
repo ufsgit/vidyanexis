@@ -867,6 +867,24 @@ class QuotationCard extends StatelessWidget {
                     backgroundColor: Colors.white,
                     borderSide: BorderSide(color: AppColors.darkGreen),
                   ),
+                  if (settingsprovider.menuIsViewMap[192] == 1)
+                    CustomOutlinedSvgButton(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 8),
+                      onPressed: () async {
+                        await customerDetailsProvider.checkQuotationConvert(
+                          taskId,
+                          context,
+                          customerId,
+                        );
+                      },
+                      svgPath: 'assets/images/flow.svg',
+                      label: 'Convert',
+                      breakpoint: 300,
+                      foregroundColor: Colors.teal,
+                      backgroundColor: Colors.white,
+                      borderSide: const BorderSide(color: Colors.teal),
+                    ),
                 ],
               ),
               if (quotation != null) ...[
