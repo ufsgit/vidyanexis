@@ -195,6 +195,13 @@ class _tasksPageReportState extends State<TaskPage> {
         },
       );
     } else if (action == 'quotation') {
+      final customerDetailsProvider =
+          Provider.of<CustomerDetailsProvider>(context, listen: false);
+      final hasPending = await customerDetailsProvider
+          .checkAndWarnPendingApprovalQuotation(
+              customerId.toString(), context);
+      if (hasPending) return;
+      if (!context.mounted) return;
       showDialog(
         barrierDismissible: false,
         context: context,

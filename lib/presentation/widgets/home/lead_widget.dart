@@ -1187,16 +1187,29 @@ class _LeadCardState extends State<LeadCard> {
                           const SizedBox(width: 4),
                           if (settingsProvider.menuIsSaveMap[16] == 1)
                             _buildActionButton(
-                              onTap: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (c) => QuotationCreationWidget(
-                                      customerId:
-                                          widget.lead.customerId.toString(),
-                                      quotationId: '0',
-                                      isEdit: false,
-                                    ),
-                                  )),
+                              onTap: () async {
+                                final customerDetailsProvider =
+                                    Provider.of<CustomerDetailsProvider>(
+                                        context,
+                                        listen: false);
+                                final hasPending =
+                                    await customerDetailsProvider
+                                        .checkAndWarnPendingApprovalQuotation(
+                                            widget.lead.customerId.toString(),
+                                            context);
+                                if (hasPending) return;
+                                if (!context.mounted) return;
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (c) => QuotationCreationWidget(
+                                        customerId:
+                                            widget.lead.customerId.toString(),
+                                        quotationId: '0',
+                                        isEdit: false,
+                                      ),
+                                    ));
+                              },
                               icon: Icons.request_quote_outlined,
                               text: 'Quote',
                               color: AppColors.bluebutton,

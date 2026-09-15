@@ -676,6 +676,18 @@ class QuotationCard extends StatelessWidget {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     onPressed: () async {
+                      if ((quotation != null && quotation!.adminApproval != 1) ||
+                          customerDetailsProvider
+                              .hasPendingApprovalQuotation()) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                                'Approval pending quotations are there , please clear that'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                        return;
+                      }
                       await customerDetailsProvider.getQuatationListByMasterId(
                           taskId, context);
                       final quotaion =

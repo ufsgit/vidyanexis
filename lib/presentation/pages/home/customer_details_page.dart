@@ -1101,6 +1101,18 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                       horizontal: 8.0),
                                   child: ElevatedButton.icon(
                                     onPressed: () {
+                                      if (customerDetailsProvider
+                                          .hasPendingApprovalQuotation()) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          const SnackBar(
+                                            content: Text(
+                                                'Approval pending quotations are there , please clear that'),
+                                            backgroundColor: Colors.red,
+                                          ),
+                                        );
+                                        return;
+                                      }
                                       customerDetailsProvider.customerId =
                                           widget.customerId;
                                       customerDetailsProvider

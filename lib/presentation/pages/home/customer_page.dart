@@ -2432,6 +2432,13 @@ class _CustomerPageState extends State<CustomerPage> {
         },
       );
     } else if (value == 'quotation') {
+      final customerDetailsProvider =
+          Provider.of<CustomerDetailsProvider>(context, listen: false);
+      final hasPending = await customerDetailsProvider
+          .checkAndWarnPendingApprovalQuotation(
+              lead.customerId.toString(), context);
+      if (hasPending) return;
+      if (!context.mounted) return;
       showDialog(
         barrierDismissible: false,
         context: context,

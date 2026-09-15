@@ -3240,6 +3240,27 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
+  bool hasPendingApprovalQuotation() {
+    return _quotationList.any((q) => q.adminApproval != 1);
+  }
+
+  Future<bool> checkAndWarnPendingApprovalQuotation(
+      String customerId, BuildContext context) async {
+    await fetchQuotationListIfNeeded(customerId, context);
+    if (hasPendingApprovalQuotation()) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Approval pending quotations are there , please clear that'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+      return true;
+    }
+    return false;
+  }
+
   Future<void> getQuatationListByMasterId(
       String masterId, BuildContext context) async {
     try {

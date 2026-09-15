@@ -65,16 +65,31 @@ class _QuotationMobileViewState extends State<QuotationMobileView>
                   ),
                 ),
                 GestureDetector(
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (c) => QuotationCreationWidget(
-                        customerId: widget.customerId,
-                        quotationId: '0',
-                        isEdit: false,
+                  onTap: () {
+                    final customerDetailsProvider =
+                        Provider.of<CustomerDetailsProvider>(context,
+                            listen: false);
+                    if (customerDetailsProvider.hasPendingApprovalQuotation()) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                              'Approval pending quotations are there , please clear that'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                      return;
+                    }
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (c) => QuotationCreationWidget(
+                          customerId: widget.customerId,
+                          quotationId: '0',
+                          isEdit: false,
+                        ),
                       ),
-                    ),
-                  ),
+                    );
+                  },
                   child: Container(
                     width: 44,
                     height: 44,
@@ -266,6 +281,19 @@ class _QuotationMobileViewState extends State<QuotationMobileView>
                                     const Spacer(),
                                     GestureDetector(
                                       onTap: () async {
+                                        if (item.adminApproval != 1 ||
+                                            customerDetailsProvider
+                                                .hasPendingApprovalQuotation()) {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            const SnackBar(
+                                              content: Text(
+                                                  'Approval pending quotations are there , please clear that'),
+                                              backgroundColor: Colors.red,
+                                            ),
+                                          );
+                                          return;
+                                        }
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(

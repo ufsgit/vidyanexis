@@ -1675,6 +1675,14 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                                   .companyDetails.first.commercialProposal ==
                               1;
 
+                  if (!widget.isEdit || widget.isDuplicate) {
+                    if (customerDetailsProvider.hasPendingApprovalQuotation()) {
+                      _showValidationDialog(context, 'Approval Pending',
+                          'Approval pending quotations are there , please clear that');
+                      return;
+                    }
+                  }
+
                   if (customerDetailsProvider.items.isEmpty &&
                       customerDetailsProvider.commercialItems.isEmpty &&
                       customerDetailsProvider.billOfMaterialsItems.isEmpty) {
