@@ -871,19 +871,28 @@ class QuotationCard extends StatelessWidget {
                     CustomOutlinedSvgButton(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 8),
-                      onPressed: () async {
-                        await customerDetailsProvider.checkQuotationConvert(
-                          taskId,
-                          context,
-                          customerId,
-                        );
-                      },
+                      onPressed: quotation?.isConverted == 1
+                          ? null
+                          : () async {
+                              await customerDetailsProvider
+                                  .checkQuotationConvert(
+                                taskId,
+                                context,
+                                customerId,
+                              );
+                            },
                       svgPath: 'assets/images/flow.svg',
-                      label: 'Convert',
+                      label:
+                          quotation?.isConverted == 1 ? 'Converted' : 'Convert',
                       breakpoint: 300,
-                      foregroundColor: Colors.teal,
+                      foregroundColor: quotation?.isConverted == 1
+                          ? Colors.grey
+                          : Colors.teal,
                       backgroundColor: Colors.white,
-                      borderSide: const BorderSide(color: Colors.teal),
+                      borderSide: BorderSide(
+                          color: quotation?.isConverted == 1
+                              ? Colors.grey
+                              : Colors.teal),
                     ),
                 ],
               ),
@@ -898,7 +907,8 @@ class QuotationCard extends StatelessWidget {
                       }
                       return Row(
                         children: [
-                          const Icon(Icons.check, color: Colors.green, size: 20),
+                          const Icon(Icons.check,
+                              color: Colors.green, size: 20),
                           const SizedBox(width: 8),
                           Text(
                             'Approved by $approverName',
@@ -925,9 +935,10 @@ class QuotationCard extends StatelessWidget {
                           quotation!.rejectedBy!.trim().isNotEmpty) {
                         try {
                           final dropDownProvider =
-                              Provider.of<DropDownProvider>(context, listen: false);
-                          final staff = dropDownProvider.searchUserDetails
-                              .firstWhere(
+                              Provider.of<DropDownProvider>(context,
+                                  listen: false);
+                          final staff =
+                              dropDownProvider.searchUserDetails.firstWhere(
                             (s) =>
                                 s.userDetailsId.toString() ==
                                 quotation!.rejectedBy.toString(),
@@ -958,23 +969,16 @@ class QuotationCard extends StatelessWidget {
                             ],
                           ),
                           if (quotation!.rejectionReason != null &&
-                              quotation!.rejectionReason!.trim().isNotEmpty) ...[
-                            const SizedBox(height: 6),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 6),
-                              decoration: BoxDecoration(
-                                color: Colors.red.shade50,
-                                borderRadius: BorderRadius.circular(4),
-                                border: Border.all(color: Colors.red.shade200),
-                              ),
-                              child: Text(
-                                'Reason: ${quotation!.rejectionReason}',
-                                style: TextStyle(
-                                  color: Colors.red.shade900,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                ),
+                              quotation!.rejectionReason!
+                                  .trim()
+                                  .isNotEmpty) ...[
+                            const SizedBox(height: 4),
+                            Text(
+                              '${quotation!.rejectionReason}',
+                              style: TextStyle(
+                                color: Colors.grey.shade700,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w400,
                               ),
                             ),
                           ],
@@ -1015,7 +1019,8 @@ class QuotationCard extends StatelessWidget {
                             if (success && context.mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                    content: Text('Status updated to Approved')),
+                                    content:
+                                        Text('Status updated to Approved')),
                               );
                             }
                           },
@@ -1103,8 +1108,7 @@ class QuotationCard extends StatelessWidget {
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           title: Row(
             children: [
               const Icon(Icons.cancel_outlined, color: Colors.red, size: 22),

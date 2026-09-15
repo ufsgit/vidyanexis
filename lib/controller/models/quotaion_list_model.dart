@@ -45,6 +45,7 @@ class QuatationListModel {
   String? rejectedBy;
   String? rejectedByName;
   String? rejectionReason;
+  int isConverted;
 
   double get calculatedNetCost {
     double systemPrice = double.tryParse(totalAmount) ?? 0.0;
@@ -104,6 +105,7 @@ class QuatationListModel {
     this.rejectedBy,
     this.rejectedByName,
     this.rejectionReason,
+    this.isConverted = 0,
   });
 
   factory QuatationListModel.fromMap(Map<String, dynamic> json) =>
@@ -180,6 +182,11 @@ class QuatationListModel {
             json["admin_remark"]?.toString() ??
             json["Admin_Remark"]?.toString() ??
             "",
+        isConverted: int.tryParse(json["Is_Converted"]?.toString() ??
+                json["is_converted"]?.toString() ??
+                json["Is_converted"]?.toString() ??
+                '') ??
+            0,
       );
 
   Map<String, dynamic> toMap() => {
@@ -230,6 +237,7 @@ class QuatationListModel {
         "rejected_by": rejectedBy,
         "rejected_by_name": rejectedByName,
         "rejection_reason": rejectionReason,
+        "Is_Converted": isConverted,
       };
 }
 
