@@ -36,6 +36,7 @@ class SettingsAddUserWidget extends StatefulWidget {
   final String? doj;
   final int? branchId;
   final List<DepartmentModel>? transferDepartments;
+  final dynamic taskStatusManaging;
 
   SettingsAddUserWidget(
       {super.key,
@@ -57,7 +58,8 @@ class SettingsAddUserWidget extends StatefulWidget {
       this.designationId,
       this.doj,
       this.branchId,
-      this.transferDepartments});
+      this.transferDepartments,
+      this.taskStatusManaging});
 
   @override
   State<SettingsAddUserWidget> createState() => _SettingsAddUserWidgetState();
@@ -141,6 +143,29 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
         if (widget.transferDepartments != null) {
           settingsProvider.setTransferDepartments(widget.transferDepartments!);
         }
+
+        settingsProvider.fetchTaskStatusesForUser(context).then((_) {
+          if (widget.taskStatusManaging != null) {
+            List<int> initialIds = [];
+            if (widget.taskStatusManaging is List) {
+              for (var item in widget.taskStatusManaging) {
+                if (item is Map) {
+                  int? id = item['Status_Id'] ??
+                      item['status_id'] ??
+                      item['Status_ID'] ??
+                      item['statusId'];
+                  if (id != null) initialIds.add(id);
+                } else if (item is int) {
+                  initialIds.add(item);
+                } else if (item is String) {
+                  int? id = int.tryParse(item);
+                  if (id != null) initialIds.add(id);
+                }
+              }
+            }
+            settingsProvider.setSelectedTaskStatusIds(initialIds);
+          }
+        });
       });
     } else {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -148,6 +173,7 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
             Provider.of<SettingsProvider>(context, listen: false);
         settingsProvider.searchDesignation("", context);
         settingsProvider.resetStates();
+        settingsProvider.fetchTaskStatusesForUser(context);
       });
     }
   }
@@ -264,6 +290,172 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
           ),
         ],
       ],
+    );
+  }
+
+  Widget _buildTaskStatusManagingField(
+      BuildContext context, SettingsProvider settingsProvider) {
+    final taskStatuses = settingsProvider.taskStatusManagingList;
+    final selectedIds = settingsProvider.selectedTaskStatusIds;
+    final bool isAllSelected = taskStatuses.isNotEmpty &&
+        selectedIds.length == taskStatuses.length;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF8FAFC),
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: const Color(0xFFE2E8F0)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Task Status Managing',
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textBlack,
+                ),
+              ),
+              if (taskStatuses.isNotEmpty)
+                InkWell(
+                  onTap: () {
+                    settingsProvider.selectAllTaskStatuses(!isAllSelected);
+                  },
+                  borderRadius: BorderRadius.circular(4),
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: Checkbox(
+                            value: isAllSelected,
+                            activeColor: AppColors.secondaryBlue,
+                            materialTapTargetSize:
+                                MaterialTapTargetSize.shrinkWrap,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(3),
+                            ),
+                            onChanged: (bool? value) {
+                              settingsProvider
+                                  .selectAllTaskStatuses(value ?? false);
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          'Select All',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xFF475569),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          if (settingsProvider.isLoadingTaskStatuses)
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 16.0),
+              child: Center(
+                child: SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+              ),
+            )
+          else if (taskStatuses.isEmpty)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Text(
+                'No task statuses found',
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 12,
+                  color: AppColors.textGrey3,
+                ),
+              ),
+            )
+          else
+            Wrap(
+              spacing: 10,
+              runSpacing: 8,
+              children: taskStatuses.map((status) {
+                final isChecked = selectedIds.contains(status.statusId);
+                return InkWell(
+                  onTap: () {
+                    settingsProvider.toggleTaskStatusSelection(status.statusId);
+                  },
+                  borderRadius: BorderRadius.circular(4),
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: isChecked
+                          ? AppColors.secondaryBlue.withOpacity(0.08)
+                          : Colors.white,
+                      borderRadius: BorderRadius.circular(4),
+                      border: Border.all(
+                        color: isChecked
+                            ? AppColors.secondaryBlue
+                            : const Color(0xFFCBD5E1),
+                        width: 1,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SizedBox(
+                          height: 18,
+                          width: 18,
+                          child: Checkbox(
+                            value: isChecked,
+                            activeColor: AppColors.secondaryBlue,
+                            materialTapTargetSize:
+                                MaterialTapTargetSize.shrinkWrap,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(3),
+                            ),
+                            onChanged: (bool? value) {
+                              settingsProvider
+                                  .toggleTaskStatusSelection(status.statusId);
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          status.statusName,
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 12,
+                            fontWeight: isChecked
+                                ? FontWeight.w600
+                                : FontWeight.w400,
+                            color: isChecked
+                                ? AppColors.secondaryBlue
+                                : AppColors.textBlack,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+        ],
+      ),
     );
   }
 
@@ -921,6 +1113,10 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                   ),
                 ],
               ),
+              if (settingsProvider.allowAppLogin) ...[
+                const SizedBox(height: 16),
+                _buildTaskStatusManagingField(context, settingsProvider),
+              ],
               const SizedBox(height: 10),
               if (!AppStyles.isWebScreen(context)) ...[
                 const SizedBox(height: 20),

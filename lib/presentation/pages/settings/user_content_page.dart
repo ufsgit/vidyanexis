@@ -546,6 +546,7 @@ class _UsersContentState extends State<UsersContent> {
                                                           designationId: int.tryParse(settingsProvider.searchUserDetails[index].designationId) ?? 0,
                                                           doj: settingsProvider.searchUserDetails[index].doj,
                                                           transferDepartments: settingsProvider.searchUserDetails[index].transferDepartments,
+                                                          taskStatusManaging: settingsProvider.searchUserDetails[index].taskStatusManaging,
                                                           isEdit: true);
                                                     },
                                                   );
@@ -1131,6 +1132,7 @@ class _UsersContentState extends State<UsersContent> {
                                                           designation: settingsProvider.searchUserDetails[index].designation,
                                                           doj: settingsProvider.searchUserDetails[index].doj,
                                                           transferDepartments: settingsProvider.searchUserDetails[index].transferDepartments,
+                                                          taskStatusManaging: settingsProvider.searchUserDetails[index].taskStatusManaging,
                                                           isEdit: true);
                                                     },
                                                   );
