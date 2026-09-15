@@ -281,9 +281,8 @@ class _QuotationMobileViewState extends State<QuotationMobileView>
                                     const Spacer(),
                                     GestureDetector(
                                       onTap: () async {
-                                        if (item.adminApproval != 1 ||
-                                            customerDetailsProvider
-                                                .hasPendingApprovalQuotation()) {
+                                        if (customerDetailsProvider
+                                            .hasPendingApprovalQuotation()) {
                                           ScaffoldMessenger.of(context)
                                               .showSnackBar(
                                             const SnackBar(
@@ -769,6 +768,31 @@ class _QuotationMobileViewState extends State<QuotationMobileView>
                                     ],
                                   ],
                                 ),
+                                if (item.adminApproval == 2 ||
+                                    (item.rejectionReason != null &&
+                                        item.rejectionReason!
+                                            .trim()
+                                            .isNotEmpty)) ...[
+                                  const SizedBox(height: 8),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: Colors.red.shade50,
+                                      borderRadius: BorderRadius.circular(4),
+                                      border: Border.all(
+                                          color: Colors.red.shade200),
+                                    ),
+                                    child: Text(
+                                      'Rejection Reason: ${item.rejectionReason}',
+                                      style: TextStyle(
+                                        color: Colors.red.shade900,
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                                 if (item.description.trim().isNotEmpty) ...[
                                   const SizedBox(height: 12),
                                   Text(

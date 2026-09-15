@@ -101,6 +101,10 @@ class GetQuotationbyMasterIdmodel {
   final String isProfitPercentage;
   final List<AddedMultiItem> multiItems;
   final double multipleItemsTotalAmount;
+  final String rejectionReason;
+  final int isRejected;
+  final String? rejectedBy;
+  final String? rejectedByName;
 
   GetQuotationbyMasterIdmodel({
     required this.quotationMasterId,
@@ -188,6 +192,10 @@ class GetQuotationbyMasterIdmodel {
     this.isProfitPercentage = "0",
     this.multiItems = const [],
     this.multipleItemsTotalAmount = 0.0,
+    this.rejectionReason = "",
+    this.isRejected = 0,
+    this.rejectedBy,
+    this.rejectedByName,
   });
 
   factory GetQuotationbyMasterIdmodel.fromJson(Map<String, dynamic> json) {
@@ -299,6 +307,18 @@ class GetQuotationbyMasterIdmodel {
           toStr(json['KSEB_Feasibility_Study_Fees_3Phase'] ?? "0.0"),
       ksebRegistrationFeeThreePhase:
           toStr(json['KSEB_Registration_Fees_3Phase'] ?? "0.0"),
+      rejectionReason: toStr(json['rejection_reason'] ??
+          json['Rejection_Reason'] ??
+          json['reason'] ??
+          json['Reason'] ??
+          json['reject_reason'] ??
+          json['Reject_Reason'] ??
+          json['admin_remark'] ??
+          json['Admin_Remark'] ??
+          ""),
+      isRejected: toInt(json['is_rejected'] ?? json['Is_rejected'] ?? json['Is_Rejected']),
+      rejectedBy: json['rejected_by']?.toString() ?? json['Rejected_By']?.toString(),
+      rejectedByName: json['rejected_by_name']?.toString() ?? json['Rejected_By_Name']?.toString(),
     );
   }
 }

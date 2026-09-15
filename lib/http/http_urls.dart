@@ -136,6 +136,8 @@ class HttpUrls {
       "quotation_master/Search_Quotaion_Report";
   static String updateQuotationApproval =
       "quotation_master/Update_Quotation_Approval";
+  static String updateQuotationRejection =
+      "quotation_master/Update_Quotation_Rejection";
 
   static String searchTaskByCustomer = "task/Search_task_by_customer";
   static String changeTaskStatus = "task/Change_Task_Status";

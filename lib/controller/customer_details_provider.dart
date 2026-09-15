@@ -798,6 +798,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
   //quotations
   final TextEditingController qproductnameController = TextEditingController();
+  final TextEditingController rejectionReasonController =
+      TextEditingController();
   final TextEditingController qsubsidyAmountController =
       TextEditingController();
   final TextEditingController qDiscountController = TextEditingController();
@@ -3241,7 +3243,10 @@ class CustomerDetailsProvider extends ChangeNotifier {
   }
 
   bool hasPendingApprovalQuotation() {
-    return _quotationList.any((q) => q.adminApproval != 1);
+    return _quotationList.any((q) =>
+        q.adminApproval == 0 &&
+        q.isRejected != 1 &&
+        (q.rejectionReason == null || q.rejectionReason!.trim().isEmpty));
   }
 
   Future<bool> checkAndWarnPendingApprovalQuotation(
@@ -3561,6 +3566,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
   void clearQuotationDetails() {
     qproductnameController.clear();
+    rejectionReasonController.clear();
     workCompletionController.clear();
     advanceController.clear();
     deliveryController.clear();
@@ -5363,6 +5369,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
     // ---- BASIC DETAILS ----
     qproductnameController.text = quotation.productName;
+    rejectionReasonController.text = quotation.rejectionReason;
     qEntryDateController.text = quotation.entryDate;
     selectedBranchId = quotation.branchId;
     advanceController.text = quotation.advancePercentage;
@@ -5694,6 +5701,35 @@ class CustomerDetailsProvider extends ChangeNotifier {
       return false;
     } catch (e) {
       debugPrint('Error updating approval status: $e');
+      if (context.mounted) Loader.stopLoader(context);
+      return false;
+    }
+  }
+
+  Future<bool> updateQuotationRejectionStatus(
+      String masterId, String rejectionReason, BuildContext context, String customerId) async {
+    try {
+      Loader.showLoader(context);
+      final bodyData = {
+        "Quotation_Master_Id": int.tryParse(masterId) ?? masterId,
+        "Rejection_Reason": rejectionReason,
+      };
+
+      final response = await HttpRequest.httpPostRequest(
+        endPoint: HttpUrls.updateQuotationRejection,
+        bodyData: bodyData,
+      );
+
+      if (!context.mounted) return false;
+      Loader.stopLoader(context);
+
+      if (response?.statusCode == 200 || response?.statusCode == 201) {
+        await getQuatationList(customerId, context);
+        return true;
+      }
+      return false;
+    } catch (e) {
+      debugPrint('Error updating rejection status: $e');
       if (context.mounted) Loader.stopLoader(context);
       return false;
     }
