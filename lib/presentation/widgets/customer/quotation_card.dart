@@ -867,7 +867,7 @@ class QuotationCard extends StatelessWidget {
                     backgroundColor: Colors.white,
                     borderSide: BorderSide(color: AppColors.darkGreen),
                   ),
-                  if (settingsprovider.menuIsViewMap[192] == 1)
+                  if (settingsprovider.menuIsViewMap[193] == 1)
                     CustomOutlinedSvgButton(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 8),
@@ -1039,7 +1039,7 @@ class QuotationCard extends StatelessWidget {
                           child: const Text('Approve'),
                         ),
                       ],
-                      if (settingsprovider.menuIsViewMap[191] == 1) ...[
+                      if (settingsprovider.menuIsViewMap[192] == 1) ...[
                         const SizedBox(width: 8),
                         ElevatedButton(
                           onPressed: () {
