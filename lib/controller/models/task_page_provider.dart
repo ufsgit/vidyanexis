@@ -143,6 +143,16 @@ class TaskPageProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void clearProcessFlowData() {
+    _taskTypeModel = [];
+    _documentTypeModel = [];
+    _statusData = [];
+    _showCustomFields = [];
+    _selectedTaskTypeIds.clear();
+    _taskTypeToUserMap.clear();
+    notifyListeners();
+  }
+
   void removePendingDocument(int documentTypeId) {
     _documentTypeModel
         .removeWhere((doc) => doc.documentTypeId == documentTypeId);

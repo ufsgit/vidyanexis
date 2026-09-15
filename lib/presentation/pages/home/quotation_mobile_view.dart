@@ -65,16 +65,31 @@ class _QuotationMobileViewState extends State<QuotationMobileView>
                   ),
                 ),
                 GestureDetector(
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (c) => QuotationCreationWidget(
-                        customerId: widget.customerId,
-                        quotationId: '0',
-                        isEdit: false,
+                  onTap: () {
+                    final customerDetailsProvider =
+                        Provider.of<CustomerDetailsProvider>(context,
+                            listen: false);
+                    if (customerDetailsProvider.hasPendingApprovalQuotation()) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                              'Approval pending quotations are there , please clear that'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                      return;
+                    }
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (c) => QuotationCreationWidget(
+                          customerId: widget.customerId,
+                          quotationId: '0',
+                          isEdit: false,
+                        ),
                       ),
-                    ),
-                  ),
+                    );
+                  },
                   child: Container(
                     width: 44,
                     height: 44,
@@ -266,6 +281,18 @@ class _QuotationMobileViewState extends State<QuotationMobileView>
                                     const Spacer(),
                                     GestureDetector(
                                       onTap: () async {
+                                        if (customerDetailsProvider
+                                            .hasPendingApprovalQuotation()) {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            const SnackBar(
+                                              content: Text(
+                                                  'Approval pending quotations are there , please clear that'),
+                                              backgroundColor: Colors.red,
+                                            ),
+                                          );
+                                          return;
+                                        }
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
@@ -741,6 +768,20 @@ class _QuotationMobileViewState extends State<QuotationMobileView>
                                     ],
                                   ],
                                 ),
+                                if (item.rejectionReason != null &&
+                                    item.rejectionReason!
+                                        .trim()
+                                        .isNotEmpty) ...[
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    'Reason: ${item.rejectionReason}',
+                                    style: TextStyle(
+                                      color: Colors.grey.shade700,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                ],
                                 if (item.description.trim().isNotEmpty) ...[
                                   const SizedBox(height: 12),
                                   Text(

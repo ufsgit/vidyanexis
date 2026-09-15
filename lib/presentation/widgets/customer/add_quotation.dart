@@ -144,6 +144,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
       }
       customerDetailsProvider.getCustomFieldsByQuotationId(context);
       await customerDetailsProvider.getQuotationFieldsApi();
+      await customerDetailsProvider.getAdditionalCustomFields(context);
       if (mounted) {
         Loader.stopLoader(context);
       }
@@ -209,6 +210,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+
                   //basic details
                   if (customerDetailsProvider.isQuotationFieldVisible(55))
                     ExpansionTile(
@@ -664,9 +666,31 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                           const Column(
                             children: [
                               CommercialCustomFieldsTableWidget(),
-                              SizedBox(height: 16),
                             ],
                           ),
+                        if (customerDetailsProvider
+                            .additionalCustomFieldsQuotation.isNotEmpty) ...[
+                          const SizedBox(height: 16),
+                          CustomFieldSectionWidget(
+                            key: customFieldAdditionalQuotationKey,
+                            customFields:
+                                customerDetailsProvider.additionalCustomFieldsQuotation,
+                            controllerKey: 'additional_quotation',
+                            showEditButton: true,
+                            onFieldValuesChanged: (values) {
+                              for (final fv in values) {
+                                final match = customerDetailsProvider.additionalCustomFieldsQuotation.firstWhere(
+                                  (e) => e.customFieldId == fv.customFieldId,
+                                  orElse: () => CustomFieldByStatusId(),
+                                );
+                                if (match.customFieldId != null) {
+                                  match.datavalue = fv.value;
+                                }
+                              }
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                        ],
                         if (customerDetailsProvider.isResidential) ...[
                           residentialItemWidget(context),
                         ],
@@ -1674,6 +1698,14 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                           settingsProvider
                                   .companyDetails.first.commercialProposal ==
                               1;
+
+                  if (!widget.isEdit || widget.isDuplicate) {
+                    if (customerDetailsProvider.hasPendingApprovalQuotation()) {
+                      _showValidationDialog(context, 'Approval Pending',
+                          'Approval pending quotations are there , please clear that');
+                      return;
+                    }
+                  }
 
                   if (customerDetailsProvider.items.isEmpty &&
                       customerDetailsProvider.commercialItems.isEmpty &&

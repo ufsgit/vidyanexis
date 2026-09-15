@@ -29,6 +29,7 @@ class GetUserModel {
   String? firstName;
   String? lastName;
   List<DepartmentModel>? transferDepartments;
+  dynamic taskStatusManaging;
 
   String get displayName {
     final fn = (firstName ?? '').trim();
@@ -65,6 +66,7 @@ class GetUserModel {
       this.designationId = '0',
       required this.doj,
       this.transferDepartments,
+      this.taskStatusManaging,
       required this.allowAppLogin});
 
   factory GetUserModel.fromJson(Map<String, dynamic> json) => GetUserModel(
@@ -98,7 +100,14 @@ class GetUserModel {
       transferDepartments: json["Transfer_Departments"] != null
           ? List<DepartmentModel>.from(json["Transfer_Departments"]
               .map((x) => DepartmentModel.fromJson(x)))
-          : null);
+          : null,
+      taskStatusManaging: json["Task_Status_Managing"] ??
+          json["task_status_managing"] ??
+          json["Task_Status"] ??
+          json["task_status"] ??
+          json["Task_Statuses"] ??
+          json["task_statuses"] ??
+          json["Task_Status_List"]);
 
   Map<String, dynamic> toJson() => {
         "User_Details_Id": userDetailsId,
@@ -119,5 +128,6 @@ class GetUserModel {
         "DeleteStatus": deleteStatus,
         "Allow_App_Login": allowAppLogin,
         "Department_Id": departmentId,
+        "Task_Status_Managing": taskStatusManaging,
       };
 }

@@ -152,6 +152,9 @@ class CustomerDetailsProvider extends ChangeNotifier {
   List<CustomFieldByStatusId> _customFieldQuotation = [];
   List<CustomFieldByStatusId> get customFieldQuotation => _customFieldQuotation;
 
+  List<CustomFieldByStatusId> _additionalCustomFieldsQuotation = [];
+  List<CustomFieldByStatusId> get additionalCustomFieldsQuotation => _additionalCustomFieldsQuotation;
+
   List<Map<String, dynamic>> _savedMasterCustomFields = [];
 
   List<CustomFieldByStatusId> _commercialCustomFields = [];
@@ -798,6 +801,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
   //quotations
   final TextEditingController qproductnameController = TextEditingController();
+  final TextEditingController rejectionReasonController =
+      TextEditingController();
   final TextEditingController qsubsidyAmountController =
       TextEditingController();
   final TextEditingController qDiscountController = TextEditingController();
@@ -1525,6 +1530,46 @@ class CustomerDetailsProvider extends ChangeNotifier {
     } finally {
       _isLoadingQuotationCustomFields = false;
       notifyListeners();
+    }
+  }
+
+  Future<void> getAdditionalCustomFields(BuildContext context) async {
+    try {
+      final response = await HttpRequest.httpGetRequest(
+          endPoint: HttpUrls.getAllCustomField);
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data != null) {
+          List<dynamic> fieldsData = [];
+          if (data is Map<String, dynamic> && data.containsKey('data')) {
+            fieldsData = data['data'] as List<dynamic>;
+          } else if (data is List) {
+            fieldsData = data;
+          }
+
+          if (fieldsData.isNotEmpty) {
+            final allFields = fieldsData.map((e) => CustomFieldByStatusId.fromJson(e)).toList();
+            _additionalCustomFieldsQuotation = allFields
+                .where((f) => f.customFieldId == 361 || f.customFieldId == 362)
+                .toList();
+            print("Successfully loaded additional custom fields: ${_additionalCustomFieldsQuotation.length}");
+          } else {
+            _additionalCustomFieldsQuotation = [];
+          }
+        } else {
+          _additionalCustomFieldsQuotation = [];
+        }
+
+        if (quotationListByMaster.isNotEmpty) {
+           final quotation = quotationListByMaster.first;
+           populateCustomFieldsFromMaster(quotation.quotationCustomFields);
+        }
+
+        notifyListeners();
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
     }
   }
 
@@ -3240,6 +3285,30 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
+  bool hasPendingApprovalQuotation() {
+    return _quotationList.any((q) =>
+        q.adminApproval == 0 &&
+        q.isRejected != 1 &&
+        (q.rejectionReason == null || q.rejectionReason!.trim().isEmpty));
+  }
+
+  Future<bool> checkAndWarnPendingApprovalQuotation(
+      String customerId, BuildContext context) async {
+    await fetchQuotationListIfNeeded(customerId, context);
+    if (hasPendingApprovalQuotation()) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Approval pending quotations are there , please clear that'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+      return true;
+    }
+    return false;
+  }
+
   Future<void> getQuatationListByMasterId(
       String masterId, BuildContext context) async {
     try {
@@ -3422,16 +3491,41 @@ class CustomerDetailsProvider extends ChangeNotifier {
         "Shipping_Charges":
             double.tryParse(shippingChargesController.text) ?? 0.0,
         "ScopeOfWorkItems": scopeOfWorkItems.map((e) => e.toJson()).toList(),
-        "customFields": [
-          ...?customFieldQuotationKey.currentState?.getFieldValuesAsJson(),
-          ..._selectedCommercialFields.map((field) {
-            int vId = field.customFieldId!;
-            return {
-              "custom_field_id": virtualToRealCommercialFieldId[vId] ?? vId,
-              "value": field.datavalue ?? ''
-            };
-          }),
-        ],
+        "customFields": () {
+          final additionalFieldsJson = customFieldAdditionalQuotationKey.currentState?.getFieldValuesAsJson() ?? [];
+          final allFields = [
+            ...?customFieldQuotationKey.currentState?.getFieldValuesAsJson(),
+            ..._additionalCustomFieldsQuotation.map((field) {
+              return {
+                "custom_field_id": field.customFieldId,
+                "value": field.datavalue ?? ''
+              };
+            }),
+            ..._selectedCommercialFields.map((field) {
+              int vId = field.customFieldId!;
+              return {
+                "custom_field_id": virtualToRealCommercialFieldId[vId] ?? vId,
+                "value": field.datavalue ?? ''
+              };
+            }),
+          ];
+          
+          // Ensure 361 and 362 are ALWAYS present, even if API load failed
+          for (int id in [361, 362]) {
+             if (!allFields.any((f) => f['custom_field_id'] == id)) {
+                // Try to get from widget state first, else empty string
+                final fromWidget = additionalFieldsJson.firstWhere(
+                   (f) => f['custom_field_id'] == id, 
+                   orElse: () => <String, dynamic>{}
+                );
+                allFields.add({
+                   "custom_field_id": id,
+                   "value": fromWidget.isNotEmpty ? fromWidget['value'] : ''
+                });
+             }
+          }
+          return allFields;
+        }(),
         "Description_2": quotationDescription2Controller.text.toString(),
         "Description_3": quotationDescription3Controller.text.toString(),
         "Purchase_Total": _billTotalAmount.toStringAsFixed(2),
@@ -3540,6 +3634,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
   void clearQuotationDetails() {
     qproductnameController.clear();
+    rejectionReasonController.clear();
     workCompletionController.clear();
     advanceController.clear();
     deliveryController.clear();
@@ -5342,6 +5437,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
     // ---- BASIC DETAILS ----
     qproductnameController.text = quotation.productName;
+    rejectionReasonController.text = quotation.rejectionReason;
     qEntryDateController.text = quotation.entryDate;
     selectedBranchId = quotation.branchId;
     advanceController.text = quotation.advancePercentage;
@@ -5517,6 +5613,12 @@ class CustomerDetailsProvider extends ChangeNotifier {
             _customFieldQuotation[i].datavalue = value;
           }
         }
+        
+        for (var i = 0; i < _additionalCustomFieldsQuotation.length; i++) {
+          if (_additionalCustomFieldsQuotation[i].customFieldId == fieldId) {
+            _additionalCustomFieldsQuotation[i].datavalue = value;
+          }
+        }
 
         for (var i = 0; i < _commercialCustomFields.length; i++) {
           if (_commercialCustomFields[i].customFieldId == fieldId) {
@@ -5674,6 +5776,121 @@ class CustomerDetailsProvider extends ChangeNotifier {
     } catch (e) {
       debugPrint('Error updating approval status: $e');
       if (context.mounted) Loader.stopLoader(context);
+      return false;
+    }
+  }
+
+  Future<bool> updateQuotationRejectionStatus(
+      String masterId, String rejectionReason, BuildContext context, String customerId) async {
+    try {
+      Loader.showLoader(context);
+      final bodyData = {
+        "Quotation_Master_Id": int.tryParse(masterId) ?? masterId,
+        "Rejection_Reason": rejectionReason,
+      };
+
+      final response = await HttpRequest.httpPostRequest(
+        endPoint: HttpUrls.updateQuotationRejection,
+        bodyData: bodyData,
+      );
+
+      if (!context.mounted) return false;
+      Loader.stopLoader(context);
+
+      if (response?.statusCode == 200 || response?.statusCode == 201) {
+        await getQuatationList(customerId, context);
+        return true;
+      }
+      return false;
+    } catch (e) {
+      debugPrint('Error updating rejection status: $e');
+      if (context.mounted) Loader.stopLoader(context);
+      return false;
+    }
+  }
+
+  Future<bool> checkQuotationConvert(
+      String masterId, BuildContext context, String customerId) async {
+    try {
+      Loader.showLoader(context);
+      final bodyData = {
+        "Quotation_Master_Id": int.tryParse(masterId) ?? masterId,
+      };
+
+      final response = await HttpRequest.httpPostRequest(
+        endPoint: HttpUrls.checkQuotationConvert,
+        bodyData: bodyData,
+      );
+
+      if (!context.mounted) return false;
+      Loader.stopLoader(context);
+
+      final data = response?.data;
+      String message = '';
+      if (data is Map) {
+        message = data['message']?.toString() ??
+            data['Message']?.toString() ??
+            data['msg']?.toString() ??
+            data['Msg']?.toString() ??
+            '';
+      } else if (data is List && data.isNotEmpty && data[0] is Map) {
+        message = data[0]['message']?.toString() ??
+            data[0]['Message']?.toString() ??
+            data[0]['msg']?.toString() ??
+            data[0]['Msg']?.toString() ??
+            '';
+      }
+
+      bool isSuccess = false;
+      if (data is Map) {
+        final rawSuccess = data['success'] ?? data['Success'] ?? data['status'] ?? data['Status'];
+        isSuccess = rawSuccess == 1 || rawSuccess == '1' || rawSuccess == true || rawSuccess == 'true';
+      } else if (data is List && data.isNotEmpty && data[0] is Map) {
+        final rawSuccess = data[0]['success'] ?? data[0]['Success'] ?? data[0]['status'] ?? data[0]['Status'];
+        isSuccess = rawSuccess == 1 || rawSuccess == '1' || rawSuccess == true || rawSuccess == 'true';
+      } else if (response?.statusCode == 200 || response?.statusCode == 201) {
+        isSuccess = true;
+      }
+
+      if (isSuccess) {
+        if (message.isEmpty) {
+          message = 'Quotation converted successfully';
+        }
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(message),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+        await getQuatationList(customerId, context);
+        return true;
+      } else {
+        if (message.isEmpty) {
+          message = 'Failed to convert quotation';
+        }
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(message),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+        return false;
+      }
+    } catch (e) {
+      debugPrint('Error converting quotation: $e');
+      if (context.mounted) {
+        Loader.stopLoader(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
       return false;
     }
   }

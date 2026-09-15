@@ -492,7 +492,14 @@ class _TaskCardState extends State<TaskCard> {
   Widget _buildQuoteButton(BuildContext context) {
     return CustomActionButton(
       imageColor: AppColors.bluebutton,
-      onTap: () {
+      onTap: () async {
+        final customerDetailsProvider =
+            Provider.of<CustomerDetailsProvider>(context, listen: false);
+        final hasPending = await customerDetailsProvider
+            .checkAndWarnPendingApprovalQuotation(
+                widget.task.customerId.toString(), context);
+        if (hasPending) return;
+        if (!context.mounted) return;
         Navigator.push(
           context,
           MaterialPageRoute(

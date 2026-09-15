@@ -3319,6 +3319,13 @@ class SettingsProvider extends ChangeNotifier {
             "DOJ": dateOfJoinController.text.toyyyymmdd(),
             "Transfer_Departments":
                 _selectedTransferDepartments.map((e) => e.toJson()).toList(),
+            "Task_Status_Managing": _taskStatusManagingList
+                .where((s) => _selectedTaskStatusIds.contains(s.statusId))
+                .map((e) => {
+                      "Status_Id": e.statusId,
+                      "Status_Name": e.statusName,
+                    })
+                .toList(),
           });
 
       if (response!.statusCode == 200) {
@@ -3346,6 +3353,7 @@ class SettingsProvider extends ChangeNotifier {
       );
       Loader.stopLoader(context);
       _selectedTransferDepartments.clear();
+      _selectedTaskStatusIds.clear();
       _isAddingUser = false;
       notifyListeners();
     }
@@ -4342,6 +4350,7 @@ class SettingsProvider extends ChangeNotifier {
     _selectedDefaultStatusId = -1;
     _selectedBranchId = -1;
     _selectedTransferDepartments.clear();
+    _selectedTaskStatusIds.clear();
 
     firstNameController.clear();
     lastNameController.clear();
@@ -4458,6 +4467,77 @@ class SettingsProvider extends ChangeNotifier {
   void toggleAppLogin(bool value) {
     _allowAppLogin = value;
     notifyListeners();
+  }
+
+  // Task Status Managing for App Login
+  List<SearchStatusModel> _taskStatusManagingList = [];
+  List<SearchStatusModel> get taskStatusManagingList => _taskStatusManagingList;
+
+  List<int> _selectedTaskStatusIds = [];
+  List<int> get selectedTaskStatusIds => _selectedTaskStatusIds;
+
+  bool _isLoadingTaskStatuses = false;
+  bool get isLoadingTaskStatuses => _isLoadingTaskStatuses;
+
+  void toggleTaskStatusSelection(int statusId) {
+    if (_selectedTaskStatusIds.contains(statusId)) {
+      _selectedTaskStatusIds.remove(statusId);
+    } else {
+      _selectedTaskStatusIds.add(statusId);
+    }
+    notifyListeners();
+  }
+
+  void selectAllTaskStatuses(bool selectAll) {
+    if (selectAll) {
+      _selectedTaskStatusIds =
+          _taskStatusManagingList.map((e) => e.statusId).toList();
+    } else {
+      _selectedTaskStatusIds.clear();
+    }
+    notifyListeners();
+  }
+
+  void setSelectedTaskStatusIds(List<int> ids) {
+    _selectedTaskStatusIds = List.from(ids);
+    notifyListeners();
+  }
+
+  void clearTaskStatuses() {
+    _selectedTaskStatusIds.clear();
+    _taskStatusManagingList.clear();
+    notifyListeners();
+  }
+
+  Future<void> fetchTaskStatusesForUser(BuildContext context) async {
+    _isLoadingTaskStatuses = true;
+    notifyListeners();
+    try {
+      String endPoint =
+          '${HttpUrls.searchStatus}?status_Name=&ViewIn_Id=3&Page_Index=1&PageSize=1000';
+      final response = await HttpRequest.httpGetRequest(endPoint: endPoint);
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data != null) {
+          if (data is List<dynamic>) {
+            _taskStatusManagingList =
+                data.map((item) => SearchStatusModel.fromJson(item)).toList();
+          } else if (data is Map<String, dynamic> && data.containsKey('data')) {
+            _taskStatusManagingList = (data['data'] as List<dynamic>)
+                .map((item) => SearchStatusModel.fromJson(item))
+                .toList();
+          } else {
+            _taskStatusManagingList = [];
+          }
+        }
+      }
+    } catch (e) {
+      print('Exception occurred in fetchTaskStatusesForUser: $e');
+    } finally {
+      _isLoadingTaskStatuses = false;
+      notifyListeners();
+    }
   }
 
   void alert(BuildContext context, String message) {

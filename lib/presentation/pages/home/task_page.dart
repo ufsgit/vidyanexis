@@ -80,6 +80,136 @@ class _tasksPageReportState extends State<TaskPage> {
   late final ScrollController _scrollableVerticalController;
   bool _isSyncing = false;
 
+  // Task multi-selection state
+  Set<String> _selectedTaskIds = {};
+  String? _selectedTaskType;
+
+  void _clearSelection() {
+    setState(() {
+      _selectedTaskIds.clear();
+      _selectedTaskType = null;
+    });
+  }
+
+  void _toggleTaskSelection(TaskReportModel task, bool? selected) {
+    if (selected == true) {
+      if (_selectedTaskIds.isNotEmpty && _selectedTaskType != task.taskTypeId.toString()) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Cannot select different task types. Please select tasks of the same type.")),
+        );
+        return;
+      }
+      setState(() {
+        _selectedTaskIds.add(task.taskId.toString());
+        _selectedTaskType = task.taskTypeId.toString();
+      });
+    } else {
+      setState(() {
+        _selectedTaskIds.remove(task.taskId.toString());
+        if (_selectedTaskIds.isEmpty) {
+          _selectedTaskType = null;
+        }
+      });
+    }
+  }
+
+  void _selectAllVisibleTasks(List<TaskReportModel> visibleTasks) {
+    if (visibleTasks.isEmpty) return;
+    
+    // Determine the type we are selecting (use the first valid one if not already set)
+    String? targetType = _selectedTaskType ?? visibleTasks.first.taskTypeId.toString();
+    if (targetType == null) return; // Edge case
+    
+    // Find all visible tasks of that type
+    final selectableTasks = visibleTasks.where((t) => t.taskTypeId.toString() == targetType).toList();
+    
+    // Check if they are all selected
+    bool allSelected = selectableTasks.every((t) => _selectedTaskIds.contains(t.taskId.toString()));
+    
+    setState(() {
+      if (allSelected) {
+        // Unselect them
+        for (var t in selectableTasks) {
+          _selectedTaskIds.remove(t.taskId.toString());
+        }
+        if (_selectedTaskIds.isEmpty) {
+          _selectedTaskType = null;
+        }
+      } else {
+        // Select them
+        for (var t in selectableTasks) {
+          _selectedTaskIds.add(t.taskId.toString());
+        }
+        _selectedTaskType = targetType;
+      }
+    });
+  }
+
+  void _showAssignModal() {
+    if (_selectedTaskIds.isEmpty) return;
+
+    String? selectedStaffId;
+    
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            final staffList = Provider.of<DropDownProvider>(context, listen: false).staffData;
+            
+            return AlertDialog(
+              title: const Text("Assign Tasks"),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Selected ${_selectedTaskIds.length} tasks of type: ${_selectedTaskType ?? 'Unknown'}"),
+                  const SizedBox(height: 16),
+                  DropdownButtonFormField<String>(
+                    decoration: const InputDecoration(
+                      labelText: "Select Staff member",
+                      border: OutlineInputBorder(),
+                    ),
+                    value: selectedStaffId,
+                    items: staffList.map((staff) {
+                      return DropdownMenuItem<String>(
+                        value: staff.userDetailsId.toString(),
+                        child: Text(staff.userDetailsName),
+                      );
+                    }).toList(),
+                    onChanged: (val) {
+                      setModalState(() {
+                        selectedStaffId = val;
+                      });
+                    },
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text("Cancel"),
+                ),
+                ElevatedButton(
+                  onPressed: selectedStaffId == null ? null : () {
+                    // Logic to assign tasks goes here. For now, print payload and show toast.
+                    print("Assigning tasks: ${_selectedTaskIds.toList()} to staff: $selectedStaffId");
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Tasks assigned successfully")),
+                    );
+                    Navigator.pop(context);
+                    _clearSelection();
+                  },
+                  child: const Text("Assign / Update"),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -195,6 +325,13 @@ class _tasksPageReportState extends State<TaskPage> {
         },
       );
     } else if (action == 'quotation') {
+      final customerDetailsProvider =
+          Provider.of<CustomerDetailsProvider>(context, listen: false);
+      final hasPending = await customerDetailsProvider
+          .checkAndWarnPendingApprovalQuotation(
+              customerId.toString(), context);
+      if (hasPending) return;
+      if (!context.mounted) return;
       showDialog(
         barrierDismissible: false,
         context: context,
@@ -832,6 +969,25 @@ class _tasksPageReportState extends State<TaskPage> {
                                       borderRadius: BorderRadius.circular(4)),
                                   backgroundColor: AppColors.primaryBlue,
                                   foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 12),
+                                ),
+                              ),
+                            ),
+                            // Assign Tasks
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                              child: ElevatedButton.icon(
+                                onPressed: _selectedTaskIds.isEmpty ? null : _showAssignModal,
+                                icon: const Icon(Icons.assignment_ind),
+                                label: const Text('Assign'),
+                                style: ElevatedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(4)),
+                                  backgroundColor: AppColors.primaryBlue,
+                                  foregroundColor: Colors.white,
+                                  disabledBackgroundColor: Colors.grey.shade300,
+                                  disabledForegroundColor: Colors.grey.shade600,
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 16, vertical: 12),
                                 ),
@@ -1630,7 +1786,7 @@ class _tasksPageReportState extends State<TaskPage> {
                             Expanded(
                               child: LayoutBuilder(
                                 builder: (context, constraints) {
-                                  // Fixed columns: No. + Lead Code + Customer + Mobile No. + Task + Status
+                                  // Fixed columns: Checkbox + No. + Lead Code + Customer + Mobile No. + Task + Status
                                   const double fixedWidth =
                                       60 + 120 + 180 + 110 + 180 + 120; // 770
 
@@ -1679,6 +1835,15 @@ class _tasksPageReportState extends State<TaskPage> {
                                                 child: Row(
                                                   children: [
                                                     SizedBox(
+                                                      width: 40,
+                                                      child: Checkbox(
+                                                        value: reportsProvider.taskReport.isNotEmpty && _selectedTaskIds.length == reportsProvider.taskReport.where((t) => t.taskTypeId.toString() == (_selectedTaskType ?? reportsProvider.taskReport.first.taskTypeId.toString())).length,
+                                                        onChanged: (val) => _selectAllVisibleTasks(reportsProvider.taskReport),
+                                                        fillColor: WidgetStateProperty.resolveWith((states) => Colors.white),
+                                                        checkColor: AppColors.primaryBlue,
+                                                      ),
+                                                    ),
+                                                    SizedBox(
                                                       width: 60,
                                                       child: Padding(
                                                         padding:
@@ -1721,7 +1886,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                       color: Colors.white,
                                                     ),
                                                     TableWidget(
-                                                      width: 110,
+                                                      width: 150,
                                                       title: 'Mobile No.',
                                                       fontSize: 13,
                                                       padding: const EdgeInsets
@@ -1916,23 +2081,30 @@ class _tasksPageReportState extends State<TaskPage> {
                                                               hoverColor:
                                                                   const Color(
                                                                       0xFFF8FAFC),
-                                                              child: Container(
-                                                                height: rowHeight,
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  color: index %
-                                                                              2 ==
-                                                                          0
-                                                                      ? Colors
-                                                                          .white
-                                                                      : const Color(
-                                                                          0xFFF6F7F9),
-                                                                ),
-                                                                child: Row(
-                                                                  children: [
-                                                                    // No.
-                                                                    SizedBox(
-                                                                      width: 60,
+                                                                child: Container(
+                                                                  height: rowHeight,
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    color: _selectedTaskIds.contains(task.taskId.toString()) 
+                                                                        ? AppColors.primaryBlue.withOpacity(0.1)
+                                                                        : index % 2 == 0
+                                                                        ? Colors.white
+                                                                        : const Color(0xFFF6F7F9),
+                                                                  ),
+                                                                  child: Row(
+                                                                    children: [
+                                                                      // Checkbox
+                                                                      SizedBox(
+                                                                        width: 40,
+                                                                        child: Checkbox(
+                                                                          value: _selectedTaskIds.contains(task.taskId.toString()),
+                                                                          onChanged: (val) => _toggleTaskSelection(task, val),
+                                                                          activeColor: AppColors.primaryBlue,
+                                                                        ),
+                                                                      ),
+                                                                      // No.
+                                                                      SizedBox(
+                                                                        width: 60,
                                                                       child:
                                                                           Padding(
                                                                         padding: const EdgeInsets
@@ -2106,7 +2278,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                     // Mobile No.
                                                                     TableWidget(
                                                                       width:
-                                                                          110,
+                                                                          150,
                                                                       padding: const EdgeInsets
                                                                           .symmetric(
                                                                           vertical:
@@ -3921,20 +4093,13 @@ class _tasksPageReportState extends State<TaskPage> {
                             Provider.of<LeadsProvider>(context, listen: false);
 
                         WidgetsBinding.instance.addPostFrameCallback((_) {
-                          reportsProvider.fetchTaskTypes(tasktypeId, statusId,
-                              customerId, enquiryForId, context);
+                          reportsProvider.clearProcessFlowData();
+                          final formProvider =
+                              Provider.of<FormProvider>(context, listen: false);
+                          formProvider.clearForms();
                           dropDownProvider.getUserDetails(context);
                           reportsProvider.clearTaskUserAssignments();
                           reportsProvider.clearDescription();
-
-                          // Also fetch forms for this customer
-                          final formProvider =
-                              Provider.of<FormProvider>(context, listen: false);
-                          formProvider.getFormDataByCustomer(
-                            task.customerId.toString(),
-                            enquiryForId: task.enquiryForId.toString(),
-                          );
-                          formProvider.fetchAvailableFields(context);
 
                           // Pre-fill Description and Follow-Up Date if available
                           reportsProvider.descriptionController.clear();
@@ -4004,6 +4169,21 @@ class _tasksPageReportState extends State<TaskPage> {
                                                         sId,
                                                         customerId,
                                                         enquiryForId,
+                                                        context);
+                                                final formProvider =
+                                                    Provider.of<FormProvider>(
+                                                        context,
+                                                        listen: false);
+                                                await formProvider
+                                                    .getFormDataByCustomer(
+                                                  task.customerId.toString(),
+                                                  enquiryForId: task
+                                                      .enquiryForId
+                                                      .toString(),
+                                                  taskTypeId: tId.toString(),
+                                                );
+                                                formProvider
+                                                    .fetchAvailableFields(
                                                         context);
                                               },
                                             );
@@ -4085,10 +4265,10 @@ class _tasksPageReportState extends State<TaskPage> {
                                                         Colors.grey.shade400),
                                               ),
                                               isExpanded: true,
-                                              onChanged: (sub) {
+                                              onChanged: (sub) async {
                                                 selectedSubStatus.value = sub;
                                                 if (sub != null) {
-                                                  reportsProvider
+                                                  await reportsProvider
                                                       .fetchTaskTypes(
                                                     task.taskTypeId,
                                                     sub.subStatusId ?? 0,
@@ -4096,6 +4276,22 @@ class _tasksPageReportState extends State<TaskPage> {
                                                     task.enquiryForId,
                                                     context,
                                                   );
+                                                  final formProvider =
+                                                      Provider.of<FormProvider>(
+                                                          context,
+                                                          listen: false);
+                                                  await formProvider
+                                                      .getFormDataByCustomer(
+                                                    task.customerId.toString(),
+                                                    enquiryForId: task
+                                                        .enquiryForId
+                                                        .toString(),
+                                                    taskTypeId: task.taskTypeId
+                                                        .toString(),
+                                                  );
+                                                  formProvider
+                                                      .fetchAvailableFields(
+                                                          context);
                                                 }
                                               },
                                               items:

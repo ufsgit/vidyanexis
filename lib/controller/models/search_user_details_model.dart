@@ -26,6 +26,7 @@ class SearchUserDetails {
   String? firstName;
   String? lastName;
   dynamic transferDepartments;
+  dynamic taskStatusManaging;
 
   SearchUserDetails(
       {required this.userDetailsId,
@@ -54,6 +55,7 @@ class SearchUserDetails {
       this.designation,
       this.doj,
       this.transferDepartments,
+      this.taskStatusManaging,
       this.allowAppLogin});
 
   factory SearchUserDetails.fromJson(Map<String, dynamic> json) =>
@@ -83,6 +85,13 @@ class SearchUserDetails {
           branchId: json["Branch_Id"]?.toString() ?? '0',
           branchName: json["Branch_Name"] ?? '',
           transferDepartments: json["Transfer_Departments"] ?? json["transfer_departments"],
+          taskStatusManaging: json["Task_Status_Managing"] ??
+              json["task_status_managing"] ??
+              json["Task_Status"] ??
+              json["task_status"] ??
+              json["Task_Statuses"] ??
+              json["task_statuses"] ??
+              json["Task_Status_List"],
           departmentId: json["Department_Id"]?.toString() ?? '0',
           departmentName: json["Department_Name"]?.toString() ?? '');
 
@@ -105,5 +114,6 @@ class SearchUserDetails {
         "DeleteStatus": deleteStatus,
         "Allow_App_Login": allowAppLogin,
         "Department_Id": departmentId,
+        "Task_Status_Managing": taskStatusManaging,
       };
 }

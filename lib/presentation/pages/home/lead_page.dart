@@ -3564,6 +3564,13 @@ class _LeadsPageState extends State<LeadPage> {
     } else if (value == 'convert') {
       leadProvider.convertLead(context, lead.customerId.toString());
     } else if (value == 'quotation') {
+      final customerDetailsProvider =
+          Provider.of<CustomerDetailsProvider>(context, listen: false);
+      final hasPending = await customerDetailsProvider
+          .checkAndWarnPendingApprovalQuotation(
+              lead.customerId.toString(), context);
+      if (hasPending) return;
+      if (!context.mounted) return;
       showDialog(
         barrierDismissible: false,
         context: context,

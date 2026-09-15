@@ -41,6 +41,11 @@ class QuatationListModel {
   int adminApproval;
   String? approvedBy;
   String? approvedByName;
+  int isRejected;
+  String? rejectedBy;
+  String? rejectedByName;
+  String? rejectionReason;
+  int isConverted;
 
   double get calculatedNetCost {
     double systemPrice = double.tryParse(totalAmount) ?? 0.0;
@@ -96,6 +101,11 @@ class QuatationListModel {
     this.adminApproval = 0,
     this.approvedBy,
     this.approvedByName,
+    this.isRejected = 0,
+    this.rejectedBy,
+    this.rejectedByName,
+    this.rejectionReason,
+    this.isConverted = 0,
   });
 
   factory QuatationListModel.fromMap(Map<String, dynamic> json) =>
@@ -159,6 +169,24 @@ class QuatationListModel {
         adminApproval: int.tryParse(json["admin_approval"]?.toString() ?? json["Admin_Approval"]?.toString() ?? '') ?? 0,
         approvedBy: json["approved_by"]?.toString() ?? json["Approved_By"]?.toString(),
         approvedByName: json["approved_by_name"]?.toString() ?? json["Approved_By_Name"]?.toString(),
+        isRejected: int.tryParse(json["is_rejected"]?.toString() ?? json["Is_rejected"]?.toString() ?? json["Is_Rejected"]?.toString() ?? '') ?? 0,
+        rejectedBy: json["rejected_by"]?.toString() ?? json["Rejected_By"]?.toString(),
+        rejectedByName: json["rejected_by_name"]?.toString() ?? json["Rejected_By_Name"]?.toString(),
+        rejectionReason: json["rejection_reason"]?.toString() ??
+            json["Rejection_Reason"]?.toString() ??
+            json["reason"]?.toString() ??
+            json["Reason"]?.toString() ??
+            json["reject_reason"]?.toString() ??
+            json["Reject_Reason"]?.toString() ??
+            json["rejection_remarks"]?.toString() ??
+            json["admin_remark"]?.toString() ??
+            json["Admin_Remark"]?.toString() ??
+            "",
+        isConverted: int.tryParse(json["Is_Converted"]?.toString() ??
+                json["is_converted"]?.toString() ??
+                json["Is_converted"]?.toString() ??
+                '') ??
+            0,
       );
 
   Map<String, dynamic> toMap() => {
@@ -172,6 +200,7 @@ class QuatationListModel {
         "Subsidy_Amount": subsidyAmount,
         "Subsidyticked": subsidyticked,
         "NetTotal": netTotal,
+        "NetCost": netCost,
         "KSEB_Registration_Fees_KW": ksebRegistrationFee,
         "KSEB_Feasibility_Study_Fees": ksebFeasibilityFee,
         "Discount_Amount": discountAmount,
@@ -181,9 +210,7 @@ class QuatationListModel {
         "Terms_And_Conditions": termsAndConditions,
         "Is_Confirm": isConfirm,
         "Order_No": orderNo,
-        "Order_Date": orderDate != null
-            ? "${orderDate!.year.toString().padLeft(4, '0')}-${orderDate!.month.toString().padLeft(2, '0')}-${orderDate!.day.toString().padLeft(2, '0')}"
-            : null,
+        "Order_Date": orderDate?.toIso8601String(),
         "Confirmed_By": confirmedBy,
         "Quotation_Status_Id": quotationStatusId,
         "Quotation_Status_Name": quotationStatusName,
@@ -192,6 +219,7 @@ class QuatationListModel {
         "Description": description,
         "DeleteStatus": deleteStatus,
         "Created_By_Name": createdByName,
+        "QuotationTypeId": quotationTypeId,
         "quotation_details": quotationDetails == null
             ? []
             : List<dynamic>.from(quotationDetails!.map((x) => x.toMap())),
@@ -205,6 +233,11 @@ class QuatationListModel {
         "admin_approval": adminApproval,
         "approved_by": approvedBy,
         "Approved_By_Name": approvedByName,
+        "is_rejected": isRejected,
+        "rejected_by": rejectedBy,
+        "rejected_by_name": rejectedByName,
+        "rejection_reason": rejectionReason,
+        "Is_Converted": isConverted,
       };
 }
 

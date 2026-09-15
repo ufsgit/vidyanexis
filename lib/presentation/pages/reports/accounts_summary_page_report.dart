@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/accounts_summary_report_provider.dart';
+import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
 import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
@@ -251,9 +253,15 @@ class _AccountsSummaryPageReportState extends State<AccountsSummaryPageReport> {
                             children: [
                               // Header
                               Container(
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFEFF2F5),
-                                  borderRadius: BorderRadius.circular(4),
+                                height: 45,
+                                decoration: const BoxDecoration(
+                                  color: AppColors.primaryBlue,
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(8),
+                                    topRight: Radius.circular(8),
+                                    bottomLeft: Radius.circular(8),
+                                    bottomRight: Radius.circular(8),
+                                  ),
                                 ),
                                 child: Row(
                                   children: [
@@ -306,19 +314,45 @@ class _AccountsSummaryPageReportState extends State<AccountsSummaryPageReport> {
                                                   width: 120,
                                                   child: Text(t.customerId.toString()),
                                                 ),
-                                                SizedBox(
-                                                  width: 180,
-                                                  child: Text(
-                                                    t.customerName,
-                                                    style: const TextStyle(
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.w600,
+                                                TextButton(
+                                                  onPressed: () {
+                                                    context.push(
+                                                        '${CustomerDetailsScreen.route}${t.customerId}/${'true'}');
+                                                  },
+                                                  style: TextButton.styleFrom(
+                                                    backgroundColor: Colors.blue
+                                                        .withOpacity(0.1),
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        4)),
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 6,
+                                                        vertical: 6),
+                                                    tapTargetSize:
+                                                        MaterialTapTargetSize
+                                                            .shrinkWrap,
+                                                  ),
+                                                  child: SizedBox(
+                                                    width: 160,
+                                                    child: Text(
+                                                      t.customerName,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      maxLines: 1,
+                                                      style: const TextStyle(
+                                                        color: Colors.blue,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        fontSize: 13,
+                                                      ),
                                                     ),
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
                                                   ),
                                                 ),
+                                                SizedBox(width: 10,),
                                                 SizedBox(
                                                   width: 140,
                                                   child: Text(t.projectType ?? '-'),
@@ -372,9 +406,9 @@ class _AccountsSummaryPageReportState extends State<AccountsSummaryPageReport> {
         child: Text(
           title,
           style: const TextStyle(
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.normal,
             fontSize: 14,
-            color: Color(0xFF607185),
+            color: Colors.white,
           ),
         ),
       ),
@@ -587,6 +621,7 @@ class _AccountsSummaryPageReportMobileState extends State<_AccountsSummaryPageRe
   Widget build(BuildContext context) {
     final reportsProvider = Provider.of<AccountsSummaryReportProvider>(context);
     final searchProvider = Provider.of<SidebarProvider>(context);
+    final sideProvider = Provider.of<SidebarProvider>(context);
 
     return Scaffold(
       key: _scaffoldKey,
@@ -727,34 +762,39 @@ class _AccountsSummaryPageReportMobileState extends State<_AccountsSummaryPageRe
                         separatorBuilder: (_, __) => const SizedBox(height: 8),
                         itemBuilder: (context, index) {
                           final t = reportsProvider.accountsSummaryReport[index];
-                          return Card(
-                            elevation: 1,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(12),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    t.customerName,
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w700,
-                                      color: Color(0xFF152D70),
+                          return InkWell(
+                            onTap: () {
+                              sideProvider.replaceWidgetCustomer(false, t.customerId.toString());
+                            },
+                            child: Card(
+                              elevation: 1,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(12),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      t.customerName,
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.normal,
+                                        color: Color(0xFF152D70),
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  _mobileRow('Delivery Date', t.materialDeliveryDate ?? '-'),
-                                  _mobileRow('Customer ID', t.customerId.toString()),
-                                  _mobileRow('Project Type', t.projectType ?? '-'),
-                                  _mobileRow('Advance Payment', t.advancePayment ?? '0.00'),
-                                  _mobileRow('Second Payment', t.secondPayment ?? '0.00'),
-                                  _mobileRow('Third Payment', t.thirdPayment ?? '0.00'),
-                                  _mobileRow('Balance Payment', t.balancePayment),
-                                  _mobileRow('Subsidy Amount', t.subsidyAmount ?? '0.00'),
-                                ],
+                                    const SizedBox(height: 8),
+                                    _mobileRow('Delivery Date', t.materialDeliveryDate ?? '-'),
+                                    _mobileRow('Customer ID', t.customerId.toString()),
+                                    _mobileRow('Project Type', t.projectType ?? '-'),
+                                    _mobileRow('Advance Payment', t.advancePayment ?? '0.00'),
+                                    _mobileRow('Second Payment', t.secondPayment ?? '0.00'),
+                                    _mobileRow('Third Payment', t.thirdPayment ?? '0.00'),
+                                    _mobileRow('Balance Payment', t.balancePayment),
+                                    _mobileRow('Subsidy Amount', t.subsidyAmount ?? '0.00'),
+                                  ],
+                                ),
                               ),
                             ),
                           );
