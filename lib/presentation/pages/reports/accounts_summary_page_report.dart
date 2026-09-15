@@ -251,9 +251,15 @@ class _AccountsSummaryPageReportState extends State<AccountsSummaryPageReport> {
                             children: [
                               // Header
                               Container(
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFEFF2F5),
-                                  borderRadius: BorderRadius.circular(4),
+                                height: 45,
+                                decoration: const BoxDecoration(
+                                  color: AppColors.primaryBlue,
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(8),
+                                    topRight: Radius.circular(8),
+                                    bottomLeft: Radius.circular(8),
+                                    bottomRight: Radius.circular(8),
+                                  ),
                                 ),
                                 child: Row(
                                   children: [
@@ -313,7 +319,7 @@ class _AccountsSummaryPageReportState extends State<AccountsSummaryPageReport> {
                                                     style: const TextStyle(
                                                       fontSize: 14,
                                                       fontWeight:
-                                                          FontWeight.w600,
+                                                          FontWeight.normal,
                                                     ),
                                                     overflow:
                                                         TextOverflow.ellipsis,
@@ -372,9 +378,9 @@ class _AccountsSummaryPageReportState extends State<AccountsSummaryPageReport> {
         child: Text(
           title,
           style: const TextStyle(
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.normal,
             fontSize: 14,
-            color: Color(0xFF607185),
+            color: Colors.white,
           ),
         ),
       ),
@@ -741,7 +747,7 @@ class _AccountsSummaryPageReportMobileState extends State<_AccountsSummaryPageRe
                                     t.customerName,
                                     style: const TextStyle(
                                       fontSize: 16,
-                                      fontWeight: FontWeight.w700,
+                                      fontWeight: FontWeight.normal,
                                       color: Color(0xFF152D70),
                                     ),
                                   ),
