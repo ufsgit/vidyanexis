@@ -10,7 +10,9 @@ import 'package:printing/printing.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
+import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/models/quotaion_list_model.dart';
+import 'package:vidyanexis/controller/models/search_user_details_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/http/loader.dart';
 import 'package:vidyanexis/presentation/pages/home/edit_quotation_screen.dart';
@@ -497,6 +499,8 @@ class QuotationCard extends StatelessWidget {
                             .text = quotaion.description2;
                         customerDetailsProvider.quotationDescription3Controller
                             .text = quotaion.description3;
+                        customerDetailsProvider.rejectionReasonController.text =
+                            quotaion.rejectionReason;
 
                         // ---- STATUS ----
                         customerDetailsProvider.selectedQuotationStatus =
@@ -676,9 +680,8 @@ class QuotationCard extends StatelessWidget {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     onPressed: () async {
-                      if ((quotation != null && quotation!.adminApproval != 1) ||
-                          customerDetailsProvider
-                              .hasPendingApprovalQuotation()) {
+                      if (customerDetailsProvider
+                          .hasPendingApprovalQuotation()) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text(
@@ -864,6 +867,33 @@ class QuotationCard extends StatelessWidget {
                     backgroundColor: Colors.white,
                     borderSide: BorderSide(color: AppColors.darkGreen),
                   ),
+                  if (settingsprovider.menuIsViewMap[193] == 1)
+                    CustomOutlinedSvgButton(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 8),
+                      onPressed: quotation?.isConverted == 1
+                          ? null
+                          : () async {
+                              await customerDetailsProvider
+                                  .checkQuotationConvert(
+                                taskId,
+                                context,
+                                customerId,
+                              );
+                            },
+                      svgPath: 'assets/images/flow.svg',
+                      label:
+                          quotation?.isConverted == 1 ? 'Converted' : 'Convert',
+                      breakpoint: 300,
+                      foregroundColor: quotation?.isConverted == 1
+                          ? Colors.grey
+                          : Colors.teal,
+                      backgroundColor: Colors.white,
+                      borderSide: BorderSide(
+                          color: quotation?.isConverted == 1
+                              ? Colors.grey
+                              : Colors.teal),
+                    ),
                 ],
               ),
               if (quotation != null) ...[
@@ -877,7 +907,8 @@ class QuotationCard extends StatelessWidget {
                       }
                       return Row(
                         children: [
-                          const Icon(Icons.check, color: Colors.green, size: 20),
+                          const Icon(Icons.check,
+                              color: Colors.green, size: 20),
                           const SizedBox(width: 8),
                           Text(
                             'Approved by $approverName',
@@ -889,7 +920,71 @@ class QuotationCard extends StatelessWidget {
                           ),
                         ],
                       );
-                    }
+                    },
+                  )
+                else if (quotation!.adminApproval == 2 ||
+                    quotation!.isRejected == 1 ||
+                    (quotation!.rejectionReason != null &&
+                        quotation!.rejectionReason!.trim().isNotEmpty))
+                  Builder(
+                    builder: (context) {
+                      String rejecterName = "admin";
+                      if (quotation!.rejectedByName?.isNotEmpty == true) {
+                        rejecterName = quotation!.rejectedByName!;
+                      } else if (quotation!.rejectedBy != null &&
+                          quotation!.rejectedBy!.trim().isNotEmpty) {
+                        try {
+                          final dropDownProvider =
+                              Provider.of<DropDownProvider>(context,
+                                  listen: false);
+                          final staff =
+                              dropDownProvider.searchUserDetails.firstWhere(
+                            (s) =>
+                                s.userDetailsId.toString() ==
+                                quotation!.rejectedBy.toString(),
+                            orElse: () => SearchUserDetails(
+                                userDetailsId: 0, userDetailsName: ''),
+                          );
+                          if (staff.userDetailsName.isNotEmpty) {
+                            rejecterName = staff.userDetailsName;
+                          }
+                        } catch (_) {}
+                      }
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(Icons.cancel_outlined,
+                                  color: Colors.red, size: 20),
+                              const SizedBox(width: 6),
+                              Text(
+                                'Rejected by $rejecterName',
+                                style: const TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                          if (quotation!.rejectionReason != null &&
+                              quotation!.rejectionReason!
+                                  .trim()
+                                  .isNotEmpty) ...[
+                            const SizedBox(height: 4),
+                            Text(
+                              '${quotation!.rejectionReason}',
+                              style: TextStyle(
+                                color: Colors.grey.shade700,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ],
+                        ],
+                      );
+                    },
                   )
                 else
                   Row(
@@ -924,7 +1019,8 @@ class QuotationCard extends StatelessWidget {
                             if (success && context.mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                    content: Text('Status updated to Approved')),
+                                    content:
+                                        Text('Status updated to Approved')),
                               );
                             }
                           },
@@ -935,11 +1031,34 @@ class QuotationCard extends StatelessWidget {
                               borderRadius: BorderRadius.circular(4),
                             ),
                             elevation: 0,
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 12),
                             minimumSize: Size.zero,
                             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                           ),
                           child: const Text('Approve'),
+                        ),
+                      ],
+                      if (settingsprovider.menuIsViewMap[192] == 1) ...[
+                        const SizedBox(width: 8),
+                        ElevatedButton(
+                          onPressed: () {
+                            _showRejectionDialog(context, taskId, customerId,
+                                customerDetailsProvider);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            elevation: 0,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 12),
+                            minimumSize: Size.zero,
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          ),
+                          child: const Text('Reject'),
                         ),
                       ],
                     ],
@@ -973,6 +1092,109 @@ class QuotationCard extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  void _showRejectionDialog(
+    BuildContext context,
+    String taskId,
+    String customerId,
+    CustomerDetailsProvider customerDetailsProvider,
+  ) {
+    final TextEditingController reasonController = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          title: Row(
+            children: [
+              const Icon(Icons.cancel_outlined, color: Colors.red, size: 22),
+              const SizedBox(width: 8),
+              Text(
+                'Reject Quotation',
+                style: GoogleFonts.plusJakartaSans(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                ),
+              ),
+            ],
+          ),
+          content: Form(
+            key: formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Please enter the reason for rejection:',
+                  style: TextStyle(fontSize: 13, color: Colors.black87),
+                ),
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: reasonController,
+                  maxLines: 3,
+                  decoration: InputDecoration(
+                    hintText: 'Enter rejection reason...',
+                    hintStyle:
+                        const TextStyle(fontSize: 13, color: Colors.grey),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(6),
+                      borderSide: const BorderSide(color: Color(0xFFCBD5E1)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(6),
+                      borderSide: const BorderSide(color: Colors.red),
+                    ),
+                    contentPadding: const EdgeInsets.all(12),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Rejection reason is required';
+                    }
+                    return null;
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                if (formKey.currentState?.validate() ?? false) {
+                  final reason = reasonController.text.trim();
+                  Navigator.pop(dialogContext);
+                  final success = await customerDetailsProvider
+                      .updateQuotationRejectionStatus(
+                          taskId, reason, context, customerId);
+                  if (success && context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Quotation rejected successfully'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+              child: const Text('Reject'),
+            ),
+          ],
+        );
+      },
     );
   }
 

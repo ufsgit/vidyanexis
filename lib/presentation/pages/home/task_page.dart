@@ -1788,7 +1788,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                 builder: (context, constraints) {
                                   // Fixed columns: Checkbox + No. + Lead Code + Customer + Mobile No. + Task + Status
                                   const double fixedWidth =
-                                      40 + 60 + 120 + 180 + 110 + 180 + 120; // 810
+                                      60 + 120 + 180 + 110 + 180 + 120; // 770
 
                                   double scrollableMinWidth = 150 +
                                       120 +
@@ -1886,7 +1886,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                       color: Colors.white,
                                                     ),
                                                     TableWidget(
-                                                      width: 110,
+                                                      width: 150,
                                                       title: 'Mobile No.',
                                                       fontSize: 13,
                                                       padding: const EdgeInsets
@@ -2278,7 +2278,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                     // Mobile No.
                                                                     TableWidget(
                                                                       width:
-                                                                          110,
+                                                                          150,
                                                                       padding: const EdgeInsets
                                                                           .symmetric(
                                                                           vertical:
@@ -4093,20 +4093,13 @@ class _tasksPageReportState extends State<TaskPage> {
                             Provider.of<LeadsProvider>(context, listen: false);
 
                         WidgetsBinding.instance.addPostFrameCallback((_) {
-                          reportsProvider.fetchTaskTypes(tasktypeId, statusId,
-                              customerId, enquiryForId, context);
+                          reportsProvider.clearProcessFlowData();
+                          final formProvider =
+                              Provider.of<FormProvider>(context, listen: false);
+                          formProvider.clearForms();
                           dropDownProvider.getUserDetails(context);
                           reportsProvider.clearTaskUserAssignments();
                           reportsProvider.clearDescription();
-
-                          // Also fetch forms for this customer
-                          final formProvider =
-                              Provider.of<FormProvider>(context, listen: false);
-                          formProvider.getFormDataByCustomer(
-                            task.customerId.toString(),
-                            enquiryForId: task.enquiryForId.toString(),
-                          );
-                          formProvider.fetchAvailableFields(context);
 
                           // Pre-fill Description and Follow-Up Date if available
                           reportsProvider.descriptionController.clear();
@@ -4176,6 +4169,21 @@ class _tasksPageReportState extends State<TaskPage> {
                                                         sId,
                                                         customerId,
                                                         enquiryForId,
+                                                        context);
+                                                final formProvider =
+                                                    Provider.of<FormProvider>(
+                                                        context,
+                                                        listen: false);
+                                                await formProvider
+                                                    .getFormDataByCustomer(
+                                                  task.customerId.toString(),
+                                                  enquiryForId: task
+                                                      .enquiryForId
+                                                      .toString(),
+                                                  taskTypeId: tId.toString(),
+                                                );
+                                                formProvider
+                                                    .fetchAvailableFields(
                                                         context);
                                               },
                                             );
@@ -4257,10 +4265,10 @@ class _tasksPageReportState extends State<TaskPage> {
                                                         Colors.grey.shade400),
                                               ),
                                               isExpanded: true,
-                                              onChanged: (sub) {
+                                              onChanged: (sub) async {
                                                 selectedSubStatus.value = sub;
                                                 if (sub != null) {
-                                                  reportsProvider
+                                                  await reportsProvider
                                                       .fetchTaskTypes(
                                                     task.taskTypeId,
                                                     sub.subStatusId ?? 0,
@@ -4268,6 +4276,22 @@ class _tasksPageReportState extends State<TaskPage> {
                                                     task.enquiryForId,
                                                     context,
                                                   );
+                                                  final formProvider =
+                                                      Provider.of<FormProvider>(
+                                                          context,
+                                                          listen: false);
+                                                  await formProvider
+                                                      .getFormDataByCustomer(
+                                                    task.customerId.toString(),
+                                                    enquiryForId: task
+                                                        .enquiryForId
+                                                        .toString(),
+                                                    taskTypeId: task.taskTypeId
+                                                        .toString(),
+                                                  );
+                                                  formProvider
+                                                      .fetchAvailableFields(
+                                                          context);
                                                 }
                                               },
                                               items:

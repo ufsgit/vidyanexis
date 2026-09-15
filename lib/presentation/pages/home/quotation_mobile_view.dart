@@ -281,9 +281,8 @@ class _QuotationMobileViewState extends State<QuotationMobileView>
                                     const Spacer(),
                                     GestureDetector(
                                       onTap: () async {
-                                        if (item.adminApproval != 1 ||
-                                            customerDetailsProvider
-                                                .hasPendingApprovalQuotation()) {
+                                        if (customerDetailsProvider
+                                            .hasPendingApprovalQuotation()) {
                                           ScaffoldMessenger.of(context)
                                               .showSnackBar(
                                             const SnackBar(
@@ -769,6 +768,20 @@ class _QuotationMobileViewState extends State<QuotationMobileView>
                                     ],
                                   ],
                                 ),
+                                if (item.rejectionReason != null &&
+                                    item.rejectionReason!
+                                        .trim()
+                                        .isNotEmpty) ...[
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    'Reason: ${item.rejectionReason}',
+                                    style: TextStyle(
+                                      color: Colors.grey.shade700,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                ],
                                 if (item.description.trim().isNotEmpty) ...[
                                   const SizedBox(height: 12),
                                   Text(

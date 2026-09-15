@@ -210,6 +210,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+
                   //basic details
                   if (customerDetailsProvider.isQuotationFieldVisible(55))
                     ExpansionTile(
