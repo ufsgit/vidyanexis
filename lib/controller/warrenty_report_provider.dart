@@ -428,6 +428,16 @@ class WarrentyReportProvider extends ChangeNotifier {
   bool isAmcNotificationLoading = false;
   bool isAmcLoaded = false;
   bool isPaymentLoaded = false;
+  int _totalAssigned = 0;
+  int get totalAssigned => _totalAssigned;
+
+  int _isAssigned = 0;
+  int get isAssigned => _isAssigned;
+
+  void setIsAssigned(int value) {
+    _isAssigned = value;
+    notifyListeners();
+  }
 
   Future<void> getAmcNotification(BuildContext context,
       {bool isFilter = false, bool shouldNotify = true}) async {
@@ -449,7 +459,7 @@ class WarrentyReportProvider extends ChangeNotifier {
     try {
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.amcNotification}?From_Date=$formattedFromDate&To_Date=$formattedToDate&Is_Date_Check=$isDate&User_Id=${_selectedUser ?? 0}');
+              '${HttpUrls.amcNotification}?From_Date=$formattedFromDate&To_Date=$formattedToDate&Is_Date_Check=$isDate&User_Id=${_selectedUser ?? 0}&Is_Assigned=$_isAssigned');
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -459,18 +469,23 @@ class WarrentyReportProvider extends ChangeNotifier {
           if (data['list'] is List) {
             _amcNotificationList = await compute(
                 _parseAmcNotification, data['list'] as List<dynamic>);
+            _totalAssigned = int.tryParse(data['total_assigned']?.toString() ?? '0') ?? 0;
           } else {
             _amcNotificationList = [];
+            _totalAssigned = 0;
           }
         } else {
           _amcNotificationList = [];
+          _totalAssigned = 0;
         }
       } else {
         _amcNotificationList = [];
+        _totalAssigned = 0;
         // print('Failed to load amc notification: ${response.statusCode}');
       }
     } catch (e) {
       _amcNotificationList = [];
+      _totalAssigned = 0;
       print('Error fetching amc notification: $e');
     } finally {
       isAmcNotificationLoading = false;

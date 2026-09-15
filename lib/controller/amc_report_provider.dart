@@ -34,11 +34,13 @@ class AMCReportProvider extends ChangeNotifier {
   int? _selectedStatus;
   int? _selectedAMCStatus;
   int? _selectedUser;
+  int? _selectedLocationId;
   int? _selectedDateFilterIndex;
   int? get selectedDateFilterIndex => _selectedDateFilterIndex;
   int? get selectedStatus => _selectedStatus;
   int? get selectedAMCStatus => _selectedAMCStatus;
   int? get selectedUser => _selectedUser;
+  int? get selectedLocationId => _selectedLocationId;
 
   void toggleFilter() {
     _isFilter = !_isFilter;
@@ -158,9 +160,15 @@ class AMCReportProvider extends ChangeNotifier {
     notifyListeners(); // Notify listeners about the change
   }
 
+  void setLocationFilter(int newLocationId) {
+    _selectedLocationId = newLocationId;
+    notifyListeners();
+  }
+
   void removeStatus() {
     _selectedStatus = null;
     _selectedUser = null;
+    _selectedLocationId = null;
     _selectedDateFilterIndex = 1; // Default to Today
     _fromDate = DateTime.now();
     _toDate = DateTime.now();
@@ -171,7 +179,7 @@ class AMCReportProvider extends ChangeNotifier {
   }
 
   void setTaskSearchCriteria(String search, String fromDate, String toDate,
-      String status, String assignedTo) {
+      String status, String assignedTo, [String locationId = '']) {
     _Search = search;
     _fromDateS = fromDate;
     _toDateS = toDate;
@@ -203,10 +211,11 @@ class AMCReportProvider extends ChangeNotifier {
       }
 
       String toUserId = (_selectedUser ?? 0).toString();
+      String locationId = (_selectedLocationId ?? 0).toString();
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchAmcReport}?Customer_Name=$_Search&AMC_Status_Id=$_Status&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&To_User_Id=$toUserId');
+              '${HttpUrls.searchAmcReport}?Customer_Name=$_Search&AMC_Status_Id=$_Status&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&To_User_Id=$toUserId&Location_Id=$locationId');
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -261,10 +270,11 @@ class AMCReportProvider extends ChangeNotifier {
       }
 
       String toUserId = (_selectedUser ?? 0).toString();
+      String locationId = (_selectedLocationId ?? 0).toString();
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchAmcReport}?Customer_Name=&AMC_Status_Id=$_Status&Is_Date$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&To_User_Id=$toUserId');
+              '${HttpUrls.searchAmcReport}?Customer_Name=&AMC_Status_Id=$_Status&Is_Date$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&To_User_Id=$toUserId&Location_Id=$locationId');
 
       if (response.statusCode == 200) {
         final data = response.data;

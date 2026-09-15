@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/controller/warrenty_report_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/models/amc_notification_model.dart';
@@ -10,6 +12,9 @@ import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/http/loader.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:go_router/go_router.dart';
+import 'package:vidyanexis/controller/customer_details_provider.dart';
+import 'package:vidyanexis/controller/side_bar_provider.dart';
 
 class AmcNotificationTab extends StatefulWidget {
   const AmcNotificationTab({super.key});
@@ -95,7 +100,10 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
                           labelText: 'AMC Service Task Type'),
                       value: selectedTaskTypeId,
                       items: dropdownProvider.taskType
-                          .where((t) => t.taskTypeName.toLowerCase().trim() == 'amc service task')
+                          .where((t) {
+                            final name = t.taskTypeName.toLowerCase().trim();
+                            return name == 'amc service task' || name == 'amc paid task';
+                          })
                           .fold<List<dynamic>>([], (prev, element) {
                             if (!prev.any((e) => e.taskTypeId == element.taskTypeId)) {
                               prev.add(element);
@@ -262,6 +270,8 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
         "Completion_Date": "",
         "Completion_Time": "",
         "Commission_Number": 0,
+        "Priority_Id": 0,
+        "Interval_Details_Id": interval?.intervalDetailsId ?? 0,
         "Task_Files": [],
       };
 
@@ -316,6 +326,24 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
                     color: const Color(0xFFFBBF24),
                   ),
                 ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _buildSummaryCard(
+                    title: "Assigned",
+                    value: provider.totalAssigned.toString(),
+                    icon: Icons.assignment_turned_in_rounded,
+                    color: const Color(0xFF10B981),
+                    isSelected: provider.isAssigned == 1,
+                    onTap: () {
+                      if (provider.isAssigned == 1) {
+                        provider.setIsAssigned(0);
+                      } else {
+                        provider.setIsAssigned(1);
+                      }
+                      provider.getAmcNotification(context, isFilter: true);
+                    },
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 20),
@@ -326,18 +354,20 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
             else if (provider.amcNotificationList.isEmpty)
               _buildEmptyState("No AMC notifications found")
             else
-              ListView.separated(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                padding: const EdgeInsets.only(bottom: 20),
-                itemCount: provider.amcNotificationList.length,
-                separatorBuilder: (context, index) =>
-                    const SizedBox(height: 16),
-                itemBuilder: (context, index) {
-                  final item = provider.amcNotificationList[index];
-                  return _buildAmcCard(item);
-                },
-              ),
+              AppStyles.isWebScreen(context)
+                  ? _buildWebTable(provider)
+                  : ListView.separated(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      padding: const EdgeInsets.only(bottom: 20),
+                      itemCount: provider.amcNotificationList.length,
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(height: 16),
+                      itemBuilder: (context, index) {
+                        final item = provider.amcNotificationList[index];
+                        return _buildAmcCard(item);
+                      },
+                    ),
           ],
         );
       },
@@ -360,51 +390,60 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
     required String value,
     required IconData icon,
     required Color color,
+    bool isSelected = false,
+    VoidCallback? onTap,
   }) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: const Color(0xFFF1F5F9)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.02),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(4),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: isSelected ? color.withOpacity(0.05) : Colors.white,
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(
+            color: isSelected ? color : const Color(0xFFF1F5F9),
+            width: isSelected ? 1.5 : 1.0,
           ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(4),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.02),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
             ),
-            child: Icon(icon, size: 20, color: color),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            title,
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textGrey3,
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Icon(icon, size: 20, color: color),
             ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            value,
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 18,
-              fontWeight: FontWeight.w800,
-              color: AppColors.textBlack,
+            const SizedBox(height: 12),
+            Text(
+              title,
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textGrey3,
+              ),
             ),
-          ),
-        ],
+            const SizedBox(height: 4),
+            Text(
+              value,
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 18,
+                fontWeight: FontWeight.w800,
+                color: AppColors.textBlack,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -462,15 +501,45 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          item.customerName,
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.textBlack,
+                        InkWell(
+                          child: Tooltip(
+                            message: item.customerName,
+                            child: TextButton(
+                              onPressed: () {
+                                if ((item.customerId ?? 0) == 0) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('Error: No ID. Keys: ${item.rawJson?.keys.join(", ")}\nVals: ${item.rawJson?.values.take(3).join(", ")}')),
+                                  );
+                                  return;
+                                }
+                                CustomerDetailsProvider customerDetailsProvider =
+                                    Provider.of<CustomerDetailsProvider>(context, listen: false);
+                                customerDetailsProvider.setCustomerId(item.customerId ?? 0);
+                                final sideProvider = Provider.of<SidebarProvider>(context, listen: false);
+                                sideProvider.name = 'Amc /';
+                                context.push('/customerDetails/${item.customerId ?? 0}/false');
+                              },
+                              style: TextButton.styleFrom(
+                                backgroundColor: Colors.blue.withOpacity(0.1),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+                                fixedSize: const Size.fromHeight(32),
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              ),
+                              child: Text(
+                                (item.customerName.isNotEmpty)
+                                    ? '${item.customerName[0].toUpperCase()}${item.customerName.substring(1)}'
+                                    : item.customerName,
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                                style: const TextStyle(
+                                  color: Colors.blue,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ),
                           ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
                         ),
                         const SizedBox(height: 2),
                         Row(
@@ -506,6 +575,10 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
                       Icons.settings_outlined, "Service", item.serviceName),
                   _buildDetailRow(
                       Icons.person_outline_rounded, "Staff", item.staffName),
+                  _buildDetailRow(
+                      Icons.info_outline_rounded, "Status", item.taskStatusName),
+                  _buildDetailRow(
+                      Icons.category_outlined, "Task Type", item.taskTypeName),
                 ],
               ),
             ),
@@ -693,6 +766,201 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
               fontWeight: FontWeight.w600,
               color: AppColors.textGrey3,
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWebTable(WarrentyReportProvider provider) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          // Header Row
+          Container(
+            decoration: BoxDecoration(
+              color: const Color(0xFFEFF2F5),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: const Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  width: 80,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 25.0),
+                    child: Text('No.', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Color(0xFF607185))),
+                  ),
+                ),
+                TableWidget(flex: 3, title: 'Customer Name', fontSize: 14, color: Color(0xFF607185)),
+                TableWidget(flex: 2, title: 'Expiry', fontSize: 14, color: Color(0xFF607185)),
+                TableWidget(flex: 2, title: 'Product', fontSize: 14, color: Color(0xFF607185)),
+                TableWidget(flex: 2, title: 'Service', fontSize: 14, color: Color(0xFF607185)),
+                TableWidget(flex: 2, title: 'Staff', fontSize: 14, color: Color(0xFF607185)),
+                TableWidget(flex: 2, title: 'Status', fontSize: 14, color: Color(0xFF607185)),
+                TableWidget(flex: 2, title: 'Task Type', fontSize: 14, color: Color(0xFF607185)),
+                TableWidget(flex: 4, title: 'Service Intervals', fontSize: 14, color: Color(0xFF607185)),
+              ],
+            ),
+          ),
+          // Data Rows
+          ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: provider.amcNotificationList.length,
+            itemBuilder: (context, index) {
+              final item = provider.amcNotificationList[index];
+              return Container(
+                decoration: BoxDecoration(
+                  color: index % 2 == 0 ? Colors.white : const Color(0xFFF6F7F9),
+                  border: const Border(bottom: BorderSide(color: Color(0xFFEFF2F5), width: 1)),
+                ),
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 80,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 25.0),
+                        child: Text('${index + 1}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                      ),
+                    ),
+                    TableWidget(
+                      flex: 3,
+                      data: Row(
+                        children: [
+                          Container(
+                            width: 32,
+                            height: 32,
+                            decoration: BoxDecoration(
+                              color: getAvatarColor(item.customerName).withOpacity(0.1),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Center(
+                              child: Text(
+                                _getInitials(item.customerName),
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: getAvatarColor(item.customerName),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Tooltip(
+                              message: item.customerName,
+                              child: TextButton(
+                                onPressed: () {
+                                  if ((item.customerId ?? 0) == 0) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text('Error: No ID. Keys: ${item.rawJson?.keys.join(", ")}\nVals: ${item.rawJson?.values.take(3).join(", ")}')),
+                                    );
+                                    return;
+                                  }
+                                  CustomerDetailsProvider customerDetailsProvider =
+                                      Provider.of<CustomerDetailsProvider>(context, listen: false);
+                                  customerDetailsProvider.setCustomerId(item.customerId ?? 0);
+                                  final sideProvider = Provider.of<SidebarProvider>(context, listen: false);
+                                  sideProvider.name = 'Amc /';
+                                  context.push('/customerDetails/${item.customerId ?? 0}/false');
+                                },
+                                style: TextButton.styleFrom(
+                                  backgroundColor: Colors.blue.withOpacity(0.1),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+                                  fixedSize: const Size.fromHeight(32),
+                                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                ),
+                                child: Text(
+                                  (item.customerName.isNotEmpty)
+                                      ? '${item.customerName[0].toUpperCase()}${item.customerName.substring(1)}'
+                                      : item.customerName,
+                                  style: const TextStyle(color: Colors.blue, fontWeight: FontWeight.w500, fontSize: 13),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.start,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    TableWidget(flex: 2, fontSize: 12, title: _formatDate(item.serviceDate), color: AppColors.textRed),
+                    TableWidget(flex: 2, fontSize: 12, title: item.amcProductName),
+                    TableWidget(flex: 2, fontSize: 12, title: item.serviceName),
+                    TableWidget(flex: 2, fontSize: 12, title: item.staffName),
+                    TableWidget(flex: 2, fontSize: 12, title: item.taskStatusName),
+                    TableWidget(flex: 2, fontSize: 12, title: item.taskTypeName),
+                    TableWidget(
+                      flex: 4,
+                      data: item.intervalDetails != null && item.intervalDetails!.isNotEmpty
+                          ? Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 8.0),
+                              child: Wrap(
+                                spacing: 4,
+                                runSpacing: 4,
+                                children: item.intervalDetails!.map<Widget>((interval) {
+                                  bool isCompleted = interval.completedStatus == 1;
+                                  return InkWell(
+                                    onTap: () {
+                                      final provider = Provider.of<WarrentyReportProvider>(context, listen: false);
+                                      final dropdownProvider = Provider.of<DropDownProvider>(context, listen: false);
+                                      _showIntervalPopup(context, item, interval, dropdownProvider, provider);
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(4),
+                                        border: Border.all(
+                                          color: isCompleted ? const Color(0xFF34C759).withOpacity(0.3) : const Color(0xFFFB923C).withOpacity(0.3),
+                                        ),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            isCompleted ? Icons.check_circle_rounded : Icons.schedule_rounded,
+                                            size: 12,
+                                            color: isCompleted ? const Color(0xFF34C759) : const Color(0xFFFB923C),
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            _formatDate(interval.intervalDate),
+                                            style: GoogleFonts.plusJakartaSans(
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.w600,
+                                              color: AppColors.textBlack,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                            )
+                          : const SizedBox(),
+                    ),
+                  ],
+                ),
+              );
+            },
           ),
         ],
       ),
