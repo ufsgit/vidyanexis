@@ -15,6 +15,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
+import 'package:vidyanexis/utils/csv_function.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
 
 class AmcNotificationTab extends StatefulWidget {
   const AmcNotificationTab({super.key});
@@ -32,9 +34,12 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
           Provider.of<WarrentyReportProvider>(context, listen: false);
       final dropdownProvider =
           Provider.of<DropDownProvider>(context, listen: false);
+      final settingsProvider =
+          Provider.of<SettingsProvider>(context, listen: false);
 
       dropdownProvider.getUserDetails(context);
       dropdownProvider.getTaskType(context, fetchUserSpecific: false, forceRefresh: true);
+      settingsProvider.fetchTaskStatusesForUser(context);
       provider.getAmcNotification(context);
     });
   }
@@ -57,6 +62,30 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
       return (parts[0][0] + parts[1][0]).toUpperCase();
     }
     return parts[0][0].toUpperCase();
+  }
+
+  Color _getStatusColor(String statusName, SettingsProvider settingsProvider) {
+    try {
+      final statusObj = settingsProvider.taskStatusManagingList.firstWhere(
+        (s) => s.statusName.toLowerCase().trim() == statusName.toLowerCase().trim(),
+      );
+      if (statusObj.colorCode.isNotEmpty && statusObj.colorCode != 'null') {
+        return AppColors.parseColor(statusObj.colorCode);
+      }
+    } catch (_) {}
+
+    switch (statusName.toLowerCase().trim()) {
+      case 'assigned':
+        return const Color(0xFF10B981); // Green
+      case 'completed':
+        return const Color(0xFF3B82F6); // Blue
+      case 'pending':
+        return const Color(0xFFF59E0B); // Amber
+      case 'rejected':
+        return const Color(0xFFEF4444); // Red
+      default:
+        return AppColors.textBlack;
+    }
   }
 
   Future<void> _showIntervalPopup(
@@ -102,7 +131,7 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
                       items: dropdownProvider.taskType
                           .where((t) {
                             final name = t.taskTypeName.toLowerCase().trim();
-                            return name == 'amc service task' || name == 'amc paid task';
+                            return name.contains('amc');
                           })
                           .fold<List<dynamic>>([], (prev, element) {
                             if (!prev.any((e) => e.taskTypeId == element.taskTypeId)) {
@@ -191,6 +220,14 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                             content: Text('Please select Task Type and Staff')),
+                      );
+                      return;
+                    }
+                    if ((item.customerId ?? 0) == 0) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                            content: Text(
+                                'No Customer ID. Keys: ${item.rawJson?.keys.join(", ")}\nVals: ${item.rawJson?.values.take(3).join(", ")}')),
                       );
                       return;
                     }
@@ -283,6 +320,9 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
       Loader.stopLoader(context);
 
       if (response != null && response.statusCode == 200) {
+        if(mounted) {
+           Provider.of<WarrentyReportProvider>(context, listen: false).getAmcNotification(context);
+        }
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Task created successfully!')),
         );
@@ -301,71 +341,239 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<WarrentyReportProvider, DropDownProvider>(
-      builder: (context, provider, dropdownProvider, child) {
+    return Consumer3<WarrentyReportProvider, DropDownProvider, SettingsProvider>(
+      builder: (context, provider, dropdownProvider, settingsProvider, child) {
+        List<AmcNotificationModel> filteredList = provider.amcNotificationList;
+        if (provider.selectedStatus != null && provider.selectedStatus != 0) {
+          try {
+            final statusObj = settingsProvider.taskStatusManagingList.firstWhere(
+              (s) => s.statusId == provider.selectedStatus,
+            );
+            final statusName = statusObj.statusName.toLowerCase().trim();
+            filteredList = provider.amcNotificationList.where((item) {
+              final currentStatus = item.taskStatusName.isEmpty ? 'pending' : item.taskStatusName.toLowerCase().trim();
+              return currentStatus == statusName;
+            }).toList();
+          } catch (_) {}
+        }
+
+        final card1 = _buildSummaryCard(
+          title: "Active Contracts",
+          value: provider.totalActive > 0 ? provider.totalActive.toString() : provider.amcNotificationList.length.toString(),
+          icon: Icons.description_rounded,
+          color: AppColors.secondaryBlue,
+          isSelected: provider.isActive == 1,
+          onTap: () {
+            if (provider.isActive == 1) {
+              provider.setIsActive(0);
+            } else {
+              provider.setIsActive(1);
+            }
+            provider.getAmcNotification(context, isFilter: true);
+          },
+        );
+
+        final card2 = _buildSummaryCard(
+          title: "Upcoming Services",
+          value: provider.totalUpcoming > 0 ? provider.totalUpcoming.toString() : _countUpcomingServices(provider.amcNotificationList).toString(),
+          icon: Icons.event_available_rounded,
+          color: const Color(0xFFFBBF24),
+          isSelected: provider.isUpcoming == 1,
+          onTap: () {
+            if (provider.isUpcoming == 1) {
+              provider.setIsUpcoming(0);
+            } else {
+              provider.setIsUpcoming(1);
+            }
+            provider.getAmcNotification(context, isFilter: true);
+          },
+        );
+
+        final card3 = _buildSummaryCard(
+          title: "Assigned",
+          value: provider.totalAssigned.toString(),
+          icon: Icons.assignment_turned_in_rounded,
+          color: const Color(0xFF10B981),
+          isSelected: provider.isAssigned == 1,
+          onTap: () {
+            if (provider.isAssigned == 1) {
+              provider.setIsAssigned(0);
+            } else {
+              provider.setIsAssigned(1);
+            }
+            provider.getAmcNotification(context, isFilter: true);
+          },
+        );
+
+        final exportButton = SizedBox(
+          height: 40,
+          width: AppStyles.isWebScreen(context) ? 160 : double.infinity,
+          child: ElevatedButton.icon(
+            icon: const Icon(Icons.download, size: 18),
+            label: const Text('Export Excel', style: TextStyle(fontSize: 13)),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
+              foregroundColor: AppColors.primaryBlue,
+              side: const BorderSide(color: AppColors.primaryBlue),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(4),
+              ),
+              elevation: 0,
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+            ),
+            onPressed: () {
+              exportToExcel(
+                fileName: 'Amc_Notifications',
+                headers: [
+                  'No.',
+                  'Customer Name',
+                  'Expiry',
+                  'Product',
+                  'Service',
+                  'Staff',
+                  'Place',
+                  'Status',
+                  'Task Type',
+                ],
+                data: provider.amcNotificationList.asMap().entries.map((entry) {
+                  final index = entry.key + 1;
+                  final task = entry.value;
+                  return {
+                    'No.': index.toString(),
+                    'Customer Name': task.customerName,
+                    'Expiry': _formatDate(task.serviceDate),
+                    'Product': task.amcProductName,
+                    'Service': task.serviceName,
+                    'Staff': task.staffName,
+                    'Place': task.place,
+                    'Status': task.taskStatusName.isEmpty ? 'Pending' : task.taskStatusName,
+                    'Task Type': task.taskTypeName,
+                  };
+                }).toList(),
+              );
+            },
+          ),
+        );
+
+        final statusDropdown = SizedBox(
+          height: 40,
+          width: AppStyles.isWebScreen(context) ? 160 : double.infinity,
+          child: DropdownButtonFormField<int>(
+            decoration: InputDecoration(
+              isDense: true,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(4),
+                borderSide: const BorderSide(color: Color(0xFFCBD5E1)),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(4),
+                borderSide: const BorderSide(color: Color(0xFFCBD5E1)),
+              ),
+              hintText: 'Status',
+            ),
+            value: (provider.selectedStatus == 0) ? null : provider.selectedStatus,
+            icon: const Icon(Icons.keyboard_arrow_down_rounded, size: 20),
+            items: [
+              const DropdownMenuItem<int>(
+                value: null,
+                child: Text('All Status', style: TextStyle(fontSize: 13)),
+              ),
+              ...settingsProvider.taskStatusManagingList
+                  .where((status) {
+                    final name = status.statusName.toLowerCase().trim();
+                    return name == 'pending' || name == 'completed' || name == 'assigned';
+                  })
+                  .map((status) {
+                return DropdownMenuItem<int>(
+                  value: status.statusId,
+                  child: Text(status.statusName, style: const TextStyle(fontSize: 13)),
+                );
+              }).toList()
+            ],
+            onChanged: (value) {
+              provider.setStatus(value ?? 0);
+              bool isPending = false;
+              if (value != null && value != 0) {
+                try {
+                  final statusObj = settingsProvider.taskStatusManagingList.firstWhere((s) => s.statusId == value);
+                  if (statusObj.statusName.toLowerCase().trim() == 'pending') {
+                    isPending = true;
+                  }
+                } catch (_) {}
+              }
+              provider.setPendingFilter(isPending);
+              provider.getAmcNotification(context, isFilter: true);
+            },
+          ),
+        );
+
         return Column(
           children: [
             // Summary Section
-            Row(
-              children: [
-                Expanded(
-                  child: _buildSummaryCard(
-                    title: "Active Contracts",
-                    value: provider.amcNotificationList.length.toString(),
-                    icon: Icons.description_rounded,
-                    color: AppColors.secondaryBlue,
+            AppStyles.isWebScreen(context)
+                ? Row(
+                    children: [
+                      Expanded(child: card1),
+                      const SizedBox(width: 12),
+                      Expanded(child: card2),
+                      const SizedBox(width: 12),
+                      Expanded(child: card3),
+                      const SizedBox(width: 16),
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          exportButton,
+                          const SizedBox(height: 12),
+                          statusDropdown,
+                        ],
+                      ),
+                    ],
+                  )
+                : Column(
+                    children: [
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            SizedBox(width: 140, child: card1),
+                            const SizedBox(width: 12),
+                            SizedBox(width: 140, child: card2),
+                            const SizedBox(width: 12),
+                            SizedBox(width: 140, child: card3),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Expanded(child: exportButton),
+                          const SizedBox(width: 12),
+                          Expanded(child: statusDropdown),
+                        ],
+                      ),
+                    ],
                   ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _buildSummaryCard(
-                    title: "Upcoming Services",
-                    value: _countUpcomingServices(provider.amcNotificationList)
-                        .toString(),
-                    icon: Icons.event_available_rounded,
-                    color: const Color(0xFFFBBF24),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _buildSummaryCard(
-                    title: "Assigned",
-                    value: provider.totalAssigned.toString(),
-                    icon: Icons.assignment_turned_in_rounded,
-                    color: const Color(0xFF10B981),
-                    isSelected: provider.isAssigned == 1,
-                    onTap: () {
-                      if (provider.isAssigned == 1) {
-                        provider.setIsAssigned(0);
-                      } else {
-                        provider.setIsAssigned(1);
-                      }
-                      provider.getAmcNotification(context, isFilter: true);
-                    },
-                  ),
-                ),
-              ],
-            ),
             const SizedBox(height: 20),
 
             // List Section
             if (provider.isAmcNotificationLoading)
               _buildShimmerLoading()
-            else if (provider.amcNotificationList.isEmpty)
+            else if (filteredList.isEmpty)
               _buildEmptyState("No AMC notifications found")
             else
               AppStyles.isWebScreen(context)
-                  ? _buildWebTable(provider)
+                  ? _buildWebTable(provider, filteredList, settingsProvider)
                   : ListView.separated(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       padding: const EdgeInsets.only(bottom: 20),
-                      itemCount: provider.amcNotificationList.length,
+                      itemCount: filteredList.length,
                       separatorBuilder: (context, index) =>
                           const SizedBox(height: 16),
                       itemBuilder: (context, index) {
-                        final item = provider.amcNotificationList[index];
-                        return _buildAmcCard(item);
+                        final item = filteredList[index];
+                        return _buildAmcCard(item, settingsProvider);
                       },
                     ),
           ],
@@ -427,6 +635,8 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
             const SizedBox(height: 12),
             Text(
               title,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
@@ -448,7 +658,7 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
     );
   }
 
-  Widget _buildAmcCard(dynamic item) {
+  Widget _buildAmcCard(dynamic item, SettingsProvider settingsProvider) {
     return InkWell(
       onTap: () {
         final provider =
@@ -576,7 +786,9 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
                   _buildDetailRow(
                       Icons.person_outline_rounded, "Staff", item.staffName),
                   _buildDetailRow(
-                      Icons.info_outline_rounded, "Status", item.taskStatusName),
+                      Icons.location_on_outlined, "Place", item.place),
+                  _buildDetailRow(
+                      Icons.info_outline_rounded, "Status", item.taskStatusName.isEmpty ? 'Pending' : item.taskStatusName, _getStatusColor(item.taskStatusName.isEmpty ? 'Pending' : item.taskStatusName, settingsProvider)),
                   _buildDetailRow(
                       Icons.category_outlined, "Task Type", item.taskTypeName),
                 ],
@@ -690,7 +902,7 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
     );
   }
 
-  Widget _buildDetailRow(IconData icon, String label, String value) {
+  Widget _buildDetailRow(IconData icon, String label, String value, [Color? valueColor]) {
     if (value.isEmpty) return const SizedBox();
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
@@ -712,7 +924,7 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color: AppColors.textBlack,
+                color: valueColor ?? AppColors.textBlack,
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -772,7 +984,7 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
     );
   }
 
-  Widget _buildWebTable(WarrentyReportProvider provider) {
+  Widget _buildWebTable(WarrentyReportProvider provider, List<AmcNotificationModel> filteredList, SettingsProvider settingsProvider) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -810,6 +1022,7 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
                 TableWidget(flex: 2, title: 'Product', fontSize: 14, color: Color(0xFF607185)),
                 TableWidget(flex: 2, title: 'Service', fontSize: 14, color: Color(0xFF607185)),
                 TableWidget(flex: 2, title: 'Staff', fontSize: 14, color: Color(0xFF607185)),
+                TableWidget(flex: 2, title: 'Place', fontSize: 14, color: Color(0xFF607185)),
                 TableWidget(flex: 2, title: 'Status', fontSize: 14, color: Color(0xFF607185)),
                 TableWidget(flex: 2, title: 'Task Type', fontSize: 14, color: Color(0xFF607185)),
                 TableWidget(flex: 4, title: 'Service Intervals', fontSize: 14, color: Color(0xFF607185)),
@@ -820,9 +1033,9 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
           ListView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: provider.amcNotificationList.length,
+            itemCount: filteredList.length,
             itemBuilder: (context, index) {
-              final item = provider.amcNotificationList[index];
+              final item = filteredList[index];
               return Container(
                 decoration: BoxDecoration(
                   color: index % 2 == 0 ? Colors.white : const Color(0xFFF6F7F9),
@@ -904,7 +1117,8 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
                     TableWidget(flex: 2, fontSize: 12, title: item.amcProductName),
                     TableWidget(flex: 2, fontSize: 12, title: item.serviceName),
                     TableWidget(flex: 2, fontSize: 12, title: item.staffName),
-                    TableWidget(flex: 2, fontSize: 12, title: item.taskStatusName),
+                    TableWidget(flex: 2, fontSize: 12, title: item.place),
+                    TableWidget(flex: 2, fontSize: 12, title: item.taskStatusName.isEmpty ? 'Pending' : item.taskStatusName, color: _getStatusColor(item.taskStatusName.isEmpty ? 'Pending' : item.taskStatusName, settingsProvider)),
                     TableWidget(flex: 2, fontSize: 12, title: item.taskTypeName),
                     TableWidget(
                       flex: 4,

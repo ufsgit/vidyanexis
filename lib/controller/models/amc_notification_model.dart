@@ -28,6 +28,7 @@ class AmcNotificationModel {
   late String serviceName;
   late String serviceDate;
   late String staffName;
+  late String place;
   late String taskStatusName;
   late String taskTypeName;
   int? customerId;
@@ -54,19 +55,27 @@ class AmcNotificationModel {
     serviceName = json['Service_Name'] ?? '';
     serviceDate = json['Service_Date'] ?? '';
     staffName = json['Staff_Name'] ?? '';
+    place = json['Place']?.toString() ?? json['place']?.toString() ?? '';
     taskStatusName = '';
     taskTypeName = '';
-    customerId = int.tryParse(json['Customer_Id']?.toString() ??
-        json['Customer_id']?.toString() ??
-        json['customer_id']?.toString() ??
-        json['CustomerId']?.toString() ??
-        json['customerId']?.toString() ??
-        json['Customer_ID']?.toString() ??
-        json['Lead_Id']?.toString() ??
-        json['Enquiry_Id']?.toString() ??
-        json['Enquiry_id']?.toString() ??
-        json['Id']?.toString() ??
-        '0');
+    List<String> possibleKeys = [
+      'Customer_Id', 'Customer_id', 'customer_id', 'CustomerId', 'customerId', 
+      'Customer_ID', 'Lead_Id', 'Enquiry_Id', 'Enquiry_id', 
+      'Customer_Details_Id', 'Customer_Master_Id', 'Id'
+    ];
+    
+    customerId = 0;
+    for (String key in possibleKeys) {
+      var val = json[key];
+      if (val != null && val.toString().trim().isNotEmpty) {
+        int? parsed = int.tryParse(val.toString());
+        if (parsed != null && parsed != 0) {
+          customerId = parsed;
+          break;
+        }
+      }
+    }
+    
     if (customerId == 0) customerId = null;
     if (json['Interval_Details'] != null) {
       intervalDetails = <IntervalDetail>[];
