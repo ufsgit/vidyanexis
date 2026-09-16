@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -26,6 +27,17 @@ class AccountsSummaryPageReport extends StatefulWidget {
 
 class _AccountsSummaryPageReportState extends State<AccountsSummaryPageReport> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  TextEditingController searchController = TextEditingController();
+  final FocusNode searchFocusNodeWeb = FocusNode();
+  Timer? _debounce;
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    searchFocusNodeWeb.dispose();
+    _debounce?.cancel();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -119,6 +131,65 @@ class _AccountsSummaryPageReportState extends State<AccountsSummaryPageReport> {
                     ),
                   ),
                   const Spacer(),
+                  Container(
+                    width: 280,
+                    height: 38,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(4),
+                      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.02),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: TextField(
+                      controller: searchController,
+                      focusNode: searchFocusNodeWeb,
+                      onChanged: (query) {
+                        if (_debounce?.isActive ?? false) _debounce!.cancel();
+                        _debounce = Timer(const Duration(milliseconds: 500), () {
+                          if (!mounted) return;
+                          final reportsProvider = Provider.of<AccountsSummaryReportProvider>(context, listen: false);
+                          reportsProvider.setSearchCriteria(
+                              reportsProvider.formattedFromDate, reportsProvider.formattedToDate, search: query);
+                          reportsProvider.getAccountsSummaryReport(context, reset: true);
+                        });
+                      },
+                      textAlignVertical: TextAlignVertical.center,
+                      onSubmitted: (query) {
+                        if (_debounce?.isActive ?? false) _debounce!.cancel();
+                        final reportsProvider = Provider.of<AccountsSummaryReportProvider>(context, listen: false);
+                        reportsProvider.setSearchCriteria(
+                            reportsProvider.formattedFromDate, reportsProvider.formattedToDate, search: query);
+                        reportsProvider.getAccountsSummaryReport(context, reset: true);
+                      },
+                      decoration: InputDecoration(
+                        hintText: 'Search here...',
+                        hintStyle: GoogleFonts.plusJakartaSans(
+                          color: const Color(0xFF94A3B8),
+                          fontSize: 13,
+                        ),
+                        border: InputBorder.none,
+                        isDense: true,
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                        suffixIcon: GestureDetector(
+                          onTap: () {
+                            if (_debounce?.isActive ?? false) _debounce!.cancel();
+                            final reportsProvider = Provider.of<AccountsSummaryReportProvider>(context, listen: false);
+                            reportsProvider.setSearchCriteria(
+                                reportsProvider.formattedFromDate, reportsProvider.formattedToDate, search: searchController.text);
+                            reportsProvider.getAccountsSummaryReport(context, reset: true);
+                          },
+                          child: const Icon(Icons.search, color: Color(0xFF64748B), size: 18),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
                   CustomFilterButton(
                     onPressed: () => reportsProvider.toggleFilter(),
                     isFilter: reportsProvider.isFilter,
@@ -229,8 +300,8 @@ class _AccountsSummaryPageReportState extends State<AccountsSummaryPageReport> {
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: SizedBox(
-                    width: MediaQuery.of(context).size.width < 1400
-                        ? 1400
+                    width: MediaQuery.of(context).size.width < 1580
+                        ? 1580
                         : MediaQuery.of(context).size.width,
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
@@ -273,6 +344,7 @@ class _AccountsSummaryPageReportState extends State<AccountsSummaryPageReport> {
                                     _headerCell('Advance Payment', 140),
                                     _headerCell('Second Payment', 140),
                                     _headerCell('Third Payment', 140),
+                                    _headerCell('Fourth Payment', 140),
                                     _headerCell('Balance Payment', 140),
                                     _headerCell('Subsidy Amount', 140),
                                   ],
@@ -304,7 +376,11 @@ class _AccountsSummaryPageReportState extends State<AccountsSummaryPageReport> {
                                               children: [
                                                 SizedBox(
                                                   width: 60,
-                                                  child: Text('${index + 1}'),
+                                                  child: Text(((index + 1) +
+                                                          reportsProvider
+                                                              .startLimit -
+                                                          1)
+                                                      .toString()),
                                                 ),
                                                 SizedBox(
                                                   width: 140,
@@ -371,6 +447,10 @@ class _AccountsSummaryPageReportState extends State<AccountsSummaryPageReport> {
                                                 ),
                                                 SizedBox(
                                                   width: 140,
+                                                  child: Text(t.fourthPayment ?? '0.00'),
+                                                ),
+                                                SizedBox(
+                                                  width: 140,
                                                   child: Text(t.balancePayment),
                                                 ),
                                                 SizedBox(
@@ -392,6 +472,7 @@ class _AccountsSummaryPageReportState extends State<AccountsSummaryPageReport> {
                 ),
               ),
             ),
+            _buildPaginationControls(context),
           ],
         ),
       ),
@@ -411,6 +492,44 @@ class _AccountsSummaryPageReportState extends State<AccountsSummaryPageReport> {
             color: Colors.white,
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildPaginationControls(BuildContext context) {
+    final reportsProvider = Provider.of<AccountsSummaryReportProvider>(context);
+
+    int startItem = reportsProvider.startLimit;
+    int endItem = (reportsProvider.endLimit < reportsProvider.totalCount)
+        ? reportsProvider.endLimit
+        : reportsProvider.totalCount;
+
+    return SizedBox(
+      height: 60,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: reportsProvider.startLimit > 1
+                ? () {
+                    reportsProvider.fetchPreviousPage(context);
+                  }
+                : null,
+          ),
+          Text(
+            'Showing $startItem / $endItem of ${reportsProvider.totalCount}',
+            style: const TextStyle(fontSize: 16),
+          ),
+          IconButton(
+            icon: const Icon(Icons.arrow_forward),
+            onPressed: reportsProvider.endLimit < reportsProvider.totalCount
+                ? () {
+                    reportsProvider.fetchNextPage(context);
+                  }
+                : null,
+          ),
+        ],
       ),
     );
   }
@@ -594,6 +713,15 @@ class _AccountsSummaryPageReportMobile extends StatefulWidget {
 
 class _AccountsSummaryPageReportMobileState extends State<_AccountsSummaryPageReportMobile> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  TextEditingController searchControllerMobile = TextEditingController();
+  Timer? _debounceMobile;
+
+  @override
+  void dispose() {
+    searchControllerMobile.dispose();
+    _debounceMobile?.cancel();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -636,7 +764,30 @@ class _AccountsSummaryPageReportMobileState extends State<_AccountsSummaryPageRe
           color: AppColors.textBlack,
         ),
         showExcel: true,
-        showSearch: false,
+        showSearch: true,
+        searchController: searchControllerMobile,
+        onSearchTap: () {
+          if (searchProvider.isSearching) {
+            searchProvider.stopSearch();
+          } else {
+            searchProvider.startSearch();
+          }
+        },
+        onChanged: (query) {
+          if (_debounceMobile?.isActive ?? false) _debounceMobile!.cancel();
+          _debounceMobile = Timer(const Duration(milliseconds: 500), () {
+            if (!mounted) return;
+            reportsProvider.setSearchCriteria(
+                reportsProvider.formattedFromDate, reportsProvider.formattedToDate, search: query);
+            reportsProvider.getAccountsSummaryReport(context, reset: true);
+          });
+        },
+        onSearch: (String query) {
+          if (_debounceMobile?.isActive ?? false) _debounceMobile!.cancel();
+          reportsProvider.setSearchCriteria(
+              reportsProvider.formattedFromDate, reportsProvider.formattedToDate, search: query);
+          reportsProvider.getAccountsSummaryReport(context, reset: true);
+        },
         onExcelTap: () async {
           final all = await reportsProvider.fetchAllForExport(context);
           if (all.isNotEmpty) {
@@ -649,6 +800,7 @@ class _AccountsSummaryPageReportMobileState extends State<_AccountsSummaryPageRe
                 'Advance Payment',
                 'Second Payment',
                 'Third Payment',
+                'Fourth Payment',
                 'Balance Payment',
                 'Subsidy Amount',
               ],
@@ -661,6 +813,7 @@ class _AccountsSummaryPageReportMobileState extends State<_AccountsSummaryPageRe
                         'Advance Payment': t.advancePayment ?? '',
                         'Second Payment': t.secondPayment ?? '',
                         'Third Payment': t.thirdPayment ?? '',
+                        'Fourth Payment': t.fourthPayment ?? '',
                         'Balance Payment': t.balancePayment,
                         'Subsidy Amount': t.subsidyAmount ?? '',
                       })
@@ -675,11 +828,13 @@ class _AccountsSummaryPageReportMobileState extends State<_AccountsSummaryPageRe
         },
         onClearTap: () {
           searchProvider.stopSearch();
+          searchControllerMobile.clear();
           reportsProvider.setFilter(false);
           reportsProvider.removeFilters();
-          reportsProvider.getAccountsSummaryReport(context);
+          reportsProvider.setSearchCriteria(
+              reportsProvider.formattedFromDate, reportsProvider.formattedToDate, search: '');
+          reportsProvider.getAccountsSummaryReport(context, reset: true);
         },
-        onSearch: (String p1) {},
       ),
       body: Container(
         color: Colors.grey[50],
@@ -791,6 +946,7 @@ class _AccountsSummaryPageReportMobileState extends State<_AccountsSummaryPageRe
                                     _mobileRow('Advance Payment', t.advancePayment ?? '0.00'),
                                     _mobileRow('Second Payment', t.secondPayment ?? '0.00'),
                                     _mobileRow('Third Payment', t.thirdPayment ?? '0.00'),
+                                    _mobileRow('Fourth Payment', t.fourthPayment ?? '0.00'),
                                     _mobileRow('Balance Payment', t.balancePayment),
                                     _mobileRow('Subsidy Amount', t.subsidyAmount ?? '0.00'),
                                   ],
@@ -801,6 +957,8 @@ class _AccountsSummaryPageReportMobileState extends State<_AccountsSummaryPageRe
                         },
                       ),
               ),
+            if (!reportsProvider.isFilter)
+               _buildPaginationControls(context),
           ],
         ),
       ),
@@ -829,6 +987,44 @@ class _AccountsSummaryPageReportMobileState extends State<_AccountsSummaryPageRe
               ),
             )
           : null,
+    );
+  }
+
+  Widget _buildPaginationControls(BuildContext context) {
+    final reportsProvider = Provider.of<AccountsSummaryReportProvider>(context);
+
+    int startItem = reportsProvider.startLimit;
+    int endItem = (reportsProvider.endLimit < reportsProvider.totalCount)
+        ? reportsProvider.endLimit
+        : reportsProvider.totalCount;
+
+    return SizedBox(
+      height: 60,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: reportsProvider.startLimit > 1
+                ? () {
+                    reportsProvider.fetchPreviousPage(context);
+                  }
+                : null,
+          ),
+          Text(
+            'Showing $startItem / $endItem of ${reportsProvider.totalCount}',
+            style: const TextStyle(fontSize: 16),
+          ),
+          IconButton(
+            icon: const Icon(Icons.arrow_forward),
+            onPressed: reportsProvider.endLimit < reportsProvider.totalCount
+                ? () {
+                    reportsProvider.fetchNextPage(context);
+                  }
+                : null,
+          ),
+        ],
+      ),
     );
   }
 

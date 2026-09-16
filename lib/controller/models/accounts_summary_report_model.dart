@@ -6,6 +6,7 @@ class AccountsSummaryReportModel {
   final String? advancePayment;
   final String? secondPayment;
   final String? thirdPayment;
+  final String? fourthPayment;
   final String balancePayment;
   final String? subsidyAmount;
 
@@ -17,6 +18,7 @@ class AccountsSummaryReportModel {
     this.advancePayment,
     this.secondPayment,
     this.thirdPayment,
+    this.fourthPayment,
     required this.balancePayment,
     this.subsidyAmount,
   });
@@ -30,6 +32,7 @@ class AccountsSummaryReportModel {
       advancePayment: json['Advance_Payment']?.toString(),
       secondPayment: json['Second_Payment']?.toString(),
       thirdPayment: json['Third_Payment']?.toString(),
+      fourthPayment: json['Fourth_Payment']?.toString(),
       balancePayment: json['Balance_Payment']?.toString() ?? '0.00',
       subsidyAmount: json['Subsidy_Amount']?.toString(),
     );
@@ -44,6 +47,7 @@ class AccountsSummaryReportModel {
       'Advance_Payment': advancePayment,
       'Second_Payment': secondPayment,
       'Third_Payment': thirdPayment,
+      'Fourth_Payment': fourthPayment,
       'Balance_Payment': balancePayment,
       'Subsidy_Amount': subsidyAmount,
     };
