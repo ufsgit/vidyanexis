@@ -990,7 +990,7 @@ class _CustomerPageState extends State<CustomerPage> {
     double tableHeaderHeight,
   ) {
     final bool showCustomerCode = settingsProvider.menuIsViewMap[184] == 1;
-    final double fixedWidth = showCustomerCode ? 780.0 : 630.0;
+    final double fixedWidth = showCustomerCode ? 930.0 : 780.0;
     final bool showLocation = settingsProvider.menuIsViewMap[142] == 1;
     final bool showRamcoLocation = settingsProvider.ramcoLocationPermission == 1;
     final double scrollableWidth = 1260.0 + (showLocation ? 140.0 : 0);
@@ -1038,6 +1038,14 @@ class _CustomerPageState extends State<CustomerPage> {
                               vertical: 4.0, horizontal: 8.0),
                           color: Color(0xFFFFFFFF),
                         ),
+                      const TableWidget(
+                        width: 150,
+                        title: 'Lead Code',
+                        fontWeight: FontWeight.normal,
+                        padding: EdgeInsets.symmetric(
+                            vertical: 4.0, horizontal: 8.0),
+                        color: Color(0xFFFFFFFF),
+                      ), // lead code
                       const TableWidget(
                         width: 230,
                         title: 'Customer Name',
@@ -1126,6 +1134,14 @@ class _CustomerPageState extends State<CustomerPage> {
                                               vertical: 6.0, horizontal: 8.0),
                                           title: lead.registrationNo,
                                         ),
+                                      TableWidget(
+                                        width: 150,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.normal,
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 6.0, horizontal: 8.0),
+                                        title: lead.leadCode,
+                                      ), // lead code
                                       TableWidget(
                                         width: 230,
                                         padding: const EdgeInsets.symmetric(
