@@ -82,6 +82,10 @@ class CompanyProvider extends ChangeNotifier {
     await prefs.setString('company_base_url', targetUrl);
     await prefs.setString('company_code', code);
 
+    // Clear login session so user is forced to login screen
+    await prefs.setBool('IsLoggedIn', false);
+    await prefs.remove('token');
+
     _baseUrl = targetUrl;
     _companyCode = code;
     HttpUrls.updateBaseUrl(targetUrl);
