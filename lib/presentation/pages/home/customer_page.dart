@@ -992,7 +992,8 @@ class _CustomerPageState extends State<CustomerPage> {
     final bool showCustomerCode = settingsProvider.menuIsViewMap[184] == 1;
     final double fixedWidth = showCustomerCode ? 930.0 : 780.0;
     final bool showLocation = settingsProvider.menuIsViewMap[142] == 1;
-    final double scrollableWidth = showLocation ? 1400.0 : 1260.0;
+    final bool showRamcoLocation = settingsProvider.ramcoLocationPermission == 1;
+    final double scrollableWidth = 1260.0 + (showLocation ? 140.0 : 0);
 
     return Scrollbar(
       controller: _scrollableVerticalController,
@@ -1499,14 +1500,24 @@ class _CustomerPageState extends State<CustomerPage> {
                                   vertical: 4.0, horizontal: 8.0),
                               color: Color(0xFFFFFFFF),
                             ),
-                            const TableWidget(
-                              width: 120,
-                              title: 'Location',
-                              fontWeight: FontWeight.normal,
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 4.0, horizontal: 8.0),
-                              color: Color(0xFFFFFFFF),
-                            ),
+                            if (!showRamcoLocation)
+                              const TableWidget(
+                                width: 120,
+                                title: 'Location',
+                                fontWeight: FontWeight.normal,
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 4.0, horizontal: 8.0),
+                                color: Color(0xFFFFFFFF),
+                              ),
+                            if (showRamcoLocation)
+                              const TableWidget(
+                                width: 120,
+                                title: 'Location',
+                                fontWeight: FontWeight.normal,
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 4.0, horizontal: 8.0),
+                                color: Color(0xFFFFFFFF),
+                              ),
                             if (showLocation)
                               const TableWidget(
                                 width: 140,
@@ -1676,14 +1687,15 @@ class _CustomerPageState extends State<CustomerPage> {
                                                       horizontal: 8.0),
                                               title: lead.toUserName,
                                             ),
-                                            SizedBox(
-                                              width: 120,
-                                              child: Padding(
-                                                padding: const EdgeInsets.symmetric(
-                                                    vertical: 4.0, horizontal: 8.0),
-                                                child: InkWell(
-                                                  onTap: () {
-                                                    String? validLink;
+                                            if (!showRamcoLocation)
+                                              SizedBox(
+                                                width: 120,
+                                                child: Padding(
+                                                  padding: const EdgeInsets.symmetric(
+                                                      vertical: 4.0, horizontal: 8.0),
+                                                  child: InkWell(
+                                                    onTap: () {
+                                                      String? validLink;
                                                     if (lead.location != null && lead.location != 'null' && lead.location!.trim().isNotEmpty) validLink = lead.location;
                                                     else if (lead.mapLink != null && lead.mapLink != 'null' && lead.mapLink!.trim().isNotEmpty) validLink = lead.mapLink;
                                                     else if (lead.latitude != null && lead.latitude != 'null' && lead.latitude!.trim().isNotEmpty && lead.longitude != null && lead.longitude != 'null' && lead.longitude!.trim().isNotEmpty) {
@@ -1699,8 +1711,16 @@ class _CustomerPageState extends State<CustomerPage> {
                                                       bool hasLink = (lead.location != null && lead.location != 'null' && lead.location!.trim().isNotEmpty) ||
                                                                      (lead.mapLink != null && lead.mapLink != 'null' && lead.mapLink!.trim().isNotEmpty) ||
                                                                      (lead.latitude != null && lead.latitude != 'null' && lead.latitude!.trim().isNotEmpty && lead.longitude != null && lead.longitude != 'null' && lead.longitude!.trim().isNotEmpty);
+                                                      
+                                                      String displayText = '-';
+                                                      if (lead.locationName != null && lead.locationName!.trim().isNotEmpty && lead.locationName != 'null') {
+                                                        displayText = lead.locationName!;
+                                                      } else if (hasLink) {
+                                                        displayText = 'View Map';
+                                                      }
+                                                      
                                                       return Text(
-                                                        hasLink ? 'View Map' : '-',
+                                                        displayText,
                                                         style: TextStyle(
                                                           fontSize: 12,
                                                           color: hasLink ? Colors.blue : Colors.black87,
@@ -1714,6 +1734,19 @@ class _CustomerPageState extends State<CustomerPage> {
                                                 ),
                                               ),
                                             ),
+                                            if (showRamcoLocation)
+                                              TableWidget(
+                                                width: 120,
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.normal,
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 4.0,
+                                                        horizontal: 8.0),
+                                                title: ((lead.locationName != null && lead.locationName!.trim().isNotEmpty && lead.locationName != 'null') || (lead.location != null && lead.location != 'null' && lead.location!.trim().isNotEmpty) ||
+                                                                     (lead.mapLink != null && lead.mapLink != 'null' && lead.mapLink!.trim().isNotEmpty) ||
+                                                                     (lead.latitude != null && lead.latitude != 'null' && lead.latitude!.trim().isNotEmpty && lead.longitude != null && lead.longitude != 'null' && lead.longitude!.trim().isNotEmpty)) ? 'Yes' : 'No',
+                                              ),
                                             if (showLocation)
                                               TableWidget(
                                                 width: 140,
@@ -1751,6 +1784,7 @@ class _CustomerPageState extends State<CustomerPage> {
     DropDownProvider provider,
   ) {
     final bool showCustomerCode = settingsProvider.menuIsViewMap[184] == 1;
+    final bool showRamcoLocation = settingsProvider.ramcoLocationPermission == 1;
 
     return customerProvider.customerData.isEmpty
         ? const CommonEmptyState(message: 'No data available')
@@ -1813,6 +1847,14 @@ class _CustomerPageState extends State<CustomerPage> {
                         padding: const EdgeInsets.only(top: 4.0),
                         child: Text(
                           'Reg No: ${lead.registrationNo}',
+                          style: TextStyle(fontSize: 12, color: Colors.grey.shade700),
+                        ),
+                      ),
+                    if (showRamcoLocation)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4.0),
+                        child: Text(
+                          'Location: ${(((lead.locationName != null && lead.locationName!.trim().isNotEmpty && lead.locationName != 'null')) || (lead.location != null && lead.location != 'null' && lead.location!.trim().isNotEmpty) || (lead.mapLink != null && lead.mapLink != 'null' && lead.mapLink!.trim().isNotEmpty) || (lead.latitude != null && lead.latitude != 'null' && lead.latitude!.trim().isNotEmpty && lead.longitude != null && lead.longitude != 'null' && lead.longitude!.trim().isNotEmpty)) ? 'Yes' : 'No'}',
                           style: TextStyle(fontSize: 12, color: Colors.grey.shade700),
                         ),
                       ),

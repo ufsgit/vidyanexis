@@ -578,6 +578,11 @@ class SettingsProvider extends ChangeNotifier {
 
   int _leadPermissionMeAndAll = 0;
   int get leadPermissionMeAndAll => _leadPermissionMeAndAll;
+  
+  int _ramcoPlace = 0;
+  int get ramcoPlace => _ramcoPlace;
+  int _ramcoLocationPermission = 0;
+  int get ramcoLocationPermission => _ramcoLocationPermission;
   String get leadNameLabel =>
       _leadNameChangeToCustomerName == 1 ? 'Customer Name' : 'Lead Name';
 
@@ -685,6 +690,14 @@ class SettingsProvider extends ChangeNotifier {
             (caption.toLowerCase().contains('new_dashboard_count') ||
                 caption.toLowerCase().contains('new dashboard count')))) {
       _newDashboardCount = value;
+    } else if (caption != null &&
+        (caption.toLowerCase().contains('ramco_place') ||
+            caption.toLowerCase().contains('ramco place'))) {
+      _ramcoPlace = value;
+    } else if (caption != null &&
+        (caption.toLowerCase().contains('ramco_location_permission') ||
+            caption.toLowerCase().contains('ramco location permission'))) {
+      _ramcoLocationPermission = value;
     }
   }
 

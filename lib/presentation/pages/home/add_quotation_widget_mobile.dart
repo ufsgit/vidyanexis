@@ -48,6 +48,7 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
       final customerDetailsProvider =
           Provider.of<CustomerDetailsProvider>(context, listen: false);
       customerDetailsProvider.getCustomFieldsByQuotationId(context);
+      customerDetailsProvider.getAdditionalCustomFields(context);
     });
   }
 
@@ -263,6 +264,28 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
                         onFieldValuesChanged: (values) {
                           for (final fv in values) {
                             final match = customerDetailsProvider.customFieldQuotation.firstWhere(
+                              (e) => e.customFieldId == fv.customFieldId,
+                              orElse: () => CustomFieldByStatusId(),
+                            );
+                            if (match.customFieldId != null) {
+                              match.datavalue = fv.value;
+                            }
+                          }
+                        },
+                      ),
+                    ],
+                    if (customerDetailsProvider
+                        .additionalCustomFieldsQuotation.isNotEmpty) ...[
+                      const SizedBox(height: 16),
+                      CustomFieldSectionWidget(
+                        key: customFieldAdditionalQuotationKey,
+                        customFields:
+                            customerDetailsProvider.additionalCustomFieldsQuotation,
+                        controllerKey: 'additional_quotation',
+                        showEditButton: true,
+                        onFieldValuesChanged: (values) {
+                          for (final fv in values) {
+                            final match = customerDetailsProvider.additionalCustomFieldsQuotation.firstWhere(
                               (e) => e.customFieldId == fv.customFieldId,
                               orElse: () => CustomFieldByStatusId(),
                             );

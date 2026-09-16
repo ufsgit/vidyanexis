@@ -61,6 +61,7 @@ class _AmcReportScreen extends State<AmcReportScreen> {
       final provider = Provider.of<DropDownProvider>(context, listen: false);
       provider.getAMCStatus(context);
       provider.getUserDetails(context);
+      provider.getLocations(context);
     });
   }
 
@@ -83,7 +84,7 @@ class _AmcReportScreen extends State<AmcReportScreen> {
   @override
   Widget build(BuildContext context) {
     final reportsProvider = Provider.of<AMCReportProvider>(context);
-    // final provider = Provider.of<DropDownProvider>(context);
+    final provider = Provider.of<DropDownProvider>(context);
     final customerDetailsProvider =
         Provider.of<CustomerDetailsProvider>(context);
 
@@ -277,7 +278,8 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                               data: reportsProvider.amcReport.map((task) {
                                 return {
                                   'Customer Name': task.customerName,
-                                  'Address': task.address1,
+                                  'Address':
+                                      '${task.address1}${task.locationName.isNotEmpty ? ', ${task.locationName}' : ''}',
                                   'Phone': task.mobile,
                                   'Description': task.description,
                                   'AMC Date': task.intervalDate,
@@ -402,6 +404,7 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                   headers: [
                                     'Customer Name',
                                     'Address',
+                                    'Place',
                                     'Phone',
                                     'Description',
                                     'AMC Date',
@@ -417,6 +420,7 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                     return {
                                       'Customer Name': task.customerName,
                                       'Address': task.address1,
+                                      'Place': task.locationName,
                                       'Phone': task.mobile,
                                       'Description': task.description,
                                       'AMC Date': task.intervalDate,
@@ -556,6 +560,61 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                           const SizedBox(
                             width: 10,
                           ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(4),
+                              border: Border.all(
+                                  color: reportsProvider.selectedLocationId != null &&
+                                          reportsProvider.selectedLocationId != 0
+                                      ? AppColors.primaryBlue
+                                      : Colors.grey[300]!),
+                            ),
+                            child: Row(
+                              children: [
+                                const Text('Place: '),
+                                DropdownButton<int>(
+                                  value: reportsProvider.selectedLocationId,
+                                  hint: const Text('All'),
+                                  items: [
+                                        const DropdownMenuItem<int>(
+                                          value: 0,
+                                          child: Text('All', style: TextStyle(fontSize: 14)),
+                                        ),
+                                      ] +
+                                      provider.locationList
+                                          .map((location) => DropdownMenuItem<int>(
+                                                value: location.locationId,
+                                                child: Text(
+                                                  location.locationName,
+                                                  style: const TextStyle(fontSize: 14),
+                                                ),
+                                              ))
+                                          .toList(),
+                                  onChanged: (int? newValue) {
+                                    if (newValue != null) {
+                                      reportsProvider.setLocationFilter(newValue);
+                                    }
+                                    reportsProvider.setTaskSearchCriteria(
+                                        reportsProvider.Search,
+                                        reportsProvider.formattedFromDate,
+                                        reportsProvider.formattedToDate,
+                                        reportsProvider.Status,
+                                        reportsProvider.AssignedTo,
+                                        reportsProvider.selectedLocationId.toString());
+                                    reportsProvider.getSearchAmcReport(context);
+                                  },
+                                  underline: Container(),
+                                  isDense: true,
+                                  iconSize: 18,
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
                           // Container(
                           //   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           //   decoration: BoxDecoration(
@@ -663,6 +722,8 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                   reportsProvider.selectedStatus != 0) ||
                               (reportsProvider.selectedUser != null &&
                                   reportsProvider.selectedUser != 0) ||
+                              (reportsProvider.selectedLocationId != null &&
+                                  reportsProvider.selectedLocationId != 0) ||
                               reportsProvider.Search.isNotEmpty)
                             CommonReportResetButton(
                               onReset: () {
@@ -715,6 +776,58 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                               formattedToDate: reportsProvider.formattedToDate,
                               onTap: () => onClickTopButton(context),
                             ),
+                            const SizedBox(height: 16),
+                            CustomText('Place',
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.textBlack),
+                            const SizedBox(height: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(
+                                    color: reportsProvider.selectedLocationId != null &&
+                                            reportsProvider.selectedLocationId != 0
+                                        ? AppColors.primaryBlue
+                                        : Colors.grey[300]!),
+                              ),
+                              child: DropdownButton<int>(
+                                isExpanded: true,
+                                value: reportsProvider.selectedLocationId,
+                                hint: const Text('Select Place'),
+                                items: [
+                                      const DropdownMenuItem<int>(
+                                        value: 0,
+                                        child: Text('All', style: TextStyle(fontSize: 14)),
+                                      ),
+                                    ] +
+                                    provider.locationList
+                                        .map((location) => DropdownMenuItem<int>(
+                                              value: location.locationId,
+                                              child: Text(
+                                                location.locationName,
+                                                style: const TextStyle(fontSize: 14),
+                                              ),
+                                            ))
+                                        .toList(),
+                                onChanged: (int? newValue) {
+                                  if (newValue != null) {
+                                    reportsProvider.setLocationFilter(newValue);
+                                  }
+                                  reportsProvider.setTaskSearchCriteria(
+                                      reportsProvider.Search,
+                                      reportsProvider.formattedFromDate,
+                                      reportsProvider.formattedToDate,
+                                      reportsProvider.Status,
+                                      reportsProvider.AssignedTo,
+                                      reportsProvider.selectedLocationId.toString());
+                                  reportsProvider.getSearchAmcReport(context);
+                                },
+                                underline: Container(),
+                              ),
+                            ),
                             const SizedBox(height: 24),
                             if (reportsProvider.fromDate != null ||
                                 reportsProvider.toDate != null ||
@@ -722,6 +835,8 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                     reportsProvider.selectedStatus != 0) ||
                                 (reportsProvider.selectedUser != null &&
                                     reportsProvider.selectedUser != 0) ||
+                                (reportsProvider.selectedLocationId != null &&
+                                    reportsProvider.selectedLocationId != 0) ||
                                 reportsProvider.Search.isNotEmpty)
                               SizedBox(
                                 width: double.infinity,
@@ -817,6 +932,11 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                         TableWidget(
                                             flex: 2,
                                             title: 'Address',
+                                            fontSize: 14,
+                                            color: Color(0xFF607185)),
+                                        TableWidget(
+                                            flex: 2,
+                                            title: 'Place',
                                             fontSize: 14,
                                             color: Color(0xFF607185)),
                                         TableWidget(
@@ -948,6 +1068,23 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                                     message: task.address1,
                                                     child: Text(
                                                       task.address1,
+                                                      maxLines: 1,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: const TextStyle(
+                                                        fontSize: 13,
+                                                        color:
+                                                            Color(0xFF607185),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                TableWidget(
+                                                  flex: 2,
+                                                  data: Tooltip(
+                                                    message: task.locationName,
+                                                    child: Text(
+                                                      task.locationName,
                                                       maxLines: 1,
                                                       overflow:
                                                           TextOverflow.ellipsis,

@@ -1093,7 +1093,7 @@ class _LeadsPageState extends State<LeadPage> {
                                             vertical: 4.0, horizontal: 8.0),
                                         alignment: Alignment.centerLeft,
                                         data: Text(
-                                          'Address',
+                                          settingsProvider.ramcoPlace == 1 ? 'Place' : 'Address',
                                           style: TextStyle(
                                             fontSize: 13,
                                             color: Colors.white,
@@ -1584,10 +1584,9 @@ class _LeadsPageState extends State<LeadPage> {
                                                                 horizontal:
                                                                     8.0),
                                                         data: Tooltip(
-                                                          message: lead
-                                                              .displayAddress,
+                                                          message: settingsProvider.ramcoPlace == 1 ? lead.displayPlace : lead.displayAddress,
                                                           child: Text(
-                                                            lead.displayAddress,
+                                                            settingsProvider.ramcoPlace == 1 ? lead.displayPlace : lead.displayAddress,
                                                             maxLines: 1,
                                                             overflow:
                                                                 TextOverflow

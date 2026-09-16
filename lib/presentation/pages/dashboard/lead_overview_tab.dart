@@ -7,6 +7,8 @@ import 'package:vidyanexis/controller/models/task_allocation_model.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/chart.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/lead_enquiry_for_report_card.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/weekly_report_card.dart';
+import 'package:vidyanexis/presentation/pages/dashboard/lead_screen_time_card.dart';
+import 'package:vidyanexis/controller/models/lead_enquiry_report_model.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 
@@ -220,36 +222,71 @@ class _LeadsOverViewTabState extends State<LeadsOverViewTab> {
             // countsGrid, // Hidden as per user request
             SizedBox(
               width: chartWidth,
-              child: LeadGraphBarChart(
-                leadData: widget.leadConversionData,
-              ),
+              child: !isWeb
+                  ? LeadScreenTimeCard<LeadCoversionChartModel>(
+                      title: 'Lead Graph',
+                      data: widget.leadConversionData,
+                      valueExtractor: (item) => item.leadCount ?? 0,
+                      nameExtractor: (item) => item.enquirySource ?? 'Unknown',
+                    )
+                  : LeadGraphBarChart(
+                      leadData: widget.leadConversionData,
+                    ),
             ),
             SizedBox(
               width: chartWidth,
-              child: ConversionGraphBarChart(
-                leadData: widget.leadConversionData,
-              ),
+              child: !isWeb
+                  ? LeadScreenTimeCard<LeadCoversionChartModel>(
+                      title: 'Conversion Graph',
+                      data: widget.leadConversionData,
+                      valueExtractor: (item) => int.tryParse(item.convertedCount ?? "0") ?? 0,
+                      nameExtractor: (item) => item.enquirySource ?? 'Unknown',
+                    )
+                  : ConversionGraphBarChart(
+                      leadData: widget.leadConversionData,
+                    ),
             ),
             SizedBox(
               width: chartWidth,
-              child: LeadDistributionPieChart(
-                leadData: widget.leadConversionData,
-              ),
+              child: !isWeb
+                  ? LeadScreenTimeCard<LeadCoversionChartModel>(
+                      title: 'Lead Distribution',
+                      data: widget.leadConversionData,
+                      valueExtractor: (item) => item.leadCount ?? 0,
+                      nameExtractor: (item) => item.enquirySource ?? 'Unknown',
+                    )
+                  : LeadDistributionPieChart(
+                      leadData: widget.leadConversionData,
+                    ),
             ),
             SizedBox(
               width: chartWidth,
-              child: LeadEnquiryForReportCard(
-                dashboardProvider: widget.dashBoardProvider,
-              ),
+              child: !isWeb
+                  ? LeadScreenTimeCard<LeadEnquiryReportModel>(
+                      title: 'Lead Enquiry For Report',
+                      data: widget.dashBoardProvider.leadEnquiryReport,
+                      valueExtractor: (item) => item.count,
+                      nameExtractor: (item) => item.enquiryForName,
+                    )
+                  : LeadEnquiryForReportCard(
+                      dashboardProvider: widget.dashBoardProvider,
+                    ),
             ),
 
             SizedBox(
               width: constraints.maxWidth,
-              child: WeeklyReportCard(
-                isLeadOverView: true,
-                data: widget.pieData,
-                dashboardProvider: widget.dashBoardProvider,
-              ),
+              child: !isWeb
+                  ? LeadScreenTimeCard<LeadProgressReportModel>(
+                      title: 'Lead Progress Report',
+                      data: widget.pieData,
+                      valueExtractor: (item) => item.count,
+                      nameExtractor: (item) => item.statusName ?? 'Unknown',
+                    )
+                  : WeeklyReportCard(
+                      isLeadOverView: true,
+                      data: widget.pieData,
+                      dashboardProvider: widget.dashBoardProvider,
+                    ),
             ),
             // Container(
             //   padding: const EdgeInsets.all(10),
