@@ -185,6 +185,7 @@ class WarrentyReportProvider extends ChangeNotifier {
 
   void removeStatus() {
     _selectedStatus = null;
+    _isPendingFilter = false;
     _selectedUser = null;
     _selectedDateFilterIndex = null;
     _fromDate = null;
@@ -431,11 +432,38 @@ class WarrentyReportProvider extends ChangeNotifier {
   int _totalAssigned = 0;
   int get totalAssigned => _totalAssigned;
 
+  int _totalActive = 0;
+  int get totalActive => _totalActive;
+
+  int _totalUpcoming = 0;
+  int get totalUpcoming => _totalUpcoming;
+
   int _isAssigned = 0;
   int get isAssigned => _isAssigned;
 
   void setIsAssigned(int value) {
     _isAssigned = value;
+    notifyListeners();
+  }
+
+  bool _isPendingFilter = false;
+  void setPendingFilter(bool value) {
+    _isPendingFilter = value;
+  }
+
+  int _isActive = 0;
+  int get isActive => _isActive;
+
+  void setIsActive(int value) {
+    _isActive = value;
+    notifyListeners();
+  }
+
+  int _isUpcoming = 0;
+  int get isUpcoming => _isUpcoming;
+
+  void setIsUpcoming(int value) {
+    _isUpcoming = value;
     notifyListeners();
   }
 
@@ -456,10 +484,12 @@ class WarrentyReportProvider extends ChangeNotifier {
       isDate = "1";
     }
 
+    int statusToSend = _isPendingFilter ? 0 : (_selectedStatus ?? 0);
+
     try {
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.amcNotification}?From_Date=$formattedFromDate&To_Date=$formattedToDate&Is_Date_Check=$isDate&User_Id=${_selectedUser ?? 0}&Is_Assigned=$_isAssigned');
+              '${HttpUrls.amcNotification}?From_Date=$formattedFromDate&To_Date=$formattedToDate&Is_Date_Check=$isDate&User_Id=${_selectedUser ?? 0}&Is_Assigned=$_isAssigned&Is_Active=$_isActive&Is_Upcoming=$_isUpcoming&Task_Status_Id=$statusToSend');
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -470,22 +500,32 @@ class WarrentyReportProvider extends ChangeNotifier {
             _amcNotificationList = await compute(
                 _parseAmcNotification, data['list'] as List<dynamic>);
             _totalAssigned = int.tryParse(data['total_assigned']?.toString() ?? '0') ?? 0;
+            _totalActive = int.tryParse(data['total_active']?.toString() ?? '0') ?? 0;
+            _totalUpcoming = int.tryParse(data['total_upcoming']?.toString() ?? '0') ?? 0;
           } else {
             _amcNotificationList = [];
             _totalAssigned = 0;
+            _totalActive = 0;
+            _totalUpcoming = 0;
           }
         } else {
           _amcNotificationList = [];
           _totalAssigned = 0;
+          _totalActive = 0;
+          _totalUpcoming = 0;
         }
       } else {
         _amcNotificationList = [];
         _totalAssigned = 0;
+        _totalActive = 0;
+        _totalUpcoming = 0;
         // print('Failed to load amc notification: ${response.statusCode}');
       }
     } catch (e) {
       _amcNotificationList = [];
       _totalAssigned = 0;
+      _totalActive = 0;
+      _totalUpcoming = 0;
       print('Error fetching amc notification: $e');
     } finally {
       isAmcNotificationLoading = false;

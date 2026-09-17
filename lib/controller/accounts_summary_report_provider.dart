@@ -144,15 +144,56 @@ class AccountsSummaryReportProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setSearchCriteria(String fromDate, String toDate) {
+  String _searchQuery = '';
+  String get searchQuery => _searchQuery;
+
+  int _startLimit = 1;
+  int _endLimit = 20;
+  final int _limit = 20;
+  int _totalCount = 0;
+  bool _isLoadingMore = false;
+  bool _hasMoreData = true;
+
+  int get startLimit => _startLimit;
+  int get endLimit => _endLimit;
+  int get totalCount => _totalCount;
+  bool get isLoadingMore => _isLoadingMore;
+  bool get hasMoreData => _hasMoreData;
+
+  void setSearchCriteria(String fromDate, String toDate, {String search = ''}) {
     _fromDateS = fromDate;
     _toDateS = toDate;
+    _searchQuery = search;
+    _startLimit = 1;
+    _endLimit = 20;
+    _hasMoreData = true;
+    _accountsSummaryReport.clear();
     notifyListeners();
+  }
+
+  Future<void> fetchNextPage(BuildContext context) async {
+    if (_endLimit < _totalCount) {
+      _startLimit += _limit;
+      _endLimit += _limit;
+      await getAccountsSummaryReport(context);
+    }
+  }
+
+  Future<void> fetchPreviousPage(BuildContext context) async {
+    if (_startLimit > 1) {
+      _startLimit -= _limit;
+      _endLimit -= _limit;
+      await getAccountsSummaryReport(context);
+    }
   }
 
   Future<void> getAccountsSummaryReport(BuildContext context,
       {bool reset = false}) async {
     try {
+      if (reset) {
+         _startLimit = 1;
+         _endLimit = 20;
+      }
       Loader.showLoader(context);
 
       if (_fromDateS.isEmpty) {
@@ -167,19 +208,34 @@ class AccountsSummaryReportProvider extends ChangeNotifier {
       final response = await HttpRequest.httpGetRequest(
         endPoint: HttpUrls.searchAccountsSummaryReport,
         bodyData: {
+          'Customer_Name_': _searchQuery,
           'From_Date': _fromDateS,
           'To_Date': _toDateS,
+          'Page_Index1_': _startLimit,
+          'Page_Index2_': _endLimit,
         },
       );
 
       if (response.statusCode == 200) {
         final data = response.data;
         if (data != null) {
-          final dataMap = data is Map ? data['data'] ?? data : data;
-          if (dataMap is List) {
-            _accountsSummaryReport = dataMap
-                .map((item) => AccountsSummaryReportModel.fromJson(item))
-                .toList();
+          if (data is Map) {
+            _totalCount = int.tryParse(data['Total_Records']?.toString() ?? '0') ?? 0;
+            final dataList = data['Data'] ?? data['data'];
+            if (dataList is List) {
+              _accountsSummaryReport.clear();
+              for (var item in dataList) {
+                _accountsSummaryReport.add(AccountsSummaryReportModel.fromJson(item));
+              }
+            } else {
+              _accountsSummaryReport = [];
+            }
+          } else if (data is List) {
+            _accountsSummaryReport.clear();
+            _totalCount = data.length;
+            for (var item in data) {
+              _accountsSummaryReport.add(AccountsSummaryReportModel.fromJson(item));
+            }
           } else {
             _accountsSummaryReport = [];
           }
@@ -210,18 +266,31 @@ class AccountsSummaryReportProvider extends ChangeNotifier {
       final response = await HttpRequest.httpGetRequest(
         endPoint: HttpUrls.searchAccountsSummaryReport,
         bodyData: {
+          'Customer_Name_': _searchQuery,
           'From_Date': _fromDateS,
           'To_Date': _toDateS,
+          'Page_Index1_': 1,
+          'Page_Index2_': 100000,
         },
       );
       if (response.statusCode == 200) {
         final data = response.data;
         if (data != null) {
-          final dataMap = data is Map ? data['data'] ?? data : data;
-          if (dataMap is List) {
-            return dataMap
-                .map((item) => AccountsSummaryReportModel.fromJson(item))
-                .toList();
+          if (data is Map) {
+            final dataList = data['Data'] ?? data['data'];
+            if (dataList is List) {
+              List<AccountsSummaryReportModel> result = [];
+              for (var item in dataList) {
+                result.add(AccountsSummaryReportModel.fromJson(item));
+              }
+              return result;
+            }
+          } else if (data is List) {
+            List<AccountsSummaryReportModel> result = [];
+            for (var item in data) {
+              result.add(AccountsSummaryReportModel.fromJson(item));
+            }
+            return result;
           }
         }
       }
