@@ -41,7 +41,7 @@ class HttpUrls {
 //dev
 
   // Local Backend Server
-  // static String baseUrl = 'https://cn1hct1v-3512.inc1.devtunnels.ms/';
+//   static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
   // static String baseUrl =
   //     'https://ramcoelectronicsapi.trackbox.net.in/'; // Android Emulator
   // static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
@@ -415,6 +415,7 @@ class HttpUrls {
   static String getInventoryCustomer = "item/get_all_customers";
   static String deleteInventoryCustomer = "item/Delete_Customer";
   static String taskSummary = "task/Task_Summary";
+  static String transferTasks = "task/Transfer_Tasks";
   static String getLeadStatusReport = "Lead/Get_Lead_Status_Report";
   static String getLeadsByStage = "lead/Get_Leads_By_Stage";
   static String getPdfAnnexure1 = "lead/get_pdf_annexure1/";

@@ -94,7 +94,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
           sourceCategoryName: ''),
     );
 
-    final selectedStatus = dropDownProvider.followUpData.firstWhere(
+    final selectedStatus = dropDownProvider.leadStatuses.firstWhere(
       (status) => status.statusId == dropDownProvider.selectedFollowUpId,
       orElse: () => SearchLeadStatusModel(
         followup: 0,
@@ -295,6 +295,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
         Provider.of<DropDownProvider>(context, listen: false);
     leadProvider.clearAllLeadControllers(context);
     dropDownProvider.resetFields();
+    dropDownProvider.resetLeadFormState();
     dropDownProvider.setSourceCategoryId(null);
     dropDownProvider.setSelectedEnquirySourceId(null);
     dropDownProvider.setSelectedFollowUPId(0);
@@ -365,7 +366,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
 
       // Follow-up statuses – has ViewIn_Id, so refresh for new lead when empty
       // Provider skips network if _followUpstatus is already filled
-      if (dropDownProvider.followUpData.isEmpty) {
+      if (dropDownProvider.leadStatuses.isEmpty) {
         await dropDownProvider.getFollowUpStatus(context, "1");
       }
 
@@ -420,14 +421,14 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
         }
 
         // Set default follow-up status to first available status with isCreateNew == 1 in dropdown
-        final createNewStatuses = dropDownProvider.followUpData
+        final createNewStatuses = dropDownProvider.leadStatuses
             .where((s) => s.isCreateNew == 1)
             .toList();
         final availableStatuses = widget.isEdit
-            ? dropDownProvider.followUpData
+            ? dropDownProvider.leadStatuses
             : (createNewStatuses.isNotEmpty
                 ? createNewStatuses
-                : dropDownProvider.followUpData);
+                : dropDownProvider.leadStatuses);
 
         int defaultDeptId = leadProvider.loginDepartmentId;
         String defaultDeptName = leadProvider.loginDepartmentName;
@@ -2299,7 +2300,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                                 child: CommonDropdown<int>(
                                                   hintText: 'Follow-up Status*',
                                                   items: dropDownProvider
-                                                      .followUpData
+                                                      .leadStatuses
                                                       .where((status) => widget
                                                               .isEdit
                                                           ? true
@@ -2335,7 +2336,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                                     );
 
                                                     final selectedStatus = dropDownProvider
-                                                        .followUpData
+                                                        .leadStatuses
                                                         .firstWhere(
                                                             (status) =>
                                                                 status

@@ -149,6 +149,7 @@ class _tasksPageReportState extends State<TaskPage> {
     if (_selectedTaskIds.isEmpty) return;
 
     String? selectedStaffId;
+    bool isAssigning = false;
     
     showDialog(
       context: context,
@@ -187,20 +188,51 @@ class _tasksPageReportState extends State<TaskPage> {
               ),
               actions: [
                 TextButton(
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: isAssigning ? null : () => Navigator.pop(context),
                   child: const Text("Cancel"),
                 ),
                 ElevatedButton(
-                  onPressed: selectedStaffId == null ? null : () {
-                    // Logic to assign tasks goes here. For now, print payload and show toast.
-                    print("Assigning tasks: ${_selectedTaskIds.toList()} to staff: $selectedStaffId");
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Tasks assigned successfully")),
+                  onPressed: (selectedStaffId == null || _selectedTaskIds.isEmpty || isAssigning) 
+                      ? null 
+                      : () async {
+                    setModalState(() {
+                      isAssigning = true;
+                    });
+
+                    final provider = Provider.of<TaskPageProvider>(context, listen: false);
+                    final success = await provider.transferTasks(
+                      taskIds: _selectedTaskIds.map((id) => int.parse(id)).toList(),
+                      toUserId: int.parse(selectedStaffId!),
                     );
-                    Navigator.pop(context);
-                    _clearSelection();
+
+                    if (!context.mounted) return;
+
+                    if (success) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Tasks transferred successfully")),
+                      );
+                      Navigator.pop(context, true);
+                      
+                      final staffName = staffList.firstWhere((s) => s.userDetailsId.toString() == selectedStaffId).userDetailsName;
+                      provider.updateAssignedStaffLocally(_selectedTaskIds.map((id) => int.parse(id)).toList(), staffName);
+                      
+                      _clearSelection();
+                    } else {
+                      setModalState(() {
+                        isAssigning = false;
+                      });
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Failed to assign tasks. Please try again.")),
+                      );
+                    }
                   },
-                  child: const Text("Assign / Update"),
+                  child: isAssigning 
+                      ? const SizedBox(
+                          height: 20, 
+                          width: 20, 
+                          child: CircularProgressIndicator(strokeWidth: 2)
+                        ) 
+                      : const Text("Assign / Update"),
                 ),
               ],
             );
@@ -1050,7 +1082,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                         style: TextStyle(fontSize: 14)),
                                   ),
                                 ] +
-                                provider.followUpData
+                                provider.taskStatuses
                                     .map((status) => DropdownMenuItem<int>(
                                           value: status.statusId,
                                           child: ConstrainedBox(
@@ -1417,7 +1449,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                 reportsProvider.selectedStatusIds.contains(0),
                             onTap: () => reportsProvider.toggleStatus(0),
                           ),
-                          ...provider.followUpData
+                          ...provider.taskStatuses
                               .map((status) => FilterChipWidget(
                                     label: StatusUtils.getDisplayStatus(
                                         status.statusName ?? ''),
@@ -1811,11 +1843,20 @@ class _tasksPageReportState extends State<TaskPage> {
                                     thumbVisibility: true,
                                     trackVisibility: true,
                                     interactive: true,
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        // ==================== FIXED COLUMNS ====================
+                                    child: SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      physics: constraints.maxWidth < fixedWidth + 50 
+                                          ? const AlwaysScrollableScrollPhysics() 
+                                          : const NeverScrollableScrollPhysics(),
+                                      child: SizedBox(
+                                        width: constraints.maxWidth < fixedWidth + 50 
+                                            ? fixedWidth + scrollableMinWidth 
+                                            : constraints.maxWidth,
+                                        child: Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            // ==================== FIXED COLUMNS ====================
                                         SizedBox(
                                           width: fixedWidth,
                                           child: Column(
@@ -3172,7 +3213,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                         ),
                                       ],
                                     ),
-                                  );
+                                  ),
+                                ),
+                              );
                                 },
                               ),
                             ),

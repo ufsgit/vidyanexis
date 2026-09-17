@@ -1,4 +1,4 @@
-import 'package:vidyanexis/controller/models/search_lead_status_model.dart';
+﻿import 'package:vidyanexis/controller/models/search_lead_status_model.dart';
 import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -498,7 +498,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                                       fontSize: 13)),
                                             ),
                                           ] +
-                                          provider.followUpData
+                                          provider.leadStatuses
                                               .map((status) =>
                                                   DropdownMenuItem<int>(
                                                     value: status.statusId ?? 0,
@@ -1952,7 +1952,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                         // Status
                         CommonDropdown<int>(
                           hintText: 'Follow-up Status*',
-                          items: dropDownProvider.followUpData
+                          items: dropDownProvider.leadStatuses
                               .map((status) => DropdownItem<int>(
                                     id: status.statusId ?? 0,
                                     name: status.statusName ?? '',
@@ -1962,7 +1962,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                           onItemSelected: (selectedId) {
                             dropDownProvider.setSelectedStatusId(selectedId);
                             final selectedItem =
-                                dropDownProvider.followUpData.firstWhere(
+                                dropDownProvider.leadStatuses.firstWhere(
                               (status) => status.statusId == selectedId,
                               orElse: () => SearchLeadStatusModel(
                                   statusId: selectedId, statusName: ''),
@@ -2324,3 +2324,4 @@ class _LeadsPageReportState extends State<LeadPageReport> {
     );
   }
 }
+

@@ -136,7 +136,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
           sourceCategoryName: ''),
     );
 
-    final selectedStatus = dropDownProvider.followUpData.firstWhere(
+    final selectedStatus = dropDownProvider.leadStatuses.firstWhere(
       (status) => status.statusId == dropDownProvider.selectedFollowUpId,
       orElse: () => SearchLeadStatusModel(
         followup: 0,
@@ -348,6 +348,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
         Provider.of<DropDownProvider>(context, listen: false);
     leadProvider.clearAllLeadControllers(context);
     dropDownProvider.resetFields();
+    dropDownProvider.resetLeadFormState();
     dropDownProvider.setSourceCategoryId(null);
     dropDownProvider.setSelectedEnquirySourceId(null);
     dropDownProvider.setSelectedFollowUPId(0);
@@ -433,7 +434,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
 
       // Follow-up statuses – has ViewIn_Id, so refresh for new lead when empty
       // Provider skips network if _followUpstatus is already filled
-      if (dropDownProvider.followUpData.isEmpty) {
+      if (dropDownProvider.leadStatuses.isEmpty) {
         await dropDownProvider.getFollowUpStatus(context, "1");
       }
 
@@ -488,14 +489,14 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
         }
 
         // Set default follow-up status to first available status with isCreateNew == 1 in dropdown
-        final createNewStatuses = dropDownProvider.followUpData
+        final createNewStatuses = dropDownProvider.leadStatuses
             .where((s) => s.isCreateNew == 1)
             .toList();
         final availableStatuses = widget.isEdit
-            ? dropDownProvider.followUpData
+            ? dropDownProvider.leadStatuses
             : (createNewStatuses.isNotEmpty
                 ? createNewStatuses
-                : dropDownProvider.followUpData);
+                : dropDownProvider.leadStatuses);
 
         int defaultDeptId = leadProvider.loginDepartmentId;
         String defaultDeptName = leadProvider.loginDepartmentName;
@@ -1171,7 +1172,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
             ),
             // CommonDropdown<int>(
             //   hintText: 'Follow-up Status*',
-            //   items: dropDownProvider.followUpData
+            //   items: dropDownProvider.leadStatuses
             //       .map((status) => DropdownItem<int>(
             //             id: status.statusId,
             //             name: status.statusName ?? '',
@@ -1296,7 +1297,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
                 Expanded(
                   child: SearchableBottomSheetDropdown<int>(
                     hintText: 'Follow-up Status*',
-                    items: dropDownProvider.followUpData
+                    items: dropDownProvider.leadStatuses
                         .where(
                             (status) => widget.isEdit ? true : status.isCreateNew == 1)
                         .map((status) => DropdownItem<int>(
@@ -1313,7 +1314,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
                         leadProvider.getCustomFieldsByStatusId(context,
                             leadId: widget.isEdit ? leadProvider.customerId : 0,
                             statusId: selectedId);
-                        final selectedStatus = dropDownProvider.followUpData
+                        final selectedStatus = dropDownProvider.leadStatuses
                             .firstWhere((status) => status.statusId == selectedId,
                                 orElse: () => SearchLeadStatusModel(
                                     statusId: selectedId, statusName: ''));

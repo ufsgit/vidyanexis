@@ -40,6 +40,25 @@ class TaskPageProvider extends ChangeNotifier {
   List<TaskReportModel> _taskData = [];
   List<TaskReportModel> get taskData => _taskData;
 
+  void updateAssignedStaffLocally(List<int> taskIds, String staffName) {
+    bool updated = false;
+    for (var task in _taskData) {
+      if (taskIds.contains(task.taskId)) {
+        task.toUserName = staffName;
+        updated = true;
+      }
+    }
+    for (var task in _taskReport) {
+      if (taskIds.contains(task.taskId)) {
+        task.toUserName = staffName;
+        updated = true;
+      }
+    }
+    if (updated) {
+      notifyListeners();
+    }
+  }
+
   List<TaskHistoryModel> _taskHistoryList = [];
   List<TaskHistoryModel> get taskHistoryList => _taskHistoryList;
 
@@ -1518,6 +1537,26 @@ class TaskPageProvider extends ChangeNotifier {
       }
     } catch (e) {
       print('Error converting lead: $e');
+    }
+  }
+
+  Future<bool> transferTasks({required List<int> taskIds, required int toUserId}) async {
+    try {
+      final response = await HttpRequest.httpPostRequest(
+        endPoint: HttpUrls.transferTasks,
+        bodyData: {
+          "Task_Ids": taskIds,
+          "To_User_Id": toUserId,
+        },
+      );
+
+      if (response != null && (response.statusCode == 200 || response.statusCode == 201)) {
+        return true;
+      }
+      return false;
+    } catch (e) {
+      print('Error transferring tasks: $e');
+      return false;
     }
   }
 }

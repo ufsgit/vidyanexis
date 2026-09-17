@@ -1,4 +1,4 @@
-import 'dart:developer';
+﻿import 'dart:developer';
 
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -298,7 +298,7 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
                                   customerProvider.toggleStatus(0);
                                 },
                               ),
-                              ...provider.followUpData.map((status) {
+                              ...provider.leadStatuses.map((status) {
                                 return FilterChipWidget(
                                   label: status.statusName ?? 'Unknown',
                                   isSelected: customerProvider.selectedStatusIds
@@ -1066,3 +1066,4 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
     'This Month',
   ];
 }
+

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:vidyanexis/controller/models/dashboard_count_model.dart';
 import 'package:vidyanexis/controller/models/dashboard_info_model.dart';
@@ -411,9 +411,9 @@ class DashboardProvider extends ChangeNotifier {
             "User": "",
           }).then((response) async {
         if (response.statusCode == 200) {
-          List<dynamic> followUpData = response.data;
+          List<dynamic> leadStatuses = response.data;
           followUpSummaryData =
-              await compute(_parseFollowUpSummary, followUpData);
+              await compute(_parseFollowUpSummary, leadStatuses);
         }
       });
     } catch (e) {
@@ -1260,3 +1260,4 @@ class DashboardProvider extends ChangeNotifier {
     notifyListeners();
   }
 }
+

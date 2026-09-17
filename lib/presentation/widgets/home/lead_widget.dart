@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -423,7 +423,7 @@ class _LeadCardState extends State<LeadCard> {
                                             runSpacing: 8,
                                             children: (_filteredFollowUpStatuses.isNotEmpty
                                                     ? _filteredFollowUpStatuses
-                                                    : dropDownProvider.followUpData)
+                                                    : dropDownProvider.leadStatuses)
                                                 .map((status) {
                                               final isSelected =
                                                   dropDownProvider.selectedStatusId ==
@@ -1286,3 +1286,4 @@ class _LeadCardState extends State<LeadCard> {
     }
   }
 }
+

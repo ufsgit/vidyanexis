@@ -464,7 +464,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                                   leadProvider.toggleStatus(0);
                                 },
                               ),
-                              ...provider.followUpData.map((status) {
+                              ...provider.leadStatuses.map((status) {
                                 return FilterChipWidget(
                                   label: status.statusName ?? 'Unknown',
                                   isSelected: leadProvider.selectedStatusIds

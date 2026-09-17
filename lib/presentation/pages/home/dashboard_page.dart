@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -64,7 +64,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
       print(
           '[PERF-RELOAD] Dashboard Page initState postFrameCallback started at ${DateTime.now().toIso8601String()}');
 
-      // Safe to call notifyListeners here — first frame is already committed
+      // Safe to call notifyListeners here â€” first frame is already committed
       final dashBoardProvider =
           Provider.of<DashboardProvider>(context, listen: false);
       dashBoardProvider.changeTab(0);
@@ -1064,7 +1064,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
                       // Find ID for Pending/Not Started
                       int? pendingId;
                       try {
-                        pendingId = dropDownProvider.followUpData.firstWhere(
+                        pendingId = dropDownProvider.leadStatuses.firstWhere(
                           (element) {
                             final name =
                                 element.statusName?.toLowerCase() ?? '';
@@ -1096,7 +1096,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
                       // Find ID for In Progress
                       int? currentId;
                       try {
-                        currentId = dropDownProvider.followUpData.firstWhere(
+                        currentId = dropDownProvider.leadStatuses.firstWhere(
                           (element) {
                             final name =
                                 element.statusName?.toLowerCase() ?? '';
@@ -1125,3 +1125,4 @@ class _DashBoardPageState extends State<DashBoardPage> {
   */
 }
 //
+

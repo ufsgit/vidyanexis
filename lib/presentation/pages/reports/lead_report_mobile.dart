@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -321,7 +321,7 @@ class _leadReportMobile extends State<LeadReportMobile> {
                               leadReportProvider.setStatus(0);
                             },
                           ),
-                          ...provider.followUpData.map((status) {
+                          ...provider.leadStatuses.map((status) {
                             return FilterChipWidget(
                               label: status.statusName ?? 'Unknown',
                               isSelected: leadReportProvider.selectedStatus ==
@@ -991,7 +991,7 @@ class _leadReportMobile extends State<LeadReportMobile> {
                         // Status
                         CommonDropdown<int>(
                           hintText: 'Follow-up Status*',
-                          items: dropDownProvider.followUpData
+                          items: dropDownProvider.leadStatuses
                               .map((status) => DropdownItem<int>(
                                     id: status.statusId ?? 0,
                                     name: status.statusName ?? '',
@@ -1001,7 +1001,7 @@ class _leadReportMobile extends State<LeadReportMobile> {
                           onItemSelected: (selectedId) {
                             dropDownProvider.setSelectedStatusId(selectedId);
                             final selectedItem =
-                                dropDownProvider.followUpData.firstWhere(
+                                dropDownProvider.leadStatuses.firstWhere(
                               (status) => status.statusId == selectedId,
                             );
                             statusController.text =
@@ -1279,3 +1279,4 @@ class _leadReportMobile extends State<LeadReportMobile> {
     'This Month',
   ];
 }
+

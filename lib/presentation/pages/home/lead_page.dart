@@ -3695,7 +3695,7 @@ class _LeadsPageState extends State<LeadPage> {
     // Build label text from selected statuses
     String labelText = 'All';
     if (hasSelection) {
-      final selectedNames = dropDownProvider.followUpData
+      final selectedNames = dropDownProvider.leadStatuses
           .where((s) => leadsProvider.selectedStatusIds.contains(s.statusId))
           .map((s) => s.statusName ?? '')
           .toList();
@@ -3722,7 +3722,7 @@ class _LeadsPageState extends State<LeadPage> {
                 barrierColor: Colors.transparent,
                 builder: (ctx) {
                   return _StatusMultiSelectDialog(
-                    allStatuses: dropDownProvider.followUpData,
+                    allStatuses: dropDownProvider.leadStatuses,
                     selectedIds:
                         List<int>.from(leadsProvider.selectedStatusIds),
                     onApply: (selectedIds) {

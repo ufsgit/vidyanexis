@@ -29,7 +29,7 @@ class TaskReportModel {
   final int deleteStatus;
   final String customerName;
   final String mobile;
-  final String toUserName;
+  String toUserName;
   final String address1;
   final String address2;
   final String address3;

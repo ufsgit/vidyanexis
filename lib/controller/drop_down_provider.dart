@@ -30,6 +30,8 @@ class DropDownProvider extends ChangeNotifier {
 
   List<SearchUserDetails> _searchUserDetails = [];
   List<SearchLeadStatusModel> _followUpstatus = [];
+  List<SearchLeadStatusModel> _leadStatuses = [];
+  List<SearchLeadStatusModel> _taskStatuses = [];
   List<TaskTypeModel> _taskType = [];
   List<AMCStatusModel> _amcStatus = [];
   List<DocumentTypeModel> _documentType = [];
@@ -42,6 +44,8 @@ class DropDownProvider extends ChangeNotifier {
   List<SearchUserDetails> get searchUserDetails => _searchUserDetails;
   List<SearchUserDetails> get staffData => _searchUserDetails;
   List<SearchLeadStatusModel> get followUpData => _followUpstatus;
+  List<SearchLeadStatusModel> get leadStatuses => _leadStatuses;
+  List<SearchLeadStatusModel> get taskStatuses => _taskStatuses;
   List<TaskTypeModel> get taskType => _taskType;
   List<DocumentTypeModel> get documentType => _documentType;
   List<AMCStatusModel> get amcStatus => _amcStatus;
@@ -693,6 +697,13 @@ class DropDownProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void resetLeadFormState() {
+    _selectedStatusId = null;
+    _selectedFollowUpId = null;
+    _selectedTransferStatusId = null;
+    notifyListeners();
+  }
+
   bool isFormValid(
       String leadName,
       String enquirySource,
@@ -1003,7 +1014,11 @@ class DropDownProvider extends ChangeNotifier {
   }
 
   Future<void> getFollowUpStatus(BuildContext context, String viewId, {bool forceRefresh = false}) async {
-    if (!forceRefresh && _followUpstatus.isNotEmpty) return;
+    if (!forceRefresh) {
+      if (viewId == "1" && _leadStatuses.isNotEmpty) return;
+      if (viewId == "3" && _taskStatuses.isNotEmpty) return;
+      if (viewId != "1" && viewId != "3" && _followUpstatus.isNotEmpty) return;
+    }
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -1023,20 +1038,28 @@ class DropDownProvider extends ChangeNotifier {
             'DEBUG getFollowUpStatus: Data type=${data.runtimeType}, Value=$data');
 
         if (data != null) {
+          List<SearchLeadStatusModel> parsedData = [];
           // Handle both list and map responses
           if (data is List<dynamic>) {
-            _followUpstatus = data
+            parsedData = data
                 .map((item) => SearchLeadStatusModel.fromJson(item))
                 .toList();
           } else if (data is Map<String, dynamic> && data.containsKey('data')) {
-            _followUpstatus = (data['data'] as List<dynamic>)
+            parsedData = (data['data'] as List<dynamic>)
                 .map((item) => SearchLeadStatusModel.fromJson(item))
                 .toList();
-          } else {
-            _followUpstatus = [];
           }
+          
+          if (viewId == "1") {
+            _leadStatuses = parsedData;
+          } else if (viewId == "3") {
+            _taskStatuses = parsedData;
+          } else {
+            _followUpstatus = parsedData;
+          }
+          
           print(
-              'DEBUG getFollowUpStatus: Loaded ${_followUpstatus.length} statuses');
+              'DEBUG getFollowUpStatus: Loaded ${parsedData.length} statuses for viewId $viewId');
           notifyListeners();
         }
       } else {

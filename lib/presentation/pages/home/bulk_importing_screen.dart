@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -33,7 +33,7 @@ class _BulkImportScreenState extends State<BulkImportScreen> {
           Provider.of<DropDownProvider>(context, listen: false);
       final leadProvider = Provider.of<LeadsProvider>(context, listen: false);
       dropDownProvider.searchUserDetails.clear();
-      dropDownProvider.followUpData.clear();
+      dropDownProvider.leadStatuses.clear();
       dropDownProvider.enquiryForList.clear();
       dropDownProvider.enquiryData.clear();
 
@@ -44,7 +44,7 @@ class _BulkImportScreenState extends State<BulkImportScreen> {
       if (widget.isCustomer) {
         dropDownProvider.getFollowUpStatusCustomer(context);
       } else {
-        if (dropDownProvider.followUpData.isEmpty) {
+        if (dropDownProvider.leadStatuses.isEmpty) {
           dropDownProvider.getFollowUpStatus(context, '1');
         }
       }
@@ -126,7 +126,7 @@ class _BulkImportScreenState extends State<BulkImportScreen> {
                           ? null
                           : () async {
                               final selectedStatus =
-                                  dropDownProvider.followUpData.firstWhere(
+                                  dropDownProvider.leadStatuses.firstWhere(
                                 (status) =>
                                     status.statusId ==
                                     dropDownProvider.selectedStatusId,
@@ -285,7 +285,7 @@ class _BulkImportScreenState extends State<BulkImportScreen> {
                               Expanded(
                                 child: CommonDropdown<int>(
                                     hintText: 'Follow-up Status*',
-                                    items: dropDownProvider.followUpData
+                                    items: dropDownProvider.leadStatuses
                                         .map((status) => DropdownItem<int>(
                                               id: status.statusId ?? 0,
                                               name: status.statusName ?? '',
@@ -297,7 +297,7 @@ class _BulkImportScreenState extends State<BulkImportScreen> {
                                           .setSelectedStatusId(selectedId);
 
                                       final selectedItem = dropDownProvider
-                                          .followUpData
+                                          .leadStatuses
                                           .firstWhere(
                                         (status) =>
                                             status.statusId == selectedId,
@@ -698,3 +698,4 @@ class _BulkImportScreenState extends State<BulkImportScreen> {
     return true;
   }
 }
+

@@ -1,4 +1,4 @@
-import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
+﻿import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:async';
@@ -2694,7 +2694,7 @@ class _CustomerPageState extends State<CustomerPage> {
     // Build label text from selected statuses
     String labelText = 'All';
     if (hasSelection) {
-      final selectedNames = dropDownProvider.followUpData
+      final selectedNames = dropDownProvider.leadStatuses
           .where((s) => customerProvider.selectedStatusIds.contains(s.statusId))
           .map((s) => s.statusName ?? '')
           .toList();
@@ -2721,7 +2721,7 @@ class _CustomerPageState extends State<CustomerPage> {
                 barrierColor: Colors.transparent,
                 builder: (ctx) {
                   return _StatusMultiSelectDialog(
-                    allStatuses: dropDownProvider.followUpData,
+                    allStatuses: dropDownProvider.leadStatuses,
                     selectedIds:
                         List<int>.from(customerProvider.selectedStatusIds),
                     onApply: (selectedIds) {
@@ -3353,3 +3353,4 @@ class _StatusMultiSelectDialogState extends State<_StatusMultiSelectDialog> {
     );
   }
 }
+

@@ -1,4 +1,4 @@
-import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
+﻿import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
@@ -303,7 +303,7 @@ class _WorkReportScreenState extends State<WorkReportScreen> {
                                     ),
                                   ),
                                 ] +
-                                provider.followUpData
+                                provider.leadStatuses
                                     .map((status) => DropdownMenuItem<int>(
                                           value: status.statusId,
                                           child: Text(
@@ -1139,3 +1139,4 @@ class _WorkReportScreenState extends State<WorkReportScreen> {
     }
   }
 }
+

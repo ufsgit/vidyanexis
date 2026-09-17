@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vidyanexis/controller/followup_reports_provider.dart';
@@ -168,7 +168,7 @@ class _FollowupReportMobile extends State<FollowupReportMobile> {
                               followUpReportsProvider.selectedStatus == null,
                           onTap: () => followUpReportsProvider.setStatus(0),
                         ),
-                        ...provider.followUpData.map((s) => FilterChipWidget(
+                        ...provider.leadStatuses.map((s) => FilterChipWidget(
                               label: s.statusName ?? 'Unknown',
                               isSelected:
                                   followUpReportsProvider.selectedStatus ==
@@ -301,7 +301,7 @@ class _FollowupReportMobile extends State<FollowupReportMobile> {
                       ],
                     ),
                     const SizedBox(height: 24),
-                    // ── Reset ────────────────────────────────────
+                    // â”€â”€ Reset â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                     if (followUpReportsProvider.fromDate != null ||
                         followUpReportsProvider.toDate != null ||
                         (followUpReportsProvider.selectedStatus != null &&
@@ -578,3 +578,4 @@ class _FollowupReportMobile extends State<FollowupReportMobile> {
     'This Month',
   ];
 }
+

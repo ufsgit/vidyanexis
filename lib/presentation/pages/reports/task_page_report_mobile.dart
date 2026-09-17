@@ -254,7 +254,7 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
                                 reportsProvider.selectedStatus == null,
                             onTap: () => reportsProvider.toggleStatus(0),
                           ),
-                          ...provider.followUpData.map((s) => FilterChipWidget(
+                          ...provider.taskStatuses.map((s) => FilterChipWidget(
                                 label: s.statusName ?? 'Unknown',
                                 isSelected: reportsProvider.selectedStatus ==
                                     s.statusId,
@@ -736,7 +736,7 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
     // Build label text from selected statuses
     String labelText = 'All';
     if (hasSelection) {
-      final selectedNames = dropDownProvider.followUpData
+      final selectedNames = dropDownProvider.taskStatuses
           .where((s) => reportsProvider.selectedStatusIds.contains(s.statusId))
           .map((s) => s.statusName ?? '')
           .toList();
@@ -763,7 +763,7 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
                 barrierColor: Colors.transparent,
                 builder: (ctx) {
                   return _StatusMultiSelectDialog(
-                    allStatuses: dropDownProvider.followUpData,
+                    allStatuses: dropDownProvider.taskStatuses,
                     selectedIds:
                         List<int>.from(reportsProvider.selectedStatusIds),
                     onApply: (selectedIds) {

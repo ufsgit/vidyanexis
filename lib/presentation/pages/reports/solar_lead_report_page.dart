@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -246,7 +246,7 @@ class _SolarLeadReportPageState extends State<SolarLeadReportPage> {
                 isSelected: provider.selectedStatus == 0,
                 onTap: () => provider.setStatus(0),
               ),
-              ...dropDownProvider.followUpData.map((s) => FilterChipWidget(
+              ...dropDownProvider.leadStatuses.map((s) => FilterChipWidget(
                     label: s.statusName ?? 'Unknown',
                     isSelected: provider.selectedStatus == s.statusId,
                     onTap: () => provider.setStatus(s.statusId ?? 0),
@@ -533,7 +533,7 @@ class _SolarLeadReportPageState extends State<SolarLeadReportPage> {
                           child: Text('All', style: TextStyle(fontSize: 14)),
                         ),
                       ] +
-                      dropDownProvider.followUpData
+                      dropDownProvider.leadStatuses
                           .map((status) => DropdownMenuItem<int>(
                                 value: status.statusId,
                                 child: Text(status.statusName ?? '',
@@ -914,7 +914,7 @@ class _SolarLeadReportPageState extends State<SolarLeadReportPage> {
                 title: AxisTitle(text: yAxisTitle),
                 numberFormat: isCurrency
                     ? NumberFormat.compactCurrency(
-                        symbol: '₹', decimalDigits: 0)
+                        symbol: 'â‚¹', decimalDigits: 0)
                     : NumberFormat.compact(),
                 axisLine: const AxisLine(width: 0),
                 majorTickLines: const MajorTickLines(size: 0),
@@ -949,3 +949,4 @@ class _SolarLeadReportPageState extends State<SolarLeadReportPage> {
     );
   }
 }
+

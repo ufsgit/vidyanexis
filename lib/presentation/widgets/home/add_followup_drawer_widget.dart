@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+﻿import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -82,7 +82,7 @@ class _AddFollowupDrawerWidgetState extends State<AddFollowupDrawerWidget> {
       );
       final selectedId = dropDownProvider.selectedStatusId;
       if (selectedId != null && selectedId != 0) {
-        final selectedItem = dropDownProvider.followUpData.firstWhere(
+        final selectedItem = dropDownProvider.leadStatuses.firstWhere(
           (status) => status.statusId == selectedId,
           orElse: () =>
               SearchLeadStatusModel(statusId: selectedId, statusName: ''),
@@ -142,7 +142,7 @@ class _AddFollowupDrawerWidgetState extends State<AddFollowupDrawerWidget> {
 
                 CommonDropdown<int>(
                   hintText: 'Follow-up Status*',
-                  items: dropDownProvider.followUpData
+                  items: dropDownProvider.leadStatuses
                       .map((status) => DropdownItem<int>(
                             id: status.statusId ?? 0,
                             name: status.statusName ?? '',
@@ -152,7 +152,7 @@ class _AddFollowupDrawerWidgetState extends State<AddFollowupDrawerWidget> {
                   onItemSelected: (selectedId) {
                     dropDownProvider.setSelectedStatusId(selectedId);
                     final selectedItem =
-                        dropDownProvider.followUpData.firstWhere(
+                        dropDownProvider.leadStatuses.firstWhere(
                       (status) => status.statusId == selectedId,
                       orElse: () => SearchLeadStatusModel(
                           statusId: selectedId, statusName: ''),
@@ -425,7 +425,7 @@ class _AddFollowupDrawerWidgetState extends State<AddFollowupDrawerWidget> {
     SettingsProvider settingsProvider,
     AudioFileProvider audioProvider,
   ) async {
-    final selectedStatus = dropDownProvider.followUpData.firstWhere(
+    final selectedStatus = dropDownProvider.leadStatuses.firstWhere(
       (status) => status.statusId == dropDownProvider.selectedStatusId,
       orElse: () => SearchLeadStatusModel(
         followup: 0,
@@ -466,7 +466,7 @@ class _AddFollowupDrawerWidgetState extends State<AddFollowupDrawerWidget> {
                 const SizedBox(height: 10),
                 ...missingDocs.map((doc) => Padding(
                       padding: const EdgeInsets.only(bottom: 4.0),
-                      child: Text('• $doc',
+                      child: Text('â€¢ $doc',
                           style: const TextStyle(fontWeight: FontWeight.w500)),
                     )),
               ],
@@ -1123,3 +1123,4 @@ class _AddFollowupDrawerWidgetState extends State<AddFollowupDrawerWidget> {
     return true;
   }
 }
+

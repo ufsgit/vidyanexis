@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -139,7 +139,7 @@ class ServiceCreationWidget extends StatelessWidget {
                   contentPadding:
                       const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
                 ),
-                // items: provider.followUpData
+                // items: provider.leadStatuses
                 //     .map((status) => DropdownMenuItem<int>(
                 //           value: status.statusId,
                 //           child: Text(
@@ -234,7 +234,7 @@ class ServiceCreationWidget extends StatelessWidget {
                 contentPadding:
                     const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
               ),
-              // items: provider.followUpData
+              // items: provider.leadStatuses
               //     .map((status) => DropdownMenuItem<int>(
               //           value: status.statusId,
               //           child: Text(
@@ -534,3 +534,4 @@ class ServiceCreationWidget extends StatelessWidget {
     );
   }
 }
+

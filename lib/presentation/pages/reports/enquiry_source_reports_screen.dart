@@ -1,4 +1,4 @@
-import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
+﻿import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
@@ -217,7 +217,7 @@ class _EnquirySourceReportsScreenState
                     reportsProvider.getSearchTaskReport(widget.userId, context);
                   },
                 ),
-                ...provider.followUpData.map((status) {
+                ...provider.leadStatuses.map((status) {
                   return FilterChipWidget(
                     label: status.statusName ?? 'Unknown',
                     isSelected:
@@ -446,7 +446,7 @@ class _EnquirySourceReportsScreenState
                           ),
                         ),
                       ] +
-                      provider.followUpData
+                      provider.leadStatuses
                           .map((status) => DropdownMenuItem<int>(
                                 value: status.statusId,
                                 child: Text(
@@ -913,3 +913,4 @@ class _EnquirySourceReportsScreenState
     }
   }
 }
+

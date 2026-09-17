@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -161,7 +161,7 @@ class _WorkReportPhoneState extends State<WorkReportPhone> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── FILTER PANEL ────────────────────────────────────────────────
+          // â”€â”€ FILTER PANEL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
           if (reportsProvider.isFilter)
             Expanded(
               child: SingleChildScrollView(
@@ -187,7 +187,7 @@ class _WorkReportPhoneState extends State<WorkReportPhone> {
                             reportsProvider.setStatus(0);
                           },
                         ),
-                        ...provider.followUpData.map((s) => FilterChipWidget(
+                        ...provider.leadStatuses.map((s) => FilterChipWidget(
                               label: s.statusName ?? 'Unknown',
                               isSelected:
                                   reportsProvider.selectedStatus == s.statusId,
@@ -287,7 +287,7 @@ class _WorkReportPhoneState extends State<WorkReportPhone> {
               ),
             ),
 
-          // ── LIST ────────────────────────────────────────────────────────
+          // â”€â”€ LIST â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
           if (!reportsProvider.isFilter)
             Expanded(
@@ -556,3 +556,4 @@ class _WorkReportPhoneState extends State<WorkReportPhone> {
     }
   }
 }
+
