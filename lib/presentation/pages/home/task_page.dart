@@ -1820,7 +1820,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                 builder: (context, constraints) {
                                   // Fixed columns: Checkbox + No. + Lead Code + Customer + Mobile No. + Task + Status
                                   const double fixedWidth =
-                                      60 + 120 + 180 + 110 + 180 + 120; // 770
+                                      80 + 60 + 120 + 180 + 110 + 180 + 120; // 770
 
                                   double scrollableMinWidth = 150 +
                                       120 +
