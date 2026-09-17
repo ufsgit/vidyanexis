@@ -81,7 +81,7 @@ class DashboardCountTab extends StatelessWidget {
           ),
         ],
       ),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
       child: LayoutBuilder(
         builder: (context, constraints) {
           int crossAxisCount = 2; // Mobile gets 2 cards per row
@@ -93,12 +93,12 @@ class DashboardCountTab extends StatelessWidget {
             crossAxisCount = 3;
           }
 
-          final double spacing = 16.0;
+          final double spacing = 24.0;
           final double availableWidth =
               constraints.maxWidth - (spacing * (crossAxisCount - 1));
           final double itemWidth = availableWidth / crossAxisCount;
           
-          final double aspectRatio = 2.1;
+          final double aspectRatio = 2.4;
 
           return GridView.builder(
             shrinkWrap: true,
