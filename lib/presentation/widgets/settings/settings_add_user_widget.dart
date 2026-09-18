@@ -1149,9 +1149,9 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                                       context: context,
                                       userDetailsId: widget.userId.toString(),
                                       userDetailsName: settingsProvider
-                                          .userNameController.text,
+                                          .userNameController.text.trim(),
                                       password: settingsProvider
-                                          .passWordController.text,
+                                          .passWordController.text.trim(),
                                       workingStatus: settingsProvider
                                           .selectedWorkingStatusId
                                           .toString(),
@@ -1276,8 +1276,8 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                         context: context,
                         userDetailsId: widget.userId.toString(),
                         userDetailsName:
-                            settingsProvider.userNameController.text,
-                        password: settingsProvider.passWordController.text,
+                            settingsProvider.userNameController.text.trim(),
+                        password: settingsProvider.passWordController.text.trim(),
                         workingStatus:
                             settingsProvider.selectedWorkingStatusId.toString(),
                         userType:

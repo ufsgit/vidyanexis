@@ -321,7 +321,7 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
 
       if (response != null && response.statusCode == 200) {
         if(mounted) {
-           Provider.of<WarrentyReportProvider>(context, listen: false).getAmcNotification(context);
+           Provider.of<WarrentyReportProvider>(context, listen: false).getAmcNotification(context, isFilter: true);
         }
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Task created successfully!')),
@@ -359,7 +359,7 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
 
         final card1 = _buildSummaryCard(
           title: "Active Contracts",
-          value: provider.totalActive > 0 ? provider.totalActive.toString() : provider.amcNotificationList.length.toString(),
+          value: provider.totalActive.toString(),
           icon: Icons.description_rounded,
           color: AppColors.secondaryBlue,
           isSelected: provider.isActive == 1,
@@ -368,6 +368,8 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
               provider.setIsActive(0);
             } else {
               provider.setIsActive(1);
+              provider.setIsUpcoming(0);
+              provider.setIsAssigned(0);
             }
             provider.getAmcNotification(context, isFilter: true);
           },
@@ -375,7 +377,7 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
 
         final card2 = _buildSummaryCard(
           title: "Upcoming Services",
-          value: provider.totalUpcoming > 0 ? provider.totalUpcoming.toString() : _countUpcomingServices(provider.amcNotificationList).toString(),
+          value: provider.totalUpcoming.toString(),
           icon: Icons.event_available_rounded,
           color: const Color(0xFFFBBF24),
           isSelected: provider.isUpcoming == 1,
@@ -384,6 +386,8 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
               provider.setIsUpcoming(0);
             } else {
               provider.setIsUpcoming(1);
+              provider.setIsActive(0);
+              provider.setIsAssigned(0);
             }
             provider.getAmcNotification(context, isFilter: true);
           },
@@ -400,6 +404,8 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
               provider.setIsAssigned(0);
             } else {
               provider.setIsAssigned(1);
+              provider.setIsActive(0);
+              provider.setIsUpcoming(0);
             }
             provider.getAmcNotification(context, isFilter: true);
           },

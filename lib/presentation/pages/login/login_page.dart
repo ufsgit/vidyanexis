@@ -61,8 +61,8 @@ class _LoginPageState extends State<LoginPage> {
                 onPressed: () {
                   loginProvider.login(
                       context: context,
-                      passWord: loginProvider.passWordController.text,
-                      userName: loginProvider.userNameController.text);
+                      passWord: loginProvider.passWordController.text.trim(),
+                      userName: loginProvider.userNameController.text.trim());
                 },
               ),
             ),
@@ -170,8 +170,8 @@ class SignUpForm extends StatelessWidget {
                     onSubmitted: (value) {
                       loginProvider.login(
                         context: context,
-                        passWord: loginProvider.passWordController.text,
-                        userName: loginProvider.userNameController.text,
+                        passWord: loginProvider.passWordController.text.trim(),
+                        userName: loginProvider.userNameController.text.trim(),
                       );
                     },
                     suffixIcon: IconButton(

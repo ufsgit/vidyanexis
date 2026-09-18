@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/customer/payment_card.dart';
@@ -56,8 +57,10 @@ class _PaymentTabWidgetState extends State<PaymentTabWidget> {
                       if (Provider.of<SettingsProvider>(context, listen: false)
                               .menuIsSaveMap[81] ==
                           1)
+                        if (AppStyles.isWebScreen(context) == false)
                         GestureDetector(
                           onTap: () {
+                            customerDetailsProvider.clearPaymentDetails();
                             showDialog(
                               context: context,
                               builder: (context) => AddPaymentWidget(
