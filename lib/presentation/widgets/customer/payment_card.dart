@@ -91,8 +91,7 @@ class PaymentCard extends StatelessWidget {
                     style: const TextStyle(color: Colors.grey),
                   ),
                 ),
-                if (settingsprovider.menuIsDeleteMap[70] ==
-                    1) // Assuming same permission as Payment Schedule for now
+                if (settingsprovider.menuIsDeleteMap[81] == 1)
                   IconButton(
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(),
@@ -111,7 +110,6 @@ class PaymentCard extends StatelessWidget {
                               payment.paymentId.toString(),
                               customerId,
                               context);
-                          Navigator.of(context).pop();
                         },
                         confirmButtonText: 'Delete',
                         confirmButtonColor: Colors.red,

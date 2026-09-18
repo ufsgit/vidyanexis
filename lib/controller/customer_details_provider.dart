@@ -603,6 +603,9 @@ class CustomerDetailsProvider extends ChangeNotifier {
         );
       }
       print('Exception occurred: $e');
+    } finally {
+      Navigator.of(context).pop();
+      notifyListeners();
     }
   }
 
