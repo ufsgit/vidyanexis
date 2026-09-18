@@ -8,6 +8,7 @@ import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/utils/pdf_function.dart';
 import 'package:vidyanexis/model/dashboard/user_activity_report_model.dart';
 import 'package:data_table_2/data_table_2.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
 
 class UserActivityTab extends StatefulWidget {
@@ -56,6 +57,8 @@ class _UserActivityTabState extends State<UserActivityTab> {
           ),
           const SizedBox(height: 12),
           _buildUserReportTable(report.userReport ?? []),
+          const SizedBox(height: 32),
+          _buildEmployeeWorkloadChart(report.userReport ?? []),
         ],
       ),
     );
@@ -671,6 +674,122 @@ class _UserActivityTabState extends State<UserActivityTab> {
       headers: _exportHeaders,
       data: _getExportData(report),
       fileName: 'UserActivityReport',
+    );
+  }
+
+  Widget _buildEmployeeWorkloadChart(List<UserReportModel> reportData) {
+    final validData = reportData
+        .where((d) => d.userDetailsName != null && d.userDetailsName!.trim().isNotEmpty)
+        .toList();
+
+    if (validData.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Employee Workload',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              color: AppColors.primaryBlue,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Distribution of assigned, completed, pending, and overdue tasks by employee.',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey[600],
+            ),
+          ),
+          const SizedBox(height: 24),
+          SizedBox(
+            height: 400,
+            child: SfCartesianChart(
+              margin: EdgeInsets.zero,
+              plotAreaBorderWidth: 0,
+              legend: const Legend(
+                isVisible: true,
+                position: LegendPosition.bottom,
+                iconHeight: 12,
+                iconWidth: 12,
+                overflowMode: LegendItemOverflowMode.wrap,
+              ),
+              primaryXAxis: const CategoryAxis(
+                majorGridLines: MajorGridLines(width: 0),
+                axisLine: AxisLine(width: 0),
+                majorTickLines: MajorTickLines(size: 0),
+                labelStyle: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              primaryYAxis: const NumericAxis(
+                isVisible: true,
+                majorGridLines: MajorGridLines(
+                  width: 1,
+                  color: Color(0xFFE2E8F0),
+                  dashArray: <double>[5, 5],
+                ),
+                axisLine: AxisLine(width: 0),
+                majorTickLines: MajorTickLines(size: 0),
+                labelStyle: TextStyle(
+                  fontSize: 11,
+                  color: Colors.grey,
+                ),
+              ),
+              series: <CartesianSeries>[
+                StackedBarSeries<UserReportModel, String>(
+                  name: 'Completed',
+                  legendIconType: LegendIconType.circle,
+                  dataSource: validData,
+                  xValueMapper: (UserReportModel data, _) => data.userDetailsName ?? '',
+                  yValueMapper: (UserReportModel data, _) => double.tryParse(data.completed ?? '0') ?? 0.0,
+                  color: const Color(0xFF2B59C3),
+                ),
+                StackedBarSeries<UserReportModel, String>(
+                  name: 'Pending',
+                  legendIconType: LegendIconType.circle,
+                  dataSource: validData,
+                  xValueMapper: (UserReportModel data, _) => data.userDetailsName ?? '',
+                  yValueMapper: (UserReportModel data, _) => double.tryParse(data.pending ?? '0') ?? 0.0,
+                  color: const Color(0xFF4E8752),
+                ),
+                StackedBarSeries<UserReportModel, String>(
+                  name: 'Overdue',
+                  legendIconType: LegendIconType.circle,
+                  dataSource: validData,
+                  xValueMapper: (UserReportModel data, _) => data.userDetailsName ?? '',
+                  yValueMapper: (UserReportModel data, _) => double.tryParse(data.overdue ?? '0') ?? 0.0,
+                  color: const Color(0xFFB85D3B),
+                ),
+              ],
+              tooltipBehavior: TooltipBehavior(
+                enable: true,
+                textStyle: const TextStyle(fontSize: 12),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
