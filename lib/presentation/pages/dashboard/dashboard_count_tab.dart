@@ -62,8 +62,7 @@ class DashboardCountTab extends StatelessWidget {
       if (settingsProvider.menuIsViewMap[129] == 1 ||
           settingsProvider.menuIsViewMap[138] == 1)
         'Completed_Leads',
-      if (settingsProvider.menuIsViewMap[187] == 1)
-        'Total_Task',
+      if (settingsProvider.menuIsViewMap[187] == 1) 'Total_Task',
     ];
     final items = dashBoardProvider.leadCountMap.entries
         .where((e) => allowedKeys.contains(e.key))
@@ -82,23 +81,24 @@ class DashboardCountTab extends StatelessWidget {
           ),
         ],
       ),
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
       child: LayoutBuilder(
         builder: (context, constraints) {
-          int crossAxisCount = 2; // Default to 2 for mobile
-          if (constraints.maxWidth > 800) {
+          int crossAxisCount = 2; // Mobile gets 2 cards per row
+          if (constraints.maxWidth > 1200) {
+            crossAxisCount = 4; // 4 cards per row for large screens (4, 4, 1)
+          } else if (constraints.maxWidth > 900) {
             crossAxisCount = 4;
           } else if (constraints.maxWidth > 600) {
             crossAxisCount = 3;
           }
 
-          final double spacing = 12.0;
+          final double spacing = 24.0;
           final double availableWidth =
               constraints.maxWidth - (spacing * (crossAxisCount - 1));
           final double itemWidth = availableWidth / crossAxisCount;
-          // Target height to match the premium design (taller than before)
-          final double itemHeight = 120.0;
-          final double aspectRatio = itemWidth / itemHeight;
+          
+          final double aspectRatio = 2.4;
 
           return GridView.builder(
             shrinkWrap: true,
@@ -114,27 +114,12 @@ class DashboardCountTab extends StatelessWidget {
               final item = items[index];
               final String keyword = item.key;
               final int count = item.value;
-              final theme = _getCardTheme(index);
-
-              // Special text/count colors when newDashboardCount == 1
-              Color? countColor;
-              Color? titleColor;
-              if (settingsProvider.newDashboardCount == 1) {
-                if (keyword == 'Missed_Leads') {
-                  countColor = Colors.red;
-                  titleColor = Colors.red;
-                } else if (keyword == 'Followup_Leads') {
-                  countColor = Colors.amber.shade700; // yellow-ish
-                  titleColor = Colors.amber.shade700;
-                }
-              }
+              final theme = _getCardThemeForKeyword(keyword);
 
               return _DashboardCard(
                 keyword: keyword,
                 count: count,
                 theme: theme,
-                countColor: countColor,
-                titleColor: titleColor,
                 onTap: () {
                   if (keyword == 'Total_Task') {
                     Navigator.push(
@@ -169,16 +154,38 @@ class DashboardCountTab extends StatelessWidget {
     );
   }
 
-  _CardTheme _getCardTheme(int index) {
-    final themes = [
-      _CardTheme(const Color(0xFFE9EAFB), const Color(0xFF7B61FF)), // Purple
-      _CardTheme(const Color(0xFFFFF1E8), const Color(0xFFFF9D6E)), // Orange
-      _CardTheme(const Color(0xFFE6F5FF), const Color(0xFF63B3ED)), // Blue
-      _CardTheme(const Color(0xFFEDF7ED), const Color(0xFF48BB78)), // Green
-      _CardTheme(const Color(0xFFFCE4EC), const Color(0xFFF06292)), // Rose
-      _CardTheme(const Color(0xFFFFF9C4), const Color(0xFFFBC02D)), // Amber
-    ];
-    return themes[index % themes.length];
+  _CardTheme _getCardThemeForKeyword(String keyword) {
+    final purple = [const Color(0xFF7A5CFA), const Color(0xFF9070FF)];
+    final emerald = [const Color(0xFF14A46B), const Color(0xFF26B87D)];
+    final cyan = [const Color(0xFF009FD6), const Color(0xFF00BBEA)];
+    final orange = [const Color(0xFFFF6D00), const Color(0xFFFF8E3C)];
+    final red = [
+      const Color(0xFFE11D48),
+      const Color(0xFFF43F5E)
+    ]; // Vibrant red for SLA critical
+
+    switch (keyword) {
+      case 'Total_Leads':
+        return _CardTheme(purple, Icons.group_outlined);
+      case 'Fresh_Leads':
+        return _CardTheme(orange, Icons.bolt_outlined);
+      case 'Missed_Leads':
+        return _CardTheme(red, Icons.error_outline);
+      case 'Completed_Leads':
+        return _CardTheme(emerald, Icons.check_circle_outline);
+      case 'Followup_Leads':
+        return _CardTheme(cyan, Icons.calendar_today_outlined);
+      case 'Upcoming_Followup':
+        return _CardTheme(purple, Icons.access_time_outlined);
+      case 'New_Leads':
+        return _CardTheme(emerald, Icons.fiber_new_outlined);
+      case 'Not_Interested':
+        return _CardTheme(cyan, Icons.block_outlined);
+      case 'Transferred_Leads':
+        return _CardTheme(purple, Icons.swap_horiz_outlined);
+      default:
+        return _CardTheme(purple, Icons.insert_chart_outlined);
+    }
   }
 
   Widget _buildSkeleton(BuildContext context) {
@@ -210,10 +217,10 @@ class DashboardCountTab extends StatelessWidget {
           return Container(
             decoration: BoxDecoration(
               color: Colors.grey.shade100,
-              borderRadius: BorderRadius.circular(4),
+              borderRadius: BorderRadius.circular(16),
             ),
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -257,25 +264,21 @@ class DashboardCountTab extends StatelessWidget {
 }
 
 class _CardTheme {
-  final Color background;
-  final Color accent;
-  _CardTheme(this.background, this.accent);
+  final List<Color> gradientColors;
+  final IconData icon;
+  _CardTheme(this.gradientColors, this.icon);
 }
 
 class _DashboardCard extends StatefulWidget {
   final String keyword;
   final int count;
   final _CardTheme theme;
-  final Color? countColor;
-  final Color? titleColor;
   final VoidCallback onTap;
 
   const _DashboardCard({
     required this.keyword,
     required this.count,
     required this.theme,
-    this.countColor,
-    this.titleColor,
     required this.onTap,
   });
 
@@ -285,94 +288,86 @@ class _DashboardCard extends StatefulWidget {
 
 class _DashboardCardState extends State<_DashboardCard> {
   bool _isHovered = false;
+  bool _isPressed = false;
 
   @override
   Widget build(BuildContext context) {
-    final String displayTitle = widget.keyword
-        .replaceAll('_', ' ')
-        .split(' ')
-        .map((w) => w.isNotEmpty ? w[0].toUpperCase() + w.substring(1) : w)
-        .join(' ');
+    final String displayTitle =
+        widget.keyword.replaceAll('_', ' ').toUpperCase();
 
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
+        onTapDown: (_) => setState(() => _isPressed = true),
+        onTapUp: (_) => setState(() => _isPressed = false),
+        onTapCancel: () => setState(() => _isPressed = false),
         onTap: widget.onTap,
         child: AnimatedScale(
-          scale: _isHovered ? 1.03 : 1.0,
-          duration: const Duration(milliseconds: 200),
+          scale: _isPressed ? 0.90 : (_isHovered ? 1.05 : 1.0),
+          duration: const Duration(milliseconds: 600),
+          curve: Curves.elasticOut,
           child: Container(
             decoration: BoxDecoration(
-              color: widget.theme.background,
-              borderRadius: BorderRadius.circular(4),
-              boxShadow: _isHovered
-                  ? [
-                      BoxShadow(
-                        color: widget.theme.accent.withOpacity(0.15),
-                        blurRadius: 15,
-                        offset: const Offset(0, 8),
-                      )
-                    ]
-                  : [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.02),
-                        blurRadius: 5,
-                        offset: const Offset(0, 2),
-                      )
-                    ],
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: widget.theme.gradientColors,
+              ),
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: widget.theme.gradientColors.first.withOpacity(0.25),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                )
+              ],
             ),
-            clipBehavior: Clip.antiAlias,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             child: Stack(
               children: [
-                // Wave Graphic
-                Positioned(
-                  right: -10,
-                  top: 20,
-                  bottom: 20,
-                  width: 60,
-                  child: CustomPaint(
-                    painter: _WavePainter(color: widget.theme.accent),
-                  ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Primary Metric
+                    Text(
+                      widget.count.toString(),
+                      style: const TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    // Title
+                    Text(
+                      displayTitle,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white.withOpacity(0.9),
+                        letterSpacing: 0.5,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
                 ),
-                // Content
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.count.toString(),
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.w900,
-                          color: widget.countColor ??
-                              Colors.black.withOpacity(0.8),
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        displayTitle,
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: widget.titleColor ??
-                              Colors.black.withOpacity(0.5),
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const Spacer(),
-                      Align(
-                        alignment: Alignment.bottomRight,
-                        child: Icon(
-                          Icons.chevron_right_rounded,
-                          color: Colors.black.withOpacity(0.3),
-                          size: 24,
-                        ),
-                      ),
-                    ],
+                // Top-Right Icon Badge
+                Align(
+                  alignment: Alignment.topRight,
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(
+                      widget.theme.icon,
+                      color: Colors.white,
+                      size: 20,
+                    ),
                   ),
                 ),
               ],
@@ -382,68 +377,4 @@ class _DashboardCardState extends State<_DashboardCard> {
       ),
     );
   }
-}
-
-class _WavePainter extends CustomPainter {
-  final Color color;
-  _WavePainter({required this.color});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color.withOpacity(0.4)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.5
-      ..strokeCap = StrokeCap.round;
-
-    final path = Path();
-    double midY = size.height / 2;
-    double amplitude = 15;
-    double frequency = 0.1;
-
-    path.moveTo(0, midY);
-    for (double x = 0; x <= size.width; x++) {
-      double y = midY +
-          amplitude *
-              1.5 *
-              (0.5 * (1 + (x / size.width))) *
-              (x / size.width % 0.5 == 0 ? 1 : 0.8);
-      // Let's draw a more "organic" wave like in the image
-      y = midY +
-          amplitude *
-              ((x < size.width * 0.2)
-                  ? (x / (size.width * 0.2))
-                  : (x < size.width * 0.5)
-                      ? (1 - (x - size.width * 0.2) / (size.width * 0.3))
-                      : (x < size.width * 0.8)
-                          ? (-(x - size.width * 0.5) / (size.width * 0.3))
-                          : (-1 + (x - size.width * 0.8) / (size.width * 0.2)));
-      // Wait, simple sine is better
-    }
-
-    // Drawing a stylized wave line
-    path.reset();
-    path.moveTo(0, midY);
-    path.cubicTo(size.width * 0.25, midY - amplitude, size.width * 0.5,
-        midY + amplitude, size.width * 0.75, midY - amplitude * 0.5);
-    path.quadraticBezierTo(
-        size.width, midY + amplitude * 0.2, size.width, midY);
-
-    canvas.drawPath(path, paint);
-
-    // Draw a second wave for more detail
-    final paint2 = Paint()
-      ..color = color.withOpacity(0.15)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.5;
-
-    final path2 = Path();
-    path2.moveTo(0, midY + 5);
-    path2.cubicTo(size.width * 0.3, midY + 5 - amplitude, size.width * 0.6,
-        midY + 5 + amplitude, size.width * 0.9, midY + 5 - amplitude * 0.3);
-    canvas.drawPath(path2, paint2);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
