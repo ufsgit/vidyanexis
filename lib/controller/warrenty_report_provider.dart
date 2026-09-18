@@ -499,9 +499,12 @@ class WarrentyReportProvider extends ChangeNotifier {
           if (data['list'] is List) {
             _amcNotificationList = await compute(
                 _parseAmcNotification, data['list'] as List<dynamic>);
-            _totalAssigned = int.tryParse(data['total_assigned']?.toString() ?? '0') ?? 0;
-            _totalActive = int.tryParse(data['total_active']?.toString() ?? '0') ?? 0;
-            _totalUpcoming = int.tryParse(data['total_upcoming']?.toString() ?? '0') ?? 0;
+            
+            if (_isActive == 0 && _isUpcoming == 0 && _isAssigned == 0) {
+              _totalAssigned = int.tryParse(data['total_assigned']?.toString() ?? '0') ?? 0;
+              _totalActive = int.tryParse(data['total_active']?.toString() ?? '0') ?? 0;
+              _totalUpcoming = int.tryParse(data['total_upcoming']?.toString() ?? '0') ?? 0;
+            }
           } else {
             _amcNotificationList = [];
             _totalAssigned = 0;
