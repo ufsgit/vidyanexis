@@ -849,7 +849,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                           ResponsiveRow(
                             children: [
                               if (settingsProvider.consumerNameMandatory == 1 &&
-                                  settingsProvider.menuIsViewMap[149] == 1)
+                                  settingsProvider.menuIsViewMap[149] == 1)...[
                                 Expanded(
                                   child: Row(
                                     children: [
@@ -871,6 +871,23 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                     ],
                                   ),
                                 ),
+                              ] else ...[
+                                Expanded(
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 4.0),
+                                          child: Container(),
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                          width: 48), // Spacer for alignment
+                                    ],
+                                  ),
+                                ),
+                              ],
                               if (settingsProvider.consumerContactNoMandatory ==
                                       1 &&
                                   settingsProvider.menuIsViewMap[150] == 1)
