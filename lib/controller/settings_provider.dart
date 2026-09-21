@@ -549,6 +549,7 @@ class SettingsProvider extends ChangeNotifier {
   int _taskDuplicateButton = 0;
   int _solarPvSystemSpecification = 1;
   int _newDashboardCount = 0;
+  int _showLeadCode = 0;
   int? _selectedStatusId;
 
   int get toggleValue => _toggleValue;
@@ -572,6 +573,7 @@ class SettingsProvider extends ChangeNotifier {
   int get taskDuplicateButton => _taskDuplicateButton;
   int get solarPvSystemSpecification => _solarPvSystemSpecification;
   int get newDashboardCount => _newDashboardCount;
+  int get showLeadCode => _showLeadCode;
 
   int _jobSheet = 0;
   int get jobSheet => _jobSheet;
@@ -699,6 +701,11 @@ class SettingsProvider extends ChangeNotifier {
             caption.toLowerCase().contains('ramco location permission'))) {
       _ramcoLocationPermission = value;
     }
+    else if (caption != null &&
+        (caption.toLowerCase().contains('show_lead_code') ||
+            caption.toLowerCase().contains('show lead code'))) {
+      _showLeadCode = value;
+    }
   }
 
   void setDocumentButtonTaskStatus(int value) {
@@ -732,6 +739,12 @@ class SettingsProvider extends ChangeNotifier {
   void setNewDashboardCount(int value) {
     _newDashboardCount = value;
     _syncStateToPermissionsList(31, value);
+    notifyListeners();
+  }
+
+  void setShowLeadCode(int value) {
+    _showLeadCode = value;
+    _syncStateToPermissionsList(36, value);
     notifyListeners();
   }
 
@@ -4989,6 +5002,7 @@ class SettingsProvider extends ChangeNotifier {
     _hideWarranty = 0;
     _solarPvSystemSpecification = 1;
     _newDashboardCount = 0;
+    _showLeadCode = 0;
     notifyListeners();
   }
 

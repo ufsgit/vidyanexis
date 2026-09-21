@@ -1017,7 +1017,8 @@ class _LeadsPageState extends State<LeadPage> {
                         children: [
                           // Fixed columns section
                           SizedBox(
-                            width: 860,
+                            width:
+                                settingsProvider.showLeadCode == 1 ? 860 : 700,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
@@ -1061,19 +1062,22 @@ class _LeadsPageState extends State<LeadPage> {
                                           ),
                                         ),
                                       ),
-                                      TableWidget(
-                                        width: 160,
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 4.0, horizontal: 12.0),
-                                        alignment: Alignment.centerLeft,
-                                        data: Text(
-                                          'Lead code',
-                                          style: TextStyle(
-                                            fontSize: 13,
-                                            color: Colors.white,
+                                      if (settingsProvider.showLeadCode ==
+                                          1) ...[
+                                        TableWidget(
+                                          width: 160,
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 4.0, horizontal: 12.0),
+                                          alignment: Alignment.centerLeft,
+                                          data: Text(
+                                            'Lead code',
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              color: Colors.white,
+                                            ),
                                           ),
                                         ),
-                                      ),
+                                      ],
                                       TableWidget(
                                         width: 230,
                                         padding: EdgeInsets.symmetric(
@@ -1237,25 +1241,33 @@ class _LeadsPageState extends State<LeadPage> {
                                                                   fontSize: 13),
                                                         ),
                                                       ),
-                                                      TableWidget(
-                                                        width: 160,
-                                                        alignment: Alignment
-                                                            .centerLeft,
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                                vertical: 4.0,
-                                                                horizontal:
-                                                                    12.0),
-                                                        data: Text(
-                                                          lead.getDisplayLeadCode(settingsProvider.leadCodeWithEnquiryCode),
-                                                          maxLines: 1,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          style:
-                                                              const TextStyle(
-                                                                  fontSize: 13),
+                                                      if (settingsProvider
+                                                              .showLeadCode ==
+                                                          1) ...[
+                                                        TableWidget(
+                                                          width: 160,
+                                                          alignment: Alignment
+                                                              .centerLeft,
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                                  vertical: 4.0,
+                                                                  horizontal:
+                                                                      12.0),
+                                                          data: Text(
+                                                            lead.getDisplayLeadCode(
+                                                                settingsProvider
+                                                                    .leadCodeWithEnquiryCode),
+                                                            maxLines: 1,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                            style:
+                                                                const TextStyle(
+                                                                    fontSize:
+                                                                        13),
+                                                          ),
                                                         ),
-                                                      ),
+                                                      ],
                                                       TableWidget(
                                                         width: 230,
                                                         alignment: Alignment

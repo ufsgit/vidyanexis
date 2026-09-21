@@ -1819,8 +1819,11 @@ class _tasksPageReportState extends State<TaskPage> {
                               child: LayoutBuilder(
                                 builder: (context, constraints) {
                                   // Fixed columns: Checkbox + No. + Lead Code + Customer + Mobile No. + Task + Status
-                                  const double fixedWidth =
-                                      80 + 60 + 120 + 180 + 110 + 180 + 120; // 770
+                                  double fixedWidth =
+                                      80 + 60 + 180 + 110 + 180 + 120; // 690
+                                  if (settingsProvider.showLeadCode == 1) {
+                                    fixedWidth += 120;
+                                  }
 
                                   double scrollableMinWidth = 150 +
                                       120 +
@@ -1904,17 +1907,23 @@ class _tasksPageReportState extends State<TaskPage> {
                                                         ),
                                                       ),
                                                     ),
-                                                    TableWidget(
-                                                      width: 120,
-                                                      title: 'Lead Code',
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          vertical: 4.0,
-                                                          horizontal: 12.0),
-                                                      alignment:
-                                                          Alignment.centerLeft,
-                                                      color: Colors.white,
-                                                    ),
+                                                      if (settingsProvider
+                                                                .showLeadCode ==
+                                                            1)
+                                                          TableWidget(
+                                                            width: 120,
+                                                            title: 'Lead Code',
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    vertical:
+                                                                        4.0,
+                                                                    horizontal:
+                                                                        12.0),
+                                                            alignment: Alignment
+                                                                .centerLeft,
+                                                            color: Colors.white,
+                                                          ),
                                                     TableWidget(
                                                       width: 180,
                                                       title: 'Customer',
@@ -2169,24 +2178,20 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                       ),
                                                                     ),
                                                                     // Lead Code
-                                                                    TableWidget(
-                                                                      width:
-                                                                          120,
-                                                                      fontSize:
-                                                                          13,
-                                                                      padding: const EdgeInsets
-                                                                          .symmetric(
-                                                                          vertical:
-                                                                              4.0,
-                                                                          horizontal:
-                                                                              12.0),
-                                                                      title: task
-                                                                              .leadCode ??
-                                                                          '-',
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .normal,
-                                                                    ),
+                                                                        if (settingsProvider.showLeadCode ==
+                                                                            1)
+                                                                          TableWidget(
+                                                                            width:
+                                                                                120,
+                                                                            fontSize:
+                                                                                13,
+                                                                            padding:
+                                                                                const EdgeInsets.symmetric(vertical: 4.0, horizontal: 12.0),
+                                                                            title:
+                                                                                task.leadCode ?? '-',
+                                                                            fontWeight:
+                                                                                FontWeight.normal,
+                                                                          ),
                                                                     // Customer
                                                                     TableWidget(
                                                                       width:
