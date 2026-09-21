@@ -115,6 +115,13 @@ class _CustomerPageState extends State<CustomerPage> {
       settingsProvider.searchBranch(context);
       settingsProvider.searchDepartment('', context);
 
+      //only for ramco
+      if (settingsProvider.ramcoSort == 1) {
+        customerProvider.setSortOption(13, context); // Creation Date (Newest)
+      } else {
+        customerProvider.setSortOption(0, context); // existing Default
+      }
+
       customerProvider.getSearchCustomers(context, isSilent: true);
       final provider = Provider.of<DropDownProvider>(context, listen: false);
       // Load all statuses by default (no ViewIn_Id) so the dropdown shows everything.

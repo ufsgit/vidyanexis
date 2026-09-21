@@ -550,6 +550,7 @@ class SettingsProvider extends ChangeNotifier {
   int _solarPvSystemSpecification = 1;
   int _newDashboardCount = 0;
   int _showLeadCode = 0;
+  int _ramcoSort = 0;
   int? _selectedStatusId;
 
   int get toggleValue => _toggleValue;
@@ -574,6 +575,7 @@ class SettingsProvider extends ChangeNotifier {
   int get solarPvSystemSpecification => _solarPvSystemSpecification;
   int get newDashboardCount => _newDashboardCount;
   int get showLeadCode => _showLeadCode;
+  int get ramcoSort => _ramcoSort;
 
   int _jobSheet = 0;
   int get jobSheet => _jobSheet;
@@ -706,6 +708,11 @@ class SettingsProvider extends ChangeNotifier {
             caption.toLowerCase().contains('show lead code'))) {
       _showLeadCode = value;
     }
+    else if (caption != null &&
+        (caption.toLowerCase().contains('ramco_sort') ||
+            caption.toLowerCase().contains('ramco sort'))) {
+      _ramcoSort = value;
+    }
   }
 
   void setDocumentButtonTaskStatus(int value) {
@@ -745,6 +752,12 @@ class SettingsProvider extends ChangeNotifier {
   void setShowLeadCode(int value) {
     _showLeadCode = value;
     _syncStateToPermissionsList(36, value);
+    notifyListeners();
+  }
+
+  void setRamcoSort(int value) {
+    _ramcoSort = value;
+    _syncStateToPermissionsList(37, value);
     notifyListeners();
   }
 
@@ -5003,6 +5016,7 @@ class SettingsProvider extends ChangeNotifier {
     _solarPvSystemSpecification = 1;
     _newDashboardCount = 0;
     _showLeadCode = 0;
+    _ramcoSort = 0;
     notifyListeners();
   }
 
