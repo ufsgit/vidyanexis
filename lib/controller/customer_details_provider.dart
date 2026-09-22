@@ -3989,6 +3989,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
+      _documentList.clear();
 
       final response = await HttpRequest.httpGetRequest(
           endPoint: '${HttpUrls.getDocumentList}?Customer_Id=$customerId');
