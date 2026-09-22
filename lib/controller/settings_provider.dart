@@ -696,10 +696,9 @@ class SettingsProvider extends ChangeNotifier {
             (caption.toLowerCase().contains('new_dashboard_count') ||
                 caption.toLowerCase().contains('new dashboard count')))) {
       _newDashboardCount = value;
-    } else if (permissionId == 36 ||
-        (caption != null &&
+    } else if (caption != null &&
             (caption.toLowerCase().contains('lead_creation_changes') ||
-                caption.toLowerCase().contains('lead creation changes')))) {
+                caption.toLowerCase().contains('lead creation changes'))) {
       _leadCreationChanges = value;
     } else if (caption != null &&
         (caption.toLowerCase().contains('ramco_place') ||

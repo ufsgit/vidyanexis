@@ -1062,8 +1062,9 @@ class _LeadsPageState extends State<LeadPage> {
                                           ),
                                         ),
                                       ),
-                                      TableWidget(
-                                        width: 160,
+                                      if (settingsProvider.showLeadCode == 1)
+                                        TableWidget(
+                                          width: 160,
                                         padding: EdgeInsets.symmetric(
                                             vertical: 4.0, horizontal: 12.0),
                                         alignment: Alignment.centerLeft,
@@ -1233,8 +1234,9 @@ class _LeadsPageState extends State<LeadPage> {
                                                                   fontSize: 13),
                                                         ),
                                                       ),
-                                                      TableWidget(
-                                                        width: 160,
+                                                      if (settingsProvider.showLeadCode == 1)
+                                                        TableWidget(
+                                                          width: 160,
                                                         alignment: Alignment
                                                             .centerLeft,
                                                         padding: EdgeInsets
