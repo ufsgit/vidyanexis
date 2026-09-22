@@ -294,7 +294,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                         ),
                                         child: Text(
                                           'ME',
-                                          style: TextStyle(
+                                          style: TextStyle(fontFamily: 'PlusJakartaSans', 
                                             color: customerProvider.entryType !=
                                                     'all'
                                                 ? AppColors.primaryBlue
@@ -334,7 +334,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                         ),
                                         child: Text(
                                           'ALL',
-                                          style: TextStyle(
+                                          style: TextStyle(fontFamily: 'PlusJakartaSans', 
                                             color: customerProvider.entryType ==
                                                     'all'
                                                 ? AppColors.primaryBlue
@@ -1117,11 +1117,8 @@ class _CustomerPageState extends State<CustomerPage> {
                                 child: Container(
                                   height: rowHeight,
                                   decoration: BoxDecoration(
-                                    color: index == _hoveredRowIndex
-                                        ? const Color(0xFFF1F5F9)
-                                        : (index % 2 == 0
-                                            ? Colors.white
-                                            : const Color(0xFFF6F7F9)),
+                                    color: index == _hoveredRowIndex ? const Color(0xFFE2E8F0) : (index % 2 == 0 ? const Color(0xFFE8EDF2) : const Color(0xFFF5F5F5)),
+                                    border: Border(bottom: BorderSide(color: Colors.grey.shade200)),
                                   ),
                                   child: Row(
                                     children: [
@@ -1171,10 +1168,10 @@ class _CustomerPageState extends State<CustomerPage> {
                                                     overflow:
                                                         TextOverflow.ellipsis,
                                                     maxLines: 1,
-                                                    style: const TextStyle(
+                                                    style: const TextStyle(fontFamily: 'PlusJakartaSans', 
                                                       color: Colors.blue,
                                                       fontWeight:
-                                                          FontWeight.normal,
+                                                          FontWeight.w600,
                                                       fontSize: 12,
                                                     ),
                                                   ),
@@ -1197,7 +1194,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                                     child: Icon(
                                                       Icons.keyboard_arrow_down,
                                                       size: 20,
-                                                      color: Colors.grey,
+                                                      color: Colors.black,
                                                     ),
                                                   ),
                                                 );
@@ -1407,7 +1404,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
                                             style:
-                                                const TextStyle(fontSize: 12),
+                                                const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 12),
                                           ),
                                         ),
                                       ),
@@ -1580,11 +1577,8 @@ class _CustomerPageState extends State<CustomerPage> {
                                       child: Container(
                                         height: rowHeight,
                                         decoration: BoxDecoration(
-                                          color: index == _hoveredRowIndex
-                                              ? const Color(0xFFF1F5F9)
-                                              : (index % 2 == 0
-                                                  ? Colors.white
-                                                  : const Color(0xFFF6F7F9)),
+                                          color: index == _hoveredRowIndex ? const Color(0xFFE2E8F0) : (index % 2 == 0 ? const Color(0xFFE8EDF2) : const Color(0xFFF5F5F5)),
+                                          border: Border(bottom: BorderSide(color: Colors.grey.shade200)),
                                         ),
                                         child: Row(
                                           children: [
@@ -1654,7 +1648,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                                     overflow:
                                                         TextOverflow.ellipsis,
                                                     maxLines: 1,
-                                                    style: TextStyle(
+                                                    style: TextStyle(fontFamily: 'PlusJakartaSans', 
                                                       color: parseColor(
                                                           lead.colorCode),
                                                       fontWeight:
@@ -1834,7 +1828,7 @@ class _CustomerPageState extends State<CustomerPage> {
                             onTap: () => onItemClick(lead.customerId),
                             child: Text(
                               lead.customerName,
-                              style: const TextStyle(
+                              style: const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -1844,7 +1838,7 @@ class _CustomerPageState extends State<CustomerPage> {
                         ),
                         Text(
                           lead.nextFollowUpDate.toFormattedDate(),
-                          style: TextStyle(
+                          style: TextStyle(fontFamily: 'PlusJakartaSans', 
                             fontSize: 12,
                             color: lead.lateFollowUp == '0'
                                 ? Colors.green
@@ -1857,14 +1851,14 @@ class _CustomerPageState extends State<CustomerPage> {
                     Text(
                       'To: ${lead.toUserName}',
                       style:
-                          TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                          TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 12, color: Colors.grey.shade600),
                     ),
                     if (showCustomerCode && lead.registrationNo.isNotEmpty)
                       Padding(
                         padding: const EdgeInsets.only(top: 4.0),
                         child: Text(
                           'Reg No: ${lead.registrationNo}',
-                          style: TextStyle(fontSize: 12, color: Colors.grey.shade700),
+                          style: TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 12, color: Colors.grey.shade700),
                         ),
                       ),
                     if (showRamcoLocation)
@@ -1872,7 +1866,7 @@ class _CustomerPageState extends State<CustomerPage> {
                         padding: const EdgeInsets.only(top: 4.0),
                         child: Text(
                           'Location: ${(((lead.locationName != null && lead.locationName!.trim().isNotEmpty && lead.locationName != 'null')) || (lead.location != null && lead.location != 'null' && lead.location!.trim().isNotEmpty) || (lead.mapLink != null && lead.mapLink != 'null' && lead.mapLink!.trim().isNotEmpty) || (lead.latitude != null && lead.latitude != 'null' && lead.latitude!.trim().isNotEmpty && lead.longitude != null && lead.longitude != 'null' && lead.longitude!.trim().isNotEmpty)) ? 'Yes' : 'No'}',
-                          style: TextStyle(fontSize: 12, color: Colors.grey.shade700),
+                          style: TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 12, color: Colors.grey.shade700),
                         ),
                       ),
                     const SizedBox(height: 8),
@@ -1881,7 +1875,7 @@ class _CustomerPageState extends State<CustomerPage> {
                         lead.remark,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
+                        style: const TextStyle(fontFamily: 'PlusJakartaSans', 
                             fontSize: 12, color: Colors.black87),
                       ),
                     const SizedBox(height: 12),
@@ -1902,7 +1896,7 @@ class _CustomerPageState extends State<CustomerPage> {
                             ),
                             child: Text(
                               lead.statusName,
-                              style: TextStyle(
+                              style: TextStyle(fontFamily: 'PlusJakartaSans', 
                                 color: parseColor(lead.colorCode),
                                 fontSize: 11,
                                 fontWeight: FontWeight.w600,
@@ -1943,7 +1937,7 @@ class _CustomerPageState extends State<CustomerPage> {
           ),
           Text(
             'Showing $startItem / $endItem of ${customerProvider.totalCount}',
-            style: const TextStyle(fontSize: 16),
+            style: const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 16),
           ),
           IconButton(
             icon: const Icon(Icons.arrow_forward),
@@ -1979,7 +1973,7 @@ class _CustomerPageState extends State<CustomerPage> {
                     const Center(
                       child: Text(
                         'Choose Follow Up Date',
-                        style: TextStyle(
+                        style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
                             fontSize: 18, fontWeight: FontWeight.w700),
                       ),
                     ),
@@ -2003,7 +1997,7 @@ class _CustomerPageState extends State<CustomerPage> {
                               customerProvider.selectedDateFilterIndex == index
                                   ? AppColors.primaryBlue
                                   : Colors.white,
-                          labelStyle: TextStyle(
+                          labelStyle: TextStyle(fontFamily: 'PlusJakartaSans', 
                             color: customerProvider.selectedDateFilterIndex ==
                                     index
                                 ? Colors.white
@@ -2016,7 +2010,7 @@ class _CustomerPageState extends State<CustomerPage> {
                     const Text(
                       'Pick a date',
                       style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                          TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 16, fontWeight: FontWeight.w700),
                     ),
                     const SizedBox(height: 15),
                     Row(
@@ -2152,7 +2146,7 @@ class _CustomerPageState extends State<CustomerPage> {
                     const Center(
                       child: Text(
                         'Choose AMC Date',
-                        style: TextStyle(
+                        style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
                             fontSize: 18, fontWeight: FontWeight.w700),
                       ),
                     ),
@@ -2177,7 +2171,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                       index
                                   ? AppColors.primaryBlue
                                   : Colors.white,
-                          labelStyle: TextStyle(
+                          labelStyle: TextStyle(fontFamily: 'PlusJakartaSans', 
                             color:
                                 customerProvider.selectedAmcDateFilterIndex ==
                                         index
@@ -2191,7 +2185,7 @@ class _CustomerPageState extends State<CustomerPage> {
                     const Text(
                       'Pick a date',
                       style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                          TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 16, fontWeight: FontWeight.w700),
                     ),
                     const SizedBox(height: 15),
                     Row(
@@ -2319,7 +2313,7 @@ class _CustomerPageState extends State<CustomerPage> {
                     const Center(
                       child: Text(
                         'Choose Work Completion Date',
-                        style: TextStyle(
+                        style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
                             fontSize: 18, fontWeight: FontWeight.w700),
                       ),
                     ),
@@ -2344,7 +2338,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                       index
                                   ? AppColors.primaryBlue
                                   : Colors.white,
-                          labelStyle: TextStyle(
+                          labelStyle: TextStyle(fontFamily: 'PlusJakartaSans', 
                             color: customerProvider.selectedWcDateFilterIndex ==
                                     index
                                 ? Colors.white
@@ -2357,7 +2351,7 @@ class _CustomerPageState extends State<CustomerPage> {
                     const Text(
                       'Pick a date',
                       style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                          TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 16, fontWeight: FontWeight.w700),
                     ),
                     const SizedBox(height: 15),
                     Row(
@@ -2787,7 +2781,7 @@ class _CustomerPageState extends State<CustomerPage> {
                   child: Text(
                     'Status: $labelText',
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
+                    style: TextStyle(fontFamily: 'PlusJakartaSans', 
                       color:
                           hasSelection ? AppColors.primaryBlue : Colors.black87,
                       fontSize: 14,
@@ -2845,7 +2839,7 @@ class _CustomerPageState extends State<CustomerPage> {
                   value: 0,
                   child: Text(
                     'All',
-                    style: TextStyle(fontSize: 14),
+                    style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
                   ),
                 ),
               ] +
@@ -2857,7 +2851,7 @@ class _CustomerPageState extends State<CustomerPage> {
                           child: Text(
                             user.userDetailsName,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(fontSize: 14),
+                            style: const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
                           ),
                         ),
                       ))
@@ -2873,7 +2867,7 @@ class _CustomerPageState extends State<CustomerPage> {
                 child: Text(
                   userName.isNotEmpty ? userName : 'Current User',
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontSize: 14),
+                  style: const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
                 ),
               ),
             ),
@@ -2897,7 +2891,7 @@ class _CustomerPageState extends State<CustomerPage> {
             child: DropdownButton<int>(
               value: dropdownValue,
               hint: const Text('Assigned Staff: All',
-                  style: TextStyle(fontSize: 14, color: Colors.black87)),
+                  style: TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 14, color: Colors.black87)),
               items: dropdownItems,
               selectedItemBuilder: (BuildContext context) {
                 return dropdownItems.map<Widget>((DropdownMenuItem<int> item) {
@@ -2906,7 +2900,7 @@ class _CustomerPageState extends State<CustomerPage> {
                     children: [
                       const Text('Assigned Staff: ',
                           style:
-                              TextStyle(fontSize: 14, color: Colors.black87)),
+                              TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 14, color: Colors.black87)),
                       item.child,
                     ],
                   );
@@ -2925,7 +2919,7 @@ class _CustomerPageState extends State<CustomerPage> {
               iconSize: 18,
               disabledHint: Text(
                 'Assigned Staff: ${userName.isNotEmpty ? userName : 'Current User'}',
-                style: const TextStyle(fontSize: 14, color: Colors.black87),
+                style: const TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 14, color: Colors.black87),
               ),
             ),
           ),
@@ -2942,7 +2936,7 @@ class _CustomerPageState extends State<CustomerPage> {
                 value: 0,
                 child: Text(
                   'All',
-                  style: TextStyle(fontSize: 14),
+                  style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
                 ),
               ),
             ] +
@@ -2954,7 +2948,7 @@ class _CustomerPageState extends State<CustomerPage> {
                         child: Text(
                           item.enquiryForName,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontSize: 14),
+                          style: const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
                         ),
                       ),
                     ))
@@ -2976,7 +2970,7 @@ class _CustomerPageState extends State<CustomerPage> {
             child: DropdownButton<int>(
               value: customerProvider.selectedEnquiryFor ?? 0,
               hint: const Text('Enquiry For: All',
-                  style: TextStyle(fontSize: 14, color: Colors.black87)),
+                  style: TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 14, color: Colors.black87)),
               items: items,
               selectedItemBuilder: (BuildContext context) {
                 return items.map<Widget>((DropdownMenuItem<int> item) {
@@ -2985,7 +2979,7 @@ class _CustomerPageState extends State<CustomerPage> {
                     children: [
                       const Text('Enquiry For: ',
                           style:
-                              TextStyle(fontSize: 14, color: Colors.black87)),
+                              TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 14, color: Colors.black87)),
                       item.child,
                     ],
                   );
@@ -3014,7 +3008,7 @@ class _CustomerPageState extends State<CustomerPage> {
                 value: 0,
                 child: Text(
                   'All',
-                  style: TextStyle(fontSize: 14),
+                  style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
                 ),
               ),
             ] +
@@ -3026,7 +3020,7 @@ class _CustomerPageState extends State<CustomerPage> {
                         child: Text(
                           item.enquirySourceName,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontSize: 14),
+                          style: const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
                         ),
                       ),
                     ))
@@ -3048,7 +3042,7 @@ class _CustomerPageState extends State<CustomerPage> {
             child: DropdownButton<int>(
               value: customerProvider.selectedEnquirySource ?? 0,
               hint: const Text('Enquiry Source: All',
-                  style: TextStyle(fontSize: 14, color: Colors.black87)),
+                  style: TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 14, color: Colors.black87)),
               items: items,
               selectedItemBuilder: (BuildContext context) {
                 return items.map<Widget>((DropdownMenuItem<int> item) {
@@ -3057,7 +3051,7 @@ class _CustomerPageState extends State<CustomerPage> {
                     children: [
                       const Text('Enquiry Source: ',
                           style:
-                              TextStyle(fontSize: 14, color: Colors.black87)),
+                              TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 14, color: Colors.black87)),
                       item.child,
                     ],
                   );
@@ -3086,7 +3080,7 @@ class _CustomerPageState extends State<CustomerPage> {
                 value: 0,
                 child: Text(
                   'All',
-                  style: TextStyle(fontSize: 14),
+                  style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
                 ),
               ),
             ] +
@@ -3098,7 +3092,7 @@ class _CustomerPageState extends State<CustomerPage> {
                         child: Text(
                           branch.branchName ?? '',
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontSize: 14),
+                          style: const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
                         ),
                       ),
                     ))
@@ -3120,7 +3114,7 @@ class _CustomerPageState extends State<CustomerPage> {
             child: DropdownButton<int>(
               value: customerProvider.selectedBranch ?? 0,
               hint: const Text('Department: All',
-                  style: TextStyle(fontSize: 14, color: Colors.black87)),
+                  style: TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 14, color: Colors.black87)),
               items: items,
               selectedItemBuilder: (BuildContext context) {
                 return items.map<Widget>((DropdownMenuItem<int> item) {
@@ -3129,7 +3123,7 @@ class _CustomerPageState extends State<CustomerPage> {
                     children: [
                       const Text('Department: ',
                           style:
-                              TextStyle(fontSize: 14, color: Colors.black87)),
+                              TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 14, color: Colors.black87)),
                       item.child,
                     ],
                   );
@@ -3304,7 +3298,7 @@ class _StatusMultiSelectDialogState extends State<_StatusMultiSelectDialog> {
                   const Expanded(
                     child: Text(
                       'Select Status',
-                      style: TextStyle(
+                      style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
@@ -3332,7 +3326,7 @@ class _StatusMultiSelectDialogState extends State<_StatusMultiSelectDialog> {
                   final bool isChecked = _tempSelected.contains(id);
                   return CheckboxListTile(
                     dense: true,
-                    title: Text(name, style: const TextStyle(fontSize: 14)),
+                    title: Text(name, style: const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14)),
                     value: isChecked,
                     activeColor: const Color(0xFF152D70),
                     controlAffinity: ListTileControlAffinity.leading,
