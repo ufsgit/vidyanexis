@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -33,6 +33,7 @@ import 'package:vidyanexis/presentation/pages/dashboard/attendance_dashboard_tab
 import 'package:vidyanexis/presentation/pages/travel_allowance/travel_allowance_page.dart';
 import 'package:vidyanexis/controller/location_tracking_provider.dart';
 import 'package:vidyanexis/presentation/pages/location/location_tracking_page.dart';
+import 'package:vidyanexis/presentation/pages/dashboard/lead_flow_tab.dart';
 
 class DashBoardPage extends StatefulWidget {
   const DashBoardPage({super.key});
@@ -97,6 +98,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
         if (userType == "1") 8,
         if (userType == "1") 9,
         if (settingsProvider.hasTravelAllowancePermission) 10,
+        11, // Lead Flow
       ];
 
       if (allowedTabs.isNotEmpty && settingsProvider.menuIsViewMap.isNotEmpty) {
@@ -158,6 +160,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
       if (userType == "1") 8,
       if (userType == "1") 9,
       if (settingsProvider.hasTravelAllowancePermission) 10,
+      11, // Lead Flow
     ];
 
     if (allowedTabs.isNotEmpty && !_hasLoadedInitialTab && settingsProvider.menuIsViewMap.isNotEmpty) {
@@ -629,6 +632,8 @@ class _DashBoardPageState extends State<DashBoardPage> {
                   case 10:
                     return const TravelAllowancePage(
                         isEmbeddedInDashboard: true);
+                  case 11:
+                    return const LeadFlowTab();
                   default:
                     return const SizedBox.shrink();
                 }

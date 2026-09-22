@@ -183,6 +183,8 @@ class HttpUrls {
   static String searchLeadDashboard = "lead/Search_lead_Dashboard";
   static String workSummary = "lead/Customer_Work_Summary";
   static String getLeadStageReport = "lead/Get_Lead_Stage_Report";
+  static String getLeadCountDayWise = "lead/Get_Lead_Count_Day_Wise";
+  static String getConversionCountDayWise = "lead/Get_Conversion_Count_Day_Wise";
   static String searchDocumentType = "settings/Search_document_type";
   static String saveImage = "lead/Save_Image";
   static String getDocumentList = "lead/Get_Images_By_Customer";

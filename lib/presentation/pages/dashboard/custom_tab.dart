@@ -229,6 +229,7 @@ class _CustomTabState extends State<CustomTab> {
       if (widget.userType == '1') 'User Activity',
       if (widget.userType == '1') 'Attendance Dashboard',
       if (settingsProvider.hasTravelAllowancePermission) 'Travel Allowance',
+      'Lead Flow',
     ];
 
     if (_tabKeys.length != tabOptions.length) {
@@ -288,6 +289,7 @@ class _CustomTabState extends State<CustomTab> {
                       if (widget.userType == '1') 8,
                       if (widget.userType == '1') 9,
                       if (settingsProvider.hasTravelAllowancePermission) 10,
+                      11, // Lead Flow
                     ];
 
                     if (index >= 0 && index < allowedTabIds.length) {
