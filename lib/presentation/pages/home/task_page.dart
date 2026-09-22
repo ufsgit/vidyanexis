@@ -4654,15 +4654,18 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                             taskItem.departmentIds);
 
                                                                     // Default selected user name
+                                                                    final taskKey = taskItem.uniqueId ??
+                                                                        taskItem.taskTypeId.toString();
                                                                     int? assignedUserId = reportsProvider
-                                                                        .taskTypeToUserMap[taskItem
-                                                                            .uniqueId ??
-                                                                        taskItem
-                                                                            .taskTypeId
-                                                                            .toString()];
-                                                                    String
-                                                                        defaultUserName =
-                                                                        '';
+                                                                        .taskTypeToUserMap[taskKey];
+                                                                    String defaultUserName = '';
+
+                                                                    final leadProvider = Provider.of<LeadsProvider>(
+                                                                        context,
+                                                                        listen: false);
+                                                                    final int loginUserId = leadProvider.loginUserId != 0
+                                                                        ? leadProvider.loginUserId
+                                                                        : (int.tryParse(reportsProvider.loginUserId) ?? 0);
 
                                                                     if (assignedUserId !=
                                                                         null) {
@@ -4678,12 +4681,25 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                             matchedStaff.userDetailsName ??
                                                                                 '';
                                                                       } catch (_) {}
+                                                                    } else if (loginUserId != 0) {
+                                                                      try {
+                                                                        final loggedInStaff = departmentStaff.firstWhere(
+                                                                          (s) => s.userDetailsId == loginUserId,
+                                                                        );
+                                                                        assignedUserId = loggedInStaff.userDetailsId;
+                                                                        defaultUserName = loggedInStaff.userDetailsName ?? '';
+                                                                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                                          if (reportsProvider.taskTypeToUserMap[taskKey] == null) {
+                                                                            reportsProvider.setTaskUser(taskKey, loggedInStaff.userDetailsId);
+                                                                          }
+                                                                        });
+                                                                      } catch (_) {}
                                                                     }
 
                                                                     return CustomAutocompleteSearch<
                                                                         SearchUserDetails>(
                                                                       key: ValueKey(
-                                                                          'user_search_${taskItem.uniqueId ?? taskItem.taskTypeId}'),
+                                                                          'user_search_${taskKey}_${assignedUserId ?? 0}'),
                                                                       showOptionsOnTap:
                                                                           true,
                                                                       maxHeight:
@@ -4714,8 +4730,7 @@ class _tasksPageReportState extends State<TaskPage> {
 
                                                                         reportsProvider
                                                                             .setTaskUser(
-                                                                          taskItem.uniqueId ??
-                                                                              taskItem.taskTypeId.toString(),
+                                                                          taskKey,
                                                                           selected
                                                                               .userDetailsId,
                                                                         );

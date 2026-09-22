@@ -29,6 +29,9 @@ class TaskPageProvider extends ChangeNotifier {
   bool _isTaskLoading = false;
   bool get isTaskLoading => _isTaskLoading;
 
+  String _loginUserId = '';
+  String get loginUserId => _loginUserId;
+
   List<TaskReportModel> _taskReport = [];
   List<TaskReportModel> get taskReport => _taskReport;
   List<TaskTypeModel> _taskTypeModel = [];
@@ -1319,6 +1322,7 @@ class TaskPageProvider extends ChangeNotifier {
 
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
+      _loginUserId = userId;
 
       final Map<String, dynamic> queryParams = {
         "Task_Type_Id": tasktypeId,
@@ -1440,6 +1444,7 @@ class TaskPageProvider extends ChangeNotifier {
 
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
+      _loginUserId = userId;
 
       final Map<String, dynamic> queryParams = {
         "Task_Type_Id": tasktypeId,
