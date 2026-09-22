@@ -1512,15 +1512,15 @@ class _CustomerPageState extends State<CustomerPage> {
                                   vertical: 4.0, horizontal: 8.0),
                               color: Color(0xFFFFFFFF),
                             ),
-                            if (!showRamcoLocation)
-                              const TableWidget(
-                                width: 120,
-                                title: 'Location',
-                                fontWeight: FontWeight.normal,
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 4.0, horizontal: 8.0),
-                                color: Color(0xFFFFFFFF),
-                              ),
+                            // if (!showRamcoLocation)
+                            //   const TableWidget(
+                            //     width: 120,
+                            //     title: 'Location',
+                            //     fontWeight: FontWeight.normal,
+                            //     padding: EdgeInsets.symmetric(
+                            //         vertical: 4.0, horizontal: 8.0),
+                            //     color: Color(0xFFFFFFFF),
+                            //   ),
                             if (showRamcoLocation)
                               const TableWidget(
                                 width: 120,
@@ -1699,53 +1699,53 @@ class _CustomerPageState extends State<CustomerPage> {
                                                       horizontal: 8.0),
                                               title: lead.toUserName,
                                             ),
-                                            if (!showRamcoLocation)
-                                              SizedBox(
-                                                width: 120,
-                                                child: Padding(
-                                                  padding: const EdgeInsets.symmetric(
-                                                      vertical: 4.0, horizontal: 8.0),
-                                                  child: InkWell(
-                                                    onTap: () {
-                                                      String? validLink;
-                                                    if (lead.location != null && lead.location != 'null' && lead.location!.trim().isNotEmpty) validLink = lead.location;
-                                                    else if (lead.mapLink != null && lead.mapLink != 'null' && lead.mapLink!.trim().isNotEmpty) validLink = lead.mapLink;
-                                                    else if (lead.latitude != null && lead.latitude != 'null' && lead.latitude!.trim().isNotEmpty && lead.longitude != null && lead.longitude != 'null' && lead.longitude!.trim().isNotEmpty) {
-                                                      validLink = 'https://www.google.com/maps?q=${lead.latitude},${lead.longitude}';
-                                                    }
+                                            // if (!showRamcoLocation)
+                                            //   SizedBox(
+                                            //     width: 120,
+                                            //     child: Padding(
+                                            //       padding: const EdgeInsets.symmetric(
+                                            //           vertical: 4.0, horizontal: 8.0),
+                                            //       child: InkWell(
+                                            //         onTap: () {
+                                            //           String? validLink;
+                                            //         if (lead.location != null && lead.location != 'null' && lead.location!.trim().isNotEmpty) validLink = lead.location;
+                                            //         else if (lead.mapLink != null && lead.mapLink != 'null' && lead.mapLink!.trim().isNotEmpty) validLink = lead.mapLink;
+                                            //         else if (lead.latitude != null && lead.latitude != 'null' && lead.latitude!.trim().isNotEmpty && lead.longitude != null && lead.longitude != 'null' && lead.longitude!.trim().isNotEmpty) {
+                                            //           validLink = 'https://www.google.com/maps?q=${lead.latitude},${lead.longitude}';
+                                            //         }
                                                     
-                                                    if (validLink != null) {
-                                                      _openMaps(validLink);
-                                                    }
-                                                  },
-                                                  child: Builder(
-                                                    builder: (context) {
-                                                      bool hasLink = (lead.location != null && lead.location != 'null' && lead.location!.trim().isNotEmpty) ||
-                                                                     (lead.mapLink != null && lead.mapLink != 'null' && lead.mapLink!.trim().isNotEmpty) ||
-                                                                     (lead.latitude != null && lead.latitude != 'null' && lead.latitude!.trim().isNotEmpty && lead.longitude != null && lead.longitude != 'null' && lead.longitude!.trim().isNotEmpty);
+                                            //         if (validLink != null) {
+                                            //           _openMaps(validLink);
+                                            //         }
+                                            //       },
+                                            //       child: Builder(
+                                            //         builder: (context) {
+                                            //           bool hasLink = (lead.location != null && lead.location != 'null' && lead.location!.trim().isNotEmpty) ||
+                                            //                          (lead.mapLink != null && lead.mapLink != 'null' && lead.mapLink!.trim().isNotEmpty) ||
+                                            //                          (lead.latitude != null && lead.latitude != 'null' && lead.latitude!.trim().isNotEmpty && lead.longitude != null && lead.longitude != 'null' && lead.longitude!.trim().isNotEmpty);
                                                       
-                                                      String displayText = '-';
-                                                      if (lead.locationName != null && lead.locationName!.trim().isNotEmpty && lead.locationName != 'null') {
-                                                        displayText = lead.locationName!;
-                                                      } else if (hasLink) {
-                                                        displayText = 'View Map';
-                                                      }
+                                            //           String displayText = '-';
+                                            //           if (lead.locationName != null && lead.locationName!.trim().isNotEmpty && lead.locationName != 'null') {
+                                            //             displayText = lead.locationName!;
+                                            //           } else if (hasLink) {
+                                            //             displayText = 'View Map';
+                                            //           }
                                                       
-                                                      return Text(
-                                                        displayText,
-                                                        style: TextStyle(
-                                                          fontSize: 12,
-                                                          color: hasLink ? Colors.blue : Colors.black87,
-                                                          decoration: hasLink ? TextDecoration.underline : TextDecoration.none,
-                                                        ),
-                                                        maxLines: 1,
-                                                        overflow: TextOverflow.ellipsis,
-                                                      );
-                                                    }
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
+                                            //           return Text(
+                                            //             displayText,
+                                            //             style: TextStyle(
+                                            //               fontSize: 12,
+                                            //               color: hasLink ? Colors.blue : Colors.black87,
+                                            //               decoration: hasLink ? TextDecoration.underline : TextDecoration.none,
+                                            //             ),
+                                            //             maxLines: 1,
+                                            //             overflow: TextOverflow.ellipsis,
+                                            //           );
+                                            //         }
+                                            //       ),
+                                            //     ),
+                                            //   ),
+                                            // ),
                                             if (showRamcoLocation)
                                               TableWidget(
                                                 width: 120,
@@ -1755,9 +1755,14 @@ class _CustomerPageState extends State<CustomerPage> {
                                                     const EdgeInsets.symmetric(
                                                         vertical: 4.0,
                                                         horizontal: 8.0),
-                                                title: ((lead.locationName != null && lead.locationName!.trim().isNotEmpty && lead.locationName != 'null') || (lead.location != null && lead.location != 'null' && lead.location!.trim().isNotEmpty) ||
-                                                                     (lead.mapLink != null && lead.mapLink != 'null' && lead.mapLink!.trim().isNotEmpty) ||
-                                                                     (lead.latitude != null && lead.latitude != 'null' && lead.latitude!.trim().isNotEmpty && lead.longitude != null && lead.longitude != 'null' && lead.longitude!.trim().isNotEmpty)) ? 'Yes' : 'No',
+                                                // location is maplink
+                                                title: ((lead.location
+                                                                ?.toString() ??
+                                                            '')
+                                                        .trim()
+                                                        .isNotEmpty)
+                                                    ? 'Yes'
+                                                    : 'No',
                                               ),
                                             if (showLocation)
                                               TableWidget(
