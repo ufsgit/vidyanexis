@@ -463,6 +463,7 @@ class _LeadsPageState extends State<LeadPage> {
     if (settingsProvider.menuIsViewMap[142] == 1) scrollableTableWidth += 150.0;
     if (settingsProvider.consumerNameMandatory == 1) scrollableTableWidth += 150.0;
     if (settingsProvider.consumerContactNoMandatory == 1) scrollableTableWidth += 150.0;
+    if (settingsProvider.ramcoLocationPermission == 1) scrollableTableWidth += 150.0;
 
     // Calculate dynamic heights for table
     final double screenHeight = MediaQuery.of(context).size.height;
@@ -1828,6 +1829,24 @@ class _LeadsPageState extends State<LeadPage> {
                                               ),
                                             ),
                                             if (settingsProvider
+                                                    .ramcoLocationPermission ==
+                                                1)
+                                              TableWidget(
+                                                width: 150,
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 4.0,
+                                                        horizontal: 12.0),
+                                                alignment: Alignment.centerLeft,
+                                                data: const Text(
+                                                  'Location',
+                                                  style: TextStyle(
+                                                    fontSize: 13,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                              ), // for ramco
+                                            if (settingsProvider
                                                     .menuIsViewMap[142] ==
                                                 1)
                                               TableWidget(
@@ -2582,6 +2601,29 @@ class _LeadsPageState extends State<LeadPage> {
                                                                   fontSize: 12),
                                                         ),
                                                       ),
+                                                      if (settingsProvider
+                                                              .ramcoLocationPermission ==
+                                                          1)
+                                                        TableWidget(
+                                                          width: 150,
+                                                          fontSize: 12,
+                                                          fontWeight:
+                                                              FontWeight.normal,
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .symmetric(
+                                                                  vertical: 4.0,
+                                                                  horizontal:
+                                                                      8.0),
+                                                          // location is maplink
+                                                          title: ((lead.location
+                                                                          ?.toString() ??
+                                                                      '')
+                                                                  .trim()
+                                                                  .isNotEmpty)
+                                                              ? 'Yes'
+                                                              : 'No',
+                                                        ), // for ramco only
                                                       if (settingsProvider
                                                                   .menuIsViewMap[
                                                               142] ==
