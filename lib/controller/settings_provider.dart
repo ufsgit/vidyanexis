@@ -549,6 +549,9 @@ class SettingsProvider extends ChangeNotifier {
   int _taskDuplicateButton = 0;
   int _solarPvSystemSpecification = 1;
   int _newDashboardCount = 0;
+  int _leadCreationChanges = 0;
+  int _showLeadCode = 0;
+  int _ramcoSort = 0;
   int? _selectedStatusId;
 
   int get toggleValue => _toggleValue;
@@ -572,6 +575,9 @@ class SettingsProvider extends ChangeNotifier {
   int get taskDuplicateButton => _taskDuplicateButton;
   int get solarPvSystemSpecification => _solarPvSystemSpecification;
   int get newDashboardCount => _newDashboardCount;
+  int get leadCreationChanges => _leadCreationChanges;
+  int get showLeadCode => _showLeadCode;
+  int get ramcoSort => _ramcoSort;
 
   int _jobSheet = 0;
   int get jobSheet => _jobSheet;
@@ -690,6 +696,11 @@ class SettingsProvider extends ChangeNotifier {
             (caption.toLowerCase().contains('new_dashboard_count') ||
                 caption.toLowerCase().contains('new dashboard count')))) {
       _newDashboardCount = value;
+    } else if (permissionId == 36 ||
+        (caption != null &&
+            (caption.toLowerCase().contains('lead_creation_changes') ||
+                caption.toLowerCase().contains('lead creation changes')))) {
+      _leadCreationChanges = value;
     } else if (caption != null &&
         (caption.toLowerCase().contains('ramco_place') ||
             caption.toLowerCase().contains('ramco place'))) {
@@ -698,6 +709,16 @@ class SettingsProvider extends ChangeNotifier {
         (caption.toLowerCase().contains('ramco_location_permission') ||
             caption.toLowerCase().contains('ramco location permission'))) {
       _ramcoLocationPermission = value;
+    }
+    else if (caption != null &&
+        (caption.toLowerCase().contains('show_lead_code') ||
+            caption.toLowerCase().contains('show lead code'))) {
+      _showLeadCode = value;
+    }
+    else if (caption != null &&
+        (caption.toLowerCase().contains('ramco_sort') ||
+            caption.toLowerCase().contains('ramco sort'))) {
+      _ramcoSort = value;
     }
   }
 
@@ -732,6 +753,24 @@ class SettingsProvider extends ChangeNotifier {
   void setNewDashboardCount(int value) {
     _newDashboardCount = value;
     _syncStateToPermissionsList(31, value);
+    notifyListeners();
+  }
+
+  void setLeadCreationChanges(int value) {
+    _leadCreationChanges = value;
+    _syncStateToPermissionsList(36, value);
+    notifyListeners();
+  }
+
+  void setShowLeadCode(int value) {
+    _showLeadCode = value;
+    _syncStateToPermissionsList(36, value);
+    notifyListeners();
+  }
+
+  void setRamcoSort(int value) {
+    _ramcoSort = value;
+    _syncStateToPermissionsList(37, value);
     notifyListeners();
   }
 
@@ -4989,6 +5028,9 @@ class SettingsProvider extends ChangeNotifier {
     _hideWarranty = 0;
     _solarPvSystemSpecification = 1;
     _newDashboardCount = 0;
+    _leadCreationChanges = 0;
+    _showLeadCode = 0;
+    _ramcoSort = 0;
     notifyListeners();
   }
 

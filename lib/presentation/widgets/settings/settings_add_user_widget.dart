@@ -77,22 +77,23 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
         settingsProvider.searchDesignation("", context);
 
         settingsProvider.workingStatusController.text = '';
-        settingsProvider.emailIdController.text = widget.email!;
-        settingsProvider.mobileNoController.text = widget.mobileNo!;
-        settingsProvider.confirmPasswordController.text = widget.password!;
-        settingsProvider.passWordController.text = widget.password!;
-        settingsProvider.userNameController.text = widget.userName!;
+        settingsProvider.emailIdController.text = widget.email ?? '';
+        settingsProvider.mobileNoController.text = widget.mobileNo ?? '';
+        settingsProvider.confirmPasswordController.text = widget.password ?? '';
+        settingsProvider.passWordController.text = widget.password ?? '';
+        settingsProvider.userNameController.text = widget.userName ?? '';
         settingsProvider.firstNameController.text = widget.firstName ?? '';
         settingsProvider.lastNameController.text = widget.lastName ?? '';
-        settingsProvider.employeeCodeController.text = widget.empCode!;
-        settingsProvider.dateOfJoinController.text = widget.doj!;
-        settingsProvider.designationController.text = widget.designation!;
-        settingsProvider.selectedDesignationId = widget.designationId!;
+        settingsProvider.employeeCodeController.text = widget.empCode ?? '';
+        settingsProvider.dateOfJoinController.text = widget.doj ?? '';
+        settingsProvider.designationController.text = widget.designation ?? '';
+        settingsProvider.selectedDesignationId = widget.designationId ?? 0;
         settingsProvider.toggleAppLogin(widget.appLogin ?? false);
         final userWorkingStatus =
             settingsProvider.searchWorkingStatus.firstWhere(
           (status) =>
-              status.workingStatusId == int.parse(widget.userStatusId ?? ''),
+              status.workingStatusId ==
+              (int.tryParse(widget.userStatusId ?? '') ?? 0),
           orElse: () => SearchWorkingStatusModel(
             workingStatusId: 0,
             workingStatusName: '',
@@ -106,7 +107,7 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
               userWorkingStatus.workingStatusName;
         }
         final userDepartmentId = settingsProvider.departmentModel.firstWhere(
-          (status) => status.departmentId == widget.departmentId,
+          (status) => status.departmentId == (widget.departmentId ?? 0),
           orElse: () => DepartmentModel(
             departmentId: 0,
             departmentName: '',
@@ -119,7 +120,7 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
               userDepartmentId.departmentName;
         }
         final branchId = settingsProvider.branchModel.firstWhere(
-          (status) => status.branchId == widget.branchId,
+          (status) => status.branchId == (widget.branchId ?? 0),
           orElse: () => BranchModel(),
         );
 
@@ -128,7 +129,9 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
           settingsProvider.branchController.text = branchId.branchName ?? "";
         }
         final userType = settingsProvider.searchUserType.firstWhere(
-          (status) => status.userTypeId == int.parse(widget.userType ?? ''),
+          (status) =>
+              status.userTypeId ==
+              (int.tryParse(widget.userType ?? '') ?? 0),
           orElse: () => SearchUserTypeModel(
             userTypeId: 0,
             userTypeName: '',
@@ -1113,10 +1116,8 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                   ),
                 ],
               ),
-              if (settingsProvider.allowAppLogin) ...[
-                const SizedBox(height: 16),
-                _buildTaskStatusManagingField(context, settingsProvider),
-              ],
+              const SizedBox(height: 16),
+              _buildTaskStatusManagingField(context, settingsProvider),
               const SizedBox(height: 10),
               if (!AppStyles.isWebScreen(context)) ...[
                 const SizedBox(height: 20),

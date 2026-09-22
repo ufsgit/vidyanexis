@@ -1017,7 +1017,8 @@ class _LeadsPageState extends State<LeadPage> {
                         children: [
                           // Fixed columns section
                           SizedBox(
-                            width: 860,
+                            width:
+                                settingsProvider.showLeadCode == 1 ? 860 : 700,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
@@ -1068,7 +1069,7 @@ class _LeadsPageState extends State<LeadPage> {
                                         alignment: Alignment.centerLeft,
                                         data: Text(
                                           'Lead code',
-                                          style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                          style: TextStyle(
                                             fontSize: 13,
                                             color: Colors.white,
                                           ),
@@ -1247,7 +1248,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                           overflow: TextOverflow
                                                               .ellipsis,
                                                           style:
-                                                              const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
+                                                              const TextStyle(
                                                                   fontSize: 13),
                                                         ),
                                                       ),

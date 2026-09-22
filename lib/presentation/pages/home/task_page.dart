@@ -1811,8 +1811,11 @@ class _tasksPageReportState extends State<TaskPage> {
                               child: LayoutBuilder(
                                 builder: (context, constraints) {
                                   // Fixed columns: Checkbox + No. + Lead Code + Customer + Mobile No. + Task + Status
-                                  const double fixedWidth =
-                                      80 + 60 + 120 + 180 + 110 + 180 + 120; // 770
+                                  double fixedWidth =
+                                      80 + 60 + 180 + 110 + 180 + 120; // 690
+                                  if (settingsProvider.showLeadCode == 1) {
+                                    fixedWidth += 120;
+                                  }
 
                                   double scrollableMinWidth = 150 +
                                       120 +
@@ -1896,17 +1899,23 @@ class _tasksPageReportState extends State<TaskPage> {
                                                         ),
                                                       ),
                                                     ),
-                                                    TableWidget(
-                                                      width: 120,
-                                                      title: 'Lead Code',
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          vertical: 4.0,
-                                                          horizontal: 12.0),
-                                                      alignment:
-                                                          Alignment.centerLeft,
-                                                      color: Colors.white,
-                                                    ),
+                                                      if (settingsProvider
+                                                                .showLeadCode ==
+                                                            1)
+                                                          TableWidget(
+                                                            width: 120,
+                                                            title: 'Lead Code',
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    vertical:
+                                                                        4.0,
+                                                                    horizontal:
+                                                                        12.0),
+                                                            alignment: Alignment
+                                                                .centerLeft,
+                                                            color: Colors.white,
+                                                          ),
                                                     TableWidget(
                                                       width: 180,
                                                       title: 'Customer',
@@ -2160,24 +2169,20 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                       ),
                                                                     ),
                                                                     // Lead Code
-                                                                    TableWidget(
-                                                                      width:
-                                                                          120,
-                                                                      fontSize:
-                                                                          13,
-                                                                      padding: const EdgeInsets
-                                                                          .symmetric(
-                                                                          vertical:
-                                                                              4.0,
-                                                                          horizontal:
-                                                                              12.0),
-                                                                      title: task
-                                                                              .leadCode ??
-                                                                          '-',
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .normal,
-                                                                    ),
+                                                                        if (settingsProvider.showLeadCode ==
+                                                                            1)
+                                                                          TableWidget(
+                                                                            width:
+                                                                                120,
+                                                                            fontSize:
+                                                                                13,
+                                                                            padding:
+                                                                                const EdgeInsets.symmetric(vertical: 4.0, horizontal: 12.0),
+                                                                            title:
+                                                                                task.leadCode ?? '-',
+                                                                            fontWeight:
+                                                                                FontWeight.normal,
+                                                                          ),
                                                                     // Customer
                                                                     TableWidget(
                                                                       width:
@@ -4633,15 +4638,18 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                             taskItem.departmentIds);
 
                                                                     // Default selected user name
+                                                                    final taskKey = taskItem.uniqueId ??
+                                                                        taskItem.taskTypeId.toString();
                                                                     int? assignedUserId = reportsProvider
-                                                                        .taskTypeToUserMap[taskItem
-                                                                            .uniqueId ??
-                                                                        taskItem
-                                                                            .taskTypeId
-                                                                            .toString()];
-                                                                    String
-                                                                        defaultUserName =
-                                                                        '';
+                                                                        .taskTypeToUserMap[taskKey];
+                                                                    String defaultUserName = '';
+
+                                                                    final leadProvider = Provider.of<LeadsProvider>(
+                                                                        context,
+                                                                        listen: false);
+                                                                    final int loginUserId = leadProvider.loginUserId != 0
+                                                                        ? leadProvider.loginUserId
+                                                                        : (int.tryParse(reportsProvider.loginUserId) ?? 0);
 
                                                                     if (assignedUserId !=
                                                                         null) {
@@ -4657,12 +4665,25 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                             matchedStaff.userDetailsName ??
                                                                                 '';
                                                                       } catch (_) {}
+                                                                    } else if (loginUserId != 0) {
+                                                                      try {
+                                                                        final loggedInStaff = departmentStaff.firstWhere(
+                                                                          (s) => s.userDetailsId == loginUserId,
+                                                                        );
+                                                                        assignedUserId = loggedInStaff.userDetailsId;
+                                                                        defaultUserName = loggedInStaff.userDetailsName ?? '';
+                                                                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                                          if (reportsProvider.taskTypeToUserMap[taskKey] == null) {
+                                                                            reportsProvider.setTaskUser(taskKey, loggedInStaff.userDetailsId);
+                                                                          }
+                                                                        });
+                                                                      } catch (_) {}
                                                                     }
 
                                                                     return CustomAutocompleteSearch<
                                                                         SearchUserDetails>(
                                                                       key: ValueKey(
-                                                                          'user_search_${taskItem.uniqueId ?? taskItem.taskTypeId}'),
+                                                                          'user_search_${taskKey}_${assignedUserId ?? 0}'),
                                                                       showOptionsOnTap:
                                                                           true,
                                                                       maxHeight:
@@ -4693,8 +4714,7 @@ class _tasksPageReportState extends State<TaskPage> {
 
                                                                         reportsProvider
                                                                             .setTaskUser(
-                                                                          taskItem.uniqueId ??
-                                                                              taskItem.taskTypeId.toString(),
+                                                                          taskKey,
                                                                           selected
                                                                               .userDetailsId,
                                                                         );
