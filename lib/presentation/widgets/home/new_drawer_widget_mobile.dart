@@ -273,7 +273,9 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
     } else if (dropDownProvider.isFollowupRequired() &&
         leadProvider.followUpDateController.text.isEmpty &&
         widget.isEdit == false) {
-      errorMessage = 'Please select Follow-up Date';
+      errorMessage = settingsProvider.leadCreationChanges == 1
+          ? 'Please select Assigned Date'
+          : 'Please select Follow-up Date';
       errorTab = 3;
     } else if (validation?.isValid == false) {
       errorMessage = 'Please Enter mandatory fields';
@@ -1603,7 +1605,9 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
                 readOnly: true,
                 height: 54,
                 controller: leadProvider.followUpDateController,
-                hintText: 'Next Follow-up Date*',
+                hintText: settingsProvider.leadCreationChanges == 1
+                    ? 'Assigned Date*'
+                    : 'Next Follow-up Date*',
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.calendar_today),
                   onPressed: () async {
@@ -2849,7 +2853,8 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
         const SizedBox(
           height: 10,
         ),
-        if (settingsProvider.menuIsViewMap[145] == 1) ...[
+        if (settingsProvider.menuIsViewMap[145] == 1 &&
+            settingsProvider.leadCreationChanges != 1) ...[
           CustomTextfieldWidgetMobile(
             focusNode: FocusNode(),
             controller: leadProvider.referenceNameController,
@@ -2874,7 +2879,8 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
           const SizedBox(height: 10),
         ],
 
-        if (settingsProvider.menuIsViewMap[149] == 1) ...[
+        if (settingsProvider.menuIsViewMap[149] == 1 &&
+            settingsProvider.leadCreationChanges != 1) ...[
           SearchableBottomSheetDropdown<int>(
             hintText: 'Source',
             items: settingsProvider.searchSourceCategory
@@ -3055,6 +3061,16 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
             ],
           ),
 
+        if (settingsProvider.leadCreationChanges == 1 &&
+            settingsProvider.menuIsViewMap[145] == 1) ...[
+          const SizedBox(height: 10),
+          CustomTextfieldWidgetMobile(
+            focusNode: FocusNode(),
+            controller: leadProvider.referenceNameController,
+            labelText: 'Reference Name',
+          ),
+        ],
+
         const SizedBox(
           height: 10,
         ),
@@ -3230,31 +3246,33 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
         const SizedBox(
           height: 10,
         ),
-        SearchableBottomSheetDropdown<int>(
-          hintText: 'Priority',
-          items: settingsProvider.priorities
-              .map((source) => DropdownItem<int>(
-                    id: source.priorityId,
-                    name: source.priorityName,
-                  ))
-              .toList(),
-          controller: leadProvider.priorityNameController,
-          onItemSelected: (selectedId) {
-            leadProvider.priorityId = selectedId ?? 0;
-            if (selectedId != null) {
-              final selectedItem = settingsProvider.priorities
-                  .firstWhere((source) => source.priorityId == selectedId);
-              leadProvider.priorityNameController.text =
-                  selectedItem.priorityName;
-            } else {
-              leadProvider.priorityNameController.clear();
-            }
-          },
-          selectedValue: leadProvider.priorityId,
-        ),
-        const SizedBox(
-          height: 10,
-        ),
+        if (settingsProvider.leadCreationChanges != 1) ...[
+          SearchableBottomSheetDropdown<int>(
+            hintText: 'Priority',
+            items: settingsProvider.priorities
+                .map((source) => DropdownItem<int>(
+                      id: source.priorityId,
+                      name: source.priorityName,
+                    ))
+                .toList(),
+            controller: leadProvider.priorityNameController,
+            onItemSelected: (selectedId) {
+              leadProvider.priorityId = selectedId ?? 0;
+              if (selectedId != null) {
+                final selectedItem = settingsProvider.priorities
+                    .firstWhere((source) => source.priorityId == selectedId);
+                leadProvider.priorityNameController.text =
+                    selectedItem.priorityName;
+              } else {
+                leadProvider.priorityNameController.clear();
+              }
+            },
+            selectedValue: leadProvider.priorityId,
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+        ],
        if (settingsProvider.menuIsViewMap[171] == 1) ...[
           CustomTextField(
             height: 54,
