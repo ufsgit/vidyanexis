@@ -613,9 +613,14 @@ class CustomerDetailsProvider extends ChangeNotifier {
       String customerId, BuildContext context) async {
     try {
       _isFollowUpHistoryLoading = true;
+      final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
+      String url = HttpUrls.followUpHistory;
+      if (settingsProvider.ramcoHistory == 1) {
+        url = HttpUrls.getAllHistory; // only for ramco
+      }
       notifyListeners();
       final response = await HttpRequest.httpGetRequest(
-          endPoint: '${HttpUrls.followUpHistory}?Customer_Id=$customerId');
+          endPoint: '$url?Customer_Id=$customerId');
 
       if (response.statusCode == 200) {
         final data = response.data;
