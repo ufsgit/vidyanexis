@@ -2721,7 +2721,7 @@ class _CustomerPageState extends State<CustomerPage> {
     // Build label text from selected statuses
     String labelText = 'All';
     if (hasSelection) {
-      final selectedNames = dropDownProvider.leadStatuses
+      final selectedNames = dropDownProvider.followUpData
           .where((s) => customerProvider.selectedStatusIds.contains(s.statusId))
           .map((s) => s.statusName ?? '')
           .toList();
@@ -2748,7 +2748,9 @@ class _CustomerPageState extends State<CustomerPage> {
                 barrierColor: Colors.transparent,
                 builder: (ctx) {
                   return _StatusMultiSelectDialog(
-                    allStatuses: dropDownProvider.leadStatuses,
+                    allStatuses: dropDownProvider.followUpData
+                        .where((e) => e.viewInId == 2 || e.isRegistered == 1)
+                        .toList(),
                     selectedIds:
                         List<int>.from(customerProvider.selectedStatusIds),
                     onApply: (selectedIds) {
