@@ -304,7 +304,9 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
                                   customerProvider.toggleStatus(0);
                                 },
                               ),
-                              ...provider.leadStatuses.map((status) {
+                              ...provider.followUpData
+                                  .where((e) => e.viewInId == 2 || e.isRegistered == 1)
+                                  .map((status) {
                                 return FilterChipWidget(
                                   label: status.statusName ?? 'Unknown',
                                   isSelected: customerProvider.selectedStatusIds
