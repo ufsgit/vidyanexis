@@ -14,6 +14,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class CustomerProvider extends ChangeNotifier {
   List<SearchLeadModel> _customerData = [];
+  List<SearchLeadModel> _customerDataExport = [];
   bool _isFilter = false;
   bool _isLoading = false;
   List<int> _selectedStatusIds = [0];
@@ -92,6 +93,7 @@ class CustomerProvider extends ChangeNotifier {
   int? get selectedStatus => _selectedStatus;
   bool get isFilter => _isFilter;
   List<SearchLeadModel> get customerData => _customerData;
+  List<SearchLeadModel> get customerDataExport => _customerDataExport;
 
   String _search = '';
   String _fromDateS = '';
@@ -921,6 +923,81 @@ class CustomerProvider extends ChangeNotifier {
       }
     }
   }
+
+  Future<void> getAllSearchCustomers(BuildContext context,
+      {bool isSilent = false}) async {
+    try {
+      _status = _selectedStatusIds.join(',');
+
+      if (_status.isEmpty || _status == 'null') {
+        _status = '0';
+      }
+
+      String isDate =
+          (_fromDateS.isNotEmpty || _toDateS.isNotEmpty) ? "1" : "0";
+      String isAmcDate =
+          (_amcFromDateS.isNotEmpty || _amcToDateS.isNotEmpty) ? "1" : "0";
+      String isWcDate =
+          (_wcFromDateS.isNotEmpty || _wcToDateS.isNotEmpty) ? "1" : "0";
+
+      String toUserId = _selectedUserIds.join(',');
+      String enquiryForId = _selectedEnquiryForIds.join(',');
+      String enquirySourceId = _selectedEnquirySourceIds.join(',');
+      String branchIds = _selectedBranchIds.join(',');
+
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      String userIdPref = preferences.getString('userId') ?? "0";
+      int loginUserId = int.parse(userIdPref);
+
+      if (!isSilent) {
+        Loader.showLoader(context);
+      }
+
+      int apiSortOption = _selectedSortOption == 4 ? 0 : _selectedSortOption;
+
+      final response = await HttpRequest.httpGetRequest(
+          endPoint:
+              '${HttpUrls.searchCustomer}?Customer_Name_=$_search&Phone_Number_=$_search&Consumer_Number_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&Is_AMC_Date_=$isAmcDate&AMC_Fromdate_=$_amcFromDateS&AMC_Todate_=$_amcToDateS&Is_Work_Completion_Date_=$isWcDate&Work_Completion_Fromdate_=$_wcFromDateS&Work_Completion_Todate_=$_wcToDateS&To_User_Id_=$toUserId&Login_User_Id_=$loginUserId&Status_Id_=$_status&Page_Index1_=1&Page_Index2_=10000&Enquiry_For_Id_=$enquiryForId&Enquiry_Source_Id_=$enquirySourceId&Branch_Id_=$branchIds&User_Details_Id_=$loginUserId&Lead_Id_=0&Order_By_=$apiSortOption&Order_Type_=$_sortOrder&Entry_Type_=$_entryType');
+
+      if (response.statusCode == 200) {
+        var data = response.data;
+        debugPrint('CUSTOMER API RESPONSE: ${jsonEncode(data)}');
+        if (data != null && data is List) {
+          _customerDataExport = data
+              .map((item) {
+                final jsonMap = item is Map<String, dynamic>
+                    ? item
+                    : (item is Map
+                        ? Map<String, dynamic>.from(item)
+                        : <String, dynamic>{});
+                return SearchLeadModel.fromJson(jsonMap);
+              })
+              .toList()
+              .where((item) => item.tp == 1)
+              .toList();
+        } else {
+          log('API Error: Data is not a list or is null');
+        }
+      } else {
+        log('API Error: Status code ${response.statusCode}');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+      }
+    } catch (e) {
+      log('Exception in getSearchCustomers: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+      if (!isSilent) {
+        Loader.stopLoader(context);
+      }
+    }
+  }
+
 
   //no context only for back in customer detail
   Future<void> getSearchCustomersNoContext() async {

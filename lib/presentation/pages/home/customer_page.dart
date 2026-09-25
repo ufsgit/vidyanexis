@@ -496,9 +496,11 @@ class _CustomerPageState extends State<CustomerPage> {
                                       .toString() ==
                                   '1')
                                 ElevatedButton.icon(
-                                  onPressed: () {
+                                  onPressed: () async {
+                                    await customerProvider.getAllSearchCustomers(context,
+                                        isSilent: true);
                                     if (customerProvider
-                                        .customerData.isNotEmpty) {
+                                        .customerDataExport.isNotEmpty) {
                                       exportToExcel(
                                         headers: [
                                           'Customer Code',
@@ -514,7 +516,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                           'Status',
                                           'Total Project Cost',
                                         ],
-                                        data: customerProvider.customerData
+                                        data: customerProvider.customerDataExport
                                             .map((cust) {
                                           return {
                                             'Customer Code':
@@ -578,9 +580,11 @@ class _CustomerPageState extends State<CustomerPage> {
                                       .toString() ==
                                   '1')
                                 ElevatedButton.icon(
-                                  onPressed: () {
+                                  onPressed: () async {
+                                    await customerProvider.getAllSearchCustomers(context,
+                                        isSilent: true);
                                     if (customerProvider
-                                        .customerData.isNotEmpty) {
+                                        .customerDataExport.isNotEmpty) {
                                       exportToExcel(
                                         headers: [
                                           'Customer Name',
@@ -589,7 +593,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                           'AMC Date',
                                           'Work Completion Date',
                                         ],
-                                        data: customerProvider.customerData
+                                        data: customerProvider.customerDataExport
                                             .map((cust) {
                                           return {
                                             'Customer Name': cust.customerName,
