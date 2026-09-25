@@ -471,6 +471,59 @@ class _tasksPageReportState extends State<TaskPage> {
     }
   }
 
+  Widget _buildTaskTypeCell(TaskReportModel task) {
+    final taskName = task.taskTypeName ?? '';
+    final color = task.parsedTaskTypeColor;
+
+    if (color != null) {
+      return Tooltip(
+        message: taskName,
+        child: Container(
+          height: 30,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(30),
+            color: color.withOpacity(0.15),
+            border: Border.all(
+              color: color,
+              width: 1,
+            ),
+          ),
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              child: Text(
+                taskName,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+                style: TextStyle(
+                  fontFamily: 'PlusJakartaSans',
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: color,
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Tooltip(
+      message: taskName,
+      child: Text(
+        taskName,
+        overflow: TextOverflow.ellipsis,
+        maxLines: 1,
+        style: const TextStyle(
+          fontFamily: 'PlusJakartaSans',
+          fontSize: 13,
+          color: Color(0xFF334155),
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+    );
+  }
+
   void _updateScreenType() {
     _isMobile = !AppStyles.isWebScreen(context);
   }
@@ -2355,8 +2408,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                           horizontal:
                                                                               12.0),
                                                                       data:
-                                                                          Tooltip(
-                                                                        message:
+                                                                          _buildTaskTypeCell(task), /*
+                                                                        //
                                                                             task.taskTypeName ??
                                                                                 '',
                                                                         child:
@@ -2378,7 +2431,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                                 task.parsedTaskTypeColor != null ? FontWeight.w600 : FontWeight.w500,
                                                                           ),
                                                                         ),
-                                                                      ),
+                                                                      ), */
                                                                     ),
                                                                     // Status
                                                                     TableWidget(
