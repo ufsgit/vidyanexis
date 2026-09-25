@@ -24,8 +24,6 @@ import 'package:vidyanexis/presentation/widgets/common/custom_form_filler_view.d
 import 'package:vidyanexis/presentation/widgets/home/auto_complete_textfield_search.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_field_section_widget.dart';
 import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
-import 'package:vidyanexis/controller/audio_file_provider.dart';
-import 'package:vidyanexis/presentation/widgets/home/task_audio_recording_widget.dart';
 
 class ProcessFlowDialog extends StatefulWidget {
   final TaskReportModel task;
@@ -66,11 +64,6 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
       final imageProvider =
           Provider.of<ImageUploadProvider>(context, listen: false);
       imageProvider.clearFiles();
-
-      // Clear any previously recorded audio
-      final audioProvider =
-          Provider.of<AudioFileProvider>(context, listen: false);
-      audioProvider.clearAudios();
 
       if (widget.task.nextFollowupDate != null &&
           widget.task.nextFollowupDate!.isNotEmpty) {
@@ -582,84 +575,167 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                                             (e) => e.isNotEmpty)
                                                         .toList();
 
-                                                    if (staffDeptList.isEmpty ||
-                                                        staffDeptList
-                                                            .contains("0")) {
-                                                      return false;
-                                                    }
+                                                     List<String>
+                                                         transferDeptList = [];
+                                                     if (staff
+                                                             .transferDepartments !=
+                                                         null) {
+                                                       if (staff
+                                                               .transferDepartments
+                                                           is Iterable) {
+                                                         for (var t in staff
+                                                             .transferDepartments) {
+                                                           if (t is Map) {
+                                                             final tId = t[
+                                                                         "Department_Id"]
+                                                                     ?.toString() ??
+                                                                 t["department_id"]
+                                                                     ?.toString();
+                                                             if (tId != null) {
+                                                               transferDeptList
+                                                                   .add(tId
+                                                                       .trim());
+                                                             }
+                                                           } else if (t !=
+                                                               null) {
+                                                             transferDeptList
+                                                                 .addAll(t
+                                                                     .toString()
+                                                                     .split(',')
+                                                                     .map((e) =>
+                                                                         e.trim()));
+                                                           }
+                                                         }
+                                                       } else {
+                                                         transferDeptList
+                                                             .addAll(staff
+                                                                 .transferDepartments
+                                                                 .toString()
+                                                                 .split(',')
+                                                                 .map((e) =>
+                                                                     e.trim()));
+                                                       }
+                                                     }
 
-                                                    return targetDeptList.any(
-                                                        (dept) => staffDeptList
-                                                            .contains(dept));
-                                                  }).toList();
-                                                }
+                                                     return targetDeptList.any(
+                                                         (dept) =>
+                                                             staffDeptList
+                                                                 .contains(
+                                                                     dept) ||
+                                                             transferDeptList
+                                                                 .contains(
+                                                                     dept));
+                                                   }).toList();
+                                                 }
 
-                                                final departmentStaff =
-                                                    getDepartmentStaff(
-                                                        task.departmentIds);
+                                                 final departmentStaff =
+                                                     getDepartmentStaff(
+                                                         task.departmentIds);
 
-                                                // Default selected user name
-                                                int? assignedUserId =
-                                                    reportsProvider
-                                                            .taskTypeToUserMap[
-                                                        task.uniqueId ??
-                                                            task.taskTypeId
-                                                                .toString()];
-                                                String defaultUserName = '';
+                                                 // Default selected user name
+                                                 final taskKey = task.uniqueId ??
+                                                     task.taskTypeId.toString();
+                                                 int? assignedUserId =
+                                                     reportsProvider
+                                                             .taskTypeToUserMap[
+                                                         taskKey];
+                                                 String defaultUserName = '';
 
-                                                if (assignedUserId != null) {
-                                                  try {
-                                                    final matchedStaff =
-                                                        dropDownProvider
-                                                            .staffData
-                                                            .firstWhere(
-                                                      (s) =>
-                                                          s.userDetailsId ==
-                                                          assignedUserId,
-                                                    );
-                                                    defaultUserName = matchedStaff
-                                                            .userDetailsName ??
-                                                        '';
-                                                  } catch (_) {}
-                                                }
+                                                 final leadProvider =
+                                                     Provider.of<LeadsProvider>(
+                                                         context,
+                                                         listen: false);
+                                                 final int loginUserId =
+                                                     leadProvider.loginUserId != 0
+                                                         ? leadProvider
+                                                             .loginUserId
+                                                         : (int.tryParse(
+                                                                 reportsProvider
+                                                                     .loginUserId) ??
+                                                             0);
 
-                                                return CustomAutocompleteSearch<
-                                                    SearchUserDetails>(
-                                                  key: ValueKey(
-                                                      'user_search_${task.uniqueId ?? task.taskTypeId}'),
-                                                  showOptionsOnTap: true,
-                                                  maxHeight: 300,
-                                                  optionsViewOpenDirection:
-                                                      OptionsViewOpenDirection
-                                                          .down,
-                                                  items: departmentStaff,
-                                                  displayStringFunction:
-                                                      (staff) =>
-                                                          staff
-                                                              .userDetailsName ??
-                                                          '',
-                                                  defaultText: defaultUserName,
-                                                  labelText: 'User',
-                                                  suffixIcon:
-                                                      const Icon(Icons.search),
-                                                  onTap: () {},
-                                                  onSelected: (SearchUserDetails
-                                                      selected) {
-                                                    dropDownProvider
-                                                        .setSelectedUserId(
-                                                            selected
-                                                                .userDetailsId);
+                                                 if (assignedUserId != null) {
+                                                   try {
+                                                     final matchedStaff =
+                                                         dropDownProvider
+                                                             .staffData
+                                                             .firstWhere(
+                                                       (s) =>
+                                                           s.userDetailsId ==
+                                                           assignedUserId,
+                                                     );
+                                                     defaultUserName = matchedStaff
+                                                             .userDetailsName ??
+                                                         '';
+                                                   } catch (_) {}
+                                                 } else if (loginUserId != 0) {
+                                                   try {
+                                                     final loggedInStaff =
+                                                         departmentStaff
+                                                             .firstWhere(
+                                                       (s) =>
+                                                           s.userDetailsId ==
+                                                           loginUserId,
+                                                     );
+                                                     assignedUserId =
+                                                         loggedInStaff
+                                                             .userDetailsId;
+                                                     defaultUserName =
+                                                         loggedInStaff
+                                                             .userDetailsName ??
+                                                         '';
+                                                     WidgetsBinding.instance
+                                                         .addPostFrameCallback(
+                                                             (_) {
+                                                       if (reportsProvider
+                                                                   .taskTypeToUserMap[
+                                                               taskKey] ==
+                                                           null) {
+                                                         reportsProvider
+                                                             .setTaskUser(
+                                                                 taskKey,
+                                                             loggedInStaff
+                                                                 .userDetailsId);
+                                                       }
+                                                     });
+                                                   } catch (_) {}
+                                                 }
 
-                                                    reportsProvider.setTaskUser(
-                                                      task.uniqueId ??
-                                                          task.taskTypeId
-                                                              .toString(),
-                                                      selected.userDetailsId,
-                                                    );
-                                                  },
-                                                  onChanged: (_) {},
-                                                  onSearch: (_) async {},
-                                                );
+                                                 return CustomAutocompleteSearch<
+                                                     SearchUserDetails>(
+                                                   key: ValueKey(
+                                                       'user_search_${taskKey}_${assignedUserId ?? 0}'),
+                                                   showOptionsOnTap: true,
+                                                   maxHeight: 300,
+                                                   optionsViewOpenDirection:
+                                                       OptionsViewOpenDirection
+                                                           .down,
+                                                   items: departmentStaff,
+                                                   displayStringFunction:
+                                                       (staff) =>
+                                                           staff
+                                                               .userDetailsName ??
+                                                           '',
+                                                   defaultText: defaultUserName,
+                                                   labelText: 'User',
+                                                   suffixIcon:
+                                                       const Icon(Icons.search),
+                                                   onTap: () {},
+                                                   onSelected: (SearchUserDetails
+                                                       selected) {
+                                                     dropDownProvider
+                                                         .setSelectedUserId(
+                                                             selected
+                                                                 .userDetailsId);
+
+                                                     reportsProvider.setTaskUser(
+                                                       taskKey,
+                                                       selected.userDetailsId,
+                                                     );
+                                                   },
+                                                   onChanged: (_) {},
+                                                   onSearch: (_) async {},
+                                                 );
                                               },
                                             )
                                         ],
@@ -772,9 +848,6 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                   hint: 'Enter detailed description...',
                                   maxLines: 4,
                                 ),
-                                const SizedBox(height: 16),
-                                // Voice Note / Audio Recording
-                                const TaskAudioRecordingWidget(),
                               ],
                             ),
                           ),
@@ -1216,21 +1289,6 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                     });
 
                                     try {
-                                      // Upload audio files if any
-                                      final audioProvider =
-                                          Provider.of<AudioFileProvider>(
-                                              context,
-                                              listen: false);
-                                      List<Map<String, String>>
-                                          uploadedAudioFiles = [];
-                                      if (audioProvider.audios.isNotEmpty) {
-                                        uploadedAudioFiles = await audioProvider
-                                            .uploadAllAudios(
-                                          widget.task.taskId.toString(),
-                                          context,
-                                        );
-                                      }
-
                                       bool isSuccess = await reportsProvider
                                           .changeTaskStatus(
                                               context,
@@ -1240,11 +1298,9 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                                   ? await reportsProvider
                                                       .getCurrentLocation()
                                                   : null,
-                                              subStatus: selectedSubStatus,
-                                              audioFiles: uploadedAudioFiles);
+                                              subStatus: selectedSubStatus);
 
                                       if (isSuccess) {
-                                        audioProvider.clearAudios();
                                         Navigator.of(context).pop(true);
                                       } else {
                                         setState(() {
