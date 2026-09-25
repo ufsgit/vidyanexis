@@ -57,5 +57,7 @@
 		<string>fetch</string>
 		<string>remote-notification</string>
 	</array>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>VidyaNexis requires microphone access to record voice notes for task updates.</string>
 </dict>
 </plist>
