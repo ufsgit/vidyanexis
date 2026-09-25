@@ -69,7 +69,7 @@ class _UsersContentState extends State<UsersContent> {
   @override
   Widget build(BuildContext context) {
     final settingsProvider = Provider.of<SettingsProvider>(context);
-    const double minContentWidth = 1300.0;
+    const double minContentWidth = 1380.0;
     return LayoutBuilder(
       builder: (context, constraints) {
         return Column(
@@ -1102,27 +1102,27 @@ class _UsersContentState extends State<UsersContent> {
                                                               '1',
                                                           userType: settingsProvider.searchUserDetails[index].userType
                                                               .toString(),
-                                                          departmentId: int.parse(
-                                                              settingsProvider
-                                                                  .searchUserDetails[
-                                                                      index]
-                                                                  .departmentId),
-                                                          branchId: int.parse(
-                                                              settingsProvider
-                                                                  .searchUserDetails[
-                                                                      index]
-                                                                  .branchId),
-                                                          userStatusId: settingsProvider
+                                                          departmentId:
+                                                              int.tryParse(settingsProvider.searchUserDetails[index].departmentId) ??
+                                                                  0,
+                                                          branchId:
+                                                              int.tryParse(settingsProvider.searchUserDetails[index].branchId) ??
+                                                                  0,
+                                                          userStatusId:
+                                                              settingsProvider.searchUserDetails[index].workingStatus
+                                                                  .toString(),
+                                                          userId: settingsProvider
                                                               .searchUserDetails[
                                                                   index]
-                                                              .workingStatus
-                                                              .toString(),
-                                                          userId: settingsProvider
-                                                              .searchUserDetails[index]
                                                               .userDetailsId
                                                               .toString(),
-                                                          email: settingsProvider.searchUserDetails[index].email,
-                                                          userName: settingsProvider.searchUserDetails[index].userDetailsName,
+                                                          email: settingsProvider
+                                                              .searchUserDetails[
+                                                                  index]
+                                                              .email,
+                                                          userName: settingsProvider
+                                                              .searchUserDetails[index]
+                                                              .userDetailsName,
                                                           firstName: settingsProvider.searchUserDetails[index].firstName,
                                                           lastName: settingsProvider.searchUserDetails[index].lastName,
                                                           password: settingsProvider.searchUserDetails[index].password,
@@ -1130,6 +1130,7 @@ class _UsersContentState extends State<UsersContent> {
                                                           mobileNo: settingsProvider.searchUserDetails[index].mobile,
                                                           empCode: settingsProvider.searchUserDetails[index].empCode,
                                                           designation: settingsProvider.searchUserDetails[index].designation,
+                                                          designationId: int.tryParse(settingsProvider.searchUserDetails[index].designationId) ?? 0,
                                                           doj: settingsProvider.searchUserDetails[index].doj,
                                                           transferDepartments: settingsProvider.searchUserDetails[index].transferDepartments,
                                                           taskStatusManaging: settingsProvider.searchUserDetails[index].taskStatusManaging,

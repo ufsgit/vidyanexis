@@ -2,8 +2,6 @@
 import 'package:vidyanexis/controller/models/priority_model.dart';
 import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'dart:async';
-import 'dart:ui' as ui;
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
@@ -17,7 +15,6 @@ import 'package:vidyanexis/presentation/widgets/common/custom_form_filler_view.d
 import 'package:vidyanexis/presentation/widgets/customer/add_quotation.dart';
 import 'package:vidyanexis/presentation/widgets/customer/upload_image.dart';
 import 'package:vidyanexis/presentation/widgets/home/auto_complete_textfield_search.dart';
-import 'package:vidyanexis/presentation/widgets/home/confirmation_dialog_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_field_section_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
@@ -33,11 +30,9 @@ import 'package:vidyanexis/controller/side_bar_provider.dart';
 
 import 'package:vidyanexis/controller/models/task_type_status_model.dart';
 import 'package:vidyanexis/controller/models/sub_status_model.dart';
-import 'package:vidyanexis/presentation/widgets/home/expandable_fab_button.dart';
 import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
 import 'package:vidyanexis/presentation/pages/home/job_sheet_page.dart';
-import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
@@ -45,7 +40,6 @@ import 'package:vidyanexis/controller/leads_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 import 'package:vidyanexis/presentation/widgets/home/task_card.dart';
-import 'package:vidyanexis/presentation/widgets/home/custom_multi_level_dropdown.dart';
 import 'package:vidyanexis/controller/models/task_type_model.dart';
 import 'package:vidyanexis/controller/models/add_task_model.dart';
 import 'package:vidyanexis/controller/models/search_user_details_model.dart';
@@ -54,6 +48,8 @@ import 'package:vidyanexis/presentation/widgets/customer/add_task_mobile.dart';
 import 'package:vidyanexis/utils/status_utils.dart';
 import 'package:vidyanexis/controller/models/form_settings_provider.dart';
 import 'package:vidyanexis/controller/models/form_model.dart';
+import 'package:vidyanexis/controller/audio_file_provider.dart';
+import 'package:vidyanexis/presentation/widgets/home/task_audio_recording_widget.dart';
 
 class TaskPage extends StatefulWidget {
   final int? initialStatusFilter;
@@ -81,7 +77,7 @@ class _tasksPageReportState extends State<TaskPage> {
   bool _isSyncing = false;
 
   // Task multi-selection state
-  Set<String> _selectedTaskIds = {};
+  final Set<String> _selectedTaskIds = {};
   String? _selectedTaskType;
 
   void _clearSelection() {
@@ -117,8 +113,7 @@ class _tasksPageReportState extends State<TaskPage> {
     if (visibleTasks.isEmpty) return;
     
     // Determine the type we are selecting (use the first valid one if not already set)
-    String? targetType = _selectedTaskType ?? visibleTasks.first.taskTypeId.toString();
-    if (targetType == null) return; // Edge case
+    String? targetType = _selectedTaskType ?? visibleTasks.first.taskTypeId.toString(); // Edge case
     
     // Find all visible tasks of that type
     final selectableTasks = visibleTasks.where((t) => t.taskTypeId.toString() == targetType).toList();
@@ -171,7 +166,7 @@ class _tasksPageReportState extends State<TaskPage> {
                       labelText: "Select Staff member",
                       border: OutlineInputBorder(),
                     ),
-                    value: selectedStaffId,
+                    initialValue: selectedStaffId,
                     items: staffList.map((staff) {
                       return DropdownMenuItem<String>(
                         value: staff.userDetailsId.toString(),
@@ -380,7 +375,7 @@ class _tasksPageReportState extends State<TaskPage> {
       final sideProvider = Provider.of<SidebarProvider>(context, listen: false);
       sideProvider.name = 'Customers /';
 
-      context.push('/customerDetails/\/false');
+      context.push('/customerDetails//false');
     } else if (action == 'document') {
       showDialog(
         barrierDismissible: false,
@@ -396,7 +391,7 @@ class _tasksPageReportState extends State<TaskPage> {
       final sideProvider = Provider.of<SidebarProvider>(context, listen: false);
       sideProvider.name = 'Customers /';
 
-      context.push('/customerDetails/\/false');
+      context.push('/customerDetails//false');
     }
   }
 
@@ -474,6 +469,59 @@ class _tasksPageReportState extends State<TaskPage> {
     if (mounted) {
       reportsProvider.searchTaskByCustomer(context);
     }
+  }
+
+  Widget _buildTaskTypeCell(TaskReportModel task) {
+    final taskName = task.taskTypeName ?? '';
+    final color = task.parsedTaskTypeColor;
+
+    if (color != null) {
+      return Tooltip(
+        message: taskName,
+        child: Container(
+          height: 30,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(30),
+            color: color.withOpacity(0.15),
+            border: Border.all(
+              color: color,
+              width: 1,
+            ),
+          ),
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              child: Text(
+                taskName,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+                style: TextStyle(
+                  fontFamily: 'PlusJakartaSans',
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: color,
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Tooltip(
+      message: taskName,
+      child: Text(
+        taskName,
+        overflow: TextOverflow.ellipsis,
+        maxLines: 1,
+        style: const TextStyle(
+          fontFamily: 'PlusJakartaSans',
+          fontSize: 13,
+          color: Color(0xFF334155),
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+    );
   }
 
   void _updateScreenType() {
@@ -746,7 +794,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                       ),
                                       child: Text(
                                         'ME',
-                                        style: TextStyle(
+                                        style: TextStyle(fontFamily: 'PlusJakartaSans', 
                                           color:
                                               reportsProvider.entryType != 'all'
                                                   ? AppColors.primaryBlue
@@ -783,7 +831,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                       ),
                                       child: Text(
                                         'ALL',
-                                        style: TextStyle(
+                                        style: TextStyle(fontFamily: 'PlusJakartaSans', 
                                           color:
                                               reportsProvider.entryType == 'all'
                                                   ? AppColors.primaryBlue
@@ -851,7 +899,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                 },
                                 decoration: InputDecoration(
                                   hintText: 'Search here...',
-                                  hintStyle: const TextStyle(
+                                  hintStyle: const TextStyle(fontFamily: 'PlusJakartaSans', 
                                     color: Color(0xFF94A3B8),
                                     fontSize: 13,
                                   ),
@@ -1070,16 +1118,16 @@ class _tasksPageReportState extends State<TaskPage> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           const Text('Status: ',
-                              style: TextStyle(fontSize: 14)),
+                              style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14)),
                           DropdownButton<int>(
                             value: reportsProvider.selectedStatus,
                             hint: const Text('All',
-                                style: TextStyle(fontSize: 14)),
+                                style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14)),
                             items: [
                                   const DropdownMenuItem<int>(
                                     value: 0,
                                     child: Text('All',
-                                        style: TextStyle(fontSize: 14)),
+                                        style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14)),
                                   ),
                                 ] +
                                 provider.taskStatuses
@@ -1093,7 +1141,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                   status.statusName ?? ''),
                                               overflow: TextOverflow.ellipsis,
                                               style:
-                                                  const TextStyle(fontSize: 14),
+                                                  const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
                                             ),
                                           ),
                                         ))
@@ -1138,7 +1186,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                       reportsProvider.toDate == null
                                   ? 'Follow-Up Date: All'
                                   : 'Date: ${reportsProvider.formattedFromDate} - ${reportsProvider.formattedToDate}',
-                              style: const TextStyle(fontSize: 14),
+                              style: const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
                             ),
                             const SizedBox(width: 8),
                             const Icon(Icons.arrow_drop_down,
@@ -1165,16 +1213,16 @@ class _tasksPageReportState extends State<TaskPage> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           const Text('Assigned To: ',
-                              style: TextStyle(fontSize: 14)),
+                              style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14)),
                           DropdownButton<int>(
                             value: reportsProvider.selectedUser,
                             hint: const Text('All',
-                                style: TextStyle(fontSize: 14)),
+                                style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14)),
                             items: [
                                   const DropdownMenuItem<int>(
                                     value: 0,
                                     child: Text('All',
-                                        style: TextStyle(fontSize: 14)),
+                                        style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14)),
                                   ),
                                 ] +
                                 provider.searchUserDetails
@@ -1187,7 +1235,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                               user.userDetailsName,
                                               overflow: TextOverflow.ellipsis,
                                               style:
-                                                  const TextStyle(fontSize: 14),
+                                                  const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
                                             ),
                                           ),
                                         ))
@@ -1224,16 +1272,16 @@ class _tasksPageReportState extends State<TaskPage> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           const Text('Task Type: ',
-                              style: TextStyle(fontSize: 14)),
+                              style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14)),
                           DropdownButton<int>(
                             value: reportsProvider.selectedTaskType,
                             hint: const Text('All',
-                                style: TextStyle(fontSize: 14)),
+                                style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14)),
                             items: [
                                   const DropdownMenuItem<int>(
                                     value: 0,
                                     child: Text('All',
-                                        style: TextStyle(fontSize: 14)),
+                                        style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14)),
                                   ),
                                 ] +
                                 provider.taskType
@@ -1246,7 +1294,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                               task.taskTypeName,
                                               overflow: TextOverflow.ellipsis,
                                               style:
-                                                  const TextStyle(fontSize: 14),
+                                                  const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
                                             ),
                                           ),
                                         ))
@@ -1283,16 +1331,16 @@ class _tasksPageReportState extends State<TaskPage> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           const Text('Enquiry For: ',
-                              style: TextStyle(fontSize: 14)),
+                              style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14)),
                           DropdownButton<int>(
                             value: reportsProvider.selectedEnquiryFor,
                             hint: const Text('All',
-                                style: TextStyle(fontSize: 14)),
+                                style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14)),
                             items: [
                                   const DropdownMenuItem<int>(
                                     value: 0,
                                     child: Text('All',
-                                        style: TextStyle(fontSize: 14)),
+                                        style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14)),
                                   ),
                                 ] +
                                 provider.enquiryForList
@@ -1305,7 +1353,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                               enquiry.enquiryForName,
                                               overflow: TextOverflow.ellipsis,
                                               style:
-                                                  const TextStyle(fontSize: 14),
+                                                  const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
                                             ),
                                           ),
                                         ))
@@ -1342,16 +1390,16 @@ class _tasksPageReportState extends State<TaskPage> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           const Text('Department: ',
-                              style: TextStyle(fontSize: 14)),
+                              style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14)),
                           DropdownButton<int>(
                             value: reportsProvider.selectedDepartment,
                             hint: const Text('All',
-                                style: TextStyle(fontSize: 14)),
+                                style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14)),
                             items: [
                                   const DropdownMenuItem<int>(
                                     value: 0,
                                     child: Text('All',
-                                        style: TextStyle(fontSize: 14)),
+                                        style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14)),
                                   ),
                                 ] +
                                 settingsProvider.departmentModel
@@ -1364,7 +1412,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                               branch.departmentName ?? '',
                                               overflow: TextOverflow.ellipsis,
                                               style:
-                                                  const TextStyle(fontSize: 14),
+                                                  const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
                                             ),
                                           ),
                                         ))
@@ -1400,8 +1448,7 @@ class _tasksPageReportState extends State<TaskPage> {
                             reportsProvider.selectedEnquiryFor != 0) ||
                         (reportsProvider.selectedDepartment != null &&
                             reportsProvider.selectedDepartment != 0) ||
-                        (reportsProvider.selectedPriority != null &&
-                            reportsProvider.selectedPriority != 0) ||
+                        (reportsProvider.selectedPriority != 0) ||
                         reportsProvider.Search.isNotEmpty)
                       ElevatedButton(
                         onPressed: () {
@@ -1525,7 +1572,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                               ? 'Follow-Up Date: All'
                                               : 'Date : ${reportsProvider.formattedFromDate} - ${reportsProvider.formattedToDate}',
                                           overflow: TextOverflow.ellipsis,
-                                          style: const TextStyle(
+                                          style: const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
                                             fontSize: 14,
                                             fontWeight: FontWeight.w500,
                                           ),
@@ -1819,8 +1866,11 @@ class _tasksPageReportState extends State<TaskPage> {
                               child: LayoutBuilder(
                                 builder: (context, constraints) {
                                   // Fixed columns: Checkbox + No. + Lead Code + Customer + Mobile No. + Task + Status
-                                  const double fixedWidth =
-                                      80 + 60 + 120 + 180 + 110 + 180 + 120; // 770
+                                  double fixedWidth =
+                                      80 + 60 + 180 + 110 + 180 + 120; // 690
+                                  if (settingsProvider.showLeadCode == 1) {
+                                    fixedWidth += 120;
+                                  }
 
                                   double scrollableMinWidth = 150 +
                                       120 +
@@ -1896,7 +1946,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                         child: Text(
                                                           'No.',
                                                           style:
-                                                              const TextStyle(
+                                                              const TextStyle(fontFamily: 'PlusJakartaSans', 
                                                             fontWeight:
                                                                 FontWeight.bold,
                                                             color: Colors.white,
@@ -1904,17 +1954,23 @@ class _tasksPageReportState extends State<TaskPage> {
                                                         ),
                                                       ),
                                                     ),
-                                                    TableWidget(
-                                                      width: 120,
-                                                      title: 'Lead Code',
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          vertical: 4.0,
-                                                          horizontal: 12.0),
-                                                      alignment:
-                                                          Alignment.centerLeft,
-                                                      color: Colors.white,
-                                                    ),
+                                                      if (settingsProvider
+                                                                .showLeadCode ==
+                                                            1)
+                                                          TableWidget(
+                                                            width: 120,
+                                                            title: 'Lead Code',
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    vertical:
+                                                                        4.0,
+                                                                    horizontal:
+                                                                        12.0),
+                                                            alignment: Alignment
+                                                                .centerLeft,
+                                                            color: Colors.white,
+                                                          ),
                                                     TableWidget(
                                                       width: 180,
                                                       title: 'Customer',
@@ -2128,9 +2184,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                       BoxDecoration(
                                                                     color: _selectedTaskIds.contains(task.taskId.toString()) 
                                                                         ? AppColors.primaryBlue.withOpacity(0.1)
-                                                                        : index % 2 == 0
-                                                                        ? Colors.white
-                                                                        : const Color(0xFFF6F7F9),
+                                                                        : index % 2 == 0 ? const Color(0xFFE8EDF2) : const Color(0xFFF5F5F5),
+                                                                    border: Border(bottom: BorderSide(color: Colors.grey.shade200)),
                                                                   ),
                                                                   child: Row(
                                                                     children: [
@@ -2159,7 +2214,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                           itemNumber
                                                                               .toString(),
                                                                           style:
-                                                                              const TextStyle(
+                                                                              const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
                                                                             fontWeight:
                                                                                 FontWeight.bold,
                                                                             fontSize:
@@ -2169,24 +2224,20 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                       ),
                                                                     ),
                                                                     // Lead Code
-                                                                    TableWidget(
-                                                                      width:
-                                                                          120,
-                                                                      fontSize:
-                                                                          13,
-                                                                      padding: const EdgeInsets
-                                                                          .symmetric(
-                                                                          vertical:
-                                                                              4.0,
-                                                                          horizontal:
-                                                                              12.0),
-                                                                      title: task
-                                                                              .leadCode ??
-                                                                          '-',
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .normal,
-                                                                    ),
+                                                                        if (settingsProvider.showLeadCode ==
+                                                                            1)
+                                                                          TableWidget(
+                                                                            width:
+                                                                                120,
+                                                                            fontSize:
+                                                                                13,
+                                                                            padding:
+                                                                                const EdgeInsets.symmetric(vertical: 4.0, horizontal: 12.0),
+                                                                            title:
+                                                                                task.leadCode ?? '-',
+                                                                            fontWeight:
+                                                                                FontWeight.normal,
+                                                                          ),
                                                                     // Customer
                                                                     TableWidget(
                                                                       width:
@@ -2200,13 +2251,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                       data: Row(
                                                                         children: [
                                                                           Expanded(
-                                                                            child:
-                                                                                Container(
-                                                                              decoration: BoxDecoration(
-                                                                                color: const Color(0xFFEBF5FF),
-                                                                                borderRadius: BorderRadius.circular(5),
-                                                                              ),
-                                                                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                                                            child: Padding(
+                                                                              padding: const EdgeInsets.symmetric(vertical: 6),
                                                                               child: InkWell(
                                                                                 onTap: () {
                                                                                   context.push('${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
@@ -2217,9 +2263,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                                     task.customerName.isNotEmpty ? task.customerName : 'Unknown',
                                                                                     overflow: TextOverflow.ellipsis,
                                                                                     maxLines: 1,
-                                                                                    style: const TextStyle(
+                                                                                    style: const TextStyle(fontFamily: 'PlusJakartaSans', 
                                                                                       color: Colors.blue,
-                                                                                      fontWeight: FontWeight.w500,
+                                                                                      fontWeight: FontWeight.w600,
                                                                                       fontSize: 13,
                                                                                     ),
                                                                                   ),
@@ -2245,7 +2291,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                                   child: Icon(
                                                                                     Icons.keyboard_arrow_down,
                                                                                     size: 20,
-                                                                                    color: Colors.grey,
+                                                                                    color: Colors.black,
                                                                                   ),
                                                                                 ),
                                                                               );
@@ -2340,7 +2386,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                           maxLines:
                                                                               1,
                                                                           style:
-                                                                              const TextStyle(
+                                                                              const TextStyle(fontFamily: 'PlusJakartaSans', 
                                                                             fontSize:
                                                                                 13,
                                                                             color:
@@ -2362,8 +2408,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                           horizontal:
                                                                               12.0),
                                                                       data:
-                                                                          Tooltip(
-                                                                        message:
+                                                                          _buildTaskTypeCell(task), /*
+                                                                        //
                                                                             task.taskTypeName ??
                                                                                 '',
                                                                         child:
@@ -2375,16 +2421,17 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                           maxLines:
                                                                               1,
                                                                           style:
-                                                                              const TextStyle(
+                                                                              TextStyle(
+                                                                            fontFamily: 'PlusJakartaSans', 
                                                                             fontSize:
                                                                                 13,
                                                                             color:
-                                                                                Color(0xFF334155),
+                                                                                task.parsedTaskTypeColor ?? const Color(0xFF334155),
                                                                             fontWeight:
-                                                                                FontWeight.w500,
+                                                                                task.parsedTaskTypeColor != null ? FontWeight.w600 : FontWeight.w500,
                                                                           ),
                                                                         ),
-                                                                      ),
+                                                                      ), */
                                                                     ),
                                                                     // Status
                                                                     TableWidget(
@@ -2450,7 +2497,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                                 task.taskStatusName,
                                                                                 overflow: TextOverflow.ellipsis,
                                                                                 maxLines: 1,
-                                                                                style: TextStyle(
+                                                                                style: TextStyle(fontFamily: 'PlusJakartaSans', 
                                                                                   fontSize: 13,
                                                                                   fontWeight: FontWeight.w600,
                                                                                   color: task.colorCode ?? const Color(0xFF3B82F6),
@@ -2576,7 +2623,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                 .centerLeft,
                                                             data: const Text(
                                                               'Priority',
-                                                              style: TextStyle(
+                                                              style: TextStyle(fontFamily: 'PlusJakartaSans', 
                                                                   fontSize: 13,
                                                                   color: Colors
                                                                       .white),
@@ -2760,13 +2807,10 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                       0xFFF8FAFC),
                                                               child: Container(
                                                                 height: rowHeight,
-                                                                color: index %
-                                                                            2 ==
-                                                                        0
-                                                                    ? Colors
-                                                                        .white
-                                                                    : const Color(
-                                                                        0xFFF6F7F9),
+                                                                decoration: BoxDecoration(
+                                                                    color: index % 2 == 0 ? const Color(0xFFE8EDF2) : const Color(0xFFF5F5F5),
+                                                                    border: Border(bottom: BorderSide(color: Colors.grey.shade200)),
+                                                                ),
                                                                 child: Row(
                                                                   children: [
                                                                     // Enquiry for
@@ -2794,7 +2838,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                           maxLines:
                                                                               1,
                                                                           style:
-                                                                              const TextStyle(
+                                                                              const TextStyle(fontFamily: 'PlusJakartaSans', 
                                                                             fontSize:
                                                                                 13,
                                                                             color:
@@ -2824,7 +2868,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                         maxLines:
                                                                             1,
                                                                         style:
-                                                                            const TextStyle(
+                                                                            const TextStyle(fontFamily: 'PlusJakartaSans', 
                                                                           fontSize:
                                                                               13,
                                                                           color:
@@ -2858,7 +2902,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                           maxLines:
                                                                               1,
                                                                           style:
-                                                                              const TextStyle(
+                                                                              const TextStyle(fontFamily: 'PlusJakartaSans', 
                                                                             fontSize:
                                                                                 13,
                                                                             color:
@@ -2893,7 +2937,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                           maxLines:
                                                                               1,
                                                                           style:
-                                                                              const TextStyle(
+                                                                              const TextStyle(fontFamily: 'PlusJakartaSans', 
                                                                             fontSize:
                                                                                 13,
                                                                             color:
@@ -2965,7 +3009,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                                   const SizedBox(width: 10),
                                                                                   Text(
                                                                                     priority.priorityName,
-                                                                                    style: TextStyle(
+                                                                                    style: TextStyle(fontFamily: 'PlusJakartaSans', 
                                                                                       color: AppColors.parseColor(priority.colorCode),
                                                                                       fontWeight: FontWeight.w500,
                                                                                     ),
@@ -3000,7 +3044,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                                   task.priorityName,
                                                                                   maxLines: 1,
                                                                                   overflow: TextOverflow.ellipsis,
-                                                                                  style: TextStyle(
+                                                                                  style: TextStyle(fontFamily: 'PlusJakartaSans', 
                                                                                     fontSize: 13,
                                                                                     fontWeight: FontWeight.w500,
                                                                                     color: AppColors.parseColor(task.priorityColor),
@@ -3037,7 +3081,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                         maxLines:
                                                                             1,
                                                                         style:
-                                                                            const TextStyle(
+                                                                            const TextStyle(fontFamily: 'PlusJakartaSans', 
                                                                           fontSize:
                                                                               13,
                                                                           color:
@@ -3066,7 +3110,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                         maxLines:
                                                                             1,
                                                                         style:
-                                                                            const TextStyle(
+                                                                            const TextStyle(fontFamily: 'PlusJakartaSans', 
                                                                           fontSize:
                                                                               13,
                                                                           color:
@@ -3095,7 +3139,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                         maxLines:
                                                                             1,
                                                                         style:
-                                                                            const TextStyle(
+                                                                            const TextStyle(fontFamily: 'PlusJakartaSans', 
                                                                           fontSize:
                                                                               13,
                                                                           color:
@@ -3143,7 +3187,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                         maxLines:
                                                                             1,
                                                                         style:
-                                                                            const TextStyle(
+                                                                            const TextStyle(fontFamily: 'PlusJakartaSans', 
                                                                           fontSize:
                                                                               13,
                                                                           color:
@@ -3192,7 +3236,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                                   ),
                                                                                 );
                                                                               },
-                                                                              child: const Text('Job Sheet', style: TextStyle(fontSize: 12)),
+                                                                              child: const Text('Job Sheet', style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 12)),
                                                                             ),
                                                                           ),
                                                                         ),
@@ -3249,7 +3293,7 @@ class _tasksPageReportState extends State<TaskPage> {
                   icon: const Icon(Icons.check, color: Colors.white, size: 18),
                   label: const Text(
                     'APPLY',
-                    style: TextStyle(
+                    style: TextStyle(fontFamily: 'PlusJakartaSans', 
                       color: Colors.white,
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
@@ -3284,7 +3328,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                     leading: const Icon(Icons.task,
                                         color: AppColors.primaryBlue),
                                     title: const Text('Create Task',
-                                        style: TextStyle(
+                                        style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
                                             fontWeight: FontWeight.w500)),
                                     onTap: () {
                                       Navigator.pop(sheetContext);
@@ -3309,7 +3353,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                       leading: const Icon(Icons.person_add,
                                           color: AppColors.primaryBlue),
                                       title: const Text('Add New Lead',
-                                          style: TextStyle(
+                                          style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
                                               fontWeight: FontWeight.w500)),
                                       onTap: () async {
                                         Navigator.pop(sheetContext);
@@ -3396,7 +3440,7 @@ class _tasksPageReportState extends State<TaskPage> {
           Expanded(
             child: Text(
               "Showing $startItem-$endItem of $totalSize",
-              style: const TextStyle(
+              style: const TextStyle(fontFamily: 'PlusJakartaSans', 
                 fontSize: 12,
                 color: Color(0xFF64748B),
                 fontWeight: FontWeight.w500,
@@ -3424,7 +3468,7 @@ class _tasksPageReportState extends State<TaskPage> {
               const SizedBox(width: 16),
               Text(
                 "Page $currentPage of $totalPages",
-                style: const TextStyle(
+                style: const TextStyle(fontFamily: 'PlusJakartaSans', 
                   fontSize: 12,
                   color: Color(0xFF334155),
                   fontWeight: FontWeight.w500,
@@ -3479,9 +3523,9 @@ class _tasksPageReportState extends State<TaskPage> {
             borderRadius: BorderRadius.circular(4.0),
           ),
           child: Container(
-            constraints: const BoxConstraints(
-              maxWidth: 480,
-              maxHeight: 520,
+            constraints: BoxConstraints(
+              maxWidth: 500,
+              maxHeight: isSmallScreen ? MediaQuery.of(context).size.height * 0.9 : 620,
             ),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -3497,7 +3541,7 @@ class _tasksPageReportState extends State<TaskPage> {
                     children: [
                       const Text(
                         'Update Status',
-                        style: TextStyle(
+                        style: TextStyle(fontFamily: 'PlusJakartaSans', 
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF1E293B),
@@ -3513,17 +3557,18 @@ class _tasksPageReportState extends State<TaskPage> {
                           children: [
                             Text(
                               'Task:',
-                              style: TextStyle(
+                              style: TextStyle(fontFamily: 'PlusJakartaSans', 
                                 fontSize: 13,
                                 color: Colors.grey.shade500,
                               ),
                             ),
                             Text(
                               task.taskTypeName ?? '',
-                              style: const TextStyle(
+                              style: TextStyle(
+                                fontFamily: 'PlusJakartaSans', 
                                 fontSize: 13,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xFF1E293B),
+                                color: task.parsedTaskTypeColor ?? const Color(0xFF1E293B),
                               ),
                             ),
                           ],
@@ -3565,6 +3610,7 @@ class _tasksPageReportState extends State<TaskPage> {
                             ValueNotifier(false);
                         WidgetsBinding.instance.addPostFrameCallback((_) {
                           reportsProvider.clearDescription();
+                          Provider.of<AudioFileProvider>(context, listen: false).clearAudios();
                         });
 
                         Widget formFields = Container(
@@ -3579,7 +3625,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     const Text('Select Status',
-                                        style: TextStyle(
+                                        style: TextStyle(fontFamily: 'PlusJakartaSans', 
                                             fontSize: 12,
                                             fontWeight: FontWeight.w500,
                                             color: Color(0xFF64748B))),
@@ -3631,7 +3677,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         const Text('Select Sub Status',
-                                            style: TextStyle(
+                                            style: TextStyle(fontFamily: 'PlusJakartaSans', 
                                                 fontSize: 12,
                                                 fontWeight: FontWeight.w500,
                                                 color: Color(0xFF64748B))),
@@ -3641,7 +3687,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                           builder: (context, subVal, _) {
                                             return DropdownButtonFormField<
                                                 SubStatus>(
-                                              value: subVal,
+                                              initialValue: subVal,
                                               decoration: InputDecoration(
                                                 contentPadding:
                                                     const EdgeInsets.symmetric(
@@ -3673,7 +3719,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                       width: 1),
                                                 ),
                                                 hintText: 'Select Sub Status',
-                                                hintStyle: TextStyle(
+                                                hintStyle: TextStyle(fontFamily: 'PlusJakartaSans', 
                                                     fontSize: 13,
                                                     color:
                                                         Colors.grey.shade400),
@@ -3699,7 +3745,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                   value: sub,
                                                   child: Text(
                                                       sub.subStatusName ?? '',
-                                                      style: const TextStyle(
+                                                      style: const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
                                                           fontSize: 14)),
                                                 );
                                               }).toList(),
@@ -3738,7 +3784,7 @@ class _tasksPageReportState extends State<TaskPage> {
                               ),
                               const SizedBox(height: 4),
                               Text('Add Notes',
-                                  style: TextStyle(
+                                  style: TextStyle(fontFamily: 'PlusJakartaSans', 
                                       fontSize: 12,
                                       color: Colors.grey.shade600,
                                       fontWeight: FontWeight.w500,
@@ -3761,18 +3807,18 @@ class _tasksPageReportState extends State<TaskPage> {
                                         horizontal: 14, vertical: 12),
                                     border: InputBorder.none,
                                     hintText: 'Enter notes here...',
-                                    hintStyle: TextStyle(
+                                    hintStyle: TextStyle(fontFamily: 'PlusJakartaSans', 
                                         fontSize: 13,
                                         color: Colors.grey.shade400),
                                   ),
-                                  style: const TextStyle(
+                                  style: const TextStyle(fontFamily: 'PlusJakartaSans', 
                                       fontSize: 14, color: Color(0xFF1E293B)),
                                 ),
                               ),
                               if (settingsProvider.showView[165] == 1) ...[
                                 const SizedBox(height: 12),
                                 Text('Remarks / Feedback',
-                                    style: TextStyle(
+                                    style: TextStyle(fontFamily: 'PlusJakartaSans', 
                                         fontSize: 12,
                                         color: Colors.grey.shade600,
                                         fontWeight: FontWeight.w500,
@@ -3796,16 +3842,18 @@ class _tasksPageReportState extends State<TaskPage> {
                                               horizontal: 14, vertical: 12),
                                       border: InputBorder.none,
                                       hintText: 'Enter remarks here...',
-                                      hintStyle: TextStyle(
+                                      hintStyle: TextStyle(fontFamily: 'PlusJakartaSans', 
                                           fontSize: 13,
                                           color: Colors.grey.shade400),
                                     ),
-                                    style: const TextStyle(
+                                    style: const TextStyle(fontFamily: 'PlusJakartaSans', 
                                         fontSize: 14, color: Color(0xFF1E293B)),
                                   ),
                                 ),
                               ],
-                              const SizedBox(height: 20),
+                              const SizedBox(height: 12),
+                              const TaskAudioRecordingWidget(),
+                              const SizedBox(height: 16),
                             ],
                           ),
                         );
@@ -3847,7 +3895,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                   BorderRadius.circular(4)),
                                         ),
                                         child: const Text('Cancel',
-                                            style: TextStyle(
+                                            style: TextStyle(fontFamily: 'PlusJakartaSans', 
                                                 color: Color(0xFF1E293B),
                                                 fontWeight: FontWeight.w700)),
                                       ),
@@ -3858,6 +3906,22 @@ class _tasksPageReportState extends State<TaskPage> {
                                             : () async {
                                                 isSaving.value = true;
                                                 try {
+                                                  final audioProvider =
+                                                      Provider.of<AudioFileProvider>(
+                                                          context,
+                                                          listen: false);
+                                                  List<Map<String, String>>
+                                                      uploadedAudioFiles = [];
+                                                  if (audioProvider
+                                                      .audios.isNotEmpty) {
+                                                    uploadedAudioFiles =
+                                                        await audioProvider
+                                                            .uploadAllAudios(
+                                                      task.taskId.toString(),
+                                                      context,
+                                                    );
+                                                  }
+
                                                   bool isSuccess =
                                                       await reportsProvider
                                                           .changeTaskStatus(
@@ -3868,8 +3932,11 @@ class _tasksPageReportState extends State<TaskPage> {
                                                         .getCurrentLocation(),
                                                     subStatus:
                                                         selectedSubStatus.value,
+                                                    audioFiles:
+                                                        uploadedAudioFiles,
                                                   );
                                                   if (isSuccess) {
+                                                    audioProvider.clearAudios();
                                                     Navigator.of(context)
                                                         .pop(true);
                                                   } else {
@@ -3908,7 +3975,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                 Color>(
                                                             Colors.white)))
                                             : const Text('Save',
-                                                style: TextStyle(
+                                                style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
                                                     fontWeight:
                                                         FontWeight.w700)),
                                       ),
@@ -3987,11 +4054,11 @@ class _tasksPageReportState extends State<TaskPage> {
             borderRadius: BorderRadius.circular(4.0),
           ),
           child: Container(
-            constraints: const BoxConstraints(
-              maxWidth: 900,
-              maxHeight: 600,
-              minHeight: 600,
-              minWidth: 900,
+            constraints: BoxConstraints(
+              maxWidth: isSmallScreen ? double.infinity : 900,
+              maxHeight: isSmallScreen ? MediaQuery.of(context).size.height * 0.9 : 680,
+              minHeight: isSmallScreen ? 0 : 400,
+              minWidth: isSmallScreen ? 0 : 700,
             ),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -4007,7 +4074,7 @@ class _tasksPageReportState extends State<TaskPage> {
                     children: [
                       const Text(
                         'Update Status',
-                        style: TextStyle(
+                        style: TextStyle(fontFamily: 'PlusJakartaSans', 
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF1E293B),
@@ -4022,24 +4089,25 @@ class _tasksPageReportState extends State<TaskPage> {
                             children: [
                               Text(
                                 'Task:',
-                                style: TextStyle(
+                                style: TextStyle(fontFamily: 'PlusJakartaSans', 
                                   fontSize: 13,
-                                  color: Colors.grey.shade500,
+                                  color: Colors.black54,
                                 ),
                               ),
                               const SizedBox(width: 6),
                               Text(
                                 task.taskTypeName ?? '',
-                                style: const TextStyle(
+                                style: TextStyle(
+                                  fontFamily: 'PlusJakartaSans', 
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
-                                  color: Color(0xFF1E293B),
+                                  color: task.parsedTaskTypeColor ?? const Color(0xFF1E293B),
                                 ),
                               ),
                               const SizedBox(width: 6),
                               Text(
                                 'for',
-                                style: TextStyle(
+                                style: TextStyle(fontFamily: 'PlusJakartaSans', 
                                   fontSize: 13,
                                   color: Colors.grey.shade500,
                                 ),
@@ -4052,7 +4120,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                 },
                                 child: Text(
                                   task.customerName,
-                                  style: const TextStyle(
+                                  style: const TextStyle(fontFamily: 'PlusJakartaSans', 
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
                                     color: Color(0xFF1E293B),
@@ -4081,7 +4149,7 @@ class _tasksPageReportState extends State<TaskPage> {
                               const SizedBox(height: 16),
                               Text(
                                 'Loading status options...',
-                                style: TextStyle(
+                                style: TextStyle(fontFamily: 'PlusJakartaSans', 
                                   color: theme.textTheme.bodyMedium?.color,
                                 ),
                               ),
@@ -4102,7 +4170,7 @@ class _tasksPageReportState extends State<TaskPage> {
                               Text(
                                 'Error loading status options',
                                 style:
-                                    TextStyle(color: theme.colorScheme.error),
+                                    TextStyle(fontFamily: 'PlusJakartaSans', color: theme.colorScheme.error),
                               ),
                               const SizedBox(height: 24),
                               ElevatedButton(
@@ -4143,6 +4211,7 @@ class _tasksPageReportState extends State<TaskPage> {
                           dropDownProvider.getUserDetails(context);
                           reportsProvider.clearTaskUserAssignments();
                           reportsProvider.clearDescription();
+                          Provider.of<AudioFileProvider>(context, listen: false).clearAudios();
 
                           // Pre-fill Description and Follow-Up Date if available
                           reportsProvider.descriptionController.clear();
@@ -4183,7 +4252,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     const Text('Select Status',
-                                        style: TextStyle(
+                                        style: TextStyle(fontFamily: 'PlusJakartaSans', 
                                             fontSize: 13,
                                             fontWeight: FontWeight.w500,
                                             color: Color(0xFF64748B))),
@@ -4260,7 +4329,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         const Text('Select Sub Status',
-                                            style: TextStyle(
+                                            style: TextStyle(fontFamily: 'PlusJakartaSans', 
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.w500,
                                                 color: Color(0xFF64748B))),
@@ -4270,7 +4339,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                           builder: (context, subVal, _) {
                                             return DropdownButtonFormField<
                                                 SubStatus>(
-                                              value: subVal,
+                                              initialValue: subVal,
                                               decoration: InputDecoration(
                                                 contentPadding:
                                                     const EdgeInsets.symmetric(
@@ -4302,7 +4371,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                       width: 1),
                                                 ),
                                                 hintText: 'Select Sub Status',
-                                                hintStyle: TextStyle(
+                                                hintStyle: TextStyle(fontFamily: 'PlusJakartaSans', 
                                                     fontSize: 13,
                                                     color:
                                                         Colors.grey.shade400),
@@ -4344,7 +4413,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                   value: sub,
                                                   child: Text(
                                                       sub.subStatusName ?? '',
-                                                      style: const TextStyle(
+                                                      style: const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
                                                           fontSize: 14)),
                                                 );
                                               }).toList(),
@@ -4432,7 +4501,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                   Expanded(
                                                     flex: 2,
                                                     child: Text('New Task',
-                                                        style: TextStyle(
+                                                        style: TextStyle(fontFamily: 'PlusJakartaSans', 
                                                             fontSize: 13,
                                                             color: Colors
                                                                 .grey.shade600,
@@ -4443,7 +4512,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                   Expanded(
                                                     flex: 1,
                                                     child: Text('Department',
-                                                        style: TextStyle(
+                                                        style: TextStyle(fontFamily: 'PlusJakartaSans', 
                                                             fontSize: 13,
                                                             color: Colors
                                                                 .grey.shade600,
@@ -4454,7 +4523,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                   Expanded(
                                                     flex: 1,
                                                     child: Text('User',
-                                                        style: TextStyle(
+                                                        style: TextStyle(fontFamily: 'PlusJakartaSans', 
                                                             fontSize: 13,
                                                             color: Colors
                                                                 .grey.shade600,
@@ -4546,7 +4615,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                               Text(
                                                                   taskItem.taskTypeName ??
                                                                       '',
-                                                                  style: const TextStyle(
+                                                                  style: const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
                                                                       fontSize:
                                                                           14,
                                                                       fontWeight:
@@ -4560,7 +4629,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                           child: Text(
                                                               taskItem.departmentName ??
                                                                   '',
-                                                              style: TextStyle(
+                                                              style: TextStyle(fontFamily: 'PlusJakartaSans', 
                                                                   fontSize: 13,
                                                                   color: Colors
                                                                       .grey
@@ -4609,8 +4678,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                           .where(
                                                                               (staff) {
                                                                         if (staff.workingStatus !=
-                                                                            "1")
+                                                                            "1") {
                                                                           return false;
+                                                                        }
 
                                                                         final staffDeptList = (staff.departmentId ??
                                                                                 '')
@@ -4649,15 +4719,18 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                             taskItem.departmentIds);
 
                                                                     // Default selected user name
+                                                                    final taskKey = taskItem.uniqueId ??
+                                                                        taskItem.taskTypeId.toString();
                                                                     int? assignedUserId = reportsProvider
-                                                                        .taskTypeToUserMap[taskItem
-                                                                            .uniqueId ??
-                                                                        taskItem
-                                                                            .taskTypeId
-                                                                            .toString()];
-                                                                    String
-                                                                        defaultUserName =
-                                                                        '';
+                                                                        .taskTypeToUserMap[taskKey];
+                                                                    String defaultUserName = '';
+
+                                                                    final leadProvider = Provider.of<LeadsProvider>(
+                                                                        context,
+                                                                        listen: false);
+                                                                    final int loginUserId = leadProvider.loginUserId != 0
+                                                                        ? leadProvider.loginUserId
+                                                                        : (int.tryParse(reportsProvider.loginUserId) ?? 0);
 
                                                                     if (assignedUserId !=
                                                                         null) {
@@ -4673,12 +4746,25 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                             matchedStaff.userDetailsName ??
                                                                                 '';
                                                                       } catch (_) {}
+                                                                    } else if (loginUserId != 0) {
+                                                                      try {
+                                                                        final loggedInStaff = departmentStaff.firstWhere(
+                                                                          (s) => s.userDetailsId == loginUserId,
+                                                                        );
+                                                                        assignedUserId = loggedInStaff.userDetailsId;
+                                                                        defaultUserName = loggedInStaff.userDetailsName ?? '';
+                                                                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                                          if (reportsProvider.taskTypeToUserMap[taskKey] == null) {
+                                                                            reportsProvider.setTaskUser(taskKey, loggedInStaff.userDetailsId);
+                                                                          }
+                                                                        });
+                                                                      } catch (_) {}
                                                                     }
 
                                                                     return CustomAutocompleteSearch<
                                                                         SearchUserDetails>(
                                                                       key: ValueKey(
-                                                                          'user_search_${taskItem.uniqueId ?? taskItem.taskTypeId}'),
+                                                                          'user_search_${taskKey}_${assignedUserId ?? 0}'),
                                                                       showOptionsOnTap:
                                                                           true,
                                                                       maxHeight:
@@ -4709,8 +4795,7 @@ class _tasksPageReportState extends State<TaskPage> {
 
                                                                         reportsProvider
                                                                             .setTaskUser(
-                                                                          taskItem.uniqueId ??
-                                                                              taskItem.taskTypeId.toString(),
+                                                                          taskKey,
                                                                           selected
                                                                               .userDetailsId,
                                                                         );
@@ -4812,7 +4897,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                   CrossAxisAlignment.start,
                                               children: [
                                                 Text('Pending Documents',
-                                                    style: TextStyle(
+                                                    style: TextStyle(fontFamily: 'PlusJakartaSans', 
                                                         fontSize: 13,
                                                         color: Colors
                                                             .grey.shade600,
@@ -4892,7 +4977,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                         children: [
                                                                           Expanded(
                                                                             child:
-                                                                                Text(doc.documentTypeName ?? '', style: const TextStyle(fontSize: 13)),
+                                                                                Text(doc.documentTypeName ?? '', style: const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 13)),
                                                                           ),
                                                                           InkWell(
                                                                             onTap:
@@ -4939,7 +5024,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                           4),
                                                                   child: Text(
                                                                       '${e.key + 1 + (hasDocs && !isDocumentButtonEnabled ? reportsProvider.documentTypeModel.length : (hasDocs ? 1 : 0))}. ${e.value.taskTypeName}-${e.value.requiredStatuses}',
-                                                                      style: const TextStyle(
+                                                                      style: const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
                                                                           fontSize:
                                                                               13)),
                                                                 )),
@@ -5003,7 +5088,7 @@ class _tasksPageReportState extends State<TaskPage> {
 
                               // Row 4: Description text area
                               Text('Comments',
-                                  style: TextStyle(
+                                  style: TextStyle(fontFamily: 'PlusJakartaSans', 
                                       fontSize: 12,
                                       color: Colors.grey.shade600,
                                       fontWeight: FontWeight.w500,
@@ -5028,18 +5113,18 @@ class _tasksPageReportState extends State<TaskPage> {
                                         horizontal: 14, vertical: 12),
                                     border: InputBorder.none,
                                     hintText: 'Enter notes here...',
-                                    hintStyle: TextStyle(
+                                    hintStyle: TextStyle(fontFamily: 'PlusJakartaSans', 
                                         color: Colors.grey.shade400,
                                         fontSize: 13),
                                   ),
-                                  style: const TextStyle(
+                                  style: const TextStyle(fontFamily: 'PlusJakartaSans', 
                                       fontSize: 14, color: Color(0xFF1E293B)),
                                 ),
                               ),
                               if (settingsProvider.showView[165] == 1) ...[
                                 const SizedBox(height: 12),
                                 Text('Remarks / Feedback',
-                                    style: TextStyle(
+                                    style: TextStyle(fontFamily: 'PlusJakartaSans', 
                                         fontSize: 12,
                                         color: Colors.grey.shade600,
                                         fontWeight: FontWeight.w500,
@@ -5065,16 +5150,18 @@ class _tasksPageReportState extends State<TaskPage> {
                                               horizontal: 14, vertical: 12),
                                       border: InputBorder.none,
                                       hintText: 'Enter remarks here...',
-                                      hintStyle: TextStyle(
+                                      hintStyle: TextStyle(fontFamily: 'PlusJakartaSans', 
                                           color: Colors.grey.shade400,
                                           fontSize: 13),
                                     ),
-                                    style: const TextStyle(
+                                    style: const TextStyle(fontFamily: 'PlusJakartaSans', 
                                         fontSize: 14, color: Color(0xFF1E293B)),
                                   ),
                                 ),
                               ],
-                              const SizedBox(height: 20),
+                              const SizedBox(height: 12),
+                              const TaskAudioRecordingWidget(),
+                              const SizedBox(height: 16),
                               Consumer<FormProvider>(
                                 builder: (context, formProvider, child) {
                                   if (formProvider.isFetchingCustomerForms) {
@@ -5117,7 +5204,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text('FORMS',
-                                          style: TextStyle(
+                                          style: TextStyle(fontFamily: 'PlusJakartaSans', 
                                               fontSize: 11,
                                               color: Colors.grey.shade600,
                                               fontWeight: FontWeight.w500,
@@ -5177,7 +5264,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                       children: [
                                                         const Text(
                                                           "1",
-                                                          style: TextStyle(
+                                                          style: TextStyle(fontFamily: 'PlusJakartaSans', 
                                                             fontSize: 13,
                                                             fontWeight:
                                                                 FontWeight.bold,
@@ -5189,7 +5276,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                           form.name.isNotEmpty
                                                               ? form.name
                                                               : "Attached Form",
-                                                          style: TextStyle(
+                                                          style: TextStyle(fontFamily: 'PlusJakartaSans', 
                                                             fontSize: 11,
                                                             fontWeight:
                                                                 FontWeight.w500,
@@ -5253,7 +5340,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                 size: 16,
                                                 color: Color(0xFF1E293B)),
                                             label: const Text("View History",
-                                                style: TextStyle(
+                                                style: TextStyle(fontFamily: 'PlusJakartaSans', 
                                                     color: Color(0xFF1E293B),
                                                     fontWeight:
                                                         FontWeight.w700)),
@@ -5626,7 +5713,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                       vertical: 12),
                                             ),
                                             child: const Text("Cancel",
-                                                style: TextStyle(
+                                                style: TextStyle(fontFamily: 'PlusJakartaSans', 
                                                     color: Color(0xFF1E293B),
                                                     fontWeight:
                                                         FontWeight.w500)),
@@ -5689,7 +5776,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                     width: 10),
                                                                 const Text(
                                                                     "Required Status Incomplete",
-                                                                    style: TextStyle(
+                                                                    style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
                                                                         fontWeight:
                                                                             FontWeight
                                                                                 .bold,
@@ -5711,7 +5798,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                 children: [
                                                                   const Text(
                                                                       "Any one of the following required statuses must be completed for the corresponding task before saving:",
-                                                                      style: TextStyle(
+                                                                      style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
                                                                           fontSize:
                                                                               16)),
                                                                   const SizedBox(
@@ -5832,7 +5919,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                     width: 10),
                                                                 const Text(
                                                                     "Unable to Save",
-                                                                    style: TextStyle(
+                                                                    style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
                                                                         fontWeight:
                                                                             FontWeight
                                                                                 .bold,
@@ -5842,7 +5929,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                             ),
                                                             content: const Text(
                                                                 "Remark Missing",
-                                                                style: TextStyle(
+                                                                style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
                                                                     fontSize:
                                                                         16)),
                                                             actions: [
@@ -5887,6 +5974,23 @@ class _tasksPageReportState extends State<TaskPage> {
                                                         isDocumentButtonEnabled) {
                                                       isSaving.value = true;
                                                       try {
+                                                        final audioProvider =
+                                                            Provider.of<AudioFileProvider>(
+                                                                context,
+                                                                listen: false);
+                                                        List<Map<String, String>>
+                                                            uploadedAudioFiles = [];
+                                                        if (audioProvider
+                                                            .audios.isNotEmpty) {
+                                                          uploadedAudioFiles =
+                                                              await audioProvider
+                                                                  .uploadAllAudios(
+                                                            task.taskId
+                                                                .toString(),
+                                                            context,
+                                                          );
+                                                        }
+
                                                         bool isSuccess = await provider
                                                             .changeTaskStatus(
                                                                 context,
@@ -5897,13 +6001,16 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                     .getCurrentLocation(),
                                                                 subStatus:
                                                                     selectedSubStatus
-                                                                        .value);
+                                                                        .value,
+                                                                audioFiles:
+                                                                    uploadedAudioFiles);
 
                                                         if (!context.mounted) {
                                                           return;
                                                         }
 
                                                         if (isSuccess) {
+                                                          audioProvider.clearAudios();
                                                           Navigator.pop(
                                                               context, true);
                                                           ScaffoldMessenger.of(
@@ -5977,7 +6084,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                     width: 10),
                                                                 const Text(
                                                                     "Unable to Save",
-                                                                    style: TextStyle(
+                                                                    style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
                                                                         fontWeight:
                                                                             FontWeight
                                                                                 .bold,
@@ -5987,7 +6094,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                             ),
                                                             content: const Text(
                                                                 "Documents Not Uploaded",
-                                                                style: TextStyle(
+                                                                style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
                                                                     fontSize:
                                                                         16)),
                                                             actions: [
@@ -6050,7 +6157,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                 Colors.white)),
                                                   )
                                                 : const Text('Save',
-                                                    style: TextStyle(
+                                                    style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
                                                         fontWeight:
                                                             FontWeight.w700)),
                                           ),
@@ -6104,7 +6211,7 @@ class _tasksPageReportState extends State<TaskPage> {
                     const Center(
                       child: Text(
                         'Choose Date',
-                        style: TextStyle(
+                        style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
                             fontSize: 18, fontWeight: FontWeight.w700),
                       ),
                     ),
@@ -6128,7 +6235,7 @@ class _tasksPageReportState extends State<TaskPage> {
                               reportsProvider.selectedDateFilterIndex == index
                                   ? AppColors.primaryBlue
                                   : Colors.white,
-                          labelStyle: TextStyle(
+                          labelStyle: TextStyle(fontFamily: 'PlusJakartaSans', 
                             color:
                                 reportsProvider.selectedDateFilterIndex == index
                                     ? Colors.white
@@ -6141,7 +6248,7 @@ class _tasksPageReportState extends State<TaskPage> {
                     const Text(
                       'Pick a date',
                       style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                          TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 16, fontWeight: FontWeight.w700),
                     ),
                     const SizedBox(height: 15),
                     Row(
@@ -6305,7 +6412,7 @@ class _tasksPageReportState extends State<TaskPage> {
       children: [
         Text(
           'Follow-up Date',
-          style: TextStyle(
+          style: TextStyle(fontFamily: 'PlusJakartaSans', 
             fontSize: 12,
             fontWeight: FontWeight.w500,
             color: Colors.grey.shade600,
@@ -6346,7 +6453,7 @@ class _tasksPageReportState extends State<TaskPage> {
                       final hasDate = val.text.isNotEmpty;
                       return Text(
                         hasDate ? val.text : 'DD MMM YYYY',
-                        style: TextStyle(
+                        style: TextStyle(fontFamily: 'PlusJakartaSans', 
                           fontSize: 13,
                           color: hasDate
                               ? const Color(0xFF1E293B)
@@ -6371,7 +6478,7 @@ class _tasksPageReportState extends State<TaskPage> {
       children: [
         Text(
           'Follow-up Time',
-          style: TextStyle(
+          style: TextStyle(fontFamily: 'PlusJakartaSans', 
             fontSize: 12,
             fontWeight: FontWeight.w500,
             color: Colors.grey.shade600,
@@ -6409,7 +6516,7 @@ class _tasksPageReportState extends State<TaskPage> {
                       final hasTime = val.text.isNotEmpty;
                       return Text(
                         hasTime ? val.text : 'HH:MM AM/PM',
-                        style: TextStyle(
+                        style: TextStyle(fontFamily: 'PlusJakartaSans', 
                           fontSize: 13,
                           color: hasTime
                               ? const Color(0xFF1E293B)
@@ -6478,7 +6585,7 @@ class _tasksPageReportState extends State<TaskPage> {
           const SizedBox(width: 4),
           Text(
             label,
-            style: TextStyle(
+            style: TextStyle(fontFamily: 'PlusJakartaSans', 
               fontSize: 12,
               color: Colors.grey.shade700,
               fontWeight: FontWeight.w500,
@@ -6530,7 +6637,7 @@ class _tasksPageReportState extends State<TaskPage> {
             const SizedBox(width: 4),
             Text(
               status.statusName ?? '',
-              style: TextStyle(
+              style: TextStyle(fontFamily: 'PlusJakartaSans', 
                 color: isSelected ? Colors.white : statusColor,
                 fontWeight: FontWeight.w500,
                 fontSize: 12,
@@ -6551,7 +6658,7 @@ Widget _buildPriorityFilter(TaskPageProvider taskProvider) {
               value: 0,
               child: Text(
                 'All',
-                style: TextStyle(fontSize: 14),
+                style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
               ),
             ),
           ] +
@@ -6563,7 +6670,7 @@ Widget _buildPriorityFilter(TaskPageProvider taskProvider) {
                       child: Text(
                         priority.priorityName ?? '',
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
+                        style: TextStyle(fontFamily: 'PlusJakartaSans', 
                           fontSize: 14,
                           color: AppColors.parseColor(priority.colorCode),
                           fontWeight: FontWeight.w500,
@@ -6579,8 +6686,7 @@ Widget _buildPriorityFilter(TaskPageProvider taskProvider) {
           color: Colors.white,
           borderRadius: BorderRadius.circular(4),
           border: Border.all(
-            color: (taskProvider.selectedPriority != null &&
-                    taskProvider.selectedPriority != 0)
+            color: (taskProvider.selectedPriority != 0)
                 ? AppColors.primaryBlue
                 : Colors.grey[300]!,
           ),
@@ -6589,7 +6695,7 @@ Widget _buildPriorityFilter(TaskPageProvider taskProvider) {
           child: DropdownButton<int>(
             value: taskProvider.selectedPriority ?? 0,
             hint: const Text('Priority: All',
-                style: TextStyle(fontSize: 14, color: Colors.black87)),
+                style: TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 14, color: Colors.black87)),
             items: items,
             selectedItemBuilder: (BuildContext context) {
               return items.map<Widget>((DropdownMenuItem<int> item) {
@@ -6597,7 +6703,7 @@ Widget _buildPriorityFilter(TaskPageProvider taskProvider) {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     const Text('Priority: ',
-                        style: TextStyle(fontSize: 14, color: Colors.black87)),
+                        style: TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 14, color: Colors.black87)),
                     item.child,
                   ],
                 );

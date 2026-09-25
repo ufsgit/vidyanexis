@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:vidyanexis/controller/models/dashboard_count_model.dart';
 import 'package:vidyanexis/controller/models/dashboard_info_model.dart';
@@ -11,6 +11,7 @@ import 'package:vidyanexis/controller/models/task_allocation_model.dart';
 import 'package:vidyanexis/controller/models/work_report_summary_model.dart';
 import 'package:vidyanexis/controller/models/lead_enquiry_report_model.dart';
 import 'package:vidyanexis/controller/models/customer_outstanding_summary_model.dart';
+import 'package:vidyanexis/controller/models/day_wise_count_model.dart';
 import 'package:vidyanexis/model/dashboard/user_activity_report_model.dart';
 import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/http_urls.dart';
@@ -25,6 +26,10 @@ import 'package:flutter/foundation.dart';
 // Top-level parsing functions for compute()
 List<TaskInfoDashboardModel> _parseTaskInfo(List<dynamic> data) {
   return data.map((item) => TaskInfoDashboardModel.fromJson(item)).toList();
+}
+
+List<DayWiseCountModel> _parseDayWiseCount(List<dynamic> data) {
+  return data.map((item) => DayWiseCountModel.fromJson(item)).toList();
 }
 
 DashBoardTaskModel _parseDashBoardTask(Map<String, dynamic> data) {
@@ -89,6 +94,7 @@ class DashboardProvider extends ChangeNotifier {
   CustomerOutstandingSummaryModel? customerOutstandingSummary;
   bool isUserActivityLoaded = false;
   bool isAttendanceDashboardLoaded = false;
+  bool isLeadFlowLoaded = false;
   UserActivityReportModel? userActivityReport;
   String userActivityDateType = 'TaskType'; // Default or as per requirement
 
@@ -121,6 +127,9 @@ class DashboardProvider extends ChangeNotifier {
   List<DashBoardCountModel> dashBoardCountModel = [];
   List<DashBoardCountModel> leadDashboardCountData = [];
   List<DashBoardCountModel> attendanceDashboardCountData = [];
+
+  List<DayWiseCountModel> leadCountDayWise = [];
+  List<DayWiseCountModel> conversionCountDayWise = [];
 
   List<dynamic> attendanceDetails = [];
   List<dynamic> loginStatusDetails = []; // Cache to look up original status
@@ -603,6 +612,89 @@ class DashboardProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> getLeadFlowData({bool shouldNotify = true}) async {
+    try {
+      isDashBoardLoading = true;
+      if (shouldNotify) notifyListeners();
+
+      String fDate = _formattedFromDate;
+      String tDate = _formattedToDate;
+
+      // The day-wise API requires a date range. If "All Dates" is selected (empty string),
+      // we default to the last 30 days to ensure the chart has data to display.
+      if (fDate.isEmpty || tDate.isEmpty) {
+        fDate = DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(const Duration(days: 30)));
+        tDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+      }
+
+      final body = <String, dynamic>{
+        "fromdate": fDate,
+        "todate": tDate,
+        "Fromdate": fDate,
+        "Todate": tDate,
+      };
+      
+      if (_selectedUser != 0) {
+        body["Staff_Id"] = _selectedUser.toString();
+      }
+
+      print('Fetching LeadFlowData with body: $body');
+
+      // Fetch Lead Count Day Wise
+      final leadResponse = await HttpRequest.httpGetRequest(
+          endPoint: HttpUrls.getLeadCountDayWise, bodyData: body);
+          
+      print('LeadResponse status: ${leadResponse.statusCode}, data: ${leadResponse.data}');
+
+      if (leadResponse.statusCode == 200 && leadResponse.data != null) {
+        var respData = leadResponse.data;
+        if (respData is Map) {
+          if ((respData['success'] == true || respData['Success'] == true) && 
+              (respData['data'] != null || respData['Data'] != null)) {
+            List<dynamic> dataList = respData['data'] ?? respData['Data'];
+            leadCountDayWise = await compute(_parseDayWiseCount, dataList);
+          } else {
+            leadCountDayWise = [];
+          }
+        } else if (respData is List) {
+           leadCountDayWise = await compute(_parseDayWiseCount, respData);
+        } else {
+           leadCountDayWise = [];
+        }
+      }
+
+      // Fetch Conversion Count Day Wise
+      final conversionResponse = await HttpRequest.httpGetRequest(
+          endPoint: HttpUrls.getConversionCountDayWise, bodyData: body);
+
+      print('ConversionResponse status: ${conversionResponse.statusCode}, data: ${conversionResponse.data}');
+
+      if (conversionResponse.statusCode == 200 && conversionResponse.data != null) {
+        var respData = conversionResponse.data;
+        if (respData is Map) {
+          if ((respData['success'] == true || respData['Success'] == true) && 
+              (respData['data'] != null || respData['Data'] != null)) {
+            List<dynamic> dataList = respData['data'] ?? respData['Data'];
+            conversionCountDayWise = await compute(_parseDayWiseCount, dataList);
+          } else {
+            conversionCountDayWise = [];
+          }
+        } else if (respData is List) {
+           conversionCountDayWise = await compute(_parseDayWiseCount, respData);
+        } else {
+           conversionCountDayWise = [];
+        }
+      }
+      
+      isLeadFlowLoaded = true;
+    } catch (e) {
+      print('Error fetching lead flow data: $e');
+    } finally {
+      isDashBoardLoading = false;
+      if (shouldNotify) notifyListeners();
+    }
+  }
+
   void changeTab(int index) {
     _tabIndex = index;
     notifyListeners();
@@ -678,6 +770,11 @@ class DashboardProvider extends ChangeNotifier {
                 .fetchTAList(context: context);
           }
         } catch (_) {}
+        break;
+      case 11: // Lead Flow
+        if (!isLeadFlowLoaded) {
+          await getLeadFlowData();
+        }
         break;
     }
     print('[PERF-RELOAD] loadDataForTab completed for activeTab = $activeTab in ${DateTime.now().millisecondsSinceEpoch - startTime} ms');
@@ -1026,6 +1123,7 @@ class DashboardProvider extends ChangeNotifier {
     isCustomerOutstandingSummaryLoaded = false;
     isUserActivityLoaded = false;
     isAttendanceDashboardLoaded = false;
+    isLeadFlowLoaded = false;
   }
 
   Future<void> refreshDashboardData(BuildContext context,

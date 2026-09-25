@@ -6,8 +6,14 @@ import 'package:vidyanexis/utils/file_downloader.dart';
 class CustomerCard extends StatelessWidget {
   final String title;
   final List<Widget> content;
+  final Widget? action;
 
-  const CustomerCard({super.key, required this.title, required this.content});
+  const CustomerCard({
+    super.key,
+    required this.title,
+    required this.content,
+    this.action,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -30,13 +36,20 @@ class CustomerCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              title,
-              style: GoogleFonts.plusJakartaSans(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textBlack,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  title,
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textBlack,
+                  ),
+                ),
+                if (action != null) action!,
+              ],
             ),
             const SizedBox(height: 12.0),
             ...content,
