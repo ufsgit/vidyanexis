@@ -101,15 +101,23 @@ class _LeadsOverViewTabState extends State<LeadsOverViewTab> {
             } else if (constraints.maxWidth > 600) {
               crossAxisCount = 3;
             }
+            final bool isMobile = constraints.maxWidth < 600;
+            final double spacing = isMobile ? 12.0 : 16.0;
+            final double availableWidth =
+                constraints.maxWidth - (spacing * (crossAxisCount - 1));
+            final double itemWidth = availableWidth / crossAxisCount;
+            final double itemHeight = isMobile ? 120.0 : 125.0;
+            final double aspectRatio = itemWidth / itemHeight;
+
             return GridView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: leadCounts.length,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: crossAxisCount,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-                childAspectRatio: 2.0, // wider rectangles similar to dashboard
+                crossAxisSpacing: spacing,
+                mainAxisSpacing: spacing,
+                childAspectRatio: aspectRatio,
               ),
               itemBuilder: (context, index) {
                 final item = leadCounts[index];

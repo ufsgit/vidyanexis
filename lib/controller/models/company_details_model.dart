@@ -33,8 +33,6 @@ class CompanyPermission {
         return "solar pv system specification";
       case 31:
         return "New Dashboard Count";
-      case 36:
-        return "Lead Creation changes";
       default:
         return "Permission $companyPermissionId";
     }
@@ -84,9 +82,6 @@ class CompanyPermission {
           break;
         case 31:
           cap = "New Dashboard Count";
-          break;
-        case 36:
-          cap = "Lead Creation changes";
           break;
       }
     }

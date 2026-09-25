@@ -68,45 +68,46 @@ class DashboardCountTab extends StatelessWidget {
         .where((e) => allowedKeys.contains(e.key))
         .toList();
 
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.02),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final bool isMobile = constraints.maxWidth < 600;
+        final double outerPaddingH =
+            isMobile ? 12.0 : (constraints.maxWidth > 900 ? 32.0 : 20.0);
+        final double outerPaddingV = isMobile ? 14.0 : 24.0;
+
+        int crossAxisCount = 2; // Mobile gets 2 cards per row
+        if (constraints.maxWidth > 1200) {
+          crossAxisCount = 4; // 4 cards per row for large screens (4, 4, 1)
+        } else if (constraints.maxWidth > 900) {
+          crossAxisCount = 4;
+        } else if (constraints.maxWidth > 600) {
+          crossAxisCount = 3;
+        }
+
+        final double spacing = isMobile ? 12.0 : 20.0;
+        final double availableWidth = constraints.maxWidth -
+            (outerPaddingH * 2) -
+            (spacing * (crossAxisCount - 1));
+        final double itemWidth = availableWidth / crossAxisCount;
+        final double itemHeight = isMobile ? 102.0 : 115.0;
+        final double aspectRatio = itemWidth / itemHeight;
+
+        return Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(4),
+            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.02),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
-        ],
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          int crossAxisCount = 2; // Mobile gets 2 cards per row
-          double aspectRatio = 1.2; // Default for mobile to avoid 5.7px overflow
-
-          if (constraints.maxWidth > 1200) {
-            crossAxisCount = 4; // 4 cards per row for large screens (4, 4, 1)
-            aspectRatio = 2.4;
-          } else if (constraints.maxWidth > 900) {
-            crossAxisCount = 4;
-            aspectRatio = 2.0;
-          } else if (constraints.maxWidth > 600) {
-            crossAxisCount = 3;
-            aspectRatio = 1.6;
-          } else if (constraints.maxWidth > 400) {
-            crossAxisCount = 2;
-            aspectRatio = 1.4;
-          }
-
-          final double spacing = 24.0;
-          final double availableWidth =
-              constraints.maxWidth - (spacing * (crossAxisCount - 1));
-          final double itemWidth = availableWidth / crossAxisCount;
-
-          return GridView.builder(
+          padding: EdgeInsets.symmetric(
+              horizontal: outerPaddingH, vertical: outerPaddingV),
+          child: GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: items.length,
@@ -126,6 +127,7 @@ class DashboardCountTab extends StatelessWidget {
                 keyword: keyword,
                 count: count,
                 theme: theme,
+                isMobile: isMobile,
                 onTap: () {
                   if (keyword == 'Total_Task') {
                     Navigator.push(
@@ -154,9 +156,9 @@ class DashboardCountTab extends StatelessWidget {
                 },
               );
             },
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -195,76 +197,93 @@ class DashboardCountTab extends StatelessWidget {
   }
 
   Widget _buildSkeleton(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.02),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final bool isMobile = constraints.maxWidth < 600;
+        final double outerPaddingH = isMobile ? 12.0 : 16.0;
+        final double outerPaddingV = isMobile ? 14.0 : 16.0;
+        final int crossAxisCount =
+            isMobile ? 2 : (constraints.maxWidth > 900 ? 4 : 3);
+        final double spacing = isMobile ? 12.0 : 16.0;
+        final double availableWidth = constraints.maxWidth -
+            (outerPaddingH * 2) -
+            (spacing * (crossAxisCount - 1));
+        final double itemWidth = availableWidth / crossAxisCount;
+        final double itemHeight = isMobile ? 102.0 : 115.0;
+        final double aspectRatio = itemWidth / itemHeight;
+
+        return Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(4),
+            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.02),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
-        ],
-      ),
-      padding: const EdgeInsets.all(16),
-      child: GridView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        itemCount: 6,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 16,
-          childAspectRatio: 1.4,
-        ),
-        itemBuilder: (context, index) {
-          return Container(
-            decoration: BoxDecoration(
-              color: Colors.grey.shade100,
-              borderRadius: BorderRadius.circular(16),
+          padding: EdgeInsets.symmetric(
+              horizontal: outerPaddingH, vertical: outerPaddingV),
+          child: GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: 6,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: crossAxisCount,
+              crossAxisSpacing: spacing,
+              mainAxisSpacing: spacing,
+              childAspectRatio: aspectRatio,
             ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    height: 30,
-                    width: 40,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade200,
-                      borderRadius: BorderRadius.circular(4),
+            itemBuilder: (context, index) {
+              return Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade100,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                padding: EdgeInsets.all(isMobile ? 10 : 14),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          height: isMobile ? 22 : 28,
+                          width: isMobile ? 32 : 40,
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade200,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                        Container(
+                          height: isMobile ? 24 : 28,
+                          width: isMobile ? 24 : 28,
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade200,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  Container(
-                    height: 12,
-                    width: 60,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade200,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                  ),
-                  const Spacer(),
-                  Align(
-                    alignment: Alignment.bottomRight,
-                    child: Container(
-                      height: 20,
-                      width: 20,
+                    Container(
+                      height: isMobile ? 10 : 12,
+                      width: isMobile ? 65 : 80,
                       decoration: BoxDecoration(
                         color: Colors.grey.shade200,
-                        shape: BoxShape.circle,
+                        borderRadius: BorderRadius.circular(4),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
-      ),
+                  ],
+                ),
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }
@@ -280,12 +299,14 @@ class _DashboardCard extends StatefulWidget {
   final int count;
   final _CardTheme theme;
   final VoidCallback onTap;
+  final bool isMobile;
 
   const _DashboardCard({
     required this.keyword,
     required this.count,
     required this.theme,
     required this.onTap,
+    this.isMobile = false,
   });
 
   @override
@@ -330,53 +351,59 @@ class _DashboardCardState extends State<_DashboardCard> {
                 )
               ],
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Stack(
+            padding: EdgeInsets.symmetric(
+              horizontal: widget.isMobile ? 12 : 16,
+              vertical: widget.isMobile ? 10 : 14,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Column(
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     // Primary Metric
-                    Text(
-                      widget.count.toString(),
-                      style: const TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                    Expanded(
+                      child: Text(
+                        widget.count.toString(),
+                        style: TextStyle(
+                          fontSize: widget.isMobile ? 24 : 30,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          height: 1.1,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    // Title
-                    Text(
-                      displayTitle,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white.withOpacity(0.9),
-                        letterSpacing: 0.5,
+                    // Top-Right Icon Badge
+                    Container(
+                      padding: EdgeInsets.all(widget.isMobile ? 5 : 8),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(8),
                       ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                      child: Icon(
+                        widget.theme.icon,
+                        color: Colors.white,
+                        size: widget.isMobile ? 16 : 20,
+                      ),
                     ),
                   ],
                 ),
-                // Top-Right Icon Badge
-                Align(
-                  alignment: Alignment.topRight,
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Icon(
-                      widget.theme.icon,
-                      color: Colors.white,
-                      size: 20,
-                    ),
+                const SizedBox(height: 2),
+                // Title
+                Text(
+                  displayTitle,
+                  style: TextStyle(
+                    fontSize: widget.isMobile ? 11 : 13,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white.withOpacity(0.9),
+                    letterSpacing: widget.isMobile ? 0.2 : 0.5,
                   ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),

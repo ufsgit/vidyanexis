@@ -16,8 +16,6 @@ class TaskReportModel {
   final int createdBy;
   final int taskTypeId;
   final String taskTypeName;
-  final String taskTypeColor;
-  final Color? parsedTaskTypeColor;
   final int locationTracking;
   final String location;
   final String locationName;
@@ -102,8 +100,6 @@ class TaskReportModel {
     required this.createdBy,
     required this.taskTypeId,
     required this.taskTypeName,
-    this.taskTypeColor = '',
-    this.parsedTaskTypeColor,
     required this.taskDate,
     required this.taskTime,
     this.completionDate,
@@ -224,18 +220,6 @@ class TaskReportModel {
       createdBy: json['Created_By'] ?? 0,
       taskTypeId: json['Task_Type_Id'] ?? 0,
       taskTypeName: json['Task_Type_Name'] ?? '',
-      taskTypeColor: parseString(json['Task_Type_Color'] ??
-          json['task_type_color'] ??
-          json['TaskTypeColor']),
-      parsedTaskTypeColor: (json['Task_Type_Color'] != null &&
-              json['Task_Type_Color'].toString().isNotEmpty &&
-              json['Task_Type_Color'].toString() != 'null')
-          ? AppColors.parseColor(json['Task_Type_Color'].toString())
-          : (json['task_type_color'] != null &&
-                  json['task_type_color'].toString().isNotEmpty &&
-                  json['task_type_color'].toString() != 'null')
-              ? AppColors.parseColor(json['task_type_color'].toString())
-              : null,
       taskDate: json['Task_Date'] ?? '',
       taskTime: json['Task_Time'] ?? '',
       completionDate: json['Completion_Date'] as String?,
@@ -310,7 +294,6 @@ class TaskReportModel {
       'Created_By': createdBy,
       'Task_Type_Id': taskTypeId,
       'Task_Type_Name': taskTypeName,
-      'Task_Type_Color': taskTypeColor,
       'Task_Date': taskDate,
       'Task_Time': taskTime,
       'Completion_Date': completionDate,

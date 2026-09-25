@@ -85,8 +85,6 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
           Provider.of<SidebarProvider>(context, listen: false);
       searchProvider.stopSearch();
       _customerProvider = Provider.of<CustomerProvider>(context, listen: false);
-      final settingsProvider =
-          Provider.of<SettingsProvider>(context, listen: false);
       final customerProvider = _customerProvider!;
       customerProvider.setSearchCriteria(
         '',
@@ -94,17 +92,13 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
         '',
       );
       customerProvider.resetExpansion();
-      //only for ramco
-      if (settingsProvider.ramcoSort == 1) {
-        customerProvider.setSortOption(13, context); // Creation Date (Newest)
-      } else {
-        customerProvider.setSortOption(0, context); // existing Default
-      }
       customerProvider.getSearchCustomers(context);
       final provider = Provider.of<DropDownProvider>(context, listen: false);
       // Load all statuses by default (no ViewIn_Id) so the dropdown shows everything.
       await provider.getFollowUpStatusCustomer(context);
       provider.getUserDetails(context);
+      final settingsProvider =
+          Provider.of<SettingsProvider>(context, listen: false);
       settingsProvider.searchBranch(context);
       settingsProvider.searchDepartment('', context);
       customerProvider.setFilter(false);
@@ -304,9 +298,7 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
                                   customerProvider.toggleStatus(0);
                                 },
                               ),
-                              ...provider.followUpData
-                                  .where((e) => e.viewInId == 2 || e.isRegistered == 1)
-                                  .map((status) {
+                              ...provider.leadStatuses.map((status) {
                                 return FilterChipWidget(
                                   label: status.statusName ?? 'Unknown',
                                   isSelected: customerProvider.selectedStatusIds

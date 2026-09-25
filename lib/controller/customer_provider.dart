@@ -183,14 +183,6 @@ class CustomerProvider extends ChangeNotifier {
         _selectedSortOption = 5;
         _sortOrder = 'DESC';
         break;
-      case 12:
-        _selectedSortOption = 6;
-        _sortOrder = 'ASC';
-        break;
-      case 13:
-        _selectedSortOption = 6;
-        _sortOrder = 'DESC';
-        break;
     }
     currentPage = 1;
     _startLimit = 1;

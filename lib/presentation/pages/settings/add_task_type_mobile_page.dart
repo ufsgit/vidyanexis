@@ -10,7 +10,6 @@ import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
-import 'package:vidyanexis/utils/extensions.dart';
 
 class AddTaskTypeMobilePage extends StatefulWidget {
   final bool isEdit;
@@ -92,17 +91,6 @@ class _AddTaskTypeMobilePageState extends State<AddTaskTypeMobilePage> {
       .toList();
   bool _selectAllEnquiryFor = false;
 
-  String _selectedColorCode = '';
-
-  final List<Color> colorOptions = [
-    const Color(0xffA8A8A8),
-    const Color(0xffDCA654),
-    const Color(0xff68AA45),
-    const Color(0xff405ED9),
-    const Color(0xffB24D44),
-    const Color(0xff4D4D4D),
-  ];
-
   // ── Lifecycle ────────────────────────────────────────────────────────────
   @override
   void initState() {
@@ -131,9 +119,6 @@ class _AddTaskTypeMobilePageState extends State<AddTaskTypeMobilePage> {
       settingsProvider.toggleCommission(false);
       settingsProvider.toggleManualCreation(false);
       settingsProvider.toggleEnquiryForVisible(false);
-
-      _selectedColorCode =
-          widget.isEdit ? (widget.taskType?.taskTypeColor ?? '') : '';
 
       settingsProvider.getSearchLeadStatus('', "3", context);
 
@@ -321,7 +306,7 @@ class _AddTaskTypeMobilePageState extends State<AddTaskTypeMobilePage> {
     final requestData = {
       "Task_Type_Id": widget.isEdit ? int.tryParse(widget.editId) ?? 0 : 0,
       "Task_Type_Name": settingsProvider.taskTypeController.text,
-      "Task_Type_Color": _selectedColorCode,
+      "Task_Type_Color": "",
       "Task_Type_Image": "",
       "Department_Ids": settingsProvider.selectedDepartmentId.toString(),
       "Branch_Ids": "",
@@ -522,8 +507,6 @@ class _AddTaskTypeMobilePageState extends State<AddTaskTypeMobilePage> {
                                 horizontal: 12, vertical: 12),
                           ),
                         ),
-                        const SizedBox(height: 16),
-                        _buildColorPicker(),
                       ],
                     ),
                   ),
@@ -751,81 +734,6 @@ class _AddTaskTypeMobilePageState extends State<AddTaskTypeMobilePage> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildColorPicker() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Choose Category Color',
-          style: GoogleFonts.plusJakartaSans(
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-            color: AppColors.textGrey3,
-          ),
-        ),
-        const SizedBox(height: 12.0),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: colorOptions.map((color) {
-              final hex = color.toHexString();
-              bool isSelected =
-                  _selectedColorCode.toLowerCase() == hex.toLowerCase();
-
-              return Padding(
-                padding: const EdgeInsets.only(right: 16.0),
-                child: GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _selectedColorCode = hex;
-                    });
-                  },
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        curve: Curves.easeInOut,
-                        width: isSelected ? 35 : 25,
-                        height: isSelected ? 35 : 25,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: color,
-                          border: Border.all(
-                            color: isSelected
-                                ? Colors.white
-                                : Colors.transparent,
-                            width: 3,
-                          ),
-                          boxShadow: isSelected
-                              ? [
-                                  BoxShadow(
-                                    color: Colors.black.withAlpha(77),
-                                    blurRadius: 8,
-                                    spreadRadius: 3,
-                                    offset: const Offset(0, 4),
-                                  ),
-                                ]
-                              : [],
-                        ),
-                      ),
-                      if (isSelected)
-                        const Icon(
-                          Icons.check,
-                          color: Colors.white,
-                          size: 16,
-                        ),
-                    ],
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
-        ),
-      ],
     );
   }
 }

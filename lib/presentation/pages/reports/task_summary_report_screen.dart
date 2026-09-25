@@ -287,7 +287,7 @@ class _TaskSummaryReportScreenState extends State<TaskSummaryReportScreen> {
               style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600),
             ),
           ),
-          // const Spacer(),
+          const Spacer(),
           if (hasDates)
             CommonReportResetButton(
               onReset: () {

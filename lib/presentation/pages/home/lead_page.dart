@@ -367,7 +367,7 @@ class _LeadsPageState extends State<LeadPage> {
                       child: Text(
                         'No matching leads found.',
                         style: GoogleFonts.plusJakartaSans(
-                          color: Colors.black,
+                          color: Colors.grey,
                           fontSize: 13,
                         ),
                       ),
@@ -395,7 +395,7 @@ class _LeadsPageState extends State<LeadPage> {
                           }
                           nameSpans.add(TextSpan(
                               text: name.substring(startIndex, endIndex),
-                              style: const TextStyle(fontFamily: 'PlusJakartaSans', 
+                              style: const TextStyle(
                                   backgroundColor: Color(0xFFE2E8F0),
                                   color: AppColors.primaryBlue)));
                           if (endIndex < name.length) {
@@ -434,7 +434,7 @@ class _LeadsPageState extends State<LeadPage> {
                                 Text(
                                   'ID: ${option.customerId} | Contact: ${option.contactNumber}',
                                   style: GoogleFonts.plusJakartaSans(
-                                    color: Colors.black,
+                                    color: Colors.grey,
                                     fontSize: 11,
                                   ),
                                 ),
@@ -463,7 +463,6 @@ class _LeadsPageState extends State<LeadPage> {
     if (settingsProvider.menuIsViewMap[142] == 1) scrollableTableWidth += 150.0;
     if (settingsProvider.consumerNameMandatory == 1) scrollableTableWidth += 150.0;
     if (settingsProvider.consumerContactNoMandatory == 1) scrollableTableWidth += 150.0;
-    if (settingsProvider.ramcoLocationPermission == 1) scrollableTableWidth += 150.0;
 
     // Calculate dynamic heights for table
     final double screenHeight = MediaQuery.of(context).size.height;
@@ -554,7 +553,7 @@ class _LeadsPageState extends State<LeadPage> {
                                       ),
                                       child: Text(
                                         'ME',
-                                        style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                        style: TextStyle(
                                           color: leadProvider.entryType != 'all'
                                               ? AppColors.primaryBlue
                                               : Colors.grey,
@@ -587,7 +586,7 @@ class _LeadsPageState extends State<LeadPage> {
                                       ),
                                       child: Text(
                                         'ALL',
-                                        style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                        style: TextStyle(
                                           color: leadProvider.entryType == 'all'
                                               ? AppColors.primaryBlue
                                               : Colors.grey,
@@ -1018,8 +1017,7 @@ class _LeadsPageState extends State<LeadPage> {
                         children: [
                           // Fixed columns section
                           SizedBox(
-                            width:
-                                settingsProvider.showLeadCode == 1 ? 860 : 700,
+                            width: 860,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
@@ -1044,7 +1042,7 @@ class _LeadsPageState extends State<LeadPage> {
                                         alignment: Alignment.center,
                                         data: Text(
                                           'SL',
-                                          style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                          style: TextStyle(
                                             fontSize: 13,
                                             color: Colors.white,
                                           ),
@@ -1057,15 +1055,14 @@ class _LeadsPageState extends State<LeadPage> {
                                         alignment: Alignment.center,
                                         data: Text(
                                           'ID',
-                                          style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                          style: TextStyle(
                                             fontSize: 13,
                                             color: Colors.white,
                                           ),
                                         ),
                                       ),
-                                      if (settingsProvider.showLeadCode == 1)
-                                        TableWidget(
-                                          width: 160,
+                                      TableWidget(
+                                        width: 160,
                                         padding: EdgeInsets.symmetric(
                                             vertical: 4.0, horizontal: 12.0),
                                         alignment: Alignment.centerLeft,
@@ -1084,7 +1081,7 @@ class _LeadsPageState extends State<LeadPage> {
                                         alignment: Alignment.centerLeft,
                                         data: Text(
                                           'Name',
-                                          style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                          style: TextStyle(
                                             fontSize: 13,
                                             color: Colors.white,
                                           ),
@@ -1097,7 +1094,7 @@ class _LeadsPageState extends State<LeadPage> {
                                         alignment: Alignment.centerLeft,
                                         data: Text(
                                           settingsProvider.ramcoPlace == 1 ? 'Place' : 'Address',
-                                          style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                          style: TextStyle(
                                             fontSize: 13,
                                             color: Colors.white,
                                           ),
@@ -1110,7 +1107,7 @@ class _LeadsPageState extends State<LeadPage> {
                                         alignment: Alignment.centerLeft,
                                         data: Text(
                                           'Contact',
-                                          style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                          style: TextStyle(
                                             fontSize: 13,
                                             color: Colors.white,
                                           ),
@@ -1167,8 +1164,13 @@ class _LeadsPageState extends State<LeadPage> {
                                                 child: Container(
                                                   height: rowHeight,
                                                   decoration: BoxDecoration(
-                                                    color: index % 2 == 0 ? const Color(0xFFE8EDF2) : const Color(0xFFF5F5F5),
-                                                    border: Border(bottom: BorderSide(color: Colors.grey.shade200)),
+                                                    color: index % 2 == 0
+                                                        ? Colors.white
+                                                        : const Color(
+                                                            0xFFF6F7F9),
+                                                    // borderRadius:
+                                                    //     BorderRadius.circular(
+                                                    //         8),
                                                   ),
                                                   child: Row(
                                                     mainAxisAlignment:
@@ -1198,7 +1200,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                                         1)
                                                                     .toString(),
                                                                 style:
-                                                                    const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
+                                                                    const TextStyle(
                                                                   fontSize: 13,
                                                                 )),
                                                             if (lead.leadTypeId ==
@@ -1211,7 +1213,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                                         left:
                                                                             4.0),
                                                                 child: Text("⭐",
-                                                                    style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
+                                                                    style: TextStyle(
                                                                         fontSize:
                                                                             10)),
                                                               )
@@ -1231,13 +1233,12 @@ class _LeadsPageState extends State<LeadPage> {
                                                           lead.customerId
                                                               .toString(),
                                                           style:
-                                                              const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
+                                                              const TextStyle(
                                                                   fontSize: 13),
                                                         ),
                                                       ),
-                                                      if (settingsProvider.showLeadCode == 1)
-                                                        TableWidget(
-                                                          width: 160,
+                                                      TableWidget(
+                                                        width: 160,
                                                         alignment: Alignment
                                                             .centerLeft,
                                                         padding: EdgeInsets
@@ -1263,53 +1264,75 @@ class _LeadsPageState extends State<LeadPage> {
                                                             .symmetric(
                                                                 vertical: 4.0,
                                                                 horizontal:
-                                                                    12.0),
+                                                                    4.0),
                                                         data: Row(
                                                           children: [
                                                             Expanded(
-                                                              child: InkWell(
-                                                                onTap:
-                                                                    () {
-                                                                  CustomerDetailsProvider
-                                                                      customerDetailsProvider =
-                                                                      Provider.of<CustomerDetailsProvider>(
-                                                                          context,
-                                                                          listen:
-                                                                              false);
-                                                                  customerDetailsProvider
-                                                                      .setCustomerId(
-                                                                          lead.customerId);
-                                                                  sideProvider
-                                                                          .name =
-                                                                      'Lead /';
+                                                              child: Tooltip(
+                                                                message: lead
+                                                                    .customerName,
+                                                                child:
+                                                                    TextButton(
+                                                                  onPressed:
+                                                                      () {
+                                                                    CustomerDetailsProvider
+                                                                        customerDetailsProvider =
+                                                                        Provider.of<CustomerDetailsProvider>(
+                                                                            context,
+                                                                            listen:
+                                                                                false);
+                                                                    customerDetailsProvider
+                                                                        .setCustomerId(
+                                                                            lead.customerId);
+                                                                    sideProvider
+                                                                            .name =
+                                                                        'Lead /';
 
-                                                                  context.push(
-                                                                      '/customerDetails/${lead.customerId}/false');
-                                                                },
-                                                                child: Tooltip(
-                                                                  message: lead
-                                                                      .customerName,
-                                                                  child: Padding(
-                                                                    padding: const EdgeInsets.symmetric(vertical: 6.0),
-                                                                    child: Text(
-                                                                      (lead.customerName.isNotEmpty ??
-                                                                              false)
-                                                                          ? '${lead.customerName[0].toUpperCase()}${lead.customerName.substring(1)}'
-                                                                          : lead.customerName ??
-                                                                              '',
-                                                                      overflow:
-                                                                          TextOverflow
-                                                                              .ellipsis,
-                                                                      maxLines: 1,
-                                                                      style:
-                                                                          const TextStyle(fontFamily: 'PlusJakartaSans', 
-                                                                        color: Colors.blue,
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .w600,
-                                                                        fontSize:
-                                                                            13,
-                                                                      ),
+                                                                    context.push(
+                                                                        '/customerDetails/${lead.customerId}/false');
+                                                                  },
+                                                                  style: TextButton
+                                                                      .styleFrom(
+                                                                    backgroundColor: Colors
+                                                                        .blue
+                                                                        .withOpacity(
+                                                                            0.1),
+                                                                    shape: RoundedRectangleBorder(
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(4)),
+                                                                    padding: const EdgeInsets
+                                                                        .symmetric(
+                                                                        horizontal:
+                                                                            6,
+                                                                        vertical:
+                                                                            6),
+                                                                    fixedSize:
+                                                                        const Size
+                                                                            .fromHeight(
+                                                                            32),
+                                                                    tapTargetSize:
+                                                                        MaterialTapTargetSize
+                                                                            .shrinkWrap,
+                                                                  ),
+                                                                  child: Text(
+                                                                    (lead.customerName.isNotEmpty ??
+                                                                            false)
+                                                                        ? '${lead.customerName[0].toUpperCase()}${lead.customerName.substring(1)}'
+                                                                        : lead.customerName ??
+                                                                            '',
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis,
+                                                                    maxLines: 1,
+                                                                    style:
+                                                                        const TextStyle(
+                                                                      color: Colors
+                                                                          .blue,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w500,
+                                                                      fontSize:
+                                                                          13,
                                                                     ),
                                                                   ),
                                                                 ),
@@ -1569,7 +1592,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                                 TextOverflow
                                                                     .ellipsis,
                                                             style:
-                                                                const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
+                                                                const TextStyle(
                                                               fontSize: 13,
                                                             ),
                                                           ),
@@ -1590,7 +1613,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                           overflow: TextOverflow
                                                               .ellipsis,
                                                           style:
-                                                              const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
+                                                              const TextStyle(
                                                             fontSize: 13,
                                                           ),
                                                         ),
@@ -1638,7 +1661,7 @@ class _LeadsPageState extends State<LeadPage> {
                                               alignment: Alignment.centerLeft,
                                               data: Text(
                                                 'Enquiry for',
-                                                style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                                style: TextStyle(
                                                   fontSize: 13,
                                                   color: Colors.white,
                                                 ),
@@ -1652,7 +1675,7 @@ class _LeadsPageState extends State<LeadPage> {
                                               alignment: Alignment.centerLeft,
                                               data: Text(
                                                 'Status',
-                                                style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                                style: TextStyle(
                                                   fontSize: 13,
                                                   color: Colors.white,
                                                 ),
@@ -1666,7 +1689,7 @@ class _LeadsPageState extends State<LeadPage> {
                                               alignment: Alignment.centerLeft,
                                               data: Text(
                                                 'Consumer No.',
-                                                style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                                style: TextStyle(
                                                   fontSize: 13,
                                                   color: Colors.white,
                                                 ),
@@ -1680,7 +1703,7 @@ class _LeadsPageState extends State<LeadPage> {
                                               alignment: Alignment.centerLeft,
                                               data: Text(
                                                 'Remark',
-                                                style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                                style: TextStyle(
                                                   fontSize: 13,
                                                   color: Colors.white,
                                                 ),
@@ -1695,7 +1718,7 @@ class _LeadsPageState extends State<LeadPage> {
                                               alignment: Alignment.centerLeft,
                                               data: const Text(
                                                 'Priority',
-                                                style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                                style: TextStyle(
                                                   fontSize: 13,
                                                   color: Colors.white,
                                                 ),
@@ -1710,7 +1733,7 @@ class _LeadsPageState extends State<LeadPage> {
                                               alignment: Alignment.centerLeft,
                                               data: const Text(
                                                 'History',
-                                                style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                                style: TextStyle(
                                                   fontSize: 13,
                                                   color: Colors.white,
                                                 ),
@@ -1724,7 +1747,7 @@ class _LeadsPageState extends State<LeadPage> {
                                               alignment: Alignment.centerLeft,
                                               data: Text(
                                                 'Department',
-                                                style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                                style: TextStyle(
                                                   fontSize: 13,
                                                   color: Colors.white,
                                                 ),
@@ -1738,7 +1761,7 @@ class _LeadsPageState extends State<LeadPage> {
                                               alignment: Alignment.centerLeft,
                                               data: Text(
                                                 'Assigned Staff',
-                                                style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                                style: TextStyle(
                                                   fontSize: 13,
                                                   color: Colors.white,
                                                 ),
@@ -1752,7 +1775,7 @@ class _LeadsPageState extends State<LeadPage> {
                                               alignment: Alignment.centerLeft,
                                               data: Text(
                                                 'Follow-Up Date',
-                                                style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                                style: TextStyle(
                                                   fontSize: 13,
                                                   color: Colors.white,
                                                 ),
@@ -1766,7 +1789,7 @@ class _LeadsPageState extends State<LeadPage> {
                                               alignment: Alignment.centerLeft,
                                               data: Text(
                                                 'Created Date',
-                                                style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                                style: TextStyle(
                                                   fontSize: 13,
                                                   color: Colors.white,
                                                 ),
@@ -1780,7 +1803,7 @@ class _LeadsPageState extends State<LeadPage> {
                                               alignment: Alignment.centerLeft,
                                               data: Text(
                                                 'Duration',
-                                                style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                                style: TextStyle(
                                                   fontSize: 13,
                                                   color: Colors.white,
                                                 ),
@@ -1794,7 +1817,7 @@ class _LeadsPageState extends State<LeadPage> {
                                               alignment: Alignment.centerLeft,
                                               data: Text(
                                                 'Branch',
-                                                style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                                style: TextStyle(
                                                   fontSize: 13,
                                                   color: Colors.white,
                                                 ),
@@ -1808,7 +1831,7 @@ class _LeadsPageState extends State<LeadPage> {
                                               alignment: Alignment.centerLeft,
                                               data: Text(
                                                 'Sub Source',
-                                                style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                                style: TextStyle(
                                                   fontSize: 13,
                                                   color: Colors.white,
                                                 ),
@@ -1822,30 +1845,12 @@ class _LeadsPageState extends State<LeadPage> {
                                               alignment: Alignment.centerLeft,
                                               data: Text(
                                                 'Source',
-                                                style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                                style: TextStyle(
                                                   fontSize: 13,
                                                   color: Colors.white,
                                                 ),
                                               ),
                                             ),
-                                            if (settingsProvider
-                                                    .ramcoLocationPermission ==
-                                                1)
-                                              TableWidget(
-                                                width: 150,
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 4.0,
-                                                        horizontal: 12.0),
-                                                alignment: Alignment.centerLeft,
-                                                data: const Text(
-                                                  'Location',
-                                                  style: TextStyle(
-                                                    fontSize: 13,
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                              ), // for ramco
                                             if (settingsProvider
                                                     .menuIsViewMap[142] ==
                                                 1)
@@ -1858,7 +1863,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                 alignment: Alignment.centerLeft,
                                                 data: const Text(
                                                   'Location',
-                                                  style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                                  style: TextStyle(
                                                     fontSize: 13,
                                                     color: Colors.white,
                                                   ),
@@ -1879,7 +1884,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                       .getPermissionCaption(
                                                           "Consumer Name",
                                                           "Consumer Name"),
-                                                  style: const TextStyle(fontFamily: 'PlusJakartaSans', 
+                                                  style: const TextStyle(
                                                     fontSize: 13,
                                                     color: Colors.white,
                                                   ),
@@ -1900,7 +1905,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                       .getPermissionCaption(
                                                           "Contact No",
                                                           "Contact No"),
-                                                  style: const TextStyle(fontFamily: 'PlusJakartaSans', 
+                                                  style: const TextStyle(
                                                     fontSize: 13,
                                                     color: Colors.white,
                                                   ),
@@ -1955,10 +1960,9 @@ class _LeadsPageState extends State<LeadPage> {
                                                 },
                                                 child: Container(
                                                   height: rowHeight,
-                                                                decoration: BoxDecoration(
-                                                                    color: index % 2 == 0 ? const Color(0xFFE8EDF2) : const Color(0xFFF5F5F5),
-                                                                    border: Border(bottom: BorderSide(color: Colors.grey.shade200)),
-                                                                ),
+                                                  color: index % 2 == 0
+                                                      ? Colors.white
+                                                      : const Color(0xFFF6F7F9),
                                                   child: Row(
                                                     crossAxisAlignment:
                                                         CrossAxisAlignment
@@ -1986,7 +1990,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                                     TextOverflow
                                                                         .ellipsis,
                                                                 style:
-                                                                    const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
+                                                                    const TextStyle(
                                                                   fontSize: 13,
                                                                 ),
                                                               ),
@@ -2115,7 +2119,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                                         Text(
                                                                           'Sales',
                                                                           style:
-                                                                              TextStyle(fontFamily: 'PlusJakartaSans', 
+                                                                              TextStyle(
                                                                             color:
                                                                                 Colors.white,
                                                                             fontSize:
@@ -2186,7 +2190,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                               overflow:
                                                                   TextOverflow
                                                                       .ellipsis,
-                                                              style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                                              style: TextStyle(
                                                                 fontSize: 13,
                                                                 fontWeight:
                                                                     FontWeight
@@ -2216,7 +2220,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                               TextOverflow
                                                                   .ellipsis,
                                                           style:
-                                                              const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
+                                                              const TextStyle(
                                                                   fontSize:
                                                                       13),
                                                         ),
@@ -2239,7 +2243,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                                 TextOverflow
                                                                     .ellipsis,
                                                             style:
-                                                                const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
+                                                                const TextStyle(
                                                                     fontSize:
                                                                         13),
                                                           ),
@@ -2312,7 +2316,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                                       priority
                                                                           .priorityName,
                                                                       style:
-                                                                          TextStyle(fontFamily: 'PlusJakartaSans', 
+                                                                          TextStyle(
                                                                         color: AppColors.parseColor(
                                                                             priority.colorCode),
                                                                         fontWeight:
@@ -2358,7 +2362,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                                         TextOverflow
                                                                             .ellipsis,
                                                                     style:
-                                                                        TextStyle(fontFamily: 'PlusJakartaSans', 
+                                                                        TextStyle(
                                                                       fontSize:
                                                                           13,
                                                                       fontWeight:
@@ -2416,7 +2420,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                           ),
                                                           label: const Text(
                                                             'History',
-                                                            style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                                            style: TextStyle(
                                                               fontSize: 13,
                                                               color: AppColors
                                                                   .primaryBlue,
@@ -2455,7 +2459,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                           overflow: TextOverflow
                                                               .ellipsis,
                                                           style:
-                                                              const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
+                                                              const TextStyle(
                                                             fontSize: 13,
                                                           ),
                                                         ),
@@ -2476,7 +2480,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                           overflow: TextOverflow
                                                               .ellipsis,
                                                           style:
-                                                              const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
+                                                              const TextStyle(
                                                                   fontSize: 13),
                                                         ),
                                                       ),
@@ -2497,7 +2501,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                           overflow: TextOverflow
                                                               .ellipsis,
                                                           style:
-                                                              const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
+                                                              const TextStyle(
                                                                   fontSize: 13),
                                                         ),
                                                       ),
@@ -2517,7 +2521,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                               .ellipsis,
                                                           maxLines: 1,
                                                           style:
-                                                              const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
+                                                              const TextStyle(
                                                             fontSize: 12,
                                                           ),
                                                         ),
@@ -2537,7 +2541,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                               .ellipsis,
                                                           maxLines: 1,
                                                           style:
-                                                              const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
+                                                              const TextStyle(
                                                             fontSize: 12,
                                                           ),
                                                         ),
@@ -2557,7 +2561,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                               .ellipsis,
                                                           maxLines: 1,
                                                           style:
-                                                              const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
+                                                              const TextStyle(
                                                             fontSize: 13,
                                                           ),
                                                         ),
@@ -2577,7 +2581,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                               .ellipsis,
                                                           maxLines: 1,
                                                           style:
-                                                              const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
+                                                              const TextStyle(
                                                             fontSize: 13,
                                                           ),
                                                         ),
@@ -2597,33 +2601,10 @@ class _LeadsPageState extends State<LeadPage> {
                                                           overflow: TextOverflow
                                                               .ellipsis,
                                                           style:
-                                                              const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
+                                                              const TextStyle(
                                                                   fontSize: 12),
                                                         ),
                                                       ),
-                                                      if (settingsProvider
-                                                              .ramcoLocationPermission ==
-                                                          1)
-                                                        TableWidget(
-                                                          width: 150,
-                                                          fontSize: 12,
-                                                          fontWeight:
-                                                              FontWeight.normal,
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .symmetric(
-                                                                  vertical: 4.0,
-                                                                  horizontal:
-                                                                      8.0),
-                                                          // location is maplink
-                                                          title: ((lead.location
-                                                                          ?.toString() ??
-                                                                      '')
-                                                                  .trim()
-                                                                  .isNotEmpty)
-                                                              ? 'Yes'
-                                                              : 'No',
-                                                        ), // for ramco only
                                                       if (settingsProvider
                                                                   .menuIsViewMap[
                                                               142] ==
@@ -2646,7 +2627,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                                 TextOverflow
                                                                     .ellipsis,
                                                             style:
-                                                                const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
+                                                                const TextStyle(
                                                                     fontSize:
                                                                         12),
                                                           ),
@@ -2671,7 +2652,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                                 TextOverflow
                                                                     .ellipsis,
                                                             style:
-                                                                const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
+                                                                const TextStyle(
                                                                     fontSize:
                                                                         12),
                                                           ),
@@ -2696,7 +2677,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                                 TextOverflow
                                                                     .ellipsis,
                                                             style:
-                                                                const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
+                                                                const TextStyle(
                                                                     fontSize:
                                                                         12),
                                                           ),
@@ -2796,7 +2777,7 @@ class _LeadsPageState extends State<LeadPage> {
                     const Center(
                       child: Text(
                         'Choose Date',
-                        style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
+                        style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.w700),
                       ),
                     ),
@@ -2820,7 +2801,7 @@ class _LeadsPageState extends State<LeadPage> {
                               leadProvider.selectedDateFilterIndex == index
                                   ? AppColors.primaryBlue
                                   : Colors.white,
-                          labelStyle: TextStyle(fontFamily: 'PlusJakartaSans', 
+                          labelStyle: TextStyle(
                             color: leadProvider.selectedDateFilterIndex == index
                                 ? Colors.white
                                 : Colors.black,
@@ -2832,7 +2813,7 @@ class _LeadsPageState extends State<LeadPage> {
                     const Text(
                       'Pick a date',
                       style:
-                          TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 16, fontWeight: FontWeight.w700),
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
                     ),
                     const SizedBox(height: 15),
                     Row(
@@ -2973,7 +2954,7 @@ class _LeadsPageState extends State<LeadPage> {
           ),
           child: Text(
             value,
-            style: const TextStyle(fontFamily: 'PlusJakartaSans', 
+            style: const TextStyle(
               fontSize: 12,
               color: Colors.green,
               fontWeight: FontWeight.w600,
@@ -2998,7 +2979,7 @@ class _LeadsPageState extends State<LeadPage> {
           ),
           child: Text(
             value,
-            style: TextStyle(fontFamily: 'PlusJakartaSans', 
+            style: TextStyle(
               fontSize: 12,
               color: color,
               fontWeight: FontWeight.w600,
@@ -3033,7 +3014,7 @@ class _LeadsPageState extends State<LeadPage> {
           ),
           Text(
             'Showing $startItem / $endItem of ${leadProvider.totalCount}',
-            style: const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 16),
+            style: const TextStyle(fontSize: 16),
           ),
           IconButton(
             icon: const Icon(Icons.arrow_forward),
@@ -3082,7 +3063,7 @@ class _LeadsPageState extends State<LeadPage> {
           isDense: true,
           contentPadding: EdgeInsets.symmetric(vertical: 8),
         ),
-        style: const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
+        style: const TextStyle(fontSize: 14),
       ),
     );
   }
@@ -3105,7 +3086,7 @@ class _LeadsPageState extends State<LeadPage> {
                   value: 0,
                   child: Text(
                     'All',
-                    style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
+                    style: TextStyle(fontSize: 14),
                   ),
                 ),
               ] +
@@ -3117,7 +3098,7 @@ class _LeadsPageState extends State<LeadPage> {
                           child: Text(
                             user.userDetailsName ?? '',
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
+                            style: const TextStyle(fontSize: 14),
                           ),
                         ),
                       ))
@@ -3133,7 +3114,7 @@ class _LeadsPageState extends State<LeadPage> {
                 child: Text(
                   userName.isNotEmpty ? userName : 'Current User',
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
+                  style: const TextStyle(fontSize: 14),
                 ),
               ),
             ),
@@ -3157,7 +3138,7 @@ class _LeadsPageState extends State<LeadPage> {
             child: DropdownButton<int>(
               value: dropdownValue,
               hint: const Text('Assigned Staff: All',
-                  style: TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 14, color: Colors.black87)),
+                  style: TextStyle(fontSize: 14, color: Colors.black87)),
               items: dropdownItems,
               selectedItemBuilder: (BuildContext context) {
                 return dropdownItems.map<Widget>((DropdownMenuItem<int> item) {
@@ -3166,7 +3147,7 @@ class _LeadsPageState extends State<LeadPage> {
                     children: [
                       const Text('Assigned Staff: ',
                           style:
-                              TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 14, color: Colors.black87)),
+                              TextStyle(fontSize: 14, color: Colors.black87)),
                       item.child,
                     ],
                   );
@@ -3193,7 +3174,7 @@ class _LeadsPageState extends State<LeadPage> {
               iconSize: 18,
               disabledHint: Text(
                 'Assigned Staff: ${userName.isNotEmpty ? userName : 'Current User'}',
-                style: const TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 14, color: Colors.black87),
+                style: const TextStyle(fontSize: 14, color: Colors.black87),
               ),
             ),
           ),
@@ -3210,7 +3191,7 @@ class _LeadsPageState extends State<LeadPage> {
                 value: 0,
                 child: Text(
                   'All',
-                  style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
+                  style: TextStyle(fontSize: 14),
                 ),
               ),
             ] +
@@ -3222,7 +3203,7 @@ class _LeadsPageState extends State<LeadPage> {
                         child: Text(
                           user.enquiryForName,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
+                          style: const TextStyle(fontSize: 14),
                         ),
                       ),
                     ))
@@ -3244,7 +3225,7 @@ class _LeadsPageState extends State<LeadPage> {
             child: DropdownButton<int>(
               value: leadProvider.selectedEnquiryFor ?? 0,
               hint: const Text('Enquiry For: All',
-                  style: TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 14, color: Colors.black87)),
+                  style: TextStyle(fontSize: 14, color: Colors.black87)),
               items: items,
               selectedItemBuilder: (BuildContext context) {
                 return items.map<Widget>((DropdownMenuItem<int> item) {
@@ -3253,7 +3234,7 @@ class _LeadsPageState extends State<LeadPage> {
                     children: [
                       const Text('Enquiry For: ',
                           style:
-                              TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 14, color: Colors.black87)),
+                              TextStyle(fontSize: 14, color: Colors.black87)),
                       item.child,
                     ],
                   );
@@ -3286,7 +3267,7 @@ class _LeadsPageState extends State<LeadPage> {
                 value: 0,
                 child: Text(
                   'All',
-                  style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
+                  style: TextStyle(fontSize: 14),
                 ),
               ),
             ] +
@@ -3298,7 +3279,7 @@ class _LeadsPageState extends State<LeadPage> {
                         child: Text(
                           user.enquirySourceName,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
+                          style: const TextStyle(fontSize: 14),
                         ),
                       ),
                     ))
@@ -3320,7 +3301,7 @@ class _LeadsPageState extends State<LeadPage> {
             child: DropdownButton<int>(
               value: leadProvider.selectedEnquirySource ?? 0,
               hint: const Text('Enquiry Source: All',
-                  style: TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 14, color: Colors.black87)),
+                  style: TextStyle(fontSize: 14, color: Colors.black87)),
               items: items,
               selectedItemBuilder: (BuildContext context) {
                 return items.map<Widget>((DropdownMenuItem<int> item) {
@@ -3329,7 +3310,7 @@ class _LeadsPageState extends State<LeadPage> {
                     children: [
                       const Text('Enquiry Source: ',
                           style:
-                              TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 14, color: Colors.black87)),
+                              TextStyle(fontSize: 14, color: Colors.black87)),
                       item.child,
                     ],
                   );
@@ -3362,7 +3343,7 @@ class _LeadsPageState extends State<LeadPage> {
                 value: 0,
                 child: Text(
                   'All',
-                  style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
+                  style: TextStyle(fontSize: 14),
                 ),
               ),
             ] +
@@ -3374,7 +3355,7 @@ class _LeadsPageState extends State<LeadPage> {
                         child: Text(
                           priority.priorityName ?? '',
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                          style: TextStyle(
                             fontSize: 14,
                             color: AppColors.parseColor(priority.colorCode),
                             fontWeight: FontWeight.w500,
@@ -3400,7 +3381,7 @@ class _LeadsPageState extends State<LeadPage> {
             child: DropdownButton<int>(
               value: leadProvider.selectedPriority ?? 0,
               hint: const Text('Priority: All',
-                  style: TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 14, color: Colors.black87)),
+                  style: TextStyle(fontSize: 14, color: Colors.black87)),
               items: items,
               selectedItemBuilder: (BuildContext context) {
                 return items.map<Widget>((DropdownMenuItem<int> item) {
@@ -3409,7 +3390,7 @@ class _LeadsPageState extends State<LeadPage> {
                     children: [
                       const Text('Priority: ',
                           style:
-                              TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 14, color: Colors.black87)),
+                              TextStyle(fontSize: 14, color: Colors.black87)),
                       item.child,
                     ],
                   );
@@ -3442,7 +3423,7 @@ class _LeadsPageState extends State<LeadPage> {
                 value: 0,
                 child: Text(
                   'All',
-                  style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
+                  style: TextStyle(fontSize: 14),
                 ),
               ),
             ] +
@@ -3454,7 +3435,7 @@ class _LeadsPageState extends State<LeadPage> {
                         child: Text(
                           branch.branchName ?? '',
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
+                          style: const TextStyle(fontSize: 14),
                         ),
                       ),
                     ))
@@ -3476,7 +3457,7 @@ class _LeadsPageState extends State<LeadPage> {
             child: DropdownButton<int>(
               value: leadProvider.selectedBranch ?? 0,
               hint: const Text('Department: All',
-                  style: TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 14, color: Colors.black87)),
+                  style: TextStyle(fontSize: 14, color: Colors.black87)),
               items: items,
               selectedItemBuilder: (BuildContext context) {
                 return items.map<Widget>((DropdownMenuItem<int> item) {
@@ -3485,7 +3466,7 @@ class _LeadsPageState extends State<LeadPage> {
                     children: [
                       const Text('Department: ',
                           style:
-                              TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 14, color: Colors.black87)),
+                              TextStyle(fontSize: 14, color: Colors.black87)),
                       item.child,
                     ],
                   );
@@ -3774,7 +3755,7 @@ class _LeadsPageState extends State<LeadPage> {
                   child: Text(
                     'Status: $labelText',
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                    style: TextStyle(
                       color:
                           hasSelection ? AppColors.primaryBlue : Colors.black87,
                       fontSize: 14,
@@ -3958,7 +3939,7 @@ class _StatusMultiSelectDialogState extends State<_StatusMultiSelectDialog> {
                   const Expanded(
                     child: Text(
                       'Select Status',
-                      style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
+                      style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
@@ -4005,7 +3986,7 @@ class _StatusMultiSelectDialogState extends State<_StatusMultiSelectDialog> {
                           Expanded(
                             child: Text(
                               name,
-                              style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                              style: TextStyle(
                                 fontSize: 14,
                                 color: isSelected
                                     ? Colors.black
@@ -4030,7 +4011,7 @@ class _StatusMultiSelectDialogState extends State<_StatusMultiSelectDialog> {
                   TextButton(
                     onPressed: () => Navigator.pop(context),
                     child: const Text('Cancel',
-                        style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black)),
+                        style: TextStyle(color: Colors.grey)),
                   ),
                   const SizedBox(width: 8),
                   ElevatedButton(

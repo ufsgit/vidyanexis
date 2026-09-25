@@ -97,79 +97,6 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
   int? selectedServiceStatusId;
   int? selectedQuotationStatusId;
 
-  Widget _buildCopyAdditionalDetailsButton(dynamic customFields) {
-    return InkWell(
-      onTap: () async {
-        final list = customFields ?? [];
-        final validFields = list.where((field) =>
-            (field.customFieldName != null &&
-                field.customFieldName.toString().trim().isNotEmpty) &&
-            (field.datavalue != null &&
-                field.datavalue.toString().trim().isNotEmpty));
-
-        if (validFields.isEmpty) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('No additional details available to copy'),
-              duration: Duration(seconds: 2),
-            ),
-          );
-          return;
-        }
-
-        final copyText = validFields.map((field) {
-          final label = field.customFieldName
-              .toString()
-              .replaceAll('_', ' ')
-              .trim();
-          final value = field.datavalue?.toString().trim() ?? '';
-          return '$label: $value';
-        }).join('\n');
-
-        await Clipboard.setData(ClipboardData(text: copyText));
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Additional details copied to clipboard!'),
-              duration: Duration(seconds: 2),
-            ),
-          );
-        }
-      },
-      borderRadius: BorderRadius.circular(4),
-      child: Tooltip(
-        message: 'Copy All Details',
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          decoration: BoxDecoration(
-            color: const Color(0xFFEFF6FF),
-            borderRadius: BorderRadius.circular(4),
-            border: Border.all(color: const Color(0xFFBFDBFE)),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                Icons.copy_rounded,
-                size: 13,
-                color: AppColors.secondaryBlue,
-              ),
-              const SizedBox(width: 4),
-              Text(
-                'Copy',
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.secondaryBlue,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   @override
   void initState() {
     super.initState();
@@ -3089,10 +3016,6 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                 CustomerCard(
                                                                   title:
                                                                       "Additional Details",
-                                                                  action:
-                                                                      _buildCopyAdditionalDetailsButton(
-                                                                          leadProvider
-                                                                              .customFieldEnquiryFor),
                                                                   content: (leadProvider.customFieldEnquiryFor ??
                                                                               [])
                                                                           .isNotEmpty
@@ -4316,10 +4239,6 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                           CustomerCard(
                                                             title:
                                                                 "Additional Details",
-                                                            action:
-                                                                _buildCopyAdditionalDetailsButton(
-                                                                    leadProvider
-                                                                        .customFieldEnquiryFor),
                                                             content: (leadProvider
                                                                             .customFieldEnquiryFor ??
                                                                         [])
