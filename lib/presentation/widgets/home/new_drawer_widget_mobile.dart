@@ -3125,7 +3125,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
 
         const SizedBox(height: 10),
 
-        if (settingsProvider.menuIsViewMap[148] == 1) ...[
+        if (settingsProvider.menuIsViewMap[149] == 1) ...[
           if (settingsProvider.consumerNameMandatory == 1) ...[
             CustomTextfieldWidgetMobile(
               controller: leadProvider.consumerNameController,
@@ -3133,6 +3133,8 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
             ),
             const SizedBox(height: 10),
           ],
+        ],
+        if (settingsProvider.menuIsViewMap[150] == 1) ...[
           if (settingsProvider.consumerContactNoMandatory == 1) ...[
             CustomTextfieldWidgetMobile(
               controller: leadProvider.consumerContactNoController,

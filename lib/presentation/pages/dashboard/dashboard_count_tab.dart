@@ -85,20 +85,26 @@ class DashboardCountTab extends StatelessWidget {
       child: LayoutBuilder(
         builder: (context, constraints) {
           int crossAxisCount = 2; // Mobile gets 2 cards per row
+          double aspectRatio = 1.2; // Default for mobile to avoid 5.7px overflow
+
           if (constraints.maxWidth > 1200) {
             crossAxisCount = 4; // 4 cards per row for large screens (4, 4, 1)
+            aspectRatio = 2.4;
           } else if (constraints.maxWidth > 900) {
             crossAxisCount = 4;
+            aspectRatio = 2.0;
           } else if (constraints.maxWidth > 600) {
             crossAxisCount = 3;
+            aspectRatio = 1.6;
+          } else if (constraints.maxWidth > 400) {
+            crossAxisCount = 2;
+            aspectRatio = 1.4;
           }
 
           final double spacing = 24.0;
           final double availableWidth =
               constraints.maxWidth - (spacing * (crossAxisCount - 1));
           final double itemWidth = availableWidth / crossAxisCount;
-          
-          final double aspectRatio = 2.4;
 
           return GridView.builder(
             shrinkWrap: true,
@@ -324,11 +330,13 @@ class _DashboardCardState extends State<_DashboardCard> {
                 )
               ],
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Stack(
               children: [
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     // Primary Metric
                     Text(

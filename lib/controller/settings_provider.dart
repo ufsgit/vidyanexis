@@ -552,6 +552,7 @@ class SettingsProvider extends ChangeNotifier {
   int _leadCreationChanges = 0;
   int _showLeadCode = 0;
   int _ramcoSort = 0;
+  int _ramcoHistory = 0;
   int? _selectedStatusId;
 
   int get toggleValue => _toggleValue;
@@ -578,6 +579,7 @@ class SettingsProvider extends ChangeNotifier {
   int get leadCreationChanges => _leadCreationChanges;
   int get showLeadCode => _showLeadCode;
   int get ramcoSort => _ramcoSort;
+  int get ramcoHistory => _ramcoHistory;
 
   int _jobSheet = 0;
   int get jobSheet => _jobSheet;
@@ -696,10 +698,9 @@ class SettingsProvider extends ChangeNotifier {
             (caption.toLowerCase().contains('new_dashboard_count') ||
                 caption.toLowerCase().contains('new dashboard count')))) {
       _newDashboardCount = value;
-    } else if (permissionId == 36 ||
-        (caption != null &&
+    } else if (caption != null &&
             (caption.toLowerCase().contains('lead_creation_changes') ||
-                caption.toLowerCase().contains('lead creation changes')))) {
+                caption.toLowerCase().contains('lead creation changes'))) {
       _leadCreationChanges = value;
     } else if (caption != null &&
         (caption.toLowerCase().contains('ramco_place') ||
@@ -719,6 +720,10 @@ class SettingsProvider extends ChangeNotifier {
         (caption.toLowerCase().contains('ramco_sort') ||
             caption.toLowerCase().contains('ramco sort'))) {
       _ramcoSort = value;
+    } else if (caption != null &&
+        (caption.toLowerCase().contains('ramco_history') ||
+            caption.toLowerCase().contains('ramco history'))) {
+      _ramcoHistory = value;
     }
   }
 
@@ -771,6 +776,12 @@ class SettingsProvider extends ChangeNotifier {
   void setRamcoSort(int value) {
     _ramcoSort = value;
     _syncStateToPermissionsList(37, value);
+    notifyListeners();
+  }
+
+  void setRamcoHistory(int value) {
+    _ramcoHistory = value;
+    _syncStateToPermissionsList(39, value);
     notifyListeners();
   }
 
@@ -5031,6 +5042,7 @@ class SettingsProvider extends ChangeNotifier {
     _leadCreationChanges = 0;
     _showLeadCode = 0;
     _ramcoSort = 0;
+    _ramcoHistory = 0;
     notifyListeners();
   }
 
