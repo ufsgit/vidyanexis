@@ -959,19 +959,23 @@ class AudioFileProvider extends ChangeNotifier {
     }
   }
 
-// Updated playAudio method (simplified)
+  // ==================== FIXED playAudio ====================
   Future<void> playAudio(int index) async {
-    if (index >= 0 && index < _audios.length) {
-      try {
-        // Stop current playing audio
-        await _audioPlayer.stop();
+    if (index < 0 || index >= _audios.length) return;
 
-        // Reset all playing states
-        for (var audio in _audios) {
-          audio.isPlaying = false;
-        }
+    try {
+      // Stop current playing audio
+      await _audioPlayer.stop();
 
-        AudioFile audioFile = _audios[index];
+      // Reset all playing states
+      for (var audio in _audios) {
+        audio.isPlaying = false;
+      }
+
+      final AudioFile audioFile = _audios[index];
+
+      // ---------- WEB (keep original logic completely unchanged) ----------
+      if (kIsWeb) {
         String? playbackUrl;
 
         // Determine playback source
@@ -998,24 +1002,47 @@ class AudioFileProvider extends ChangeNotifier {
         // Play the audio
         await _audioPlayer.play(UrlSource(playbackUrl));
         print('✓ Playing audio from: $playbackUrl');
+      }
+      // ---------- MOBILE (new safe path) ----------
+      else {
+        if (audioFile.existingPath != null &&
+            audioFile.existingPath!.startsWith('http')) {
+          // Existing uploaded file (network URL)
+          await _audioPlayer.play(UrlSource(audioFile.existingPath!));
+          print('✓ Playing from network URL: ${audioFile.existingPath}');
+        } else if (audioFile.data.isNotEmpty) {
+          // Write bytes to temporary file and play
+          final dir = await getTemporaryDirectory();
+          final ext =
+              audioFile.extension.isNotEmpty ? audioFile.extension : 'm4a';
+          final tempFile = File(
+              '${dir.path}/play_${DateTime.now().millisecondsSinceEpoch}.$ext');
 
-        // Update playing state
-        _audios[index].isPlaying = true;
-        _currentPlayingIndex = index;
+          await tempFile.writeAsBytes(audioFile.data);
 
-        // Set up event listeners (only set up once to avoid multiple listeners)
-        _setupAudioPlayerListeners();
-
-        notifyListeners();
-      } catch (e) {
-        print('Error playing audio: $e');
-        // Reset playing state on error
-        if (_currentPlayingIndex != null &&
-            _currentPlayingIndex! < _audios.length) {
-          _audios[_currentPlayingIndex!].isPlaying = false;
-          _currentPlayingIndex = null;
-          notifyListeners();
+          await _audioPlayer.play(DeviceFileSource(tempFile.path));
+          print('✓ Playing from temp file: ${tempFile.path}');
+        } else {
+          print('ERROR: No audio data available for mobile playback');
+          return;
         }
+      }
+
+      // Update playing state
+      _audios[index].isPlaying = true;
+      _currentPlayingIndex = index;
+
+      // Set up event listeners
+      _setupAudioPlayerListeners();
+
+      notifyListeners();
+    } catch (e) {
+      print('Error playing audio: $e');
+      if (_currentPlayingIndex != null &&
+          _currentPlayingIndex! < _audios.length) {
+        _audios[_currentPlayingIndex!].isPlaying = false;
+        _currentPlayingIndex = null;
+        notifyListeners();
       }
     }
   }
@@ -1094,6 +1121,17 @@ void dispose() {
       default:
         return 'audio/webm';
     }
+  }
+
+  @override
+  void dispose() {
+    _playerCompleteSubscription?.cancel();
+    _positionChangedSubscription?.cancel();
+    _durationChangedSubscription?.cancel();
+    _audioPlayer.dispose();
+    _audioRecorder.dispose();
+    _recordingTimer?.cancel();
+    super.dispose();
   }
 }
 

@@ -24,6 +24,8 @@ import 'package:vidyanexis/presentation/widgets/common/custom_form_filler_view.d
 import 'package:vidyanexis/presentation/widgets/home/auto_complete_textfield_search.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_field_section_widget.dart';
 import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
+import 'package:vidyanexis/controller/audio_file_provider.dart';
+import 'package:vidyanexis/presentation/widgets/home/task_audio_recording_widget.dart';
 
 class ProcessFlowDialog extends StatefulWidget {
   final TaskReportModel task;
@@ -64,6 +66,11 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
       final imageProvider =
           Provider.of<ImageUploadProvider>(context, listen: false);
       imageProvider.clearFiles();
+
+      // Clear any previously recorded audio
+      final audioProvider =
+          Provider.of<AudioFileProvider>(context, listen: false);
+      audioProvider.clearAudios();
 
       if (widget.task.nextFollowupDate != null &&
           widget.task.nextFollowupDate!.isNotEmpty) {
@@ -848,6 +855,9 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                   hint: 'Enter detailed description...',
                                   maxLines: 4,
                                 ),
+                                const SizedBox(height: 16),
+                                // Voice Note / Audio Recording
+                                const TaskAudioRecordingWidget(),
                               ],
                             ),
                           ),
@@ -1289,6 +1299,21 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                     });
 
                                     try {
+                                      // Upload audio files if any
+                                      final audioProvider =
+                                          Provider.of<AudioFileProvider>(
+                                              context,
+                                              listen: false);
+                                      List<Map<String, String>>
+                                          uploadedAudioFiles = [];
+                                      if (audioProvider.audios.isNotEmpty) {
+                                        uploadedAudioFiles = await audioProvider
+                                            .uploadAllAudios(
+                                          widget.task.taskId.toString(),
+                                          context,
+                                        );
+                                      }
+
                                       bool isSuccess = await reportsProvider
                                           .changeTaskStatus(
                                               context,
@@ -1298,9 +1323,11 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                                   ? await reportsProvider
                                                       .getCurrentLocation()
                                                   : null,
-                                              subStatus: selectedSubStatus);
+                                              subStatus: selectedSubStatus,
+                                              audioFiles: uploadedAudioFiles);
 
                                       if (isSuccess) {
+                                        audioProvider.clearAudios();
                                         Navigator.of(context).pop(true);
                                       } else {
                                         setState(() {
