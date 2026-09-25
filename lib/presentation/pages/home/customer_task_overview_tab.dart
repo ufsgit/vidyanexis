@@ -1,12 +1,15 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/models/task_customer_model.dart';
-import 'package:intl/intl.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/presentation/widgets/home/task_history_popup.dart';
-import 'package:vidyanexis/constants/app_styles.dart';
 
 class CustomerTaskOverviewTab extends StatefulWidget {
   final String customerId;
@@ -78,7 +81,7 @@ class _CustomerTaskOverviewTabState extends State<CustomerTaskOverviewTab> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             SizedBox(
-              height: 160,
+              height: 280,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 padding:
@@ -104,8 +107,9 @@ class _CustomerTaskOverviewTabState extends State<CustomerTaskOverviewTab> {
 class TaskSummaryCardWidget extends StatefulWidget {
   final TaskCustomerModel task;
   final bool isWeb;
-  
-  const TaskSummaryCardWidget({super.key, required this.task, this.isWeb = false});
+
+  const TaskSummaryCardWidget(
+      {super.key, required this.task, this.isWeb = false});
 
   @override
   State<TaskSummaryCardWidget> createState() => _TaskSummaryCardWidgetState();
@@ -122,9 +126,11 @@ class _TaskSummaryCardWidgetState extends State<TaskSummaryCardWidget> {
   }
 
   Future<void> _fetchStatus() async {
-    final dropDownProvider = Provider.of<DropDownProvider>(context, listen: false);
-    final statuses = await dropDownProvider.getStatusByTaskTypeId(context, widget.task.taskTypeId.toString(), '3');
-    
+    final dropDownProvider =
+        Provider.of<DropDownProvider>(context, listen: false);
+    final statuses = await dropDownProvider.getStatusByTaskTypeId(
+        context, widget.task.taskTypeId.toString(), '3');
+
     bool isFollowUp = false;
     for (var status in statuses) {
       if (status.statusId == widget.task.taskStatusId) {
@@ -178,6 +184,27 @@ class _TaskSummaryCardWidgetState extends State<TaskSummaryCardWidget> {
     return '$days Days';
   }
 
+  bool _isAudioFile(TaskFile file) {
+    final type = (file.fileType ?? '').toLowerCase().trim();
+    final path = (file.filePath ?? '').toLowerCase().trim();
+    final name = (file.fileName ?? '').toLowerCase().trim();
+
+    return type == 'audio' ||
+        type.contains('audio') ||
+        path.endsWith('.mpeg') ||
+        path.endsWith('.mp3') ||
+        path.endsWith('.wav') ||
+        path.endsWith('.m4a') ||
+        path.endsWith('.ogg') ||
+        path.endsWith('.webm') ||
+        path.contains('uploadedaudios') ||
+        name.endsWith('.mpeg') ||
+        name.endsWith('.mp3') ||
+        name.endsWith('.wav') ||
+        name.endsWith('.m4a') ||
+        name.endsWith('.webm');
+  }
+
   @override
   Widget build(BuildContext context) {
     final task = widget.task;
@@ -190,13 +217,15 @@ class _TaskSummaryCardWidgetState extends State<TaskSummaryCardWidget> {
     if (!_isLoadingStatus) {
       final now = DateTime.now();
       final today = DateTime(now.year, now.month, now.day);
-      final taskDate = DateTime(task.taskDate.year, task.taskDate.month, task.taskDate.day);
-      
+      final taskDate =
+          DateTime(task.taskDate.year, task.taskDate.month, task.taskDate.day);
+
       final taskTypeDuration = taskDate.difference(today).inDays;
       taskTypeDurationStr = _formatDays(taskTypeDuration);
 
       if (task.entryDate != null) {
-        final entryDate = DateTime(task.entryDate!.year, task.entryDate!.month, task.entryDate!.day);
+        final entryDate = DateTime(
+            task.entryDate!.year, task.entryDate!.month, task.entryDate!.day);
         if (_isFollowUp) {
           final actualDuration = today.difference(entryDate).inDays;
           actualDurationStr = _formatDays(actualDuration);
@@ -207,9 +236,15 @@ class _TaskSummaryCardWidgetState extends State<TaskSummaryCardWidget> {
       }
     }
 
+    // Separate audio files and other documents
+    final audioFiles = task.taskFiles.where(_isAudioFile).toList();
+    final documentFiles =
+        task.taskFiles.where((f) => !_isAudioFile(f)).toList();
+
     return InkWell(
       onTap: () {
-        final provider = Provider.of<CustomerDetailsProvider>(context, listen: false);
+        final provider =
+            Provider.of<CustomerDetailsProvider>(context, listen: false);
         provider.fetchTaskHistory(task.taskId.toString());
         showDialog(
           context: context,
@@ -221,7 +256,7 @@ class _TaskSummaryCardWidgetState extends State<TaskSummaryCardWidget> {
       },
       borderRadius: BorderRadius.circular(4),
       child: Container(
-        width: 220,
+        width: 230,
         margin: isWeb ? EdgeInsets.zero : const EdgeInsets.only(right: 12),
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
@@ -268,8 +303,7 @@ class _TaskSummaryCardWidgetState extends State<TaskSummaryCardWidget> {
                 color: const Color(0xFF64748B),
               ),
             ),
-            if (task.completionDate != null &&
-                task.completionDate.toString().trim().isNotEmpty &&
+            if (task.completionDate.toString().trim().isNotEmpty &&
                 task.completionDate.toString().trim() != 'null') ...[
               const SizedBox(height: 6),
               Text(
@@ -281,8 +315,7 @@ class _TaskSummaryCardWidgetState extends State<TaskSummaryCardWidget> {
                 ),
               ),
             ],
-            if (task.toUsername != null &&
-                task.toUsername.toString().trim().isNotEmpty &&
+            if (task.toUsername.toString().trim().isNotEmpty &&
                 task.toUsername.toString().trim() != 'null') ...[
               const SizedBox(height: 6),
               Text(
@@ -316,8 +349,321 @@ class _TaskSummaryCardWidgetState extends State<TaskSummaryCardWidget> {
                 ),
               ),
             ],
+            // Voice recordings section
+            if (audioFiles.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              ...audioFiles.map((audioFile) {
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: TaskSummaryAudioPlayer(
+                    url: audioFile.filePath ?? '',
+                    fileName: audioFile.fileName?.isNotEmpty == true
+                        ? audioFile.fileName!
+                        : 'Voice Recording',
+                  ),
+                );
+              }),
+            ],
+            // Other document attachments section
+            if (documentFiles.isNotEmpty) ...[
+              const SizedBox(height: 6),
+              Wrap(
+                spacing: 4,
+                runSpacing: 4,
+                children: documentFiles.map((doc) {
+                  final rawUrl = (doc.filePath ?? '').trim();
+                  return InkWell(
+                    onTap: () async {
+                      if (rawUrl.isNotEmpty) {
+                        String fullUrl = rawUrl.replaceAll('\\', '/');
+                        if (!fullUrl.startsWith('http://') &&
+                            !fullUrl.startsWith('https://')) {
+                          if (fullUrl.startsWith('/')) {
+                            fullUrl = fullUrl.substring(1);
+                          }
+                          final base = HttpUrls.imgBaseUrl.endsWith('/')
+                              ? HttpUrls.imgBaseUrl
+                              : '${HttpUrls.imgBaseUrl}/';
+                          fullUrl = '$base$fullUrl';
+                        }
+                        final uri = Uri.tryParse(fullUrl);
+                        if (uri != null && await canLaunchUrl(uri)) {
+                          await launchUrl(uri,
+                              mode: LaunchMode.externalApplication);
+                        }
+                      }
+                    },
+                    borderRadius: BorderRadius.circular(4),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 6, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFEEF2F6),
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(
+                            color: const Color(0xFFCBD5E1), width: 0.5),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.attach_file,
+                              size: 11, color: Color(0xFF64748B)),
+                          const SizedBox(width: 3),
+                          ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 130),
+                            child: Text(
+                              doc.fileName?.isNotEmpty == true
+                                  ? doc.fileName!
+                                  : (doc.documentTypeName ?? 'Attachment'),
+                              style: const TextStyle(
+                                fontSize: 10,
+                                color: Color(0xFF1E293B),
+                                fontWeight: FontWeight.w500,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ],
           ],
         ),
+      ),
+    );
+  }
+}
+
+class TaskSummaryAudioPlayer extends StatefulWidget {
+  final String url;
+  final String fileName;
+
+  const TaskSummaryAudioPlayer({
+    super.key,
+    required this.url,
+    required this.fileName,
+  });
+
+  @override
+  State<TaskSummaryAudioPlayer> createState() => _TaskSummaryAudioPlayerState();
+}
+
+class _TaskSummaryAudioPlayerState extends State<TaskSummaryAudioPlayer> {
+  final AudioPlayer _player = AudioPlayer();
+  bool _isPlaying = false;
+  Duration _position = Duration.zero;
+  Duration _duration = Duration.zero;
+  bool _hasError = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _player.onPlayerComplete.listen((_) {
+      if (mounted) {
+        setState(() {
+          _isPlaying = false;
+          _position = Duration.zero;
+        });
+      }
+    });
+    _player.onPositionChanged.listen((pos) {
+      if (mounted) {
+        setState(() {
+          _position = pos;
+        });
+      }
+    });
+    _player.onDurationChanged.listen((dur) {
+      if (mounted) {
+        setState(() {
+          _duration = dur;
+        });
+      }
+    });
+    _player.onPlayerStateChanged.listen((state) {
+      if (state == PlayerState.stopped || state == PlayerState.completed) {
+        if (mounted && _isPlaying) {
+          setState(() {
+            _isPlaying = false;
+          });
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _player.stop();
+    _player.dispose();
+    super.dispose();
+  }
+
+  String _resolveAudioUrl(String raw) {
+    String url = raw.trim().replaceAll('\\', '/');
+    if (url.isEmpty) return '';
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      if (url.startsWith('/')) {
+        url = url.substring(1);
+      }
+      final base = HttpUrls.imgBaseUrl.endsWith('/')
+          ? HttpUrls.imgBaseUrl
+          : '${HttpUrls.imgBaseUrl}/';
+      url = '$base$url';
+    }
+    return Uri.encodeFull(url);
+  }
+
+  Future<void> _togglePlay() async {
+    final resolvedUrl = _resolveAudioUrl(widget.url);
+    if (resolvedUrl.isEmpty) return;
+
+    try {
+      if (_isPlaying) {
+        await _player.pause();
+        if (mounted) {
+          setState(() {
+            _isPlaying = false;
+          });
+        }
+      } else {
+        if (_position > Duration.zero) {
+          await _player.resume();
+        } else {
+          await _player.stop();
+          debugPrint('Playing audio from URL: $resolvedUrl');
+          await _player.play(UrlSource(resolvedUrl));
+        }
+        if (mounted) {
+          setState(() {
+            _isPlaying = true;
+            _hasError = false;
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint('Audio playback error for $resolvedUrl: $e');
+      if (mounted) {
+        setState(() {
+          _isPlaying = false;
+          _hasError = true;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to play audio: $e'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    }
+  }
+
+  String _formatDuration(Duration d) {
+    final minutes = d.inMinutes.remainder(60).toString().padLeft(2, '0');
+    final seconds = d.inSeconds.remainder(60).toString().padLeft(2, '0');
+    return '$minutes:$seconds';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    double progress = 0.0;
+    if (_duration.inMilliseconds > 0) {
+      progress = (_position.inMilliseconds / _duration.inMilliseconds)
+          .clamp(0.0, 1.0);
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF1F5F9),
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: const Color(0xFFE2E8F0)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              GestureDetector(
+                onTap: _togglePlay,
+                child: Container(
+                  width: 26,
+                  height: 26,
+                  decoration: BoxDecoration(
+                    color: _hasError
+                        ? Colors.red.shade400
+                        : const Color(0xFF1A7AE8),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    _isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
+                    color: Colors.white,
+                    size: 16,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(Icons.mic_rounded,
+                            size: 12, color: Color(0xFF1A7AE8)),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            widget.fileName.isNotEmpty
+                                ? widget.fileName
+                                : 'Voice Note',
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                              color: const Color(0xFF1E293B),
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      _isPlaying || _position > Duration.zero
+                          ? '${_formatDuration(_position)} / ${_formatDuration(_duration)}'
+                          : 'Voice Recording',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 9,
+                        fontWeight: FontWeight.w500,
+                        color: const Color(0xFF64748B),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          if (_isPlaying || progress > 0) ...[
+            const SizedBox(height: 4),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(2),
+              child: LinearProgressIndicator(
+                value: progress,
+                backgroundColor: const Color(0xFFE2E8F0),
+                valueColor:
+                    const AlwaysStoppedAnimation<Color>(Color(0xFF1A7AE8)),
+                minHeight: 3,
+              ),
+            ),
+          ],
+        ],
       ),
     );
   }
