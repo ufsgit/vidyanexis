@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:http/http.dart' as http;
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:file_picker/file_picker.dart';
@@ -290,7 +291,7 @@ class AudioFileProvider extends ChangeNotifier {
       RecordConfig config;
       if (kIsWeb) {
         config = const RecordConfig(
-          encoder: AudioEncoder.wav,
+          encoder: AudioEncoder.opus,
           bitRate: 128000,
           sampleRate: 44100,
           numChannels: 1,
@@ -723,7 +724,7 @@ class AudioFileProvider extends ChangeNotifier {
       for (var audioFile in audioFiles) {
         String? uploadedFilePath = await saveAudioToAws(
           audioFile.data,
-          'audio/mpeg',
+          audioFile.extension,
           taskId,
           context,
         );
@@ -922,13 +923,28 @@ class AudioFileProvider extends ChangeNotifier {
     try {
       print('Saving web recorded audio from path: $path');
 
+      // Add a small delay to ensure the browser has fully populated the blob
+      await Future.delayed(const Duration(milliseconds: 1000));
+
+      // Fetch the actual audio bytes from the blob URL
+      Uint8List audioData = Uint8List(0);
+      try {
+        final response = await http.get(Uri.parse(path));
+        if (response.statusCode == 200) {
+          audioData = response.bodyBytes;
+          print('✓ Read ${audioData.length} bytes from blob URL');
+        } else {
+          print('Failed to load blob URL: ${response.statusCode}');
+        }
+      } catch (e) {
+        print('Error fetching blob data: $e');
+      }
+
       final fileName =
           'Voice Recording ${DateTime.now().toString().substring(0, 19)}';
 
-      // For web, we'll store the path directly and use it for playback
-      // The record package should provide a usable blob URL or data URL
       final audioFile = AudioFile(
-        data: Uint8List(0), // Empty data since we'll use the path/URL directly
+        data: audioData,
         name: fileName,
         extension: 'webm',
         isRecording: true,
