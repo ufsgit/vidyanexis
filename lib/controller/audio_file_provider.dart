@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:http/http.dart' as http;
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:file_picker/file_picker.dart';
@@ -291,7 +290,7 @@ class AudioFileProvider extends ChangeNotifier {
       RecordConfig config;
       if (kIsWeb) {
         config = const RecordConfig(
-          encoder: AudioEncoder.opus,
+          encoder: AudioEncoder.wav,
           bitRate: 128000,
           sampleRate: 44100,
           numChannels: 1,
@@ -724,7 +723,7 @@ class AudioFileProvider extends ChangeNotifier {
       for (var audioFile in audioFiles) {
         String? uploadedFilePath = await saveAudioToAws(
           audioFile.data,
-          audioFile.extension,
+          'audio/mpeg',
           taskId,
           context,
         );
@@ -923,28 +922,13 @@ class AudioFileProvider extends ChangeNotifier {
     try {
       print('Saving web recorded audio from path: $path');
 
-      // Add a small delay to ensure the browser has fully populated the blob
-      await Future.delayed(const Duration(milliseconds: 1000));
-
-      // Fetch the actual audio bytes from the blob URL
-      Uint8List audioData = Uint8List(0);
-      try {
-        final response = await http.get(Uri.parse(path));
-        if (response.statusCode == 200) {
-          audioData = response.bodyBytes;
-          print('✓ Read ${audioData.length} bytes from blob URL');
-        } else {
-          print('Failed to load blob URL: ${response.statusCode}');
-        }
-      } catch (e) {
-        print('Error fetching blob data: $e');
-      }
-
       final fileName =
           'Voice Recording ${DateTime.now().toString().substring(0, 19)}';
 
+      // For web, we'll store the path directly and use it for playback
+      // The record package should provide a usable blob URL or data URL
       final audioFile = AudioFile(
-        data: audioData,
+        data: Uint8List(0), // Empty data since we'll use the path/URL directly
         name: fileName,
         extension: 'webm',
         isRecording: true,
@@ -959,23 +943,19 @@ class AudioFileProvider extends ChangeNotifier {
     }
   }
 
-  // ==================== FIXED playAudio ====================
+// Updated playAudio method (simplified)
   Future<void> playAudio(int index) async {
-    if (index < 0 || index >= _audios.length) return;
+    if (index >= 0 && index < _audios.length) {
+      try {
+        // Stop current playing audio
+        await _audioPlayer.stop();
 
-    try {
-      // Stop current playing audio
-      await _audioPlayer.stop();
+        // Reset all playing states
+        for (var audio in _audios) {
+          audio.isPlaying = false;
+        }
 
-      // Reset all playing states
-      for (var audio in _audios) {
-        audio.isPlaying = false;
-      }
-
-      final AudioFile audioFile = _audios[index];
-
-      // ---------- WEB (keep original logic completely unchanged) ----------
-      if (kIsWeb) {
+        AudioFile audioFile = _audios[index];
         String? playbackUrl;
 
         // Determine playback source
@@ -1002,47 +982,24 @@ class AudioFileProvider extends ChangeNotifier {
         // Play the audio
         await _audioPlayer.play(UrlSource(playbackUrl));
         print('✓ Playing audio from: $playbackUrl');
-      }
-      // ---------- MOBILE (new safe path) ----------
-      else {
-        if (audioFile.existingPath != null &&
-            audioFile.existingPath!.startsWith('http')) {
-          // Existing uploaded file (network URL)
-          await _audioPlayer.play(UrlSource(audioFile.existingPath!));
-          print('✓ Playing from network URL: ${audioFile.existingPath}');
-        } else if (audioFile.data.isNotEmpty) {
-          // Write bytes to temporary file and play
-          final dir = await getTemporaryDirectory();
-          final ext =
-              audioFile.extension.isNotEmpty ? audioFile.extension : 'm4a';
-          final tempFile = File(
-              '${dir.path}/play_${DateTime.now().millisecondsSinceEpoch}.$ext');
 
-          await tempFile.writeAsBytes(audioFile.data);
+        // Update playing state
+        _audios[index].isPlaying = true;
+        _currentPlayingIndex = index;
 
-          await _audioPlayer.play(DeviceFileSource(tempFile.path));
-          print('✓ Playing from temp file: ${tempFile.path}');
-        } else {
-          print('ERROR: No audio data available for mobile playback');
-          return;
-        }
-      }
+        // Set up event listeners (only set up once to avoid multiple listeners)
+        _setupAudioPlayerListeners();
 
-      // Update playing state
-      _audios[index].isPlaying = true;
-      _currentPlayingIndex = index;
-
-      // Set up event listeners
-      _setupAudioPlayerListeners();
-
-      notifyListeners();
-    } catch (e) {
-      print('Error playing audio: $e');
-      if (_currentPlayingIndex != null &&
-          _currentPlayingIndex! < _audios.length) {
-        _audios[_currentPlayingIndex!].isPlaying = false;
-        _currentPlayingIndex = null;
         notifyListeners();
+      } catch (e) {
+        print('Error playing audio: $e');
+        // Reset playing state on error
+        if (_currentPlayingIndex != null &&
+            _currentPlayingIndex! < _audios.length) {
+          _audios[_currentPlayingIndex!].isPlaying = false;
+          _currentPlayingIndex = null;
+          notifyListeners();
+        }
       }
     }
   }
@@ -1121,17 +1078,6 @@ void dispose() {
       default:
         return 'audio/webm';
     }
-  }
-
-  @override
-  void dispose() {
-    _playerCompleteSubscription?.cancel();
-    _positionChangedSubscription?.cancel();
-    _durationChangedSubscription?.cancel();
-    _audioPlayer.dispose();
-    _audioRecorder.dispose();
-    _recordingTimer?.cancel();
-    super.dispose();
   }
 }
 
