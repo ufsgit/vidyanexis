@@ -774,7 +774,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                 ),
                                 const SizedBox(height: 16),
                                 // Voice Note / Audio Recording
-                                const TaskAudioRecordingWidget(),
+                                TaskAudioRecordingWidget(),
                               ],
                             ),
                           ),
