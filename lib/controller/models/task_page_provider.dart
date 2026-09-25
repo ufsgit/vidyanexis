@@ -980,7 +980,7 @@ class TaskPageProvider extends ChangeNotifier {
       TaskTypeStatusModel statusModel,
       int taskId,
       Map<String, dynamic>? locationData,
-      {SubStatus? subStatus}) async {
+      {SubStatus? subStatus, List<Map<String, String>>? audioFiles}) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -1036,6 +1036,7 @@ class TaskPageProvider extends ChangeNotifier {
             "sub_status_name": subStatus?.subStatusName,
             "Sub_Status": subStatus != null ? [subStatus.toJson()] : null,
             "TaskUsers": taskUsers,
+            "Audio_Files": audioFiles,
           });
 
       if (response?.statusCode == 200) {
