@@ -54,6 +54,8 @@ import 'package:vidyanexis/presentation/widgets/customer/add_task_mobile.dart';
 import 'package:vidyanexis/utils/status_utils.dart';
 import 'package:vidyanexis/controller/models/form_settings_provider.dart';
 import 'package:vidyanexis/controller/models/form_model.dart';
+import 'package:vidyanexis/controller/audio_file_provider.dart';
+import 'package:vidyanexis/presentation/widgets/home/task_audio_recording_widget.dart';
 
 class TaskPage extends StatefulWidget {
   final int? initialStatusFilter;
@@ -3484,9 +3486,9 @@ class _tasksPageReportState extends State<TaskPage> {
             borderRadius: BorderRadius.circular(4.0),
           ),
           child: Container(
-            constraints: const BoxConstraints(
-              maxWidth: 480,
-              maxHeight: 520,
+            constraints: BoxConstraints(
+              maxWidth: 500,
+              maxHeight: isSmallScreen ? MediaQuery.of(context).size.height * 0.9 : 620,
             ),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -3570,6 +3572,7 @@ class _tasksPageReportState extends State<TaskPage> {
                             ValueNotifier(false);
                         WidgetsBinding.instance.addPostFrameCallback((_) {
                           reportsProvider.clearDescription();
+                          Provider.of<AudioFileProvider>(context, listen: false).clearAudios();
                         });
 
                         Widget formFields = Container(
@@ -3810,7 +3813,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                   ),
                                 ),
                               ],
-                              const SizedBox(height: 20),
+                              const SizedBox(height: 12),
+                              const TaskAudioRecordingWidget(),
+                              const SizedBox(height: 16),
                             ],
                           ),
                         );
@@ -3863,6 +3868,22 @@ class _tasksPageReportState extends State<TaskPage> {
                                             : () async {
                                                 isSaving.value = true;
                                                 try {
+                                                  final audioProvider =
+                                                      Provider.of<AudioFileProvider>(
+                                                          context,
+                                                          listen: false);
+                                                  List<Map<String, String>>
+                                                      uploadedAudioFiles = [];
+                                                  if (audioProvider
+                                                      .audios.isNotEmpty) {
+                                                    uploadedAudioFiles =
+                                                        await audioProvider
+                                                            .uploadAllAudios(
+                                                      task.taskId.toString(),
+                                                      context,
+                                                    );
+                                                  }
+
                                                   bool isSuccess =
                                                       await reportsProvider
                                                           .changeTaskStatus(
@@ -3873,8 +3894,11 @@ class _tasksPageReportState extends State<TaskPage> {
                                                         .getCurrentLocation(),
                                                     subStatus:
                                                         selectedSubStatus.value,
+                                                    audioFiles:
+                                                        uploadedAudioFiles,
                                                   );
                                                   if (isSuccess) {
+                                                    audioProvider.clearAudios();
                                                     Navigator.of(context)
                                                         .pop(true);
                                                   } else {
@@ -3992,11 +4016,11 @@ class _tasksPageReportState extends State<TaskPage> {
             borderRadius: BorderRadius.circular(4.0),
           ),
           child: Container(
-            constraints: const BoxConstraints(
-              maxWidth: 900,
-              maxHeight: 600,
-              minHeight: 600,
-              minWidth: 900,
+            constraints: BoxConstraints(
+              maxWidth: isSmallScreen ? double.infinity : 900,
+              maxHeight: isSmallScreen ? MediaQuery.of(context).size.height * 0.9 : 680,
+              minHeight: isSmallScreen ? 0 : 400,
+              minWidth: isSmallScreen ? 0 : 700,
             ),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -4148,6 +4172,7 @@ class _tasksPageReportState extends State<TaskPage> {
                           dropDownProvider.getUserDetails(context);
                           reportsProvider.clearTaskUserAssignments();
                           reportsProvider.clearDescription();
+                          Provider.of<AudioFileProvider>(context, listen: false).clearAudios();
 
                           // Pre-fill Description and Follow-Up Date if available
                           reportsProvider.descriptionController.clear();
@@ -5094,7 +5119,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                   ),
                                 ),
                               ],
-                              const SizedBox(height: 20),
+                              const SizedBox(height: 12),
+                              const TaskAudioRecordingWidget(),
+                              const SizedBox(height: 16),
                               Consumer<FormProvider>(
                                 builder: (context, formProvider, child) {
                                   if (formProvider.isFetchingCustomerForms) {
@@ -5907,6 +5934,23 @@ class _tasksPageReportState extends State<TaskPage> {
                                                         isDocumentButtonEnabled) {
                                                       isSaving.value = true;
                                                       try {
+                                                        final audioProvider =
+                                                            Provider.of<AudioFileProvider>(
+                                                                context,
+                                                                listen: false);
+                                                        List<Map<String, String>>
+                                                            uploadedAudioFiles = [];
+                                                        if (audioProvider
+                                                            .audios.isNotEmpty) {
+                                                          uploadedAudioFiles =
+                                                              await audioProvider
+                                                                  .uploadAllAudios(
+                                                            task.taskId
+                                                                .toString(),
+                                                            context,
+                                                          );
+                                                        }
+
                                                         bool isSuccess = await provider
                                                             .changeTaskStatus(
                                                                 context,
@@ -5917,13 +5961,16 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                     .getCurrentLocation(),
                                                                 subStatus:
                                                                     selectedSubStatus
-                                                                        .value);
+                                                                        .value,
+                                                                audioFiles:
+                                                                    uploadedAudioFiles);
 
                                                         if (!context.mounted) {
                                                           return;
                                                         }
 
                                                         if (isSuccess) {
+                                                          audioProvider.clearAudios();
                                                           Navigator.pop(
                                                               context, true);
                                                           ScaffoldMessenger.of(
