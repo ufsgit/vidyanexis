@@ -2368,13 +2368,14 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                           maxLines:
                                                                               1,
                                                                           style:
-                                                                              const TextStyle(fontFamily: 'PlusJakartaSans', 
+                                                                              TextStyle(
+                                                                            fontFamily: 'PlusJakartaSans', 
                                                                             fontSize:
                                                                                 13,
                                                                             color:
-                                                                                Color(0xFF334155),
+                                                                                task.parsedTaskTypeColor ?? const Color(0xFF334155),
                                                                             fontWeight:
-                                                                                FontWeight.w500,
+                                                                                task.parsedTaskTypeColor != null ? FontWeight.w600 : FontWeight.w500,
                                                                           ),
                                                                         ),
                                                                       ),
@@ -3510,10 +3511,11 @@ class _tasksPageReportState extends State<TaskPage> {
                             ),
                             Text(
                               task.taskTypeName ?? '',
-                              style: const TextStyle(fontFamily: 'PlusJakartaSans', 
+                              style: TextStyle(
+                                fontFamily: 'PlusJakartaSans', 
                                 fontSize: 13,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xFF1E293B),
+                                color: task.parsedTaskTypeColor ?? const Color(0xFF1E293B),
                               ),
                             ),
                           ],
@@ -4042,10 +4044,11 @@ class _tasksPageReportState extends State<TaskPage> {
                               const SizedBox(width: 6),
                               Text(
                                 task.taskTypeName ?? '',
-                                style: const TextStyle(fontFamily: 'PlusJakartaSans', 
+                                style: TextStyle(
+                                  fontFamily: 'PlusJakartaSans', 
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
-                                  color: Color(0xFF1E293B),
+                                  color: task.parsedTaskTypeColor ?? const Color(0xFF1E293B),
                                 ),
                               ),
                               const SizedBox(width: 6),

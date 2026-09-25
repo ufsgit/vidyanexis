@@ -121,7 +121,8 @@ class _TaskTypeContentState extends State<TaskTypeContent> {
                             // Task type badge – fixed min-width so names align
                             SizedBox(
                               width: 200,
-                              child: _buildTaskTypeBadge(task.taskTypeName),
+                              child: _buildTaskTypeBadge(
+                                  task.taskTypeName, task.taskTypeColor),
                             ),
                             // Department name – fixed width column
                             SizedBox(
@@ -170,19 +171,29 @@ class _TaskTypeContentState extends State<TaskTypeContent> {
     );
   }
 
-  Widget _buildTaskTypeBadge(String name) {
+  Widget _buildTaskTypeBadge(String name, [String? colorCode]) {
+    Color? badgeColor;
+    if (colorCode != null && colorCode.isNotEmpty) {
+      badgeColor = AppColors.parseColor(colorCode);
+    }
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: AppColors.surfaceGrey,
+        color: badgeColor != null
+            ? badgeColor.withOpacity(0.12)
+            : AppColors.surfaceGrey,
         borderRadius: BorderRadius.circular(4),
+        border: badgeColor != null
+            ? Border.all(color: badgeColor.withOpacity(0.4), width: 1)
+            : null,
       ),
       child: Text(
         name,
         style: GoogleFonts.plusJakartaSans(
           fontSize: 12,
           fontWeight: FontWeight.w500,
-          color: Colors.black,
+          color: badgeColor ?? Colors.black,
         ),
       ),
     );
