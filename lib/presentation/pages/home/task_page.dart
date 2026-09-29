@@ -3501,6 +3501,9 @@ class _tasksPageReportState extends State<TaskPage> {
   }
 
   Future<bool?> updateStatusDialogWithoutTask(TaskReportModel task) {
+    final prefetchReportsProvider = Provider.of<TaskPageProvider>(context, listen: false);
+    final Future<Map<String, dynamic>> locationFuture = prefetchReportsProvider.getCurrentLocation();
+    
     return showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
@@ -3928,8 +3931,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                     context,
                                                     selectedStatus.value,
                                                     task.taskId,
-                                                    await reportsProvider
-                                                        .getCurrentLocation(),
+                                                    await locationFuture,
                                                     subStatus:
                                                         selectedSubStatus.value,
                                                     audioFiles:
@@ -4033,6 +4035,9 @@ class _tasksPageReportState extends State<TaskPage> {
   }
 
   Future statusDialog(TaskReportModel task) {
+    final prefetchReportsProvider = Provider.of<TaskPageProvider>(context, listen: false);
+    final Future<Map<String, dynamic>> locationFuture = prefetchReportsProvider.getCurrentLocation();
+    
     return showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
@@ -5997,8 +6002,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                 selectedStatus
                                                                     .value,
                                                                 task.taskId,
-                                                                await provider
-                                                                    .getCurrentLocation(),
+                                                                await locationFuture,
                                                                 subStatus:
                                                                     selectedSubStatus
                                                                         .value,
