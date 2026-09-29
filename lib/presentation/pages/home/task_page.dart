@@ -1884,9 +1884,6 @@ class _tasksPageReportState extends State<TaskPage> {
                                   if (settingsProvider.jobSheet == 1) {
                                     scrollableMinWidth += 130;
                                   }
-                                  if (settingsProvider.showView[162] != 1) {
-                                    scrollableMinWidth -= 130;
-                                  }
 
                                   return Scrollbar(
                                     controller: _scrollableVerticalController,
