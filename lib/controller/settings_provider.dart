@@ -586,6 +586,9 @@ class SettingsProvider extends ChangeNotifier {
 
   int _leadPermissionMeAndAll = 0;
   int get leadPermissionMeAndAll => _leadPermissionMeAndAll;
+
+  int _amcDatePermission = 0;
+  int get amcDatePermission => _amcDatePermission;
   
   int _ramcoPlace = 0;
   int get ramcoPlace => _ramcoPlace;
@@ -649,8 +652,12 @@ class SettingsProvider extends ChangeNotifier {
       _leadCodeWithEnquiryCode = value;
     } else if (permissionId == 16) {
       _documentButtonTaskStatus = value;
+    } else if (permissionId == 40 &&
+        caption != null &&
+        caption.toLowerCase().contains('amc_date')) {
+      _amcDatePermission = value;
     } else if (permissionId == 17 ||
-        permissionId == 40 ||
+        (permissionId == 40 && (caption == null || !caption.toLowerCase().contains('amc_date'))) ||
         (caption != null &&
             caption.toLowerCase().contains('lead permission me and all'))) {
       _leadPermissionMeAndAll = value;
@@ -857,14 +864,16 @@ class SettingsProvider extends ChangeNotifier {
   void updateCompanyPermission(int permissionId, int newValue) {
     if (_companyDetails.isNotEmpty &&
         _companyDetails[0].permissions.isNotEmpty) {
-      final index = _companyDetails[0].permissions.indexWhere((p) =>
-          p.companyPermissionId == permissionId ||
-          (permissionId == 40 && p.companyPermissionId == 17) ||
-          (permissionId == 41 && p.companyPermissionId == 18) ||
-          (permissionId == 42 && p.companyPermissionId == 19) ||
-          (permissionId == 17 && p.companyPermissionId == 40) ||
-          (permissionId == 18 && p.companyPermissionId == 41) ||
-          (permissionId == 19 && p.companyPermissionId == 42));
+      int index = _companyDetails[0].permissions.indexWhere((p) => p.companyPermissionId == permissionId);
+      if (index == -1) {
+        index = _companyDetails[0].permissions.indexWhere((p) =>
+            (permissionId == 40 && p.companyPermissionId == 17) ||
+            (permissionId == 41 && p.companyPermissionId == 18) ||
+            (permissionId == 42 && p.companyPermissionId == 19) ||
+            (permissionId == 17 && p.companyPermissionId == 40) ||
+            (permissionId == 18 && p.companyPermissionId == 41) ||
+            (permissionId == 19 && p.companyPermissionId == 42));
+      }
       if (index != -1) {
         final old = _companyDetails[0].permissions[index];
         _companyDetails[0].permissions[index] = CompanyPermission(
@@ -5029,6 +5038,7 @@ class SettingsProvider extends ChangeNotifier {
     _enquiryForMandatory = 0;
     _enquirySourceMandatory = 0;
     _leadPermissionMeAndAll = 0;
+    _amcDatePermission = 0;
     _customerPermissionMeAndAll = 0;
     _taskPermissionMeAndAll = 0;
     _taskRemarkMandatory = 0;

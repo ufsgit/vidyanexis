@@ -44,6 +44,7 @@ class StockUseItems {
   String itemName;
   int categoryId;
   String categoryName;
+  String unitName;
   double quantity;
   double unitPrice;
   double amount;
@@ -56,6 +57,7 @@ class StockUseItems {
     required this.itemName,
     required this.categoryId,
     required this.categoryName,
+    this.unitName = '',
     required this.quantity,
     required this.unitPrice,
     required this.amount,
@@ -71,6 +73,7 @@ class StockUseItems {
       itemName: json['Item_Name'] ?? '',
       categoryId: json['Category_Id'] ?? 0,
       categoryName: json['Category_Name'] ?? '',
+      unitName: json['Unit_Name']?.toString() ?? '',
       quantity: double.tryParse(json['Qauntity']?.toString() ?? '0') ?? 0.0,
       unitPrice: double.tryParse(json['Unit_Price']?.toString() ?? '0') ?? 0.0,
       amount: double.tryParse(json['Amount']?.toString() ?? '0') ?? 0.0,
