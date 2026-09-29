@@ -1,4 +1,4 @@
-﻿import 'dart:developer';
+import 'dart:developer';
 
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -376,57 +376,58 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
                                   ),
                                 ),
                               ),
-                              GestureDetector(
-                                onTap: () {
-                                  onClickAmcTopButton(context);
-                                },
-                                child: Container(
-                                  height: 32,
-                                  decoration: BoxDecoration(
-                                    color: AppColors.scaffoldColor,
-                                    borderRadius: BorderRadius.circular(4),
-                                    border: Border.all(
-                                      color: customerProvider.amcFromDate != null ||
-                                              customerProvider.amcToDate != null
-                                          ? AppColors.primaryBlue
-                                          : Colors.transparent,
+                              if (settingsProvider.amcDatePermission == 1)
+                                GestureDetector(
+                                  onTap: () {
+                                    onClickAmcTopButton(context);
+                                  },
+                                  child: Container(
+                                    height: 32,
+                                    decoration: BoxDecoration(
+                                      color: AppColors.scaffoldColor,
+                                      borderRadius: BorderRadius.circular(4),
+                                      border: Border.all(
+                                        color: customerProvider.amcFromDate != null ||
+                                                customerProvider.amcToDate != null
+                                            ? AppColors.primaryBlue
+                                            : Colors.transparent,
+                                      ),
                                     ),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 12),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Flexible(
-                                          child: ConstrainedBox(
-                                            constraints: const BoxConstraints(
-                                                maxWidth: 200),
-                                            child: CustomText(
-                                              customerProvider.amcFromDate ==
-                                                          null &&
-                                                      customerProvider.amcToDate ==
-                                                          null
-                                                  ? 'AMC Date'
-                                                  : 'AMC : ${customerProvider.formattedAmcFromDate.toString().toDayMonthYearFormat()} - ${customerProvider.formattedAmcToDate.toString().toDayMonthYearFormat()}',
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w500,
-                                              color: AppColors.textBlack,
-                                              overflow: TextOverflow.ellipsis,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 12),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Flexible(
+                                            child: ConstrainedBox(
+                                              constraints: const BoxConstraints(
+                                                  maxWidth: 200),
+                                              child: CustomText(
+                                                customerProvider.amcFromDate ==
+                                                            null &&
+                                                        customerProvider.amcToDate ==
+                                                            null
+                                                    ? 'AMC Date'
+                                                    : 'AMC : ${customerProvider.formattedAmcFromDate.toString().toDayMonthYearFormat()} - ${customerProvider.formattedAmcToDate.toString().toDayMonthYearFormat()}',
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
+                                                color: AppColors.textBlack,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                        const SizedBox(width: 4),
-                                        Icon(
-                                          Icons.keyboard_arrow_down,
-                                          color: AppColors.textGrey3,
-                                          size: 18,
-                                        ),
-                                      ],
+                                          const SizedBox(width: 4),
+                                          Icon(
+                                            Icons.keyboard_arrow_down,
+                                            color: AppColors.textGrey3,
+                                            size: 18,
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
                               GestureDetector(
                                 onTap: () {
                                   onClickWcTopButton(context);
