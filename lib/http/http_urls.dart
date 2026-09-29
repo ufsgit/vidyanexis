@@ -514,4 +514,5 @@ class HttpUrls {
   static String searchNewLeadDashboard = "lead/Search_lead_dashboard_comorin";
   static String searchTaskDashboard = "lead/Search_task_Dashboard";
   static String getAllHistory = "lead/Get_All_History";
+  static String exportCustomer = "lead/Search_Customer_Export";
 }

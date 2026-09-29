@@ -922,6 +922,86 @@ class CustomerProvider extends ChangeNotifier {
     }
   }
 
+
+  Future<Uint8List?> getSearchCustomersForExportExcel(
+      BuildContext context) async {
+    try {
+      _status = _selectedStatusIds.join(',');
+      if (_status.isEmpty || _status == 'null') {
+        _status = '0';
+      }
+
+      final isDate = (_fromDateS.isNotEmpty || _toDateS.isNotEmpty) ? "1" : "0";
+      final isAmcDate =
+          (_amcFromDateS.isNotEmpty || _amcToDateS.isNotEmpty) ? "1" : "0";
+      final isWcDate =
+          (_wcFromDateS.isNotEmpty || _wcToDateS.isNotEmpty) ? "1" : "0";
+
+      final toUserId = _selectedUserIds.join(',');
+      final enquiryForId = _selectedEnquiryForIds.join(',');
+      final enquirySourceId = _selectedEnquirySourceIds.join(',');
+      final branchIds = _selectedBranchIds.join(',');
+
+      final preferences = await SharedPreferences.getInstance();
+      final loginUserId = int.parse(preferences.getString('userId') ?? "0");
+
+      final apiSortOption = _selectedSortOption == 4 ? 0 : _selectedSortOption;
+
+      final response = await HttpRequest.httpGetRequest(
+        endPoint: '${HttpUrls.exportCustomer}'
+            '?Customer_Name_=$_search'
+            '&Phone_Number_=$_search'
+            '&Consumer_Number_=$_search'
+            '&Is_Date_=$isDate'
+            '&Fromdate_=$_fromDateS'
+            '&Todate_=$_toDateS'
+            '&Is_AMC_Date_=$isAmcDate'
+            '&AMC_Fromdate_=$_amcFromDateS'
+            '&AMC_Todate_=$_amcToDateS'
+            '&Is_Work_Completion_Date_=$isWcDate'
+            '&Work_Completion_Fromdate_=$_wcFromDateS'
+            '&Work_Completion_Todate_=$_wcToDateS'
+            '&To_User_Id_=$toUserId'
+            '&Login_User_Id_=$loginUserId'
+            '&Status_Id_=$_status'
+            '&Enquiry_For_Id_=$enquiryForId'
+            '&Enquiry_Source_Id_=$enquirySourceId'
+            '&Branch_Id_=$branchIds'
+            '&User_Details_Id_=$loginUserId'
+            '&Lead_Id_=0'
+            '&Order_By_=$apiSortOption'
+            '&Order_Type_=$_sortOrder'
+            '&Entry_Type_=$_entryType',
+        returnBytes: true, // ← THIS IS THE KEY
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        if (response.data is Uint8List) {
+          return response.data as Uint8List;
+        }
+        if (response.data is List<int>) {
+          return Uint8List.fromList(response.data);
+        }
+        if (response.data is List) {
+          return Uint8List.fromList(List<int>.from(response.data));
+        }
+      }
+
+      return null;
+    } catch (e) {
+      log('Exception in getSearchCustomersForExportExcel: $e');
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('An error occurred while exporting')),
+        );
+      }
+      return null;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
   //no context only for back in customer detail
   Future<void> getSearchCustomersNoContext() async {
     _startLimit = 1;

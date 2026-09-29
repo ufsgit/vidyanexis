@@ -35,6 +35,7 @@ import 'package:vidyanexis/controller/models/task_type_model.dart';
 import 'package:vidyanexis/controller/models/add_task_model.dart';
 import 'package:vidyanexis/controller/models/search_user_details_model.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_multi_level_dropdown.dart';
+import 'package:vidyanexis/utils/excel_action_helper.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 import 'dart:developer';
 import 'package:go_router/go_router.dart';
@@ -496,57 +497,66 @@ class _CustomerPageState extends State<CustomerPage> {
                                       .toString() ==
                                   '1')
                                 ElevatedButton.icon(
-                                  onPressed: () {
-                                    if (customerProvider
-                                        .customerData.isNotEmpty) {
-                                      exportToExcel(
-                                        headers: [
-                                          'Customer Code',
-                                          'Customer Name',
-                                          'Mobile No',
-                                          'Email',
-                                          'Enquiry For',
-                                          'Enquiry Source',
-                                          'Assigned To',
-                                          'AMC Date',
-                                          'Next Follow-up Date',
-                                          'Work Completion Date',
-                                          'Status',
-                                          'Total Project Cost',
-                                        ],
-                                        data: customerProvider.customerData
-                                            .map((cust) {
-                                          return {
-                                            'Customer Code':
-                                                cust.getDisplayLeadCode(
-                                                    settingsProvider
-                                                        .leadCodeWithEnquiryCode),
-                                            'Customer Name': cust.customerName,
-                                            'Mobile No': cust.contactNumber,
-                                            'Email': cust.email,
-                                            'Enquiry For': cust.enquiryFor,
-                                            'Enquiry Source':
-                                                cust.enquirySourceName,
-                                            'Assigned To': cust.toUserName,
-                                            'AMC Date': cust.amcDateDisplay,
-                                            'Next Follow-up Date':
-                                                cust.nextFollowUpDate,
-                                            'Work Completion Date':
-                                                cust.workCompletionDateDisplay,
-                                            'Status': cust.statusName,
-                                            'Total Project Cost':
-                                                cust.totalProjectCost,
-                                          };
-                                        }).toList(),
-                                        fileName: 'Customers_Export',
-                                      );
-                                    } else {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        const SnackBar(
-                                            content: Text('No data to export')),
-                                      );
-                                    }
+                                  onPressed: () async {
+                                    ExcelActionHelper.downloadExcelDirect(
+                                      context: context,
+                                      fileName: 'Customers.xlsx',
+                                      onGenerate: () {
+                                        return customerProvider
+                                            .getSearchCustomersForExportExcel(
+                                                context);
+                                      },
+                                    );
+                                    // if (customerProvider
+                                    //     .customerData.isNotEmpty) {
+                                    //   exportToExcel(
+                                    //     headers: [
+                                    //       'Customer Code',
+                                    //       'Customer Name',
+                                    //       'Mobile No',
+                                    //       'Email',
+                                    //       'Enquiry For',
+                                    //       'Enquiry Source',
+                                    //       'Assigned To',
+                                    //       'AMC Date',
+                                    //       'Next Follow-up Date',
+                                    //       'Work Completion Date',
+                                    //       'Status',
+                                    //       'Total Project Cost',
+                                    //     ],
+                                    //     data: customerProvider.customerData
+                                    //         .map((cust) {
+                                    //       return {
+                                    //         'Customer Code':
+                                    //             cust.getDisplayLeadCode(
+                                    //                 settingsProvider
+                                    //                     .leadCodeWithEnquiryCode),
+                                    //         'Customer Name': cust.customerName,
+                                    //         'Mobile No': cust.contactNumber,
+                                    //         'Email': cust.email,
+                                    //         'Enquiry For': cust.enquiryFor,
+                                    //         'Enquiry Source':
+                                    //             cust.enquirySourceName,
+                                    //         'Assigned To': cust.toUserName,
+                                    //         'AMC Date': cust.amcDateDisplay,
+                                    //         'Next Follow-up Date':
+                                    //             cust.nextFollowUpDate,
+                                    //         'Work Completion Date':
+                                    //             cust.workCompletionDateDisplay,
+                                    //         'Status': cust.statusName,
+                                    //         'Total Project Cost':
+                                    //             cust.totalProjectCost,
+                                    //       };
+                                    //     }).toList(),
+                                    //     fileName: 'Customers_Export',
+                                    //   );
+                                    // } else {
+                                    //   ScaffoldMessenger.of(context)
+                                    //       .showSnackBar(
+                                    //     const SnackBar(
+                                    //         content: Text('No data to export')),
+                                    //   );
+                                    // }
                                   },
                                   icon:
                                       const Icon(Icons.file_download, size: 16),
@@ -579,36 +589,45 @@ class _CustomerPageState extends State<CustomerPage> {
                                   '1')
                                 ElevatedButton.icon(
                                   onPressed: () {
-                                    if (customerProvider
-                                        .customerData.isNotEmpty) {
-                                      exportToExcel(
-                                        headers: [
-                                          'Customer Name',
-                                          'Place',
-                                          'Mobile Number',
-                                          'AMC Date',
-                                          'Work Completion Date',
-                                        ],
-                                        data: customerProvider.customerData
-                                            .map((cust) {
-                                          return {
-                                            'Customer Name': cust.customerName,
-                                            'Place': cust.displayPlace,
-                                            'Mobile Number': cust.contactNumber,
-                                            'AMC Date': cust.amcDateDisplay,
-                                            'Work Completion Date':
-                                                cust.workCompletionDateDisplay,
-                                          };
-                                        }).toList(),
-                                        fileName: 'Customers_Selected_Columns_Export',
-                                      );
-                                    } else {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        const SnackBar(
-                                            content: Text('No data to export')),
-                                      );
-                                    }
+                                    ExcelActionHelper.downloadExcelDirect(
+                                      context: context,
+                                      fileName: 'Customers.xlsx',
+                                      onGenerate: () {
+                                        return customerProvider
+                                            .getSearchCustomersForExportExcel(
+                                                context);
+                                      },
+                                    );
+                                    // if (customerProvider
+                                    //     .customerData.isNotEmpty) {
+                                    //   exportToExcel(
+                                    //     headers: [
+                                    //       'Customer Name',
+                                    //       'Place',
+                                    //       'Mobile Number',
+                                    //       'AMC Date',
+                                    //       'Work Completion Date',
+                                    //     ],
+                                    //     data: customerProvider.customerData
+                                    //         .map((cust) {
+                                    //       return {
+                                    //         'Customer Name': cust.customerName,
+                                    //         'Place': cust.displayPlace,
+                                    //         'Mobile Number': cust.contactNumber,
+                                    //         'AMC Date': cust.amcDateDisplay,
+                                    //         'Work Completion Date':
+                                    //             cust.workCompletionDateDisplay,
+                                    //       };
+                                    //     }).toList(),
+                                    //     fileName: 'Customers_Selected_Columns_Export',
+                                    //   );
+                                    // } else {
+                                    //   ScaffoldMessenger.of(context)
+                                    //       .showSnackBar(
+                                    //     const SnackBar(
+                                    //         content: Text('No data to export')),
+                                    //   );
+                                    // }
                                   },
                                   icon:
                                       const Icon(Icons.file_download, size: 16),
