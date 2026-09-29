@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/controller/stock_use_provider.dart';
+import 'package:vidyanexis/utils/csv_function.dart';
 import '../../../constants/app_colors.dart';
 import '../../../controller/customer_details_provider.dart';
 import '../../../controller/models/stock_model.dart';
@@ -19,18 +21,29 @@ class AddStockUseWidget extends StatefulWidget {
   final int editId;
   final int customerId;
 
-  const AddStockUseWidget(
-      {super.key,
-      required this.isEdit,
-      this.stockUse,
-      required this.editId,
-      required this.customerId});
+  const AddStockUseWidget({
+    super.key,
+    required this.isEdit,
+    this.stockUse,
+    required this.editId,
+    required this.customerId,
+  });
 
   @override
   State<AddStockUseWidget> createState() => _AddStockUseWidgetState();
 }
 
 class _AddStockUseWidgetState extends State<AddStockUseWidget> {
+  final TextEditingController _searchController = TextEditingController();
+  Timer? _debounce;
+
+  final ValueNotifier<List<MapEntry<int, StockUseItems>>> _filteredNotifier =
+      ValueNotifier([]);
+
+  final ValueNotifier<bool> _isLoadingItems = ValueNotifier(true);
+
+  String _searchQuery = '';
+
   String? validateInputs(
       BuildContext context, StockUseProvider expenseProvider) {
     if (!expenseProvider.stockUseItems.any((item) => item.isChecked)) {
@@ -53,19 +66,12 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
           ),
           content: Text(
             message,
-            style: const TextStyle(
-              color: Colors.black87,
-              fontSize: 16,
-            ),
+            style: const TextStyle(color: Colors.black87, fontSize: 16),
           ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(4),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
+              onPressed: () => Navigator.pop(context),
               child: Text(
                 'OK',
                 style: TextStyle(
@@ -81,75 +87,139 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
     );
   }
 
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final expenseProvider =
-          Provider.of<StockUseProvider>(context, listen: false);
-      final customerDetailsProvider =
-          Provider.of<CustomerDetailsProvider>(context, listen: false);
+  void _exportCheckedItems(StockUseProvider provider) {
+    final checkedItems =
+        provider.stockUseItems.where((item) => item.isChecked).toList();
 
-      // Load ALL items first
+    if (checkedItems.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No items selected to export')),
+      );
+      return;
+    }
+
+    exportToExcel(
+      headers: ['Item Name', 'Category', 'Unit', 'Quantity', 'Amount'],
+      data: checkedItems.map((item) {
+        return {
+          'Item Name': item.itemName,
+          'Category': item.categoryName,
+          'Unit': item.unitName,
+          'Quantity': item.quantity,
+          'Amount': item.amount,
+        };
+      }).toList(),
+      fileName: 'Stock_Use_Checked_Items_Export',
+    );
+  }
+
+  void _updateFilteredList(StockUseProvider provider) {
+    final query = _searchQuery.toLowerCase();
+    final items = provider.stockUseItems;
+    final List<MapEntry<int, StockUseItems>> result = [];
+
+    if (query.isEmpty) {
+      for (int i = 0; i < items.length; i++) {
+        result.add(MapEntry(i, items[i]));
+      }
+    } else {
+      for (int i = 0; i < items.length; i++) {
+        final item = items[i];
+        if (item.itemName.toLowerCase().contains(query) ||
+            item.categoryName.toLowerCase().contains(query) ||
+            item.unitName.toLowerCase().contains(query)) {
+          result.add(MapEntry(i, item));
+        }
+      }
+    }
+    _filteredNotifier.value = result;
+  }
+
+  void _onSearchChanged(String value, StockUseProvider provider) {
+    _searchQuery = value.trim();
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+
+    _debounce = Timer(const Duration(milliseconds: 200), () {
+      if (!mounted) return;
+      _updateFilteredList(provider);
+    });
+  }
+
+  Future<void> _loadData() async {
+    final expenseProvider =
+        Provider.of<StockUseProvider>(context, listen: false);
+    final customerDetailsProvider =
+        Provider.of<CustomerDetailsProvider>(context, listen: false);
+
+    try {
+      // Load items
       await expenseProvider.searchItemListStock(context);
 
       if (widget.isEdit) {
-        // Load specific details and merge with ALL items
         await expenseProvider.getStockUseDetails(
-            context: context, masterId: widget.editId.toString());
+          context: context,
+          masterId: widget.editId.toString(),
+        );
 
-        // Set the date and description
-        expenseProvider.suDateController.text = widget.stockUse!.date;
-        expenseProvider.suDescriptionController.text =
-            widget.stockUse!.description;
-
-        // Set the stock status from the existing data
-        customerDetailsProvider
-            .updateStockStatus(widget.stockUse!.stockStatus ?? 'Pending');
+        // Set form fields (safe even if widget is still mounted)
+        if (mounted) {
+          expenseProvider.suDateController.text = widget.stockUse!.date;
+          expenseProvider.suDescriptionController.text =
+              widget.stockUse!.description;
+          customerDetailsProvider
+              .updateStockStatus(widget.stockUse!.stockStatus ?? 'Pending');
+        }
       } else {
         expenseProvider.clearStockUseForm();
         customerDetailsProvider.updateStockStatus('Pending');
       }
+
+      if (mounted) {
+        _updateFilteredList(expenseProvider);
+      }
+    } catch (e) {
+      debugPrint('Error loading stock use data: $e');
+    } finally {
+      if (mounted) {
+        _isLoadingItems.value = false;
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Pre-fill date/description immediately for edit mode (no waiting)
+    if (widget.isEdit && widget.stockUse != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final expenseProvider =
+            Provider.of<StockUseProvider>(context, listen: false);
+        final customerDetailsProvider =
+            Provider.of<CustomerDetailsProvider>(context, listen: false);
+
+        expenseProvider.suDateController.text = widget.stockUse!.date;
+        expenseProvider.suDescriptionController.text =
+            widget.stockUse!.description;
+        customerDetailsProvider
+            .updateStockStatus(widget.stockUse!.stockStatus ?? 'Pending');
+      });
+    }
+
+    // Load data in background – page opens instantly
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadData();
     });
   }
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   WidgetsBinding.instance.addPostFrameCallback((_) async {
-  //     final expenseProvider =
-  //     Provider.of<StockUseProvider>(context, listen: false);
-  //     final customerDetailsProvider =
-  //     Provider.of<CustomerDetailsProvider>(context, listen: false);
-  //
-  //     expenseProvider.searchItemListStock(context);
-  //
-  //     if (widget.isEdit) {
-  //       // Load stock use details including technical specification
-  //       await expenseProvider.getStockUseDetails(
-  //           context: context,
-  //           masterId: widget.editId.toString()
-  //       );
-  //
-  //       // Set the date and description
-  //       expenseProvider.suDateController.text = widget.stockUse!.date;
-  //       expenseProvider.suDescriptionController.text = widget.stockUse!.description;
-  //
-  //       // Note: stockUseItems and billOfMaterialsItems are already loaded in getStockUseDetails
-  //       print("Loaded ${customerDetailsProvider.billOfMaterialsItems.length} BOM items for editing");
-  //     } else {
-  //       // Clear everything for new entry
-  //       expenseProvider.suDateController.clear();
-  //       expenseProvider.suDescriptionController.clear();
-  //       expenseProvider.stockUseItems.clear();
-  //       expenseProvider.resetStockUseForm();
-  //
-  //       // Clear BOM items
-  //       customerDetailsProvider.billOfMaterialsItems.clear();
-  //       customerDetailsProvider.clearBOMFields();
-  //     }
-  //   });
-  // }
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    _searchController.dispose();
+    _filteredNotifier.dispose();
+    _isLoadingItems.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -178,7 +248,7 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
         ),
       ),
       body: Center(
-        child: Container(
+        child: SizedBox(
           width: AppStyles.isWebScreen(context) ? 800 : double.infinity,
           child: Column(
             children: [
@@ -227,14 +297,10 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
                             customerDetailsProvider.selectedStockStatus ??
                                 'Pending',
                         items: const [
-                          DropdownMenuItem<String>(
-                            value: 'Pending',
-                            child: Text('Pending'),
-                          ),
-                          DropdownMenuItem<String>(
-                            value: 'Approved',
-                            child: Text('Approved'),
-                          ),
+                          DropdownMenuItem(
+                              value: 'Pending', child: Text('Pending')),
+                          DropdownMenuItem(
+                              value: 'Approved', child: Text('Approved')),
                         ],
                         onChanged: (String? newValue) {
                           if (newValue != null) {
@@ -273,132 +339,177 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
                         ),
                       ),
                       const SizedBox(height: 32),
+
+                      // Items header
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           _buildSectionTitle('Items'),
-                          Text(
-                            '${expenseProvider.stockUseItems.where((item) => item.isChecked).length} Selected',
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.secondaryBlue,
-                            ),
+                          Consumer<StockUseProvider>(
+                            builder: (context, provider, _) {
+                              final count = provider.stockUseItems
+                                  .where((item) => item.isChecked)
+                                  .length;
+                              return Text(
+                                '$count Selected',
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.secondaryBlue,
+                                ),
+                              );
+                            },
                           ),
                         ],
                       ),
+                      const SizedBox(height: 12),
+
+                      // Search
+                      TextField(
+                        controller: _searchController,
+                        onChanged: (value) =>
+                            _onSearchChanged(value, expenseProvider),
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        decoration: InputDecoration(
+                          hintText: 'Search by item, category or unit...',
+                          hintStyle: GoogleFonts.plusJakartaSans(
+                            fontSize: 14,
+                            color: const Color(0xFF94A3B8),
+                          ),
+                          prefixIcon: const Icon(
+                            Icons.search_rounded,
+                            color: Color(0xFF64748B),
+                            size: 22,
+                          ),
+                          suffixIcon: ValueListenableBuilder(
+                            valueListenable: _filteredNotifier,
+                            builder: (context, _, __) {
+                              if (_searchQuery.isEmpty) {
+                                return const SizedBox.shrink();
+                              }
+                              return IconButton(
+                                icon: const Icon(Icons.clear_rounded,
+                                    size: 20, color: Color(0xFF64748B)),
+                                onPressed: () {
+                                  _searchController.clear();
+                                  _debounce?.cancel();
+                                  _searchQuery = '';
+                                  _updateFilteredList(expenseProvider);
+                                },
+                              );
+                            },
+                          ),
+                          filled: true,
+                          fillColor: const Color(0xFFF8FAFC),
+                          contentPadding: const EdgeInsets.symmetric(
+                              vertical: 14, horizontal: 16),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide:
+                                const BorderSide(color: Color(0xFFE2E8F0)),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide:
+                                const BorderSide(color: Color(0xFFE2E8F0)),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide:
+                                const BorderSide(color: Color(0xFF3B82F6)),
+                          ),
+                        ),
+                      ),
                       const SizedBox(height: 16),
-                      ListView.separated(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: expenseProvider.stockUseItems.length,
-                        separatorBuilder: (context, index) =>
-                            const SizedBox(height: 12),
-                        itemBuilder: (context, index) {
-                          final item = expenseProvider.stockUseItems[index];
-                          return Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: item.isChecked
-                                  ? const Color(0xFFF0F7FF)
-                                  : Colors.white,
-                              borderRadius: BorderRadius.circular(4),
-                              border: Border.all(
-                                color: item.isChecked
-                                    ? const Color(0xFF3B82F6)
-                                    : const Color(0xFFE2E8F0),
+
+                      // Items list / loading indicator
+                      ValueListenableBuilder<bool>(
+                        valueListenable: _isLoadingItems,
+                        builder: (context, isLoading, _) {
+                          if (isLoading) {
+                            return const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 48),
+                              child: Center(
+                                child: Column(
+                                  children: [
+                                    SizedBox(
+                                      width: 28,
+                                      height: 28,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2.5,
+                                        color: Color(0xFF3B82F6),
+                                      ),
+                                    ),
+                                    SizedBox(height: 12),
+                                    Text(
+                                      'Loading items...',
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        color: Color(0xFF64748B),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                            child: Row(
-                              children: [
-                                Transform.scale(
-                                  scale: 0.9,
-                                  child: Checkbox(
-                                    value: item.isChecked,
-                                    onChanged: (value) {
+                            );
+                          }
+
+                          return ValueListenableBuilder<
+                              List<MapEntry<int, StockUseItems>>>(
+                            valueListenable: _filteredNotifier,
+                            builder: (context, filteredEntries, _) {
+                              if (filteredEntries.isEmpty) {
+                                return Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 40),
+                                  child: Center(
+                                    child: Text(
+                                      _searchQuery.isEmpty
+                                          ? 'No items available'
+                                          : 'No items match your search',
+                                      style: GoogleFonts.plusJakartaSans(
+                                        fontSize: 14,
+                                        color: const Color(0xFF64748B),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }
+
+                              return ListView.separated(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: filteredEntries.length,
+                                separatorBuilder: (_, __) =>
+                                    const SizedBox(height: 12),
+                                itemBuilder: (context, index) {
+                                  final entry = filteredEntries[index];
+                                  final originalIndex = entry.key;
+                                  final item = entry.value;
+
+                                  return _ItemTile(
+                                    item: item,
+                                    onCheckChanged: (value) {
                                       expenseProvider.toggleItemCheck(
-                                          index, value ?? false);
+                                          originalIndex, value ?? false);
+                                      _updateFilteredList(expenseProvider);
                                     },
-                                    activeColor: const Color(0xFF3B82F6),
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(4)),
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        item.itemName,
-                                        style: GoogleFonts.plusJakartaSans(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,
-                                          color: const Color(0xFF1E293B),
-                                        ),
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      Text(
-                                        item.categoryName,
-                                        style: GoogleFonts.plusJakartaSans(
-                                          fontSize: 12,
-                                          color: const Color(0xFF64748B),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                Text(
-                                  'Total: ${(item.total)}',
-                                  style: GoogleFonts.plusJakartaSans(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w600,
-                                    color: const Color(0xFF64748B),
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                SizedBox(
-                                  width: 70,
-                                  child: TextFormField(
-                                    initialValue: item.quantity.toString(),
-                                    keyboardType: TextInputType.number,
-                                    textAlign: TextAlign.center,
-                                    style: GoogleFonts.plusJakartaSans(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                    decoration: InputDecoration(
-                                      hintText: 'Qty',
-                                      contentPadding:
-                                          const EdgeInsets.symmetric(
-                                              vertical: 8),
-                                      border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(4)),
-                                      isDense: true,
-                                    ),
-                                    onChanged: (value) {
+                                    onQuantityChanged: (value) {
                                       expenseProvider.updateItemQuantity(
-                                          index, value);
+                                          originalIndex, value);
                                     },
-                                    inputFormatters: [
-                                      FilteringTextInputFormatter.allow(
-                                          RegExp(r'^\d*\.?\d{0,2}')),
-                                    ],
-                                  ),
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.delete_outline_rounded,
-                                      color: Color(0xFFEF4444), size: 22),
-                                  onPressed: () {
-                                    expenseProvider.deleteStockUseItem(index);
-                                  },
-                                ),
-                              ],
-                            ),
+                                    onDelete: () {
+                                      expenseProvider
+                                          .deleteStockUseItem(originalIndex);
+                                      _updateFilteredList(expenseProvider);
+                                    },
+                                  );
+                                },
+                              );
+                            },
                           );
                         },
                       ),
@@ -407,6 +518,8 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
                   ),
                 ),
               ),
+
+              // Bottom buttons
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
@@ -442,7 +555,28 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 16),
+                    const SizedBox(width: 12),
+                    ResponsiveButtonWrapper(
+                      child: OutlinedButton.icon(
+                        onPressed: () => _exportCheckedItems(expenseProvider),
+                        icon:
+                            const Icon(Icons.file_download_outlined, size: 18),
+                        label: Text(
+                          'Export',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: AppColors.secondaryBlue,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          side: BorderSide(color: AppColors.secondaryBlue),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4)),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
                     ResponsiveButtonWrapper(
                       child: ElevatedButton(
                         onPressed: () async {
@@ -491,6 +625,117 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
         fontSize: 16,
         fontWeight: FontWeight.w700,
         color: const Color(0xFF1E293B),
+      ),
+    );
+  }
+}
+
+class _ItemTile extends StatelessWidget {
+  final StockUseItems item;
+  final ValueChanged<bool?> onCheckChanged;
+  final ValueChanged<String> onQuantityChanged;
+  final VoidCallback onDelete;
+
+  const _ItemTile({
+    required this.item,
+    required this.onCheckChanged,
+    required this.onQuantityChanged,
+    required this.onDelete,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: item.isChecked ? const Color(0xFFF0F7FF) : Colors.white,
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(
+          color: item.isChecked
+              ? const Color(0xFF3B82F6)
+              : const Color(0xFFE2E8F0),
+        ),
+      ),
+      child: Row(
+        children: [
+          Transform.scale(
+            scale: 0.9,
+            child: Checkbox(
+              value: item.isChecked,
+              onChanged: onCheckChanged,
+              activeColor: const Color(0xFF3B82F6),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4)),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  item.itemName,
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFF1E293B),
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  [
+                    if (item.categoryName.isNotEmpty) item.categoryName,
+                    if (item.unitName.isNotEmpty) item.unitName,
+                  ].join(' • '),
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 12,
+                    color: const Color(0xFF64748B),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          Text(
+            'Total: ${item.total}',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF64748B),
+            ),
+          ),
+          const SizedBox(width: 12),
+          SizedBox(
+            width: 70,
+            child: TextFormField(
+              initialValue: item.quantity.toString(),
+              keyboardType: TextInputType.number,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+              ),
+              decoration: InputDecoration(
+                hintText: 'Qty',
+                contentPadding: const EdgeInsets.symmetric(vertical: 8),
+                border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(4)),
+                isDense: true,
+              ),
+              onChanged: onQuantityChanged,
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
+              ],
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.delete_outline_rounded,
+                color: Color(0xFFEF4444), size: 22),
+            onPressed: onDelete,
+          ),
+        ],
       ),
     );
   }

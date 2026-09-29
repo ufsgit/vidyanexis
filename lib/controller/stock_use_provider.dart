@@ -1936,6 +1936,7 @@ class StockUseProvider extends ChangeNotifier {
               _stockUseItems[i].unitPrice = matchingSavedItem.unitPrice;
               _stockUseItems[i].stockId = matchingSavedItem.stockId;
               _stockUseItems[i].total = matchingSavedItem.total;
+              _stockUseItems[i].unitName = matchingSavedItem.unitName;
             } else {
               _stockUseItems[i].isChecked = false;
             }
