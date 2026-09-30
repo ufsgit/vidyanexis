@@ -553,6 +553,7 @@ class SettingsProvider extends ChangeNotifier {
   int _showLeadCode = 0;
   int _ramcoSort = 0;
   int _ramcoHistory = 0;
+  int _ramcoAdminTaskPhoto = 0;
   int? _selectedStatusId;
 
   int get toggleValue => _toggleValue;
@@ -580,6 +581,7 @@ class SettingsProvider extends ChangeNotifier {
   int get showLeadCode => _showLeadCode;
   int get ramcoSort => _ramcoSort;
   int get ramcoHistory => _ramcoHistory;
+  int get ramcoAdminTaskPhoto => _ramcoAdminTaskPhoto;
 
   int _jobSheet = 0;
   int get jobSheet => _jobSheet;
@@ -731,6 +733,10 @@ class SettingsProvider extends ChangeNotifier {
         (caption.toLowerCase().contains('ramco_history') ||
             caption.toLowerCase().contains('ramco history'))) {
       _ramcoHistory = value;
+    } else if (caption != null &&
+        (caption.toLowerCase().contains('ramco_admin_task_photo') ||
+            caption.toLowerCase().contains('ramco admin task photo'))) {
+      _ramcoAdminTaskPhoto = value;
     }
   }
 
@@ -789,6 +795,12 @@ class SettingsProvider extends ChangeNotifier {
   void setRamcoHistory(int value) {
     _ramcoHistory = value;
     _syncStateToPermissionsList(39, value);
+    notifyListeners();
+  }
+
+  void setRamcoAdminTaskPhoto(int value) {
+    _ramcoAdminTaskPhoto = value;
+    _syncStateToPermissionsList(41, value);
     notifyListeners();
   }
 
@@ -5053,6 +5065,7 @@ class SettingsProvider extends ChangeNotifier {
     _showLeadCode = 0;
     _ramcoSort = 0;
     _ramcoHistory = 0;
+    _ramcoAdminTaskPhoto = 0;
     notifyListeners();
   }
 
