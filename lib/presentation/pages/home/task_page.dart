@@ -1,4 +1,5 @@
 // Check line 1776
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/controller/models/priority_model.dart';
 import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'dart:async';
@@ -3602,8 +3603,10 @@ class _tasksPageReportState extends State<TaskPage> {
                           orElse: () => statusOptions.first,
                         );
 
+                        // final ValueNotifier<TaskTypeStatusModel>
+                        //     selectedStatus = ValueNotifier(defaultStatus);
                         final ValueNotifier<TaskTypeStatusModel>
-                            selectedStatus = ValueNotifier(defaultStatus);
+                            selectedStatus = ValueNotifier(TaskTypeStatusModel()); // for deafult showing status value uncomment above code
                         final ValueNotifier<SubStatus?> selectedSubStatus =
                             ValueNotifier(null);
                         final ValueNotifier<bool> isSaving =
@@ -4214,6 +4217,12 @@ class _tasksPageReportState extends State<TaskPage> {
                           reportsProvider.clearTaskUserAssignments();
                           reportsProvider.clearDescription();
                           Provider.of<AudioFileProvider>(context, listen: false).clearAudios();
+                          
+                          formProvider.getFormDataByCustomer(
+                            task.customerId.toString(),
+                            enquiryForId: task.enquiryForId.toString(),
+                          );
+                          formProvider.fetchAvailableFields(context);
 
                           // Pre-fill Description and Follow-Up Date if available
                           reportsProvider.descriptionController.clear();
@@ -4233,8 +4242,10 @@ class _tasksPageReportState extends State<TaskPage> {
                           }
                         });
 
+                        // final ValueNotifier<TaskTypeStatusModel>
+                        //     selectedStatus = ValueNotifier(defaultStatus);
                         final ValueNotifier<TaskTypeStatusModel>
-                            selectedStatus = ValueNotifier(defaultStatus);
+                            selectedStatus = ValueNotifier(TaskTypeStatusModel()); // for deafult showing status value uncomment above code    
                         final ValueNotifier<SubStatus?> selectedSubStatus =
                             ValueNotifier(null);
                         final ValueNotifier<bool> isSaving =
@@ -4984,7 +4995,19 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                           InkWell(
                                                                             onTap:
                                                                                 () async {
-                                                                              final result = await showDialog(
+                                                                              // final result = await showDialog(
+                                                                              //   barrierDismissible: false,
+                                                                              //   context: context,
+                                                                              //   builder: (context) => ImageUploadAlert(
+                                                                              //     customerId: task.customerId.toString(),
+                                                                              //     initialDocumentTypeId: doc.documentTypeId,
+                                                                              //     initialDocumentTypeName: doc.documentTypeName,
+                                                                              //   ),
+                                                                              // );
+                                                                              // if (result == true) {
+                                                                              //   reportsProvider.removePendingDocument(doc.documentTypeId ?? 0);
+                                                                              // }
+                                                                              await showDialog(
                                                                                 barrierDismissible: false,
                                                                                 context: context,
                                                                                 builder: (context) => ImageUploadAlert(
@@ -4993,9 +5016,12 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                                   initialDocumentTypeName: doc.documentTypeName,
                                                                                 ),
                                                                               );
-                                                                              if (result == true) {
-                                                                                reportsProvider.removePendingDocument(doc.documentTypeId ?? 0);
-                                                                              }
+                                                                              // Refresh data after upload
+                                                                              int sId = selectedStatus.value.statusId ?? 0;
+                                                                              int tId = selectedStatus.value.taskTypeId ?? 0;
+                                                                              int cId = task.customerId ?? 0;
+                                                                              int eId = task.enquiryForId ?? 0;
+                                                                              reportsProvider.fetchTaskTypes(tId, sId, cId, eId, context);
                                                                             },
                                                                             child:
                                                                                 Container(
@@ -5859,6 +5885,122 @@ class _tasksPageReportState extends State<TaskPage> {
                                                       return;
                                                     }
 
+                                                    if (selectedStatus.value
+                                                                .statusId ==
+                                                            null ||
+                                                        selectedStatus.value
+                                                                .statusId ==
+                                                            0) {
+                                                      showDialog(
+                                                        context: context,
+                                                        builder: (BuildContext
+                                                            context) {
+                                                          return AlertDialog(
+                                                            shape:
+                                                                RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          4),
+                                                            ),
+                                                            titlePadding:
+                                                                const EdgeInsets
+                                                                    .fromLTRB(
+                                                                    24,
+                                                                    24,
+                                                                    24,
+                                                                    8),
+                                                            contentPadding:
+                                                                const EdgeInsets
+                                                                    .fromLTRB(
+                                                                    24,
+                                                                    0,
+                                                                    24,
+                                                                    16),
+                                                            actionsPadding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        16,
+                                                                    vertical:
+                                                                        10),
+                                                            title: Row(
+                                                              children: [
+                                                                Icon(
+                                                                  Icons
+                                                                      .warning_amber_rounded,
+                                                                  color: AppColors
+                                                                      .darkGreen,
+                                                                ),
+                                                                const SizedBox(
+                                                                    width: 10),
+                                                                const Text(
+                                                                  "Unable to Save",
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontFamily:
+                                                                        'PlusJakartaSans',
+                                                                    color: Colors
+                                                                        .black,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    fontSize:
+                                                                        20,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            content: const Text(
+                                                              "Please choose a status",
+                                                              style: TextStyle(
+                                                                fontFamily:
+                                                                    'PlusJakartaSans',
+                                                                color: Colors
+                                                                    .black,
+                                                                fontSize: 16,
+                                                              ),
+                                                            ),
+                                                            actions: [
+                                                              TextButton(
+                                                                style: TextButton
+                                                                    .styleFrom(
+                                                                  foregroundColor:
+                                                                      Colors
+                                                                          .white,
+                                                                  backgroundColor:
+                                                                      AppColors
+                                                                          .darkGreen,
+                                                                  shape:
+                                                                      RoundedRectangleBorder(
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(4),
+                                                                  ),
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .symmetric(
+                                                                    horizontal:
+                                                                        20,
+                                                                    vertical:
+                                                                        10,
+                                                                  ),
+                                                                ),
+                                                                onPressed: () =>
+                                                                    Navigator.of(
+                                                                            context)
+                                                                        .pop(),
+                                                                child:
+                                                                    const Text(
+                                                                        "OK"),
+                                                              ),
+                                                            ],
+                                                          );
+                                                        },
+                                                      );
+                                                      return;
+                                                    }
+
                                                     final settingsProvider =
                                                         Provider.of<
                                                                 SettingsProvider>(
@@ -5874,7 +6016,25 @@ class _tasksPageReportState extends State<TaskPage> {
                                                     int remarkMandatoty =
                                                         settingsProvider
                                                             .taskRemarkMandatory;
-                                                    if (remarkMandatoty == 1 &&
+                                                    int ramcoAdminTaskPhoto =
+                                                        settingsProvider
+                                                            .ramcoAdminTaskPhoto;
+                                                    SharedPreferences
+                                                        preferences =
+                                                        await SharedPreferences
+                                                            .getInstance();
+                                                    String userId =
+                                                        preferences.getString(
+                                                                'userId') ??
+                                                            "0";
+
+                                                    final bool isRemarkRequired =
+                                                        remarkMandatoty == 1
+                                                            ? true
+                                                            : (ramcoAdminTaskPhoto ==
+                                                                    1 &&
+                                                                userId == "1");
+                                                    if (isRemarkRequired &&
                                                         provider
                                                             .remarksController
                                                             .text
@@ -5973,7 +6133,10 @@ class _tasksPageReportState extends State<TaskPage> {
                                                     if (provider
                                                             .documentTypeModel
                                                             .isEmpty ||
-                                                        isDocumentButtonEnabled) {
+                                                        isDocumentButtonEnabled ||
+                                                        (ramcoAdminTaskPhoto ==
+                                                                1 &&
+                                                            userId == "1")) {
                                                       isSaving.value = true;
                                                       try {
                                                         final audioProvider =
