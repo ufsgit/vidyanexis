@@ -675,7 +675,6 @@ class SettingsProvider extends ChangeNotifier {
             caption.toLowerCase().contains('lead permission me and all'))) {
       _leadPermissionMeAndAll = value;
     } else if (permissionId == 18 ||
-        permissionId == 41 ||
         (caption != null &&
             caption.toLowerCase().contains('customer permission me and all'))) {
       _customerPermissionMeAndAll = value;
