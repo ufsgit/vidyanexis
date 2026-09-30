@@ -14,6 +14,7 @@ import 'package:vidyanexis/presentation/pages/home/reciept_screen.dart';
 import 'package:vidyanexis/presentation/pages/home/expense_screen.dart';
 import 'package:vidyanexis/controller/expense_provider.dart';
 import 'package:vidyanexis/controller/models/expense_management_model.dart';
+import 'package:vidyanexis/presentation/widgets/customer/amc_tab_widget.dart';
 import 'package:vidyanexis/presentation/widgets/inventory/add_expense_management.dart';
 
 import 'package:vidyanexis/presentation/pages/inventory/stock_return_page.dart';
@@ -461,11 +462,12 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
         provider.getRecieptListApi(widget.customerId, context);
         break;
       case "Periodic Service":
-        provider.getServiceList(widget.customerId, context);
-        provider.getAmc(widget.customerId, '0', context);
-        final dropDownProvider =
-            Provider.of<DropDownProvider>(context, listen: false);
-        dropDownProvider.getAMCStatus(context);
+        // provider.getServiceList(widget.customerId, context);
+        // provider.getAmc(widget.customerId, '0', context);
+        // final dropDownProvider =
+        //     Provider.of<DropDownProvider>(context, listen: false);
+        // dropDownProvider.getAMCStatus(context);
+        //passing directly in amc.tab.widget.dart
         break;
     }
   }
@@ -5306,148 +5308,9 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                     .menuIsViewMap[15] ==
                                                 1)
                                               if (sideprovider.name != 'Lead /')
-                                                customerDetailsProvider
-                                                        .isLoading
-                                                    ? const Center(
-                                                        child:
-                                                            CircularProgressIndicator())
-                                                    : Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              AppStyles.isWebScreen(
-                                                                      context)
-                                                                  ? Container(
-                                                                      margin: const EdgeInsets
-                                                                          .all(
-                                                                          8.0),
-                                                                      decoration:
-                                                                          BoxDecoration(
-                                                                        color: const Color(
-                                                                            0xFFEFF2F5),
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(4),
-                                                                      ),
-                                                                      child:
-                                                                          Padding(
-                                                                        padding: const EdgeInsets
-                                                                            .all(
-                                                                            4.0),
-                                                                        child:
-                                                                            Wrap(
-                                                                          spacing:
-                                                                              8.0, // Space between chips
-                                                                          runSpacing:
-                                                                              4.0, // Space between rows
-                                                                          children: [
-// _buildAMCChip('All Periodic Service',
-//     null), // All tasks (no filter)
-// Wrap(
-//   spacing: 8.0, // Space between chips
-//   runSpacing: 4.0,
-//   children: dropDownProvider.amcStatus.map((task) {
-//     return _buildAMCChip(task.amcStatusName, task.amcStatusId);
-//   }).toList(),
-// ),
-                                                                          ],
-                                                                        ),
-                                                                      ),
-                                                                    )
-                                                                  : Container(
-                                                                      margin: const EdgeInsets
-                                                                          .all(
-                                                                          30),
-                                                                    ),
-                                                            ],
-                                                          ),
-                                                          // const SizedBox(
-                                                          //   height: 16,
-                                                          // ),
-                                                          _buildAmcTaskWidget(
-                                                            onTap: (taskId,
-                                                                productName,
-                                                                service,
-                                                                entryDate,
-                                                                amount,
-                                                                description,
-                                                                amcStatus,
-                                                                customerName,
-                                                                amcId,
-                                                                fromDate,
-                                                                toDate,
-                                                                amc) {
-                                                              leadProvider
-                                                                  .setCutomerId(
-                                                                      int.parse(
-                                                                          widget
-                                                                              .customerId));
-                                                              print(
-                                                                  'Task ID: $taskId');
-
-                                                              showDialog(
-                                                                context:
-                                                                    context,
-                                                                builder:
-                                                                    (BuildContext
-                                                                        context) {
-                                                                  return AmcWidget(
-                                                                    onPressed:
-                                                                        () {
-                                                                      customerDetailsProvider
-                                                                              .customerId =
-                                                                          widget
-                                                                              .customerId;
-                                                                      showDialog(
-                                                                        barrierDismissible:
-                                                                            false,
-                                                                        context:
-                                                                            context,
-                                                                        builder:
-                                                                            (BuildContext
-                                                                                context) {
-                                                                          return AmcCreationWidget(
-                                                                              amcId: amcId.toString(),
-                                                                              amcAmountController: amount,
-                                                                              amcDescriptionController: description,
-                                                                              amcProductNameController: productName,
-                                                                              amcServiceController: service,
-                                                                              fromDateController: fromDate,
-                                                                              toDateController: toDate,
-                                                                              customerId: widget.customerId,
-                                                                              amc: amc,
-                                                                              isEdit: true);
-                                                                        },
-                                                                      );
-                                                                    },
-                                                                    customerName:
-                                                                        customerName,
-                                                                    customerStatus:
-                                                                        amcStatus,
-                                                                    amount:
-                                                                        '₹${double.parse(amount)}',
-                                                                    description:
-                                                                        description,
-                                                                    productName:
-                                                                        productName,
-                                                                    service:
-                                                                        service,
-                                                                    entryDate:
-                                                                        entryDate,
-                                                                  );
-                                                                },
-                                                              );
-                                                            },
-                                                            amcId:
-                                                                selectedAmcStatusId,
-                                                          )
-                                                        ],
-                                                      ),
+                                                AmcTabWidget(
+                                                  customerId: widget.customerId,
+                                                ),
 
                                             // Follow-Up Details Tab
                                             if (settingsprovider
