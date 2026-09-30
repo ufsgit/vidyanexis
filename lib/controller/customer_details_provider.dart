@@ -3112,7 +3112,6 @@ class CustomerDetailsProvider extends ChangeNotifier {
     // print(_selectedAMCStatus.toString());
     // print(_selectedAMCStatusName.toString());
     try {
-      Loader.showLoader(context);
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
       String userName = preferences.getString('userName') ?? "";
@@ -3156,22 +3155,19 @@ class CustomerDetailsProvider extends ChangeNotifier {
         if (onSuccess != null) {
           onSuccess();
         }
-        Navigator.pop(context);
-
-        Loader.stopLoader(context);
         print(data);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Server Error')),
         );
-        Loader.stopLoader(context);
       }
     } catch (e) {
       print('Exception occurred: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('An error occurred')),
       );
-      Loader.stopLoader(context);
+    } finally {
+      Navigator.pop(context);
     }
   }
 

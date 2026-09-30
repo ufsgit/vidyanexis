@@ -2,11 +2,13 @@ class MaintenanceDate {
   // final String id; // ID as a String
   final String date; // Date of the maintenance in 'yyyy-MM-dd' format
   final int completed; // 1 if completed, else 0
+  final String? imagePath;
 
   MaintenanceDate({
     // required this.id,
     required this.date,
     this.completed = 0,
+    this.imagePath,
   });
 
   // Convert the object to a map (like JSON format)
@@ -24,6 +26,7 @@ class MaintenanceDate {
       // id: json['id']?.toString() ?? '0', // Now expect id to be a String
       date: json['Interval_Date']?.toString() ?? '',
       completed: int.tryParse((json['Completed_Status'] ?? 0).toString()) ?? 0,
+      imagePath: json['File_Path']?.toString() ?? '',
     );
   }
 }
