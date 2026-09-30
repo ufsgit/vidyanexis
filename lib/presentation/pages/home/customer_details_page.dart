@@ -1599,6 +1599,22 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                               ),
                                               const SizedBox(height: 2),
                                               DetailRow(
+                                                label: "District",
+                                                value: customerDetailsProvider
+                                                        .leadDetails![0]
+                                                        .address2 ??
+                                                    '',
+                                              ),
+                                              const SizedBox(height: 2),
+                                              DetailRow(
+                                                label: "Place",
+                                                value: customerDetailsProvider
+                                                        .leadDetails![0]
+                                                        .address1 ??
+                                                    '',
+                                              ),
+                                              const SizedBox(height: 2),
+                                              DetailRow(
                                                 label: "Enquiry Source",
                                                 value: customerDetailsProvider
                                                         .leadDetails![0]
@@ -1669,7 +1685,6 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                           .leadDetails![0]
                                                           .address1 ??
                                                       ''),
-
                                               // State
                                               const SizedBox(height: 2),
                                               DetailRow(
@@ -1719,9 +1734,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                   label: "District",
                                                   value: customerDetailsProvider
                                                           .leadDetails![0]
-                                                          .districtName ??
+                                                          .address2 ??
                                                       ''),
-
                                               // Firestation
                                               const SizedBox(height: 2),
                                               DetailRow(
@@ -2112,6 +2126,28 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                             2),
                                                                     DetailRow(
                                                                       label:
+                                                                          "District",
+                                                                      value: customerDetailsProvider
+                                                                              .leadDetails![0]
+                                                                              .address2 ??
+                                                                          '',
+                                                                    ),
+                                                                    const SizedBox(
+                                                                        height:
+                                                                            2),
+                                                                    DetailRow(
+                                                                      label:
+                                                                          "Place",
+                                                                      value: customerDetailsProvider
+                                                                              .leadDetails![0]
+                                                                              .address1 ??
+                                                                          '',
+                                                                    ),
+                                                                    const SizedBox(
+                                                                        height:
+                                                                            2),
+                                                                    DetailRow(
+                                                                      label:
                                                                           "Enquiry Source",
                                                                       value: customerDetailsProvider
                                                                               .leadDetails![0]
@@ -2174,7 +2210,6 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                             "Place",
                                                                         value: customerDetailsProvider.leadDetails![0].address1 ??
                                                                             ''),
-
                                                                     // State
                                                                     const SizedBox(
                                                                         height:
@@ -2236,9 +2271,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                     DetailRow(
                                                                         label:
                                                                             "District",
-                                                                        value: customerDetailsProvider.leadDetails![0].districtName ??
+                                                                        value: customerDetailsProvider.leadDetails![0].address2 ??
                                                                             ''),
-
                                                                     // Consumer Number
                                                                     const SizedBox(
                                                                         height:
@@ -3295,6 +3329,26 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                               const SizedBox(
                                                                   height: 2),
                                                               DetailRow(
+                                                                label: "District",
+                                                                value: customerDetailsProvider
+                                                                        .leadDetails![
+                                                                            0]
+                                                                        .address2 ??
+                                                                    '',
+                                                              ),
+                                                              const SizedBox(
+                                                                  height: 2),
+                                                              DetailRow(
+                                                                label: "Place",
+                                                                value: customerDetailsProvider
+                                                                        .leadDetails![
+                                                                            0]
+                                                                        .address1 ??
+                                                                    '',
+                                                              ),
+                                                              const SizedBox(
+                                                                  height: 2),
+                                                              DetailRow(
                                                                 label:
                                                                     "Enquiry Source",
                                                                 value: customerDetailsProvider
@@ -3364,7 +3418,6 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                               0]
                                                                           .address1 ??
                                                                       ''),
-
                                                               // State
                                                               const SizedBox(
                                                                   height: 2),
@@ -3434,9 +3487,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                   value: customerDetailsProvider
                                                                           .leadDetails![
                                                                               0]
-                                                                          .districtName ??
+                                                                          .address2 ??
                                                                       ''),
-
                                                               // Consumer Number
                                                               const SizedBox(
                                                                   height: 2),
