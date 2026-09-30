@@ -10,6 +10,7 @@ import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
 
+import 'package:vidyanexis/controller/models/category_model.dart';
 import '../../../constants/app_styles.dart';
 
 class AddCustomField extends StatefulWidget {
@@ -112,6 +113,7 @@ class _AddCustomFieldState extends State<AddCustomField> {
       final customerDetailsProvider =
           Provider.of<CustomerDetailsProvider>(context, listen: false);
       await settingsProvider.getCustomFieldDropDown(context);
+      await settingsProvider.getCustomFieldCategory(context);
       customerDetailsProvider.getQuotationTypes(context);
       if (widget.isEdit) {
         settingsProvider.fieldNameController.text =
@@ -143,10 +145,25 @@ class _AddCustomFieldState extends State<AddCustomField> {
             .toggleIsChecked(widget.customFieldTypeModel?.isChecked == 1);
         customerDetailsProvider.selectedQuotationType =
             widget.customFieldTypeModel?.quotationTypeId ?? 0;
+            
+        if (widget.customFieldTypeModel?.categoryId != null) {
+          try {
+            settingsProvider.setCategory(
+              settingsProvider.customFieldCategoryList.firstWhere((e) =>
+                  e.categoryId == widget.customFieldTypeModel?.categoryId),
+            );
+          } catch (e) {
+            settingsProvider.setCategory(null);
+          }
+        } else {
+          settingsProvider.setCategory(null);
+        }
       } else {
         settingsProvider.fieldNameController.clear();
         settingsProvider.fieldTypeController.clear();
+        settingsProvider.categoryController.clear();
         settingsProvider.fieldListItems.clear();
+        settingsProvider.setCategory(null);
         settingsProvider.toggleQuotationCustom(false);
         settingsProvider.toggleViewInQuotation(false);
         settingsProvider.toggleCommercial(false);
@@ -183,6 +200,23 @@ class _AddCustomFieldState extends State<AddCustomField> {
                 controller: settingsProvider.fieldNameController,
                 hintText: 'Field Name*',
                 labelText: '',
+              ),
+              const SizedBox(height: 16),
+              CommonDropdown<CategoryModel>(
+                hintText: 'Category Name',
+                selectedValue: widget.isEdit
+                    ? settingsProvider.selectedCategory
+                    : null,
+                items: settingsProvider.customFieldCategoryList
+                    .map(
+                      (e) => DropdownItem<CategoryModel>(
+                          id: e, name: e.categoryName),
+                    )
+                    .toList(),
+                controller: settingsProvider.categoryController,
+                onItemSelected: (selectedId) {
+                  settingsProvider.setCategory(selectedId);
+                },
               ),
               const SizedBox(height: 16),
               CommonDropdown<CustomFieldTypeModel>(

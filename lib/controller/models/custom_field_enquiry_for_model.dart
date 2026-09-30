@@ -6,6 +6,8 @@ class CustomFieldEnquiryForModel {
   int? customFieldTypeId;
   String? customFieldName;
   String? datavalue;
+  int? categoryId;
+  String? categoryName;
   List<DropdownValue>? dropdownValues;
   List<CheckBoxValues>? checkboxValues;
 
@@ -15,6 +17,8 @@ class CustomFieldEnquiryForModel {
     this.datavalue,
     this.customFieldName,
     this.customFieldTypeId,
+    this.categoryId,
+    this.categoryName,
     this.dropdownValues,
     this.checkboxValues,
   });
@@ -24,6 +28,8 @@ class CustomFieldEnquiryForModel {
     int? customFieldId,
     String? customFieldName,
     String? datavalue,
+    int? categoryId,
+    String? categoryName,
     List<DropdownValue>? dropdownValues,
     List<CheckBoxValues>? checkboxValues,
   }) =>
@@ -32,6 +38,8 @@ class CustomFieldEnquiryForModel {
         customFieldId: customFieldId ?? this.customFieldId,
         customFieldName: customFieldName ?? this.customFieldName,
         datavalue: datavalue ?? this.datavalue,
+        categoryId: categoryId ?? this.categoryId,
+        categoryName: categoryName ?? this.categoryName,
         dropdownValues: dropdownValues ?? this.dropdownValues,
         checkboxValues: checkboxValues ?? this.checkboxValues,
       );
@@ -43,6 +51,8 @@ class CustomFieldEnquiryForModel {
         customFieldName: json["custom_field_name"],
         datavalue: json["datavalue"] ?? "",
         customFieldTypeId: json["custom_field_type_id"],
+        categoryId: json["Category_Id"],
+        categoryName: json["Category_Name"],
         dropdownValues: json["dropdown_values"] == null
             ? []
             : List<DropdownValue>.from(
@@ -58,6 +68,8 @@ class CustomFieldEnquiryForModel {
         "custom_field_id": customFieldId,
         "custom_field_name": customFieldName,
         "custom_field_type_id": customFieldTypeId,
+        "Category_Id": categoryId,
+        "Category_Name": categoryName,
         "dropdown_values": dropdownValues == null
             ? []
             : List<dynamic>.from(dropdownValues!.map((x) => x.toJson())),

@@ -474,6 +474,7 @@ class HttpUrls {
   static String getFollowupAssignedUser = "followup/Get_Followup_Assigned_User";
   static String saveTargetEnquirySource = "lead/Save_Target_Enquiry_Source";
   static String getTargetEnquirySource = "lead/Get_Target_Enquiry_Source";
+  static String getFieldCategory = "settings/Get_Field_Category";
   static String deleteTargetEnquirySource = "lead/Delete_Target_Enquiry_Source";
   static String saveRegistrationDate = "lead/Save_Registration_Date";
   static String getMenuPermissionPrint = "user_details/Get_print_Permission";

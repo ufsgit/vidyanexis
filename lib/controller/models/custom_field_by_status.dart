@@ -12,6 +12,8 @@ class CustomFieldByStatusId {
   int? isViewInQuotation;
   int? isChecked;
   int? isCommercial;
+  int? categoryId;
+  String? categoryName;
 
   CustomFieldByStatusId({
     this.isMandatory,
@@ -27,6 +29,8 @@ class CustomFieldByStatusId {
     this.isViewInQuotation,
     this.isChecked,
     this.isCommercial,
+    this.categoryId,
+    this.categoryName,
   });
 
   CustomFieldByStatusId copyWith({
@@ -42,6 +46,8 @@ class CustomFieldByStatusId {
     int? isViewInQuotation,
     int? isChecked,
     int? isCommercial,
+    int? categoryId,
+    String? categoryName,
   }) =>
       CustomFieldByStatusId(
         isMandatory: isMandatory ?? this.isMandatory,
@@ -58,6 +64,8 @@ class CustomFieldByStatusId {
         isViewInQuotation: isViewInQuotation ?? this.isViewInQuotation,
         isChecked: isChecked ?? this.isChecked,
         isCommercial: isCommercial ?? this.isCommercial,
+        categoryId: categoryId ?? this.categoryId,
+        categoryName: categoryName ?? this.categoryName,
       );
 
   factory CustomFieldByStatusId.fromJson(Map<String, dynamic> json) =>
@@ -71,6 +79,8 @@ class CustomFieldByStatusId {
         isViewInQuotation: json["view_in_quotation"],
         isChecked: json["is_checked"] != null ? int.tryParse(json["is_checked"].toString()) : null,
         isCommercial: json["is_commercial"],
+        categoryId: json["Category_Id"],
+        categoryName: json["Category_Name"],
         dropdownValues: json["dropdown_values"] == null
             ? []
             : List<DropdownValue>.from(
@@ -95,6 +105,8 @@ class CustomFieldByStatusId {
         "view_in_quotation": isViewInQuotation,
         "is_checked": isChecked,
         "is_commercial": isCommercial,
+        "Category_Id": categoryId,
+        "Category_Name": categoryName,
         "dropdown_values": dropdownValues == null
             ? []
             : List<dynamic>.from(dropdownValues!.map((x) => x.toJson())),

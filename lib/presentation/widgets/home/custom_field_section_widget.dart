@@ -232,6 +232,21 @@ class _CustomFieldSectionWidgetState extends State<CustomFieldSectionWidget> {
       return const SizedBox.shrink();
     }
 
+    final hasCategories = widget.customFields.any((f) => f.categoryName != null && f.categoryName!.trim().isNotEmpty);
+
+    if (hasCategories) {
+      return Padding(
+        padding: widget.padding ?? const EdgeInsets.all(0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: _buildCategorizedFields(context),
+          ),
+        ),
+      );
+    }
+
     final mandatoryFields =
         widget.customFields.where((f) => f.isMandatory == 1).toList();
     final nonMandatoryFields =
@@ -362,6 +377,80 @@ class _CustomFieldSectionWidgetState extends State<CustomFieldSectionWidget> {
         ),
       ),
     );
+  }
+
+  List<Widget> _buildCategorizedFields(BuildContext context) {
+    final Map<String, List<CustomFieldByStatusId>> groupedFields = {};
+    final List<CustomFieldByStatusId> uncategorized = [];
+
+    for (var f in widget.customFields) {
+      final cat = f.categoryName?.trim();
+      if (cat != null && cat.isNotEmpty) {
+        groupedFields.putIfAbsent(cat, () => []).add(f);
+      } else {
+        uncategorized.add(f);
+      }
+    }
+
+    List<Widget> children = [];
+    final spacing = widget.spacing ?? 16.0;
+
+    Widget buildFieldList(List<CustomFieldByStatusId> fields) {
+      return LayoutBuilder(
+        builder: (context, constraints) {
+          if (AppStyles.isWebScreen(context)) {
+            return Wrap(
+              spacing: spacing,
+              runSpacing: spacing / 2,
+              children: fields.map((field) => SizedBox(
+                width: (constraints.maxWidth - spacing) / 2 - 0.1,
+                child: widgetBuilder.buildWidget(field),
+              )).toList(),
+            );
+          }
+          return Column(
+            children: fields.map((field) => Padding(
+              padding: EdgeInsets.only(bottom: spacing / 2),
+              child: widgetBuilder.buildWidget(field),
+            )).toList(),
+          );
+        },
+      );
+    }
+
+    for (var entry in groupedFields.entries) {
+      children.add(Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Text(
+          entry.key,
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: AppColors.textGrey3,
+          ),
+        ),
+      ));
+      children.add(buildFieldList(entry.value));
+      children.add(const SizedBox(height: 8.0));
+    }
+
+    if (uncategorized.isNotEmpty) {
+      children.add(Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Text(
+          "Other Fields",
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: AppColors.textGrey3,
+          ),
+        ),
+      ));
+      children.add(buildFieldList(uncategorized));
+      children.add(const SizedBox(height: 8.0));
+    }
+
+    return children;
   }
 
   // Public API methods

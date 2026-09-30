@@ -13,8 +13,10 @@ String customFieldModelToJson(List<CustomFieldModel> data) =>
 
 class CustomFieldModel {
   int? customFieldId;
+  int? categoryId;
   int? customFieldTypeId;
   String? customFieldName;
+  String? categoryName;
   int? deletedStatus;
   int? isQuotationCustom;
   int? isViewInQuotation;
@@ -28,10 +30,12 @@ class CustomFieldModel {
 
   CustomFieldModel({
     this.customFieldId,
+    this.categoryId,
     this.checkBoxValues,
     this.dropDownValues,
     this.customFieldTypeId,
     this.customFieldName,
+    this.categoryName,
     this.deletedStatus,
     this.isQuotationCustom,
     this.isViewInQuotation,
@@ -43,8 +47,10 @@ class CustomFieldModel {
 
   CustomFieldModel copyWith({
     int? customFieldId,
+    int? categoryId,
     int? customFieldTypeId,
     String? customFieldName,
+    String? categoryName,
     List<String>? dropDownValues,
     List<String>? checkBoxValues,
     int? deletedStatus,
@@ -57,8 +63,10 @@ class CustomFieldModel {
   }) =>
       CustomFieldModel(
         customFieldId: customFieldId ?? this.customFieldId,
+        categoryId: categoryId ?? this.categoryId,
         customFieldTypeId: customFieldTypeId ?? this.customFieldTypeId,
         customFieldName: customFieldName ?? this.customFieldName,
+        categoryName: categoryName ?? this.categoryName,
         deletedStatus: deletedStatus ?? this.deletedStatus,
         isQuotationCustom: isQuotationCustom ?? this.isQuotationCustom,
         isViewInQuotation: isViewInQuotation ?? this.isViewInQuotation,
@@ -73,9 +81,11 @@ class CustomFieldModel {
   factory CustomFieldModel.fromJson(Map<String, dynamic> json) =>
       CustomFieldModel(
         customFieldId: json["custom_field_id"] ?? json["Custom_Field_Id"],
+        categoryId: json["Category_Id"] ?? json["category_id"],
         customFieldTypeId:
             json["custom_field_type_id"] ?? json["Custom_Field_Type_Id"],
         customFieldName: json["custom_field_name"] ?? json["Custom_Field_Name"],
+        categoryName: json["Category_Name"] ?? json["category_name"],
         deletedStatus: json["Deleted_Status"] ?? json["deleted_status"],
         isQuotationCustom:
             json["quotation_custom"] ?? json["isQuotationCustom"],
@@ -122,6 +132,8 @@ class CustomFieldModel {
 
   Map<String, dynamic> toJson() => {
         "custom_field_id": customFieldId,
+        "Category_Id": categoryId,
+        "Category_Name": categoryName,
         "custom_field_type_id": customFieldTypeId,
         "custom_field_name": customFieldName,
         "Deleted_Status": deletedStatus,

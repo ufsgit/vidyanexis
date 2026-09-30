@@ -203,6 +203,13 @@ class SettingsProvider extends ChangeNotifier {
 
   final TextEditingController searchEnquiryForController =
       TextEditingController();
+  final TextEditingController categoryController = TextEditingController();
+  CategoryModel? selectedCategory;
+
+  void setCategory(CategoryModel? cat) {
+    selectedCategory = cat;
+    notifyListeners();
+  }
   final TextEditingController searchDocumentTypeController =
       TextEditingController();
   final TextEditingController searchCheckListController =
@@ -355,6 +362,7 @@ class SettingsProvider extends ChangeNotifier {
   List<DocumentTypeModel> _documentType = [];
   List<DocumentTypeModel> get documentType => _documentType;
   List<CustomFieldModel> customFieldModelList = [];
+  List<CategoryModel> customFieldCategoryList = [];
   List<ExpenseTypeModel> _expenseTypeList = [];
   List<ExpenseTypeModel> get expenseTypeList => _expenseTypeList;
   List<CustomerModel> _customerTypeList = [];
@@ -1309,6 +1317,9 @@ class SettingsProvider extends ChangeNotifier {
       } else if (customFieldModel.customFieldTypeId == 5) {
         customFieldModel.checkBoxValues = fieldListItems;
       }
+      
+      customFieldModel.categoryId = selectedCategory?.categoryId;
+
       final response = await HttpRequest.httpPostRequest(
           endPoint: HttpUrls.saveCustomField,
           bodyData: customFieldModel.toJson());
@@ -1358,6 +1369,28 @@ class SettingsProvider extends ChangeNotifier {
           .showSnackBar(const SnackBar(content: Text('An error occured')));
     }
     return customFieldModelList;
+  }
+
+  Future<void> getCustomFieldCategory(BuildContext context) async {
+    try {
+      final response = await HttpRequest.httpGetRequest(
+          endPoint: HttpUrls.getFieldCategory);
+
+      if (response.statusCode == 200) {
+        final body = response.data;
+        if (body != null && body['success'] == true) {
+          final data = body['data'];
+          if (data is List) {
+            customFieldCategoryList = data
+                .map((item) => CategoryModel.fromJson(item))
+                .toList();
+          }
+        }
+        notifyListeners();
+      }
+    } catch (e) {
+      log('Error getting custom field categories: $e');
+    }
   }
 
   String _customFieldSearchQuery = '';
