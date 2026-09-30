@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:vidyanexis/controller/models/add_task_model.dart';
 import 'package:vidyanexis/controller/models/amc_report_model.dart';
 import 'package:vidyanexis/controller/models/document_checklist_model.dart';
+import 'package:vidyanexis/controller/models/custom_field_by_status.dart';
 
 import 'package:vidyanexis/presentation/pages/home/checklist_management_page.dart';
 import 'package:vidyanexis/presentation/pages/home/inovice_tab.dart';
@@ -141,6 +142,82 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
         ],
       );
     }).toList();
+  }
+
+  List<Widget> _buildCategorizedAdditionalDetails(List<CustomFieldByStatusId>? customFields) {
+    if (customFields == null || customFields.isEmpty) {
+      return [const Text('No additional details available')];
+    }
+    
+    final validFields = customFields.where((field) =>
+      field != null &&
+      (field.customFieldName != null && field.customFieldName!.trim().isNotEmpty) &&
+      (field.datavalue != null && field.datavalue!.trim().isNotEmpty)).toList();
+
+    if (validFields.isEmpty) {
+      return [const Text('No additional details available')];
+    }
+
+    final hasCategories = validFields.any((f) => f.categoryName != null && f.categoryName!.trim().isNotEmpty);
+
+    if (!hasCategories) {
+      return validFields.map((field) => DetailRow(
+        label: field.customFieldName!.replaceAll('_', ' '),
+        value: field.datavalue!,
+      )).toList();
+    }
+
+    final Map<String, List<CustomFieldByStatusId>> groupedFields = {};
+    final List<CustomFieldByStatusId> uncategorized = [];
+
+    for (var f in validFields) {
+      final cat = f.categoryName?.trim();
+      if (cat != null && cat.isNotEmpty) {
+        groupedFields.putIfAbsent(cat, () => []).add(f);
+      } else {
+        uncategorized.add(f);
+      }
+    }
+
+    List<Widget> children = [];
+
+    for (var entry in groupedFields.entries) {
+      children.add(Padding(
+        padding: const EdgeInsets.only(top: 8.0, bottom: 4.0),
+        child: Text(
+          entry.key,
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: AppColors.textGrey3,
+          ),
+        ),
+      ));
+      children.addAll(entry.value.map((CustomFieldByStatusId field) => DetailRow(
+        label: field.customFieldName!.replaceAll('_', ' '),
+        value: field.datavalue!,
+      )));
+    }
+
+    if (uncategorized.isNotEmpty) {
+      children.add(Padding(
+        padding: const EdgeInsets.only(top: 8.0, bottom: 4.0),
+        child: Text(
+          "Other Fields",
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: AppColors.textGrey3,
+          ),
+        ),
+      ));
+      children.addAll(uncategorized.map((CustomFieldByStatusId field) => DetailRow(
+        label: field.customFieldName!.replaceAll('_', ' '),
+        value: field.datavalue!,
+      )));
+    }
+
+    return children;
   }
 
   Widget _buildCopyAdditionalDetailsButton(dynamic customFields) {
@@ -3177,24 +3254,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                       _buildCopyAdditionalDetailsButton(
                                                                           leadProvider
                                                                               .customFieldEnquiryFor),
-                                                                  content: (leadProvider.customFieldEnquiryFor ??
-                                                                              [])
-                                                                          .isNotEmpty
-                                                                      ? (leadProvider.customFieldEnquiryFor ??
-                                                                              [])
-                                                                          .where((field) =>
-                                                                              (field.customFieldName != null && field.customFieldName.toString().isNotEmpty) &&
-                                                                              (field.datavalue != null && field.datavalue.toString().isNotEmpty))
-                                                                          .map<Widget>((field) => DetailRow(
-                                                                                label: field.customFieldName.toString().replaceAll('_', ' '),
-                                                                                value: field.datavalue?.toString() ?? '',
-                                                                              ))
-                                                                          .toList()
-                                                                      : [
-                                                                          if ((leadProvider.customFieldEnquiryFor ?? [])
-                                                                              .isEmpty)
-                                                                            const Text('No additional details available')
-                                                                        ],
+                                                                  content: _buildCategorizedAdditionalDetails(leadProvider.customFieldEnquiryFor),
                                                                 ),
                                                               ],
                                                             ),
@@ -4422,38 +4482,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                 _buildCopyAdditionalDetailsButton(
                                                                     leadProvider
                                                                         .customFieldEnquiryFor),
-                                                            content: (leadProvider
-                                                                            .customFieldEnquiryFor ??
-                                                                        [])
-                                                                    .isNotEmpty
-                                                                ? (leadProvider
-                                                                            .customFieldEnquiryFor ??
-                                                                        [])
-                                                                    .where((field) =>
-                                                                        (field.customFieldName !=
-                                                                                null &&
-                                                                            field.customFieldName
-                                                                                .toString()
-                                                                                .isNotEmpty) &&
-                                                                        (field.datavalue !=
-                                                                                null &&
-                                                                            field.datavalue
-                                                                                .toString()
-                                                                                .isNotEmpty))
-                                                                    .map<Widget>(
-                                                                        (field) =>
-                                                                            DetailRow(
-                                                                              label: field.customFieldName.toString().replaceAll('_', ' '),
-                                                                              value: field.datavalue?.toString() ?? '',
-                                                                            ))
-                                                                    .toList()
-                                                                : [
-                                                                    if ((leadProvider.customFieldEnquiryFor ??
-                                                                            [])
-                                                                        .isEmpty)
-                                                                      const Text(
-                                                                          'No additional details available')
-                                                                  ],
+                                                            content: _buildCategorizedAdditionalDetails(leadProvider.customFieldEnquiryFor),
                                                           ),
                                                         ],
                                                       ))
