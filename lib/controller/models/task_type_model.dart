@@ -69,8 +69,8 @@ class TaskTypeModel {
       taskTypeColor: json["Task_Type_Color"] ?? '',
       taskTypeImage: json["Task_Type_Image"] ?? '',
       deleteStatus: json["DeleteStatus"] ?? 0,
-      departmentIds: json["Department_Ids"] ?? '',
-      branchIds: json["Branch_Ids"] ?? '',
+      departmentIds: json["Department_Ids"] ?? json["department_id"] ?? json["department_ids"] ?? json["Department_Id"] ?? '',
+      branchIds: json["Branch_Ids"] ?? json["branch_id"] ?? json["branch_ids"] ?? json["Branch_Id"] ?? '',
       defaultStatusId: json["default_status_id"] ?? 0,
       duration: json["Duration"] ?? 0,
       conversionTask: json["Is_Active"] is bool
