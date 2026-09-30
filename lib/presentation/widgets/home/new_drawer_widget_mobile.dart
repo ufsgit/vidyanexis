@@ -2854,7 +2854,8 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
           height: 10,
         ),
         if (settingsProvider.menuIsViewMap[145] == 1 &&
-            settingsProvider.leadCreationChanges != 1) ...[
+            settingsProvider.leadCreationChanges != 1 &&
+            settingsProvider.referenceNameAfterEnquiryFor != 1) ...[
           CustomTextfieldWidgetMobile(
             focusNode: FocusNode(),
             controller: leadProvider.referenceNameController,
@@ -3061,7 +3062,8 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
             ],
           ),
 
-        if (settingsProvider.leadCreationChanges == 1 &&
+        if ((settingsProvider.leadCreationChanges == 1 ||
+                settingsProvider.referenceNameAfterEnquiryFor == 1) &&
             settingsProvider.menuIsViewMap[145] == 1) ...[
           const SizedBox(height: 10),
           CustomTextfieldWidgetMobile(

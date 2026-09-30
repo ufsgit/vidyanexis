@@ -1028,7 +1028,8 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                           if (settingsProvider.leadCreationChanges != 1) ...[
                             ResponsiveRow(
                               children: [
-                                if (settingsProvider.menuIsViewMap[145] == 1)
+                                if (settingsProvider.menuIsViewMap[145] == 1 &&
+                                    settingsProvider.referenceNameAfterEnquiryFor != 1)
                                   Expanded(
                                     child: Row(
                                       children: [
@@ -1394,8 +1395,9 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                           ),
                           const SizedBox(height: 8),
 
-                          // Row: Reference Name (When Lead Creation Changes permission is enabled)
-                          if (settingsProvider.leadCreationChanges == 1 &&
+                          // Row: Reference Name (When Lead Creation Changes permission is enabled or referenceNameAfterEnquiryFor is 1)
+                          if ((settingsProvider.leadCreationChanges == 1 ||
+                                  settingsProvider.referenceNameAfterEnquiryFor == 1) &&
                               settingsProvider.menuIsViewMap[145] == 1) ...[
                             ResponsiveRow(
                               children: [

@@ -594,6 +594,8 @@ class SettingsProvider extends ChangeNotifier {
   int get ramcoPlace => _ramcoPlace;
   int _ramcoLocationPermission = 0;
   int get ramcoLocationPermission => _ramcoLocationPermission;
+  int _referenceNameAfterEnquiryFor = 0;
+  int get referenceNameAfterEnquiryFor => _referenceNameAfterEnquiryFor;
   String get leadNameLabel =>
       _leadNameChangeToCustomerName == 1 ? 'Customer Name' : 'Lead Name';
 
@@ -656,8 +658,17 @@ class SettingsProvider extends ChangeNotifier {
         caption != null &&
         caption.toLowerCase().contains('amc_date')) {
       _amcDatePermission = value;
+    } else if (permissionId == 40 &&
+        caption != null &&
+        (caption.toLowerCase().contains('refrance name after enquiry for') ||
+            caption.toLowerCase().contains('reference name after enquiry for'))) {
+      _referenceNameAfterEnquiryFor = value;
     } else if (permissionId == 17 ||
-        (permissionId == 40 && (caption == null || !caption.toLowerCase().contains('amc_date'))) ||
+        (permissionId == 40 &&
+            (caption == null ||
+                (!caption.toLowerCase().contains('amc_date') &&
+                 !caption.toLowerCase().contains('refrance name after enquiry for') &&
+                 !caption.toLowerCase().contains('reference name after enquiry for')))) ||
         (caption != null &&
             caption.toLowerCase().contains('lead permission me and all'))) {
       _leadPermissionMeAndAll = value;
