@@ -97,6 +97,52 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
   int? selectedServiceStatusId;
   int? selectedQuotationStatusId;
 
+  List<Widget> _getBasicCustomFields(
+      CustomerDetailsProvider customerDetailsProvider, LeadsProvider leadProvider) {
+    if (customerDetailsProvider.leadDetails == null ||
+        customerDetailsProvider.leadDetails!.isEmpty) {
+      return [];
+    }
+
+    final leadDetails = customerDetailsProvider.leadDetails![0];
+    final keyValues = leadDetails.keyValues;
+    if (keyValues == null || keyValues.isEmpty) return [];
+
+    final showCustomFieldsData = keyValues
+        .where((kv) => kv.keyValueName.toLowerCase() == 'show custom fields')
+        .map((kv) => kv.keyValueData)
+        .join(',');
+
+    if (showCustomFieldsData.isEmpty) return [];
+
+    final idsToShow = showCustomFieldsData
+        .split(',')
+        .map((s) => int.tryParse(s.trim()))
+        .where((id) => id != null)
+        .toList();
+
+    final allCustomFields = leadProvider.customFieldEnquiryFor ?? [];
+
+    final fieldsToShow = allCustomFields.where((field) =>
+        idsToShow.contains(field.customFieldId) &&
+        field.customFieldName != null &&
+        field.customFieldName!.trim().isNotEmpty &&
+        field.datavalue != null &&
+        field.datavalue!.trim().isNotEmpty);
+
+    return fieldsToShow.map((field) {
+      return Column(
+        children: [
+          const SizedBox(height: 2),
+          DetailRow(
+            label: field.customFieldName!.replaceAll('_', ' '),
+            value: field.datavalue!,
+          ),
+        ],
+      );
+    }).toList();
+  }
+
   Widget _buildCopyAdditionalDetailsButton(dynamic customFields) {
     return InkWell(
       onTap: () async {
@@ -1416,6 +1462,101 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                           const SizedBox(
                                             height: 2),
                                           ),
+                                          // Basic Information
+                                          CustomerCard(
+                                            title: "Basic",
+                                            content: [
+                                              DetailRow(
+                                                label: "Lead Name",
+                                                value: customerDetailsProvider
+                                                        .leadDetails![0]
+                                                        .customerName ??
+                                                    '',
+                                              ),
+                                              const SizedBox(height: 2),
+                                              DetailRow(
+                                                label: "Source",
+                                                value: customerDetailsProvider
+                                                        .leadDetails![0]
+                                                        .sourceCategoryName ??
+                                                    '',
+                                              ),
+                                              const SizedBox(height: 2),
+                                              DetailRow(
+                                                label: "Mobile No",
+                                                value: customerDetailsProvider
+                                                    .leadDetails![0]
+                                                    .contactNumber
+                                                    .toString(),
+                                              ),
+                                              const SizedBox(height: 2),
+                                              DetailRow(
+                                                label: "District",
+                                                value: customerDetailsProvider
+                                                        .leadDetails![0]
+                                                        .address2 ??
+                                                    '',
+                                              ),
+                                              const SizedBox(height: 2),
+                                              DetailRow(
+                                                label: "Place",
+                                                value: customerDetailsProvider
+                                                        .leadDetails![0]
+                                                        .address1 ??
+                                                    '',
+                                              ),
+                                              ..._getBasicCustomFields(customerDetailsProvider, leadProvider),
+                                              const SizedBox(height: 2),
+                                              DetailRow(
+                                                label: "Enquiry Source",
+                                                value: customerDetailsProvider
+                                                        .leadDetails![0]
+                                                        .enquirySourceName ??
+                                                    '',
+                                              ),
+                                              const SizedBox(height: 2),
+                                              DetailRow(
+                                                label: "Enquiry For",
+                                                value: customerDetailsProvider
+                                                        .leadDetails![0]
+                                                        .enquiryForName ??
+                                                    '',
+                                              ),
+                                              const SizedBox(height: 2),
+
+                                              DetailRow(
+                                                label: "Total project cost",
+                                                value: customerDetailsProvider
+                                                    .leadDetails![0]
+                                                    .displayProjectCost,
+                                              ),
+                                              // DetailRow(
+                                              //   label: "Engineer",
+                                              //   value: customerDetailsProvider
+                                              //       .leadDetails![0].engineerName,
+                                              // ),
+                                              // DetailRow(
+                                              //   label: "Engineer Organization",
+                                              //   value: customerDetailsProvider
+                                              //       .leadDetails![0].organization,
+                                              // ),
+                                              // DetailRow(
+                                              //   label: "Engineer Mobile",
+                                              //   value: customerDetailsProvider
+                                              //       .leadDetails![0].engineerMobile,
+                                              // ),
+                                              // DetailRow(
+                                              //   label: "Engineer City",
+                                              //   value: customerDetailsProvider
+                                              //       .leadDetails![0].engineerCity,
+                                              // ),
+                                              // DetailRow(
+                                              //   label: "Engineer District",
+                                              //   value: customerDetailsProvider
+                                              //       .leadDetails![0].engineerDistrict,
+                                              // ),
+                                            ],
+                                          ),
                                           CustomerCard(
                                             title: "Contact",
                                             content: [
@@ -1570,100 +1711,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                               ),
                                             ],
                                           ),
-                                          // Basic Information
-                                          CustomerCard(
-                                            title: "Basic",
-                                            content: [
-                                              DetailRow(
-                                                label: "Lead Name",
-                                                value: customerDetailsProvider
-                                                        .leadDetails![0]
-                                                        .customerName ??
-                                                    '',
-                                              ),
-                                              const SizedBox(height: 2),
-                                              DetailRow(
-                                                label: "Source",
-                                                value: customerDetailsProvider
-                                                        .leadDetails![0]
-                                                        .sourceCategoryName ??
-                                                    '',
-                                              ),
-                                              const SizedBox(height: 2),
-                                              DetailRow(
-                                                label: "Mobile No",
-                                                value: customerDetailsProvider
-                                                    .leadDetails![0]
-                                                    .contactNumber
-                                                    .toString(),
-                                              ),
-                                              const SizedBox(height: 2),
-                                              DetailRow(
-                                                label: "District",
-                                                value: customerDetailsProvider
-                                                        .leadDetails![0]
-                                                        .address2 ??
-                                                    '',
-                                              ),
-                                              const SizedBox(height: 2),
-                                              DetailRow(
-                                                label: "Place",
-                                                value: customerDetailsProvider
-                                                        .leadDetails![0]
-                                                        .address1 ??
-                                                    '',
-                                              ),
-                                              const SizedBox(height: 2),
-                                              DetailRow(
-                                                label: "Enquiry Source",
-                                                value: customerDetailsProvider
-                                                        .leadDetails![0]
-                                                        .enquirySourceName ??
-                                                    '',
-                                              ),
-                                              const SizedBox(height: 2),
-                                              DetailRow(
-                                                label: "Enquiry For",
-                                                value: customerDetailsProvider
-                                                        .leadDetails![0]
-                                                        .enquiryForName ??
-                                                    '',
-                                              ),
-                                              const SizedBox(height: 2),
 
-                                              DetailRow(
-                                                label: "Total project cost",
-                                                value: customerDetailsProvider
-                                                    .leadDetails![0]
-                                                    .displayProjectCost,
-                                              ),
-                                              // DetailRow(
-                                              //   label: "Engineer",
-                                              //   value: customerDetailsProvider
-                                              //       .leadDetails![0].engineerName,
-                                              // ),
-                                              // DetailRow(
-                                              //   label: "Engineer Organization",
-                                              //   value: customerDetailsProvider
-                                              //       .leadDetails![0].organization,
-                                              // ),
-                                              // DetailRow(
-                                              //   label: "Engineer Mobile",
-                                              //   value: customerDetailsProvider
-                                              //       .leadDetails![0].engineerMobile,
-                                              // ),
-                                              // DetailRow(
-                                              //   label: "Engineer City",
-                                              //   value: customerDetailsProvider
-                                              //       .leadDetails![0].engineerCity,
-                                              // ),
-                                              // DetailRow(
-                                              //   label: "Engineer District",
-                                              //   value: customerDetailsProvider
-                                              //       .leadDetails![0].engineerDistrict,
-                                              // ),
-                                            ],
-                                          ),
 
                                           // Address Details
                                           CustomerCard(
@@ -1965,6 +2013,111 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                       .all(
                                                                       16.0),
                                                               children: [
+                                                                // Basic Information
+                                                                CustomerCard(
+                                                                  title:
+                                                                      "Basic",
+                                                                  content: [
+                                                                    DetailRow(
+                                                                      label:
+                                                                          "Lead Name",
+                                                                      value: customerDetailsProvider
+                                                                              .leadDetails![0]
+                                                                              .customerName ??
+                                                                          '',
+                                                                    ),
+                                                                    const SizedBox(
+                                                                        height:
+                                                                            2),
+                                                                    DetailRow(
+                                                                      label:
+                                                                          "Source",
+                                                                      value: customerDetailsProvider
+                                                                              .leadDetails![0]
+                                                                              .sourceCategoryName ??
+                                                                          '',
+                                                                    ),
+                                                                    const SizedBox(
+                                                                        height:
+                                                                            2),
+                                                                    DetailRow(
+                                                                      label:
+                                                                          "Mobile No",
+                                                                      value: customerDetailsProvider
+                                                                          .leadDetails![
+                                                                              0]
+                                                                          .contactNumber
+                                                                          .toString(),
+                                                                    ),
+                                                                    const SizedBox(
+                                                                        height:
+                                                                            2),
+                                                                    DetailRow(
+                                                                      label:
+                                                                          "District",
+                                                                      value: customerDetailsProvider
+                                                                              .leadDetails![0]
+                                                                              .address2 ??
+                                                                          '',
+                                                                    ),
+                                                                    const SizedBox(
+                                                                        height:
+                                                                            2),
+                                                                    DetailRow(
+                                                                      label:
+                                                                          "Place",
+                                                                      value: customerDetailsProvider
+                                                                              .leadDetails![0]
+                                                                              .address1 ??
+                                                                          '',
+                                                                    ),
+                                                                    ..._getBasicCustomFields(customerDetailsProvider, leadProvider),
+                                                                    const SizedBox(
+                                                                        height:
+                                                                            2),
+                                                                    DetailRow(
+                                                                      label:
+                                                                          "Enquiry Source",
+                                                                      value: customerDetailsProvider
+                                                                              .leadDetails![0]
+                                                                              .enquirySourceName ??
+                                                                          '',
+                                                                    ),
+                                                                    const SizedBox(
+                                                                        height:
+                                                                            2),
+                                                                    DetailRow(
+                                                                      label:
+                                                                          "Enquiry For",
+                                                                      value: customerDetailsProvider
+                                                                              .leadDetails![0]
+                                                                              .enquiryForName ??
+                                                                          '',
+                                                                    ),
+                                                                    const SizedBox(
+                                                                        height:
+                                                                            2),
+                                                                    DetailRow(
+                                                                      label:
+                                                                          "Total project cost",
+                                                                      value: customerDetailsProvider
+                                                                          .leadDetails![
+                                                                              0]
+                                                                          .displayProjectCost,
+                                                                    ),
+                                                                    const SizedBox(
+                                                                        height:
+                                                                            2),
+                                                                    DetailRow(
+                                                                      label:
+                                                                          "Sub Source",
+                                                                      value: customerDetailsProvider
+                                                                          .leadDetails![
+                                                                              0]
+                                                                          .referenceName,
+                                                                    ),
+                                                                  ],
+                                                                ),
                                                                 // Contact
                                                                 CustomerCard(
                                                                   title:
@@ -2085,110 +2238,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                 //     ),
                                                                 //   ],
                                                                 // ),
-                                                                // Basic Information
-                                                                CustomerCard(
-                                                                  title:
-                                                                      "Basic",
-                                                                  content: [
-                                                                    DetailRow(
-                                                                      label:
-                                                                          "Lead Name",
-                                                                      value: customerDetailsProvider
-                                                                              .leadDetails![0]
-                                                                              .customerName ??
-                                                                          '',
-                                                                    ),
-                                                                    const SizedBox(
-                                                                        height:
-                                                                            2),
-                                                                    DetailRow(
-                                                                      label:
-                                                                          "Source",
-                                                                      value: customerDetailsProvider
-                                                                              .leadDetails![0]
-                                                                              .sourceCategoryName ??
-                                                                          '',
-                                                                    ),
-                                                                    const SizedBox(
-                                                                        height:
-                                                                            2),
-                                                                    DetailRow(
-                                                                      label:
-                                                                          "Mobile No",
-                                                                      value: customerDetailsProvider
-                                                                          .leadDetails![
-                                                                              0]
-                                                                          .contactNumber
-                                                                          .toString(),
-                                                                    ),
-                                                                    const SizedBox(
-                                                                        height:
-                                                                            2),
-                                                                    DetailRow(
-                                                                      label:
-                                                                          "District",
-                                                                      value: customerDetailsProvider
-                                                                              .leadDetails![0]
-                                                                              .address2 ??
-                                                                          '',
-                                                                    ),
-                                                                    const SizedBox(
-                                                                        height:
-                                                                            2),
-                                                                    DetailRow(
-                                                                      label:
-                                                                          "Place",
-                                                                      value: customerDetailsProvider
-                                                                              .leadDetails![0]
-                                                                              .address1 ??
-                                                                          '',
-                                                                    ),
-                                                                    const SizedBox(
-                                                                        height:
-                                                                            2),
-                                                                    DetailRow(
-                                                                      label:
-                                                                          "Enquiry Source",
-                                                                      value: customerDetailsProvider
-                                                                              .leadDetails![0]
-                                                                              .enquirySourceName ??
-                                                                          '',
-                                                                    ),
-                                                                    const SizedBox(
-                                                                        height:
-                                                                            2),
-                                                                    DetailRow(
-                                                                      label:
-                                                                          "Enquiry For",
-                                                                      value: customerDetailsProvider
-                                                                              .leadDetails![0]
-                                                                              .enquiryForName ??
-                                                                          '',
-                                                                    ),
-                                                                    const SizedBox(
-                                                                        height:
-                                                                            2),
-                                                                    DetailRow(
-                                                                      label:
-                                                                          "Total project cost",
-                                                                      value: customerDetailsProvider
-                                                                          .leadDetails![
-                                                                              0]
-                                                                          .displayProjectCost,
-                                                                    ),
-                                                                    const SizedBox(
-                                                                        height:
-                                                                            2),
-                                                                    DetailRow(
-                                                                      label:
-                                                                          "Sub Source",
-                                                                      value: customerDetailsProvider
-                                                                          .leadDetails![
-                                                                              0]
-                                                                          .referenceName,
-                                                                    ),
-                                                                  ],
-                                                                ),
+
                                                                 // Address Details
                                                                 CustomerCard(
                                                                   title:

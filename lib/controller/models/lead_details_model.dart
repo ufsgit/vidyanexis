@@ -1,6 +1,34 @@
 import 'package:intl/intl.dart';
 import 'package:vidyanexis/controller/models/search_leads_model.dart';
 
+class KeyValue {
+  final int fieldId;
+  final String keyValueName;
+  final String keyValueData;
+
+  KeyValue({
+    required this.fieldId,
+    required this.keyValueName,
+    required this.keyValueData,
+  });
+
+  factory KeyValue.fromJson(Map<String, dynamic> json) {
+    return KeyValue(
+      fieldId: json['Field_Id'] is int ? json['Field_Id'] : int.tryParse(json['Field_Id']?.toString() ?? '0') ?? 0,
+      keyValueName: json['Key_Value_Name']?.toString() ?? '',
+      keyValueData: json['Key_Value_Data']?.toString() ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'Field_Id': fieldId,
+      'Key_Value_Name': keyValueName,
+      'Key_Value_Data': keyValueData,
+    };
+  }
+}
+
 class LeadDetails {
   // Core Fields
   final int customerId;
@@ -138,6 +166,7 @@ class LeadDetails {
   final int priorityId;
   final String subsidyAmount;
   final String workCompletionDate;
+  final List<KeyValue>? keyValues;
 
   String get workCompletionDateDisplay {
     final trimmed = workCompletionDate.trim();
@@ -274,6 +303,7 @@ class LeadDetails {
     required this.consumerContactNo,
     required this.priorityId,
     required this.subsidyAmount,
+    this.keyValues,
     this.workCompletionDate = '',
   });
 
@@ -452,6 +482,9 @@ class LeadDetails {
               ? (json['lead']['Work_Completion_Date'] ??
                   json['lead']['work_completion_date'])
               : null)),
+      keyValues: (json['key_values'] as List<dynamic>?)
+          ?.map((item) => KeyValue.fromJson(item as Map<String, dynamic>))
+          .toList(),
     );
   }
 
@@ -579,6 +612,7 @@ class LeadDetails {
           workCompletionDate.isNotEmpty ? workCompletionDate : null,
       'Work_Completion_Date':
           workCompletionDate.isNotEmpty ? workCompletionDate : null,
+      'key_values': keyValues?.map((x) => x.toJson()).toList(),
     };
   }
 
@@ -696,6 +730,7 @@ class LeadDetails {
     String? consumerContactNo,
     int? priorityId,
     String? subsidyAmount,
+    List<KeyValue>? keyValues,
   }) {
     return LeadDetails(
       audioFiles: audioFiles ?? this.audioFiles,
