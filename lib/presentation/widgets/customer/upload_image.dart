@@ -13,12 +13,14 @@ class ImageUploadAlert extends StatefulWidget {
   final String customerId;
   final int? initialDocumentTypeId;
   final String? initialDocumentTypeName;
+  final String? taskId;
 
   const ImageUploadAlert({
     super.key,
     required this.customerId,
     this.initialDocumentTypeId,
     this.initialDocumentTypeName,
+    this.taskId,
   });
 
   @override
@@ -427,7 +429,10 @@ class _ImageUploadAlertState extends State<ImageUploadAlert> {
                   onPressed: () async {
                     provider.setCutomerId(widget.customerId);
                     if (provider.fileInfoList.isNotEmpty) {
-                      await provider.uploadAllDocumentsGrouped(context);
+                      await provider.uploadAllDocumentsGrouped(
+                        context,
+                        taskId: widget.taskId,
+                      );
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(

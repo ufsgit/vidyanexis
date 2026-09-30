@@ -506,7 +506,7 @@ class ImageUploadProvider extends ChangeNotifier {
   }
 
   Future<void> uploadAllDocumentsGrouped(BuildContext context,
-      {bool shouldPop = true}) async {
+      {bool shouldPop = true, String? taskId}) async {
     final customerDetailsProvider =
         Provider.of<CustomerDetailsProvider>(context, listen: false);
     final scaffoldMessenger = ScaffoldMessenger.of(context);
@@ -558,6 +558,7 @@ class ImageUploadProvider extends ChangeNotifier {
                 "File_Paths": currentUploadedPaths,
                 "User_Details_Id": userId,
                 "Description": getDescription(typeId),
+                "TaskId": int.tryParse(taskId ?? "0") ?? 0,
               });
 
           if (response != null && response.statusCode == 200) {

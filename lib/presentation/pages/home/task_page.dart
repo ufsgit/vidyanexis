@@ -5014,6 +5014,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                                   customerId: task.customerId.toString(),
                                                                                   initialDocumentTypeId: doc.documentTypeId,
                                                                                   initialDocumentTypeName: doc.documentTypeName,
+                                                                                  taskId: task.taskId.toString(),
                                                                                 ),
                                                                               );
                                                                               // Refresh data after upload
