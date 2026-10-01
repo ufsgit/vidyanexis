@@ -2212,8 +2212,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     ),
                   ],
                 ),
-              if (customerDetailsProvider.items.isNotEmpty ||
-                  customerDetailsProvider.selectedCommercialFields.isNotEmpty &&
+              if ((customerDetailsProvider.items.isNotEmpty ||
+                      customerDetailsProvider.selectedCommercialFields.isNotEmpty) &&
                   customerDetailsProvider.isQuotationFieldVisible(91))
                 Row(
                   mainAxisAlignment: AppStyles.isWebScreen(context)
