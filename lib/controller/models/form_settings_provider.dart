@@ -183,6 +183,7 @@ class FormProvider extends ChangeNotifier {
               type: type,
               options: cf.dropDownValues,
               checkBoxOptions: cf.checkBoxValues,
+              categoryName: cf.categoryName,
             );
           }).toList();
         }
@@ -269,6 +270,7 @@ class FormProvider extends ChangeNotifier {
                           isMandatoryValue == true ||
                           isMandatoryValue == "1"),
                       orderBy: int.tryParse(orderBy.toString()) ?? 0,
+                      categoryName: f['Category_Name'] ?? f['category_name'] ?? availableField.categoryName,
                     );
                   }).toList();
                 }
@@ -619,6 +621,7 @@ class FormProvider extends ChangeNotifier {
                       isMandatoryValue == true ||
                       isMandatoryValue == "1"),
                   orderBy: int.tryParse(orderBy.toString()) ?? 0,
+                  categoryName: f['Category_Name'] ?? f['category_name'] ?? availableField.categoryName,
                 );
               }).toList();
             }

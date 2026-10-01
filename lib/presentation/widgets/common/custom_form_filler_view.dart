@@ -229,9 +229,8 @@ class _CustomFormFillerViewState extends State<CustomFormFillerView> {
           Flexible(
             child: SingleChildScrollView(
               child: Column(
-                children: widget.form.fields
-                    .map((field) => _buildField(field))
-                    .toList(),
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: _buildCategorizedFields(),
               ),
             ),
           ),
@@ -267,6 +266,58 @@ class _CustomFormFillerViewState extends State<CustomFormFillerView> {
         ],
       ),
     );
+  }
+
+  List<Widget> _buildCategorizedFields() {
+    final Map<String, List<FieldModel>> groupedFields = {};
+    final List<FieldModel> uncategorized = [];
+
+    for (var f in widget.form.fields) {
+      final cat = f.categoryName?.trim();
+      if (cat != null && cat.isNotEmpty) {
+        groupedFields.putIfAbsent(cat, () => []).add(f);
+      } else {
+        uncategorized.add(f);
+      }
+    }
+
+    if (groupedFields.isEmpty) {
+      return widget.form.fields.map((field) => _buildField(field)).toList();
+    }
+
+    List<Widget> children = [];
+
+    for (var entry in groupedFields.entries) {
+      children.add(Padding(
+        padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
+        child: Text(
+          entry.key,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
+      ));
+      children.addAll(entry.value.map((field) => _buildField(field)));
+    }
+
+    if (uncategorized.isNotEmpty) {
+      children.add(Padding(
+        padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
+        child: const Text(
+          "Other Fields",
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
+      ));
+      children.addAll(uncategorized.map((field) => _buildField(field)));
+    }
+
+    return children;
   }
 
   Widget _buildField(FieldModel field) {

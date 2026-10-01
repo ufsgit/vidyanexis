@@ -10,6 +10,7 @@ class FieldModel {
   final List<String>? options;
   final List<String>? checkBoxOptions;
   String? remark;
+  String? categoryName;
 
   FieldModel({
     required this.id,
@@ -21,6 +22,7 @@ class FieldModel {
     this.options,
     this.checkBoxOptions,
     this.remark,
+    this.categoryName,
   });
 }
 

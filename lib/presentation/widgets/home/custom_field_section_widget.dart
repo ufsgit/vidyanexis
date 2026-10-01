@@ -32,7 +32,8 @@ final GlobalKey<_CustomFieldSectionWidgetState> customFieldTaskStatusKey =
     GlobalKey<_CustomFieldSectionWidgetState>();
 final GlobalKey<_CustomFieldSectionWidgetState> customFieldCommercialKey =
     GlobalKey<_CustomFieldSectionWidgetState>();
-final GlobalKey<_CustomFieldSectionWidgetState> customFieldAdditionalQuotationKey =
+final GlobalKey<_CustomFieldSectionWidgetState>
+    customFieldAdditionalQuotationKey =
     GlobalKey<_CustomFieldSectionWidgetState>();
 
 class CustomFieldSectionWidget extends StatefulWidget {
@@ -232,7 +233,8 @@ class _CustomFieldSectionWidgetState extends State<CustomFieldSectionWidget> {
       return const SizedBox.shrink();
     }
 
-    final hasCategories = widget.customFields.any((f) => f.categoryName != null && f.categoryName!.trim().isNotEmpty);
+    final hasCategories = widget.customFields.any(
+        (f) => f.categoryName != null && f.categoryName!.trim().isNotEmpty);
 
     if (hasCategories) {
       return Padding(
@@ -402,17 +404,21 @@ class _CustomFieldSectionWidgetState extends State<CustomFieldSectionWidget> {
             return Wrap(
               spacing: spacing,
               runSpacing: spacing / 2,
-              children: fields.map((field) => SizedBox(
-                width: (constraints.maxWidth - spacing) / 2 - 0.1,
-                child: widgetBuilder.buildWidget(field),
-              )).toList(),
+              children: fields
+                  .map((field) => SizedBox(
+                        width: (constraints.maxWidth - spacing) / 2 - 0.1,
+                        child: widgetBuilder.buildWidget(field),
+                      ))
+                  .toList(),
             );
           }
           return Column(
-            children: fields.map((field) => Padding(
-              padding: EdgeInsets.only(bottom: spacing / 2),
-              child: widgetBuilder.buildWidget(field),
-            )).toList(),
+            children: fields
+                .map((field) => Padding(
+                      padding: EdgeInsets.only(bottom: spacing / 2),
+                      child: widgetBuilder.buildWidget(field),
+                    ))
+                .toList(),
           );
         },
       );
@@ -424,9 +430,9 @@ class _CustomFieldSectionWidgetState extends State<CustomFieldSectionWidget> {
         child: Text(
           entry.key,
           style: GoogleFonts.plusJakartaSans(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textGrey3,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
           ),
         ),
       ));
@@ -440,9 +446,9 @@ class _CustomFieldSectionWidgetState extends State<CustomFieldSectionWidget> {
         child: Text(
           "Other Fields",
           style: GoogleFonts.plusJakartaSans(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textGrey3,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
           ),
         ),
       ));
