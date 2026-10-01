@@ -732,7 +732,7 @@ class FormProvider extends ChangeNotifier {
 
         debugPrint(
             "DEBUG: Determined resultId: $resultId (Original formDataDetailsId: $formDataDetailsId)");
-        return resultId ?? (formDataDetailsId != 0 ? formDataDetailsId : null);
+        return resultId ?? (formDataDetailsId != 0 ? formDataDetailsId : -1);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Failed to save form data')),
