@@ -159,8 +159,14 @@ class _CustomFormFillerViewState extends State<CustomFormFillerView> {
       if (resultId != null) {
         widget.onSaved();
 
-        // Show print confirmation
         if (mounted) {
+          if (!widget.isDrawer) {
+             Navigator.pop(context);
+          }
+        }
+
+        // Show print confirmation
+        if (mounted && resultId != -1) {
           showDialog(
             context: context,
             builder: (confirmContext) => AlertDialog(
