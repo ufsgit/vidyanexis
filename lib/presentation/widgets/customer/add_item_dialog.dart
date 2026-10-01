@@ -251,17 +251,17 @@ class _AddItemDialogState extends State<AddItemDialog> {
                     child: CustomElevatedButton(
                       buttonText: 'Save',
                       onPressed: () {
-                        // Validate required fields before calling provider
-                        if (provider.itemNameController.text.trim().isEmpty ||
-                            provider.itemPriceController.text.trim().isEmpty) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Item Name and Price are required'),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
-                          return;
-                        }
+                        // // Validate required fields before calling provider
+                        // if (provider.itemNameController.text.trim().isEmpty ||
+                        //     provider.itemPriceController.text.trim().isEmpty) {
+                        //   ScaffoldMessenger.of(context).showSnackBar(
+                        //     const SnackBar(
+                        //       content: Text('Item Name and Price are required'),
+                        //       backgroundColor: Colors.red,
+                        //     ),
+                        //   );
+                        //   return;
+                        // }
                         provider.addOrEditItem(context);
                         Navigator.pop(context);
                       },

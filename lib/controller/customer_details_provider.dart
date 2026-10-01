@@ -1986,7 +1986,16 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
   void addOrEditItem(BuildContext context) {
     // Validate input fields
-    if (itemNameController.text.isEmpty || itemPriceController.text.isEmpty) {
+    bool priceMissing = false;
+    if (isQuotationFieldVisible(4)) {
+      priceMissing = itemPriceController.text.isEmpty;
+    }
+
+    bool itemNameMissing = false;
+    if (isQuotationFieldVisible(1)) {
+      itemNameMissing = itemNameController.text.isEmpty;
+    }
+    if (priceMissing || itemNameMissing) {
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -2252,12 +2261,12 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
   void addOrEditProductionChart() {
     // Validate input fields
-    if (unitProductionChartController.text.isEmpty ||
-        dailyController.text.isEmpty ||
-        monthlyController.text.isEmpty ||
-        remarksController.text.isEmpty) {
-      return;
-    }
+    // if (unitProductionChartController.text.isEmpty ||
+    //     dailyController.text.isEmpty ||
+    //     monthlyController.text.isEmpty ||
+    //     remarksController.text.isEmpty) {
+    //   return;
+    // }
 
     // Create the BOM item
     final newProductionItem = ProductionChartItem(
@@ -2357,11 +2366,11 @@ class CustomerDetailsProvider extends ChangeNotifier {
   }
 
   void addOrEditStructureMaterial() {
-    if (structureItemsController.text.isEmpty ||
-        structureQtyController.text.isEmpty ||
-        structureBrandController.text.isEmpty) {
-      return;
-    }
+    // if (structureItemsController.text.isEmpty ||
+    //     structureQtyController.text.isEmpty ||
+    //     structureBrandController.text.isEmpty) {
+    //   return;
+    // }
 
     final newItem = StructureMaterialItem(
       items: structureItemsController.text,
@@ -4826,7 +4835,11 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
   void addOrEditCommercialItem(BuildContext context) {
     // Validate input fields
-    if (commercialDescriptionController.text.isEmpty) {
+    bool itemNameMissing = false;
+    if (isQuotationFieldVisible(1)) {
+      itemNameMissing = commercialDescriptionController.text.isEmpty;
+    }
+    if (itemNameMissing) {
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -4946,7 +4959,11 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
   void addOrEditScopeOfWorkItem(BuildContext context) {
     // Validate input fields
-    if (designAndEngineeringController.text.isEmpty) {
+    bool itemNameMissing = false;
+    if (isQuotationFieldVisible(67)) {
+      itemNameMissing = designAndEngineeringController.text.isEmpty;
+    }
+    if (itemNameMissing) {
       showDialog(
         context: context,
         builder: (BuildContext context) {

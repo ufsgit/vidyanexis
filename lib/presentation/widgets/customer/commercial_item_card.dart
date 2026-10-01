@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/models/commercial_item_model.dart';
 
-class CommercialItemCard extends StatelessWidget {
+class CommercialItemCard extends StatefulWidget {
   final CommercialItemModel item;
   final VoidCallback onDelete;
   final VoidCallback onEdit;
@@ -18,7 +20,14 @@ class CommercialItemCard extends StatelessWidget {
   });
 
   @override
+  State<CommercialItemCard> createState() => _CommercialItemCardState();
+}
+
+class _CommercialItemCardState extends State<CommercialItemCard> {
+  @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<CustomerDetailsProvider>(context);
+
     final cardContent = Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -41,9 +50,10 @@ class CommercialItemCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                if (provider.isQuotationFieldVisible(1))
                 Expanded(
                   child: Text(
-                    item.description ?? '',
+                    widget.item.description ?? '',
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -51,9 +61,9 @@ class CommercialItemCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                if (showActions)
+                if (widget.showActions)
                   GestureDetector(
-                    onTap: onDelete,
+                    onTap: widget.onDelete,
                     child: Text(
                       'Delete',
                       style: GoogleFonts.plusJakartaSans(
@@ -68,21 +78,25 @@ class CommercialItemCard extends StatelessWidget {
             const SizedBox(height: 12),
 
             // Details
-            _buildDetailRow('Quantity', item.unitPrice ?? '-'),
+            if (provider.isQuotationFieldVisible(5))
+            _buildDetailRow('Quantity', widget.item.unitPrice ?? '-'),
             const SizedBox(height: 8),
-            _buildDetailRow('Specification', item.acCapacity ?? '-'),
+            if (provider.isQuotationFieldVisible(2))
+            _buildDetailRow('Specification', widget.item.acCapacity ?? '-'),
             const SizedBox(height: 8),
-            _buildDetailRow('Manufacturer', item.dcCapacity ?? '-'),
+            if (provider.isQuotationFieldVisible(3))
+            _buildDetailRow('Manufacturer', widget.item.dcCapacity ?? '-'),
             const SizedBox(height: 8),
-            _buildDetailRow('Comments', item.total ?? '-'),
+            if (provider.isQuotationFieldVisible(9))
+            _buildDetailRow('Comments', widget.item.total ?? '-'),
           ],
         ),
       ),
     );
 
-    if (showActions) {
+    if (widget.showActions) {
       return GestureDetector(
-        onTap: onEdit,
+        onTap: widget.onEdit,
         child: cardContent,
       );
     } else {

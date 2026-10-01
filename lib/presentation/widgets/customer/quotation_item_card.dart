@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/models/item_model.dart';
 
-class QuotationItemCard extends StatelessWidget {
+class QuotationItemCard extends StatefulWidget {
   final Item item;
   final VoidCallback onDelete;
   final VoidCallback onEdit;
@@ -22,7 +24,13 @@ class QuotationItemCard extends StatelessWidget {
   });
 
   @override
+  State<QuotationItemCard> createState() => _QuotationItemCardState();
+}
+
+class _QuotationItemCardState extends State<QuotationItemCard> {
+  @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<CustomerDetailsProvider>(context);
     final cardContent = Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -45,9 +53,10 @@ class QuotationItemCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                if (provider.isQuotationFieldVisible(1)) 
                 Expanded(
                   child: Text(
-                    item.ItemName,
+                    widget.item.ItemName,
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -55,32 +64,32 @@ class QuotationItemCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                if (showActions)
+                if (widget.showActions)
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      if (onMoveUp != null || onMoveDown != null) ...[
+                      if (widget.onMoveUp != null || widget.onMoveDown != null) ...[
                         GestureDetector(
-                          onTap: onMoveUp,
+                          onTap: widget.onMoveUp,
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 4.0),
                             child: Icon(
                               Icons.arrow_upward_rounded,
                               size: 20,
-                              color: onMoveUp != null
+                              color: widget.onMoveUp != null
                                   ? AppColors.primaryBlue
                                   : Colors.grey.shade300,
                             ),
                           ),
                         ),
                         GestureDetector(
-                          onTap: onMoveDown,
+                          onTap: widget.onMoveDown,
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 4.0),
                             child: Icon(
                               Icons.arrow_downward_rounded,
                               size: 20,
-                              color: onMoveDown != null
+                              color: widget.onMoveDown != null
                                   ? AppColors.primaryBlue
                                   : Colors.grey.shade300,
                             ),
@@ -89,7 +98,7 @@ class QuotationItemCard extends StatelessWidget {
                         const SizedBox(width: 8),
                       ],
                       GestureDetector(
-                        onTap: onDelete,
+                        onTap: widget.onDelete,
                         child: Text(
                           'Delete',
                           style: GoogleFonts.plusJakartaSans(
@@ -106,27 +115,31 @@ class QuotationItemCard extends StatelessWidget {
             const SizedBox(height: 12),
 
             // Details
-            _buildDetailRow('Quantity', '${item.Quantity} ${item.Unit}'),
+            if (provider.isQuotationFieldVisible(5)) 
+            _buildDetailRow('Quantity', '${widget.item.Quantity} ${widget.item.Unit}'),
             const SizedBox(height: 8),
+            if (provider.isQuotationFieldVisible(4)) 
             _buildDetailRow(
-                'Unit Price', '₹${item.UnitPrice.toStringAsFixed(2)}'),
-            if (item.priceRangeFrom != null && item.priceRangeTo != null) ...[
+                'Unit Price', '₹${widget.item.UnitPrice.toStringAsFixed(2)}'),
+            if (widget.item.priceRangeFrom != null && widget.item.priceRangeTo != null) ...[
               const SizedBox(height: 8),
               _buildDetailRow('Price Range',
-                  '₹${item.priceRangeFrom} - ₹${item.priceRangeTo}'),
+                  '₹${widget.item.priceRangeFrom} - ₹${widget.item.priceRangeTo}'),
             ],
             const SizedBox(height: 8),
-            _buildDetailRow('GST', '₹${item.GST.toStringAsFixed(2)}'),
+            if (provider.isQuotationFieldVisible(7)) 
+            _buildDetailRow('GST', '₹${widget.item.GST.toStringAsFixed(2)}'),
             const SizedBox(height: 8),
-            _buildDetailRow('Total', '₹${item.Amount.toStringAsFixed(2)}'),
+            if (provider.isQuotationFieldVisible(9)) 
+            _buildDetailRow('Total', '₹${widget.item.Amount.toStringAsFixed(2)}'),
           ],
         ),
       ),
     );
 
-    if (showActions) {
+    if (widget.showActions) {
       return GestureDetector(
-        onTap: onEdit,
+        onTap: widget.onEdit,
         child: cardContent,
       );
     } else {

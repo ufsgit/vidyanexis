@@ -139,6 +139,7 @@ class _BomItemCardState extends State<BomItemCard> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  if (provider.isQuotationFieldVisible(10))
                   Expanded(
                     child: Text(
                       widget.item.description,
