@@ -47,6 +47,7 @@ import 'package:vidyanexis/controller/models/checklist_type_model.dart';
 import 'package:vidyanexis/controller/models/company_details_model.dart';
 import 'package:vidyanexis/controller/models/department_model.dart';
 import 'package:vidyanexis/controller/models/document_type_model.dart';
+import 'package:vidyanexis/controller/models/document_category_model.dart';
 import 'package:vidyanexis/controller/models/dummy_models.dart';
 import 'package:vidyanexis/controller/models/enquiry_for_model.dart';
 import 'package:vidyanexis/controller/models/enquiry_settings_model.dart';
@@ -212,6 +213,8 @@ class SettingsProvider extends ChangeNotifier {
   }
   final TextEditingController searchDocumentTypeController =
       TextEditingController();
+  final TextEditingController searchDocumentCategoryController =
+      TextEditingController();
   final TextEditingController searchCheckListController =
       TextEditingController();
   final TextEditingController searchTaskTypeController =
@@ -258,6 +261,9 @@ class SettingsProvider extends ChangeNotifier {
 
   //document type
   final TextEditingController documentTypeController = TextEditingController();
+  
+  //document category
+  final TextEditingController documentCategoryController = TextEditingController();
 
   //checklist
   final TextEditingController checkListController = TextEditingController();
@@ -361,6 +367,8 @@ class SettingsProvider extends ChangeNotifier {
   List<MenuPermissionModel> get showMenu => _showMenu;
   List<DocumentTypeModel> _documentType = [];
   List<DocumentTypeModel> get documentType => _documentType;
+  List<DocumentCategoryModel> _documentCategory = [];
+  List<DocumentCategoryModel> get documentCategory => _documentCategory;
   List<CustomFieldModel> customFieldModelList = [];
   List<CategoryModel> customFieldCategoryList = [];
   List<ExpenseTypeModel> _expenseTypeList = [];
@@ -5347,6 +5355,45 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> addDocumentCategory({
+    required BuildContext context,
+    required String categoryId,
+    required String categoryName,
+  }) async {
+    try {
+      Loader.showLoader(context);
+
+      final response = await HttpRequest.httpPostRequest(
+          endPoint: HttpUrls.saveDocumentCategory,
+          bodyData: {
+            "Document_Category_Id": int.tryParse(categoryId) ?? 0,
+            "Document_Category_Name": categoryName
+          });
+
+      if (response!.statusCode == 200) {
+        documentCategoryController.clear();
+        searchDocumentCategoryController.clear();
+
+        final data = response.data;
+        searchDocumentCategory('', context);
+        Navigator.pop(context);
+        Loader.stopLoader(context);
+        print(data);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+        Loader.stopLoader(context);
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+      Loader.stopLoader(context);
+    }
+  }
+
   Future<void> saveStatus({
     required BuildContext context,
     required bool followUp,
@@ -5565,6 +5612,33 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> searchDocumentCategory(String query, BuildContext context) async {
+    try {
+      final response = await HttpRequest.httpGetRequest(
+          endPoint: '${HttpUrls.searchDocumentCategory}?Document_Category_Name=$query');
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data != null) {
+          final newData = data['data'] ?? [];
+          _documentCategory = (newData as List<dynamic>)
+              .map((item) => DocumentCategoryModel.fromJson(item))
+              .toList();
+          notifyListeners();
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+    }
+  }
+
   Future<void> searchStatus(BuildContext context, String viewId) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -5637,6 +5711,39 @@ class SettingsProvider extends ChangeNotifier {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Failed to delete Document Type')),
+        );
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+    }
+  }
+
+  void deleteDocumentCategory(BuildContext context, int categoryId) async {
+    try {
+      final response = await HttpRequest.httpDeleteRequest(
+        endPoint: '${HttpUrls.deleteDocumentCategory}/$categoryId',
+      );
+
+      if (response != null && response.statusCode == 200) {
+        final data = response.data;
+        if (data['Document_Category_Id_'] == -1) {
+          alert(context,
+              "You are attempting to delete a Document Category \n that is currently in use");
+        } else {
+          searchDocumentCategory('', context);
+          documentCategoryController.clear();
+          searchDocumentCategoryController.clear();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Document Category deleted successfully')),
+          );
+        }
+        notifyListeners();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to delete Document Category')),
         );
       }
     } catch (e) {

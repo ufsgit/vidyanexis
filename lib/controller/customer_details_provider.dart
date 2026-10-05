@@ -5124,12 +5124,12 @@ class CustomerDetailsProvider extends ChangeNotifier {
     // int maintenanceId = 1;
 
     // Add installation date
-    _maintenanceDates.add(MaintenanceDate(
-      // id: (maintenanceId++).toString(),
-      date: "${installDate.year.toString().padLeft(4, '0')}-"
-          "${installDate.month.toString().padLeft(2, '0')}-"
-          "${installDate.day.toString().padLeft(2, '0')}",
-    ));
+    //_maintenanceDates.add(MaintenanceDate(
+    //  // id: (maintenanceId++).toString(),
+    //  date: "${installDate.year.toString().padLeft(4, '0')}-"
+    //      "${installDate.month.toString().padLeft(2, '0')}-"
+    //      "${installDate.day.toString().padLeft(2, '0')}",
+    //));
 
     DateTime currentDate = installDate;
 

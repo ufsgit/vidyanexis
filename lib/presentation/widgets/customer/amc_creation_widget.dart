@@ -683,11 +683,10 @@ class _AmcCreationWidgetState extends State<AmcCreationWidget> {
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
                           itemCount:
-                              customerDetailsProvider.maintenanceDates.length -
-                                  1,
+                              customerDetailsProvider.maintenanceDates.length,
                           itemBuilder: (context, index) {
                             final dateString = customerDetailsProvider
-                                .maintenanceDates[index + 1];
+                                .maintenanceDates[index];
 
                             return Container(
                               margin: const EdgeInsets.only(bottom: 8.0),
