@@ -22,6 +22,7 @@ import 'package:vidyanexis/presentation/pages/settings/company_details.dart';
 import 'package:vidyanexis/presentation/pages/settings/custom_field.dart';
 import 'package:vidyanexis/presentation/pages/settings/department_page.dart';
 import 'package:vidyanexis/presentation/pages/settings/document_type.dart';
+import 'package:vidyanexis/presentation/pages/settings/document_category.dart';
 import 'package:vidyanexis/presentation/pages/settings/enquiry_for_content.dart';
 import 'package:vidyanexis/presentation/pages/settings/enquiry_source_content.dart';
 import 'package:vidyanexis/presentation/pages/settings/expense_type.dart';
@@ -77,6 +78,9 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
         break;
       case 'Document Type':
         provider.searchDocumentType(query, context);
+        break;
+      case 'Document Category':
+        provider.searchDocumentCategory(query, context);
         break;
       case 'Task Type':
         provider.searchTaskType(query, context,
@@ -922,6 +926,8 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
         return const EnquiryForContent();
       case 'Document Type':
         return const DocumentTypeContent();
+      case 'Document Category':
+        return const DocumentCategoryContent();
       case 'Task Type':
         return const TaskTypeContent();
       case 'Excel Import':
@@ -979,6 +985,9 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
             isMobile: isMobile),
       if (settingsProvider.menuIsViewMap[23].toString() == '1')
         _buildMenuItem(context, 'Document Type', Icons.trending_up,
+            isMobile: isMobile),
+      if (settingsProvider.menuIsViewMap[23].toString() == '1')
+        _buildMenuItem(context, 'Document Category', Icons.trending_up,
             isMobile: isMobile),
       if (settingsProvider.menuIsViewMap[41].toString() == '1')
         _buildMenuItem(context, 'Task Type', Icons.trending_up,

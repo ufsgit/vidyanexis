@@ -516,4 +516,7 @@ class HttpUrls {
   static String searchTaskDashboard = "lead/Search_task_Dashboard";
   static String getAllHistory = "lead/Get_All_History";
   static String exportCustomer = "lead/Search_Customer_Export";
+  static String searchDocumentCategory = "item/get_Document_Category";
+  static String saveDocumentCategory = "item/save_Document_Category";
+  static String deleteDocumentCategory = "item/delete_Document_Category";
 }
