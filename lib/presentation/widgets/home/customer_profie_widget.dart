@@ -148,7 +148,7 @@ class DetailRow extends StatelessWidget {
         children: [
           Expanded(
             flex: 4,
-            child: Text(
+            child: SelectableText(
               "$label: ",
               style: GoogleFonts.plusJakartaSans(
                 color: const Color(0xFF64748B),
@@ -182,7 +182,7 @@ class DetailRow extends StatelessWidget {
                       ),
                     ),
                   )
-                : Text(
+                : SelectableText(
                     value,
                     textAlign: TextAlign.end,
                     style: GoogleFonts.plusJakartaSans(

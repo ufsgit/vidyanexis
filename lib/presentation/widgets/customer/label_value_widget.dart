@@ -39,7 +39,7 @@ class LabelValueWidget extends StatelessWidget {
           // Label on the left
           Padding(
             padding: const EdgeInsets.only(top: 2),
-            child: Text(
+            child: SelectableText(
               label,
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 13,
@@ -52,15 +52,13 @@ class LabelValueWidget extends StatelessWidget {
             width: 16,
           ),
           Expanded(
-            child: Text(
+            child: SelectableText(
               value,
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
                 color: valueColor ?? AppColors.textBlack,
               ),
-              overflow: TextOverflow.visible,
-              softWrap: true,
               textAlign: TextAlign.right,
             ),
           )
