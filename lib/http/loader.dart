@@ -127,7 +127,9 @@ class Loader {
       try {
         if (ctx.mounted) {
           final navigator = Navigator.of(ctx, rootNavigator: true);
-          navigator.pop();
+          if (navigator.canPop()) {
+            navigator.pop();
+          }
         }
       } catch (e) {
         debugPrint('Error stopping loader: $e');
