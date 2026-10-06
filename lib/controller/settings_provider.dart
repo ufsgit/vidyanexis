@@ -4018,7 +4018,7 @@ class SettingsProvider extends ChangeNotifier {
         final data = response.data;
         searchEnquiryStatusData('', context);
         Loader.stopLoader(context);
-        Navigator.pop(context);
+        Navigator.pop(context, statusName);
 
         print(data);
       } else {
