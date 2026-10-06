@@ -14,6 +14,7 @@ import 'package:vidyanexis/controller/invoice_tab_provider.dart';
 import 'package:vidyanexis/controller/lead_check_in_provider.dart';
 import 'package:vidyanexis/controller/lead_check_in_report_provider.dart';
 import 'package:vidyanexis/controller/deleted_lead_report_provider.dart';
+import 'package:vidyanexis/controller/lead_creation_details_provider.dart';
 import 'package:vidyanexis/controller/leads_report_provider.dart';
 import 'package:vidyanexis/controller/models/form_settings_provider.dart';
 import 'package:vidyanexis/controller/notification_provider.dart';
@@ -86,6 +87,7 @@ import 'package:vidyanexis/controller/work_completion_report_provider.dart';
 import 'package:vidyanexis/controller/duplicate_entry_attempts_provider.dart';
 import 'package:vidyanexis/controller/location_tracking_provider.dart';
 import 'package:vidyanexis/controller/project_duration_report_provider.dart';
+import 'package:vidyanexis/controller/lead_creation_report_provider.dart';
 
 final GlobalKey<ScaffoldMessengerState> navigatorKey =
     GlobalKey<ScaffoldMessengerState>();
@@ -226,6 +228,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => DuplicateEntryAttemptsProvider()),
         ChangeNotifierProvider(create: (_) => LocationTrackingProvider()),
         ChangeNotifierProvider(create: (_) => ProjectDurationReportProvider()),
+        ChangeNotifierProvider(create: (_) => LeadCreationReportProvider()),
+        ChangeNotifierProvider(create: (_) => LeadCreationDetailsProvider()),
       ],
       child: Consumer<SettingsProvider>(
         builder: (context, settingsProvider, child) {

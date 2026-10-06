@@ -14,6 +14,7 @@ import 'package:vidyanexis/presentation/pages/reports/solar_lead_report_page.dar
 import 'package:vidyanexis/presentation/pages/reports/lead_status_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/lead_stage_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/lead_page_report.dart';
+import 'package:vidyanexis/presentation/pages/reports/lead_creation_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/deleted_lead_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/quotation_report.dart';
 import 'package:vidyanexis/presentation/pages/home/process_flow_page.dart';
@@ -517,6 +518,12 @@ class _HomePageState extends State<HomePage> {
           title: 'Sales Pipeline',
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: LeadStatusReportScreen()),
+        ),
+      if (settingsProvider.menuIsViewMap[56].toString() == '1') 
+        SidebarOption(
+          title: 'Lead Creation Report',
+          iconPath: 'assets/images/Reports.svg',
+          baseContent: const Center(child: LeadCreationReportScreen()),
         ),
       if (settingsProvider.menuIsViewMap[181].toString() == '1')
         SidebarOption(

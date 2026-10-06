@@ -52,6 +52,7 @@ import 'package:vidyanexis/presentation/pages/reports/task_summary_report_screen
 import 'package:vidyanexis/presentation/pages/reports/task_aging_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/solar_lead_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/lead_status_report_screen.dart';
+import 'package:vidyanexis/presentation/pages/reports/lead_creation_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/lead_stage_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/stock_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/work_completion_report_screen.dart';
@@ -186,6 +187,8 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
         {'title': 'Solar Lead Reports', 'page': const SolarLeadReportPage()},
       if (settingsProvider.menuIsViewMap[98].toString() == '1')
         {'title': 'Sales Pipeline', 'page': const LeadStatusReportScreen()},
+      if (settingsProvider.menuIsViewMap[56].toString() == '1') 
+        {'title': 'Lead Creation Report', 'page': const LeadCreationReportScreen()},
       if (settingsProvider.menuIsViewMap[181].toString() == '1')
         {'title': 'Stage Report', 'page': const LeadStageReportScreen()},
       if (settingsProvider.menuIsViewMap[99].toString() == '1')

@@ -111,6 +111,8 @@ class HttpUrls {
   static String getTaskOverview = "task/Task_Overview";
   static String searchLeadReports = "lead/Search_lead_Report";
   static String searchLeadHistoryReport = "lead/Search_Lead_History_Report";
+  static String searchLeadCreatedReport = "lead/Search_Lead_Created_Report";
+  static String searchLeadCreatedDetails = "lead/Search_Lead_Created_Details";
   static String saveTask = "task/Save_task";
   static String saveJobSheet = "task/Save_job_sheet";
   static String getJobSheet = "task/Get_job_sheet";

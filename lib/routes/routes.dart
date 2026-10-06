@@ -27,6 +27,8 @@ import 'package:vidyanexis/presentation/pages/travel_allowance/travel_allowance_
 import 'package:vidyanexis/presentation/pages/location/location_tracking_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/task_aging_report_screen.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/presentation/pages/reports/lead_creation_report_screen.dart';
+import 'package:vidyanexis/presentation/pages/reports/lead_creation_details_screen.dart';
 
 final GoRouter appRouter = GoRouter(
   debugLogDiagnostics: true, // Helpful for debugging
@@ -190,6 +192,12 @@ final GoRouter appRouter = GoRouter(
       },
     ),
     GoRoute(
+      path: LeadCreationReportScreen.route,
+      pageBuilder: (context, state) {
+        return fadeTransition(const LeadCreationReportScreen());
+      },
+    ),
+    GoRoute(
       path: CustomerOutstandingReportPage.route,
       pageBuilder: (context, state) {
         return fadeTransition(const CustomerOutstandingReportPage());
@@ -230,6 +238,19 @@ final GoRouter appRouter = GoRouter(
       path: TAReportScreen.route,
       pageBuilder: (context, state) {
         return fadeTransition(const TAReportScreen());
+      },
+    ),
+    GoRoute(
+      path: '${LeadCreationDetailsScreen.route}/:employeeId/:fromDate/:toDate',
+      pageBuilder: (context, state) {
+        final employeeId = state.pathParameters['employeeId']!;
+        final fromDate = state.pathParameters['fromDate']!;
+        final toDate = state.pathParameters['toDate']!;
+        return fadeTransition(LeadCreationDetailsScreen(
+          employeeId: int.parse(employeeId),
+          fromDate: fromDate == 'empty' ? '' : fromDate, // Using 'empty' to pass empty string
+          toDate: toDate == 'empty' ? '' : toDate,
+        ));
       },
     ),
   ],
