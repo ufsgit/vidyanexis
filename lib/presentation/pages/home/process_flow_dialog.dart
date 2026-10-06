@@ -41,7 +41,6 @@ class ProcessFlowDialog extends StatefulWidget {
 
 class ProcessFlowDialogState extends State<ProcessFlowDialog> {
   late Future<List<TaskTypeStatusModel>> statusOptionsFuture;
-  Future<Map<String, dynamic>>? locationFuture;
   late TaskTypeStatusModel selectedStatus;
   SubStatus? selectedSubStatus;
   bool isSaving = false;
@@ -56,12 +55,6 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
     super.initState();
 
     statusOptionsFuture = getStatusType(widget.task.taskTypeId.toString());
-    
-    final prefetchReportsProvider = Provider.of<TaskPageProvider>(context, listen: false);
-    if (widget.task.locationTracking == 1) {
-      locationFuture = prefetchReportsProvider.getCurrentLocation();
-    }
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final reportsProvider =
           Provider.of<TaskPageProvider>(context, listen: false);
@@ -1282,7 +1275,8 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                             1;
 
                                     if (reportsProvider
-                                            .documentTypeModel.isNotEmpty) {
+                                            .documentTypeModel.isNotEmpty &&
+                                        !isDocumentButtonEnabled) {
                                       showDialog(
                                         context: context,
                                         builder: (context) => AlertDialog(
@@ -1327,7 +1321,8 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                               selectedStatus,
                                               widget.task.taskId,
                                               widget.task.locationTracking == 1
-                                                  ? (locationFuture != null ? await locationFuture : await reportsProvider.getCurrentLocation())
+                                                  ? await reportsProvider
+                                                      .getCurrentLocation()
                                                   : null,
                                               subStatus: selectedSubStatus,
                                               audioFiles: uploadedAudioFiles);
