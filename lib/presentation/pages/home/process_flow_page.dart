@@ -572,7 +572,11 @@ class _ProcessFlowPageState extends State<ProcessFlowPage> {
             ),
           ),
         ),
-      ).then((_) => getData());
+      ).then((result) {
+        if (result == true) {
+          getData();
+        }
+      });
     } else {
       Navigator.push(
         context,
@@ -582,7 +586,11 @@ class _ProcessFlowPageState extends State<ProcessFlowPage> {
             processFlowModel: model,
           ),
         ),
-      ).then((_) => getData());
+      ).then((result) {
+        if (result == true) {
+          getData();
+        }
+      });
     }
   }
 

@@ -1861,7 +1861,7 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
         processFlowProvider.getProcessFlow(context);
 
         // Close the dialog
-        Navigator.of(context).pop();
+        Navigator.of(context).pop(true);
         _onDrawerClosed(context);
       } else {
         showToastInDialog(result.$2, context);
