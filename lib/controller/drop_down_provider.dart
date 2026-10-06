@@ -853,7 +853,6 @@ class DropDownProvider extends ChangeNotifier {
 
   Future<void> getEnquirySource(BuildContext context,
       {bool fetchUserSpecific = false, bool forceRefresh = false}) async {
-    if (!forceRefresh && _enquiryData.isNotEmpty) return;
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -936,7 +935,6 @@ class DropDownProvider extends ChangeNotifier {
 
   Future<void> getEnquiryFor(BuildContext context,
       {bool fetchUserSpecific = false, bool forceRefresh = false}) async {
-    if (!forceRefresh && _enquiryForList.isNotEmpty) return;
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";

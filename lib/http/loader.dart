@@ -127,8 +127,9 @@ class Loader {
       try {
         if (ctx.mounted) {
           final navigator = Navigator.of(ctx, rootNavigator: true);
-          if (navigator.canPop()) {
-            navigator.pop();
+          final route = ModalRoute.of(ctx);
+          if (route != null && route.isActive) {
+            navigator.removeRoute(route);
           }
         }
       } catch (e) {
