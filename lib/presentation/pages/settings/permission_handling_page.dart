@@ -53,7 +53,7 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
 
     if (selectedUser != null && mounted) {
       try {
-        Loader.showLoader(context);
+        // Loader.showLoader(context);
         if (widget.isPrintPermission) {
           await settingsProvider.getMenuPermissionDataPrint(
             selectedUser.userDetailsId.toString(),
@@ -67,7 +67,7 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
         }
       } finally {
         if (mounted) {
-          Loader.stopLoader(context);
+          // Loader.stopLoader(context);
           String sourceUserName = selectedUser.userDetailsName.isNotEmpty
               ? selectedUser.userDetailsName
               : '${selectedUser.firstName ?? ''} ${selectedUser.lastName ?? ''}'.trim();
