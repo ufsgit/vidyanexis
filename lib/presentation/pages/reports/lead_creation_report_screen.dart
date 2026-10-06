@@ -460,7 +460,9 @@ class _LeadCreationReportScreenState extends State<LeadCreationReportScreen> {
                 flex: 2,
                 data: InkWell(
                   onTap: () {
-                    context.push('${LeadCreationDetailsScreen.route}/${record.employeeId}/${reportProvider.formattedFromDate}/${reportProvider.formattedToDate}');
+                    final fromDate = reportProvider.formattedFromDate.isEmpty ? 'empty' : reportProvider.formattedFromDate;
+                    final toDate = reportProvider.formattedToDate.isEmpty ? 'empty' : reportProvider.formattedToDate;
+                    context.push('${LeadCreationDetailsScreen.route}/${record.employeeId}/$fromDate/$toDate');
                   },
                   child: Row(
                     mainAxisSize: MainAxisSize.min,

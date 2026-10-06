@@ -283,7 +283,9 @@ class LeadCreationReportMobile extends StatelessWidget {
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        context.push('${LeadCreationDetailsScreen.route}/${record.employeeId}/${reportProvider.formattedFromDate}/${reportProvider.formattedToDate}');
+                        final fromDate = reportProvider.formattedFromDate.isEmpty ? 'empty' : reportProvider.formattedFromDate;
+                        final toDate = reportProvider.formattedToDate.isEmpty ? 'empty' : reportProvider.formattedToDate;
+                        context.push('${LeadCreationDetailsScreen.route}/${record.employeeId}/$fromDate/$toDate');
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primaryBlue.withOpacity(0.1),
