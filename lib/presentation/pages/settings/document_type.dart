@@ -153,6 +153,8 @@ class _DocumentTypeContentState extends State<DocumentTypeContent> {
                     isEdit: true,
                     isMandatory:
                         settingsProvider.documentType[index].isMandatory,
+                    documentCategoryId:
+                        settingsProvider.documentType[index].documentCategoryId,
                   );
                 },
               );
