@@ -986,7 +986,7 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
       if (settingsProvider.menuIsViewMap[23].toString() == '1')
         _buildMenuItem(context, 'Document Type', Icons.trending_up,
             isMobile: isMobile),
-      if (settingsProvider.menuIsViewMap[23].toString() == '1')
+      if (settingsProvider.menuIsViewMap[196].toString() == '1')
         _buildMenuItem(context, 'Document Category', Icons.trending_up,
             isMobile: isMobile),
       if (settingsProvider.menuIsViewMap[41].toString() == '1')
