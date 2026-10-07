@@ -1000,7 +1000,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
       print("Error fetching materials for multiple items: $e");
     } finally {
       Loader.stopLoader(context);
-      Navigator.pop(context);
+      // Navigator.pop(context);
     }
   }
 

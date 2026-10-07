@@ -5319,6 +5319,7 @@ class SettingsProvider extends ChangeNotifier {
     required String forId,
     required String forName,
     required int isMandatory,
+    required int documentCategoryId,
   }) async {
     try {
       Loader.showLoader(context);
@@ -5328,7 +5329,8 @@ class SettingsProvider extends ChangeNotifier {
           bodyData: {
             "Document_Type_Id": forId,
             "Document_Type_Name": forName,
-            "mandatory": isMandatory
+            "mandatory": isMandatory,
+            "Document_Category_Id": documentCategoryId
           });
 
       if (response!.statusCode == 200) {

@@ -5,6 +5,7 @@ import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
 
 class AddDocumentType extends StatefulWidget {
@@ -12,6 +13,7 @@ class AddDocumentType extends StatefulWidget {
   final String status;
   final String editId;
   final bool isMandatory;
+  final int documentCategoryId;
 
   const AddDocumentType({
     super.key,
@@ -19,6 +21,7 @@ class AddDocumentType extends StatefulWidget {
     required this.status,
     required this.editId,
     this.isMandatory = false,
+    this.documentCategoryId = 0,
   });
 
   @override
@@ -27,6 +30,7 @@ class AddDocumentType extends StatefulWidget {
 
 class _AddDocumentTypeState extends State<AddDocumentType> {
   bool isMandatory = false;
+  int _selectedCategoryId = 0;
 
   String? validateInputs(
       BuildContext context, SettingsProvider settingsProvider) {
@@ -85,14 +89,20 @@ class _AddDocumentTypeState extends State<AddDocumentType> {
   @override
   void initState() {
     super.initState();
-    isMandatory = widget.isMandatory;
-    if (widget.isEdit) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        final settingsProvider =
-            Provider.of<SettingsProvider>(context, listen: false);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      isMandatory = widget.isMandatory;
+      _selectedCategoryId = widget.documentCategoryId;
+
+      final settingsProvider =
+          Provider.of<SettingsProvider>(context, listen: false);
+
+      // Fetch document categories for the dropdown
+      settingsProvider.searchDocumentCategory('', context);
+
+      if (widget.isEdit) {
         settingsProvider.documentTypeController.text = widget.status;
-      });
-    }
+      }
+    });
   }
 
   @override
@@ -145,9 +155,24 @@ class _AddDocumentTypeState extends State<AddDocumentType> {
                   ),
                 ],
               ),
-              const SizedBox(
-                height: 10,
+              const SizedBox(height: 10),
+              // Document Category Dropdown
+              CommonDropdown<int>(
+                hintText: 'Document Category',
+                selectedValue: _selectedCategoryId,
+                items: settingsProvider.documentCategory
+                    .map((category) => DropdownItem<int>(
+                          id: category.documentCategoryId,
+                          name: category.documentCategoryName,
+                        ))
+                    .toList(),
+                onItemSelected: (int value) {
+                  setState(() {
+                    _selectedCategoryId = value;
+                  });
+                },
               ),
+              const SizedBox(height: 10),
               Row(
                 children: [
                   Checkbox(
@@ -200,6 +225,7 @@ class _AddDocumentTypeState extends State<AddDocumentType> {
               forId: widget.editId,
               forName: settingsProvider.documentTypeController.text,
               isMandatory: isMandatory ? 1 : 0,
+              documentCategoryId: _selectedCategoryId ?? 0,
             );
           },
           radius: 4,
