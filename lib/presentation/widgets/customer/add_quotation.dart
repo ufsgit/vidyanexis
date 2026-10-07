@@ -1968,16 +1968,19 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                               color: Colors.black,
                               fontSize: 16),
                         ),
-                        Tooltip(
-                          message: "Is Percentage %",
-                          child: Checkbox(
-                            value: customerDetailsProvider.isPercentage,
-                            onChanged: (value) {
-                              customerDetailsProvider.isPercentage =
-                                  value ?? false;
-                            },
+                        if (customerDetailsProvider
+                            .isQuotationFieldVisible(190)) ...[
+                          Tooltip(
+                            message: "Is Percentage %",
+                            child: Checkbox(
+                              value: customerDetailsProvider.isPercentage,
+                              onChanged: (value) {
+                                customerDetailsProvider.isPercentage =
+                                    value ?? false;
+                              },
+                            ),
                           ),
-                        ),
+                        ],
                       ],
                     ),
                     Container(
