@@ -1,3 +1,5 @@
+import 'package:vidyanexis/controller/models/task_customer_model.dart';
+
 class TaskHistoryModel {
   String? taskHistoryId;
   String? entryDate;
@@ -8,6 +10,7 @@ class TaskHistoryModel {
   String? location;
   String? latitude;
   String? longitude;
+  List<TaskFile>? taskFiles;
 
   TaskHistoryModel({
     this.taskHistoryId,
@@ -19,6 +22,7 @@ class TaskHistoryModel {
     this.location,
     this.latitude,
     this.longitude,
+    this.taskFiles,
   });
 
   TaskHistoryModel.fromJson(Map<String, dynamic> json) {
@@ -36,6 +40,13 @@ class TaskHistoryModel {
     location = json['Location']?.toString() ?? json['location']?.toString();
     latitude = json['Latitude']?.toString() ?? json['latitude']?.toString();
     longitude = json['Longitude']?.toString() ?? json['longitude']?.toString();
+    if (json['Task_Files'] != null && json['Task_Files'] is List) {
+      taskFiles = (json['Task_Files'] as List<dynamic>)
+          .map((item) => TaskFile.fromJson(item))
+          .toList();
+    } else {
+      taskFiles = [];
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -49,6 +60,9 @@ class TaskHistoryModel {
     data['Location'] = location;
     data['Latitude'] = latitude;
     data['Longitude'] = longitude;
+    if (taskFiles != null) {
+      data['Task_Files'] = taskFiles!.map((v) => v.toJson()).toList();
+    }
     return data;
   }
 }

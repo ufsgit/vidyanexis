@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
+import 'package:vidyanexis/controller/models/task_customer_model.dart';
 import 'package:vidyanexis/controller/models/task_history_model.dart';
+import 'package:vidyanexis/http/http_urls.dart';
+import 'package:vidyanexis/presentation/pages/home/customer_task_overview_tab.dart';
 import 'package:intl/intl.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class TaskHistoryPopup extends StatelessWidget {
   final String taskId;
@@ -142,7 +146,32 @@ class TaskHistoryPopup extends StatelessWidget {
     );
   }
 
+  bool _isAudioFile(TaskFile file) {
+    final type = (file.fileType ?? '').toLowerCase().trim();
+    final path = (file.filePath ?? '').toLowerCase().trim();
+    final name = (file.fileName ?? '').toLowerCase().trim();
+
+    return type == 'audio' ||
+        type.contains('audio') ||
+        path.endsWith('.mpeg') ||
+        path.endsWith('.mp3') ||
+        path.endsWith('.wav') ||
+        path.endsWith('.m4a') ||
+        path.endsWith('.ogg') ||
+        path.endsWith('.webm') ||
+        path.contains('uploadedaudios') ||
+        name.endsWith('.mpeg') ||
+        name.endsWith('.mp3') ||
+        name.endsWith('.wav') ||
+        name.endsWith('.m4a') ||
+        name.endsWith('.webm');
+  }
+
   Widget _buildHistoryItem(TaskHistoryModel history, bool isLast) {
+    final audioFiles = (history.taskFiles ?? []).where(_isAudioFile).toList();
+    final documentFiles =
+        (history.taskFiles ?? []).where((f) => !_isAudioFile(f)).toList();
+
     return IntrinsicHeight(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -322,6 +351,88 @@ class TaskHistoryPopup extends StatelessWidget {
                           ),
                         ],
                       ),
+                    ),
+                  ],
+                  // Voice recordings section
+                  if (audioFiles.isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    ...audioFiles.map((audioFile) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 4),
+                        child: TaskSummaryAudioPlayer(
+                          url: audioFile.filePath ?? '',
+                          fileName: audioFile.fileName?.isNotEmpty == true
+                              ? audioFile.fileName!
+                              : 'Voice Recording',
+                        ),
+                      );
+                    }),
+                  ],
+                  // Other document attachments section
+                  if (documentFiles.isNotEmpty) ...[
+                    const SizedBox(height: 6),
+                    Wrap(
+                      spacing: 4,
+                      runSpacing: 4,
+                      children: documentFiles.map((doc) {
+                        final rawUrl = (doc.filePath ?? '').trim();
+                        return InkWell(
+                          onTap: () async {
+                            if (rawUrl.isNotEmpty) {
+                              String fullUrl = rawUrl.replaceAll('\\', '/');
+                              if (!fullUrl.startsWith('http://') &&
+                                  !fullUrl.startsWith('https://')) {
+                                if (fullUrl.startsWith('/')) {
+                                  fullUrl = fullUrl.substring(1);
+                                }
+                                final base = HttpUrls.imgBaseUrl.endsWith('/')
+                                    ? HttpUrls.imgBaseUrl
+                                    : '${HttpUrls.imgBaseUrl}/';
+                                fullUrl = '$base$fullUrl';
+                              }
+                              final uri = Uri.tryParse(fullUrl);
+                              if (uri != null && await canLaunchUrl(uri)) {
+                                await launchUrl(uri,
+                                    mode: LaunchMode.externalApplication);
+                              }
+                            }
+                          },
+                          borderRadius: BorderRadius.circular(4),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 6, vertical: 3),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFEEF2F6),
+                              borderRadius: BorderRadius.circular(4),
+                              border: Border.all(
+                                  color: const Color(0xFFCBD5E1), width: 0.5),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(Icons.attach_file,
+                                    size: 11, color: Color(0xFF64748B)),
+                                const SizedBox(width: 3),
+                                ConstrainedBox(
+                                  constraints: const BoxConstraints(maxWidth: 150),
+                                  child: Text(
+                                    doc.fileName?.isNotEmpty == true
+                                        ? doc.fileName!
+                                        : (doc.documentTypeName ?? 'Attachment'),
+                                    style: const TextStyle(
+                                      fontSize: 10,
+                                      color: Color(0xFF1E293B),
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }).toList(),
                     ),
                   ],
                   const SizedBox(height: 8),
