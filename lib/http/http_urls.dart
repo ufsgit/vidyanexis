@@ -305,6 +305,7 @@ class HttpUrls {
   static String getLeadReportByEnquirySource =
       "lead/Get_Lead_Report_By_Enquiry_Source";
 
+  static String employeeLeadSummary = "lead/Get_Employee_Lead_Summary";
   static String employeeSummaryReport = "lead/Employee_Summary_Report";
   static String employeeSalesReport = "lead/Employee_Sales_Report";
   static String enquiryForSummaryReport = "lead/Enquiry_For_Summary_Report";

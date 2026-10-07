@@ -34,6 +34,8 @@ import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/task_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/enquiry_source_summary_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/employee_sales_customer_report_screen.dart';
+import 'package:vidyanexis/presentation/pages/reports/employee_summary_report_screen.dart';
+import 'package:vidyanexis/presentation/pages/reports/employee_lead_summary_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/inventory/inventory_page.dart';
 import 'package:vidyanexis/presentation/pages/inventory/expense_management.dart';
 import 'package:vidyanexis/presentation/pages/reports/expense_report_screen.dart';
@@ -425,6 +427,19 @@ class _HomePageState extends State<HomePage> {
           title: 'Enquiry Source Reports',
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: EnquirySourceSummaryReportScreen()),
+        ),
+      if (settingsProvider.menuIsViewMap[119].toString() == '1' ||
+          settingsProvider.menuIsViewMap[89].toString() == '1')
+        SidebarOption(
+          title: 'Employee Summary Reports',
+          iconPath: 'assets/images/Reports.svg',
+          baseContent: const Center(child: EmployeeSummaryReportScreen()),
+        ),
+      if (settingsProvider.menuIsViewMap[195].toString() == '1')
+        SidebarOption(
+          title: 'Employee Lead Summary Reports',
+          iconPath: 'assets/images/Reports.svg',
+          baseContent: const Center(child: EmployeeLeadSummaryReportScreen()),
         ),
       if (settingsProvider.menuIsViewMap[119].toString() == '1' ||
           settingsProvider.menuIsViewMap[89].toString() == '1')
