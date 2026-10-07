@@ -113,101 +113,101 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
     if (_isProcessingClick) return;
     setState(() => _isProcessingClick = true);
     try {
-    final dropDownProvider =
-        Provider.of<DropDownProvider>(context, listen: false);
-    final leadProvider = Provider.of<LeadsProvider>(context, listen: false);
-    final settingsProvider =
-        Provider.of<SettingsProvider>(context, listen: false);
+      final dropDownProvider =
+          Provider.of<DropDownProvider>(context, listen: false);
+      final leadProvider = Provider.of<LeadsProvider>(context, listen: false);
+      final settingsProvider =
+          Provider.of<SettingsProvider>(context, listen: false);
 
-    // Validation checks
-    if (!_validateForm(leadProvider, dropDownProvider)) {
-      setState(() => _isProcessingClick = false);
-      return;
-    }
+      // Validation checks
+      if (!_validateForm(leadProvider, dropDownProvider)) {
+        setState(() => _isProcessingClick = false);
+        return;
+      }
 
-    final selectedEnquirySource = dropDownProvider.enquiryData.firstWhere(
-      (source) =>
-          source.enquirySourceId == dropDownProvider.selectedEnquirySourceId,
-      orElse: () => Enquirysourcemodel(
-          enquirySourceId: 0,
-          enquirySourceName: '',
-          deleteStatus: 0,
-          sourceCategoryId: 0,
-          sourceCategoryName: ''),
-    );
+      final selectedEnquirySource = dropDownProvider.enquiryData.firstWhere(
+        (source) =>
+            source.enquirySourceId == dropDownProvider.selectedEnquirySourceId,
+        orElse: () => Enquirysourcemodel(
+            enquirySourceId: 0,
+            enquirySourceName: '',
+            deleteStatus: 0,
+            sourceCategoryId: 0,
+            sourceCategoryName: ''),
+      );
 
-    final selectedStatus = dropDownProvider.leadStatuses.firstWhere(
-      (status) => status.statusId == dropDownProvider.selectedFollowUpId,
-      orElse: () => SearchLeadStatusModel(
-        followup: 0,
-        statusId: 0,
-        statusName: '',
-        statusOrder: 0,
-      ),
-    );
+      final selectedStatus = dropDownProvider.leadStatuses.firstWhere(
+        (status) => status.statusId == dropDownProvider.selectedFollowUpId,
+        orElse: () => SearchLeadStatusModel(
+          followup: 0,
+          statusId: 0,
+          statusName: '',
+          statusOrder: 0,
+        ),
+      );
 
-    final selectedUser = dropDownProvider.searchUserDetails.firstWhere(
-      (user) => user.userDetailsId == dropDownProvider.selectedUserId,
-      orElse: () => SearchUserDetails(userDetailsId: 0, userDetailsName: ''),
-    );
+      final selectedUser = dropDownProvider.searchUserDetails.firstWhere(
+        (user) => user.userDetailsId == dropDownProvider.selectedUserId,
+        orElse: () => SearchUserDetails(userDetailsId: 0, userDetailsName: ''),
+      );
 
-    await leadProvider.saveLead(
-        custId: widget.isEdit ? int.tryParse(widget.customerId) ?? 0 : 0,
-        context: context,
-        address1: leadProvider.addressController.text,
-        address2: leadProvider.cityController.text,
-        address3: leadProvider.districtController.text,
-        address4: leadProvider.stateController.text,
-        byUserId: 0,
-        byUserName: '',
-        circle: leadProvider.circleController.text,
-        connectedLoad: leadProvider.connectedLoadController.text,
-        consumerNo: leadProvider.consumerNoController.text,
-        contactNumber: leadProvider.contactNoController.text,
-        contactPerson: '',
-        createdBy: 0,
-        createdByName: '',
-        customerName: leadProvider.leadNameController.text,
-        division: leadProvider.divisionController.text,
-        email: leadProvider.emailIdController.text,
-        entryDate: DateTime.now().toString(),
-        followUp: leadProvider.followUpDateController.text.isNotEmpty ? 1 : 0,
-        mapLink: leadProvider.mapLinkController.text,
-        nextFollowUpDate: leadProvider.followUpDateController.text,
-        landmark: leadProvider.landmarkController.text,
-        pincode: leadProvider.pincodeController.text,
-        proposedKW: leadProvider.proposedKWController.text,
-        remark: leadProvider.remarksController.text,
-        roofType: leadProvider.roofTypeController.text,
-        section: '',
-        enquirySourceId: dropDownProvider.selectedEnquirySourceId ?? 0,
-        enquirySourceName: selectedEnquirySource.enquirySourceName,
-        statusId: dropDownProvider.selectedFollowUpId ?? 0,
-        statusName: selectedStatus.statusName!,
-        toUserId: dropDownProvider.selectedUserId ?? 0,
-        toUserName: selectedUser.userDetailsName ?? '',
-        subDistrict: '',
-        subDivision: leadProvider.subDivisionController.text,
-        village: '',
-        enquiryForId: dropDownProvider.selectedEnquiryForId ?? 0,
-        enquiryForName: dropDownProvider.selectedEnquiryForName,
-        branchId: settingsProvider.selectedBranchId!,
-        branchName: leadProvider.branchController.text,
-        departmentId: settingsProvider.selectedDepartmentId,
-        departmentName: leadProvider.departmentController.text,
-        sourceId: dropDownProvider.selectedSourceId ?? 0,
-        sourceName: leadProvider.sourceCategoryController.text,
-        districtId: dropDownProvider.selectedDistrictId ?? 0,
-        districtName: dropDownProvider.selectedDistrictName,
-        age: int.tryParse(leadProvider.leadAgeController.text) ?? 0,
-        peId: dropDownProvider.selectedpeUserId ?? 0,
-        peName: leadProvider.peController.text,
-        creId: dropDownProvider.selectedcreUserId ?? 0,
-        creName: leadProvider.creController.text,
-        leadtypeId: dropDownProvider.selectedleadtypeUserId ?? 0,
-        leadtypeName: leadProvider.leadtypeController.text,
-        locationId: dropDownProvider.selectedLocationId,
-        workCompletionDate: leadProvider.workCompletionDateController.text);
+      await leadProvider.saveLead(
+          custId: widget.isEdit ? int.tryParse(widget.customerId) ?? 0 : 0,
+          context: context,
+          address1: leadProvider.addressController.text,
+          address2: leadProvider.cityController.text,
+          address3: leadProvider.districtController.text,
+          address4: leadProvider.stateController.text,
+          byUserId: 0,
+          byUserName: '',
+          circle: leadProvider.circleController.text,
+          connectedLoad: leadProvider.connectedLoadController.text,
+          consumerNo: leadProvider.consumerNoController.text,
+          contactNumber: leadProvider.contactNoController.text,
+          contactPerson: '',
+          createdBy: 0,
+          createdByName: '',
+          customerName: leadProvider.leadNameController.text,
+          division: leadProvider.divisionController.text,
+          email: leadProvider.emailIdController.text,
+          entryDate: DateTime.now().toString(),
+          followUp: leadProvider.followUpDateController.text.isNotEmpty ? 1 : 0,
+          mapLink: leadProvider.mapLinkController.text,
+          nextFollowUpDate: leadProvider.followUpDateController.text,
+          landmark: leadProvider.landmarkController.text,
+          pincode: leadProvider.pincodeController.text,
+          proposedKW: leadProvider.proposedKWController.text,
+          remark: leadProvider.remarksController.text,
+          roofType: leadProvider.roofTypeController.text,
+          section: '',
+          enquirySourceId: dropDownProvider.selectedEnquirySourceId ?? 0,
+          enquirySourceName: selectedEnquirySource.enquirySourceName,
+          statusId: dropDownProvider.selectedFollowUpId ?? 0,
+          statusName: selectedStatus.statusName!,
+          toUserId: dropDownProvider.selectedUserId ?? 0,
+          toUserName: selectedUser.userDetailsName ?? '',
+          subDistrict: '',
+          subDivision: leadProvider.subDivisionController.text,
+          village: '',
+          enquiryForId: dropDownProvider.selectedEnquiryForId ?? 0,
+          enquiryForName: dropDownProvider.selectedEnquiryForName,
+          branchId: settingsProvider.selectedBranchId!,
+          branchName: leadProvider.branchController.text,
+          departmentId: settingsProvider.selectedDepartmentId,
+          departmentName: leadProvider.departmentController.text,
+          sourceId: dropDownProvider.selectedSourceId ?? 0,
+          sourceName: leadProvider.sourceCategoryController.text,
+          districtId: dropDownProvider.selectedDistrictId ?? 0,
+          districtName: dropDownProvider.selectedDistrictName,
+          age: int.tryParse(leadProvider.leadAgeController.text) ?? 0,
+          peId: dropDownProvider.selectedpeUserId ?? 0,
+          peName: leadProvider.peController.text,
+          creId: dropDownProvider.selectedcreUserId ?? 0,
+          creName: leadProvider.creController.text,
+          leadtypeId: dropDownProvider.selectedleadtypeUserId ?? 0,
+          leadtypeName: leadProvider.leadtypeController.text,
+          locationId: dropDownProvider.selectedLocationId,
+          workCompletionDate: leadProvider.workCompletionDateController.text);
     } finally {
       if (mounted) setState(() => _isProcessingClick = false);
     }
@@ -289,9 +289,12 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
       final tabsCount = widget.isEdit ? 3 : 4;
       if (errorTab != null && errorTab < tabsCount) {
         GlobalKey? targetKey;
-        if (errorTab == 0) targetKey = _basicDetailsKey;
-        else if (errorTab == 1) targetKey = _addressDetailsKey;
-        else if (errorTab == 2) targetKey = _additionalDetailsKey;
+        if (errorTab == 0)
+          targetKey = _basicDetailsKey;
+        else if (errorTab == 1)
+          targetKey = _addressDetailsKey;
+        else if (errorTab == 2)
+          targetKey = _additionalDetailsKey;
         else if (errorTab == 3) targetKey = _followupDetailsKey;
 
         if (targetKey != null) {
@@ -517,15 +520,16 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
               statusId: firstStatus.statusId!,
             );
 
-            final transferStatusesData = await settingsProvider
-                .getTransferStatusById(context, firstStatus.statusId.toString());
-            final statusData = await settingsProvider
-                .getStatusById(context, firstStatus.statusId.toString());
+            final transferStatusesData =
+                await settingsProvider.getTransferStatusById(
+                    context, firstStatus.statusId.toString());
+            final statusData = await settingsProvider.getStatusById(
+                context, firstStatus.statusId.toString());
 
-            bool mainHasAmount = (statusData.isNotEmpty &&
-                    statusData.first.isAmount == 1) ||
-                (transferStatusesData.isNotEmpty &&
-                    transferStatusesData.first.isAmount == 1);
+            bool mainHasAmount =
+                (statusData.isNotEmpty && statusData.first.isAmount == 1) ||
+                    (transferStatusesData.isNotEmpty &&
+                        transferStatusesData.first.isAmount == 1);
 
             if (mounted) {
               setState(() {
@@ -555,8 +559,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
                 transferStatusesData.first.departmentId != null &&
                 transferStatusesData.first.departmentId != 0) {
               defaultDeptId = transferStatusesData.first.departmentId!;
-              defaultDeptName =
-                  transferStatusesData.first.departmentName ?? '';
+              defaultDeptName = transferStatusesData.first.departmentName ?? '';
             } else if (firstStatus.departmentId != null &&
                 firstStatus.departmentId != 0) {
               defaultDeptId = firstStatus.departmentId!;
@@ -657,10 +660,8 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
     });
   }
 
-  void _showAllEnquirySourcesBottomSheet(
-      BuildContext context,
-      DropDownProvider dropDownProvider,
-      LeadsProvider leadProvider) {
+  void _showAllEnquirySourcesBottomSheet(BuildContext context,
+      DropDownProvider dropDownProvider, LeadsProvider leadProvider) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -876,43 +877,9 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
           ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: AppColors.bluebutton.withOpacity(0.08),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Icon(
-                    icon,
-                    size: 20,
-                    color: AppColors.bluebutton,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Text(
-                  title,
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textBlack,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Divider(height: 1, color: Colors.grey[200]),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: child,
-          ),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: child,
       ),
     );
   }
@@ -944,7 +911,8 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
               },
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
-                padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
                 decoration: BoxDecoration(
                   color: isSelected ? AppColors.bluebutton : Colors.grey[100],
                   borderRadius: BorderRadius.circular(24.0),
@@ -964,7 +932,8 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
                     style: GoogleFonts.plusJakartaSans(
                       color: isSelected ? Colors.white : AppColors.textGrey3,
                       fontSize: 13,
-                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                      fontWeight:
+                          isSelected ? FontWeight.w600 : FontWeight.w500,
                     ),
                   ),
                 ),
@@ -1022,22 +991,25 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final settingsProvider = Provider.of<SettingsProvider>(context);
     final List<Map<String, dynamic>> tabs = [
       {
         'title': 'Basic details',
         'key': _basicDetailsKey,
         'widget': buildBasicDetails(),
       },
-      {
-        'title': 'Address',
-        'key': _addressDetailsKey,
-        'widget': buildAddressDetails(),
-      },
-      {
-        'title': 'Additional details',
-        'key': _additionalDetailsKey,
-        'widget': buildAdditionalDetails(),
-      },
+      if (settingsProvider.menuIsViewMap[205] == 1)
+        {
+          'title': 'Address',
+          'key': _addressDetailsKey,
+          'widget': buildAddressDetails(),
+        },
+      if (settingsProvider.menuIsViewMap[206] == 1)
+        {
+          'title': 'Additional details',
+          'key': _additionalDetailsKey,
+          'widget': buildAdditionalDetails(),
+        },
       if (!widget.isEdit)
         {
           'title': 'Follow-up Details',
@@ -1051,7 +1023,6 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
       expandedIndex = 0;
     }
 
-    final settingsProvider = Provider.of<SettingsProvider>(context);
     final displayLogo = settingsProvider.displayLogo;
 
     return Consumer<DropDownProvider>(
@@ -1096,13 +1067,6 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
               ],
             ),
             actions: const [],
-            bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(50),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: _buildTabsHeader(tabs),
-              ),
-            ),
           ),
           body: MediaQuery.removePadding(
             removeTop: true,
@@ -1113,7 +1077,8 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
                   child: SingleChildScrollView(
                     controller: scrollController,
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 16),
                       child: Column(
                         children: [
                           _buildSection(
@@ -1122,18 +1087,20 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
                             key: _basicDetailsKey,
                             child: buildBasicDetails(),
                           ),
-                          _buildSection(
-                            title: 'Address',
-                            icon: Icons.location_on_outlined,
-                            key: _addressDetailsKey,
-                            child: buildAddressDetails(),
-                          ),
-                          _buildSection(
-                            title: 'Additional details',
-                            icon: Icons.add_circle_outline,
-                            key: _additionalDetailsKey,
-                            child: buildAdditionalDetails(),
-                          ),
+                          if (settingsProvider.menuIsViewMap[205] == 1)
+                            _buildSection(
+                              title: 'Address',
+                              icon: Icons.location_on_outlined,
+                              key: _addressDetailsKey,
+                              child: buildAddressDetails(),
+                            ),
+                          if (settingsProvider.menuIsViewMap[206] == 1)
+                            _buildSection(
+                              title: 'Additional details',
+                              icon: Icons.add_circle_outline,
+                              key: _additionalDetailsKey,
+                              child: buildAdditionalDetails(),
+                            ),
                           if (!widget.isEdit)
                             _buildSection(
                               title: 'Follow-up Details',
@@ -1191,107 +1158,114 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
             //   },
             // ),
 
-            const SizedBox(height: 10),
-            SearchableBottomSheetDropdown<int>(
-              hintText: 'Branch*',
-              selectedValue: settingsProvider.selectedBranchId,
-              items: settingsProvider.branchModel
-                  .map((source) => DropdownItem<int>(
-                        id: source.branchId ?? 0,
-                        name: source.branchName ?? '',
-                      ))
-                  .toList(),
-              controller: leadProvider.branchController,
-              onItemSelected: (selectedId) {
-                settingsProvider.selectedBranchId = selectedId;
+            if (showTransfer) ...[
+              const SizedBox(height: 10),
+              SearchableBottomSheetDropdown<int>(
+                hintText: 'Branch*',
+                selectedValue: settingsProvider.selectedBranchId,
+                items: settingsProvider.branchModel
+                    .map((source) => DropdownItem<int>(
+                          id: source.branchId ?? 0,
+                          name: source.branchName ?? '',
+                        ))
+                    .toList(),
+                controller: leadProvider.branchController,
+                onItemSelected: (selectedId) {
+                  settingsProvider.selectedBranchId = selectedId;
 
-                if (selectedId != null) {
-                  // Update the controller text with the selected branch name
-                  final selectedBranch = settingsProvider.branchModel
-                      .firstWhere((branch) => branch.branchId == selectedId);
-                  leadProvider.branchController.text =
-                      selectedBranch.branchName ?? '';
-                } else {
-                  leadProvider.branchController.clear();
-                }
+                  if (selectedId != null) {
+                    // Update the controller text with the selected branch name
+                    final selectedBranch = settingsProvider.branchModel
+                        .firstWhere((branch) => branch.branchId == selectedId);
+                    leadProvider.branchController.text =
+                        selectedBranch.branchName ?? '';
+                  } else {
+                    leadProvider.branchController.clear();
+                  }
 
-                // Clear department and staff selections when branch changes
-                settingsProvider.setSelectedDepartmentId(0);
-                leadProvider.departmentController.clear();
-                dropDownProvider.setSelectedUserId(0);
-                leadProvider.searchUserController.clear();
-
-                // Filter staff based on new branch selection
-                dropDownProvider.fetchStaffByDepartment(
-                  context: context,
-                  branchId: selectedId,
-                  departmentId: null,
-                );
-              },
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            SearchableBottomSheetDropdown<int>(
-              hintText: 'Department*',
-              selectedValue: settingsProvider.selectedDepartmentId,
-              items: settingsProvider.departmentModel
-                  .map((source) => DropdownItem<int>(
-                        id: source.departmentId,
-                        name: source.departmentName ?? '',
-                      ))
-                  .toList(),
-              controller: leadProvider.departmentController,
-              onItemSelected: (selectedId) async {
-                settingsProvider.selectedDepartmentId = selectedId;
-                if (selectedId != null) {
-                  // Update the controller text with the selected department name
-                  final selectedDepartment =
-                      settingsProvider.departmentModel.firstWhere(
-                    (dept) => dept.departmentId == selectedId,
-                    orElse: () => DepartmentModel(
-                        departmentId: selectedId, departmentName: ''),
-                  );
-                  leadProvider.departmentController.text =
-                      selectedDepartment.departmentName ?? '';
-                } else {
+                  // Clear department and staff selections when branch changes
+                  settingsProvider.setSelectedDepartmentId(0);
                   leadProvider.departmentController.clear();
-                }
-
-                // Filter staff based on both branch and department
-                await dropDownProvider.fetchStaffByDepartment(
-                  context: context,
-                  branchId: settingsProvider.selectedBranchId,
-                  departmentId: selectedId,
-                );
-
-                if (dropDownProvider.filteredStaffData.any((s) => s.userDetailsId == leadProvider.loginUserId)) {
-                  dropDownProvider.setSelectedUserId(leadProvider.loginUserId);
-                  leadProvider.searchUserController.text = leadProvider.loginUserName;
-                } else if (dropDownProvider.filteredStaffData.isNotEmpty) {
-                  final firstStaff = dropDownProvider.filteredStaffData.first;
-                  dropDownProvider.setSelectedUserId(firstStaff.userDetailsId);
-                  leadProvider.searchUserController.text = firstStaff.userDetailsName;
-                } else {
                   dropDownProvider.setSelectedUserId(0);
                   leadProvider.searchUserController.clear();
-                }
 
-                if (widget.customerId != null &&
-                    widget.customerId.isNotEmpty &&
-                    widget.customerId != '0') {
-                  dropDownProvider.fetchAndSetAssignedUser(
+                  // Filter staff based on new branch selection
+                  dropDownProvider.fetchStaffByDepartment(
                     context: context,
-                    leadId: widget.customerId,
+                    branchId: selectedId,
+                    departmentId: null,
+                  );
+                },
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              SearchableBottomSheetDropdown<int>(
+                hintText: 'Department*',
+                selectedValue: settingsProvider.selectedDepartmentId,
+                items: settingsProvider.departmentModel
+                    .map((source) => DropdownItem<int>(
+                          id: source.departmentId,
+                          name: source.departmentName ?? '',
+                        ))
+                    .toList(),
+                controller: leadProvider.departmentController,
+                onItemSelected: (selectedId) async {
+                  settingsProvider.selectedDepartmentId = selectedId;
+                  if (selectedId != null) {
+                    // Update the controller text with the selected department name
+                    final selectedDepartment =
+                        settingsProvider.departmentModel.firstWhere(
+                      (dept) => dept.departmentId == selectedId,
+                      orElse: () => DepartmentModel(
+                          departmentId: selectedId, departmentName: ''),
+                    );
+                    leadProvider.departmentController.text =
+                        selectedDepartment.departmentName ?? '';
+                  } else {
+                    leadProvider.departmentController.clear();
+                  }
+
+                  // Filter staff based on both branch and department
+                  await dropDownProvider.fetchStaffByDepartment(
+                    context: context,
                     branchId: settingsProvider.selectedBranchId,
                     departmentId: selectedId,
-                    leadProvider: leadProvider,
                   );
-                }
-                if (mounted) setState(() {});
-              },
-            ),
-            SizedBox(
+
+                  if (dropDownProvider.filteredStaffData.any(
+                      (s) => s.userDetailsId == leadProvider.loginUserId)) {
+                    dropDownProvider
+                        .setSelectedUserId(leadProvider.loginUserId);
+                    leadProvider.searchUserController.text =
+                        leadProvider.loginUserName;
+                  } else if (dropDownProvider.filteredStaffData.isNotEmpty) {
+                    final firstStaff = dropDownProvider.filteredStaffData.first;
+                    dropDownProvider
+                        .setSelectedUserId(firstStaff.userDetailsId);
+                    leadProvider.searchUserController.text =
+                        firstStaff.userDetailsName;
+                  } else {
+                    dropDownProvider.setSelectedUserId(0);
+                    leadProvider.searchUserController.clear();
+                  }
+
+                  if (widget.customerId != null &&
+                      widget.customerId.isNotEmpty &&
+                      widget.customerId != '0') {
+                    dropDownProvider.fetchAndSetAssignedUser(
+                      context: context,
+                      leadId: widget.customerId,
+                      branchId: settingsProvider.selectedBranchId,
+                      departmentId: selectedId,
+                      leadProvider: leadProvider,
+                    );
+                  }
+                  if (mounted) setState(() {});
+                },
+              ),
+            ],
+            const SizedBox(
               height: 10,
             ),
             Row(
@@ -1300,8 +1274,8 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
                   child: SearchableBottomSheetDropdown<int>(
                     hintText: 'Follow-up Status*',
                     items: dropDownProvider.leadStatuses
-                        .where(
-                            (status) => widget.isEdit ? true : status.isCreateNew == 1)
+                        .where((status) =>
+                            widget.isEdit ? true : status.isCreateNew == 1)
                         .map((status) => DropdownItem<int>(
                               id: status.statusId ?? 0,
                               name: status.statusName ?? '',
@@ -1317,15 +1291,16 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
                             leadId: widget.isEdit ? leadProvider.customerId : 0,
                             statusId: selectedId);
                         final selectedStatus = dropDownProvider.leadStatuses
-                            .firstWhere((status) => status.statusId == selectedId,
+                            .firstWhere(
+                                (status) => status.statusId == selectedId,
                                 orElse: () => SearchLeadStatusModel(
                                     statusId: selectedId, statusName: ''));
                         leadProvider.followUpStatusController.text =
                             selectedStatus.statusName ?? '';
                         if (selectedStatus.isShowFollowupDate == 1) {
-                          int durationVal =
-                              int.tryParse(selectedStatus.statusDuration ?? '') ??
-                                  0;
+                          int durationVal = int.tryParse(
+                                  selectedStatus.statusDuration ?? '') ??
+                              0;
                           DateTime baseDate =
                               originalFollowUpDate ?? DateTime.now();
                           DateTime targetDate =
@@ -1338,21 +1313,24 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
 
                         final statusData = await settingsProvider.getStatusById(
                             context, selectedId.toString());
-                        final transferStatusesData = await settingsProvider
-                            .getTransferStatusById(context, selectedId.toString());
+                        final transferStatusesData =
+                            await settingsProvider.getTransferStatusById(
+                                context, selectedId.toString());
 
-                        bool mainHasAmount =
-                            (statusData.isNotEmpty && statusData.first.isAmount == 1) ||
-                                (transferStatusesData.isNotEmpty &&
-                                    transferStatusesData.first.isAmount == 1);
+                        bool mainHasAmount = (statusData.isNotEmpty &&
+                                statusData.first.isAmount == 1) ||
+                            (transferStatusesData.isNotEmpty &&
+                                transferStatusesData.first.isAmount == 1);
 
                         int? statusDeptId;
                         String? statusDeptName;
                         if (transferStatusesData.isNotEmpty &&
                             transferStatusesData.first.departmentId != null &&
                             transferStatusesData.first.departmentId != 0) {
-                          statusDeptId = transferStatusesData.first.departmentId;
-                          statusDeptName = transferStatusesData.first.departmentName;
+                          statusDeptId =
+                              transferStatusesData.first.departmentId;
+                          statusDeptName =
+                              transferStatusesData.first.departmentName;
                         } else if (selectedStatus.departmentId != null &&
                             selectedStatus.departmentId != 0) {
                           statusDeptId = selectedStatus.departmentId;
@@ -1361,7 +1339,8 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
 
                         if (statusDeptId != null && statusDeptId != 0) {
                           settingsProvider.selectedDepartmentId = statusDeptId;
-                          leadProvider.departmentController.text = statusDeptName ?? '';
+                          leadProvider.departmentController.text =
+                              statusDeptName ?? '';
 
                           await dropDownProvider.fetchStaffByDepartment(
                             context: context,
@@ -1369,13 +1348,20 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
                             departmentId: statusDeptId,
                           );
 
-                          if (dropDownProvider.filteredStaffData.any((s) => s.userDetailsId == leadProvider.loginUserId)) {
-                            dropDownProvider.setSelectedUserId(leadProvider.loginUserId);
-                            leadProvider.searchUserController.text = leadProvider.loginUserName;
-                          } else if (dropDownProvider.filteredStaffData.isNotEmpty) {
-                            final firstStaff = dropDownProvider.filteredStaffData.first;
-                            dropDownProvider.setSelectedUserId(firstStaff.userDetailsId);
-                            leadProvider.searchUserController.text = firstStaff.userDetailsName;
+                          if (dropDownProvider.filteredStaffData.any((s) =>
+                              s.userDetailsId == leadProvider.loginUserId)) {
+                            dropDownProvider
+                                .setSelectedUserId(leadProvider.loginUserId);
+                            leadProvider.searchUserController.text =
+                                leadProvider.loginUserName;
+                          } else if (dropDownProvider
+                              .filteredStaffData.isNotEmpty) {
+                            final firstStaff =
+                                dropDownProvider.filteredStaffData.first;
+                            dropDownProvider
+                                .setSelectedUserId(firstStaff.userDetailsId);
+                            leadProvider.searchUserController.text =
+                                firstStaff.userDetailsName;
                           } else {
                             dropDownProvider.setSelectedUserId(0);
                             leadProvider.searchUserController.clear();
@@ -1386,15 +1372,19 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
                           setState(() {
                             showAmountForMain = mainHasAmount;
                             showAmountForSecondary = false;
-                            showTransferStatus = transferStatusesData.isNotEmpty &&
-                                transferStatusesData.first.isTransferStatus == 1;
+                            showTransferStatus = transferStatusesData
+                                    .isNotEmpty &&
+                                transferStatusesData.first.isTransferStatus ==
+                                    1;
                             showTime = transferStatusesData.isNotEmpty &&
                                 transferStatusesData.first.isTime == 1;
                             showDate = transferStatusesData.isNotEmpty &&
-                                transferStatusesData.first.isShowFollowupDate == 1;
+                                transferStatusesData.first.isShowFollowupDate ==
+                                    1;
                             showTransfer = transferStatusesData.isNotEmpty &&
                                 transferStatusesData.first.isTransfer == 1;
-                            _filteredTransferStatuses = transferStatusesData.isNotEmpty
+                            _filteredTransferStatuses = transferStatusesData
+                                    .isNotEmpty
                                 ? transferStatusesData.first.transferStatuses
                                         ?.map((s) => SearchLeadStatusModel(
                                               statusId: s.subStatusId,
@@ -1514,36 +1504,39 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
               ),
             ],
 
-            SizedBox(
-              height: 10,
-            ),
-            SearchableBottomSheetDropdown<int>(
-              hintText: 'Assigned Staff*',
-              // Use filtered staff data instead of all staff data
-              items: dropDownProvider.filteredStaffData
-                  .map((staff) => DropdownItem<int>(
-                        id: staff.userDetailsId,
-                        name: staff.userDetailsName,
-                      ))
-                  .toList(),
-              controller: leadProvider.searchUserController,
-              onItemSelected: (selectedId) {
-                dropDownProvider.setSelectedUserId(selectedId);
+            if (showTransfer) ...[
+              const SizedBox(
+                height: 10,
+              ),
+              SearchableBottomSheetDropdown<int>(
+                hintText: 'Assigned Staff*',
+                // Use filtered staff data instead of all staff data
+                items: dropDownProvider.filteredStaffData
+                    .map((staff) => DropdownItem<int>(
+                          id: staff.userDetailsId,
+                          name: staff.userDetailsName,
+                        ))
+                    .toList(),
+                controller: leadProvider.searchUserController,
+                onItemSelected: (selectedId) {
+                  dropDownProvider.setSelectedUserId(selectedId);
 
-                if (selectedId != null) {
-                  // Update the controller text with the selected staff name
-                  final selectedStaff = dropDownProvider.filteredStaffData
-                      .firstWhere((staff) => staff.userDetailsId == selectedId);
-                  leadProvider.searchUserController.text =
-                      selectedStaff.userDetailsName;
-                } else {
-                  leadProvider.searchUserController.clear();
-                }
-              },
-              selectedValue: dropDownProvider.selectedUserId,
-              // Disable if branch or department is not selected
-              enabled: settingsProvider.selectedBranchId != null,
-            ),
+                  if (selectedId != null) {
+                    // Update the controller text with the selected staff name
+                    final selectedStaff = dropDownProvider.filteredStaffData
+                        .firstWhere(
+                            (staff) => staff.userDetailsId == selectedId);
+                    leadProvider.searchUserController.text =
+                        selectedStaff.userDetailsName;
+                  } else {
+                    leadProvider.searchUserController.clear();
+                  }
+                },
+                selectedValue: dropDownProvider.selectedUserId,
+                // Disable if branch or department is not selected
+                enabled: settingsProvider.selectedBranchId != null,
+              ),
+            ],
             if (dropDownProvider.selectedFollowUpId != null &&
                 dropDownProvider.selectedFollowUpId != 0)
               // customFieldSection(),
@@ -2321,13 +2314,12 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
                   .firstWhere((task) => task.stateId == newValue);
               dropDownProvider.updateState(
                   newValue, selectedState.stateName ?? '');
-              leadProvider.stateController.text =
-                  selectedState.stateName ?? '';
+              leadProvider.stateController.text = selectedState.stateName ?? '';
             }
           },
           selectedValue: dropDownProvider.selectedStateId != null &&
-                  dropDownProvider.stateList.any(
-                      (item) => item.stateId == dropDownProvider.selectedStateId)
+                  dropDownProvider.stateList.any((item) =>
+                      item.stateId == dropDownProvider.selectedStateId)
               ? dropDownProvider.selectedStateId
               : null,
           showError: dropDownProvider.showValidation &&
@@ -2433,9 +2425,8 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
                 onItemSelected: (selectedId) {
                   if (selectedId != null) {
                     leadProvider.setCostIncId(selectedId);
-                    final selectedItem = leadProvider
-                        .leadDropdownData!.costIncludes
-                        .firstWhere(
+                    final selectedItem =
+                        leadProvider.leadDropdownData!.costIncludes.firstWhere(
                       (status) => status.costIncludesId == selectedId,
                     );
                     leadProvider.costIncludesController.text =
@@ -2604,9 +2595,9 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
                 onItemSelected: (selectedId) {
                   if (selectedId != null) {
                     leadProvider.setInverterId(selectedId);
-                    final selectedItem = leadProvider
-                        .leadDropdownData!.inverterType
-                        .firstWhere((item) => item.inverterTypeId == selectedId);
+                    final selectedItem =
+                        leadProvider.leadDropdownData!.inverterType.firstWhere(
+                            (item) => item.inverterTypeId == selectedId);
                     leadProvider.inverterTypeController.text =
                         selectedItem.inverterTypeName ?? '';
                   }
@@ -2853,7 +2844,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
         const SizedBox(
           height: 10,
         ),
-        if (settingsProvider.menuIsViewMap[145] == 1 &&
+        if (settingsProvider.menuIsViewMap[201] == 1 &&
             settingsProvider.leadCreationChanges != 1 &&
             settingsProvider.referenceNameAfterEnquiryFor != 1) ...[
           CustomTextfieldWidgetMobile(
@@ -2863,7 +2854,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
           ),
           const SizedBox(height: 10),
         ],
-        if (settingsProvider.menuIsViewMap[146] == 1) ...[
+        if (settingsProvider.menuIsViewMap[207] == 1) ...[
           SearchableBottomSheetDropdown<int>(
             hintText: 'Location',
             items: dropDownProvider.locationList
@@ -2880,7 +2871,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
           const SizedBox(height: 10),
         ],
 
-        if (settingsProvider.menuIsViewMap[149] == 1 &&
+        if (settingsProvider.menuIsViewMap[202] == 1 &&
             settingsProvider.leadCreationChanges != 1) ...[
           SearchableBottomSheetDropdown<int>(
             hintText: 'Source',
@@ -2929,7 +2920,8 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
                   ),
                   IconButton(
                     tooltip: "Add Enquiry Source",
-                    icon: Icon(Icons.add_circle, color: AppColors.primaryViolet),
+                    icon:
+                        Icon(Icons.add_circle, color: AppColors.primaryViolet),
                     onPressed: () {
                       showDialog(
                         barrierDismissible: false,
@@ -2951,18 +2943,25 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
                 ],
               ),
               () {
-                final selectedSourceId = dropDownProvider.selectedEnquirySourceId;
-                final List<Enquirysourcemodel> displaySources = dropDownProvider.enquiryData.take(5).toList();
+                final selectedSourceId =
+                    dropDownProvider.selectedEnquirySourceId;
+                final List<Enquirysourcemodel> displaySources =
+                    dropDownProvider.enquiryData.take(5).toList();
                 if (selectedSourceId != null && selectedSourceId > 0) {
-                  final hasSelected = displaySources.any((s) => s.enquirySourceId == selectedSourceId);
+                  final hasSelected = displaySources
+                      .any((s) => s.enquirySourceId == selectedSourceId);
                   if (!hasSelected) {
-                    final selectedSourceObj = dropDownProvider.enquiryData.firstWhere(
+                    final selectedSourceObj =
+                        dropDownProvider.enquiryData.firstWhere(
                       (s) => s.enquirySourceId == selectedSourceId,
                       orElse: () => Enquirysourcemodel(
                         enquirySourceId: selectedSourceId,
-                        enquirySourceName: leadProvider.enquirySourceController.text,
-                        sourceCategoryId: dropDownProvider.selectedSourceId ?? 0,
-                        sourceCategoryName: leadProvider.sourceCategoryController.text,
+                        enquirySourceName:
+                            leadProvider.enquirySourceController.text,
+                        sourceCategoryId:
+                            dropDownProvider.selectedSourceId ?? 0,
+                        sourceCategoryName:
+                            leadProvider.sourceCategoryController.text,
                         deleteStatus: 0,
                       ),
                     );
@@ -2978,7 +2977,8 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
                   child: Row(
                     children: [
                       ...displaySources.map((source) {
-                        final isSelected = selectedSourceId == source.enquirySourceId;
+                        final isSelected =
+                            selectedSourceId == source.enquirySourceId;
                         return Padding(
                           padding: const EdgeInsets.only(right: 8.0),
                           child: ChoiceChip(
@@ -2987,22 +2987,31 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
                             selected: isSelected,
                             onSelected: (bool selected) {
                               if (selected) {
-                                dropDownProvider.setSelectedEnquirySourceId(source.enquirySourceId);
-                                leadProvider.enquirySourceController.text = source.enquirySourceName ?? '';
+                                dropDownProvider.setSelectedEnquirySourceId(
+                                    source.enquirySourceId);
+                                leadProvider.enquirySourceController.text =
+                                    source.enquirySourceName ?? '';
                               }
                             },
-                            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12.0, vertical: 8.0),
                             selectedColor: AppColors.lightBlueColor,
                             backgroundColor: Colors.white,
                             labelStyle: GoogleFonts.plusJakartaSans(
-                              color: isSelected ? AppColors.textBlue800 : AppColors.textGrey3,
+                              color: isSelected
+                                  ? AppColors.textBlue800
+                                  : AppColors.textGrey3,
                               fontSize: 14,
-                              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                              fontWeight: isSelected
+                                  ? FontWeight.w600
+                                  : FontWeight.w500,
                             ),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
                               side: BorderSide(
-                                color: isSelected ? AppColors.textBlue800 : AppColors.grey,
+                                color: isSelected
+                                    ? AppColors.textBlue800
+                                    : AppColors.grey,
                                 width: 1.0,
                               ),
                             ),
@@ -3019,14 +3028,17 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
                               children: [
                                 Text('More'),
                                 const SizedBox(width: 4),
-                                Icon(Icons.keyboard_arrow_down, size: 16, color: AppColors.textGrey3),
+                                Icon(Icons.keyboard_arrow_down,
+                                    size: 16, color: AppColors.textGrey3),
                               ],
                             ),
                             selected: false,
                             onSelected: (bool selected) {
-                              _showAllEnquirySourcesBottomSheet(context, dropDownProvider, leadProvider);
+                              _showAllEnquirySourcesBottomSheet(
+                                  context, dropDownProvider, leadProvider);
                             },
-                            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12.0, vertical: 8.0),
                             backgroundColor: Colors.grey[100],
                             labelStyle: GoogleFonts.plusJakartaSans(
                               color: AppColors.textGrey3,
@@ -3064,7 +3076,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
 
         if ((settingsProvider.leadCreationChanges == 1 ||
                 settingsProvider.referenceNameAfterEnquiryFor == 1) &&
-            settingsProvider.menuIsViewMap[145] == 1) ...[
+            settingsProvider.menuIsViewMap[201] == 1) ...[
           const SizedBox(height: 10),
           CustomTextfieldWidgetMobile(
             focusNode: FocusNode(),
@@ -3136,7 +3148,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
             const SizedBox(height: 10),
           ],
         ],
-        if (settingsProvider.menuIsViewMap[150] == 1) ...[
+        if (settingsProvider.menuIsViewMap[204] == 1) ...[
           if (settingsProvider.consumerContactNoMandatory == 1) ...[
             CustomTextfieldWidgetMobile(
               controller: leadProvider.consumerContactNoController,
@@ -3187,70 +3199,74 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
           const SizedBox(height: 10),
         ],
 
-        Row(
-          children: [
-            Expanded(
-              child: SearchableBottomSheetDropdown<int>(
-                hintText:
-                    'Enquiry For${settingsProvider.enquiryForMandatory == 1 ? '*' : ''}',
-                enabled: dropDownProvider.selectedSourceId != null,
-                items: dropDownProvider.filteredEnquiryForData
-                    .map((status) => DropdownItem<int>(
-                          id: status.enquiryForId,
-                          name: status.enquiryForName,
-                        ))
-                    .toList(),
-                controller: leadProvider.enquiryForController,
-                onItemSelected: (int? newValue) {
-                  if (newValue != null) {
-                    final selectedEnquiryFor = dropDownProvider
-                        .filteredEnquiryForData
-                        .firstWhere((task) => task.enquiryForId == newValue);
-                    dropDownProvider.updateEnquiryForName(
-                        newValue, selectedEnquiryFor.enquiryForName);
-                    leadProvider.clearCustomFieldEnquiryFor();
-                    leadProvider.getCustomFieldsByEnquiryForId(
-                      context,
-                      leadId: widget.isEdit ? (leadProvider.customerId ?? 0) : 0,
-                      enquiryForId: newValue,
-                    );
-                  }
-                },
-                selectedValue: dropDownProvider.selectedEnquiryForId,
-              ),
-            ),
-            IconButton(
-              tooltip: "Add Enquiry For",
-              icon: Icon(Icons.add_circle, color: AppColors.primaryViolet),
-              onPressed: () {
-                showDialog(
-                  barrierDismissible: false,
-                  context: context,
-                  builder: (BuildContext context) {
-                    return const AddEnquiryFor(
-                      editId: '0',
-                      isEdit: false,
-                      sourceId: '0',
-                      sourceName: '',
-                      status: '',
-                      data: null,
-                    );
+        if (settingsProvider.menuIsViewMap[203] == 1) ...[
+          Row(
+            children: [
+              Expanded(
+                child: SearchableBottomSheetDropdown<int>(
+                  hintText:
+                      'Enquiry For${settingsProvider.enquiryForMandatory == 1 ? '*' : ''}',
+                  enabled: dropDownProvider.selectedSourceId != null,
+                  items: dropDownProvider.filteredEnquiryForData
+                      .map((status) => DropdownItem<int>(
+                            id: status.enquiryForId,
+                            name: status.enquiryForName,
+                          ))
+                      .toList(),
+                  controller: leadProvider.enquiryForController,
+                  onItemSelected: (int? newValue) {
+                    if (newValue != null) {
+                      final selectedEnquiryFor = dropDownProvider
+                          .filteredEnquiryForData
+                          .firstWhere((task) => task.enquiryForId == newValue);
+                      dropDownProvider.updateEnquiryForName(
+                          newValue, selectedEnquiryFor.enquiryForName);
+                      leadProvider.clearCustomFieldEnquiryFor();
+                      leadProvider.getCustomFieldsByEnquiryForId(
+                        context,
+                        leadId:
+                            widget.isEdit ? (leadProvider.customerId ?? 0) : 0,
+                        enquiryForId: newValue,
+                      );
+                    }
                   },
-                ).then((value) async {
-                  if (context.mounted) {
-                    await dropDownProvider.getEnquiryFor(context);
-                    dropDownProvider.filterEnquiryForByCategory(
-                        dropDownProvider.selectedSourceId ?? 0);
-                  }
-                });
-              },
-            ),
-          ],
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        if (settingsProvider.leadCreationChanges != 1) ...[
+                  selectedValue: dropDownProvider.selectedEnquiryForId,
+                ),
+              ),
+              IconButton(
+                tooltip: "Add Enquiry For",
+                icon: Icon(Icons.add_circle, color: AppColors.primaryViolet),
+                onPressed: () {
+                  showDialog(
+                    barrierDismissible: false,
+                    context: context,
+                    builder: (BuildContext context) {
+                      return const AddEnquiryFor(
+                        editId: '0',
+                        isEdit: false,
+                        sourceId: '0',
+                        sourceName: '',
+                        status: '',
+                        data: null,
+                      );
+                    },
+                  ).then((value) async {
+                    if (context.mounted) {
+                      await dropDownProvider.getEnquiryFor(context);
+                      dropDownProvider.filterEnquiryForByCategory(
+                          dropDownProvider.selectedSourceId ?? 0);
+                    }
+                  });
+                },
+              ),
+            ],
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+        ],
+        if (settingsProvider.leadCreationChanges != 1 &&
+            settingsProvider.menuIsViewMap[197] == 1) ...[
           SearchableBottomSheetDropdown<int>(
             hintText: 'Priority',
             items: settingsProvider.priorities
@@ -3277,7 +3293,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
             height: 10,
           ),
         ],
-       if (settingsProvider.menuIsViewMap[171] == 1) ...[
+        if (settingsProvider.menuIsViewMap[200] == 1) ...[
           CustomTextField(
             height: 54,
             controller: leadProvider.leadSubsidyController,
@@ -3293,7 +3309,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
             height: 10,
           ),
         ],
-        if (settingsProvider.menuIsViewMap[104] == 1) ...[
+        if (settingsProvider.menuIsViewMap[198] == 1) ...[
           CustomTextfieldWidgetMobile(
             focusNode: FocusNode(),
             controller: leadProvider.projectCostController,
@@ -3305,7 +3321,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
             height: 10,
           ),
         ],
-        if (settingsProvider.menuIsViewMap[147] == 1) ...[
+        if (settingsProvider.menuIsViewMap[199] == 1) ...[
           CustomTextfieldWidgetMobile(
             focusNode: FocusNode(),
             controller: leadProvider.commissionController,
@@ -3349,7 +3365,8 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
                     if (leadProvider.customFieldEnquiryFor.isNotEmpty)
                       CustomFieldSectionWidget(
                         showEditButton: true,
-                        controllerKey: CustomFieldControllerkey.enquirySource.value,
+                        controllerKey:
+                            CustomFieldControllerkey.enquirySource.value,
                         key: customFieldEnquirySourceKey,
                         showMore: false,
                         initialFieldValues: widget.isEdit
@@ -3361,8 +3378,8 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
                             : leadProvider.customFieldEnquiryFor
                                 .map((e) => FieldValueModel(
                                     customFieldId: e.customFieldId,
-                                    value: leadProvider
-                                        .getCustomFieldValue(e.customFieldId ?? 0)))
+                                    value: leadProvider.getCustomFieldValue(
+                                        e.customFieldId ?? 0)))
                                 .toList(),
                         onFieldValuesChanged: (fieldValues) {
                           if (!widget.isEdit) {
@@ -3376,32 +3393,6 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
                         customFields: leadProvider.customFieldEnquiryFor,
                         initialValues: const {},
                       ),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: TextButton.icon(
-                        onPressed: () {
-                          showDialog(
-                            barrierDismissible: false,
-                            context: context,
-                            builder: (BuildContext context) {
-                              return const AddCustomField(
-                                editId: '0',
-                                isEdit: false,
-                                status: '',
-                              );
-                            },
-                          ).then((value) async {
-                            if (context.mounted) {
-                              if (null != value && value) {
-                                settingsProvider.getCustomField(context);
-                              }
-                            }
-                          });
-                        },
-                        icon: Icon(Icons.add_circle, color: AppColors.primaryViolet),
-                        label: Text('Choose Custom Field', style: GoogleFonts.plusJakartaSans(color: AppColors.primaryViolet, fontWeight: FontWeight.w600)),
-                      ),
-                    ),
                   ],
                 );
               }

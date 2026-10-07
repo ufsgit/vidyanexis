@@ -5035,6 +5035,7 @@ class SettingsProvider extends ChangeNotifier {
   }
 
   Future<void> uploadImagesToAws(String taskId, BuildContext context) async {
+    if (_images.isEmpty) return;
     await _uploadFilesToAws(_images, 'image/jpeg', taskId, context);
   }
 

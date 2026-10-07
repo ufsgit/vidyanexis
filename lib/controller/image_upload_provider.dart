@@ -337,11 +337,13 @@ class ImageUploadProvider extends ChangeNotifier {
 
   // Upload images to AWS
   Future<void> uploadImagesToAws(String taskId, BuildContext context) async {
+    if (_images.isEmpty) return;
     await _uploadFilesToAws(_images, 'image/jpeg', taskId, context);
   }
 
   // Upload PDFs to AWS
   Future<void> uploadPdfsToAws(String taskId, BuildContext context) async {
+    if (_pdfs.isEmpty) return;
     await _uploadFilesToAws(_pdfs, 'application/pdf', taskId, context);
   }
 
