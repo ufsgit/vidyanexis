@@ -522,4 +522,5 @@ class HttpUrls {
   static String searchDocumentCategory = "item/get_Document_Category";
   static String saveDocumentCategory = "item/save_Document_Category";
   static String deleteDocumentCategory = "item/delete_Document_Category";
+  static String taskDeadlineReport = "task/Task_Deadline_Report";
 }
