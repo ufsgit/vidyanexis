@@ -527,4 +527,6 @@ class HttpUrls {
   static String saveItemDocuments = "item/Save_Item_Documents";
   static String getItemDocumentsByItemId = "item/Get_Item_Documents_By_Item_Id";
   static String deleteItemDocument = "item/Delete_Item_Document";
+  static String getItemDocumentCategories = "item/Get_Item_Document_Categories";
+  static String getItemDocumentsByCategory = "item/Get_Item_Documents_By_Category";
 }
