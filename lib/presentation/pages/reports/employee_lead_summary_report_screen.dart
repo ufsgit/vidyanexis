@@ -750,8 +750,8 @@ class _EmployeeLeadSummaryReportScreenState
         spacing: 12,
         runSpacing: 12,
         children: [
-          _buildSummaryCard(context, 'Total Leads', totalLeads, Colors.blue, onTap: () {
-             if (totalLeads != "0") provider.getEmployeeLeadList(context, 0, 'Total');
+          _buildSummaryCard(context, 'Assigned', totalLeads, Colors.blue, onTap: () {
+             if (totalLeads != "0") provider.getEmployeeLeadList(context, 0, 'Assigned');
           }),
           _buildSummaryCard(context, 'Pending Followup', pending, Colors.orange, onTap: () {
              if (pending != "0") provider.getEmployeeLeadList(context, 0, 'Pending');
