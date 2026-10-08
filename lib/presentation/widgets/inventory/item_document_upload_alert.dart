@@ -1,7 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
+import 'package:universal_html/universal_html.dart' as html;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
@@ -11,6 +15,7 @@ import 'package:vidyanexis/controller/models/item_document_model.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
+import 'package:vidyanexis/utils/file_downloader_io.dart';
 
 class ItemDocumentUploadAlert extends StatefulWidget {
   final int itemId;
@@ -50,6 +55,33 @@ class _ItemDocumentUploadAlertState extends State<ItemDocumentUploadAlert> {
       expenseProvider.clearPendingItemFiles();
       expenseProvider.getItemDocuments(widget.itemId, context);
     });
+  }
+
+  Future<String> webForceDownload(String url, {String? suggestedName}) async {
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode != 200) {
+      throw Exception('HTTP ${response.statusCode}');
+    }
+
+    final bytes = response.bodyBytes;
+    final fileName = suggestedName ??
+        Uri.parse(url).pathSegments.lastOrNull ??
+        'download_${DateTime.now().millisecondsSinceEpoch}';
+
+    final blob = html.Blob([bytes]);
+    final objectUrl = html.Url.createObjectUrlFromBlob(blob);
+
+    final anchor = html.AnchorElement(href: objectUrl)
+      ..setAttribute('download', fileName)
+      ..style.display = 'none';
+
+    html.document.body!.children.add(anchor);
+    anchor.click(); // ← forces the browser download
+    anchor.remove();
+
+    html.Url.revokeObjectUrl(objectUrl);
+    return fileName;
   }
 
   // ---------- Fullscreen (same as document page) ----------
@@ -191,6 +223,49 @@ class _ItemDocumentUploadAlertState extends State<ItemDocumentUploadAlert> {
                       },
                     ),
                   ),
+
+                  // Download (current page)
+                  Positioned(
+                    top: 20,
+                    right: 70,
+                    child: IconButton(
+                      icon: const Icon(Icons.download, color: Colors.white),
+                      onPressed: () async {
+                        final currentIndex = pageController.hasClients &&
+                                pageController.page != null
+                            ? pageController.page!.round()
+                            : initialIndex;
+                        final item = items[currentIndex];
+                        final String imagePath = item is ItemDocumentModel
+                            ? item.filePath
+                            : (item['filePath'] as String? ?? '');
+                        if (imagePath.isEmpty) return;
+
+                        print("file Path: $imagePath");
+
+                        try {
+                          Fluttertoast.showToast(msg: "Downloading file...");
+
+                          String result;
+                          if (kIsWeb) {
+                            // Real forced download on web
+                            result = await webForceDownload(
+                                imagePath); // or imagePath
+                          } else {
+                            // Existing mobile / desktop code (unchanged)
+                            result = await FileDownloader.download(imagePath);
+                          }
+
+                          Fluttertoast.showToast(msg: "Downloaded to $result");
+                        } catch (e) {
+                          Fluttertoast.showToast(
+                              msg: "Failed to download file");
+                        }
+                      },
+                    ),
+                  ),
+
+                  // Close
                   Positioned(
                     top: 20,
                     right: 20,
@@ -248,6 +323,44 @@ class _ItemDocumentUploadAlertState extends State<ItemDocumentUploadAlert> {
                   ),
                 ),
               ),
+
+              // Download (top-left)
+              Positioned(
+                top: 4,
+                left: 4,
+                child: GestureDetector(
+                  onTap: () async {
+                    if (filePath.isEmpty) return;
+                    print("file Path: $filePath");
+
+                    try {
+                      Fluttertoast.showToast(msg: "Downloading file...");
+
+                      String result;
+                      if (kIsWeb) {
+                        // Real forced download on web
+                        result =
+                            await webForceDownload(filePath); // or imagePath
+                      } else {
+                        // Existing mobile / desktop code (unchanged)
+                        result = await FileDownloader.download(filePath);
+                      }
+
+                      Fluttertoast.showToast(msg: "Downloaded to $result");
+                    } catch (e) {
+                      Fluttertoast.showToast(msg: "Failed to download file");
+                    }
+                  },
+                  child: const CircleAvatar(
+                    radius: 12,
+                    backgroundColor: Colors.white,
+                    child: Icon(Icons.download,
+                        size: 16, color: AppColors.primaryBlue),
+                  ),
+                ),
+              ),
+
+              // Delete / X (top-right)
               Positioned(
                 top: 4,
                 right: 4,
