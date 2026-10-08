@@ -3258,7 +3258,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           AppColors
                                                                               .darkGreen,
                                                                       buttonText:
-                                                                          'Download',
+                                                                          'Download Document',
                                                                       onPressed:
                                                                           () {
                                                                         showDialog(
@@ -4512,7 +4512,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                     AppColors
                                                                         .darkGreen,
                                                                 buttonText:
-                                                                    'Download',
+                                                                    'Download Document',
                                                                 onPressed: () {
                                                                   showDialog(
                                                                     context:

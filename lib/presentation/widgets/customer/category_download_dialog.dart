@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
+import 'package:vidyanexis/http/loader.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 
 class DocumentCategoryDownloadDialog extends StatefulWidget {
@@ -138,10 +139,13 @@ class _DocumentCategoryDownloadDialogState
                                               horizontalPadding: 14,
                                               verticalPadding: 0,
                                               onPressed: () async {
+                                                Loader.showLoader(context);
                                                 await provider.downloadCategoryDocuments(
                                                   customerId: widget.customerId,
                                                   categoryId: category.documentCategoryId,
+                                                  categoryName: category.documentCategoryName,
                                                 );
+                                                Loader.stopLoader(context);
                                               },
                                             ),
                                           ),

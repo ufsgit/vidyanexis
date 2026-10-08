@@ -5974,6 +5974,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
   Future<void> downloadCategoryDocuments({
     required String customerId,
     required int categoryId,
+    required String categoryName,
   }) async {
     try {
       final response = await HttpRequest.httpGetRequest(
@@ -5995,6 +5996,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
       final archive = Archive();
       final dio = Dio();
+      Fluttertoast.showToast(msg: 'Downloading ...');
 
       for (int i = 0; i < documents.length; i++) {
         final String fileUrl = documents[i]['File_Path'] ?? '';
@@ -6031,16 +6033,17 @@ class CustomerDetailsProvider extends ChangeNotifier {
       }
 
       final Uint8List zipData = Uint8List.fromList(zipBytes);
+      final customerName = leadDetails?[0].customerName ?? '';
 
       if (kIsWeb) {
         _downloadZipWeb(
           zipData,
-          'customer_$customerId.zip',
+          '$customerName-$categoryName.zip',
         );
       } else {
         await _downloadZipMobile(
           zipData,
-          'customer_$customerId.zip',
+          '$customerName-$categoryName.zip',
         );
       }
     } catch (e) {
