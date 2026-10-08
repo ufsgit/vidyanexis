@@ -26,6 +26,7 @@ import 'package:vidyanexis/presentation/pages/reports/ta_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/travel_allowance/travel_allowance_page.dart';
 import 'package:vidyanexis/presentation/pages/location/location_tracking_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/task_aging_report_screen.dart';
+import 'package:vidyanexis/presentation/pages/reports/task_deadline_report_screen.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/pages/reports/lead_creation_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/lead_creation_details_screen.dart';
@@ -177,6 +178,12 @@ final GoRouter appRouter = GoRouter(
       path: '/taskAgingReport',
       pageBuilder: (context, state) {
         return fadeTransition(const TaskAgingReportScreen());
+      },
+    ),
+    GoRoute(
+      path: TaskDeadlineReportScreen.route,
+      pageBuilder: (context, state) {
+        return fadeTransition(const TaskDeadlineReportScreen());
       },
     ),
     GoRoute(

@@ -58,6 +58,7 @@ import 'package:vidyanexis/controller/task_report_provider.dart';
 import 'package:vidyanexis/controller/warrenty_report_provider.dart';
 import 'package:vidyanexis/controller/time_track_report_provider.dart';
 import 'package:vidyanexis/controller/stock_use_report_provider.dart';
+import 'package:vidyanexis/controller/task_deadline_report_provider.dart';
 import 'package:vidyanexis/controller/stock_return_report_provider.dart';
 import 'package:vidyanexis/controller/work_report_provider.dart';
 import 'package:vidyanexis/controller/work_summary_provider.dart';
@@ -228,6 +229,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => TargetReportProvider()),
         ChangeNotifierProvider(create: (_) => AccountsSummaryReportProvider()),
         ChangeNotifierProvider(create: (_) => DuplicateEntryAttemptsProvider()),
+        ChangeNotifierProvider(create: (_) => TaskDeadlineReportProvider()),
         ChangeNotifierProvider(create: (_) => LocationTrackingProvider()),
         ChangeNotifierProvider(create: (_) => ProjectDurationReportProvider()),
         ChangeNotifierProvider(create: (_) => LeadCreationReportProvider()),

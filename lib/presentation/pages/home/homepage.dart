@@ -50,6 +50,7 @@ import 'package:vidyanexis/presentation/pages/reports/service_page_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/stock_return_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/task_page_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/task_aging_report_screen.dart';
+import 'package:vidyanexis/presentation/pages/reports/task_deadline_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/balance_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/payment_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/receipt_report_page.dart';
@@ -345,6 +346,12 @@ class _HomePageState extends State<HomePage> {
           title: 'Task Aging Report',
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: TaskAgingReportScreen()),
+        ),
+      if (settingsProvider.menuIsViewMap[208].toString() == '1')
+        SidebarOption(
+          title: 'Task Deadline Report',
+          iconPath: 'assets/images/Reports.svg',
+          baseContent: const Center(child: TaskDeadlineReportScreen()),
         ),
       if (settingsProvider.menuIsViewMap[123].toString() == '1')
         SidebarOption(
