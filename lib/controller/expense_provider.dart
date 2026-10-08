@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:mime/mime.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -13,6 +14,7 @@ import 'package:vidyanexis/controller/models/Sales_model.dart';
 import 'package:vidyanexis/controller/models/customer_details_model.dart';
 import 'package:vidyanexis/controller/models/expense_management_model.dart';
 import 'package:vidyanexis/controller/models/expense_type_model.dart';
+import 'package:vidyanexis/controller/models/item_document_model.dart';
 import 'package:vidyanexis/controller/models/item_list_model.dart';
 import 'package:vidyanexis/controller/models/item_lists_model.dart';
 import 'package:vidyanexis/controller/models/item_settings_model.dart';
@@ -2870,6 +2872,247 @@ class ExpenseProvider extends ChangeNotifier {
           content: Text('An error occurred: ${e.toString()}'),
         ),
       );
+    }
+  }
+
+  // ==================== ITEM DOCUMENTS ====================
+
+  List<ItemDocumentModel> _itemDocuments = [];
+  List<ItemDocumentModel> get itemDocuments => _itemDocuments;
+
+  List<Map<String, dynamic>> _pendingItemFiles = [];
+  List<Map<String, dynamic>> get pendingItemFiles => _pendingItemFiles;
+
+  void clearPendingItemFiles() {
+    _pendingItemFiles.clear();
+    notifyListeners();
+  }
+
+  void removePendingItemFile(int index) {
+    if (index >= 0 && index < _pendingItemFiles.length) {
+      _pendingItemFiles.removeAt(index);
+      notifyListeners();
+    }
+  }
+
+  Future<void> getItemDocuments(int itemId, BuildContext context) async {
+    try {
+      _itemDocuments = [];
+      notifyListeners();
+      final response = await HttpRequest.httpGetRequest(
+        endPoint: '${HttpUrls.getItemDocumentsByItemId}/?Item_Id=$itemId',
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        final data = response.data;
+        if (data['success'] == true && data['data'] is List) {
+          _itemDocuments = (data['data'] as List)
+              .map((e) => ItemDocumentModel.fromJson(e as Map<String, dynamic>))
+              .where((e) => e.deleteStatus == 0)
+              .toList();
+        } else {
+          _itemDocuments = [];
+        }
+      } else {
+        _itemDocuments = [];
+      }
+    } catch (e) {
+      debugPrint('getItemDocuments error: $e');
+      _itemDocuments = [];
+    } finally {
+      notifyListeners();
+    }
+  }
+
+  /// Pick files + upload to Cloudflare immediately (same helpers as documents)
+  Future<void> pickAndUploadItemFiles({
+    required int docTypeId,
+    required String docTypeName,
+    required BuildContext context,
+  }) async {
+    if (!kIsWeb) {
+      await Permission.storage.request();
+      await Permission.photos.request();
+    }
+
+    final result = await FilePicker.platform.pickFiles(
+      allowMultiple: true,
+      type: FileType.custom,
+      allowedExtensions: [
+        'jpg',
+        'jpeg',
+        'png',
+        'pdf',
+        'doc',
+        'docx',
+        'xls',
+        'xlsx',
+        'csv'
+      ],
+    );
+
+    if (result == null) return;
+
+    try {
+      Loader.showLoader(context);
+
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      String userId = preferences.getString('userId') ?? '0';
+
+      for (var platformFile in result.files) {
+        Uint8List? fileData;
+
+        if (platformFile.bytes != null) {
+          fileData = platformFile.bytes;
+        } else if (platformFile.path != null) {
+          fileData = await File(platformFile.path!).readAsBytes();
+        }
+
+        if (fileData == null) {
+          print('Unable to read file data for ${platformFile.name}');
+          continue;
+        }
+
+        String fileType = '';
+        if (platformFile.bytes != null) {
+          fileType = determineFileType(fileData);
+        } else if (platformFile.path != null) {
+          fileType =
+              lookupMimeType(platformFile.path!, headerBytes: fileData) ?? '';
+        }
+
+        final String ext = platformFile.extension?.toLowerCase() ?? '';
+
+        String type = 'image';
+        String mimeType = 'image/jpeg';
+
+        if (fileType == 'application/pdf' || ext == 'pdf') {
+          type = 'pdf';
+          mimeType = 'application/pdf';
+        } else if (fileType.startsWith('image/') ||
+            ['jpg', 'jpeg', 'png'].contains(ext)) {
+          type = 'image';
+          mimeType = 'image/${ext.isEmpty ? 'jpeg' : ext}';
+        } else if (['doc', 'docx', 'xls', 'xlsx', 'csv'].contains(ext)) {
+          type = 'document';
+          mimeType = ext;
+        } else {
+          print('Unsupported file type: ${platformFile.name}');
+          continue;
+        }
+
+        // Existing Cloudflare upload (same as documents)
+        final String? uploadedPath = await CloudflareUpload.uploadToCloudflare(
+          fileData,
+          mimeType,
+          userId,
+          context,
+        );
+
+        if (uploadedPath != null && uploadedPath.isNotEmpty) {
+          _pendingItemFiles.add({
+            'name': platformFile.name,
+            'type': type,
+            'mimeType': mimeType,
+            'filePath': HttpUrls.imgBaseUrl + uploadedPath,
+            'docTypeId': docTypeId,
+            'docTypeName': docTypeName,
+          });
+          print('File uploaded to Cloudflare: ${platformFile.name}');
+        } else {
+          Fluttertoast.showToast(msg: "Failed to upload ${platformFile.name}");
+        }
+      }
+    } catch (e) {
+      debugPrint('pickAndUploadItemFiles error: $e');
+      Fluttertoast.showToast(msg: "An error occurred");
+    } finally {
+      if (context.mounted) {
+        Loader.stopLoader(context);
+      }
+      notifyListeners();
+    }
+  }
+
+  /// Save already-uploaded paths to Item API only
+  Future<void> saveItemDocuments({
+    required int itemId,
+    required BuildContext context,
+  }) async {
+    if (_pendingItemFiles.isEmpty) {
+      Fluttertoast.showToast(msg: "Pick at least one document");
+      return;
+    }
+
+    try {
+      Loader.showLoader(context);
+
+      final documentsJson = _pendingItemFiles.map((f) {
+        return {
+          'Item_Document_Id': 0,
+          'Document_Type_Id': f['docTypeId'] ?? 1,
+          'File_Path': f['filePath'],
+          'DeleteStatus': 0,
+        };
+      }).toList();
+
+      final response = await HttpRequest.httpPostRequest(
+        endPoint: HttpUrls.saveItemDocuments,
+        bodyData: {
+          'Item_Id': itemId,
+          'Item_Documents_JSON': documentsJson,
+        },
+      );
+
+      if (response != null && response.statusCode == 200) {
+        clearPendingItemFiles();
+        await getItemDocuments(itemId, context);
+
+        Fluttertoast.showToast(msg: "Documents Uploaded Successfully");
+        if (context.mounted) {
+          Navigator.pop(context);
+        }
+      } else {
+        Fluttertoast.showToast(msg: "Failed to save documents");
+      }
+    } catch (e) {
+      debugPrint('saveItemDocuments error: $e');
+      Fluttertoast.showToast(msg: "An error occurred during upload");
+    } finally {
+      if (context.mounted) {
+      Loader.stopLoader(context);
+      }
+    }
+  }
+
+  Future<void> deleteItemDocument({
+    required int documentId,
+    required int itemId,
+    required BuildContext context,
+  }) async {
+    try {
+      Loader.showLoader(context);
+
+      final response = await HttpRequest.httpDeleteRequest(
+        endPoint: '${HttpUrls.deleteItemDocument}?Item_Document_Id=$documentId',
+      );
+
+      if (response != null && response.statusCode == 200) {
+        await getItemDocuments(itemId, context);
+        Fluttertoast.showToast(msg: "Document deleted");
+        if (context.mounted) {
+          Navigator.pop(context);
+        }
+      } else {
+        Fluttertoast.showToast(msg: "Failed to delete document");
+      }
+    } catch (e) {
+      debugPrint('deleteItemDocument error: $e');
+      Fluttertoast.showToast(msg: "An error occurred");
+    } finally {
+      if (context.mounted) {
+        Loader.stopLoader(context);
+      }
     }
   }
 }

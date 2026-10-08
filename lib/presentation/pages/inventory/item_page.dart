@@ -4,9 +4,11 @@ import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/expense_provider.dart';
+import 'package:vidyanexis/controller/models/item_list_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/inventory/add_item.dart';
 import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
+import 'package:vidyanexis/presentation/widgets/inventory/item_document_upload_alert.dart';
 
 class ItemPage extends StatefulWidget {
   const ItemPage({super.key});
@@ -88,6 +90,7 @@ class _ItemPageState extends State<ItemPage> {
                           subtitle: 'Code: ${item.itemId}  |  Total Qty: ${item.total}',
                           itemTypeName: itemTypeName,
                           itemTypeColor: itemTypeColor,
+                          item: item,
                           onEdit: settingsProvider.menuIsEditMap[43] == 1
                               ? () {
                                   expenseProvider.getItemMaterialList(
@@ -132,6 +135,7 @@ class _ItemPageState extends State<ItemPage> {
     Color? itemTypeColor,
     VoidCallback? onEdit,
     VoidCallback? onDelete,
+    required ItemListModel item,
   }) {
     return Container(
       color: index.isEven ? Colors.white : const Color(0xFFF8FAFC),
@@ -178,6 +182,27 @@ class _ItemPageState extends State<ItemPage> {
                 ],
               ],
             ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) => ItemDocumentUploadAlert(
+                  itemId: item.itemId,
+                  itemName: item.itemName,
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.secondaryBlue,
+              foregroundColor: Colors.white,
+              elevation: 0,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            child: const Text('Upload Documents'),
           ),
           if (onEdit != null)
             TextButton(
