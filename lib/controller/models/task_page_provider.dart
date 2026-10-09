@@ -821,16 +821,45 @@ class TaskPageProvider extends ChangeNotifier {
 
       int apiSortOption = _selectedSortOption == 4 ? 0 : _selectedSortOption;
 
-      final response = await HttpRequest.httpGetRequest(
+      // For Creation Date (Newest / DESC), the backend stores oldest on page 1 and newest on last page (_totalPages).
+      // Pass the reversed page index so the newest page is fetched first.
+      int apiPageIndex = _pageIndex;
+      if (_selectedSortOption == 2 && _sortOrder == 'DESC') {
+        if (_totalPages > 1) {
+          apiPageIndex = (_totalPages - _pageIndex + 1).clamp(1, _totalPages);
+        }
+      }
+
+      var response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchTaskByCustomer}?Customer_Name=$_Search&Phone_Number=$_Search&Consumer_Number=$_Search&Task_Status_Id=$_Status&To_User=$toUserId&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&Task_Type_Id=$_TaskType&Enquiry_For_Id=$_enquiryForS&Department_Id=$_Department_Id&Page_Index=$_pageIndex&PageSize=$_pageSize&Order_By_=$apiSortOption&Order_Type_=$_sortOrder&Entry_Type_=$_entryType&Priority_Id_=$_selectedPriority');
+              '${HttpUrls.searchTaskByCustomer}?Customer_Name=$_Search&Phone_Number=$_Search&Consumer_Number=$_Search&Task_Status_Id=$_Status&To_User=$toUserId&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&Task_Type_Id=$_TaskType&Enquiry_For_Id=$_enquiryForS&Department_Id=$_Department_Id&Page_Index=$apiPageIndex&PageSize=$_pageSize&Order_By_=$apiSortOption&Order_Type_=$_sortOrder&Entry_Type_=$_entryType&Priority_Id_=$_selectedPriority');
 
       if (response.statusCode == 200) {
-        final data = response.data;
+        var data = response.data;
 
         if (data != null) {
-          final newData = data['data'] ?? [];
           final metaData = data['metadata'] ?? {};
+
+          // Update metadata
+          _totalSize = metaData['Total_Items'] ?? 1;
+          _totalPages = metaData['Total_Pages'] ?? 1;
+
+          // If sorting by creation date DESC and initial totalPages was 1, re-fetch the actual last page
+          if (_selectedSortOption == 2 && _sortOrder == 'DESC' && _totalPages > 1) {
+            final int correctApiPageIndex =
+                (_totalPages - _pageIndex + 1).clamp(1, _totalPages);
+            if (apiPageIndex != correctApiPageIndex) {
+              apiPageIndex = correctApiPageIndex;
+              final reResponse = await HttpRequest.httpGetRequest(
+                  endPoint:
+                      '${HttpUrls.searchTaskByCustomer}?Customer_Name=$_Search&Phone_Number=$_Search&Consumer_Number=$_Search&Task_Status_Id=$_Status&To_User=$toUserId&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&Task_Type_Id=$_TaskType&Enquiry_For_Id=$_enquiryForS&Department_Id=$_Department_Id&Page_Index=$apiPageIndex&PageSize=$_pageSize&Order_By_=$apiSortOption&Order_Type_=$_sortOrder&Entry_Type_=$_entryType&Priority_Id_=$_selectedPriority');
+              if (reResponse.statusCode == 200 && reResponse.data != null) {
+                data = reResponse.data;
+              }
+            }
+          }
+
+          final newData = data['data'] ?? [];
 
           // Convert new data to TaskReportModel list
           if (newData.isNotEmpty) {
@@ -843,10 +872,6 @@ class TaskPageProvider extends ChangeNotifier {
           final newTasks = (newData as List<dynamic>)
               .map((item) => TaskReportModel.fromJson(item))
               .toList();
-
-          // Update metadata
-          _totalSize = metaData['Total_Items'] ?? 1;
-          _totalPages = metaData['Total_Pages'] ?? 1;
 
           // Check if it's mobile screen using app-wide threshold
           final isMobile = !AppStyles.isWebScreen(context);
@@ -867,11 +892,23 @@ class TaskPageProvider extends ChangeNotifier {
               _taskReport.sort((a, b) => b.taskId.compareTo(a.taskId));
             }
           } else if (_selectedSortOption == 2) {
-            if (_sortOrder == 'ASC') {
-              _taskReport.sort((a, b) => (a.entryDate).compareTo(b.entryDate));
-            } else {
-              _taskReport.sort((a, b) => (b.entryDate).compareTo(a.entryDate));
-            }
+            _taskReport.sort((a, b) {
+              final dateA = a.parsedCreationDate;
+              final dateB = b.parsedCreationDate;
+              if (dateA != null && dateB != null) {
+                final dateComp = _sortOrder == 'ASC'
+                    ? dateA.compareTo(dateB)
+                    : dateB.compareTo(dateA);
+                if (dateComp != 0) return dateComp;
+              } else if (dateA == null && dateB != null) {
+                return 1;
+              } else if (dateA != null && dateB == null) {
+                return -1;
+              }
+              return _sortOrder == 'ASC'
+                  ? a.taskId.compareTo(b.taskId)
+                  : b.taskId.compareTo(a.taskId);
+            });
           } else if (_selectedSortOption == 3) {
             if (_sortOrder == 'ASC') {
               _taskReport.sort((a, b) => (a.nextFollowupDate ?? '').compareTo(b.nextFollowupDate ?? ''));
