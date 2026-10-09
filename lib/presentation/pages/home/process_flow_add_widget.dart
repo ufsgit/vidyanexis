@@ -972,13 +972,44 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                       ),
                       _buildMandatoryTaskList(taskTypeList, taskTypeStatusList),
                       const SizedBox(height: 24),
-                      Text(
-                        'Mandatory Document',
-                        style: GoogleFonts.plusJakartaSans(
-                          color: AppColors.textBlue800,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                        ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              'Documents',
+                              style: GoogleFonts.plusJakartaSans(
+                                color: AppColors.textBlue800,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 60,
+                            child: Text(
+                              'Select',
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.plusJakartaSans(
+                                color: AppColors.textBlue800,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          SizedBox(
+                            width: 80,
+                            child: Text(
+                              'Mandatory',
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.plusJakartaSans(
+                                color: AppColors.textBlue800,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(
                         height: 5,
@@ -997,15 +1028,19 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                                   (selected) =>
                                       selected.documentTypeId ==
                                       doc.documentTypeId);
-                              return InkWell(
-                                onTap: () =>
-                                    provider.toggleDocumentSelection(doc),
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 4),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
+                              bool isMandatory = provider.selectedDocuments.any(
+                                  (selected) =>
+                                      selected.documentTypeId ==
+                                      doc.documentTypeId && selected.isMandatory == true);
+                              return Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 4),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: InkWell(
+                                        onTap: () =>
+                                            provider.toggleDocumentSelection(doc),
                                         child: Text(
                                           doc.documentTypeName,
                                           style: GoogleFonts.plusJakartaSans(
@@ -1015,24 +1050,41 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                                           ),
                                         ),
                                       ),
-                                      SizedBox(
-                                        height: 24,
-                                        width: 24,
-                                        child: Checkbox(
-                                          value: isSelected,
-                                          activeColor: AppColors.secondaryBlue,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(4),
-                                          ),
-                                          onChanged: (bool? value) {
-                                            provider
-                                                .toggleDocumentSelection(doc);
-                                          },
+                                    ),
+                                    SizedBox(
+                                      height: 24,
+                                      width: 60,
+                                      child: Checkbox(
+                                        value: isSelected,
+                                        activeColor: AppColors.secondaryBlue,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(4),
                                         ),
+                                        onChanged: (bool? value) {
+                                          provider
+                                              .toggleDocumentSelection(doc);
+                                        },
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                    const SizedBox(width: 16),
+                                    SizedBox(
+                                      height: 24,
+                                      width: 80,
+                                      child: Checkbox(
+                                        value: isMandatory,
+                                        activeColor: AppColors.secondaryBlue,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(4),
+                                        ),
+                                        onChanged: (bool? value) {
+                                          provider
+                                              .toggleDocumentMandatory(doc);
+                                        },
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               );
                             },

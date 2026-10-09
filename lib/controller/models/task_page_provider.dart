@@ -1353,9 +1353,10 @@ class TaskPageProvider extends ChangeNotifier {
                     .add(Duration(days: _taskTypeModel.first.duration)));
           }
 
-          _documentTypeModel = (documentData as List<dynamic>)
-              .map((item) => DocumentTypeModel.fromJson(item))
-              .toList();
+          _documentTypeModel = (documentData as List<dynamic>).map((item) {
+            debugPrint("DEBUG DOCUMENT JSON: $item");
+            return DocumentTypeModel.fromJson(item);
+          }).toList();
           _statusData = (statusData as List<dynamic>)
               .map((item) => MandatoryStatusModel.fromJson(item))
               .toList();

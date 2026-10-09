@@ -1274,9 +1274,8 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                                 .documentButtonTaskStatus ==
                                             1;
 
-                                    if (reportsProvider
-                                            .documentTypeModel.isNotEmpty &&
-                                        !isDocumentButtonEnabled) {
+                                    bool hasPendingMandatoryDocs = reportsProvider.documentTypeModel.any((doc) => doc.isMandatory);
+                                    if (hasPendingMandatoryDocs) {
                                       showDialog(
                                         context: context,
                                         builder: (context) => AlertDialog(
@@ -1666,26 +1665,10 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            ListTile(
-              leading: const Icon(Icons.camera_alt, color: Color(0xFF1A7AE8)),
-              title: const Text('Take Photo'),
-              onTap: () async {
-                await provider.addPhotoMobile(allowCamera: true);
-                if (context.mounted) Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading:
-                  const Icon(Icons.photo_library, color: Color(0xFF1A7AE8)),
-              title: const Text('Pick from Gallery'),
-              onTap: () async {
-                await provider.addPhotoMobile(allowCamera: false);
-                if (context.mounted) Navigator.pop(context);
-              },
-            ),
+
             ListTile(
               leading: const Icon(Icons.description, color: Color(0xFF1A7AE8)),
-              title: const Text('Upload Document (PDF/Image)'),
+              title: const Text('Upload Document'),
               onTap: () async {
                 await provider.addFileMobile();
                 if (context.mounted) Navigator.pop(context);

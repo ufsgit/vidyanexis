@@ -400,7 +400,11 @@ class ProcessFlowProvider extends ChangeNotifier {
 
             _selectedDocuments = documentsData
                 .where((item) => item != null)
-                .map((item) => DocumentTypeModel.fromJson(item))
+                .map((item) {
+                  var doc = DocumentTypeModel.fromJson(item);
+                  doc.isView = true;
+                  return doc;
+                })
                 .toList();
 
             processFlowModel.templateId = resData["template_id"]?.toString();
@@ -538,9 +542,19 @@ class ProcessFlowProvider extends ChangeNotifier {
       _selectedDocuments
           .removeWhere((d) => d.documentTypeId == doc.documentTypeId);
     } else {
-      _selectedDocuments.add(doc);
+      _selectedDocuments.add(doc.copyWith(isView: true, isMandatory: false));
     }
     print(_selectedDocuments.map((item) => item.toJson()).toList());
+    notifyListeners();
+  }
+
+  void toggleDocumentMandatory(DocumentTypeModel doc) {
+    final existingIndex = _selectedDocuments.indexWhere((d) => d.documentTypeId == doc.documentTypeId);
+    if (existingIndex >= 0) {
+      _selectedDocuments[existingIndex].isMandatory = !_selectedDocuments[existingIndex].isMandatory;
+    } else {
+      _selectedDocuments.add(doc.copyWith(isView: true, isMandatory: true));
+    }
     notifyListeners();
   }
 }

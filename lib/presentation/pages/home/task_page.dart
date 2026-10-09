@@ -6131,13 +6131,14 @@ class _tasksPageReportState extends State<TaskPage> {
                                                       return;
                                                     }
 
-                                                    if (provider
-                                                            .documentTypeModel
-                                                            .isEmpty ||
-                                                        isDocumentButtonEnabled ||
-                                                        (ramcoAdminTaskPhoto ==
-                                                                1 &&
-                                                            userId == "1")) {
+                                                    bool hasPendingMandatoryDocs = provider.documentTypeModel.any((doc) => doc.isMandatory);
+                                                    debugPrint("DEBUG: checking mandatory docs. List length: ${provider.documentTypeModel.length}");
+                                                    for (var doc in provider.documentTypeModel) {
+                                                      debugPrint("DEBUG: Doc ${doc.documentTypeName} - isMandatory: ${doc.isMandatory}, isView: ${doc.isView}");
+                                                    }
+                                                    debugPrint("DEBUG: hasPendingMandatoryDocs: $hasPendingMandatoryDocs");
+
+                                                    if (!hasPendingMandatoryDocs || (ramcoAdminTaskPhoto == 1 && userId == "1")) {
                                                       isSaving.value = true;
                                                       try {
                                                         final audioProvider =

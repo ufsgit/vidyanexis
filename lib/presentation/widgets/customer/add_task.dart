@@ -210,25 +210,10 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            ListTile(
-              leading: Icon(Icons.camera_alt, color: AppColors.appViolet),
-              title: const Text('Take Photo'),
-              onTap: () {
-                Navigator.pop(context);
-                _addPhotoMobile(allowCamera: true);
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.photo_library, color: AppColors.appViolet),
-              title: const Text('Pick from Gallery'),
-              onTap: () {
-                Navigator.pop(context);
-                _addPhotoMobile(allowCamera: false);
-              },
-            ),
+
             ListTile(
               leading: Icon(Icons.description, color: AppColors.appViolet),
-              title: const Text('Upload Document (PDF/Image)'),
+              title: const Text('Upload Document'),
               onTap: () {
                 Navigator.pop(context);
                 _addFileMobile();
