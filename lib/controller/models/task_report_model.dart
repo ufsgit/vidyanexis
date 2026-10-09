@@ -60,6 +60,16 @@ class TaskReportModel {
     final parsed = DateTime.tryParse(dateStr);
     if (parsed != null) return parsed;
     try {
+      int hour = 0, minute = 0, second = 0;
+      if (dateStr.contains(' ')) {
+        final spaceParts = dateStr.split(' ');
+        if (spaceParts.length > 1) {
+          final timeParts = spaceParts[1].split(':');
+          if (timeParts.isNotEmpty) hour = int.tryParse(timeParts[0]) ?? 0;
+          if (timeParts.length > 1) minute = int.tryParse(timeParts[1]) ?? 0;
+          if (timeParts.length > 2) second = int.tryParse(timeParts[2]) ?? 0;
+        }
+      }
       if (dateStr.contains('/')) {
         final parts = dateStr.split(' ');
         final dateParts = parts[0].split('/');
@@ -67,16 +77,23 @@ class TaskReportModel {
           int day = int.parse(dateParts[0]);
           int month = int.parse(dateParts[1]);
           int year = int.parse(dateParts[2]);
-          return DateTime(year, month, day);
+          return DateTime(year, month, day, hour, minute, second);
         }
       } else if (dateStr.contains('-')) {
         final parts = dateStr.split(' ');
         final dateParts = parts[0].split('-');
-        if (dateParts.length == 3 && dateParts[0].length <= 2) {
-          int day = int.parse(dateParts[0]);
-          int month = int.parse(dateParts[1]);
-          int year = int.parse(dateParts[2]);
-          return DateTime(year, month, day);
+        if (dateParts.length == 3) {
+          if (dateParts[0].length == 4) {
+            int year = int.parse(dateParts[0]);
+            int month = int.parse(dateParts[1]);
+            int day = int.parse(dateParts[2]);
+            return DateTime(year, month, day, hour, minute, second);
+          } else {
+            int day = int.parse(dateParts[0]);
+            int month = int.parse(dateParts[1]);
+            int year = int.parse(dateParts[2]);
+            return DateTime(year, month, day, hour, minute, second);
+          }
         }
       }
     } catch (_) {}
