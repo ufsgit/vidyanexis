@@ -1741,7 +1741,36 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
           builder: (context, setStateDialog) {
             return AlertDialog(
               backgroundColor: Colors.white,
-              title: const Text('Select Custom Fields'),
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('Select Custom Fields'),
+                  Row(
+                    children: [
+                      Text(
+                        'Event',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
+                      const SizedBox(width: 28), // Adjust width to align with the first checkbox
+                      Padding(
+                        padding: const EdgeInsets.only(right: 8.0),
+                        child: Text(
+                          'Mandatory',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.grey.shade700,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
               content: SizedBox(
                 width: AppStyles.isWebScreen(context)
                     ? MediaQuery.of(context).size.width / 3
@@ -1826,7 +1855,7 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                                 ),
                               ),
                             ),
-                            if (isSelected && selectedItem != null)
+                            if (isSelected && selectedItem != null) ...[
                               Checkbox(
                                 value: selectedItem.isChecked == 1,
                                 onChanged: (bool? val) {
@@ -1837,6 +1866,18 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                                   });
                                 },
                               ),
+                              const SizedBox(width: 8),
+                              Checkbox(
+                                value: selectedItem.isMandatory == 1,
+                                onChanged: (bool? val) {
+                                  setStateDialog(() {
+                                    selectedItem.isMandatory =
+                                        (val == true) ? 1 : 0;
+                                    field.isMandatory = (val == true) ? 1 : 0;
+                                  });
+                                },
+                              ),
+                            ],
                           ],
                         ),
                       ),

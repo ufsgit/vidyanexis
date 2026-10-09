@@ -22,6 +22,7 @@ class CustomFieldModel {
   int? isViewInQuotation;
   int? isCommercial;
   int? isChecked; // Added this property
+  int? isMandatory;
   List<String>? dropDownValues;
   List<String>? checkBoxValues;
   int? quotationTypeId;
@@ -41,6 +42,7 @@ class CustomFieldModel {
     this.isViewInQuotation,
     this.isCommercial,
     this.isChecked,
+    this.isMandatory,
     this.createdAt,
     this.quotationTypeId,
   });
@@ -58,6 +60,7 @@ class CustomFieldModel {
     int? isViewInQuotation,
     int? isCommercial,
     int? isChecked,
+    int? isMandatory,
     DateTime? createdAt,
     int? quotationTypeId,
   }) =>
@@ -72,6 +75,7 @@ class CustomFieldModel {
         isViewInQuotation: isViewInQuotation ?? this.isViewInQuotation,
         isCommercial: isCommercial ?? this.isCommercial,
         isChecked: isChecked ?? this.isChecked,
+        isMandatory: isMandatory ?? this.isMandatory,
         dropDownValues: dropDownValues ?? this.dropDownValues,
         checkBoxValues: checkBoxValues ?? this.checkBoxValues,
         createdAt: createdAt ?? this.createdAt,
@@ -97,6 +101,18 @@ class CustomFieldModel {
                 : null) ??
             (json["events"] != null
                 ? int.tryParse(json["events"].toString())
+                : null),
+        isMandatory: (json["is_mandatory"] != null
+                ? int.tryParse(json["is_mandatory"].toString())
+                : null) ??
+            (json["is_customfield_mandatory"] != null
+                ? int.tryParse(json["is_customfield_mandatory"].toString())
+                : null) ??
+            (json["isMandatory"] != null
+                ? int.tryParse(json["isMandatory"].toString())
+                : null) ??
+            (json["mandatory"] != null
+                ? (json["mandatory"] == true || json["mandatory"] == 1 ? 1 : 0)
                 : null),
         dropDownValues: _parseValuesList(
             json["Dropdown_Values"] ?? json["dropdown_values"]),
@@ -142,6 +158,9 @@ class CustomFieldModel {
         "is_commercial": isCommercial,
         "is_checked": isChecked,
         "events": isChecked,
+        "is_mandatory": isMandatory,
+        "is_customfield_mandatory": isMandatory,
+        "isMandatory": isMandatory,
         "Dropdown_Values": dropDownValues == null
             ? []
             : List<dynamic>.from(dropDownValues!.map((x) => x)),
