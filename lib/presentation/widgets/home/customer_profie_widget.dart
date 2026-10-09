@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/utils/file_downloader.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CustomerCard extends StatelessWidget {
   final String title;
@@ -82,6 +83,22 @@ class DetailRow extends StatelessWidget {
         path.endsWith('.webp');
   }
 
+  bool _isDocumentUrl(String url) {
+    if (url.isEmpty) return false;
+    final uri = Uri.tryParse(url);
+    if (uri == null || !uri.hasScheme || !uri.scheme.startsWith('http')) {
+      return false;
+    }
+    final path = uri.path.toLowerCase();
+    return path.endsWith('.pdf') ||
+        path.endsWith('.doc') ||
+        path.endsWith('.docx') ||
+        path.endsWith('.xls') ||
+        path.endsWith('.xlsx') ||
+        path.endsWith('.csv') ||
+        path.endsWith('.txt');
+  }
+
   void _showImageDialog(BuildContext context, String imageUrl) {
     showDialog(
       context: context,
@@ -96,7 +113,10 @@ class DetailRow extends StatelessWidget {
                 child: Image.network(
                   imageUrl,
                   fit: BoxFit.contain,
-                  errorBuilder: (context, error, stackTrace) => const Icon(Icons.broken_image, color: Colors.white, size: 50),
+                  errorBuilder: (context, error, stackTrace) => const Icon(
+                      Icons.broken_image,
+                      color: Colors.white,
+                      size: 50),
                 ),
               ),
               Positioned(
@@ -123,7 +143,8 @@ class DetailRow extends StatelessWidget {
                     } catch (e) {
                       if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Failed to download image')),
+                          const SnackBar(
+                              content: Text('Failed to download image')),
                         );
                       }
                     }
@@ -176,21 +197,65 @@ class DetailRow extends StatelessWidget {
                           child: Image.network(
                             value,
                             fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) => const Icon(Icons.broken_image),
+                            errorBuilder: (context, error, stackTrace) =>
+                                const Icon(Icons.broken_image),
                           ),
                         ),
                       ),
                     ),
                   )
-                : SelectableText(
-                    value,
-                    textAlign: TextAlign.end,
-                    style: GoogleFonts.plusJakartaSans(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 13,
-                      color: AppColors.textBlack,
-                    ),
-                  ),
+                : _isDocumentUrl(value)
+                    ? Align(
+                        alignment: Alignment.centerRight,
+                        child: InkWell(
+                          onTap: () async {
+                            final uri = Uri.tryParse(value);
+                            if (uri != null && await canLaunchUrl(uri)) {
+                              await launchUrl(uri,
+                                  mode: LaunchMode.externalApplication);
+                            }
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 8),
+                            decoration: BoxDecoration(
+                              color: AppColors.primaryBlue.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(4),
+                              border: Border.all(
+                                  color:
+                                      AppColors.primaryBlue.withOpacity(0.3)),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(Icons.description,
+                                    size: 16, color: AppColors.primaryBlue),
+                                const SizedBox(width: 8),
+                                Flexible(
+                                  child: Text(
+                                    "View Document",
+                                    style: GoogleFonts.plusJakartaSans(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 12,
+                                      color: AppColors.primaryBlue,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      )
+                    : SelectableText(
+                        value,
+                        textAlign: TextAlign.end,
+                        style: GoogleFonts.plusJakartaSans(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13,
+                          color: AppColors.textBlack,
+                        ),
+                      ),
           ),
         ],
       ),
