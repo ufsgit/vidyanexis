@@ -2417,6 +2417,7 @@ class SettingsProvider extends ChangeNotifier {
             84: 'Dashboard count',
             120: 'Lead Search',
             182: 'Task Aging Report',
+            208: 'Task Deadline Report',
           };
 
           for (var entry in customPermissions.entries) {

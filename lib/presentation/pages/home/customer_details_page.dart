@@ -15,6 +15,7 @@ import 'package:vidyanexis/presentation/pages/home/expense_screen.dart';
 import 'package:vidyanexis/controller/expense_provider.dart';
 import 'package:vidyanexis/controller/models/expense_management_model.dart';
 import 'package:vidyanexis/presentation/widgets/customer/amc_tab_widget.dart';
+import 'package:vidyanexis/presentation/widgets/customer/category_download_dialog.dart';
 import 'package:vidyanexis/presentation/widgets/inventory/add_expense_management.dart';
 
 import 'package:vidyanexis/presentation/pages/inventory/stock_return_page.dart';
@@ -3244,6 +3245,33 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                             );
                                                                           },
                                                                         ),
+                                                                  
+                                                                    CustomElevatedButton(
+                                                                      radius: 4,
+                                                                      backgroundColor:
+                                                                          AppColors
+                                                                              .whiteColor,
+                                                                      borderColor:
+                                                                          AppColors
+                                                                              .darkGreen,
+                                                                      textColor:
+                                                                          AppColors
+                                                                              .darkGreen,
+                                                                      buttonText:
+                                                                          'Download Document',
+                                                                      onPressed:
+                                                                          () {
+                                                                        showDialog(
+                                                                          context:
+                                                                              context,
+                                                                          builder: (context) =>
+                                                                              DocumentCategoryDownloadDialog(
+                                                                            customerId:
+                                                                                widget.customerId,
+                                                                          ),
+                                                                        );
+                                                                      },
+                                                                    ), //
                                                                   ],
                                                                 ),
                                                                 const SizedBox(
@@ -4472,6 +4500,33 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                     );
                                                                   },
                                                                 ),
+                                                              CustomElevatedButton(
+                                                                radius: 4,
+                                                                backgroundColor:
+                                                                    AppColors
+                                                                        .whiteColor,
+                                                                borderColor:
+                                                                    AppColors
+                                                                        .darkGreen,
+                                                                textColor:
+                                                                    AppColors
+                                                                        .darkGreen,
+                                                                buttonText:
+                                                                    'Download Document',
+                                                                onPressed: () {
+                                                                  showDialog(
+                                                                    context:
+                                                                        context,
+                                                                    builder:
+                                                                        (context) =>
+                                                                            DocumentCategoryDownloadDialog(
+                                                                      customerId:
+                                                                          widget
+                                                                              .customerId,
+                                                                    ),
+                                                                  );
+                                                                },
+                                                              ), //
                                                             ],
                                                           ),
                                                           const SizedBox(

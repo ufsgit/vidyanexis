@@ -1,4 +1,9 @@
+import 'dart:io';
+
+import 'package:archive/archive.dart';
 import 'package:dio/dio.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:path_provider/path_provider.dart';
 import 'dart:developer';
 import 'dart:convert';
 import 'dart:math' as math;
@@ -13,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:vidyanexis/controller/models/added_multi_item.dart';
 import 'package:vidyanexis/controller/models/commercial_item_model.dart';
+import 'package:vidyanexis/controller/models/document_category_model.dart';
 import 'package:vidyanexis/controller/models/get_refund_model.dart';
 import 'package:vidyanexis/controller/models/item_settings_model.dart';
 import 'package:vidyanexis/controller/models/maintenance_model.dart';
@@ -5915,6 +5921,163 @@ class CustomerDetailsProvider extends ChangeNotifier {
       }
       return false;
     }
+  }
+
+  // ---------- Document Categories ----------
+  List<DocumentCategoryModel> _documentCategories = [];
+  List<DocumentCategoryModel> get documentCategories => _documentCategories;
+
+  bool _isDocumentCategoriesLoading = false;
+  bool get isDocumentCategoriesLoading => _isDocumentCategoriesLoading;
+
+  String? _documentCategoriesError;
+  String? get documentCategoriesError => _documentCategoriesError;
+
+  Future<void> getItemDocumentCategories(String customerId) async {
+    try {
+      _isDocumentCategoriesLoading = true;
+      _documentCategoriesError = null;
+      notifyListeners();
+
+      final response = await HttpRequest.httpGetRequest(
+        endPoint:
+            '${HttpUrls.getItemDocumentCategories}?Customer_Id=$customerId',
+      );
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        if (data != null && data['success'] == true) {
+          final List list = data['data'] ?? [];
+          _documentCategories = list
+              .map((e) =>
+                  DocumentCategoryModel.fromJson(e as Map<String, dynamic>))
+              .toList();
+        } else {
+          _documentCategories = [];
+          _documentCategoriesError = 'No categories found';
+        }
+      } else {
+        _documentCategories = [];
+        _documentCategoriesError = 'Failed to load categories';
+      }
+    } catch (e) {
+      print('Exception in getItemDocumentCategories: $e');
+      _documentCategories = [];
+      _documentCategoriesError = 'Error: $e';
+    } finally {
+      _isDocumentCategoriesLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> downloadCategoryDocuments({
+    required String customerId,
+    required int categoryId,
+    required String categoryName,
+  }) async {
+    try {
+      final response = await HttpRequest.httpGetRequest(
+        endPoint:
+            '${HttpUrls.getItemDocumentsByCategory}?Customer_Id=$customerId&Document_Category_Id=$categoryId',
+      );
+
+      if (response.statusCode != 200 ||
+          response.data == null ||
+          response.data['success'] != true) {
+        throw Exception('Failed to fetch documents');
+      }
+
+      final List documents = response.data['data'] ?? [];
+
+      if (documents.isEmpty) {
+        throw Exception('No documents found');
+      }
+
+      final archive = Archive();
+      final dio = Dio();
+      Fluttertoast.showToast(msg: 'Downloading ...');
+
+      for (int i = 0; i < documents.length; i++) {
+        final String fileUrl = documents[i]['File_Path'] ?? '';
+
+        if (fileUrl.isEmpty) continue;
+
+        try {
+          final fileResponse = await dio.get<List<int>>(
+            fileUrl,
+            options: Options(responseType: ResponseType.bytes),
+          );
+
+          final bytes = Uint8List.fromList(fileResponse.data!);
+
+          String fileName = fileUrl.split('/').last;
+
+          archive.addFile(
+            ArchiveFile(
+              fileName,
+              bytes.length,
+              bytes,
+            ),
+          );
+        } catch (e) {
+          debugPrint('Failed downloading file: $fileUrl');
+        }
+      }
+
+      final zipBytes = ZipEncoder().encode(archive);
+
+      if (zipBytes == null) {
+        Fluttertoast.showToast(msg: 'Failed creating zip');
+        throw Exception('Failed creating zip');
+      }
+
+      final Uint8List zipData = Uint8List.fromList(zipBytes);
+      final customerName = leadDetails?[0].customerName ?? '';
+
+      if (kIsWeb) {
+        _downloadZipWeb(
+          zipData,
+          '$customerName-$categoryName.zip',
+        );
+      } else {
+        await _downloadZipMobile(
+          zipData,
+          '$customerName-$categoryName.zip',
+        );
+      }
+    } catch (e) {
+      Fluttertoast.showToast(msg: 'Failed downloading file');
+      rethrow;
+    }
+  }
+
+  void _downloadZipWeb(
+    Uint8List bytes,
+    String fileName,
+  ) {
+    final blob = html.Blob([bytes]);
+
+    final url = html.Url.createObjectUrlFromBlob(blob);
+
+    final anchor = html.AnchorElement(href: url)
+      ..download = fileName
+      ..click();
+
+    html.Url.revokeObjectUrl(url);
+  }
+
+  Future<void> _downloadZipMobile(
+    Uint8List bytes,
+    String fileName,
+  ) async {
+    final dir = await getApplicationDocumentsDirectory();
+
+    final file = File(
+      '${dir.path}/$fileName',
+    );
+
+    await file.writeAsBytes(bytes);
   }
 }
 

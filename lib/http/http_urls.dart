@@ -186,7 +186,8 @@ class HttpUrls {
   static String workSummary = "lead/Customer_Work_Summary";
   static String getLeadStageReport = "lead/Get_Lead_Stage_Report";
   static String getLeadCountDayWise = "lead/Get_Lead_Count_Day_Wise";
-  static String getConversionCountDayWise = "lead/Get_Conversion_Count_Day_Wise";
+  static String getConversionCountDayWise =
+      "lead/Get_Conversion_Count_Day_Wise";
   static String searchDocumentType = "settings/Search_document_type";
   static String saveImage = "lead/Save_Image";
   static String getDocumentList = "lead/Get_Images_By_Customer";
@@ -522,4 +523,10 @@ class HttpUrls {
   static String searchDocumentCategory = "item/get_Document_Category";
   static String saveDocumentCategory = "item/save_Document_Category";
   static String deleteDocumentCategory = "item/delete_Document_Category";
+  static String taskDeadlineReport = "task/Task_Deadline_Report";
+  static String saveItemDocuments = "item/Save_Item_Documents";
+  static String getItemDocumentsByItemId = "item/Get_Item_Documents_By_Item_Id";
+  static String deleteItemDocument = "item/Delete_Item_Document";
+  static String getItemDocumentCategories = "item/Get_Item_Document_Categories";
+  static String getItemDocumentsByCategory = "item/Get_Item_Documents_By_Category";
 }
