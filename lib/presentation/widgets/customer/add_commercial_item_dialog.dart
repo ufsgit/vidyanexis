@@ -43,7 +43,9 @@ class _AddCommercialItemDialogState extends State<AddCommercialItemDialog> {
                   Text(
                     widget.isEdit
                         ? 'Edit Commercial Item'
-                        : 'Add Commercial Item',
+                        : (provider.isQuotationFieldVisible(192) && provider.isQuotationFieldCaptionLoad(192))
+                            ? provider.getQuotationFieldName(192, 'Add Commercial Item')
+                            : 'Add Commercial Item',
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 18,
                       fontWeight: FontWeight.w700,

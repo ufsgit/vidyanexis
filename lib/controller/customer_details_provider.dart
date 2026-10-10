@@ -1682,6 +1682,18 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
+  bool isQuotationFieldCaptionLoad(int fieldId) {
+    if (_quotationFields.isEmpty) return false;
+    try {
+      final field = _quotationFields.firstWhere(
+        (element) => element.quotationFieldsId == fieldId,
+      );
+      return field.captionLoad == 1 || field.captionLoad == 2;
+    } catch (e) {
+      return false;
+    }
+  }
+
   void updateAMCCategory(int? value, String categoryName) {
     _selectedAMCCategory = value;
     amcCategoryController.text = categoryName;

@@ -1867,7 +1867,11 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                 text: TextSpan(
                   children: [
                     TextSpan(
-                      text: 'Residential ',
+                      text: !customerDetailsProvider.isQuotationFieldVisible(192)
+                          ? 'Add Item '
+                          : customerDetailsProvider.isQuotationFieldCaptionLoad(192) 
+                              ? '${customerDetailsProvider.getQuotationFieldName(192, 'Residential')} '
+                              : 'Residential ',
                       style: GoogleFonts.plusJakartaSans(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
@@ -1901,7 +1905,11 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                       );
                     },
                     icon: const Icon(Icons.add),
-                    label: const Text('Add Item1'),
+                    label: Text(
+                      (customerDetailsProvider.isQuotationFieldVisible(192) && customerDetailsProvider.isQuotationFieldCaptionLoad(192))
+                          ? customerDetailsProvider.getQuotationFieldName(192, 'Add Item1')
+                          : 'Add Item1',
+                    ),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: AppColors.primaryBlue,
                       backgroundColor: Colors.white,
@@ -2480,7 +2488,11 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
             text: TextSpan(
               children: [
                 TextSpan(
-                  text: 'Commercial ',
+                  text: !customerDetailsProvider.isQuotationFieldVisible(192)
+                      ? 'Add Item '
+                      : customerDetailsProvider.isQuotationFieldCaptionLoad(192)
+                          ? '${customerDetailsProvider.getQuotationFieldName(192, 'Commercial')} '
+                          : 'Commercial ',
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
@@ -2504,7 +2516,11 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                 );
               },
               icon: const Icon(Icons.add),
-              label: const Text('Add item3'),
+              label: Text(
+                (customerDetailsProvider.isQuotationFieldVisible(192) && customerDetailsProvider.isQuotationFieldCaptionLoad(192))
+                    ? customerDetailsProvider.getQuotationFieldName(192, 'Add Item1')
+                    : 'Add Item1',
+              ),
               style: OutlinedButton.styleFrom(
                 foregroundColor:
                     AppColors.primaryBlue, // Change foreground color

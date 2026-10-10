@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/controller/audio_file_provider.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
 
 class TaskAudioRecordingWidget extends StatelessWidget {
   const TaskAudioRecordingWidget({Key? key}) : super(key: key);
@@ -11,6 +12,14 @@ class TaskAudioRecordingWidget extends StatelessWidget {
     return Consumer<AudioFileProvider>(
       builder: (context, provider, child) {
         final isSmallScreen = MediaQuery.of(context).size.width < 600;
+        final settingsProvider = context.watch<SettingsProvider>();
+
+        // Check if entire widget should be hidden (no permissions and no audios)
+        if (settingsProvider.recordVoiceNote != 1 && 
+            settingsProvider.uploadAudio != 1 && 
+            provider.audios.isEmpty) {
+          return const SizedBox.shrink();
+        }
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -195,69 +204,71 @@ class TaskAudioRecordingWidget extends StatelessWidget {
                       ),
                     ),
                   ] else ...[
-                    // Not recording - Action Buttons
                     Row(
                       children: [
-                        Expanded(
-                          child: OutlinedButton.icon(
-                            onPressed: () async {
-                              await provider.startRecording();
-                            },
-                            icon: const Icon(Icons.mic_rounded,
-                                size: 18, color: Colors.red),
-                            label: Text(
-                              isSmallScreen
-                                  ? 'Record'
-                                  : 'Record Voice Note',
-                              style: const TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
-                                color: Color(0xFF1E293B),
+                        if (settingsProvider.recordVoiceNote == 1)
+                          Expanded(
+                            child: OutlinedButton.icon(
+                              onPressed: () async {
+                                await provider.startRecording();
+                              },
+                              icon: const Icon(Icons.mic_rounded,
+                                  size: 18, color: Colors.red),
+                              label: Text(
+                                isSmallScreen
+                                    ? 'Record'
+                                    : 'Record Voice Note',
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xFF1E293B),
+                                ),
                               ),
-                            ),
-                            style: OutlinedButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              side: const BorderSide(
-                                  color: Color(0xFFE2E8F0)),
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 11, horizontal: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: OutlinedButton.icon(
-                            onPressed: () async {
-                              await provider.addAudioFile();
-                            },
-                            icon: const Icon(Icons.upload_file_rounded,
-                                size: 18, color: Color(0xFF1A7AE8)),
-                            label: Text(
-                              isSmallScreen ? 'Upload' : 'Upload Audio',
-                              style: const TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
-                                color: Color(0xFF1E293B),
-                              ),
-                            ),
-                            style: OutlinedButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              side: const BorderSide(
-                                  color: Color(0xFFE2E8F0)),
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 11, horizontal: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4),
+                              style: OutlinedButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                side: const BorderSide(
+                                    color: Color(0xFFE2E8F0)),
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 11, horizontal: 12),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
                               ),
                             ),
                           ),
-                        ),
+                        if (settingsProvider.recordVoiceNote == 1 && settingsProvider.uploadAudio == 1)
+                          const SizedBox(width: 10),
+                        if (settingsProvider.uploadAudio == 1)
+                          Expanded(
+                            child: OutlinedButton.icon(
+                              onPressed: () async {
+                                await provider.addAudioFile();
+                              },
+                              icon: const Icon(Icons.upload_file_rounded,
+                                  size: 18, color: Color(0xFF1A7AE8)),
+                              label: Text(
+                                isSmallScreen ? 'Upload' : 'Upload Audio',
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xFF1E293B),
+                                ),
+                              ),
+                              style: OutlinedButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                side: const BorderSide(
+                                    color: Color(0xFFE2E8F0)),
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 11, horizontal: 12),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                              ),
+                            ),
+                          ),
                       ],
                     ),
-                    if (kIsWeb) ...[
+                    if (kIsWeb && settingsProvider.recordVoiceNote == 1) ...[
                       const SizedBox(height: 6),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 2),

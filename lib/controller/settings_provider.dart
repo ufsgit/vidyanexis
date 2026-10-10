@@ -599,6 +599,12 @@ class SettingsProvider extends ChangeNotifier {
   int get ramcoHistory => _ramcoHistory;
   int get ramcoAdminTaskPhoto => _ramcoAdminTaskPhoto;
 
+  int _recordVoiceNote = 0;
+  int get recordVoiceNote => _recordVoiceNote;
+
+  int _uploadAudio = 0;
+  int get uploadAudio => _uploadAudio;
+
   int _jobSheet = 0;
   int get jobSheet => _jobSheet;
 
@@ -763,6 +769,10 @@ class SettingsProvider extends ChangeNotifier {
         (caption.toLowerCase().contains('ramco_admin_task_photo') ||
             caption.toLowerCase().contains('ramco admin task photo'))) {
       _ramcoAdminTaskPhoto = value;
+    } else if (permissionId == 44 || (caption != null && (caption.toLowerCase().contains('record_voice_note') || caption.toLowerCase().contains('record voice note')))) {
+      _recordVoiceNote = value;
+    } else if (permissionId == 45 || (caption != null && (caption.toLowerCase().contains('upload_audio') || caption.toLowerCase().contains('upload audio')))) {
+      _uploadAudio = value;
     }
   }
 
@@ -827,6 +837,18 @@ class SettingsProvider extends ChangeNotifier {
   void setRamcoAdminTaskPhoto(int value) {
     _ramcoAdminTaskPhoto = value;
     _syncStateToPermissionsList(41, value);
+    notifyListeners();
+  }
+
+  void setRecordVoiceNote(int value) {
+    _recordVoiceNote = value;
+    _syncStateToPermissionsList(44, value);
+    notifyListeners();
+  }
+
+  void setUploadAudio(int value) {
+    _uploadAudio = value;
+    _syncStateToPermissionsList(45, value);
     notifyListeners();
   }
 

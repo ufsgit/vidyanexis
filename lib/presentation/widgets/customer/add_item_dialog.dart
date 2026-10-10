@@ -41,7 +41,11 @@ class _AddItemDialogState extends State<AddItemDialog> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    widget.isEdit ? 'Edit Item' : 'Add Item',
+                    widget.isEdit 
+                        ? 'Edit Item' 
+                        : (provider.isQuotationFieldVisible(192) && provider.isQuotationFieldCaptionLoad(192))
+                            ? provider.getQuotationFieldName(192, 'Add Item')
+                            : 'Add Item',
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
