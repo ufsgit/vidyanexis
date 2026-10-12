@@ -1257,11 +1257,6 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                       );
                                       return;
                                     }
-                                    bool isDocumentButtonEnabled =
-                                        settingsProvider
-                                                .documentButtonTaskStatus ==
-                                            1;
-
                                     // Custom Fields Mandatory Check
                                     final bool hasMandatoryCustomFields =
                                         reportsProvider.showCustomFields
@@ -1427,7 +1422,17 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                       }
                                     }
 
-                                    bool hasPendingMandatoryDocs = reportsProvider.documentTypeModel.any((doc) => doc.isMandatory);
+                                    bool hasPendingMandatoryDocs =
+                                        reportsProvider.documentTypeModel.any(
+                                            (doc) {
+                                      final int docId =
+                                          doc.documentTypeId;
+                                      final bool isUploaded =
+                                          _uploadedDocUrls[docId] != null &&
+                                              _uploadedDocUrls[docId]!
+                                                  .isNotEmpty;
+                                      return doc.isMandatory && !isUploaded;
+                                    });
                                     if (hasPendingMandatoryDocs) {
                                       showDialog(
                                         context: context,

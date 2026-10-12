@@ -1,5 +1,8 @@
 // Check line 1776
+import 'dart:typed_data';
+
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vidyanexis/controller/image_upload_provider.dart';
 import 'package:vidyanexis/controller/models/priority_model.dart';
 import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'dart:async';
@@ -10,6 +13,7 @@ import 'package:intl/intl.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/lead_details_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/presentation/widgets/common/document_preview_dialog.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/pages/home/process_flow_dialog.dart';
 import 'package:vidyanexis/presentation/widgets/common/custom_form_filler_view.dart';
@@ -77,6 +81,12 @@ class _tasksPageReportState extends State<TaskPage> {
   late final ScrollController _fixedVerticalController;
   late final ScrollController _scrollableVerticalController;
   bool _isSyncing = false;
+  final Set<int> _uploadingDocs = {};
+  final Map<int, double> _uploadProgress = {}; // 0.0 → 1.0
+  final Map<int, String> _uploadedDocUrls = {};
+  final ValueNotifier<int> _docTick = ValueNotifier(0);
+
+  void _refreshDocs() => _docTick.value++;
 
   // Task multi-selection state
   final Set<String> _selectedTaskIds = {};
@@ -636,6 +646,7 @@ class _tasksPageReportState extends State<TaskPage> {
     _horizontalScrollController.dispose();
     _fixedVerticalController.dispose();
     _scrollableVerticalController.dispose();
+    _docTick.dispose();
     super.dispose();
   }
 
@@ -5336,73 +5347,145 @@ class _tasksPageReportState extends State<TaskPage> {
                                                         ),
                                                       if (hasDocs &&
                                                           !isDocumentButtonEnabled)
-                                                        ...reportsProvider
-                                                            .documentTypeModel
-                                                            .map(
-                                                                (doc) =>
-                                                                    Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .symmetric(
-                                                                          vertical:
-                                                                              4),
-                                                                      child:
-                                                                          Row(
-                                                                        mainAxisAlignment:
-                                                                            MainAxisAlignment.spaceBetween,
+                                                        ValueListenableBuilder<
+                                                            int>(
+                                                          valueListenable:
+                                                              _docTick,
+                                                          builder:
+                                                              (_, __, ___) {
+                                                            return Column(
+                                                              children:
+                                                                  reportsProvider
+                                                                      .documentTypeModel
+                                                                      .map(
+                                                                          (doc) {
+                                                                final int
+                                                                    docId =
+                                                                    doc.documentTypeId ??
+                                                                        0;
+                                                                final bool
+                                                                    isUploading =
+                                                                    _uploadingDocs
+                                                                        .contains(
+                                                                            docId);
+                                                                final double
+                                                                    progress =
+                                                                    _uploadProgress[
+                                                                            docId] ??
+                                                                        0;
+                                                                final String?
+                                                                    url =
+                                                                    _uploadedDocUrls[
+                                                                        docId];
+                                                                final bool
+                                                                    isUploaded =
+                                                                    url != null &&
+                                                                        url.isNotEmpty;
+
+                                                                return Padding(
+                                                                  padding: const EdgeInsets
+                                                                      .symmetric(
+                                                                      vertical:
+                                                                          4),
+                                                                  child: Column(
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .start,
+                                                                    children: [
+                                                                      Row(
                                                                         children: [
                                                                           Expanded(
                                                                             child:
-                                                                                Text(doc.documentTypeName ?? '', style: const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 13)),
-                                                                          ),
-                                                                          InkWell(
-                                                                            onTap:
-                                                                                () async {
-                                                                              // final result = await showDialog(
-                                                                              //   barrierDismissible: false,
-                                                                              //   context: context,
-                                                                              //   builder: (context) => ImageUploadAlert(
-                                                                              //     customerId: task.customerId.toString(),
-                                                                              //     initialDocumentTypeId: doc.documentTypeId,
-                                                                              //     initialDocumentTypeName: doc.documentTypeName,
-                                                                              //   ),
-                                                                              // );
-                                                                              // if (result == true) {
-                                                                              //   reportsProvider.removePendingDocument(doc.documentTypeId ?? 0);
-                                                                              // }
-                                                                              await showDialog(
-                                                                                barrierDismissible: false,
-                                                                                context: context,
-                                                                                builder: (context) => ImageUploadAlert(
-                                                                                  customerId: task.customerId.toString(),
-                                                                                  initialDocumentTypeId: doc.documentTypeId,
-                                                                                  initialDocumentTypeName: doc.documentTypeName,
-                                                                                  taskId: task.taskId.toString(),
-                                                                                ),
-                                                                              );
-                                                                              // Refresh data after upload
-                                                                              int sId = selectedStatus.value.statusId ?? 0;
-                                                                              int tId = selectedStatus.value.taskTypeId ?? 0;
-                                                                              int cId = task.customerId ?? 0;
-                                                                              int eId = task.enquiryForId ?? 0;
-                                                                              reportsProvider.fetchTaskTypes(tId, sId, cId, eId, context);
-                                                                            },
-                                                                            child:
-                                                                                Container(
-                                                                              padding: const EdgeInsets.all(4),
-                                                                              decoration: BoxDecoration(
-                                                                                color: AppColors.darkGreen.withOpacity(0.1),
-                                                                                borderRadius: BorderRadius.circular(4),
-                                                                              ),
-                                                                              child: Icon(
-                                                                                Icons.upload_rounded,
-                                                                                size: 16,
-                                                                                color: AppColors.darkGreen,
+                                                                                Text(
+                                                                              doc.documentTypeName ?? '',
+                                                                              style: const TextStyle(
+                                                                                fontFamily: 'PlusJakartaSans',
+                                                                                color: Colors.black,
+                                                                                fontSize: 13,
                                                                               ),
                                                                             ),
                                                                           ),
+                                                                          if (isUploaded)
+                                                                            Row(
+                                                                              mainAxisSize: MainAxisSize.min,
+                                                                              children: [
+                                                                                InkWell(
+                                                                                  onTap: () => _openViewer(
+                                                                                    context,
+                                                                                    url!,
+                                                                                    doc.documentTypeName ?? 'Document',
+                                                                                  ),
+                                                                                  child: const Text(
+                                                                                    'View',
+                                                                                    style: TextStyle(
+                                                                                      fontFamily: 'PlusJakartaSans',
+                                                                                      color: Color(0xFF1A7AE8),
+                                                                                      fontSize: 13,
+                                                                                      fontWeight: FontWeight.w600,
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                                const SizedBox(width: 6),
+                                                                                const Icon(Icons.check_circle, color: Colors.green, size: 18),
+                                                                              ],
+                                                                            )
+                                                                          else if (isUploading)
+                                                                            Text(
+                                                                              '${(progress * 100).toInt()}%',
+                                                                              style: const TextStyle(
+                                                                                fontFamily: 'PlusJakartaSans',
+                                                                                fontSize: 12,
+                                                                                color: Color(0xFF1A7AE8),
+                                                                                fontWeight: FontWeight.w600,
+                                                                              ),
+                                                                            )
+                                                                          else
+                                                                            InkWell(
+                                                                              onTap: () => _uploadDocument(
+                                                                                context: context,
+                                                                                doc: doc,
+                                                                                customerId: task.customerId.toString(),
+                                                                                taskId: task.taskId.toString(),
+                                                                              ),
+                                                                              child: Container(
+                                                                                padding: const EdgeInsets.all(4),
+                                                                                decoration: BoxDecoration(
+                                                                                  color: AppColors.darkGreen.withOpacity(0.1),
+                                                                                  borderRadius: BorderRadius.circular(4),
+                                                                                ),
+                                                                                child: const Icon(
+                                                                                  Icons.upload_rounded,
+                                                                                  size: 16,
+                                                                                  color: AppColors.darkGreen,
+                                                                                ),
+                                                                              ),
+                                                                            ),
                                                                         ],
                                                                       ),
-                                                                    )),
+                                                                      if (isUploading)
+                                                                        Padding(
+                                                                          padding: const EdgeInsets
+                                                                              .only(
+                                                                              top: 6),
+                                                                          child:
+                                                                              LinearProgressIndicator(
+                                                                            value:
+                                                                                progress,
+                                                                            minHeight:
+                                                                                3,
+                                                                            backgroundColor:
+                                                                                const Color(0xFFE2E8F0),
+                                                                            color:
+                                                                                const Color(0xFF1A7AE8),
+                                                                          ),
+                                                                        ),
+                                                                    ],
+                                                                  ),
+                                                                );
+                                                              }).toList(),
+                                                            );
+                                                          },
+                                                        ),
                                                       if (hasMandatory)
                                                         ...reportsProvider
                                                             .statusData
@@ -7458,6 +7541,122 @@ class _tasksPageReportState extends State<TaskPage> {
                 color: isSelected ? Colors.white : statusColor,
                 fontWeight: FontWeight.w500,
                 fontSize: 12,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _uploadDocument({
+    required BuildContext context,
+    required dynamic doc,
+    required String customerId,
+    required String taskId,
+  }) async {
+    final int docId = doc.documentTypeId ?? 0;
+
+    final imageProvider =
+        Provider.of<ImageUploadProvider>(context, listen: false);
+    imageProvider.clearFiles();
+    imageProvider.setCutomerId(customerId);
+    imageProvider.updateDocumentType(docId, doc.documentTypeName);
+
+    await imageProvider.addFileMobile();
+    if (imageProvider.fileInfoList.isEmpty) return;
+
+    final file = imageProvider.fileInfoList.first;
+    final shouldUpload = await showDocumentPreviewDialog(
+      context: context,
+      fileName: file['name'] as String? ?? 'document',
+      bytes: file['data'] as Uint8List?,
+      mimeType: file['mimeType'] as String?,
+    );
+    if (shouldUpload != true) {
+      imageProvider.clearFiles();
+      return;
+    }
+
+    // start progress
+    _uploadingDocs.add(docId);
+    _uploadProgress[docId] = 0.05;
+    _refreshDocs();
+
+    Timer? progressTimer;
+    progressTimer = Timer.periodic(const Duration(milliseconds: 300), (_) {
+      if (!_uploadingDocs.contains(docId)) {
+        progressTimer?.cancel();
+        return;
+      }
+      final p = _uploadProgress[docId] ?? 0;
+      if (p < 0.9) {
+        _uploadProgress[docId] = p + 0.07;
+        _refreshDocs();
+      }
+    });
+
+    try {
+      final urls = await imageProvider.uploadAllDocumentsGrouped(
+        context,
+        shouldPop: false,
+        taskId: taskId,
+      );
+
+      progressTimer.cancel();
+      _uploadProgress[docId] = 1.0;
+      _refreshDocs();
+      await Future.delayed(const Duration(milliseconds: 200));
+
+      _uploadingDocs.remove(docId);
+      _uploadProgress.remove(docId);
+      if (urls.isNotEmpty) {
+        _uploadedDocUrls[docId] = urls.first;
+      }
+      _refreshDocs();
+    } catch (_) {
+      progressTimer.cancel();
+      _uploadingDocs.remove(docId);
+      _uploadProgress.remove(docId);
+      _refreshDocs();
+    }
+  }
+
+  void _openViewer(BuildContext context, String url, String title) {
+    showDialog(
+      context: context,
+      builder: (_) => Dialog(
+        backgroundColor: Colors.black,
+        insetPadding: EdgeInsets.zero,
+        child: Stack(
+          children: [
+            Center(
+              child: InteractiveViewer(
+                child: Image.network(
+                  url,
+                  fit: BoxFit.contain,
+                  errorBuilder: (_, __, ___) => const Icon(
+                    Icons.broken_image,
+                    color: Colors.white,
+                    size: 64,
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              top: 40,
+              right: 16,
+              child: IconButton(
+                icon: const Icon(Icons.close, color: Colors.white, size: 28),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ),
+            Positioned(
+              top: 48,
+              left: 16,
+              child: Text(
+                title,
+                style: const TextStyle(color: Colors.white, fontSize: 16),
               ),
             ),
           ],
