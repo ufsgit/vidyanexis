@@ -106,6 +106,13 @@ class TaskPageProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  int _customerTypeId = 0; // 0=Combined, 1=Lead, 2=Customer
+  int get customerTypeId => _customerTypeId;
+  void setCustomerTypeId(int value) {
+    _customerTypeId = value;
+    notifyListeners();
+  }
+
   int? _selectedStatus;
   int? _selectedAMCStatus;
   int? _selectedUser;
@@ -749,6 +756,7 @@ class TaskPageProvider extends ChangeNotifier {
     _enquiryForS = '';
     _Department_Id = '';
     _entryType = 'myown';
+    _customerTypeId = 0;
     _isFilter = false;
     _pageIndex = 1;
     _selectedPriority = 0;
@@ -832,7 +840,7 @@ class TaskPageProvider extends ChangeNotifier {
 
       var response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchTaskByCustomer}?Customer_Name=$_Search&Phone_Number=$_Search&Consumer_Number=$_Search&Task_Status_Id=$_Status&To_User=$toUserId&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&Task_Type_Id=$_TaskType&Enquiry_For_Id=$_enquiryForS&Department_Id=$_Department_Id&Page_Index=$apiPageIndex&PageSize=$_pageSize&Order_By_=$apiSortOption&Order_Type_=$_sortOrder&Entry_Type_=$_entryType&Priority_Id_=$_selectedPriority');
+              '${HttpUrls.searchTaskByCustomer}?Customer_Name=$_Search&Phone_Number=$_Search&Consumer_Number=$_Search&Task_Status_Id=$_Status&To_User=$toUserId&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&Task_Type_Id=$_TaskType&Enquiry_For_Id=$_enquiryForS&Department_Id=$_Department_Id&Page_Index=$apiPageIndex&PageSize=$_pageSize&Order_By_=$apiSortOption&Order_Type_=$_sortOrder&Entry_Type_=$_entryType&Priority_Id_=$_selectedPriority&Customer_Type_Id_=$_customerTypeId');
 
       if (response.statusCode == 200) {
         var data = response.data;
@@ -852,7 +860,7 @@ class TaskPageProvider extends ChangeNotifier {
               apiPageIndex = correctApiPageIndex;
               final reResponse = await HttpRequest.httpGetRequest(
                   endPoint:
-                      '${HttpUrls.searchTaskByCustomer}?Customer_Name=$_Search&Phone_Number=$_Search&Consumer_Number=$_Search&Task_Status_Id=$_Status&To_User=$toUserId&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&Task_Type_Id=$_TaskType&Enquiry_For_Id=$_enquiryForS&Department_Id=$_Department_Id&Page_Index=$apiPageIndex&PageSize=$_pageSize&Order_By_=$apiSortOption&Order_Type_=$_sortOrder&Entry_Type_=$_entryType&Priority_Id_=$_selectedPriority');
+                      '${HttpUrls.searchTaskByCustomer}?Customer_Name=$_Search&Phone_Number=$_Search&Consumer_Number=$_Search&Task_Status_Id=$_Status&To_User=$toUserId&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&Task_Type_Id=$_TaskType&Enquiry_For_Id=$_enquiryForS&Department_Id=$_Department_Id&Page_Index=$apiPageIndex&PageSize=$_pageSize&Order_By_=$apiSortOption&Order_Type_=$_sortOrder&Entry_Type_=$_entryType&Priority_Id_=$_selectedPriority&Customer_Type_Id_=$_customerTypeId');
               if (reResponse.statusCode == 200 && reResponse.data != null) {
                 data = reResponse.data;
               }

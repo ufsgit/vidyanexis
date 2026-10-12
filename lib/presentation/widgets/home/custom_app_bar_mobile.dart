@@ -299,36 +299,43 @@ class _CustomAppBarState extends State<CustomAppBar> {
       Padding(
         padding: widget.actionsPadding,
         child: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            if (widget.customActionWidget != null) widget.customActionWidget!,
+            if (widget.customActionWidget != null) ...[
+              widget.customActionWidget!,
+              const SizedBox(width: 4),
+            ],
             if (widget.showFilterIcon &&
                 onFilterTap != null &&
                 !widget.showSearch)
-              IconButton(
-                icon: Icon(
-                  Icons.filter_list,
-                  color: widget.iconColor,
-                  size: widget.filterIconSize,
-                ),
-                onPressed: onFilterTap,
+              _compactIcon(
+                icon: Icons.filter_list,
+                size: widget.filterIconSize,
+                color: widget.iconColor,
+                onTap: onFilterTap!,
               ),
             if (widget.showRefresh && widget.onRefreshTap != null)
-              IconButton(
-                icon: Icon(
-                  Icons.refresh,
-                  color: widget.iconColor,
-                  size: widget.searchIconSize,
-                ),
-                onPressed: widget.onRefreshTap,
+              _compactIcon(
+                icon: Icons.refresh,
+                size: widget.searchIconSize,
+                color: widget.iconColor,
+                onTap: widget.onRefreshTap!,
               ),
             if (widget.showSearch)
-              IconButton(
-                icon: Icon(
-                  Icons.search,
-                  color: widget.iconColor,
-                  size: widget.searchIconSize,
-                ),
-                onPressed: onSearchTap,
+              _compactIcon(
+                icon: Icons.search,
+                size: widget.searchIconSize,
+                color: widget.iconColor,
+                onTap: onSearchTap ?? () {},
+              ),
+            if (widget.showFilterIcon &&
+                onFilterTap != null &&
+                widget.showSearch)
+              _compactIcon(
+                icon: Icons.filter_list,
+                size: widget.filterIconSize,
+                color: widget.iconColor,
+                onTap: onFilterTap!,
               ),
             if (widget.showAddIcon && widget.onAddTap != null)
               Padding(
@@ -360,11 +367,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
               ),
             if (widget.showSort)
               PopupMenuButton<int>(
-                icon: Icon(
-                  Icons.sort,
-                  color: widget.iconColor,
-                  size: widget.searchIconSize,
-                ),
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(minWidth: 0, minHeight: 0),
                 onSelected: onSortTap,
                 itemBuilder: (context) => [
                   const PopupMenuItem(value: 0, child: Text('Default')),
@@ -384,46 +388,69 @@ class _CustomAppBarState extends State<CustomAppBar> {
                   const PopupMenuItem(value: 7, child: Text('Name (A-Z)')),
                   const PopupMenuItem(value: 8, child: Text('Name (Z-A)')),
                 ],
+                child: _compactIcon(
+                  icon: Icons.sort,
+                  size: widget.searchIconSize,
+                  color: widget.iconColor,
+                ),
               ),
             if (widget.showExcel)
-              IconButton(
-                icon: Icon(
-                  Icons.file_download,
-                  color: widget.iconColor,
-                  size: widget.searchIconSize,
-                ),
-                onPressed: onExcelTap,
+              _compactIcon(
+                icon: Icons.file_download,
+                size: widget.searchIconSize,
+                color: widget.iconColor,
+                onTap: onExcelTap ?? () {},
               ),
             if (widget.showImportExcel && widget.onImportExcelTap != null)
-              IconButton(
-                icon: Icon(
-                  Icons.upload_file,
-                  color: widget.iconColor,
-                  size: widget.searchIconSize,
-                ),
-                onPressed: widget.onImportExcelTap,
+              _compactIcon(
+                icon: Icons.upload_file,
+                size: widget.searchIconSize,
+                color: widget.iconColor,
+                onTap: widget.onImportExcelTap!,
               ),
             if (widget.showPdf)
-              IconButton(
-                icon: Icon(
-                  Icons.picture_as_pdf,
-                  color: widget.iconColor,
-                  size: widget.searchIconSize,
-                ),
-                onPressed: onPdfTap,
+              _compactIcon(
+                icon: Icons.picture_as_pdf,
+                size: widget.searchIconSize,
+                color: widget.iconColor,
+                onTap: onPdfTap ?? () {},
               ),
             if (widget.showTransfer)
-              IconButton(
-                icon: Icon(
-                  Icons.compare_arrows,
-                  color: widget.iconColor,
-                  size: widget.searchIconSize,
-                ),
-                onPressed: widget.onTransferTap,
+              _compactIcon(
+                icon: Icons.compare_arrows,
+                size: widget.searchIconSize,
+                color: widget.iconColor,
+                onTap: widget.onTransferTap ?? () {},
               ),
           ],
         ),
       ),
     ];
+  }
+
+  Widget _compactIcon({
+    required IconData icon,
+    required double size,
+    required Color? color,
+    VoidCallback? onTap,
+  }) {
+    final iconWidget = Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 8),
+      child: Icon(
+        icon,
+        size: size,
+        color: color,
+      ),
+    );
+
+    if (onTap == null) {
+      return iconWidget;
+    }
+
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: iconWidget,
+    );
   }
 }

@@ -90,9 +90,12 @@ class _tasksPageReportState extends State<TaskPage> {
 
   void _toggleTaskSelection(TaskReportModel task, bool? selected) {
     if (selected == true) {
-      if (_selectedTaskIds.isNotEmpty && _selectedTaskType != task.taskTypeId.toString()) {
+      if (_selectedTaskIds.isNotEmpty &&
+          _selectedTaskType != task.taskTypeId.toString()) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Cannot select different task types. Please select tasks of the same type.")),
+          const SnackBar(
+              content: Text(
+                  "Cannot select different task types. Please select tasks of the same type.")),
         );
         return;
       }
@@ -112,16 +115,20 @@ class _tasksPageReportState extends State<TaskPage> {
 
   void _selectAllVisibleTasks(List<TaskReportModel> visibleTasks) {
     if (visibleTasks.isEmpty) return;
-    
+
     // Determine the type we are selecting (use the first valid one if not already set)
-    String? targetType = _selectedTaskType ?? visibleTasks.first.taskTypeId.toString(); // Edge case
-    
+    String? targetType = _selectedTaskType ??
+        visibleTasks.first.taskTypeId.toString(); // Edge case
+
     // Find all visible tasks of that type
-    final selectableTasks = visibleTasks.where((t) => t.taskTypeId.toString() == targetType).toList();
-    
+    final selectableTasks = visibleTasks
+        .where((t) => t.taskTypeId.toString() == targetType)
+        .toList();
+
     // Check if they are all selected
-    bool allSelected = selectableTasks.every((t) => _selectedTaskIds.contains(t.taskId.toString()));
-    
+    bool allSelected = selectableTasks
+        .every((t) => _selectedTaskIds.contains(t.taskId.toString()));
+
     setState(() {
       if (allSelected) {
         // Unselect them
@@ -146,21 +153,23 @@ class _tasksPageReportState extends State<TaskPage> {
 
     String? selectedStaffId;
     bool isAssigning = false;
-    
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (context, setModalState) {
-            final staffList = Provider.of<DropDownProvider>(context, listen: false).staffData;
-            
+            final staffList =
+                Provider.of<DropDownProvider>(context, listen: false).staffData;
+
             return AlertDialog(
               title: const Text("Assign Tasks"),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Selected ${_selectedTaskIds.length} tasks of type: ${_selectedTaskType ?? 'Unknown'}"),
+                  Text(
+                      "Selected ${_selectedTaskIds.length} tasks of type: ${_selectedTaskType ?? 'Unknown'}"),
                   const SizedBox(height: 16),
                   DropdownButtonFormField<String>(
                     decoration: const InputDecoration(
@@ -188,46 +197,63 @@ class _tasksPageReportState extends State<TaskPage> {
                   child: const Text("Cancel"),
                 ),
                 ElevatedButton(
-                  onPressed: (selectedStaffId == null || _selectedTaskIds.isEmpty || isAssigning) 
-                      ? null 
+                  onPressed: (selectedStaffId == null ||
+                          _selectedTaskIds.isEmpty ||
+                          isAssigning)
+                      ? null
                       : () async {
-                    setModalState(() {
-                      isAssigning = true;
-                    });
+                          setModalState(() {
+                            isAssigning = true;
+                          });
 
-                    final provider = Provider.of<TaskPageProvider>(context, listen: false);
-                    final success = await provider.transferTasks(
-                      taskIds: _selectedTaskIds.map((id) => int.parse(id)).toList(),
-                      toUserId: int.parse(selectedStaffId!),
-                    );
+                          final provider = Provider.of<TaskPageProvider>(
+                              context,
+                              listen: false);
+                          final success = await provider.transferTasks(
+                            taskIds: _selectedTaskIds
+                                .map((id) => int.parse(id))
+                                .toList(),
+                            toUserId: int.parse(selectedStaffId!),
+                          );
 
-                    if (!context.mounted) return;
+                          if (!context.mounted) return;
 
-                    if (success) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("Tasks transferred successfully")),
-                      );
-                      Navigator.pop(context, true);
-                      
-                      final staffName = staffList.firstWhere((s) => s.userDetailsId.toString() == selectedStaffId).userDetailsName;
-                      provider.updateAssignedStaffLocally(_selectedTaskIds.map((id) => int.parse(id)).toList(), staffName);
-                      
-                      _clearSelection();
-                    } else {
-                      setModalState(() {
-                        isAssigning = false;
-                      });
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("Failed to assign tasks. Please try again.")),
-                      );
-                    }
-                  },
-                  child: isAssigning 
+                          if (success) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content:
+                                      Text("Tasks transferred successfully")),
+                            );
+                            Navigator.pop(context, true);
+
+                            final staffName = staffList
+                                .firstWhere((s) =>
+                                    s.userDetailsId.toString() ==
+                                    selectedStaffId)
+                                .userDetailsName;
+                            provider.updateAssignedStaffLocally(
+                                _selectedTaskIds
+                                    .map((id) => int.parse(id))
+                                    .toList(),
+                                staffName);
+
+                            _clearSelection();
+                          } else {
+                            setModalState(() {
+                              isAssigning = false;
+                            });
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text(
+                                      "Failed to assign tasks. Please try again.")),
+                            );
+                          }
+                        },
+                  child: isAssigning
                       ? const SizedBox(
-                          height: 20, 
-                          width: 20, 
-                          child: CircularProgressIndicator(strokeWidth: 2)
-                        ) 
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2))
                       : const Text("Assign / Update"),
                 ),
               ],
@@ -327,7 +353,7 @@ class _tasksPageReportState extends State<TaskPage> {
 
   void _handleCustomerAction(String action, int customerId) async {
     final leadsProvider = Provider.of<LeadsProvider>(context, listen: false);
-    
+
     if (action == 'edit') {
       showDialog(
         context: context,
@@ -339,15 +365,20 @@ class _tasksPageReportState extends State<TaskPage> {
         },
       );
 
-      final leadDetailsProvider = Provider.of<LeadDetailsProvider>(context, listen: false);
-      await leadDetailsProvider.fetchLeadDetails(customerId.toString(), context);
+      final leadDetailsProvider =
+          Provider.of<LeadDetailsProvider>(context, listen: false);
+      await leadDetailsProvider.fetchLeadDetails(
+          customerId.toString(), context);
 
       leadsProvider.setCutomerId(customerId);
-      final dropDownProvider = Provider.of<DropDownProvider>(context, listen: false);
+      final dropDownProvider =
+          Provider.of<DropDownProvider>(context, listen: false);
 
-      if (leadDetailsProvider.leadDetails != null && leadDetailsProvider.leadDetails!.isNotEmpty) {
+      if (leadDetailsProvider.leadDetails != null &&
+          leadDetailsProvider.leadDetails!.isNotEmpty) {
         final leadDetails = leadDetailsProvider.leadDetails![0];
-        leadsProvider.enquirySourceController.text = leadDetails.enquirySourceName.toString();
+        leadsProvider.enquirySourceController.text =
+            leadDetails.enquirySourceName.toString();
         dropDownProvider.selectedEnquirySourceId = leadDetails.enquirySourceId;
         // await leadsProvider.getLeadDropdowns(context);
       }
@@ -365,8 +396,7 @@ class _tasksPageReportState extends State<TaskPage> {
       final customerDetailsProvider =
           Provider.of<CustomerDetailsProvider>(context, listen: false);
       final hasPending = await customerDetailsProvider
-          .checkAndWarnPendingApprovalQuotation(
-              customerId.toString(), context);
+          .checkAndWarnPendingApprovalQuotation(customerId.toString(), context);
       if (hasPending) return;
       if (!context.mounted) return;
       showDialog(
@@ -379,7 +409,8 @@ class _tasksPageReportState extends State<TaskPage> {
         ),
       );
     } else if (action == 'quotation_list_tab') {
-      CustomerDetailsProvider customerDetailsProvider = Provider.of<CustomerDetailsProvider>(context, listen: false);
+      CustomerDetailsProvider customerDetailsProvider =
+          Provider.of<CustomerDetailsProvider>(context, listen: false);
       customerDetailsProvider.setCustomerId(customerId);
       customerDetailsProvider.setInitialTabName("Quotations");
       final sideProvider = Provider.of<SidebarProvider>(context, listen: false);
@@ -395,7 +426,8 @@ class _tasksPageReportState extends State<TaskPage> {
         ),
       );
     } else if (action == 'documents_tab') {
-      CustomerDetailsProvider customerDetailsProvider = Provider.of<CustomerDetailsProvider>(context, listen: false);
+      CustomerDetailsProvider customerDetailsProvider =
+          Provider.of<CustomerDetailsProvider>(context, listen: false);
       customerDetailsProvider.setCustomerId(customerId);
       customerDetailsProvider.setInitialTabName("Documents");
       final sideProvider = Provider.of<SidebarProvider>(context, listen: false);
@@ -427,14 +459,16 @@ class _tasksPageReportState extends State<TaskPage> {
         context: context,
         builder: (context) => Dialog(
           backgroundColor: Colors.transparent,
-          child: TaskCreationWidget(isEdit: false, taskId: '0', isFromTaskPage: true),
+          child: TaskCreationWidget(
+              isEdit: false, taskId: '0', isFromTaskPage: true),
         ),
       );
     } else {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => AddTaskMobile(isEdit: false, taskId: '0', isFromTaskPage: true)));
+              builder: (context) => AddTaskMobile(
+                  isEdit: false, taskId: '0', isFromTaskPage: true)));
     }
   }
 
@@ -604,7 +638,94 @@ class _tasksPageReportState extends State<TaskPage> {
     super.dispose();
   }
 
+  /// Compact pill-style dropdown for the mobile app bar action area.
+  Widget _buildCompactDropdown<T>({
+    required T value,
+    required List<DropdownMenuItem<T>> items,
+    required ValueChanged<T?> onChanged,
+  }) {
+    return Container(
+      height: 30,
+      padding: const EdgeInsets.symmetric(horizontal: 6),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: const Color(0xFFCBD5E1), width: 1),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<T>(
+          value: value,
+          isDense: true,
+          style: const TextStyle(
+            fontFamily: 'PlusJakartaSans',
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFF1E293B),
+          ),
+          icon: const Icon(Icons.arrow_drop_down,
+              size: 16, color: Color(0xFF64748B)),
+          items: items,
+          onChanged: onChanged,
+        ),
+      ),
+    );
+  }
+
+  /// Styled dropdown for the web header – shows "Combined / Lead / Customer".
+  Widget _buildWebCustomerTypeDropdown(
+      BuildContext context, TaskPageProvider reportsProvider) {
+    const Map<int, String> labels = {
+      0: 'Combined',
+      1: 'Leads',
+      2: 'Customers',
+    };
+    final int current = reportsProvider.customerTypeId;
+    return Container(
+      height: 34,
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: const Color(0xFFCBD5E1), width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<int>(
+          value: current,
+          isDense: true,
+          style: const TextStyle(
+            fontFamily: 'PlusJakartaSans',
+            fontSize: 13,
+            color: Color(0xFF1E293B),
+          ),
+          icon: const Icon(Icons.arrow_drop_down,
+              size: 18, color: Color(0xFF64748B)),
+          items: labels.entries
+              .map((e) => DropdownMenuItem<int>(
+                    value: e.key,
+                    child: Text(e.value),
+                  ))
+              .toList(),
+          onChanged: (v) {
+            if (v != null) {
+              reportsProvider.setCustomerTypeId(v);
+              reportsProvider.goToPage(1);
+              reportsProvider.searchTaskByCustomer(context);
+            }
+          },
+        ),
+      ),
+    );
+  }
+
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     final double rowHeight = AppStyles.isWebScreen(context) ? 36.0 : 48.0;
@@ -713,19 +834,47 @@ class _tasksPageReportState extends State<TaskPage> {
                 );
                 reportsProvider.searchTaskByCustomer(context);
               },
-              customActionWidget: settingsProvider.canViewTaskMeAndAll
-                  ? Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                      child: MeAllToggleSwitch(
+              customActionWidget: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // ME/ALL compact dropdown on mobile
+                  if (settingsProvider.canViewTaskMeAndAll)
+                    Padding(
+                      padding: const EdgeInsets.only(right: 4),
+                      child: _buildCompactDropdown<String>(
                         value: reportsProvider.entryType,
-                        onChanged: (String newValue) {
-                          reportsProvider.setEntryType(newValue);
-                          reportsProvider.goToPage(1);
-                          reportsProvider.searchTaskByCustomer(context);
+                        items: const [
+                          DropdownMenuItem(value: 'myown', child: Text('ME')),
+                          DropdownMenuItem(value: 'all', child: Text('ALL')),
+                        ],
+                        onChanged: (v) {
+                          if (v != null) {
+                            reportsProvider.setEntryType(v);
+                            reportsProvider.goToPage(1);
+                            reportsProvider.searchTaskByCustomer(context);
+                          }
                         },
                       ),
-                    )
-                  : const SizedBox.shrink(),
+                    ),
+                  // Customer Type compact dropdown on mobile
+                  if (settingsProvider.canViewCustomerTypeFilter)
+                    _buildCompactDropdown<int>(
+                      value: reportsProvider.customerTypeId,
+                      items: const [
+                        DropdownMenuItem(value: 0, child: Text('Combined')),
+                        DropdownMenuItem(value: 1, child: Text('Lead')),
+                        DropdownMenuItem(value: 2, child: Text('Customer')),
+                      ],
+                      onChanged: (v) {
+                        if (v != null) {
+                          reportsProvider.setCustomerTypeId(v);
+                          reportsProvider.goToPage(1);
+                          reportsProvider.searchTaskByCustomer(context);
+                        }
+                      },
+                    ),
+                ],
+              ),
             )
           : null,
       drawer: AppStyles.isWebScreen(context) ? null : const SidebarDrawer(),
@@ -777,7 +926,7 @@ class _tasksPageReportState extends State<TaskPage> {
                           runSpacing: 8,
                           crossAxisAlignment: WrapCrossAlignment.center,
                           children: [
-                            // Entry Type Filter
+                            // Entry Type Filter (ME/ALL) — web tab style
                             if (settingsProvider.canViewTaskMeAndAll)
                               Row(
                                 mainAxisSize: MainAxisSize.min,
@@ -804,7 +953,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                       ),
                                       child: Text(
                                         'ME',
-                                        style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                        style: TextStyle(
+                                          fontFamily: 'PlusJakartaSans',
                                           color:
                                               reportsProvider.entryType != 'all'
                                                   ? AppColors.primaryBlue
@@ -841,7 +991,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                       ),
                                       child: Text(
                                         'ALL',
-                                        style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                        style: TextStyle(
+                                          fontFamily: 'PlusJakartaSans',
                                           color:
                                               reportsProvider.entryType == 'all'
                                                   ? AppColors.primaryBlue
@@ -857,6 +1008,10 @@ class _tasksPageReportState extends State<TaskPage> {
                                   ),
                                 ],
                               ),
+                            // Customer Type Dropdown — web
+                            if (settingsProvider.canViewCustomerTypeFilter)
+                              _buildWebCustomerTypeDropdown(
+                                  context, reportsProvider),
                             Container(
                               width: 280,
                               height: 38,
@@ -909,7 +1064,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                 },
                                 decoration: InputDecoration(
                                   hintText: 'Search here...',
-                                  hintStyle: const TextStyle(fontFamily: 'PlusJakartaSans', 
+                                  hintStyle: const TextStyle(
+                                    fontFamily: 'PlusJakartaSans',
                                     color: Color(0xFF94A3B8),
                                     fontSize: 13,
                                   ),
@@ -1066,9 +1222,12 @@ class _tasksPageReportState extends State<TaskPage> {
                             ),
                             // Assign Tasks
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 8.0),
                               child: ElevatedButton.icon(
-                                onPressed: _selectedTaskIds.isEmpty ? null : _showAssignModal,
+                                onPressed: _selectedTaskIds.isEmpty
+                                    ? null
+                                    : _showAssignModal,
                                 icon: const Icon(Icons.assignment_ind),
                                 label: const Text('Assign'),
                                 style: ElevatedButton.styleFrom(
@@ -1128,16 +1287,25 @@ class _tasksPageReportState extends State<TaskPage> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           const Text('Status: ',
-                              style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14)),
+                              style: TextStyle(
+                                  fontFamily: 'PlusJakartaSans',
+                                  color: Colors.black,
+                                  fontSize: 14)),
                           DropdownButton<int>(
                             value: reportsProvider.selectedStatus,
                             hint: const Text('All',
-                                style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14)),
+                                style: TextStyle(
+                                    fontFamily: 'PlusJakartaSans',
+                                    color: Colors.black,
+                                    fontSize: 14)),
                             items: [
                                   const DropdownMenuItem<int>(
                                     value: 0,
                                     child: Text('All',
-                                        style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14)),
+                                        style: TextStyle(
+                                            fontFamily: 'PlusJakartaSans',
+                                            color: Colors.black,
+                                            fontSize: 14)),
                                   ),
                                 ] +
                                 provider.taskStatuses
@@ -1150,8 +1318,10 @@ class _tasksPageReportState extends State<TaskPage> {
                                               StatusUtils.getDisplayStatus(
                                                   status.statusName ?? ''),
                                               overflow: TextOverflow.ellipsis,
-                                              style:
-                                                  const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
+                                              style: const TextStyle(
+                                                  fontFamily: 'PlusJakartaSans',
+                                                  color: Colors.black,
+                                                  fontSize: 14),
                                             ),
                                           ),
                                         ))
@@ -1196,7 +1366,10 @@ class _tasksPageReportState extends State<TaskPage> {
                                       reportsProvider.toDate == null
                                   ? 'Follow-Up Date: All'
                                   : 'Date: ${reportsProvider.formattedFromDate} - ${reportsProvider.formattedToDate}',
-                              style: const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
+                              style: const TextStyle(
+                                  fontFamily: 'PlusJakartaSans',
+                                  color: Colors.black,
+                                  fontSize: 14),
                             ),
                             const SizedBox(width: 8),
                             const Icon(Icons.arrow_drop_down,
@@ -1223,16 +1396,25 @@ class _tasksPageReportState extends State<TaskPage> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           const Text('Assigned To: ',
-                              style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14)),
+                              style: TextStyle(
+                                  fontFamily: 'PlusJakartaSans',
+                                  color: Colors.black,
+                                  fontSize: 14)),
                           DropdownButton<int>(
                             value: reportsProvider.selectedUser,
                             hint: const Text('All',
-                                style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14)),
+                                style: TextStyle(
+                                    fontFamily: 'PlusJakartaSans',
+                                    color: Colors.black,
+                                    fontSize: 14)),
                             items: [
                                   const DropdownMenuItem<int>(
                                     value: 0,
                                     child: Text('All',
-                                        style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14)),
+                                        style: TextStyle(
+                                            fontFamily: 'PlusJakartaSans',
+                                            color: Colors.black,
+                                            fontSize: 14)),
                                   ),
                                 ] +
                                 provider.searchUserDetails
@@ -1244,8 +1426,10 @@ class _tasksPageReportState extends State<TaskPage> {
                                             child: Text(
                                               user.userDetailsName,
                                               overflow: TextOverflow.ellipsis,
-                                              style:
-                                                  const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
+                                              style: const TextStyle(
+                                                  fontFamily: 'PlusJakartaSans',
+                                                  color: Colors.black,
+                                                  fontSize: 14),
                                             ),
                                           ),
                                         ))
@@ -1282,16 +1466,25 @@ class _tasksPageReportState extends State<TaskPage> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           const Text('Task Type: ',
-                              style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14)),
+                              style: TextStyle(
+                                  fontFamily: 'PlusJakartaSans',
+                                  color: Colors.black,
+                                  fontSize: 14)),
                           DropdownButton<int>(
                             value: reportsProvider.selectedTaskType,
                             hint: const Text('All',
-                                style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14)),
+                                style: TextStyle(
+                                    fontFamily: 'PlusJakartaSans',
+                                    color: Colors.black,
+                                    fontSize: 14)),
                             items: [
                                   const DropdownMenuItem<int>(
                                     value: 0,
                                     child: Text('All',
-                                        style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14)),
+                                        style: TextStyle(
+                                            fontFamily: 'PlusJakartaSans',
+                                            color: Colors.black,
+                                            fontSize: 14)),
                                   ),
                                 ] +
                                 provider.taskType
@@ -1303,8 +1496,10 @@ class _tasksPageReportState extends State<TaskPage> {
                                             child: Text(
                                               task.taskTypeName,
                                               overflow: TextOverflow.ellipsis,
-                                              style:
-                                                  const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
+                                              style: const TextStyle(
+                                                  fontFamily: 'PlusJakartaSans',
+                                                  color: Colors.black,
+                                                  fontSize: 14),
                                             ),
                                           ),
                                         ))
@@ -1341,16 +1536,25 @@ class _tasksPageReportState extends State<TaskPage> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           const Text('Enquiry For: ',
-                              style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14)),
+                              style: TextStyle(
+                                  fontFamily: 'PlusJakartaSans',
+                                  color: Colors.black,
+                                  fontSize: 14)),
                           DropdownButton<int>(
                             value: reportsProvider.selectedEnquiryFor,
                             hint: const Text('All',
-                                style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14)),
+                                style: TextStyle(
+                                    fontFamily: 'PlusJakartaSans',
+                                    color: Colors.black,
+                                    fontSize: 14)),
                             items: [
                                   const DropdownMenuItem<int>(
                                     value: 0,
                                     child: Text('All',
-                                        style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14)),
+                                        style: TextStyle(
+                                            fontFamily: 'PlusJakartaSans',
+                                            color: Colors.black,
+                                            fontSize: 14)),
                                   ),
                                 ] +
                                 provider.enquiryForList
@@ -1362,8 +1566,10 @@ class _tasksPageReportState extends State<TaskPage> {
                                             child: Text(
                                               enquiry.enquiryForName,
                                               overflow: TextOverflow.ellipsis,
-                                              style:
-                                                  const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
+                                              style: const TextStyle(
+                                                  fontFamily: 'PlusJakartaSans',
+                                                  color: Colors.black,
+                                                  fontSize: 14),
                                             ),
                                           ),
                                         ))
@@ -1400,16 +1606,25 @@ class _tasksPageReportState extends State<TaskPage> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           const Text('Department: ',
-                              style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14)),
+                              style: TextStyle(
+                                  fontFamily: 'PlusJakartaSans',
+                                  color: Colors.black,
+                                  fontSize: 14)),
                           DropdownButton<int>(
                             value: reportsProvider.selectedDepartment,
                             hint: const Text('All',
-                                style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14)),
+                                style: TextStyle(
+                                    fontFamily: 'PlusJakartaSans',
+                                    color: Colors.black,
+                                    fontSize: 14)),
                             items: [
                                   const DropdownMenuItem<int>(
                                     value: 0,
                                     child: Text('All',
-                                        style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14)),
+                                        style: TextStyle(
+                                            fontFamily: 'PlusJakartaSans',
+                                            color: Colors.black,
+                                            fontSize: 14)),
                                   ),
                                 ] +
                                 settingsProvider.departmentModel
@@ -1421,8 +1636,10 @@ class _tasksPageReportState extends State<TaskPage> {
                                             child: Text(
                                               branch.departmentName ?? '',
                                               overflow: TextOverflow.ellipsis,
-                                              style:
-                                                  const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
+                                              style: const TextStyle(
+                                                  fontFamily: 'PlusJakartaSans',
+                                                  color: Colors.black,
+                                                  fontSize: 14),
                                             ),
                                           ),
                                         ))
@@ -1582,7 +1799,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                               ? 'Follow-Up Date: All'
                                               : 'Date : ${reportsProvider.formattedFromDate} - ${reportsProvider.formattedToDate}',
                                           overflow: TextOverflow.ellipsis,
-                                          style: const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
+                                          style: const TextStyle(
+                                            fontFamily: 'PlusJakartaSans',
+                                            color: Colors.black,
                                             fontSize: 14,
                                             fontWeight: FontWeight.w500,
                                           ),
@@ -1904,66 +2123,95 @@ class _tasksPageReportState extends State<TaskPage> {
                                     interactive: true,
                                     child: SingleChildScrollView(
                                       scrollDirection: Axis.horizontal,
-                                      physics: constraints.maxWidth < fixedWidth + 50 
-                                          ? const AlwaysScrollableScrollPhysics() 
+                                      physics: constraints.maxWidth <
+                                              fixedWidth + 50
+                                          ? const AlwaysScrollableScrollPhysics()
                                           : const NeverScrollableScrollPhysics(),
                                       child: SizedBox(
-                                        width: constraints.maxWidth < fixedWidth + 50 
-                                            ? fixedWidth + scrollableMinWidth 
+                                        width: constraints.maxWidth <
+                                                fixedWidth + 50
+                                            ? fixedWidth + scrollableMinWidth
                                             : constraints.maxWidth,
                                         child: Row(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
                                             // ==================== FIXED COLUMNS ====================
-                                        SizedBox(
-                                          width: fixedWidth,
-                                          child: Column(
-                                            children: [
-                                              // Fixed Header
-                                              Container(
-                                                height: 40,
-                                                decoration: BoxDecoration(
-                                                  color: AppColors.primaryBlue,
-                                                  borderRadius:
-                                                      const BorderRadius.only(
-                                                    topLeft: Radius.circular(4),
-                                                    bottomLeft:
-                                                        Radius.circular(4),
-                                                  ),
-                                                ),
-                                                child: Row(
-                                                  children: [
-                                                    SizedBox(
-                                                      width: 40,
-                                                      child: Checkbox(
-                                                        value: reportsProvider.taskReport.isNotEmpty && _selectedTaskIds.length == reportsProvider.taskReport.where((t) => t.taskTypeId.toString() == (_selectedTaskType ?? reportsProvider.taskReport.first.taskTypeId.toString())).length,
-                                                        onChanged: (val) => _selectAllVisibleTasks(reportsProvider.taskReport),
-                                                        fillColor: WidgetStateProperty.resolveWith((states) => Colors.white),
-                                                        checkColor: AppColors.primaryBlue,
+                                            SizedBox(
+                                              width: fixedWidth,
+                                              child: Column(
+                                                children: [
+                                                  // Fixed Header
+                                                  Container(
+                                                    height: 40,
+                                                    decoration: BoxDecoration(
+                                                      color:
+                                                          AppColors.primaryBlue,
+                                                      borderRadius:
+                                                          const BorderRadius
+                                                              .only(
+                                                        topLeft:
+                                                            Radius.circular(4),
+                                                        bottomLeft:
+                                                            Radius.circular(4),
                                                       ),
                                                     ),
-                                                    SizedBox(
-                                                      width: 60,
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                                vertical: 4.0,
-                                                                horizontal:
-                                                                    12.0),
-                                                        child: Text(
-                                                          'No.',
-                                                          style:
-                                                              const TextStyle(fontFamily: 'PlusJakartaSans', 
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            color: Colors.white,
+                                                    child: Row(
+                                                      children: [
+                                                        SizedBox(
+                                                          width: 40,
+                                                          child: Checkbox(
+                                                            value: reportsProvider
+                                                                    .taskReport
+                                                                    .isNotEmpty &&
+                                                                _selectedTaskIds
+                                                                        .length ==
+                                                                    reportsProvider
+                                                                        .taskReport
+                                                                        .where((t) =>
+                                                                            t.taskTypeId.toString() ==
+                                                                            (_selectedTaskType ??
+                                                                                reportsProvider.taskReport.first.taskTypeId.toString()))
+                                                                        .length,
+                                                            onChanged: (val) =>
+                                                                _selectAllVisibleTasks(
+                                                                    reportsProvider
+                                                                        .taskReport),
+                                                            fillColor: WidgetStateProperty
+                                                                .resolveWith(
+                                                                    (states) =>
+                                                                        Colors
+                                                                            .white),
+                                                            checkColor: AppColors
+                                                                .primaryBlue,
                                                           ),
                                                         ),
-                                                      ),
-                                                    ),
-                                                      if (settingsProvider
+                                                        SizedBox(
+                                                          width: 60,
+                                                          child: Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    vertical:
+                                                                        4.0,
+                                                                    horizontal:
+                                                                        12.0),
+                                                            child: Text(
+                                                              'No.',
+                                                              style:
+                                                                  const TextStyle(
+                                                                fontFamily:
+                                                                    'PlusJakartaSans',
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color: Colors
+                                                                    .white,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        if (settingsProvider
                                                                 .showLeadCode ==
                                                             1)
                                                           TableWidget(
@@ -1980,145 +2228,177 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                 .centerLeft,
                                                             color: Colors.white,
                                                           ),
-                                                    TableWidget(
-                                                      width: 180,
-                                                      title: 'Customer',
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          vertical: 4.0,
-                                                          horizontal: 12.0),
-                                                      alignment:
-                                                          Alignment.centerLeft,
-                                                      color: Colors.white,
+                                                        TableWidget(
+                                                          width: 180,
+                                                          title: 'Customer',
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .symmetric(
+                                                                  vertical: 4.0,
+                                                                  horizontal:
+                                                                      12.0),
+                                                          alignment: Alignment
+                                                              .centerLeft,
+                                                          color: Colors.white,
+                                                        ),
+                                                        TableWidget(
+                                                          width: 150,
+                                                          title: 'Mobile No.',
+                                                          fontSize: 13,
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .symmetric(
+                                                                  vertical: 4.0,
+                                                                  horizontal:
+                                                                      12.0),
+                                                          color: Colors.white,
+                                                        ),
+                                                        TableWidget(
+                                                          width: 180,
+                                                          title: 'Task',
+                                                          fontSize: 13,
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .symmetric(
+                                                                  vertical: 4.0,
+                                                                  horizontal:
+                                                                      12.0),
+                                                          color: Colors.white,
+                                                        ),
+                                                        TableWidget(
+                                                          width: 120,
+                                                          title: 'Status',
+                                                          fontSize: 13,
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .symmetric(
+                                                                  vertical: 4.0,
+                                                                  horizontal:
+                                                                      12.0),
+                                                          color: Colors.white,
+                                                        ),
+                                                      ],
                                                     ),
-                                                    TableWidget(
-                                                      width: 150,
-                                                      title: 'Mobile No.',
-                                                      fontSize: 13,
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          vertical: 4.0,
-                                                          horizontal: 12.0),
-                                                      color: Colors.white,
-                                                    ),
-                                                    TableWidget(
-                                                      width: 180,
-                                                      title: 'Task',
-                                                      fontSize: 13,
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          vertical: 4.0,
-                                                          horizontal: 12.0),
-                                                      color: Colors.white,
-                                                    ),
-                                                    TableWidget(
-                                                      width: 120,
-                                                      title: 'Status',
-                                                      fontSize: 13,
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          vertical: 4.0,
-                                                          horizontal: 12.0),
-                                                      color: Colors.white,
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
+                                                  ),
 
-                                              // Fixed Data Rows
-                                              Expanded(
-                                                child: reportsProvider
-                                                        .taskReport.isEmpty
-                                                    ? const Center(
-                                                        child: Text(
-                                                            "No tasks found"))
-                                                    : ScrollConfiguration(
-                                                        behavior:
-                                                            ScrollConfiguration
+                                                  // Fixed Data Rows
+                                                  Expanded(
+                                                    child: reportsProvider
+                                                            .taskReport.isEmpty
+                                                        ? const Center(
+                                                            child: Text(
+                                                                "No tasks found"))
+                                                        : ScrollConfiguration(
+                                                            behavior: ScrollConfiguration
                                                                     .of(context)
                                                                 .copyWith(
                                                                     scrollbars:
                                                                         false),
-                                                        child: ListView.builder(
-                                                          controller:
-                                                              _fixedVerticalController,
-                                                          physics:
-                                                              const AlwaysScrollableScrollPhysics(),
-                                                          itemCount: reportsProvider
-                                                                  .taskReport
-                                                                  .length +
-                                                              (_isLoadingMore &&
-                                                                      !AppStyles
-                                                                          .isWebScreen(
+                                                            child: ListView
+                                                                .builder(
+                                                              controller:
+                                                                  _fixedVerticalController,
+                                                              physics:
+                                                                  const AlwaysScrollableScrollPhysics(),
+                                                              itemCount: reportsProvider
+                                                                      .taskReport
+                                                                      .length +
+                                                                  (_isLoadingMore &&
+                                                                          !AppStyles.isWebScreen(
                                                                               context)
-                                                                  ? 1
-                                                                  : 0),
-                                                          itemBuilder:
-                                                              (context, index) {
-                                                            // Loading indicator (mobile)
-                                                            if (!AppStyles
-                                                                    .isWebScreen(
-                                                                        context) &&
-                                                                index ==
-                                                                    reportsProvider
-                                                                        .taskReport
-                                                                        .length &&
-                                                                _isLoadingMore) {
-                                                              return const Padding(
-                                                                padding:
-                                                                    EdgeInsets
-                                                                        .all(
-                                                                            16),
-                                                                child: Center(
-                                                                    child:
-                                                                        CircularProgressIndicator()),
-                                                              );
-                                                            }
-
-                                                            var task =
-                                                                reportsProvider
-                                                                        .taskReport[
-                                                                    index];
-                                                            final itemNumber =
-                                                                ((reportsProvider.pageIndex ??
-                                                                                1) -
-                                                                            1) *
-                                                                        (reportsProvider.pageSize ??
-                                                                            20) +
-                                                                    index +
-                                                                    1;
-
-                                                            // Mobile card
-                                                            if (!AppStyles
-                                                                .isWebScreen(
-                                                                    context)) {
-                                                              return Column(
-                                                                children: [
-                                                                  Divider(
-                                                                      height: 1,
-                                                                      thickness:
-                                                                          1,
-                                                                      color: AppColors
-                                                                          .grey),
-                                                                  TaskCard(
-                                                                    task: task,
-                                                                    isExpanded:
-                                                                        reportsProvider.expandedIndex ==
-                                                                            index,
-                                                                    onTap: () =>
+                                                                      ? 1
+                                                                      : 0),
+                                                              itemBuilder:
+                                                                  (context,
+                                                                      index) {
+                                                                // Loading indicator (mobile)
+                                                                if (!AppStyles
+                                                                        .isWebScreen(
+                                                                            context) &&
+                                                                    index ==
                                                                         reportsProvider
-                                                                            .toggleExpansion(index),
-                                                                    showStatusUpdate:
-                                                                        (ctx,
-                                                                            t) {
-                                                                      reportsProvider
-                                                                          .selectedTaskTypeIds
-                                                                          .clear();
-                                                                      reportsProvider
-                                                                          .taskTypeModel
-                                                                          .clear();
-                                                                      statusDialogMobile(
-                                                                              t)
+                                                                            .taskReport
+                                                                            .length &&
+                                                                    _isLoadingMore) {
+                                                                  return const Padding(
+                                                                    padding:
+                                                                        EdgeInsets.all(
+                                                                            16),
+                                                                    child: Center(
+                                                                        child:
+                                                                            CircularProgressIndicator()),
+                                                                  );
+                                                                }
+
+                                                                var task =
+                                                                    reportsProvider
+                                                                            .taskReport[
+                                                                        index];
+                                                                final itemNumber =
+                                                                    ((reportsProvider.pageIndex ?? 1) -
+                                                                                1) *
+                                                                            (reportsProvider.pageSize ??
+                                                                                20) +
+                                                                        index +
+                                                                        1;
+
+                                                                // Mobile card
+                                                                if (!AppStyles
+                                                                    .isWebScreen(
+                                                                        context)) {
+                                                                  return Column(
+                                                                    children: [
+                                                                      Divider(
+                                                                          height:
+                                                                              1,
+                                                                          thickness:
+                                                                              1,
+                                                                          color:
+                                                                              AppColors.grey),
+                                                                      TaskCard(
+                                                                        task:
+                                                                            task,
+                                                                        isExpanded:
+                                                                            reportsProvider.expandedIndex ==
+                                                                                index,
+                                                                        onTap: () =>
+                                                                            reportsProvider.toggleExpansion(index),
+                                                                        showStatusUpdate:
+                                                                            (ctx,
+                                                                                t) {
+                                                                          reportsProvider
+                                                                              .selectedTaskTypeIds
+                                                                              .clear();
+                                                                          reportsProvider
+                                                                              .taskTypeModel
+                                                                              .clear();
+                                                                          statusDialogMobile(t)
+                                                                              .then((value) {
+                                                                            if (value ==
+                                                                                true) {
+                                                                              reportsProvider.searchTaskByCustomer(context);
+                                                                            }
+                                                                          });
+                                                                        },
+                                                                      ),
+                                                                    ],
+                                                                  );
+                                                                }
+
+                                                                // ===== WEB FIXED ROW =====
+                                                                return InkWell(
+                                                                  onTap: () {
+                                                                    reportsProvider
+                                                                        .selectedTaskTypeIds
+                                                                        .clear();
+                                                                    reportsProvider
+                                                                        .taskTypeModel
+                                                                        .clear();
+                                                                    if (task
+                                                                        .customerName
+                                                                        .isEmpty) {
+                                                                      updateStatusDialogWithoutTask(
+                                                                              task)
                                                                           .then(
                                                                               (value) {
                                                                         if (value ==
@@ -2127,112 +2407,87 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                               .searchTaskByCustomer(context);
                                                                         }
                                                                       });
-                                                                    },
-                                                                  ),
-                                                                ],
-                                                              );
-                                                            }
-
-                                                            // ===== WEB FIXED ROW =====
-                                                            return InkWell(
-                                                              onTap: () {
-                                                                reportsProvider
-                                                                    .selectedTaskTypeIds
-                                                                    .clear();
-                                                                reportsProvider
-                                                                    .taskTypeModel
-                                                                    .clear();
-                                                                if (task
-                                                                    .customerName
-                                                                    .isEmpty) {
-                                                                  updateStatusDialogWithoutTask(
-                                                                          task)
-                                                                      .then(
-                                                                          (value) {
-                                                                    if (value ==
-                                                                        true) {
-                                                                      reportsProvider
-                                                                          .searchTaskByCustomer(
-                                                                              context);
+                                                                    } else {
+                                                                      if (AppStyles
+                                                                          .isWebScreen(
+                                                                              context)) {
+                                                                        statusDialog(task)
+                                                                            .then((value) {
+                                                                          if (value ==
+                                                                              true) {
+                                                                            reportsProvider.searchTaskByCustomer(context);
+                                                                          }
+                                                                        });
+                                                                      } else {
+                                                                        statusDialogMobile(task)
+                                                                            .then((value) {
+                                                                          if (value ==
+                                                                              true) {
+                                                                            reportsProvider.searchTaskByCustomer(context);
+                                                                          }
+                                                                        });
+                                                                      }
                                                                     }
-                                                                  });
-                                                                } else {
-                                                                  if (AppStyles
-                                                                      .isWebScreen(
-                                                                          context)) {
-                                                                    statusDialog(
-                                                                            task)
-                                                                        .then(
-                                                                            (value) {
-                                                                      if (value ==
-                                                                          true) {
-                                                                        reportsProvider
-                                                                            .searchTaskByCustomer(context);
-                                                                      }
-                                                                    });
-                                                                  } else {
-                                                                    statusDialogMobile(
-                                                                            task)
-                                                                        .then(
-                                                                            (value) {
-                                                                      if (value ==
-                                                                          true) {
-                                                                        reportsProvider
-                                                                            .searchTaskByCustomer(context);
-                                                                      }
-                                                                    });
-                                                                  }
-                                                                }
-                                                              },
-                                                              hoverColor:
-                                                                  const Color(
-                                                                      0xFFF8FAFC),
-                                                                child: Container(
-                                                                  height: rowHeight,
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    color: _selectedTaskIds.contains(task.taskId.toString()) 
-                                                                        ? AppColors.primaryBlue.withOpacity(0.1)
-                                                                        : index % 2 == 0 ? const Color(0xFFE8EDF2) : const Color(0xFFF5F5F5),
-                                                                    border: Border(bottom: BorderSide(color: Colors.grey.shade200)),
-                                                                  ),
-                                                                  child: Row(
-                                                                    children: [
-                                                                      // Checkbox
-                                                                      SizedBox(
-                                                                        width: 40,
-                                                                        child: Checkbox(
-                                                                          value: _selectedTaskIds.contains(task.taskId.toString()),
-                                                                          onChanged: (val) => _toggleTaskSelection(task, val),
-                                                                          activeColor: AppColors.primaryBlue,
-                                                                        ),
-                                                                      ),
-                                                                      // No.
-                                                                      SizedBox(
-                                                                        width: 60,
-                                                                      child:
-                                                                          Padding(
-                                                                        padding: const EdgeInsets
-                                                                            .symmetric(
-                                                                            vertical:
-                                                                                4.0,
-                                                                            horizontal:
-                                                                                12.0),
-                                                                        child:
-                                                                            Text(
-                                                                          itemNumber
-                                                                              .toString(),
-                                                                          style:
-                                                                              const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
-                                                                            fontWeight:
-                                                                                FontWeight.bold,
-                                                                            fontSize:
-                                                                                13,
+                                                                  },
+                                                                  hoverColor:
+                                                                      const Color(
+                                                                          0xFFF8FAFC),
+                                                                  child:
+                                                                      Container(
+                                                                    height:
+                                                                        rowHeight,
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      color: _selectedTaskIds.contains(task
+                                                                              .taskId
+                                                                              .toString())
+                                                                          ? AppColors
+                                                                              .primaryBlue
+                                                                              .withOpacity(0.1)
+                                                                          : index % 2 == 0
+                                                                              ? const Color(0xFFE8EDF2)
+                                                                              : const Color(0xFFF5F5F5),
+                                                                      border: Border(
+                                                                          bottom:
+                                                                              BorderSide(color: Colors.grey.shade200)),
+                                                                    ),
+                                                                    child: Row(
+                                                                      children: [
+                                                                        // Checkbox
+                                                                        SizedBox(
+                                                                          width:
+                                                                              40,
+                                                                          child:
+                                                                              Checkbox(
+                                                                            value:
+                                                                                _selectedTaskIds.contains(task.taskId.toString()),
+                                                                            onChanged: (val) =>
+                                                                                _toggleTaskSelection(task, val),
+                                                                            activeColor:
+                                                                                AppColors.primaryBlue,
                                                                           ),
                                                                         ),
-                                                                      ),
-                                                                    ),
-                                                                    // Lead Code
+                                                                        // No.
+                                                                        SizedBox(
+                                                                          width:
+                                                                              60,
+                                                                          child:
+                                                                              Padding(
+                                                                            padding:
+                                                                                const EdgeInsets.symmetric(vertical: 4.0, horizontal: 12.0),
+                                                                            child:
+                                                                                Text(
+                                                                              itemNumber.toString(),
+                                                                              style: const TextStyle(
+                                                                                fontFamily: 'PlusJakartaSans',
+                                                                                color: Colors.black,
+                                                                                fontWeight: FontWeight.bold,
+                                                                                fontSize: 13,
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                        // Lead Code
                                                                         if (settingsProvider.showLeadCode ==
                                                                             1)
                                                                           TableWidget(
@@ -2247,177 +2502,163 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                             fontWeight:
                                                                                 FontWeight.normal,
                                                                           ),
-                                                                    // Customer
-                                                                    TableWidget(
-                                                                      width:
-                                                                          180,
-                                                                      padding: const EdgeInsets
-                                                                          .symmetric(
-                                                                          vertical:
-                                                                              4.0,
-                                                                          horizontal:
-                                                                              12.0),
-                                                                      data: Row(
-                                                                        children: [
-                                                                          Expanded(
-                                                                            child: Padding(
-                                                                              padding: const EdgeInsets.symmetric(vertical: 6),
-                                                                              child: InkWell(
-                                                                                onTap: () {
-                                                                                  context.push('${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
-                                                                                },
-                                                                                child: Tooltip(
-                                                                                  message: task.customerName.isNotEmpty ? task.customerName : 'Unknown',
-                                                                                  child: Text(
-                                                                                    task.customerName.isNotEmpty ? task.customerName : 'Unknown',
-                                                                                    overflow: TextOverflow.ellipsis,
-                                                                                    maxLines: 1,
-                                                                                    style: const TextStyle(fontFamily: 'PlusJakartaSans', 
-                                                                                      color: Colors.blue,
-                                                                                      fontWeight: FontWeight.w600,
-                                                                                      fontSize: 13,
+                                                                        // Customer
+                                                                        TableWidget(
+                                                                          width:
+                                                                              180,
+                                                                          padding: const EdgeInsets
+                                                                              .symmetric(
+                                                                              vertical: 4.0,
+                                                                              horizontal: 12.0),
+                                                                          data:
+                                                                              Row(
+                                                                            children: [
+                                                                              Expanded(
+                                                                                child: Padding(
+                                                                                  padding: const EdgeInsets.symmetric(vertical: 6),
+                                                                                  child: InkWell(
+                                                                                    onTap: () {
+                                                                                      context.push('${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
+                                                                                    },
+                                                                                    child: Tooltip(
+                                                                                      message: task.customerName.isNotEmpty ? task.customerName : 'Unknown',
+                                                                                      child: Text(
+                                                                                        task.customerName.isNotEmpty ? task.customerName : 'Unknown',
+                                                                                        overflow: TextOverflow.ellipsis,
+                                                                                        maxLines: 1,
+                                                                                        style: const TextStyle(
+                                                                                          fontFamily: 'PlusJakartaSans',
+                                                                                          color: Colors.blue,
+                                                                                          fontWeight: FontWeight.w600,
+                                                                                          fontSize: 13,
+                                                                                        ),
+                                                                                      ),
                                                                                     ),
                                                                                   ),
                                                                                 ),
                                                                               ),
-                                                                            ),
-                                                                          ),
-                                                                          _HoverMenuAnchor(
-                                                                            builder: (context,
-                                                                                controller,
-                                                                                onHover,
-                                                                                child) {
-                                                                              return InkWell(
-                                                                                onTap: () {
-                                                                                  if (controller.isOpen) {
-                                                                                    controller.close();
-                                                                                  } else {
-                                                                                    controller.open();
-                                                                                  }
+                                                                              _HoverMenuAnchor(
+                                                                                builder: (context, controller, onHover, child) {
+                                                                                  return InkWell(
+                                                                                    onTap: () {
+                                                                                      if (controller.isOpen) {
+                                                                                        controller.close();
+                                                                                      } else {
+                                                                                        controller.open();
+                                                                                      }
+                                                                                    },
+                                                                                    child: const Padding(
+                                                                                      padding: EdgeInsets.symmetric(horizontal: 4.0),
+                                                                                      child: Icon(
+                                                                                        Icons.keyboard_arrow_down,
+                                                                                        size: 20,
+                                                                                        color: Colors.black,
+                                                                                      ),
+                                                                                    ),
+                                                                                  );
                                                                                 },
-                                                                                child: const Padding(
-                                                                                  padding: EdgeInsets.symmetric(horizontal: 4.0),
-                                                                                  child: Icon(
-                                                                                    Icons.keyboard_arrow_down,
-                                                                                    size: 20,
-                                                                                    color: Colors.black,
-                                                                                  ),
-                                                                                ),
-                                                                              );
-                                                                            },
-                                                                            menuChildren: [
-                                                                              if (settingsProvider.menuIsSaveMap[16] == 1)
-                                                                                (onHover) => MenuItemButton(
-                                                                                      onHover: onHover,
-                                                                                      onPressed: () => _handleCustomerAction('quotation', task.customerId ?? 0),
-                                                                                      child: const Row(
-                                                                                        children: [
-                                                                                          Icon(Icons.request_quote, size: 18, color: Colors.orange),
-                                                                                          SizedBox(width: 8),
-                                                                                          Text('Quotation'),
-                                                                                        ],
-                                                                                      ),
-                                                                                    ),
-                                                                              if (settingsProvider.menuIsViewMap[16] == 1)
-                                                                                (onHover) => MenuItemButton(
-                                                                                      onHover: onHover,
-                                                                                      onPressed: () => _handleCustomerAction('quotation_list_tab', task.customerId ?? 0),
-                                                                                      child: const Row(
-                                                                                        children: [
-                                                                                          Icon(Icons.list_alt, size: 18, color: Colors.orangeAccent),
-                                                                                          SizedBox(width: 8),
-                                                                                          Text('Quotation list'),
-                                                                                        ],
-                                                                                      ),
-                                                                                    ),
-                                                                              if (settingsProvider.menuIsSaveMap[19] == 1)
-                                                                                (onHover) => MenuItemButton(
-                                                                                      onHover: onHover,
-                                                                                      onPressed: () => _handleCustomerAction('document', task.customerId ?? 0),
-                                                                                      child: const Row(
-                                                                                        children: [
-                                                                                          Icon(Icons.description, size: 18, color: Colors.purple),
-                                                                                          SizedBox(width: 8),
-                                                                                          Text('Document'),
-                                                                                        ],
-                                                                                      ),
-                                                                                    ),
-                                                                              if (settingsProvider.menuIsViewMap[19] == 1)
-                                                                                (onHover) => MenuItemButton(
-                                                                                      onHover: onHover,
-                                                                                      onPressed: () => _handleCustomerAction('documents_tab', task.customerId ?? 0),
-                                                                                      child: const Row(
-                                                                                        children: [
-                                                                                          Icon(Icons.folder, size: 18, color: Colors.blue),
-                                                                                          SizedBox(width: 8),
-                                                                                          Text('Documents Tab'),
-                                                                                        ],
-                                                                                      ),
-                                                                                    ),
-                                                                              if (settingsProvider.menuIsEditMap[4] == 1)
-                                                                                (onHover) => MenuItemButton(
-                                                                                      onHover: onHover,
-                                                                                      onPressed: () => _handleCustomerAction('edit', task.customerId ?? 0),
-                                                                                      child: const Row(
-                                                                                        children: [
-                                                                                          Icon(Icons.edit, size: 18, color: Colors.blue),
-                                                                                          SizedBox(width: 8),
-                                                                                          Text('Edit Customer'),
-                                                                                        ],
-                                                                                      ),
-                                                                                    ),
+                                                                                menuChildren: [
+                                                                                  if (settingsProvider.menuIsSaveMap[16] == 1)
+                                                                                    (onHover) => MenuItemButton(
+                                                                                          onHover: onHover,
+                                                                                          onPressed: () => _handleCustomerAction('quotation', task.customerId ?? 0),
+                                                                                          child: const Row(
+                                                                                            children: [
+                                                                                              Icon(Icons.request_quote, size: 18, color: Colors.orange),
+                                                                                              SizedBox(width: 8),
+                                                                                              Text('Quotation'),
+                                                                                            ],
+                                                                                          ),
+                                                                                        ),
+                                                                                  if (settingsProvider.menuIsViewMap[16] == 1)
+                                                                                    (onHover) => MenuItemButton(
+                                                                                          onHover: onHover,
+                                                                                          onPressed: () => _handleCustomerAction('quotation_list_tab', task.customerId ?? 0),
+                                                                                          child: const Row(
+                                                                                            children: [
+                                                                                              Icon(Icons.list_alt, size: 18, color: Colors.orangeAccent),
+                                                                                              SizedBox(width: 8),
+                                                                                              Text('Quotation list'),
+                                                                                            ],
+                                                                                          ),
+                                                                                        ),
+                                                                                  if (settingsProvider.menuIsSaveMap[19] == 1)
+                                                                                    (onHover) => MenuItemButton(
+                                                                                          onHover: onHover,
+                                                                                          onPressed: () => _handleCustomerAction('document', task.customerId ?? 0),
+                                                                                          child: const Row(
+                                                                                            children: [
+                                                                                              Icon(Icons.description, size: 18, color: Colors.purple),
+                                                                                              SizedBox(width: 8),
+                                                                                              Text('Document'),
+                                                                                            ],
+                                                                                          ),
+                                                                                        ),
+                                                                                  if (settingsProvider.menuIsViewMap[19] == 1)
+                                                                                    (onHover) => MenuItemButton(
+                                                                                          onHover: onHover,
+                                                                                          onPressed: () => _handleCustomerAction('documents_tab', task.customerId ?? 0),
+                                                                                          child: const Row(
+                                                                                            children: [
+                                                                                              Icon(Icons.folder, size: 18, color: Colors.blue),
+                                                                                              SizedBox(width: 8),
+                                                                                              Text('Documents Tab'),
+                                                                                            ],
+                                                                                          ),
+                                                                                        ),
+                                                                                  if (settingsProvider.menuIsEditMap[4] == 1)
+                                                                                    (onHover) => MenuItemButton(
+                                                                                          onHover: onHover,
+                                                                                          onPressed: () => _handleCustomerAction('edit', task.customerId ?? 0),
+                                                                                          child: const Row(
+                                                                                            children: [
+                                                                                              Icon(Icons.edit, size: 18, color: Colors.blue),
+                                                                                              SizedBox(width: 8),
+                                                                                              Text('Edit Customer'),
+                                                                                            ],
+                                                                                          ),
+                                                                                        ),
+                                                                                ],
+                                                                              ),
                                                                             ],
                                                                           ),
-                                                                        ],
-                                                                      ),
-                                                                    ),
-                                                                    // Mobile No.
-                                                                    TableWidget(
-                                                                      width:
-                                                                          150,
-                                                                      padding: const EdgeInsets
-                                                                          .symmetric(
-                                                                          vertical:
-                                                                              4.0,
-                                                                          horizontal:
-                                                                              12.0),
-                                                                      data:
-                                                                          Tooltip(
-                                                                        message:
-                                                                            task.mobile,
-                                                                        child:
-                                                                            Text(
-                                                                          task.mobile.isNotEmpty
-                                                                              ? task.mobile
-                                                                              : '-',
-                                                                          overflow:
-                                                                              TextOverflow.ellipsis,
-                                                                          maxLines:
-                                                                              1,
-                                                                          style:
-                                                                              const TextStyle(fontFamily: 'PlusJakartaSans', 
-                                                                            fontSize:
-                                                                                13,
-                                                                            color:
-                                                                                Color(0xFF334155),
-                                                                            fontWeight:
-                                                                                FontWeight.w500,
+                                                                        ),
+                                                                        // Mobile No.
+                                                                        TableWidget(
+                                                                          width:
+                                                                              150,
+                                                                          padding: const EdgeInsets
+                                                                              .symmetric(
+                                                                              vertical: 4.0,
+                                                                              horizontal: 12.0),
+                                                                          data:
+                                                                              Tooltip(
+                                                                            message:
+                                                                                task.mobile,
+                                                                            child:
+                                                                                Text(
+                                                                              task.mobile.isNotEmpty ? task.mobile : '-',
+                                                                              overflow: TextOverflow.ellipsis,
+                                                                              maxLines: 1,
+                                                                              style: const TextStyle(
+                                                                                fontFamily: 'PlusJakartaSans',
+                                                                                fontSize: 13,
+                                                                                color: Color(0xFF334155),
+                                                                                fontWeight: FontWeight.w500,
+                                                                              ),
+                                                                            ),
                                                                           ),
                                                                         ),
-                                                                      ),
-                                                                    ),
-                                                                    // Task
-                                                                    TableWidget(
-                                                                      width:
-                                                                          180,
-                                                                      padding: const EdgeInsets
-                                                                          .symmetric(
-                                                                          vertical:
-                                                                              4.0,
-                                                                          horizontal:
-                                                                              12.0),
-                                                                      data:
-                                                                          _buildTaskTypeCell(task), /*
+                                                                        // Task
+                                                                        TableWidget(
+                                                                          width:
+                                                                              180,
+                                                                          padding: const EdgeInsets
+                                                                              .symmetric(
+                                                                              vertical: 4.0,
+                                                                              horizontal: 12.0),
+                                                                          data:
+                                                                              _buildTaskTypeCell(task), /*
                                                                         //
                                                                             task.taskTypeName ??
                                                                                 '',
@@ -2441,834 +2682,743 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                           ),
                                                                         ),
                                                                       ), */
-                                                                    ),
-                                                                    // Status
-                                                                    TableWidget(
-                                                                      width:
-                                                                          120,
-                                                                      padding: const EdgeInsets
-                                                                          .symmetric(
-                                                                          vertical:
-                                                                              4.0,
-                                                                          horizontal:
-                                                                              12.0),
-                                                                      data:
-                                                                          InkWell(
-                                                                        onTap:
-                                                                            () {
-                                                                          reportsProvider
-                                                                              .selectedTaskTypeIds
-                                                                              .clear();
-                                                                          reportsProvider
-                                                                              .taskTypeModel
-                                                                              .clear();
-                                                                          if (task
-                                                                              .customerName
-                                                                              .isEmpty) {
-                                                                            updateStatusDialogWithoutTask(task).then((value) {
-                                                                              if (value == true) {
-                                                                                reportsProvider.searchTaskByCustomer(context);
+                                                                        ),
+                                                                        // Status
+                                                                        TableWidget(
+                                                                          width:
+                                                                              120,
+                                                                          padding: const EdgeInsets
+                                                                              .symmetric(
+                                                                              vertical: 4.0,
+                                                                              horizontal: 12.0),
+                                                                          data:
+                                                                              InkWell(
+                                                                            onTap:
+                                                                                () {
+                                                                              reportsProvider.selectedTaskTypeIds.clear();
+                                                                              reportsProvider.taskTypeModel.clear();
+                                                                              if (task.customerName.isEmpty) {
+                                                                                updateStatusDialogWithoutTask(task).then((value) {
+                                                                                  if (value == true) {
+                                                                                    reportsProvider.searchTaskByCustomer(context);
+                                                                                  }
+                                                                                });
+                                                                              } else {
+                                                                                if (AppStyles.isWebScreen(context)) {
+                                                                                  statusDialog(task).then((value) {
+                                                                                    if (value == true) {
+                                                                                      reportsProvider.searchTaskByCustomer(context);
+                                                                                    }
+                                                                                  });
+                                                                                } else {
+                                                                                  statusDialogMobile(task).then((value) {
+                                                                                    if (value == true) {
+                                                                                      reportsProvider.searchTaskByCustomer(context);
+                                                                                    }
+                                                                                  });
+                                                                                }
                                                                               }
-                                                                            });
-                                                                          } else {
-                                                                            if (AppStyles.isWebScreen(context)) {
-                                                                              statusDialog(task).then((value) {
-                                                                                if (value == true) {
-                                                                                  reportsProvider.searchTaskByCustomer(context);
-                                                                                }
-                                                                              });
-                                                                            } else {
-                                                                              statusDialogMobile(task).then((value) {
-                                                                                if (value == true) {
-                                                                                  reportsProvider.searchTaskByCustomer(context);
-                                                                                }
-                                                                              });
-                                                                            }
-                                                                          }
-                                                                        },
-                                                                        child:
-                                                                            Container(
-                                                                          height:
-                                                                              30,
-                                                                          decoration:
-                                                                              BoxDecoration(
-                                                                            borderRadius:
-                                                                                BorderRadius.circular(30),
-                                                                            color:
-                                                                                (task.colorCode ?? const Color(0xFF3B82F6)).withOpacity(0.2),
-                                                                          ),
-                                                                          child:
-                                                                              Center(
+                                                                            },
                                                                             child:
-                                                                                Padding(
-                                                                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                                                                              child: Text(
-                                                                                task.taskStatusName,
-                                                                                overflow: TextOverflow.ellipsis,
-                                                                                maxLines: 1,
-                                                                                style: TextStyle(fontFamily: 'PlusJakartaSans', 
-                                                                                  fontSize: 13,
-                                                                                  fontWeight: FontWeight.w600,
-                                                                                  color: task.colorCode ?? const Color(0xFF3B82F6),
+                                                                                Container(
+                                                                              height: 30,
+                                                                              decoration: BoxDecoration(
+                                                                                borderRadius: BorderRadius.circular(30),
+                                                                                color: (task.colorCode ?? const Color(0xFF3B82F6)).withOpacity(0.2),
+                                                                              ),
+                                                                              child: Center(
+                                                                                child: Padding(
+                                                                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                                                                  child: Text(
+                                                                                    task.taskStatusName,
+                                                                                    overflow: TextOverflow.ellipsis,
+                                                                                    maxLines: 1,
+                                                                                    style: TextStyle(
+                                                                                      fontFamily: 'PlusJakartaSans',
+                                                                                      fontSize: 13,
+                                                                                      fontWeight: FontWeight.w600,
+                                                                                      color: task.colorCode ?? const Color(0xFF3B82F6),
+                                                                                    ),
+                                                                                  ),
                                                                                 ),
                                                                               ),
                                                                             ),
                                                                           ),
                                                                         ),
-                                                                      ),
+                                                                      ],
                                                                     ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            );
-                                                          },
-                                                        ),
-                                                      ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-
-                                        // ==================== SCROLLABLE COLUMNS ====================
-                                        Expanded(
-                                          child: Scrollbar(
-                                            controller:
-                                                _horizontalScrollController,
-                                            thumbVisibility: true,
-                                            trackVisibility: true,
-                                            interactive: true,
-                                            child: SingleChildScrollView(
-                                              controller:
-                                                  _horizontalScrollController,
-                                              scrollDirection: Axis.horizontal,
-                                              child: SizedBox(
-                                                width: scrollableMinWidth,
-                                                child: Column(
-                                                  children: [
-                                                    // Scrollable Header
-                                                    Container(
-                                                      height: 40,
-                                                      decoration: BoxDecoration(
-                                                        color: AppColors
-                                                            .primaryBlue,
-                                                        borderRadius:
-                                                            const BorderRadius
-                                                                .only(
-                                                          topRight:
-                                                              Radius.circular(
-                                                                  4),
-                                                          bottomRight:
-                                                              Radius.circular(
-                                                                  4),
-                                                        ),
-                                                      ),
-                                                      child: Row(
-                                                        children: [
-                                                          TableWidget(
-                                                            width: 150,
-                                                            title:
-                                                                'Enquiry for',
-                                                            fontSize: 13,
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
-                                                                    vertical:
-                                                                        4.0,
-                                                                    horizontal:
-                                                                        12.0),
-                                                            color: Colors.white,
-                                                          ),
-                                                          TableWidget(
-                                                            width: 120,
-                                                            title: 'Staff',
-                                                            fontSize: 13,
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
-                                                                    vertical:
-                                                                        4.0,
-                                                                    horizontal:
-                                                                        12.0),
-                                                            color: Colors.white,
-                                                          ),
-                                                          TableWidget(
-                                                            width: 140,
-                                                            title:
-                                                                'Consumer No',
-                                                            fontSize: 13,
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
-                                                                    vertical:
-                                                                        4.0,
-                                                                    horizontal:
-                                                                        12.0),
-                                                            color: Colors.white,
-                                                          ),
-                                                          TableWidget(
-                                                            width: 180,
-                                                            title:
-                                                                'Description',
-                                                            fontSize: 13,
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
-                                                                    vertical:
-                                                                        4.0,
-                                                                    horizontal:
-                                                                        12.0),
-                                                            color: Colors.white,
-                                                          ),
-                                                          TableWidget(
-                                                            width: 150,
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
-                                                                    vertical:
-                                                                        4.0,
-                                                                    horizontal:
-                                                                        12.0),
-                                                            alignment: Alignment
-                                                                .centerLeft,
-                                                            data: const Text(
-                                                              'Priority',
-                                                              style: TextStyle(fontFamily: 'PlusJakartaSans', 
-                                                                  fontSize: 13,
-                                                                  color: Colors
-                                                                      .white),
+                                                                  ),
+                                                                );
+                                                              },
                                                             ),
                                                           ),
-                                                          TableWidget(
-                                                            width: 140,
-                                                            title:
-                                                                'Created Date',
-                                                            fontSize: 13,
-                                                            padding:
-                                                                const EdgeInsets
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+
+                                            // ==================== SCROLLABLE COLUMNS ====================
+                                            Expanded(
+                                              child: Scrollbar(
+                                                controller:
+                                                    _horizontalScrollController,
+                                                thumbVisibility: true,
+                                                trackVisibility: true,
+                                                interactive: true,
+                                                child: SingleChildScrollView(
+                                                  controller:
+                                                      _horizontalScrollController,
+                                                  scrollDirection:
+                                                      Axis.horizontal,
+                                                  child: SizedBox(
+                                                    width: scrollableMinWidth,
+                                                    child: Column(
+                                                      children: [
+                                                        // Scrollable Header
+                                                        Container(
+                                                          height: 40,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: AppColors
+                                                                .primaryBlue,
+                                                            borderRadius:
+                                                                const BorderRadius
+                                                                    .only(
+                                                              topRight: Radius
+                                                                  .circular(4),
+                                                              bottomRight:
+                                                                  Radius
+                                                                      .circular(
+                                                                          4),
+                                                            ),
+                                                          ),
+                                                          child: Row(
+                                                            children: [
+                                                              TableWidget(
+                                                                width: 150,
+                                                                title:
+                                                                    'Enquiry for',
+                                                                fontSize: 13,
+                                                                padding: const EdgeInsets
                                                                     .symmetric(
                                                                     vertical:
                                                                         4.0,
                                                                     horizontal:
                                                                         12.0),
-                                                            color: Colors.white,
-                                                          ),
-                                                          TableWidget(
-                                                            width: 120,
-                                                            title: 'Duration',
-                                                            fontSize: 13,
-                                                            padding:
-                                                                const EdgeInsets
+                                                                color: Colors
+                                                                    .white,
+                                                              ),
+                                                              TableWidget(
+                                                                width: 120,
+                                                                title: 'Staff',
+                                                                fontSize: 13,
+                                                                padding: const EdgeInsets
                                                                     .symmetric(
                                                                     vertical:
                                                                         4.0,
                                                                     horizontal:
                                                                         12.0),
-                                                            color: Colors.white,
-                                                          ),
-                                                          TableWidget(
-                                                            width: 120,
-                                                            title: 'Overdue',
-                                                            fontSize: 13,
-                                                            padding:
-                                                                const EdgeInsets
+                                                                color: Colors
+                                                                    .white,
+                                                              ),
+                                                              TableWidget(
+                                                                width: 140,
+                                                                title:
+                                                                    'Consumer No',
+                                                                fontSize: 13,
+                                                                padding: const EdgeInsets
                                                                     .symmetric(
                                                                     vertical:
                                                                         4.0,
                                                                     horizontal:
                                                                         12.0),
-                                                            color: Colors.white,
-                                                          ),
-                                                          TableWidget(
-                                                            width: 160,
-                                                            title:
-                                                                'Followup Date&Time',
-                                                            fontSize: 13,
-                                                            padding:
-                                                                const EdgeInsets
+                                                                color: Colors
+                                                                    .white,
+                                                              ),
+                                                              TableWidget(
+                                                                width: 180,
+                                                                title:
+                                                                    'Description',
+                                                                fontSize: 13,
+                                                                padding: const EdgeInsets
                                                                     .symmetric(
                                                                     vertical:
                                                                         4.0,
                                                                     horizontal:
                                                                         12.0),
-                                                            color: Colors.white,
-                                                          ),
-                                                          if (settingsProvider
-                                                                  .jobSheet ==
-                                                              1)
-                                                            TableWidget(
-                                                              width: 130,
-                                                              title:
-                                                                  'Job Sheet',
-                                                              fontSize: 13,
-                                                              padding:
-                                                                  const EdgeInsets
+                                                                color: Colors
+                                                                    .white,
+                                                              ),
+                                                              TableWidget(
+                                                                width: 150,
+                                                                padding: const EdgeInsets
+                                                                    .symmetric(
+                                                                    vertical:
+                                                                        4.0,
+                                                                    horizontal:
+                                                                        12.0),
+                                                                alignment: Alignment
+                                                                    .centerLeft,
+                                                                data:
+                                                                    const Text(
+                                                                  'Priority',
+                                                                  style: TextStyle(
+                                                                      fontFamily:
+                                                                          'PlusJakartaSans',
+                                                                      fontSize:
+                                                                          13,
+                                                                      color: Colors
+                                                                          .white),
+                                                                ),
+                                                              ),
+                                                              TableWidget(
+                                                                width: 140,
+                                                                title:
+                                                                    'Created Date',
+                                                                fontSize: 13,
+                                                                padding: const EdgeInsets
+                                                                    .symmetric(
+                                                                    vertical:
+                                                                        4.0,
+                                                                    horizontal:
+                                                                        12.0),
+                                                                color: Colors
+                                                                    .white,
+                                                              ),
+                                                              TableWidget(
+                                                                width: 120,
+                                                                title:
+                                                                    'Duration',
+                                                                fontSize: 13,
+                                                                padding: const EdgeInsets
+                                                                    .symmetric(
+                                                                    vertical:
+                                                                        4.0,
+                                                                    horizontal:
+                                                                        12.0),
+                                                                color: Colors
+                                                                    .white,
+                                                              ),
+                                                              TableWidget(
+                                                                width: 120,
+                                                                title:
+                                                                    'Overdue',
+                                                                fontSize: 13,
+                                                                padding: const EdgeInsets
+                                                                    .symmetric(
+                                                                    vertical:
+                                                                        4.0,
+                                                                    horizontal:
+                                                                        12.0),
+                                                                color: Colors
+                                                                    .white,
+                                                              ),
+                                                              TableWidget(
+                                                                width: 160,
+                                                                title:
+                                                                    'Followup Date&Time',
+                                                                fontSize: 13,
+                                                                padding: const EdgeInsets
+                                                                    .symmetric(
+                                                                    vertical:
+                                                                        4.0,
+                                                                    horizontal:
+                                                                        12.0),
+                                                                color: Colors
+                                                                    .white,
+                                                              ),
+                                                              if (settingsProvider
+                                                                      .jobSheet ==
+                                                                  1)
+                                                                TableWidget(
+                                                                  width: 130,
+                                                                  title:
+                                                                      'Job Sheet',
+                                                                  fontSize: 13,
+                                                                  padding: const EdgeInsets
                                                                       .symmetric(
                                                                       vertical:
                                                                           4.0,
                                                                       horizontal:
                                                                           12.0),
-                                                              color:
-                                                                  Colors.white,
-                                                            ),
-                                                        ],
-                                                      ),
-                                                    ),
+                                                                  color: Colors
+                                                                      .white,
+                                                                ),
+                                                            ],
+                                                          ),
+                                                        ),
 
-                                                    // Scrollable Data Rows
-                                                    Expanded(
-                                                      child:
-                                                          ScrollConfiguration(
-                                                        behavior:
-                                                            ScrollConfiguration
+                                                        // Scrollable Data Rows
+                                                        Expanded(
+                                                          child:
+                                                              ScrollConfiguration(
+                                                            behavior: ScrollConfiguration
                                                                     .of(context)
                                                                 .copyWith(
                                                                     scrollbars:
                                                                         false),
-                                                        child: ListView.builder(
-                                                          controller:
-                                                              _scrollableVerticalController,
-                                                          physics:
-                                                              const AlwaysScrollableScrollPhysics(),
-                                                          itemCount: reportsProvider
-                                                                  .taskReport
-                                                                  .length +
-                                                              (_isLoadingMore &&
-                                                                      !AppStyles
-                                                                          .isWebScreen(
+                                                            child: ListView
+                                                                .builder(
+                                                              controller:
+                                                                  _scrollableVerticalController,
+                                                              physics:
+                                                                  const AlwaysScrollableScrollPhysics(),
+                                                              itemCount: reportsProvider
+                                                                      .taskReport
+                                                                      .length +
+                                                                  (_isLoadingMore &&
+                                                                          !AppStyles.isWebScreen(
                                                                               context)
-                                                                  ? 1
-                                                                  : 0),
-                                                          itemBuilder:
-                                                              (context, index) {
-                                                            // Loading / mobile already handled on fixed side
-                                                            if (!AppStyles
-                                                                .isWebScreen(
-                                                                    context)) {
-                                                              return const SizedBox
-                                                                  .shrink();
-                                                            }
-
-                                                            if (index >=
-                                                                reportsProvider
-                                                                    .taskReport
-                                                                    .length) {
-                                                              return const SizedBox
-                                                                  .shrink();
-                                                            }
-
-                                                            var task =
-                                                                reportsProvider
-                                                                        .taskReport[
-                                                                    index];
-
-                                                            return InkWell(
-                                                              onTap: () {
-                                                                reportsProvider
-                                                                    .selectedTaskTypeIds
-                                                                    .clear();
-                                                                reportsProvider
-                                                                    .taskTypeModel
-                                                                    .clear();
-                                                                if (task
-                                                                    .customerName
-                                                                    .isEmpty) {
-                                                                  updateStatusDialogWithoutTask(
-                                                                          task)
-                                                                      .then(
-                                                                          (value) {
-                                                                    if (value ==
-                                                                        true) {
-                                                                      reportsProvider
-                                                                          .searchTaskByCustomer(
-                                                                              context);
-                                                                    }
-                                                                  });
-                                                                } else {
-                                                                  if (AppStyles
-                                                                      .isWebScreen(
-                                                                          context)) {
-                                                                    statusDialog(
-                                                                            task)
-                                                                        .then(
-                                                                            (value) {
-                                                                      if (value ==
-                                                                          true) {
-                                                                        reportsProvider
-                                                                            .searchTaskByCustomer(context);
-                                                                      }
-                                                                    });
-                                                                  } else {
-                                                                    statusDialogMobile(
-                                                                            task)
-                                                                        .then(
-                                                                            (value) {
-                                                                      if (value ==
-                                                                          true) {
-                                                                        reportsProvider
-                                                                            .searchTaskByCustomer(context);
-                                                                      }
-                                                                    });
-                                                                  }
+                                                                      ? 1
+                                                                      : 0),
+                                                              itemBuilder:
+                                                                  (context,
+                                                                      index) {
+                                                                // Loading / mobile already handled on fixed side
+                                                                if (!AppStyles
+                                                                    .isWebScreen(
+                                                                        context)) {
+                                                                  return const SizedBox
+                                                                      .shrink();
                                                                 }
-                                                              },
-                                                              hoverColor:
-                                                                  const Color(
-                                                                      0xFFF8FAFC),
-                                                              child: Container(
-                                                                height: rowHeight,
-                                                                decoration: BoxDecoration(
-                                                                    color: index % 2 == 0 ? const Color(0xFFE8EDF2) : const Color(0xFFF5F5F5),
-                                                                    border: Border(bottom: BorderSide(color: Colors.grey.shade200)),
-                                                                ),
-                                                                child: Row(
-                                                                  children: [
-                                                                    // Enquiry for
-                                                                    TableWidget(
-                                                                      width:
-                                                                          150,
-                                                                      padding: const EdgeInsets
-                                                                          .symmetric(
-                                                                          vertical:
-                                                                              4.0,
-                                                                          horizontal:
-                                                                              12.0),
-                                                                      data:
-                                                                          Tooltip(
-                                                                        message: provider.getEnquiryForNameById(
-                                                                            task.enquiryForId,
-                                                                            task.enquiryForName),
-                                                                        child:
-                                                                            Text(
-                                                                          provider.getEnquiryForNameById(
-                                                                              task.enquiryForId,
-                                                                              task.enquiryForName),
-                                                                          overflow:
-                                                                              TextOverflow.ellipsis,
-                                                                          maxLines:
-                                                                              1,
-                                                                          style:
-                                                                              const TextStyle(fontFamily: 'PlusJakartaSans', 
-                                                                            fontSize:
-                                                                                13,
-                                                                            color:
-                                                                                Color(0xFF334155),
-                                                                            fontWeight:
-                                                                                FontWeight.w500,
-                                                                          ),
-                                                                        ),
-                                                                      ),
+
+                                                                if (index >=
+                                                                    reportsProvider
+                                                                        .taskReport
+                                                                        .length) {
+                                                                  return const SizedBox
+                                                                      .shrink();
+                                                                }
+
+                                                                var task =
+                                                                    reportsProvider
+                                                                            .taskReport[
+                                                                        index];
+
+                                                                return InkWell(
+                                                                  onTap: () {
+                                                                    reportsProvider
+                                                                        .selectedTaskTypeIds
+                                                                        .clear();
+                                                                    reportsProvider
+                                                                        .taskTypeModel
+                                                                        .clear();
+                                                                    if (task
+                                                                        .customerName
+                                                                        .isEmpty) {
+                                                                      updateStatusDialogWithoutTask(
+                                                                              task)
+                                                                          .then(
+                                                                              (value) {
+                                                                        if (value ==
+                                                                            true) {
+                                                                          reportsProvider
+                                                                              .searchTaskByCustomer(context);
+                                                                        }
+                                                                      });
+                                                                    } else {
+                                                                      if (AppStyles
+                                                                          .isWebScreen(
+                                                                              context)) {
+                                                                        statusDialog(task)
+                                                                            .then((value) {
+                                                                          if (value ==
+                                                                              true) {
+                                                                            reportsProvider.searchTaskByCustomer(context);
+                                                                          }
+                                                                        });
+                                                                      } else {
+                                                                        statusDialogMobile(task)
+                                                                            .then((value) {
+                                                                          if (value ==
+                                                                              true) {
+                                                                            reportsProvider.searchTaskByCustomer(context);
+                                                                          }
+                                                                        });
+                                                                      }
+                                                                    }
+                                                                  },
+                                                                  hoverColor:
+                                                                      const Color(
+                                                                          0xFFF8FAFC),
+                                                                  child:
+                                                                      Container(
+                                                                    height:
+                                                                        rowHeight,
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      color: index % 2 ==
+                                                                              0
+                                                                          ? const Color(
+                                                                              0xFFE8EDF2)
+                                                                          : const Color(
+                                                                              0xFFF5F5F5),
+                                                                      border: Border(
+                                                                          bottom:
+                                                                              BorderSide(color: Colors.grey.shade200)),
                                                                     ),
-                                                                    // Staff
-                                                                    TableWidget(
-                                                                      width:
-                                                                          120,
-                                                                      padding: const EdgeInsets
-                                                                          .symmetric(
-                                                                          vertical:
-                                                                              4.0,
-                                                                          horizontal:
-                                                                              12.0),
-                                                                      data:
-                                                                          Text(
-                                                                        task.toUserName ??
-                                                                            '',
-                                                                        overflow:
-                                                                            TextOverflow.ellipsis,
-                                                                        maxLines:
-                                                                            1,
-                                                                        style:
-                                                                            const TextStyle(fontFamily: 'PlusJakartaSans', 
-                                                                          fontSize:
-                                                                              13,
-                                                                          color:
-                                                                              Color(0xFF334155),
-                                                                          fontWeight:
-                                                                              FontWeight.w500,
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                    // Consumer No
-                                                                    TableWidget(
-                                                                      width:
-                                                                          140,
-                                                                      padding: const EdgeInsets
-                                                                          .symmetric(
-                                                                          vertical:
-                                                                              4.0,
-                                                                          horizontal:
-                                                                              12.0),
-                                                                      data:
-                                                                          Tooltip(
-                                                                        message:
-                                                                            task.consumerNo ??
-                                                                                '',
-                                                                        child:
-                                                                            Text(
-                                                                          task.consumerNo ??
-                                                                              '',
-                                                                          overflow:
-                                                                              TextOverflow.ellipsis,
-                                                                          maxLines:
-                                                                              1,
-                                                                          style:
-                                                                              const TextStyle(fontFamily: 'PlusJakartaSans', 
-                                                                            fontSize:
-                                                                                13,
-                                                                            color:
-                                                                                Color(0xFF334155),
-                                                                            fontWeight:
-                                                                                FontWeight.w500,
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                    // Description
-                                                                    TableWidget(
-                                                                      width:
-                                                                          180,
-                                                                      padding: const EdgeInsets
-                                                                          .symmetric(
-                                                                          vertical:
-                                                                              4.0,
-                                                                          horizontal:
-                                                                              12.0),
-                                                                      data:
-                                                                          Tooltip(
-                                                                        message:
-                                                                            task.description ??
-                                                                                '',
-                                                                        child:
-                                                                            Text(
-                                                                          task.description ??
-                                                                              '',
-                                                                          overflow:
-                                                                              TextOverflow.ellipsis,
-                                                                          maxLines:
-                                                                              1,
-                                                                          style:
-                                                                              const TextStyle(fontFamily: 'PlusJakartaSans', 
-                                                                            fontSize:
-                                                                                13,
-                                                                            color:
-                                                                                Color(0xFF334155),
-                                                                            fontWeight:
-                                                                                FontWeight.w500,
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                    // Priority
-                                                                    TableWidget(
-                                                                      width:
-                                                                          150,
-                                                                      alignment:
-                                                                          Alignment
-                                                                              .centerLeft,
-                                                                      padding: const EdgeInsets
-                                                                          .symmetric(
-                                                                          vertical:
-                                                                              4.0,
-                                                                          horizontal:
-                                                                              12.0),
-                                                                      data: PopupMenuButton<
-                                                                          PriorityModel>(
-                                                                        enabled:
-                                                                            settingsProvider.showEdit[190] ==
-                                                                                1,
-                                                                        tooltip:
-                                                                            task.priorityName,
-                                                                        constraints:
-                                                                            const BoxConstraints(maxHeight: 300),
-                                                                        offset: const Offset(
-                                                                            0,
-                                                                            40),
-                                                                        shape: RoundedRectangleBorder(
-                                                                            borderRadius:
-                                                                                BorderRadius.circular(8)),
-                                                                        onSelected:
-                                                                            (PriorityModel
-                                                                                selected) async {
-                                                                          await reportsProvider
-                                                                              .updateTaskPriority(
-                                                                            context:
-                                                                                context,
-                                                                            taskId:
-                                                                                task.taskId,
-                                                                            priorityId:
-                                                                                selected.priorityId,
-                                                                          );
-                                                                        },
-                                                                        itemBuilder:
-                                                                            (context) {
-                                                                          return settingsProvider
-                                                                              .priorities
-                                                                              .map((priority) {
-                                                                            return PopupMenuItem<PriorityModel>(
-                                                                              value: priority,
-                                                                              child: Row(
-                                                                                children: [
-                                                                                  Container(
-                                                                                    width: 12,
-                                                                                    height: 12,
-                                                                                    decoration: BoxDecoration(
-                                                                                      color: AppColors.parseColor(priority.colorCode).withOpacity(0.8),
-                                                                                      shape: BoxShape.circle,
-                                                                                    ),
-                                                                                  ),
-                                                                                  const SizedBox(width: 10),
-                                                                                  Text(
-                                                                                    priority.priorityName,
-                                                                                    style: TextStyle(fontFamily: 'PlusJakartaSans', 
-                                                                                      color: AppColors.parseColor(priority.colorCode),
-                                                                                      fontWeight: FontWeight.w500,
-                                                                                    ),
-                                                                                  ),
-                                                                                ],
-                                                                              ),
-                                                                            );
-                                                                          }).toList();
-                                                                        },
-                                                                        child:
-                                                                            Container(
-                                                                          height:
-                                                                              32,
+                                                                    child: Row(
+                                                                      children: [
+                                                                        // Enquiry for
+                                                                        TableWidget(
+                                                                          width:
+                                                                              150,
                                                                           padding: const EdgeInsets
                                                                               .symmetric(
-                                                                              horizontal: 10,
-                                                                              vertical: 6),
-                                                                          decoration:
-                                                                              BoxDecoration(
-                                                                            color:
-                                                                                AppColors.parseColor(task.priorityColor).withOpacity(0.2),
-                                                                            borderRadius:
-                                                                                BorderRadius.circular(5),
-                                                                          ),
-                                                                          child:
-                                                                              Row(
-                                                                            mainAxisSize:
-                                                                                MainAxisSize.min,
-                                                                            children: [
-                                                                              Flexible(
-                                                                                child: Text(
-                                                                                  task.priorityName,
-                                                                                  maxLines: 1,
-                                                                                  overflow: TextOverflow.ellipsis,
-                                                                                  style: TextStyle(fontFamily: 'PlusJakartaSans', 
-                                                                                    fontSize: 13,
-                                                                                    fontWeight: FontWeight.w500,
-                                                                                    color: AppColors.parseColor(task.priorityColor),
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                              const SizedBox(width: 4),
-                                                                              Icon(
-                                                                                Icons.arrow_drop_down,
-                                                                                size: 18,
-                                                                                color: AppColors.parseColor(task.priorityColor),
-                                                                              ),
-                                                                            ],
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                    // Created Date
-                                                                    TableWidget(
-                                                                      width:
-                                                                          140,
-                                                                      padding: const EdgeInsets
-                                                                          .symmetric(
-                                                                          vertical:
-                                                                              4.0,
-                                                                          horizontal:
-                                                                              12.0),
-                                                                      data:
-                                                                          Text(
-                                                                        task.entryDate
-                                                                            .toDayMonthYearFormat(),
-                                                                        overflow:
-                                                                            TextOverflow.ellipsis,
-                                                                        maxLines:
-                                                                            1,
-                                                                        style:
-                                                                            const TextStyle(fontFamily: 'PlusJakartaSans', 
-                                                                          fontSize:
-                                                                              13,
-                                                                          color:
-                                                                              Color(0xFF334155),
-                                                                          fontWeight:
-                                                                              FontWeight.w500,
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                    // Duration
-                                                                    TableWidget(
-                                                                      width:
-                                                                          120,
-                                                                      padding: const EdgeInsets
-                                                                          .symmetric(
-                                                                          vertical:
-                                                                              4.0,
-                                                                          horizontal:
-                                                                              12.0),
-                                                                      data:
-                                                                          Text(
-                                                                        task.leadDuration
-                                                                            .toString(),
-                                                                        overflow:
-                                                                            TextOverflow.ellipsis,
-                                                                        maxLines:
-                                                                            1,
-                                                                        style:
-                                                                            const TextStyle(fontFamily: 'PlusJakartaSans', 
-                                                                          fontSize:
-                                                                              13,
-                                                                          color:
-                                                                              Color(0xFF334155),
-                                                                          fontWeight:
-                                                                              FontWeight.w500,
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                    // Overdue
-                                                                    TableWidget(
-                                                                      width:
-                                                                          120,
-                                                                      padding: const EdgeInsets
-                                                                          .symmetric(
-                                                                          vertical:
-                                                                              4.0,
-                                                                          horizontal:
-                                                                              12.0),
-                                                                      data:
-                                                                          Text(
-                                                                        task.overdue
-                                                                            .toString(),
-                                                                        overflow:
-                                                                            TextOverflow.ellipsis,
-                                                                        maxLines:
-                                                                            1,
-                                                                        style:
-                                                                            const TextStyle(fontFamily: 'PlusJakartaSans', 
-                                                                          fontSize:
-                                                                              13,
-                                                                          color:
-                                                                              Color(0xFF334155),
-                                                                          fontWeight:
-                                                                              FontWeight.w500,
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                    // Followup Date&Time
-                                                                    TableWidget(
-                                                                      width:
-                                                                          160,
-                                                                      padding: const EdgeInsets
-                                                                          .symmetric(
-                                                                          vertical:
-                                                                              4.0,
-                                                                          horizontal:
-                                                                              12.0),
-                                                                      data:
-                                                                          Text(
-                                                                        () {
-                                                                          String
-                                                                              date =
-                                                                              task.taskDate.toDayMonthYearFormat();
-                                                                          String
-                                                                              time =
-                                                                              '';
-                                                                          if (task
-                                                                              .taskTime
-                                                                              .isNotEmpty) {
-                                                                            try {
-                                                                              final parsed = DateFormat('HH:mm:ss').parse(task.taskTime);
-                                                                              time = DateFormat('hh:mm a').format(parsed);
-                                                                            } catch (_) {
-                                                                              time = task.taskTime;
-                                                                            }
-                                                                          }
-                                                                          return time.isEmpty
-                                                                              ? date
-                                                                              : '$date $time';
-                                                                        }(),
-                                                                        overflow:
-                                                                            TextOverflow.ellipsis,
-                                                                        maxLines:
-                                                                            1,
-                                                                        style:
-                                                                            const TextStyle(fontFamily: 'PlusJakartaSans', 
-                                                                          fontSize:
-                                                                              13,
-                                                                          color:
-                                                                              Color(0xFF334155),
-                                                                          fontWeight:
-                                                                              FontWeight.w500,
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                    // Job Sheet
-                                                                    if (settingsProvider
-                                                                            .jobSheet ==
-                                                                        1)
-                                                                      TableWidget(
-                                                                        width:
-                                                                            130,
-                                                                        padding: const EdgeInsets
-                                                                            .symmetric(
-                                                                            vertical:
-                                                                                4.0,
-                                                                            horizontal:
-                                                                                12.0),
-                                                                        data:
-                                                                            Center(
-                                                                          child:
-                                                                              SizedBox(
-                                                                            height:
-                                                                                32,
+                                                                              vertical: 4.0,
+                                                                              horizontal: 12.0),
+                                                                          data:
+                                                                              Tooltip(
+                                                                            message:
+                                                                                provider.getEnquiryForNameById(task.enquiryForId, task.enquiryForName),
                                                                             child:
-                                                                                ElevatedButton(
-                                                                              style: ElevatedButton.styleFrom(
-                                                                                backgroundColor: AppColors.primaryBlue,
-                                                                                foregroundColor: Colors.white,
-                                                                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                                                                                minimumSize: const Size(80, 32),
-                                                                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                                                                                Text(
+                                                                              provider.getEnquiryForNameById(task.enquiryForId, task.enquiryForName),
+                                                                              overflow: TextOverflow.ellipsis,
+                                                                              maxLines: 1,
+                                                                              style: const TextStyle(
+                                                                                fontFamily: 'PlusJakartaSans',
+                                                                                fontSize: 13,
+                                                                                color: Color(0xFF334155),
+                                                                                fontWeight: FontWeight.w500,
                                                                               ),
-                                                                              onPressed: () async {
-                                                                                Navigator.push(
-                                                                                  context,
-                                                                                  MaterialPageRoute(
-                                                                                    builder: (context) => JobSheetPage(
-                                                                                      taskId: task.taskId,
-                                                                                      customerId: int.tryParse(task.customerId.toString()) ?? 0,
-                                                                                    ),
-                                                                                  ),
-                                                                                );
-                                                                              },
-                                                                              child: const Text('Job Sheet', style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 12)),
                                                                             ),
                                                                           ),
                                                                         ),
-                                                                      ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            );
-                                                          },
+                                                                        // Staff
+                                                                        TableWidget(
+                                                                          width:
+                                                                              120,
+                                                                          padding: const EdgeInsets
+                                                                              .symmetric(
+                                                                              vertical: 4.0,
+                                                                              horizontal: 12.0),
+                                                                          data:
+                                                                              Text(
+                                                                            task.toUserName ??
+                                                                                '',
+                                                                            overflow:
+                                                                                TextOverflow.ellipsis,
+                                                                            maxLines:
+                                                                                1,
+                                                                            style:
+                                                                                const TextStyle(
+                                                                              fontFamily: 'PlusJakartaSans',
+                                                                              fontSize: 13,
+                                                                              color: Color(0xFF334155),
+                                                                              fontWeight: FontWeight.w500,
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                        // Consumer No
+                                                                        TableWidget(
+                                                                          width:
+                                                                              140,
+                                                                          padding: const EdgeInsets
+                                                                              .symmetric(
+                                                                              vertical: 4.0,
+                                                                              horizontal: 12.0),
+                                                                          data:
+                                                                              Tooltip(
+                                                                            message:
+                                                                                task.consumerNo ?? '',
+                                                                            child:
+                                                                                Text(
+                                                                              task.consumerNo ?? '',
+                                                                              overflow: TextOverflow.ellipsis,
+                                                                              maxLines: 1,
+                                                                              style: const TextStyle(
+                                                                                fontFamily: 'PlusJakartaSans',
+                                                                                fontSize: 13,
+                                                                                color: Color(0xFF334155),
+                                                                                fontWeight: FontWeight.w500,
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                        // Description
+                                                                        TableWidget(
+                                                                          width:
+                                                                              180,
+                                                                          padding: const EdgeInsets
+                                                                              .symmetric(
+                                                                              vertical: 4.0,
+                                                                              horizontal: 12.0),
+                                                                          data:
+                                                                              Tooltip(
+                                                                            message:
+                                                                                task.description ?? '',
+                                                                            child:
+                                                                                Text(
+                                                                              task.description ?? '',
+                                                                              overflow: TextOverflow.ellipsis,
+                                                                              maxLines: 1,
+                                                                              style: const TextStyle(
+                                                                                fontFamily: 'PlusJakartaSans',
+                                                                                fontSize: 13,
+                                                                                color: Color(0xFF334155),
+                                                                                fontWeight: FontWeight.w500,
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                        // Priority
+                                                                        TableWidget(
+                                                                          width:
+                                                                              150,
+                                                                          alignment:
+                                                                              Alignment.centerLeft,
+                                                                          padding: const EdgeInsets
+                                                                              .symmetric(
+                                                                              vertical: 4.0,
+                                                                              horizontal: 12.0),
+                                                                          data:
+                                                                              PopupMenuButton<PriorityModel>(
+                                                                            enabled:
+                                                                                settingsProvider.showEdit[190] == 1,
+                                                                            tooltip:
+                                                                                task.priorityName,
+                                                                            constraints:
+                                                                                const BoxConstraints(maxHeight: 300),
+                                                                            offset:
+                                                                                const Offset(0, 40),
+                                                                            shape:
+                                                                                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                                                            onSelected:
+                                                                                (PriorityModel selected) async {
+                                                                              await reportsProvider.updateTaskPriority(
+                                                                                context: context,
+                                                                                taskId: task.taskId,
+                                                                                priorityId: selected.priorityId,
+                                                                              );
+                                                                            },
+                                                                            itemBuilder:
+                                                                                (context) {
+                                                                              return settingsProvider.priorities.map((priority) {
+                                                                                return PopupMenuItem<PriorityModel>(
+                                                                                  value: priority,
+                                                                                  child: Row(
+                                                                                    children: [
+                                                                                      Container(
+                                                                                        width: 12,
+                                                                                        height: 12,
+                                                                                        decoration: BoxDecoration(
+                                                                                          color: AppColors.parseColor(priority.colorCode).withOpacity(0.8),
+                                                                                          shape: BoxShape.circle,
+                                                                                        ),
+                                                                                      ),
+                                                                                      const SizedBox(width: 10),
+                                                                                      Text(
+                                                                                        priority.priorityName,
+                                                                                        style: TextStyle(
+                                                                                          fontFamily: 'PlusJakartaSans',
+                                                                                          color: AppColors.parseColor(priority.colorCode),
+                                                                                          fontWeight: FontWeight.w500,
+                                                                                        ),
+                                                                                      ),
+                                                                                    ],
+                                                                                  ),
+                                                                                );
+                                                                              }).toList();
+                                                                            },
+                                                                            child:
+                                                                                Container(
+                                                                              height: 32,
+                                                                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                                                              decoration: BoxDecoration(
+                                                                                color: AppColors.parseColor(task.priorityColor).withOpacity(0.2),
+                                                                                borderRadius: BorderRadius.circular(5),
+                                                                              ),
+                                                                              child: Row(
+                                                                                mainAxisSize: MainAxisSize.min,
+                                                                                children: [
+                                                                                  Flexible(
+                                                                                    child: Text(
+                                                                                      task.priorityName,
+                                                                                      maxLines: 1,
+                                                                                      overflow: TextOverflow.ellipsis,
+                                                                                      style: TextStyle(
+                                                                                        fontFamily: 'PlusJakartaSans',
+                                                                                        fontSize: 13,
+                                                                                        fontWeight: FontWeight.w500,
+                                                                                        color: AppColors.parseColor(task.priorityColor),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                  const SizedBox(width: 4),
+                                                                                  Icon(
+                                                                                    Icons.arrow_drop_down,
+                                                                                    size: 18,
+                                                                                    color: AppColors.parseColor(task.priorityColor),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                        // Created Date
+                                                                        TableWidget(
+                                                                          width:
+                                                                              140,
+                                                                          padding: const EdgeInsets
+                                                                              .symmetric(
+                                                                              vertical: 4.0,
+                                                                              horizontal: 12.0),
+                                                                          data:
+                                                                              Text(
+                                                                            task.entryDate.toDayMonthYearFormat(),
+                                                                            overflow:
+                                                                                TextOverflow.ellipsis,
+                                                                            maxLines:
+                                                                                1,
+                                                                            style:
+                                                                                const TextStyle(
+                                                                              fontFamily: 'PlusJakartaSans',
+                                                                              fontSize: 13,
+                                                                              color: Color(0xFF334155),
+                                                                              fontWeight: FontWeight.w500,
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                        // Duration
+                                                                        TableWidget(
+                                                                          width:
+                                                                              120,
+                                                                          padding: const EdgeInsets
+                                                                              .symmetric(
+                                                                              vertical: 4.0,
+                                                                              horizontal: 12.0),
+                                                                          data:
+                                                                              Text(
+                                                                            task.leadDuration.toString(),
+                                                                            overflow:
+                                                                                TextOverflow.ellipsis,
+                                                                            maxLines:
+                                                                                1,
+                                                                            style:
+                                                                                const TextStyle(
+                                                                              fontFamily: 'PlusJakartaSans',
+                                                                              fontSize: 13,
+                                                                              color: Color(0xFF334155),
+                                                                              fontWeight: FontWeight.w500,
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                        // Overdue
+                                                                        TableWidget(
+                                                                          width:
+                                                                              120,
+                                                                          padding: const EdgeInsets
+                                                                              .symmetric(
+                                                                              vertical: 4.0,
+                                                                              horizontal: 12.0),
+                                                                          data:
+                                                                              Text(
+                                                                            task.overdue.toString(),
+                                                                            overflow:
+                                                                                TextOverflow.ellipsis,
+                                                                            maxLines:
+                                                                                1,
+                                                                            style:
+                                                                                const TextStyle(
+                                                                              fontFamily: 'PlusJakartaSans',
+                                                                              fontSize: 13,
+                                                                              color: Color(0xFF334155),
+                                                                              fontWeight: FontWeight.w500,
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                        // Followup Date&Time
+                                                                        TableWidget(
+                                                                          width:
+                                                                              160,
+                                                                          padding: const EdgeInsets
+                                                                              .symmetric(
+                                                                              vertical: 4.0,
+                                                                              horizontal: 12.0),
+                                                                          data:
+                                                                              Text(
+                                                                            () {
+                                                                              String date = task.taskDate.toDayMonthYearFormat();
+                                                                              String time = '';
+                                                                              if (task.taskTime.isNotEmpty) {
+                                                                                try {
+                                                                                  final parsed = DateFormat('HH:mm:ss').parse(task.taskTime);
+                                                                                  time = DateFormat('hh:mm a').format(parsed);
+                                                                                } catch (_) {
+                                                                                  time = task.taskTime;
+                                                                                }
+                                                                              }
+                                                                              return time.isEmpty ? date : '$date $time';
+                                                                            }(),
+                                                                            overflow:
+                                                                                TextOverflow.ellipsis,
+                                                                            maxLines:
+                                                                                1,
+                                                                            style:
+                                                                                const TextStyle(
+                                                                              fontFamily: 'PlusJakartaSans',
+                                                                              fontSize: 13,
+                                                                              color: Color(0xFF334155),
+                                                                              fontWeight: FontWeight.w500,
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                        // Job Sheet
+                                                                        if (settingsProvider.jobSheet ==
+                                                                            1)
+                                                                          TableWidget(
+                                                                            width:
+                                                                                130,
+                                                                            padding:
+                                                                                const EdgeInsets.symmetric(vertical: 4.0, horizontal: 12.0),
+                                                                            data:
+                                                                                Center(
+                                                                              child: SizedBox(
+                                                                                height: 32,
+                                                                                child: ElevatedButton(
+                                                                                  style: ElevatedButton.styleFrom(
+                                                                                    backgroundColor: AppColors.primaryBlue,
+                                                                                    foregroundColor: Colors.white,
+                                                                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                                                                                    minimumSize: const Size(80, 32),
+                                                                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                                                                                  ),
+                                                                                  onPressed: () async {
+                                                                                    Navigator.push(
+                                                                                      context,
+                                                                                      MaterialPageRoute(
+                                                                                        builder: (context) => JobSheetPage(
+                                                                                          taskId: task.taskId,
+                                                                                          customerId: int.tryParse(task.customerId.toString()) ?? 0,
+                                                                                        ),
+                                                                                      ),
+                                                                                    );
+                                                                                  },
+                                                                                  child: const Text('Job Sheet', style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 12)),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                );
+                                                              },
+                                                            ),
+                                                          ),
                                                         ),
-                                                      ),
+                                                      ],
                                                     ),
-                                                  ],
+                                                  ),
                                                 ),
                                               ),
                                             ),
-                                          ),
+                                          ],
                                         ),
-                                      ],
+                                      ),
                                     ),
-                                  ),
-                                ),
-                              );
+                                  );
                                 },
                               ),
                             ),
@@ -3302,7 +3452,8 @@ class _tasksPageReportState extends State<TaskPage> {
                   icon: const Icon(Icons.check, color: Colors.white, size: 18),
                   label: const Text(
                     'APPLY',
-                    style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                    style: TextStyle(
+                      fontFamily: 'PlusJakartaSans',
                       color: Colors.white,
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
@@ -3337,7 +3488,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                     leading: const Icon(Icons.task,
                                         color: AppColors.primaryBlue),
                                     title: const Text('Create Task',
-                                        style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
+                                        style: TextStyle(
+                                            fontFamily: 'PlusJakartaSans',
+                                            color: Colors.black,
                                             fontWeight: FontWeight.w500)),
                                     onTap: () {
                                       Navigator.pop(sheetContext);
@@ -3362,7 +3515,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                       leading: const Icon(Icons.person_add,
                                           color: AppColors.primaryBlue),
                                       title: const Text('Add New Lead',
-                                          style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
+                                          style: TextStyle(
+                                              fontFamily: 'PlusJakartaSans',
+                                              color: Colors.black,
                                               fontWeight: FontWeight.w500)),
                                       onTap: () async {
                                         Navigator.pop(sheetContext);
@@ -3449,7 +3604,8 @@ class _tasksPageReportState extends State<TaskPage> {
           Expanded(
             child: Text(
               "Showing $startItem-$endItem of $totalSize",
-              style: const TextStyle(fontFamily: 'PlusJakartaSans', 
+              style: const TextStyle(
+                fontFamily: 'PlusJakartaSans',
                 fontSize: 12,
                 color: Color(0xFF64748B),
                 fontWeight: FontWeight.w500,
@@ -3477,7 +3633,8 @@ class _tasksPageReportState extends State<TaskPage> {
               const SizedBox(width: 16),
               Text(
                 "Page $currentPage of $totalPages",
-                style: const TextStyle(fontFamily: 'PlusJakartaSans', 
+                style: const TextStyle(
+                  fontFamily: 'PlusJakartaSans',
                   fontSize: 12,
                   color: Color(0xFF334155),
                   fontWeight: FontWeight.w500,
@@ -3510,9 +3667,11 @@ class _tasksPageReportState extends State<TaskPage> {
   }
 
   Future<bool?> updateStatusDialogWithoutTask(TaskReportModel task) {
-    final prefetchReportsProvider = Provider.of<TaskPageProvider>(context, listen: false);
-    final Future<Map<String, dynamic>> locationFuture = prefetchReportsProvider.getCurrentLocation();
-    
+    final prefetchReportsProvider =
+        Provider.of<TaskPageProvider>(context, listen: false);
+    final Future<Map<String, dynamic>> locationFuture =
+        prefetchReportsProvider.getCurrentLocation();
+
     return showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
@@ -3537,7 +3696,9 @@ class _tasksPageReportState extends State<TaskPage> {
           child: Container(
             constraints: BoxConstraints(
               maxWidth: 500,
-              maxHeight: isSmallScreen ? MediaQuery.of(context).size.height * 0.9 : 620,
+              maxHeight: isSmallScreen
+                  ? MediaQuery.of(context).size.height * 0.9
+                  : 620,
             ),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -3553,7 +3714,8 @@ class _tasksPageReportState extends State<TaskPage> {
                     children: [
                       const Text(
                         'Update Status',
-                        style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                        style: TextStyle(
+                          fontFamily: 'PlusJakartaSans',
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF1E293B),
@@ -3569,7 +3731,8 @@ class _tasksPageReportState extends State<TaskPage> {
                           children: [
                             Text(
                               'Task:',
-                              style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                              style: TextStyle(
+                                fontFamily: 'PlusJakartaSans',
                                 fontSize: 13,
                                 color: Colors.grey.shade500,
                               ),
@@ -3577,10 +3740,11 @@ class _tasksPageReportState extends State<TaskPage> {
                             Text(
                               task.taskTypeName ?? '',
                               style: TextStyle(
-                                fontFamily: 'PlusJakartaSans', 
+                                fontFamily: 'PlusJakartaSans',
                                 fontSize: 13,
                                 fontWeight: FontWeight.bold,
-                                color: task.parsedTaskTypeColor ?? const Color(0xFF1E293B),
+                                color: task.parsedTaskTypeColor ??
+                                    const Color(0xFF1E293B),
                               ),
                             ),
                           ],
@@ -3617,14 +3781,16 @@ class _tasksPageReportState extends State<TaskPage> {
                         // final ValueNotifier<TaskTypeStatusModel>
                         //     selectedStatus = ValueNotifier(defaultStatus);
                         final ValueNotifier<TaskTypeStatusModel>
-                            selectedStatus = ValueNotifier(TaskTypeStatusModel()); // for deafult showing status value uncomment above code
+                            selectedStatus = ValueNotifier(
+                                TaskTypeStatusModel()); // for deafult showing status value uncomment above code
                         final ValueNotifier<SubStatus?> selectedSubStatus =
                             ValueNotifier(null);
                         final ValueNotifier<bool> isSaving =
                             ValueNotifier(false);
                         WidgetsBinding.instance.addPostFrameCallback((_) {
                           reportsProvider.clearDescription();
-                          Provider.of<AudioFileProvider>(context, listen: false).clearAudios();
+                          Provider.of<AudioFileProvider>(context, listen: false)
+                              .clearAudios();
                         });
 
                         Widget formFields = Container(
@@ -3639,7 +3805,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     const Text('Select Status',
-                                        style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                        style: TextStyle(
+                                            fontFamily: 'PlusJakartaSans',
                                             fontSize: 12,
                                             fontWeight: FontWeight.w500,
                                             color: Color(0xFF64748B))),
@@ -3691,7 +3858,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         const Text('Select Sub Status',
-                                            style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                            style: TextStyle(
+                                                fontFamily: 'PlusJakartaSans',
                                                 fontSize: 12,
                                                 fontWeight: FontWeight.w500,
                                                 color: Color(0xFF64748B))),
@@ -3733,7 +3901,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                                       width: 1),
                                                 ),
                                                 hintText: 'Select Sub Status',
-                                                hintStyle: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                                hintStyle: TextStyle(
+                                                    fontFamily:
+                                                        'PlusJakartaSans',
                                                     fontSize: 13,
                                                     color:
                                                         Colors.grey.shade400),
@@ -3759,7 +3929,10 @@ class _tasksPageReportState extends State<TaskPage> {
                                                   value: sub,
                                                   child: Text(
                                                       sub.subStatusName ?? '',
-                                                      style: const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
+                                                      style: const TextStyle(
+                                                          fontFamily:
+                                                              'PlusJakartaSans',
+                                                          color: Colors.black,
                                                           fontSize: 14)),
                                                 );
                                               }).toList(),
@@ -3798,7 +3971,8 @@ class _tasksPageReportState extends State<TaskPage> {
                               ),
                               const SizedBox(height: 4),
                               Text('Add Notes',
-                                  style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                  style: TextStyle(
+                                      fontFamily: 'PlusJakartaSans',
                                       fontSize: 12,
                                       color: Colors.grey.shade600,
                                       fontWeight: FontWeight.w500,
@@ -3821,18 +3995,22 @@ class _tasksPageReportState extends State<TaskPage> {
                                         horizontal: 14, vertical: 12),
                                     border: InputBorder.none,
                                     hintText: 'Enter notes here...',
-                                    hintStyle: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                    hintStyle: TextStyle(
+                                        fontFamily: 'PlusJakartaSans',
                                         fontSize: 13,
                                         color: Colors.grey.shade400),
                                   ),
-                                  style: const TextStyle(fontFamily: 'PlusJakartaSans', 
-                                      fontSize: 14, color: Color(0xFF1E293B)),
+                                  style: const TextStyle(
+                                      fontFamily: 'PlusJakartaSans',
+                                      fontSize: 14,
+                                      color: Color(0xFF1E293B)),
                                 ),
                               ),
                               if (settingsProvider.showView[165] == 1) ...[
                                 const SizedBox(height: 12),
                                 Text('Remarks / Feedback',
-                                    style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                    style: TextStyle(
+                                        fontFamily: 'PlusJakartaSans',
                                         fontSize: 12,
                                         color: Colors.grey.shade600,
                                         fontWeight: FontWeight.w500,
@@ -3856,12 +4034,15 @@ class _tasksPageReportState extends State<TaskPage> {
                                               horizontal: 14, vertical: 12),
                                       border: InputBorder.none,
                                       hintText: 'Enter remarks here...',
-                                      hintStyle: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                      hintStyle: TextStyle(
+                                          fontFamily: 'PlusJakartaSans',
                                           fontSize: 13,
                                           color: Colors.grey.shade400),
                                     ),
-                                    style: const TextStyle(fontFamily: 'PlusJakartaSans', 
-                                        fontSize: 14, color: Color(0xFF1E293B)),
+                                    style: const TextStyle(
+                                        fontFamily: 'PlusJakartaSans',
+                                        fontSize: 14,
+                                        color: Color(0xFF1E293B)),
                                   ),
                                 ),
                               ],
@@ -3909,7 +4090,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                                   BorderRadius.circular(4)),
                                         ),
                                         child: const Text('Cancel',
-                                            style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                            style: TextStyle(
+                                                fontFamily: 'PlusJakartaSans',
                                                 color: Color(0xFF1E293B),
                                                 fontWeight: FontWeight.w700)),
                                       ),
@@ -3920,8 +4102,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                             : () async {
                                                 isSaving.value = true;
                                                 try {
-                                                  final audioProvider =
-                                                      Provider.of<AudioFileProvider>(
+                                                  final audioProvider = Provider
+                                                      .of<AudioFileProvider>(
                                                           context,
                                                           listen: false);
                                                   List<Map<String, String>>
@@ -3988,7 +4170,10 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                 Color>(
                                                             Colors.white)))
                                             : const Text('Save',
-                                                style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
+                                                style: TextStyle(
+                                                    fontFamily:
+                                                        'PlusJakartaSans',
+                                                    color: Colors.black,
                                                     fontWeight:
                                                         FontWeight.w700)),
                                       ),
@@ -4046,9 +4231,11 @@ class _tasksPageReportState extends State<TaskPage> {
   }
 
   Future statusDialog(TaskReportModel task) {
-    final prefetchReportsProvider = Provider.of<TaskPageProvider>(context, listen: false);
-    final Future<Map<String, dynamic>> locationFuture = prefetchReportsProvider.getCurrentLocation();
-    
+    final prefetchReportsProvider =
+        Provider.of<TaskPageProvider>(context, listen: false);
+    final Future<Map<String, dynamic>> locationFuture =
+        prefetchReportsProvider.getCurrentLocation();
+
     return showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
@@ -4072,7 +4259,9 @@ class _tasksPageReportState extends State<TaskPage> {
           child: Container(
             constraints: BoxConstraints(
               maxWidth: isSmallScreen ? double.infinity : 900,
-              maxHeight: isSmallScreen ? MediaQuery.of(context).size.height * 0.9 : 680,
+              maxHeight: isSmallScreen
+                  ? MediaQuery.of(context).size.height * 0.9
+                  : 680,
               minHeight: isSmallScreen ? 0 : 400,
               minWidth: isSmallScreen ? 0 : 700,
             ),
@@ -4090,7 +4279,8 @@ class _tasksPageReportState extends State<TaskPage> {
                     children: [
                       const Text(
                         'Update Status',
-                        style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                        style: TextStyle(
+                          fontFamily: 'PlusJakartaSans',
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF1E293B),
@@ -4105,7 +4295,8 @@ class _tasksPageReportState extends State<TaskPage> {
                             children: [
                               Text(
                                 'Task:',
-                                style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                style: TextStyle(
+                                  fontFamily: 'PlusJakartaSans',
                                   fontSize: 13,
                                   color: Colors.black54,
                                 ),
@@ -4114,16 +4305,18 @@ class _tasksPageReportState extends State<TaskPage> {
                               Text(
                                 task.taskTypeName ?? '',
                                 style: TextStyle(
-                                  fontFamily: 'PlusJakartaSans', 
+                                  fontFamily: 'PlusJakartaSans',
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
-                                  color: task.parsedTaskTypeColor ?? const Color(0xFF1E293B),
+                                  color: task.parsedTaskTypeColor ??
+                                      const Color(0xFF1E293B),
                                 ),
                               ),
                               const SizedBox(width: 6),
                               Text(
                                 'for',
-                                style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                style: TextStyle(
+                                  fontFamily: 'PlusJakartaSans',
                                   fontSize: 13,
                                   color: Colors.grey.shade500,
                                 ),
@@ -4136,7 +4329,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                 },
                                 child: Text(
                                   task.customerName,
-                                  style: const TextStyle(fontFamily: 'PlusJakartaSans', 
+                                  style: const TextStyle(
+                                    fontFamily: 'PlusJakartaSans',
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
                                     color: Color(0xFF1E293B),
@@ -4165,7 +4359,8 @@ class _tasksPageReportState extends State<TaskPage> {
                               const SizedBox(height: 16),
                               Text(
                                 'Loading status options...',
-                                style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                style: TextStyle(
+                                  fontFamily: 'PlusJakartaSans',
                                   color: theme.textTheme.bodyMedium?.color,
                                 ),
                               ),
@@ -4185,8 +4380,9 @@ class _tasksPageReportState extends State<TaskPage> {
                               const SizedBox(height: 16),
                               Text(
                                 'Error loading status options',
-                                style:
-                                    TextStyle(fontFamily: 'PlusJakartaSans', color: theme.colorScheme.error),
+                                style: TextStyle(
+                                    fontFamily: 'PlusJakartaSans',
+                                    color: theme.colorScheme.error),
                               ),
                               const SizedBox(height: 24),
                               ElevatedButton(
@@ -4227,8 +4423,9 @@ class _tasksPageReportState extends State<TaskPage> {
                           dropDownProvider.getUserDetails(context);
                           reportsProvider.clearTaskUserAssignments();
                           reportsProvider.clearDescription();
-                          Provider.of<AudioFileProvider>(context, listen: false).clearAudios();
-                          
+                          Provider.of<AudioFileProvider>(context, listen: false)
+                              .clearAudios();
+
                           formProvider.getFormDataByCustomer(
                             task.customerId.toString(),
                             enquiryForId: task.enquiryForId.toString(),
@@ -4256,7 +4453,8 @@ class _tasksPageReportState extends State<TaskPage> {
                         // final ValueNotifier<TaskTypeStatusModel>
                         //     selectedStatus = ValueNotifier(defaultStatus);
                         final ValueNotifier<TaskTypeStatusModel>
-                            selectedStatus = ValueNotifier(TaskTypeStatusModel()); // for deafult showing status value uncomment above code    
+                            selectedStatus = ValueNotifier(
+                                TaskTypeStatusModel()); // for deafult showing status value uncomment above code
                         final ValueNotifier<SubStatus?> selectedSubStatus =
                             ValueNotifier(null);
                         final ValueNotifier<bool> isSaving =
@@ -4276,7 +4474,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     const Text('Select Status',
-                                        style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                        style: TextStyle(
+                                            fontFamily: 'PlusJakartaSans',
                                             fontSize: 13,
                                             fontWeight: FontWeight.w500,
                                             color: Color(0xFF64748B))),
@@ -4353,7 +4552,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         const Text('Select Sub Status',
-                                            style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                            style: TextStyle(
+                                                fontFamily: 'PlusJakartaSans',
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.w500,
                                                 color: Color(0xFF64748B))),
@@ -4395,7 +4595,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                                       width: 1),
                                                 ),
                                                 hintText: 'Select Sub Status',
-                                                hintStyle: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                                hintStyle: TextStyle(
+                                                    fontFamily:
+                                                        'PlusJakartaSans',
                                                     fontSize: 13,
                                                     color:
                                                         Colors.grey.shade400),
@@ -4437,7 +4639,10 @@ class _tasksPageReportState extends State<TaskPage> {
                                                   value: sub,
                                                   child: Text(
                                                       sub.subStatusName ?? '',
-                                                      style: const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
+                                                      style: const TextStyle(
+                                                          fontFamily:
+                                                              'PlusJakartaSans',
+                                                          color: Colors.black,
                                                           fontSize: 14)),
                                                 );
                                               }).toList(),
@@ -4525,7 +4730,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                                   Expanded(
                                                     flex: 2,
                                                     child: Text('New Task',
-                                                        style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                                        style: TextStyle(
+                                                            fontFamily:
+                                                                'PlusJakartaSans',
                                                             fontSize: 13,
                                                             color: Colors
                                                                 .grey.shade600,
@@ -4536,7 +4743,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                                   Expanded(
                                                     flex: 1,
                                                     child: Text('Department',
-                                                        style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                                        style: TextStyle(
+                                                            fontFamily:
+                                                                'PlusJakartaSans',
                                                             fontSize: 13,
                                                             color: Colors
                                                                 .grey.shade600,
@@ -4547,7 +4756,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                                   Expanded(
                                                     flex: 1,
                                                     child: Text('User',
-                                                        style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                                        style: TextStyle(
+                                                            fontFamily:
+                                                                'PlusJakartaSans',
                                                             fontSize: 13,
                                                             color: Colors
                                                                 .grey.shade600,
@@ -4639,7 +4850,11 @@ class _tasksPageReportState extends State<TaskPage> {
                                                               Text(
                                                                   taskItem.taskTypeName ??
                                                                       '',
-                                                                  style: const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
+                                                                  style: const TextStyle(
+                                                                      fontFamily:
+                                                                          'PlusJakartaSans',
+                                                                      color: Colors
+                                                                          .black,
                                                                       fontSize:
                                                                           14,
                                                                       fontWeight:
@@ -4653,7 +4868,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                                           child: Text(
                                                               taskItem.departmentName ??
                                                                   '',
-                                                              style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                                              style: TextStyle(
+                                                                  fontFamily:
+                                                                      'PlusJakartaSans',
                                                                   fontSize: 13,
                                                                   color: Colors
                                                                       .grey
@@ -4717,10 +4934,15 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                             .where((e) => e.isNotEmpty)
                                                                             .toList();
 
-                                                                        List<String> transferDeptList = [];
-                                                                        if (staff.transferDepartments != null) {
-                                                                          if (staff.transferDepartments is Iterable) {
-                                                                            for (var t in staff.transferDepartments) {
+                                                                        List<String>
+                                                                            transferDeptList =
+                                                                            [];
+                                                                        if (staff.transferDepartments !=
+                                                                            null) {
+                                                                          if (staff.transferDepartments
+                                                                              is Iterable) {
+                                                                            for (var t
+                                                                                in staff.transferDepartments) {
                                                                               if (t is Map) {
                                                                                 final tId = t["Department_Id"]?.toString() ?? t["department_id"]?.toString();
                                                                                 if (tId != null) transferDeptList.add(tId.trim());
@@ -4729,12 +4951,14 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                               }
                                                                             }
                                                                           } else {
-                                                                            transferDeptList.addAll(staff.transferDepartments.toString().split(',').map((e) => e.trim()));
+                                                                            transferDeptList.addAll(staff.transferDepartments.toString().split(',').map((e) =>
+                                                                                e.trim()));
                                                                           }
                                                                         }
 
                                                                         return targetDeptList.any((dept) =>
-                                                                            staffDeptList.contains(dept) || transferDeptList.contains(dept));
+                                                                            staffDeptList.contains(dept) ||
+                                                                            transferDeptList.contains(dept));
                                                                       }).toList();
                                                                     }
 
@@ -4743,18 +4967,30 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                             taskItem.departmentIds);
 
                                                                     // Default selected user name
-                                                                    final taskKey = taskItem.uniqueId ??
-                                                                        taskItem.taskTypeId.toString();
-                                                                    int? assignedUserId = reportsProvider
-                                                                        .taskTypeToUserMap[taskKey];
-                                                                    String defaultUserName = '';
+                                                                    final taskKey = taskItem
+                                                                            .uniqueId ??
+                                                                        taskItem
+                                                                            .taskTypeId
+                                                                            .toString();
+                                                                    int?
+                                                                        assignedUserId =
+                                                                        reportsProvider
+                                                                            .taskTypeToUserMap[taskKey];
+                                                                    String
+                                                                        defaultUserName =
+                                                                        '';
 
-                                                                    final leadProvider = Provider.of<LeadsProvider>(
+                                                                    final leadProvider = Provider.of<
+                                                                            LeadsProvider>(
                                                                         context,
-                                                                        listen: false);
-                                                                    final int loginUserId = leadProvider.loginUserId != 0
-                                                                        ? leadProvider.loginUserId
-                                                                        : (int.tryParse(reportsProvider.loginUserId) ?? 0);
+                                                                        listen:
+                                                                            false);
+                                                                    final int loginUserId = leadProvider.loginUserId !=
+                                                                            0
+                                                                        ? leadProvider
+                                                                            .loginUserId
+                                                                        : (int.tryParse(reportsProvider.loginUserId) ??
+                                                                            0);
 
                                                                     if (assignedUserId !=
                                                                         null) {
@@ -4770,16 +5006,27 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                             matchedStaff.userDetailsName ??
                                                                                 '';
                                                                       } catch (_) {}
-                                                                    } else if (loginUserId != 0) {
+                                                                    } else if (loginUserId !=
+                                                                        0) {
                                                                       try {
-                                                                        final loggedInStaff = departmentStaff.firstWhere(
-                                                                          (s) => s.userDetailsId == loginUserId,
+                                                                        final loggedInStaff =
+                                                                            departmentStaff.firstWhere(
+                                                                          (s) =>
+                                                                              s.userDetailsId ==
+                                                                              loginUserId,
                                                                         );
-                                                                        assignedUserId = loggedInStaff.userDetailsId;
-                                                                        defaultUserName = loggedInStaff.userDetailsName ?? '';
-                                                                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                                          if (reportsProvider.taskTypeToUserMap[taskKey] == null) {
-                                                                            reportsProvider.setTaskUser(taskKey, loggedInStaff.userDetailsId);
+                                                                        assignedUserId =
+                                                                            loggedInStaff.userDetailsId;
+                                                                        defaultUserName =
+                                                                            loggedInStaff.userDetailsName ??
+                                                                                '';
+                                                                        WidgetsBinding
+                                                                            .instance
+                                                                            .addPostFrameCallback((_) {
+                                                                          if (reportsProvider.taskTypeToUserMap[taskKey] ==
+                                                                              null) {
+                                                                            reportsProvider.setTaskUser(taskKey,
+                                                                                loggedInStaff.userDetailsId);
                                                                           }
                                                                         });
                                                                       } catch (_) {}
@@ -4921,7 +5168,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                                   CrossAxisAlignment.start,
                                               children: [
                                                 Text('Pending Documents',
-                                                    style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                                    style: TextStyle(
+                                                        fontFamily:
+                                                            'PlusJakartaSans',
                                                         fontSize: 13,
                                                         color: Colors
                                                             .grey.shade600,
@@ -4984,7 +5233,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                                             radius: 4,
                                                           ),
                                                         ),
-                                                      if (hasDocs && !isDocumentButtonEnabled)
+                                                      if (hasDocs &&
+                                                          !isDocumentButtonEnabled)
                                                         ...reportsProvider
                                                             .documentTypeModel
                                                             .map(
@@ -5064,7 +5314,11 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                           4),
                                                                   child: Text(
                                                                       '${e.key + 1 + (hasDocs && !isDocumentButtonEnabled ? reportsProvider.documentTypeModel.length : (hasDocs ? 1 : 0))}. ${e.value.taskTypeName}-${e.value.requiredStatuses}',
-                                                                      style: const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
+                                                                      style: const TextStyle(
+                                                                          fontFamily:
+                                                                              'PlusJakartaSans',
+                                                                          color: Colors
+                                                                              .black,
                                                                           fontSize:
                                                                               13)),
                                                                 )),
@@ -5128,7 +5382,8 @@ class _tasksPageReportState extends State<TaskPage> {
 
                               // Row 4: Description text area
                               Text('Comments',
-                                  style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                  style: TextStyle(
+                                      fontFamily: 'PlusJakartaSans',
                                       fontSize: 12,
                                       color: Colors.grey.shade600,
                                       fontWeight: FontWeight.w500,
@@ -5153,18 +5408,22 @@ class _tasksPageReportState extends State<TaskPage> {
                                         horizontal: 14, vertical: 12),
                                     border: InputBorder.none,
                                     hintText: 'Enter notes here...',
-                                    hintStyle: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                    hintStyle: TextStyle(
+                                        fontFamily: 'PlusJakartaSans',
                                         color: Colors.grey.shade400,
                                         fontSize: 13),
                                   ),
-                                  style: const TextStyle(fontFamily: 'PlusJakartaSans', 
-                                      fontSize: 14, color: Color(0xFF1E293B)),
+                                  style: const TextStyle(
+                                      fontFamily: 'PlusJakartaSans',
+                                      fontSize: 14,
+                                      color: Color(0xFF1E293B)),
                                 ),
                               ),
                               if (settingsProvider.showView[165] == 1) ...[
                                 const SizedBox(height: 12),
                                 Text('Remarks / Feedback',
-                                    style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                    style: TextStyle(
+                                        fontFamily: 'PlusJakartaSans',
                                         fontSize: 12,
                                         color: Colors.grey.shade600,
                                         fontWeight: FontWeight.w500,
@@ -5190,12 +5449,15 @@ class _tasksPageReportState extends State<TaskPage> {
                                               horizontal: 14, vertical: 12),
                                       border: InputBorder.none,
                                       hintText: 'Enter remarks here...',
-                                      hintStyle: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                      hintStyle: TextStyle(
+                                          fontFamily: 'PlusJakartaSans',
                                           color: Colors.grey.shade400,
                                           fontSize: 13),
                                     ),
-                                    style: const TextStyle(fontFamily: 'PlusJakartaSans', 
-                                        fontSize: 14, color: Color(0xFF1E293B)),
+                                    style: const TextStyle(
+                                        fontFamily: 'PlusJakartaSans',
+                                        fontSize: 14,
+                                        color: Color(0xFF1E293B)),
                                   ),
                                 ),
                               ],
@@ -5244,7 +5506,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text('FORMS',
-                                          style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                          style: TextStyle(
+                                              fontFamily: 'PlusJakartaSans',
                                               fontSize: 11,
                                               color: Colors.grey.shade600,
                                               fontWeight: FontWeight.w500,
@@ -5304,7 +5567,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                                       children: [
                                                         const Text(
                                                           "1",
-                                                          style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                                          style: TextStyle(
+                                                            fontFamily:
+                                                                'PlusJakartaSans',
                                                             fontSize: 13,
                                                             fontWeight:
                                                                 FontWeight.bold,
@@ -5316,7 +5581,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                                           form.name.isNotEmpty
                                                               ? form.name
                                                               : "Attached Form",
-                                                          style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                                          style: TextStyle(
+                                                            fontFamily:
+                                                                'PlusJakartaSans',
                                                             fontSize: 11,
                                                             fontWeight:
                                                                 FontWeight.w500,
@@ -5380,7 +5647,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                                 size: 16,
                                                 color: Color(0xFF1E293B)),
                                             label: const Text("View History",
-                                                style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                                style: TextStyle(
+                                                    fontFamily:
+                                                        'PlusJakartaSans',
                                                     color: Color(0xFF1E293B),
                                                     fontWeight:
                                                         FontWeight.w700)),
@@ -5753,7 +6022,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                                       vertical: 12),
                                             ),
                                             child: const Text("Cancel",
-                                                style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                                style: TextStyle(
+                                                    fontFamily:
+                                                        'PlusJakartaSans',
                                                     color: Color(0xFF1E293B),
                                                     fontWeight:
                                                         FontWeight.w500)),
@@ -5816,7 +6087,11 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                     width: 10),
                                                                 const Text(
                                                                     "Required Status Incomplete",
-                                                                    style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
+                                                                    style: TextStyle(
+                                                                        fontFamily:
+                                                                            'PlusJakartaSans',
+                                                                        color: Colors
+                                                                            .black,
                                                                         fontWeight:
                                                                             FontWeight
                                                                                 .bold,
@@ -5838,7 +6113,11 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                 children: [
                                                                   const Text(
                                                                       "Any one of the following required statuses must be completed for the corresponding task before saving:",
-                                                                      style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
+                                                                      style: TextStyle(
+                                                                          fontFamily:
+                                                                              'PlusJakartaSans',
+                                                                          color: Colors
+                                                                              .black,
                                                                           fontSize:
                                                                               16)),
                                                                   const SizedBox(
@@ -6040,7 +6319,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                 'userId') ??
                                                             "0";
 
-                                                    final bool isRemarkRequired =
+                                                    final bool
+                                                        isRemarkRequired =
                                                         remarkMandatoty == 1
                                                             ? true
                                                             : (ramcoAdminTaskPhoto ==
@@ -6093,7 +6373,11 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                     width: 10),
                                                                 const Text(
                                                                     "Unable to Save",
-                                                                    style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
+                                                                    style: TextStyle(
+                                                                        fontFamily:
+                                                                            'PlusJakartaSans',
+                                                                        color: Colors
+                                                                            .black,
                                                                         fontWeight:
                                                                             FontWeight
                                                                                 .bold,
@@ -6103,7 +6387,11 @@ class _tasksPageReportState extends State<TaskPage> {
                                                             ),
                                                             content: const Text(
                                                                 "Remark Missing",
-                                                                style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
+                                                                style: TextStyle(
+                                                                    fontFamily:
+                                                                        'PlusJakartaSans',
+                                                                    color: Colors
+                                                                        .black,
                                                                     fontSize:
                                                                         16)),
                                                             actions: [
@@ -6142,24 +6430,40 @@ class _tasksPageReportState extends State<TaskPage> {
                                                       return;
                                                     }
 
-                                                    bool hasPendingMandatoryDocs = provider.documentTypeModel.any((doc) => doc.isMandatory);
-                                                    debugPrint("DEBUG: checking mandatory docs. List length: ${provider.documentTypeModel.length}");
-                                                    for (var doc in provider.documentTypeModel) {
-                                                      debugPrint("DEBUG: Doc ${doc.documentTypeName} - isMandatory: ${doc.isMandatory}, isView: ${doc.isView}");
+                                                    bool
+                                                        hasPendingMandatoryDocs =
+                                                        provider
+                                                            .documentTypeModel
+                                                            .any((doc) => doc
+                                                                .isMandatory);
+                                                    debugPrint(
+                                                        "DEBUG: checking mandatory docs. List length: ${provider.documentTypeModel.length}");
+                                                    for (var doc in provider
+                                                        .documentTypeModel) {
+                                                      debugPrint(
+                                                          "DEBUG: Doc ${doc.documentTypeName} - isMandatory: ${doc.isMandatory}, isView: ${doc.isView}");
                                                     }
-                                                    debugPrint("DEBUG: hasPendingMandatoryDocs: $hasPendingMandatoryDocs");
+                                                    debugPrint(
+                                                        "DEBUG: hasPendingMandatoryDocs: $hasPendingMandatoryDocs");
 
-                                                    if (!hasPendingMandatoryDocs || (ramcoAdminTaskPhoto == 1 && userId == "1")) {
+                                                    if (!hasPendingMandatoryDocs ||
+                                                        (ramcoAdminTaskPhoto ==
+                                                                1 &&
+                                                            userId == "1")) {
                                                       isSaving.value = true;
                                                       try {
                                                         final audioProvider =
-                                                            Provider.of<AudioFileProvider>(
+                                                            Provider.of<
+                                                                    AudioFileProvider>(
                                                                 context,
                                                                 listen: false);
-                                                        List<Map<String, String>>
-                                                            uploadedAudioFiles = [];
-                                                        if (audioProvider
-                                                            .audios.isNotEmpty) {
+                                                        List<
+                                                                Map<String,
+                                                                    String>>
+                                                            uploadedAudioFiles =
+                                                            [];
+                                                        if (audioProvider.audios
+                                                            .isNotEmpty) {
                                                           uploadedAudioFiles =
                                                               await audioProvider
                                                                   .uploadAllAudios(
@@ -6187,7 +6491,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                                         }
 
                                                         if (isSuccess) {
-                                                          audioProvider.clearAudios();
+                                                          audioProvider
+                                                              .clearAudios();
                                                           Navigator.pop(
                                                               context, true);
                                                           ScaffoldMessenger.of(
@@ -6261,7 +6566,11 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                     width: 10),
                                                                 const Text(
                                                                     "Unable to Save",
-                                                                    style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
+                                                                    style: TextStyle(
+                                                                        fontFamily:
+                                                                            'PlusJakartaSans',
+                                                                        color: Colors
+                                                                            .black,
                                                                         fontWeight:
                                                                             FontWeight
                                                                                 .bold,
@@ -6271,7 +6580,11 @@ class _tasksPageReportState extends State<TaskPage> {
                                                             ),
                                                             content: const Text(
                                                                 "Documents Not Uploaded",
-                                                                style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
+                                                                style: TextStyle(
+                                                                    fontFamily:
+                                                                        'PlusJakartaSans',
+                                                                    color: Colors
+                                                                        .black,
                                                                     fontSize:
                                                                         16)),
                                                             actions: [
@@ -6334,7 +6647,10 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                 Colors.white)),
                                                   )
                                                 : const Text('Save',
-                                                    style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
+                                                    style: TextStyle(
+                                                        fontFamily:
+                                                            'PlusJakartaSans',
+                                                        color: Colors.black,
                                                         fontWeight:
                                                             FontWeight.w700)),
                                           ),
@@ -6388,8 +6704,11 @@ class _tasksPageReportState extends State<TaskPage> {
                     const Center(
                       child: Text(
                         'Choose Date',
-                        style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
-                            fontSize: 18, fontWeight: FontWeight.w700),
+                        style: TextStyle(
+                            fontFamily: 'PlusJakartaSans',
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700),
                       ),
                     ),
                     const SizedBox(height: 15),
@@ -6412,7 +6731,8 @@ class _tasksPageReportState extends State<TaskPage> {
                               reportsProvider.selectedDateFilterIndex == index
                                   ? AppColors.primaryBlue
                                   : Colors.white,
-                          labelStyle: TextStyle(fontFamily: 'PlusJakartaSans', 
+                          labelStyle: TextStyle(
+                            fontFamily: 'PlusJakartaSans',
                             color:
                                 reportsProvider.selectedDateFilterIndex == index
                                     ? Colors.white
@@ -6424,8 +6744,11 @@ class _tasksPageReportState extends State<TaskPage> {
                     const SizedBox(height: 15),
                     const Text(
                       'Pick a date',
-                      style:
-                          TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 16, fontWeight: FontWeight.w700),
+                      style: TextStyle(
+                          fontFamily: 'PlusJakartaSans',
+                          color: Colors.black,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700),
                     ),
                     const SizedBox(height: 15),
                     Row(
@@ -6589,7 +6912,8 @@ class _tasksPageReportState extends State<TaskPage> {
       children: [
         Text(
           'Follow-up Date',
-          style: TextStyle(fontFamily: 'PlusJakartaSans', 
+          style: TextStyle(
+            fontFamily: 'PlusJakartaSans',
             fontSize: 12,
             fontWeight: FontWeight.w500,
             color: Colors.grey.shade600,
@@ -6630,7 +6954,8 @@ class _tasksPageReportState extends State<TaskPage> {
                       final hasDate = val.text.isNotEmpty;
                       return Text(
                         hasDate ? val.text : 'DD MMM YYYY',
-                        style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                        style: TextStyle(
+                          fontFamily: 'PlusJakartaSans',
                           fontSize: 13,
                           color: hasDate
                               ? const Color(0xFF1E293B)
@@ -6655,7 +6980,8 @@ class _tasksPageReportState extends State<TaskPage> {
       children: [
         Text(
           'Follow-up Time',
-          style: TextStyle(fontFamily: 'PlusJakartaSans', 
+          style: TextStyle(
+            fontFamily: 'PlusJakartaSans',
             fontSize: 12,
             fontWeight: FontWeight.w500,
             color: Colors.grey.shade600,
@@ -6693,7 +7019,8 @@ class _tasksPageReportState extends State<TaskPage> {
                       final hasTime = val.text.isNotEmpty;
                       return Text(
                         hasTime ? val.text : 'HH:MM AM/PM',
-                        style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                        style: TextStyle(
+                          fontFamily: 'PlusJakartaSans',
                           fontSize: 13,
                           color: hasTime
                               ? const Color(0xFF1E293B)
@@ -6762,7 +7089,8 @@ class _tasksPageReportState extends State<TaskPage> {
           const SizedBox(width: 4),
           Text(
             label,
-            style: TextStyle(fontFamily: 'PlusJakartaSans', 
+            style: TextStyle(
+              fontFamily: 'PlusJakartaSans',
               fontSize: 12,
               color: Colors.grey.shade700,
               fontWeight: FontWeight.w500,
@@ -6814,7 +7142,8 @@ class _tasksPageReportState extends State<TaskPage> {
             const SizedBox(width: 4),
             Text(
               status.statusName ?? '',
-              style: TextStyle(fontFamily: 'PlusJakartaSans', 
+              style: TextStyle(
+                fontFamily: 'PlusJakartaSans',
                 color: isSelected ? Colors.white : statusColor,
                 fontWeight: FontWeight.w500,
                 fontSize: 12,
@@ -6835,7 +7164,10 @@ Widget _buildPriorityFilter(TaskPageProvider taskProvider) {
               value: 0,
               child: Text(
                 'All',
-                style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
+                style: TextStyle(
+                    fontFamily: 'PlusJakartaSans',
+                    color: Colors.black,
+                    fontSize: 14),
               ),
             ),
           ] +
@@ -6847,7 +7179,8 @@ Widget _buildPriorityFilter(TaskPageProvider taskProvider) {
                       child: Text(
                         priority.priorityName ?? '',
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                        style: TextStyle(
+                          fontFamily: 'PlusJakartaSans',
                           fontSize: 14,
                           color: AppColors.parseColor(priority.colorCode),
                           fontWeight: FontWeight.w500,
@@ -6872,7 +7205,10 @@ Widget _buildPriorityFilter(TaskPageProvider taskProvider) {
           child: DropdownButton<int>(
             value: taskProvider.selectedPriority ?? 0,
             hint: const Text('Priority: All',
-                style: TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 14, color: Colors.black87)),
+                style: TextStyle(
+                    fontFamily: 'PlusJakartaSans',
+                    fontSize: 14,
+                    color: Colors.black87)),
             items: items,
             selectedItemBuilder: (BuildContext context) {
               return items.map<Widget>((DropdownMenuItem<int> item) {
@@ -6880,7 +7216,10 @@ Widget _buildPriorityFilter(TaskPageProvider taskProvider) {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     const Text('Priority: ',
-                        style: TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 14, color: Colors.black87)),
+                        style: TextStyle(
+                            fontFamily: 'PlusJakartaSans',
+                            fontSize: 14,
+                            color: Colors.black87)),
                     item.child,
                   ],
                 );
