@@ -507,21 +507,24 @@ class ImageUploadProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> uploadAllDocumentsGrouped(BuildContext context,
-      {bool shouldPop = true, String? taskId}) async {
+  Future<List<String>> uploadAllDocumentsGrouped(
+    BuildContext context, {
+    bool shouldPop = true,
+    String? taskId,
+  }) async {
     final customerDetailsProvider =
         Provider.of<CustomerDetailsProvider>(context, listen: false);
     final scaffoldMessenger = ScaffoldMessenger.of(context);
     final navigator = Navigator.of(context);
 
-    try {
-      if (_fileInfoList.isEmpty) return;
+    final List<String> uploadedUrls = [];
 
-      Loader.showLoader(context);
+    try {
+      if (_fileInfoList.isEmpty) return [];
+
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "0";
 
-      // Group files by docTypeId
       Map<int?, List<Map<String, dynamic>>> groupedFiles = {};
       for (var file in _fileInfoList) {
         int? typeId = file['docTypeId'];
@@ -533,7 +536,6 @@ class ImageUploadProvider extends ChangeNotifier {
       for (var entry in groupedFiles.entries) {
         int? typeId = entry.key;
         List<Map<String, dynamic>> files = entry.value;
-
         List<Map<String, String>> currentUploadedPaths = [];
 
         for (var file in files) {
@@ -544,24 +546,25 @@ class ImageUploadProvider extends ChangeNotifier {
           String? uploadedPath =
               await saveToAws(fileData, mimeType, userId, context);
           if (uploadedPath != null) {
-            currentUploadedPaths
-                .add({'File_Path': HttpUrls.imgBaseUrl + uploadedPath});
+            final fullUrl = HttpUrls.imgBaseUrl + uploadedPath;
+            currentUploadedPaths.add({'File_Path': fullUrl});
+            uploadedUrls.add(fullUrl);
           }
         }
 
         if (currentUploadedPaths.isNotEmpty) {
-          // Call the API for this group
           final response = await HttpRequest.httpPostRequest(
-              endPoint: HttpUrls.saveImage,
-              bodyData: {
-                "Images_Id": 0,
-                "Customer_Id": customerId,
-                "Document_Type_Id": typeId ?? 0,
-                "File_Paths": currentUploadedPaths,
-                "User_Details_Id": userId,
-                "Description": getDescription(typeId),
-                "TaskId": int.tryParse(taskId ?? "0") ?? 0,
-              });
+            endPoint: HttpUrls.saveImage,
+            bodyData: {
+              "Images_Id": 0,
+              "Customer_Id": customerId,
+              "Document_Type_Id": typeId ?? 0,
+              "File_Paths": currentUploadedPaths,
+              "User_Details_Id": userId,
+              "Description": getDescription(typeId),
+              "TaskId": int.tryParse(taskId ?? "0") ?? 0,
+            },
+          );
 
           if (response != null && response.statusCode == 200) {
             anySuccess = true;
@@ -569,28 +572,26 @@ class ImageUploadProvider extends ChangeNotifier {
         }
       }
 
-      Loader.stopLoader(context);
-
       if (anySuccess) {
         scaffoldMessenger.showSnackBar(
           const SnackBar(content: Text('Documents uploaded successfully')),
         );
         clearFiles();
         customerDetailsProvider.getDocument(customerId, context);
-        if (shouldPop) {
-          navigator.pop(true);
-        }
+        if (shouldPop) navigator.pop(true);
+        return uploadedUrls;
       } else {
         scaffoldMessenger.showSnackBar(
           const SnackBar(content: Text('Failed to upload some documents')),
         );
+        return [];
       }
     } catch (e) {
-      Loader.stopLoader(context);
       print('Error in uploadAllDocumentsGrouped: $e');
       scaffoldMessenger.showSnackBar(
         const SnackBar(content: Text('An error occurred during upload')),
       );
+      return [];
     }
   }
 
