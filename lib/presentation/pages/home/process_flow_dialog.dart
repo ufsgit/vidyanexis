@@ -1261,7 +1261,17 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                                 .documentButtonTaskStatus ==
                                             1;
 
-                                    bool hasPendingMandatoryDocs = reportsProvider.documentTypeModel.any((doc) => doc.isMandatory);
+                                    bool hasPendingMandatoryDocs =
+                                        reportsProvider.documentTypeModel.any(
+                                            (doc) {
+                                      final int docId =
+                                          doc.documentTypeId ?? 0;
+                                      final bool isUploaded =
+                                          _uploadedDocUrls[docId] != null &&
+                                              _uploadedDocUrls[docId]!
+                                                  .isNotEmpty;
+                                      return doc.isMandatory && !isUploaded;
+                                    });
                                     if (hasPendingMandatoryDocs) {
                                       showDialog(
                                         context: context,
