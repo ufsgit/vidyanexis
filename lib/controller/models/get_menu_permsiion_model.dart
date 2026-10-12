@@ -19,13 +19,37 @@ class GetMenuPermissionModel {
 
   factory GetMenuPermissionModel.fromJson(Map<String, dynamic> json) =>
       GetMenuPermissionModel(
-        menuId: json["Menu_Id"],
-        menuName: json["Menu_Name"],
-        isView: json["IsView"],
-        isSave: json["IsSave"],
-        isEdit: json["IsEdit"],
-        isDelete: json["IsDelete"],
-        deleteStatus: json["DeleteStatus"] ?? 0,
+        menuId: int.tryParse(json["Menu_Id"]?.toString() ??
+                json["menu_id"]?.toString() ??
+                "0") ??
+            0,
+        menuName: json["Menu_Name"]?.toString() ??
+            json["menu_name"]?.toString() ??
+            "",
+        isView: int.tryParse(json["IsView"]?.toString() ??
+                json["is_view"]?.toString() ??
+                json["isView"]?.toString() ??
+                "0") ??
+            0,
+        isSave: int.tryParse(json["IsSave"]?.toString() ??
+                json["is_save"]?.toString() ??
+                json["isSave"]?.toString() ??
+                "0") ??
+            0,
+        isEdit: int.tryParse(json["IsEdit"]?.toString() ??
+                json["is_edit"]?.toString() ??
+                json["isEdit"]?.toString() ??
+                "0") ??
+            0,
+        isDelete: int.tryParse(json["IsDelete"]?.toString() ??
+                json["is_delete"]?.toString() ??
+                json["isDelete"]?.toString() ??
+                "0") ??
+            0,
+        deleteStatus: int.tryParse(json["DeleteStatus"]?.toString() ??
+                json["delete_status"]?.toString() ??
+                "0") ??
+            0,
       );
 
   Map<String, dynamic> toJson() => {

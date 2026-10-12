@@ -447,6 +447,41 @@ class SettingsProvider extends ChangeNotifier {
       (menuIsEditMap[166] ?? 0).toString() == '1';
   bool get hasTravelAllowanceDeletePermission =>
       (menuIsDeleteMap[166] ?? 0).toString() == '1';
+
+  /// Task Permission ME and ALL (Menu ID: 209)
+  /// Checks company permission first (ID 19 / 42 / "Task Permission ME and ALL"),
+  /// then user menu permission (menuIsViewMap[209] == 1 or showView[209] == 1).
+  bool get canViewTaskMeAndAll {
+    bool hasCompanyPermission = _taskPermissionMeAndAll == 1;
+    if (!hasCompanyPermission &&
+        _companyDetails.isNotEmpty &&
+        _companyDetails[0].permissions.isNotEmpty) {
+      for (var p in _companyDetails[0].permissions) {
+        if ((p.companyPermissionId == 19 ||
+                p.companyPermissionId == 42 ||
+                p.caption.toLowerCase().contains('task permission me and all')) &&
+            (p.value == 1 || p.value.toString() == '1')) {
+          hasCompanyPermission = true;
+          break;
+        }
+      }
+    }
+
+    bool hasUserPermission = (_menuIsViewMap[209] ?? 0) == 1 ||
+        (_menuIsViewMap[209] ?? 0).toString() == '1' ||
+        (_showView[209] ?? 0) == 1 ||
+        (_showView[209] ?? 0).toString() == '1';
+
+    if (!hasUserPermission && _getMenuPermission.isNotEmpty) {
+      for (var p in _getMenuPermission) {
+        if (p.menuId == 209 && (p.isView == 1 || p.isView.toString() == '1')) {
+          hasUserPermission = true;
+          break;
+        }
+      }
+    }
+    return hasCompanyPermission && hasUserPermission;
+  }
   //show checkbox
   final Map<int, int> _showView = {};
   Map<int, int> get showView => _showView;
@@ -2440,6 +2475,7 @@ class SettingsProvider extends ChangeNotifier {
             120: 'Lead Search',
             182: 'Task Aging Report',
             208: 'Task Deadline Report',
+            209: 'Task Permission ME and ALL',
           };
 
           for (var entry in customPermissions.entries) {
@@ -2453,7 +2489,7 @@ class SettingsProvider extends ChangeNotifier {
 
           SharedPreferences preferences = await SharedPreferences.getInstance();
           String loginuserId = preferences.getString('userId') ?? "";
-          if (loginuserId == userId) {
+          if (loginuserId.isEmpty || loginuserId == userId || userId == "0" || userId.isEmpty) {
             final newViewMap = <int, int>{};
             final newEditMap = <int, int>{};
             final newDeleteMap = <int, int>{};
@@ -5224,6 +5260,9 @@ class SettingsProvider extends ChangeNotifier {
             77: 'Payment Reminders',
             84: 'Dashboard count',
             120: 'Lead Search',
+            182: 'Task Aging Report',
+            208: 'Task Deadline Report',
+            209: 'Task Permission ME and ALL',
           };
 
           for (var entry in customPermissionsShow.entries) {

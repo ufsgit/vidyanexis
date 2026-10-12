@@ -260,6 +260,12 @@ class _tasksPageReportState extends State<TaskPage> {
       reportsProvider.removeStatus();
       searchProvider.stopSearch();
 
+      final settingsProvider =
+          Provider.of<SettingsProvider>(context, listen: false);
+      if (!settingsProvider.canViewTaskMeAndAll) {
+        reportsProvider.setEntryType('myown');
+      }
+
       customerProvider.resetExpansion();
 
       if (widget.initialStatusFilter != null) {
@@ -278,8 +284,6 @@ class _tasksPageReportState extends State<TaskPage> {
       provider.getFollowUpStatus(context, "3", forceRefresh: true);
       provider.getEnquiryFor(context);
 
-      final settingsProvider =
-          Provider.of<SettingsProvider>(context, listen: false);
       provider.getEnquirySource(context);
       settingsProvider.searchBranch(context);
       settingsProvider.searchDepartment('', context);
@@ -288,6 +292,11 @@ class _tasksPageReportState extends State<TaskPage> {
       provider.getDistricts(context);
       provider.getStatesDropdown(context);
       settingsProvider.getPriorities(context);
+      SharedPreferences.getInstance().then((prefs) {
+        String uid = prefs.getString('userId') ?? "0";
+        settingsProvider.getCompanyDetails();
+        settingsProvider.getMenuPermissionData(uid, context);
+      });
     });
   }
 
@@ -704,7 +713,7 @@ class _tasksPageReportState extends State<TaskPage> {
                 );
                 reportsProvider.searchTaskByCustomer(context);
               },
-              customActionWidget: settingsProvider.taskPermissionMeAndAll == 1
+              customActionWidget: settingsProvider.canViewTaskMeAndAll
                   ? Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 4.0),
                       child: MeAllToggleSwitch(
@@ -769,7 +778,7 @@ class _tasksPageReportState extends State<TaskPage> {
                           crossAxisAlignment: WrapCrossAlignment.center,
                           children: [
                             // Entry Type Filter
-                            if (settingsProvider.taskPermissionMeAndAll == 1)
+                            if (settingsProvider.canViewTaskMeAndAll)
                               Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
@@ -1643,30 +1652,32 @@ class _tasksPageReportState extends State<TaskPage> {
                               )),
                         ],
                       ),
-                      const SizedBox(height: 16),
-                      const CustomText('Entry Type',
-                          fontSize: 16, fontWeight: FontWeight.bold),
-                      const SizedBox(height: 10),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: [
-                          FilterChipWidget(
-                            label: 'All',
-                            isSelected: reportsProvider.entryType == 'all',
-                            onTap: () {
-                              reportsProvider.setEntryType('all');
-                            },
-                          ),
-                          FilterChipWidget(
-                            label: 'My Own',
-                            isSelected: reportsProvider.entryType == 'myown',
-                            onTap: () {
-                              reportsProvider.setEntryType('myown');
-                            },
-                          ),
-                        ],
-                      ),
+                      if (settingsProvider.canViewTaskMeAndAll) ...[
+                        const SizedBox(height: 16),
+                        const CustomText('Entry Type',
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                        const SizedBox(height: 10),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: [
+                            FilterChipWidget(
+                              label: 'All',
+                              isSelected: reportsProvider.entryType == 'all',
+                              onTap: () {
+                                reportsProvider.setEntryType('all');
+                              },
+                            ),
+                            FilterChipWidget(
+                              label: 'My Own',
+                              isSelected: reportsProvider.entryType == 'myown',
+                              onTap: () {
+                                reportsProvider.setEntryType('myown');
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
                       const SizedBox(height: 16),
                       const CustomText('Enquiry For',
                           fontSize: 16, fontWeight: FontWeight.bold),
