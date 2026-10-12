@@ -1376,7 +1376,25 @@ class TaskPageProvider extends ChangeNotifier {
           final documentData = data['document_types'] ?? [];
           final statusData = data['mandatory_status'] ?? [];
           final formsData = data['forms'] ?? [];
-          final customFieldData = data['show_custom_field'] ?? [];
+          dynamic customFieldData = data['show_custom_field'] ??
+              data['show_custom_fields'] ??
+              data['custom_fields'];
+          if (customFieldData == null ||
+              (customFieldData is List && customFieldData.isEmpty)) {
+            for (final entry in (data as Map<String, dynamic>).entries) {
+              final k = entry.key.toString().toLowerCase().replaceAll('_', '');
+              if (k == 'showcustomfield' ||
+                  k == 'showcustomfields' ||
+                  k == 'customfields' ||
+                  k == 'customfield') {
+                if (entry.value is List && (entry.value as List).isNotEmpty) {
+                  customFieldData = entry.value;
+                  break;
+                }
+              }
+            }
+          }
+          customFieldData ??= [];
           final enquiry = data['enquiry'] ?? [];
           if (enquiry.isNotEmpty) {
             _flowId = enquiry.first['FlowId'] ?? 0;
@@ -1406,9 +1424,11 @@ class TaskPageProvider extends ChangeNotifier {
               .map((item) => MandatoryStatusModel.fromJson(item))
               .toList();
 
+          debugPrint("DEBUG fetchTaskTypes raw customFieldData: $customFieldData");
           _showCustomFields = (customFieldData as List)
               .map((e) => CustomFieldByStatusId.fromJson(e))
               .toList();
+          debugPrint("DEBUG fetchTaskTypes parsed _showCustomFields: ${_showCustomFields.map((f) => '${f.customFieldName}: id=${f.customFieldId}, isMandatory=${f.isMandatory}, typeId=${f.customFieldTypeId}').toList()}");
 
           // Update forms in FormProvider if present
           final formProvider =
@@ -1529,11 +1549,31 @@ class TaskPageProvider extends ChangeNotifier {
               .map((item) => MandatoryStatusModel.fromJson(item))
               .toList();
 
-          final customFieldData = data['show_custom_field'] ?? [];
+          dynamic customFieldData = data['show_custom_field'] ??
+              data['show_custom_fields'] ??
+              data['custom_fields'];
+          if (customFieldData == null ||
+              (customFieldData is List && customFieldData.isEmpty)) {
+            for (final entry in (data as Map<String, dynamic>).entries) {
+              final k = entry.key.toString().toLowerCase().replaceAll('_', '');
+              if (k == 'showcustomfield' ||
+                  k == 'showcustomfields' ||
+                  k == 'customfields' ||
+                  k == 'customfield') {
+                if (entry.value is List && (entry.value as List).isNotEmpty) {
+                  customFieldData = entry.value;
+                  break;
+                }
+              }
+            }
+          }
+          customFieldData ??= [];
           if (customFieldData.isNotEmpty) {
+            debugPrint("DEBUG withCustomFields raw customFieldData: $customFieldData");
             _showCustomFields = (customFieldData as List)
                 .map((e) => CustomFieldByStatusId.fromJson(e))
                 .toList();
+            debugPrint("DEBUG withCustomFields parsed _showCustomFields: ${_showCustomFields.map((f) => '${f.customFieldName}: id=${f.customFieldId}, isMandatory=${f.isMandatory}, typeId=${f.customFieldTypeId}').toList()}");
           }
           // Update forms in FormProvider if present
           final formProvider =

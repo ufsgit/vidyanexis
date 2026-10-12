@@ -23,6 +23,7 @@ import 'package:provider/provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/me_all_toggle_switch.dart';
 import 'package:vidyanexis/constants/app_colors.dart' hide StatusUtils;
 import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/constants/enums.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/models/task_page_provider.dart';
 import 'package:vidyanexis/controller/models/task_report_model.dart';
@@ -4100,6 +4101,106 @@ class _tasksPageReportState extends State<TaskPage> {
                                         onPressed: saving
                                             ? null
                                             : () async {
+                                                // Custom Fields Mandatory Check
+                                                final bool hasMandatoryCustomFields =
+                                                    reportsProvider.showCustomFields.any((f) => f.isMandatory == 1);
+                                                if (hasMandatoryCustomFields) {
+                                                  List<String> customFieldErrors = [];
+                                                  if (customFieldTaskStatusKey.currentState != null) {
+                                                    final validation = customFieldTaskStatusKey.currentState!.validateForm();
+                                                    if (!validation.isValid || validation.errors.isNotEmpty) {
+                                                      customFieldErrors = validation.errors.isNotEmpty
+                                                          ? validation.errors
+                                                          : ["Please fill mandatory custom fields"];
+                                                    }
+                                                  }
+                                                  if (customFieldErrors.isEmpty) {
+                                                    for (final f in reportsProvider.showCustomFields) {
+                                                      if (f.isMandatory == 1 && f.customFieldId != null) {
+                                                        final val = customFieldTaskStatusKey.currentState?.getFieldValue(f.customFieldId!)?.value ?? f.datavalue;
+                                                        final fieldType = CustomFieldType.fromValue(f.customFieldTypeId);
+                                                        if (fieldType == CustomFieldType.checkbox) {
+                                                          final availableOptions = (f.checkboxValues ?? [])
+                                                              .map((o) => o.checkBoxValues?.toString().trim().toLowerCase())
+                                                              .where((o) => o != null && o.isNotEmpty)
+                                                              .toSet();
+                                                          bool selected = false;
+                                                          if (val != null && val.trim().isNotEmpty && val != "0" && val.toLowerCase() != "false") {
+                                                            final parts = val.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty && e != "0" && e.toLowerCase() != "false").toList();
+                                                            if (availableOptions.isNotEmpty) {
+                                                              selected = parts.any((p) => availableOptions.contains(p.toLowerCase()));
+                                                            } else {
+                                                              selected = parts.isNotEmpty;
+                                                            }
+                                                          }
+                                                          if (!selected) {
+                                                            customFieldErrors.add('${f.customFieldName ?? "Custom field"} is required');
+                                                          }
+                                                        } else if (fieldType == CustomFieldType.fileUpload || fieldType == CustomFieldType.signature) {
+                                                          final hasPending = customFieldTaskStatusKey.currentState?.getPendingFileBytes().containsKey(f.customFieldId!) ?? false;
+                                                          final hasVal = val != null && val.trim().isNotEmpty;
+                                                          if (!hasVal && !hasPending) {
+                                                            customFieldErrors.add('${f.customFieldName ?? "Custom field"} is required');
+                                                          }
+                                                        } else {
+                                                          if (val == null || val.trim().isEmpty) {
+                                                            customFieldErrors.add('${f.customFieldName ?? "Custom field"} is required');
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+
+                                                  if (customFieldErrors.isNotEmpty) {
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (BuildContext context) {
+                                                        return AlertDialog(
+                                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                                                          titlePadding: const EdgeInsets.fromLTRB(24, 24, 24, 8),
+                                                          contentPadding: const EdgeInsets.fromLTRB(24, 0, 24, 16),
+                                                          actionsPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                                                          title: Row(
+                                                            children: [
+                                                              Icon(Icons.warning_amber_rounded, color: AppColors.darkGreen),
+                                                              const SizedBox(width: 10),
+                                                              const Text(
+                                                                "Unable to Save",
+                                                                style: TextStyle(
+                                                                  fontFamily: 'PlusJakartaSans',
+                                                                  color: Colors.black,
+                                                                  fontWeight: FontWeight.bold,
+                                                                  fontSize: 20,
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          content: const Text(
+                                                            "Custom Fields Not Filled",
+                                                            style: TextStyle(
+                                                              fontFamily: 'PlusJakartaSans',
+                                                              color: Colors.black,
+                                                              fontSize: 16,
+                                                            ),
+                                                          ),
+                                                          actions: [
+                                                            TextButton(
+                                                              style: TextButton.styleFrom(
+                                                                foregroundColor: Colors.white,
+                                                                backgroundColor: AppColors.darkGreen,
+                                                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                                                                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                                                              ),
+                                                              onPressed: () => Navigator.of(context).pop(),
+                                                              child: const Text("OK"),
+                                                            ),
+                                                          ],
+                                                        );
+                                                      },
+                                                    );
+                                                    return;
+                                                  }
+                                                }
                                                 isSaving.value = true;
                                                 try {
                                                   final audioProvider = Provider
@@ -6428,6 +6529,216 @@ class _tasksPageReportState extends State<TaskPage> {
                                                         },
                                                       );
                                                       return;
+                                                    }
+
+                                                    // Custom Fields Mandatory Check
+                                                    final bool
+                                                        hasMandatoryCustomFields =
+                                                        provider
+                                                            .showCustomFields
+                                                            .any((f) =>
+                                                                f.isMandatory ==
+                                                                1);
+                                                    if (hasMandatoryCustomFields) {
+                                                      List<String>
+                                                          customFieldErrors =
+                                                          [];
+                                                      if (customFieldTaskStatusKey
+                                                              .currentState !=
+                                                          null) {
+                                                        final validation =
+                                                            customFieldTaskStatusKey
+                                                                .currentState!
+                                                                .validateForm();
+                                                        if (!validation
+                                                                .isValid ||
+                                                            validation.errors
+                                                                .isNotEmpty) {
+                                                          customFieldErrors =
+                                                              validation
+                                                                      .errors
+                                                                      .isNotEmpty
+                                                                  ? validation
+                                                                      .errors
+                                                                  : [
+                                                                      "Please fill mandatory custom fields"
+                                                                    ];
+                                                        }
+                                                      }
+                                                      if (customFieldErrors.isEmpty) {
+                                                        for (final f in provider.showCustomFields) {
+                                                          if (f.isMandatory == 1 && f.customFieldId != null) {
+                                                            final val = customFieldTaskStatusKey.currentState?.getFieldValue(f.customFieldId!)?.value ?? f.datavalue;
+                                                            final fieldType = CustomFieldType.fromValue(f.customFieldTypeId);
+                                                            if (fieldType == CustomFieldType.checkbox) {
+                                                              final availableOptions = (f.checkboxValues ?? [])
+                                                                  .map((o) => o.checkBoxValues?.toString().trim().toLowerCase())
+                                                                  .where((o) => o != null && o.isNotEmpty)
+                                                                  .toSet();
+                                                              bool selected = false;
+                                                              if (val != null && val.trim().isNotEmpty && val != "0" && val.toLowerCase() != "false") {
+                                                                final parts = val.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty && e != "0" && e.toLowerCase() != "false").toList();
+                                                                if (availableOptions.isNotEmpty) {
+                                                                  selected = parts.any((p) => availableOptions.contains(p.toLowerCase()));
+                                                                } else {
+                                                                  selected = parts.isNotEmpty;
+                                                                }
+                                                              }
+                                                              if (!selected) {
+                                                                customFieldErrors.add('${f.customFieldName ?? "Custom field"} is required');
+                                                              }
+                                                            } else if (fieldType == CustomFieldType.fileUpload || fieldType == CustomFieldType.signature) {
+                                                              final hasPending = customFieldTaskStatusKey.currentState?.getPendingFileBytes().containsKey(f.customFieldId!) ?? false;
+                                                              final hasVal = val != null && val.trim().isNotEmpty;
+                                                              if (!hasVal && !hasPending) {
+                                                                customFieldErrors.add('${f.customFieldName ?? "Custom field"} is required');
+                                                              }
+                                                            } else {
+                                                              if (val == null || val.trim().isEmpty) {
+                                                                customFieldErrors.add('${f.customFieldName ?? "Custom field"} is required');
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+
+                                                      if (customFieldErrors
+                                                          .isNotEmpty) {
+                                                        showDialog(
+                                                          context: context,
+                                                          builder:
+                                                              (BuildContext
+                                                                  context) {
+                                                            return AlertDialog(
+                                                              shape:
+                                                                  RoundedRectangleBorder(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              4)),
+                                                              titlePadding:
+                                                                  const EdgeInsets
+                                                                      .fromLTRB(
+                                                                      24,
+                                                                      24,
+                                                                      24,
+                                                                      8),
+                                                              contentPadding:
+                                                                  const EdgeInsets
+                                                                      .fromLTRB(
+                                                                      24,
+                                                                      0,
+                                                                      24,
+                                                                      16),
+                                                              actionsPadding:
+                                                                  const EdgeInsets
+                                                                      .symmetric(
+                                                                      horizontal:
+                                                                          16,
+                                                                      vertical:
+                                                                          10),
+                                                              title: Row(
+                                                                children: [
+                                                                  Icon(
+                                                                      Icons
+                                                                          .warning_amber_rounded,
+                                                                      color: AppColors
+                                                                          .darkGreen),
+                                                                  const SizedBox(
+                                                                      width:
+                                                                          10),
+                                                                  const Text(
+                                                                    "Unable to Save",
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontFamily:
+                                                                          'PlusJakartaSans',
+                                                                      color: Colors
+                                                                          .black,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      fontSize:
+                                                                          20,
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              content: Column(
+                                                                mainAxisSize:
+                                                                    MainAxisSize
+                                                                        .min,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  const Text(
+                                                                    "Custom Fields Not Filled",
+                                                                    style: TextStyle(
+                                                                      fontFamily:
+                                                                          'PlusJakartaSans',
+                                                                      color: Colors
+                                                                          .black,
+                                                                      fontSize: 16,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w600,
+                                                                    ),
+                                                                  ),
+                                                                  if (customFieldErrors
+                                                                      .isNotEmpty) ...[
+                                                                    const SizedBox(
+                                                                        height: 8),
+                                                                    ...customFieldErrors
+                                                                        .map((err) =>
+                                                                            Text(
+                                                                              "• $err",
+                                                                              style:
+                                                                                  const TextStyle(
+                                                                                fontFamily:
+                                                                                    'PlusJakartaSans',
+                                                                                color: Colors
+                                                                                    .black87,
+                                                                                fontSize:
+                                                                                    14,
+                                                                              ),
+                                                                            )),
+                                                                  ],
+                                                                ],
+                                                              ),
+                                                              actions: [
+                                                                TextButton(
+                                                                  style: TextButton
+                                                                      .styleFrom(
+                                                                    foregroundColor:
+                                                                        Colors
+                                                                            .white,
+                                                                    backgroundColor:
+                                                                        AppColors
+                                                                            .darkGreen,
+                                                                    shape: RoundedRectangleBorder(
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(
+                                                                                4)),
+                                                                    padding: const EdgeInsets
+                                                                        .symmetric(
+                                                                        horizontal:
+                                                                            20,
+                                                                        vertical:
+                                                                            10),
+                                                                  ),
+                                                                  onPressed: () =>
+                                                                      Navigator.of(
+                                                                              context)
+                                                                          .pop(),
+                                                                  child: const Text(
+                                                                      "OK"),
+                                                                ),
+                                                              ],
+                                                            );
+                                                          },
+                                                        );
+                                                        return;
+                                                      }
                                                     }
 
                                                     bool

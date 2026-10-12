@@ -639,7 +639,34 @@ class SettingsProvider extends ChangeNotifier {
   int get leadNameChangeToCustomerName => _leadNameChangeToCustomerName;
   int get leadCodeWithEnquiryCode => _leadCodeWithEnquiryCode;
   int get documentButtonTaskStatus => _documentButtonTaskStatus;
-  int get taskDuplicateButton => _taskDuplicateButton;
+  int get taskDuplicateButton {
+    if (_companyDetails.isNotEmpty &&
+        _companyDetails[0].permissions.isNotEmpty) {
+      for (var p in _companyDetails[0].permissions) {
+        if (p.companyPermissionId == 44) {
+          return p.value;
+        }
+      }
+      for (var p in _companyDetails[0].permissions) {
+        if (p.companyPermissionId == 23) {
+          return p.value;
+        }
+      }
+      for (var p in _companyDetails[0].permissions) {
+        final cap = (p.caption.isNotEmpty ? p.caption : p.displayCaption).toLowerCase();
+        if (cap.contains('task page add') ||
+            cap.contains('task_page_add') ||
+            cap.contains('task duplicate') ||
+            cap.contains('task_duplicate') ||
+            cap.contains('task page duplicate') ||
+            cap.contains('task_page_duplicate')) {
+          return p.value;
+        }
+      }
+    }
+    return _taskDuplicateButton;
+  }
+  int get taskPageAddButton => taskDuplicateButton;
   int get solarPvSystemSpecification => _solarPvSystemSpecification;
   int get newDashboardCount => _newDashboardCount;
   int get leadCreationChanges => _leadCreationChanges;
@@ -779,10 +806,15 @@ class SettingsProvider extends ChangeNotifier {
             (caption.toLowerCase().contains('commercial_scope_of_work') ||
                 caption.toLowerCase().contains('commercial scope of work')))) {
       _commercialScopeOfWork = value;
-    } else if (permissionId == 23 ||
+    } else if (permissionId == 44 ||
+        permissionId == 23 ||
         (caption != null &&
-            (caption.toLowerCase().contains('task_duplicate_button') ||
-                caption.toLowerCase().contains('task duplicate button')))) {
+            (caption.toLowerCase().contains('task page add') ||
+                caption.toLowerCase().contains('task_page_add') ||
+                caption.toLowerCase().contains('task duplicate') ||
+                caption.toLowerCase().contains('task_duplicate') ||
+                caption.toLowerCase().contains('task page duplicate') ||
+                caption.toLowerCase().contains('task_page_duplicate')))) {
       _taskDuplicateButton = value;
     } else if (permissionId == 25 ||
         (caption != null &&
@@ -824,10 +856,10 @@ class SettingsProvider extends ChangeNotifier {
         (caption.toLowerCase().contains('ramco_admin_task_photo') ||
             caption.toLowerCase().contains('ramco admin task photo'))) {
       _ramcoAdminTaskPhoto = value;
-    } else if (permissionId == 44 ||
-        (caption != null &&
-            (caption.toLowerCase().contains('record_voice_note') ||
-                caption.toLowerCase().contains('record voice note')))) {
+    } else if (caption != null &&
+        (caption.toLowerCase().contains('record_voice_note') ||
+            caption.toLowerCase().contains('record voice note') ||
+            caption.toLowerCase().contains('voice note'))) {
       _recordVoiceNote = value;
     } else if (permissionId == 45 ||
         (caption != null &&
@@ -844,6 +876,7 @@ class SettingsProvider extends ChangeNotifier {
 
   void setTaskDuplicateButton(int value) {
     _taskDuplicateButton = value;
+    _syncStateToPermissionsList(44, value);
     _syncStateToPermissionsList(23, value);
     notifyListeners();
   }
@@ -941,9 +974,23 @@ class SettingsProvider extends ChangeNotifier {
   void _syncStateToPermissionsList(int permissionId, int value) {
     if (_companyDetails.isNotEmpty &&
         _companyDetails[0].permissions.isNotEmpty) {
-      final index = _companyDetails[0]
+      int index = _companyDetails[0]
           .permissions
           .indexWhere((p) => p.companyPermissionId == permissionId);
+      if (index == -1 && (permissionId == 23 || permissionId == 44)) {
+        index = _companyDetails[0].permissions.indexWhere((p) {
+          if (p.companyPermissionId == 44 || p.companyPermissionId == 23) {
+            return true;
+          }
+          final cap = (p.caption.isNotEmpty ? p.caption : p.displayCaption).toLowerCase();
+          return cap.contains('task page add') ||
+              cap.contains('task_page_add') ||
+              cap.contains('task duplicate') ||
+              cap.contains('task_duplicate') ||
+              cap.contains('task page duplicate') ||
+              cap.contains('task_page_duplicate');
+        });
+      }
       if (index != -1) {
         final old = _companyDetails[0].permissions[index];
         _companyDetails[0].permissions[index] = CompanyPermission(
@@ -996,6 +1043,20 @@ class SettingsProvider extends ChangeNotifier {
             (permissionId == 17 && p.companyPermissionId == 40) ||
             (permissionId == 18 && p.companyPermissionId == 41) ||
             (permissionId == 19 && p.companyPermissionId == 42));
+      }
+      if (index == -1 && (permissionId == 23 || permissionId == 44)) {
+        index = _companyDetails[0].permissions.indexWhere((p) {
+          if (p.companyPermissionId == 44 || p.companyPermissionId == 23) {
+            return true;
+          }
+          final cap = (p.caption.isNotEmpty ? p.caption : p.displayCaption).toLowerCase();
+          return cap.contains('task page add') ||
+              cap.contains('task_page_add') ||
+              cap.contains('task duplicate') ||
+              cap.contains('task_duplicate') ||
+              cap.contains('task page duplicate') ||
+              cap.contains('task_page_duplicate');
+        });
       }
       if (index != -1) {
         final old = _companyDetails[0].permissions[index];

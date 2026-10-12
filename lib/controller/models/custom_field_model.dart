@@ -82,6 +82,79 @@ class CustomFieldModel {
         quotationTypeId: quotationTypeId ?? this.quotationTypeId,
       );
 
+  static int? _parseMandatoryValue(dynamic val) {
+    if (val == null) return null;
+    if (val == 1 || val == "1" || val == true || val == "true") return 1;
+    if (val == 0 || val == "0" || val == false || val == "false") return 0;
+    return int.tryParse(val.toString());
+  }
+
+  static int? _extractMandatory(Map<String, dynamic> json) {
+    final candidateKeys = [
+      'is_customfield_mandatory',
+      'is_custom_field_mandatory',
+      'Is_Customfield_Mandatory',
+      'Is_Custom_Field_Mandatory',
+      'is_mandatory',
+      'isMandatory',
+      'Is_Mandatory',
+      'IsMandatory',
+      'mandatory',
+      'Mandatory',
+      'is_required',
+      'isRequired',
+      'Is_Required',
+      'IsRequired',
+      'required',
+      'Required',
+    ];
+    // First pass: If ANY key is explicitly 1 / "1" / true, return 1 immediately
+    for (final key in candidateKeys) {
+      if (json.containsKey(key)) {
+        final val = _parseMandatoryValue(json[key]);
+        if (val == 1) return 1;
+      }
+    }
+    for (final entry in json.entries) {
+      final keyClean = entry.key.toLowerCase().replaceAll('_', '');
+      if (keyClean == 'iscustomfieldmandatory' ||
+          keyClean == 'iscustomfieldsmandatory' ||
+          keyClean == 'ismandatory' ||
+          keyClean == 'mandatory' ||
+          keyClean == 'isrequired' ||
+          keyClean == 'required') {
+        final val = _parseMandatoryValue(entry.value);
+        if (val == 1) return 1;
+      }
+    }
+    return 0;
+  }
+
+  static int? _extractChecked(Map<String, dynamic> json) {
+    final candidateKeys = [
+      'is_checked',
+      'Is_Checked',
+      'isChecked',
+      'IsChecked',
+      'events',
+      'Events',
+    ];
+    for (final key in candidateKeys) {
+      if (json.containsKey(key) && json[key] != null) {
+        final parsed = int.tryParse(json[key].toString());
+        if (parsed != null && parsed == 1) return 1;
+      }
+    }
+    for (final entry in json.entries) {
+      final keyClean = entry.key.toLowerCase().replaceAll('_', '');
+      if (keyClean == 'ischecked' || keyClean == 'events') {
+        final parsed = int.tryParse(entry.value.toString());
+        if (parsed != null && parsed == 1) return 1;
+      }
+    }
+    return 0;
+  }
+
   factory CustomFieldModel.fromJson(Map<String, dynamic> json) =>
       CustomFieldModel(
         customFieldId: json["custom_field_id"] ?? json["Custom_Field_Id"],
@@ -96,24 +169,8 @@ class CustomFieldModel {
         isViewInQuotation:
             json["view_in_quotation"] ?? json["isViewInQuotation"],
         isCommercial: json["is_commercial"] ?? json["isCommercial"],
-        isChecked: (json["is_checked"] != null
-                ? int.tryParse(json["is_checked"].toString())
-                : null) ??
-            (json["events"] != null
-                ? int.tryParse(json["events"].toString())
-                : null),
-        isMandatory: (json["is_mandatory"] != null
-                ? int.tryParse(json["is_mandatory"].toString())
-                : null) ??
-            (json["is_customfield_mandatory"] != null
-                ? int.tryParse(json["is_customfield_mandatory"].toString())
-                : null) ??
-            (json["isMandatory"] != null
-                ? int.tryParse(json["isMandatory"].toString())
-                : null) ??
-            (json["mandatory"] != null
-                ? (json["mandatory"] == true || json["mandatory"] == 1 ? 1 : 0)
-                : null),
+        isChecked: _extractChecked(json),
+        isMandatory: _extractMandatory(json),
         dropDownValues: _parseValuesList(
             json["Dropdown_Values"] ?? json["dropdown_values"]),
         checkBoxValues: _parseValuesList(

@@ -28,7 +28,8 @@ class CompanyPermission {
       case 22:
         return "Job Sheet";
       case 23:
-        return "Task Duplicate Button";
+      case 44:
+        return "Task page add button";
       case 25:
         return "solar pv system specification";
       case 31:
@@ -77,7 +78,8 @@ class CompanyPermission {
           cap = "Job Sheet";
           break;
         case 23:
-          cap = "Task_Duplicate_Button";
+        case 44:
+          cap = "Task page add button";
           break;
         case 25:
           cap = "solar pv system specification";

@@ -22,19 +22,19 @@ import 'package:vidyanexis/presentation/widgets/settings/add_custom_field.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 
 // Global keys for specific instances
-final GlobalKey<_CustomFieldSectionWidgetState> customFieldLeadStatusKey =
-    GlobalKey<_CustomFieldSectionWidgetState>();
-final GlobalKey<_CustomFieldSectionWidgetState> customFieldEnquirySourceKey =
-    GlobalKey<_CustomFieldSectionWidgetState>();
-final GlobalKey<_CustomFieldSectionWidgetState> customFieldQuotationKey =
-    GlobalKey<_CustomFieldSectionWidgetState>();
-final GlobalKey<_CustomFieldSectionWidgetState> customFieldTaskStatusKey =
-    GlobalKey<_CustomFieldSectionWidgetState>();
-final GlobalKey<_CustomFieldSectionWidgetState> customFieldCommercialKey =
-    GlobalKey<_CustomFieldSectionWidgetState>();
-final GlobalKey<_CustomFieldSectionWidgetState>
+final GlobalKey<CustomFieldSectionWidgetState> customFieldLeadStatusKey =
+    GlobalKey<CustomFieldSectionWidgetState>();
+final GlobalKey<CustomFieldSectionWidgetState> customFieldEnquirySourceKey =
+    GlobalKey<CustomFieldSectionWidgetState>();
+final GlobalKey<CustomFieldSectionWidgetState> customFieldQuotationKey =
+    GlobalKey<CustomFieldSectionWidgetState>();
+final GlobalKey<CustomFieldSectionWidgetState> customFieldTaskStatusKey =
+    GlobalKey<CustomFieldSectionWidgetState>();
+final GlobalKey<CustomFieldSectionWidgetState> customFieldCommercialKey =
+    GlobalKey<CustomFieldSectionWidgetState>();
+final GlobalKey<CustomFieldSectionWidgetState>
     customFieldAdditionalQuotationKey =
-    GlobalKey<_CustomFieldSectionWidgetState>();
+    GlobalKey<CustomFieldSectionWidgetState>();
 
 class CustomFieldSectionWidget extends StatefulWidget {
   final List<CustomFieldByStatusId> customFields;
@@ -64,11 +64,11 @@ class CustomFieldSectionWidget extends StatefulWidget {
   });
 
   @override
-  _CustomFieldSectionWidgetState createState() =>
-      _CustomFieldSectionWidgetState();
+  CustomFieldSectionWidgetState createState() =>
+      CustomFieldSectionWidgetState();
 }
 
-class _CustomFieldSectionWidgetState extends State<CustomFieldSectionWidget> {
+class CustomFieldSectionWidgetState extends State<CustomFieldSectionWidget> {
   late CustomFieldWidgetBuilder widgetBuilder;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _isInitialized = false;
@@ -461,7 +461,7 @@ class _CustomFieldSectionWidgetState extends State<CustomFieldSectionWidget> {
 
   // Public API methods
   ValidationResult validateForm() {
-    final formValid = _formKey.currentState?.validate() ?? false;
+    final formValid = _formKey.currentState?.validate() ?? true;
     final fieldValidation =
         widgetBuilder.validateAllFields(widget.customFields);
 
@@ -472,6 +472,7 @@ class _CustomFieldSectionWidgetState extends State<CustomFieldSectionWidget> {
   }
 
   List<FieldValueModel> getFieldValues() => widgetBuilder.getAllFieldValues();
+  FieldValueModel? getFieldValue(int fieldId) => widgetBuilder.getFieldValue(fieldId);
   Map<int, dynamic> getValues() => widgetBuilder.getAllValues();
   Map<int, Uint8List> getPendingFileBytes() =>
       widgetBuilder.getPendingFileBytes();
@@ -493,7 +494,7 @@ class _CustomFieldSectionWidgetState extends State<CustomFieldSectionWidget> {
 }
 
 // Extension for additional helper methods
-extension CustomFieldSectionWidgetExtension on _CustomFieldSectionWidgetState {
+extension CustomFieldSectionWidgetExtension on CustomFieldSectionWidgetState {
   List<Map<String, dynamic>> getFieldValuesAsJson() {
     return getFieldValues().map((field) => field.toJson()).toList();
   }
@@ -1750,32 +1751,61 @@ class CustomFieldWidgetBuilder {
         final fieldType = CustomFieldType.fromValue(field.customFieldTypeId);
 
         if (fieldType == CustomFieldType.checkbox) {
-          // For checkbox, check if at least one value is selected
-          if (fieldValue?.value == null || fieldValue!.value!.trim().isEmpty) {
-            errors.add('${field.customFieldName} is required');
-          } else {
-            // Check if it contains any valid selections
-            final selectedValues =
-                fieldValue.value!.split(',').map((e) => e.trim()).toList();
-            if (selectedValues.isEmpty ||
-                (selectedValues.length == 1 && selectedValues[0].isEmpty)) {
-              errors.add('${field.customFieldName} is required');
+          // For checkbox, check if at least one valid option is selected
+          final val = fieldValue?.value ?? field.datavalue;
+          final availableOptionValues = (field.checkboxValues ?? [])
+              .map((opt) => opt.checkBoxValues?.toString().trim().toLowerCase())
+              .where((opt) => opt != null && opt.isNotEmpty)
+              .toSet();
+
+          bool hasValidSelection = false;
+          if (val != null &&
+              val.trim().isNotEmpty &&
+              val != "0" &&
+              val.toLowerCase() != "false") {
+            final selectedValues = val
+                .split(',')
+                .map((e) => e.trim())
+                .where((e) =>
+                    e.isNotEmpty && e != "0" && e.toLowerCase() != "false")
+                .toList();
+            if (availableOptionValues.isNotEmpty) {
+              hasValidSelection = selectedValues.any(
+                  (s) => availableOptionValues.contains(s.toLowerCase()));
+            } else {
+              hasValidSelection = selectedValues.isNotEmpty;
             }
+          }
+
+          if (!hasValidSelection) {
+            errors.add(
+                '${field.customFieldName ?? "Custom field"} is required');
           }
         } else if (fieldType == CustomFieldType.fileUpload ||
             fieldType == CustomFieldType.signature) {
           // For file upload and signature, allow either an existing URL value or a pending file selection
+          final val = fieldValue?.value ?? field.datavalue;
           final hasExisting =
-              fieldValue?.value != null && fieldValue!.value!.trim().isNotEmpty;
+              val != null && val.trim().isNotEmpty;
           final hasPending =
               _pendingFileBytes.containsKey(field.customFieldId!);
           if (!hasExisting && !hasPending) {
-            errors.add('${field.customFieldName} is required');
+            errors.add('${field.customFieldName ?? "Custom field"} is required');
           }
         } else {
           // For other fields, check if value is not empty
-          if (fieldValue?.value == null || fieldValue!.value!.trim().isEmpty) {
-            errors.add('${field.customFieldName} is required');
+          String? val = fieldValue?.value;
+          if (val == null || val.trim().isEmpty) {
+            String key = '${field.customFieldId} $controllerkey';
+            final ctrl = CustomFieldWidgetHelper.getExistingController(key);
+            if (ctrl != null && ctrl.text.trim().isNotEmpty) {
+              val = ctrl.text.trim();
+            } else if (field.datavalue != null && field.datavalue!.trim().isNotEmpty) {
+              val = field.datavalue!.trim();
+            }
+          }
+          if (val == null || val.trim().isEmpty) {
+            errors.add('${field.customFieldName ?? "Custom field"} is required');
           }
         }
       }
@@ -1789,6 +1819,9 @@ class CustomFieldWidgetBuilder {
 class CustomFieldWidgetHelper {
   static final Map<String, TextEditingController> _controllers = {};
   static final Map<int, String?> _initialValues = {};
+
+  static TextEditingController? getExistingController(String key) =>
+      _controllers[key];
 
   static TextEditingController getController(
       {required String key, required int fieldId, String? initialValue}) {
@@ -1826,7 +1859,8 @@ class CustomFieldWidgetHelper {
     }
   }
 
-  static bool hasController(int fieldId) => _controllers.containsKey(fieldId);
+  static bool hasController(int fieldId) =>
+      _controllers.keys.any((k) => k.startsWith('$fieldId '));
 
   static int get activeControllerCount => _controllers.length;
 }

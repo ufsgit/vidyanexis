@@ -492,14 +492,32 @@ class ProcessFlowProvider extends ChangeNotifier {
                 .map((item) => {
                       "custom_field_id": item.customFieldId,
                       "custom_field_name": item.customFieldName,
+                      "custom_field_type_id": item.customFieldTypeId,
                       "is_checked": item.isChecked ?? 0,
+                      "events": item.isChecked ?? 0,
+                      "isChecked": item.isChecked ?? 0,
+                      "is_mandatory": item.isMandatory ?? 0,
+                      "isMandatory": item.isMandatory ?? 0,
+                      "is_customfield_mandatory": item.isMandatory ?? 0,
+                      "Is_Customfield_Mandatory": item.isMandatory ?? 0,
+                      "Is_Mandatory": item.isMandatory ?? 0,
+                      "mandatory": item.isMandatory ?? 0,
                     })
                 .toList(),
             "show_custom_field": showCustomFields
                 .map((item) => {
                       "custom_field_id": item.customFieldId,
                       "custom_field_name": item.customFieldName,
+                      "custom_field_type_id": item.customFieldTypeId,
                       "is_checked": item.isChecked ?? 0,
+                      "events": item.isChecked ?? 0,
+                      "isChecked": item.isChecked ?? 0,
+                      "is_mandatory": item.isMandatory ?? 0,
+                      "isMandatory": item.isMandatory ?? 0,
+                      "is_customfield_mandatory": item.isMandatory ?? 0,
+                      "Is_Customfield_Mandatory": item.isMandatory ?? 0,
+                      "Is_Mandatory": item.isMandatory ?? 0,
+                      "mandatory": item.isMandatory ?? 0,
                     })
                 .toList(),
             "lead_status_id": processFlowModel.leadStatusId ?? 0,
