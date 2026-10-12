@@ -1,9 +1,13 @@
+import 'dart:async';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/leads_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/job_sheet_page.dart';
+import 'package:vidyanexis/presentation/widgets/common/document_preview_dialog.dart';
 import 'package:vidyanexis/presentation/widgets/customer/upload_image.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/controller/models/search_user_details_model.dart';
@@ -49,6 +53,9 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
   bool showDescription = false;
   bool showFollowUpDate = false;
   FocusNode staffFocusNode = FocusNode();
+  final Map<int, String> _uploadedDocUrls = {}; // docTypeId → url
+  final Map<int, double> _uploadProgress = {}; // docTypeId → 0.0–1.0
+  final Set<int> _uploadingDocs = {}; // currently uploading
 
   @override
   void initState() {
@@ -1026,42 +1033,22 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                                 endIndent: 16,
                                                 color: Color(0xFFF1F5F9)),
                                         itemBuilder: (context, index) {
-                                          var doc = reportsProvider
+                                          final doc = reportsProvider
                                               .documentTypeModel[index];
+                                          final docId = doc.documentTypeId ?? 0;
+
                                           return _buildDocumentTile(
-                                            title: doc.documentTypeName,
-                                            onTap: () async {
-                                              final imageProvider = Provider.of<
-                                                      ImageUploadProvider>(
-                                                  context,
-                                                  listen: false);
-                                              imageProvider.clearFiles();
-                                              imageProvider.setCutomerId(widget
-                                                  .task.customerId
-                                                  .toString());
-                                              imageProvider.updateDocumentType(
-                                                  doc.documentTypeId,
-                                                  doc.documentTypeName);
-
-                                              await _showPickOptions(
-                                                  context, imageProvider);
-
-                                              if (imageProvider
-                                                  .fileInfoList.isNotEmpty) {
-                                                await imageProvider
-                                                    .uploadAllDocumentsGrouped(
-                                                        context,
-                                                        shouldPop: false);
-
-                                                if (imageProvider
-                                                    .fileInfoList.isEmpty) {
-                                                  reportsProvider
-                                                      .removePendingDocument(
-                                                          doc.documentTypeId ??
-                                                              0);
-                                                }
-                                              }
-                                            },
+                                            title: doc.documentTypeName ?? '',
+                                            uploadedUrl:
+                                                _uploadedDocUrls[docId],
+                                            isUploading:
+                                                _uploadingDocs.contains(docId),
+                                            progress: _uploadProgress[docId],
+                                            onTap: () => _handleDocumentUpload(
+                                              context: context,
+                                              doc: doc,
+                                              reportsProvider: reportsProvider,
+                                            ),
                                           );
                                         },
                                       ),
@@ -1665,7 +1652,6 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-
             ListTile(
               leading: const Icon(Icons.description, color: Color(0xFF1A7AE8)),
               title: const Text('Upload Document'),
@@ -1680,29 +1666,203 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
     );
   }
 
+  Future<void> _handleDocumentUpload({
+    required BuildContext context,
+    required dynamic doc,
+    required TaskPageProvider reportsProvider,
+  }) async {
+    final int docId = doc.documentTypeId ?? 0;
+
+    final imageProvider =
+        Provider.of<ImageUploadProvider>(context, listen: false);
+    imageProvider.clearFiles();
+    imageProvider.setCutomerId(widget.task.customerId.toString());
+    imageProvider.updateDocumentType(docId, doc.documentTypeName);
+
+    await _showPickOptions(context, imageProvider);
+    if (imageProvider.fileInfoList.isEmpty) return;
+
+    final file = imageProvider.fileInfoList.first;
+    final fileName = file['name'] as String? ?? 'document';
+    final bytes = file['data'] as Uint8List?;
+    final mime = file['mimeType'] as String?;
+
+    final shouldUpload = await showDocumentPreviewDialog(
+      context: context,
+      fileName: fileName,
+      bytes: bytes,
+      mimeType: mime,
+    );
+    if (shouldUpload != true) {
+      imageProvider.clearFiles();
+      return;
+    }
+
+    // Gmail-style: progress on the row only
+    setState(() {
+      _uploadingDocs.add(docId);
+      _uploadProgress[docId] = 0.05;
+    });
+
+    Timer? progressTimer;
+    progressTimer = Timer.periodic(const Duration(milliseconds: 120), (_) {
+      if (!_uploadingDocs.contains(docId)) {
+        progressTimer?.cancel();
+        return;
+      }
+      setState(() {
+        final current = _uploadProgress[docId] ?? 0.0;
+        if (current < 0.9) {
+          _uploadProgress[docId] = current + 0.04;
+        }
+      });
+    });
+
+    try {
+      final uploadedUrls = await imageProvider.uploadAllDocumentsGrouped(
+        context,
+        shouldPop: false,
+        taskId: widget.task.taskId.toString(),
+      );
+
+      progressTimer.cancel();
+
+      if (uploadedUrls.isNotEmpty) {
+        // finish bar to 100%
+        setState(() {
+          _uploadProgress[docId] = 1.0;
+        });
+        await Future.delayed(const Duration(milliseconds: 250));
+
+        // keep in list, only mark uploaded — NO fetchTaskTypes
+        setState(() {
+          _uploadingDocs.remove(docId);
+          _uploadProgress.remove(docId);
+          _uploadedDocUrls[docId] = uploadedUrls.first;
+        });
+      } else {
+        setState(() {
+          _uploadingDocs.remove(docId);
+          _uploadProgress.remove(docId);
+        });
+      }
+    } catch (e) {
+      progressTimer.cancel();
+      setState(() {
+        _uploadingDocs.remove(docId);
+        _uploadProgress.remove(docId);
+      });
+    }
+  }
+
   Widget _buildDocumentTile({
     required String title,
     required VoidCallback onTap,
+    String? uploadedUrl,
+    double? progress,
+    bool isUploading = false,
   }) {
-    return ListTile(
-      onTap: onTap,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-      title: Text(
-        title,
-        style: GoogleFonts.plusJakartaSans(
-          fontSize: 13,
-          fontWeight: FontWeight.w600,
-          color: const Color(0xFF334155),
+    final bool isUploaded = uploadedUrl != null && uploadedUrl.isNotEmpty;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ListTile(
+          onTap: (isUploaded || isUploading) ? null : onTap,
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+          title: Text(
+            title,
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF334155),
+            ),
+          ),
+          trailing: isUploaded
+              ? Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextButton.icon(
+                      onPressed: () =>
+                          _openViewer(context, uploadedUrl!, title),
+                      icon: const Icon(Icons.visibility, size: 16),
+                      label: const Text('View'),
+                      style: TextButton.styleFrom(
+                        foregroundColor: const Color(0xFF1A7AE8),
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        minimumSize: Size.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    const Icon(Icons.check_circle,
+                        color: Colors.green, size: 18),
+                  ],
+                )
+              : isUploading
+                  ? SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.5,
+                        value: progress,
+                      ),
+                    )
+                  : Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF1F5F9),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Icon(
+                        Icons.upload_rounded,
+                        size: 16,
+                        color: const Color(0xFF1A7AE8).withOpacity(0.8),
+                      ),
+                    ),
         ),
-      ),
-      trailing: Container(
-        padding: const EdgeInsets.all(6),
-        decoration: BoxDecoration(
-          color: const Color(0xFFF1F5F9),
-          borderRadius: BorderRadius.circular(4),
+      ],
+    );
+  }
+
+  void _openViewer(BuildContext context, String url, String title) {
+    showDialog(
+      context: context,
+      builder: (_) => Dialog(
+        backgroundColor: Colors.black,
+        insetPadding: EdgeInsets.zero,
+        child: Stack(
+          children: [
+            Center(
+              child: InteractiveViewer(
+                child: Image.network(
+                  url,
+                  fit: BoxFit.contain,
+                  errorBuilder: (_, __, ___) => const Icon(
+                    Icons.broken_image,
+                    color: Colors.white,
+                    size: 64,
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              top: 40,
+              right: 16,
+              child: IconButton(
+                icon: const Icon(Icons.close, color: Colors.white, size: 28),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ),
+            Positioned(
+              top: 48,
+              left: 16,
+              child: Text(title,
+                  style: const TextStyle(color: Colors.white, fontSize: 16)),
+            ),
+          ],
         ),
-        child: Icon(Icons.upload_rounded,
-            size: 16, color: const Color(0xFF1A7AE8).withOpacity(0.8)),
       ),
     );
   }

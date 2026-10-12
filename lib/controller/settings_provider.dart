@@ -211,6 +211,7 @@ class SettingsProvider extends ChangeNotifier {
     selectedCategory = cat;
     notifyListeners();
   }
+
   final TextEditingController searchDocumentTypeController =
       TextEditingController();
   final TextEditingController searchDocumentCategoryController =
@@ -257,13 +258,15 @@ class SettingsProvider extends ChangeNotifier {
   //enquiry for
   final TextEditingController enquiryForController = TextEditingController();
   final TextEditingController enquiryCodeController = TextEditingController();
-  final TextEditingController projectDurationController = TextEditingController();
+  final TextEditingController projectDurationController =
+      TextEditingController();
 
   //document type
   final TextEditingController documentTypeController = TextEditingController();
-  
+
   //document category
-  final TextEditingController documentCategoryController = TextEditingController();
+  final TextEditingController documentCategoryController =
+      TextEditingController();
 
   //checklist
   final TextEditingController checkListController = TextEditingController();
@@ -447,6 +450,51 @@ class SettingsProvider extends ChangeNotifier {
       (menuIsEditMap[166] ?? 0).toString() == '1';
   bool get hasTravelAllowanceDeletePermission =>
       (menuIsDeleteMap[166] ?? 0).toString() == '1';
+
+  /// Task Permission ME and ALL (Menu ID: 209)
+  /// Checks company permission first (ID 19 / 42 / "Task Permission ME and ALL"),
+  /// then user menu permission (menuIsViewMap[209] == 1 or showView[209] == 1).
+  bool get canViewTaskMeAndAll {
+    bool hasCompanyPermission = _taskPermissionMeAndAll == 1;
+    if (!hasCompanyPermission &&
+        _companyDetails.isNotEmpty &&
+        _companyDetails[0].permissions.isNotEmpty) {
+      for (var p in _companyDetails[0].permissions) {
+        if ((p.companyPermissionId == 19 ||
+                p.companyPermissionId == 42 ||
+                p.caption
+                    .toLowerCase()
+                    .contains('task permission me and all')) &&
+            (p.value == 1 || p.value.toString() == '1')) {
+          hasCompanyPermission = true;
+          break;
+        }
+      }
+    }
+
+    bool hasUserPermission = (_menuIsViewMap[209] ?? 0) == 1 ||
+        (_menuIsViewMap[209] ?? 0).toString() == '1' ||
+        (_showView[209] ?? 0) == 1 ||
+        (_showView[209] ?? 0).toString() == '1';
+
+    if (!hasUserPermission && _getMenuPermission.isNotEmpty) {
+      for (var p in _getMenuPermission) {
+        if (p.menuId == 209 && (p.isView == 1 || p.isView.toString() == '1')) {
+          hasUserPermission = true;
+          break;
+        }
+      }
+    }
+    return hasCompanyPermission && hasUserPermission;
+  }
+
+  /// Task Lead/Customer Filter (Menu ID: 213)
+  /// Shows the Combined / Lead / Customer dropdown on the Task page
+  /// only when the user permission IsView == 1.
+  bool get canViewCustomerTypeFilter =>
+      (_menuIsViewMap[213] ?? 0) == 1 ||
+      (_menuIsViewMap[213] ?? 0).toString() == '1';
+
   //show checkbox
   final Map<int, int> _showView = {};
   Map<int, int> get showView => _showView;
@@ -467,6 +515,7 @@ class SettingsProvider extends ChangeNotifier {
     _priorities = list;
     notifyListeners();
   }
+
   final Map<int, int> _menuIsEditMapPrint = {};
   Map<int, int> get menuIsEditMapPrint => _menuIsEditMapPrint;
   final Map<int, int> _menuIsSaveMapPrint = {};
@@ -613,7 +662,7 @@ class SettingsProvider extends ChangeNotifier {
 
   int _amcDatePermission = 0;
   int get amcDatePermission => _amcDatePermission;
-  
+
   int _ramcoPlace = 0;
   int get ramcoPlace => _ramcoPlace;
   int _ramcoLocationPermission = 0;
@@ -685,14 +734,20 @@ class SettingsProvider extends ChangeNotifier {
     } else if (permissionId == 40 &&
         caption != null &&
         (caption.toLowerCase().contains('refrance name after enquiry for') ||
-            caption.toLowerCase().contains('reference name after enquiry for'))) {
+            caption
+                .toLowerCase()
+                .contains('reference name after enquiry for'))) {
       _referenceNameAfterEnquiryFor = value;
     } else if (permissionId == 17 ||
         (permissionId == 40 &&
             (caption == null ||
                 (!caption.toLowerCase().contains('amc_date') &&
-                 !caption.toLowerCase().contains('refrance name after enquiry for') &&
-                 !caption.toLowerCase().contains('reference name after enquiry for')))) ||
+                    !caption
+                        .toLowerCase()
+                        .contains('refrance name after enquiry for') &&
+                    !caption
+                        .toLowerCase()
+                        .contains('reference name after enquiry for')))) ||
         (caption != null &&
             caption.toLowerCase().contains('lead permission me and all'))) {
       _leadPermissionMeAndAll = value;
@@ -732,7 +787,9 @@ class SettingsProvider extends ChangeNotifier {
     } else if (permissionId == 25 ||
         (caption != null &&
             (caption.toLowerCase().contains('solar_pv_system_specification') ||
-                caption.toLowerCase().contains('solar pv system specification')))) {
+                caption
+                    .toLowerCase()
+                    .contains('solar pv system specification')))) {
       _solarPvSystemSpecification = value;
     } else if (permissionId == 31 ||
         (caption != null &&
@@ -740,8 +797,8 @@ class SettingsProvider extends ChangeNotifier {
                 caption.toLowerCase().contains('new dashboard count')))) {
       _newDashboardCount = value;
     } else if (caption != null &&
-            (caption.toLowerCase().contains('lead_creation_changes') ||
-                caption.toLowerCase().contains('lead creation changes'))) {
+        (caption.toLowerCase().contains('lead_creation_changes') ||
+            caption.toLowerCase().contains('lead creation changes'))) {
       _leadCreationChanges = value;
     } else if (caption != null &&
         (caption.toLowerCase().contains('ramco_place') ||
@@ -751,13 +808,11 @@ class SettingsProvider extends ChangeNotifier {
         (caption.toLowerCase().contains('ramco_location_permission') ||
             caption.toLowerCase().contains('ramco location permission'))) {
       _ramcoLocationPermission = value;
-    }
-    else if (caption != null &&
+    } else if (caption != null &&
         (caption.toLowerCase().contains('show_lead_code') ||
             caption.toLowerCase().contains('show lead code'))) {
       _showLeadCode = value;
-    }
-    else if (caption != null &&
+    } else if (caption != null &&
         (caption.toLowerCase().contains('ramco_sort') ||
             caption.toLowerCase().contains('ramco sort'))) {
       _ramcoSort = value;
@@ -769,9 +824,15 @@ class SettingsProvider extends ChangeNotifier {
         (caption.toLowerCase().contains('ramco_admin_task_photo') ||
             caption.toLowerCase().contains('ramco admin task photo'))) {
       _ramcoAdminTaskPhoto = value;
-    } else if (permissionId == 44 || (caption != null && (caption.toLowerCase().contains('record_voice_note') || caption.toLowerCase().contains('record voice note')))) {
+    } else if (permissionId == 44 ||
+        (caption != null &&
+            (caption.toLowerCase().contains('record_voice_note') ||
+                caption.toLowerCase().contains('record voice note')))) {
       _recordVoiceNote = value;
-    } else if (permissionId == 45 || (caption != null && (caption.toLowerCase().contains('upload_audio') || caption.toLowerCase().contains('upload audio')))) {
+    } else if (permissionId == 45 ||
+        (caption != null &&
+            (caption.toLowerCase().contains('upload_audio') ||
+                caption.toLowerCase().contains('upload audio')))) {
       _uploadAudio = value;
     }
   }
@@ -924,7 +985,9 @@ class SettingsProvider extends ChangeNotifier {
   void updateCompanyPermission(int permissionId, int newValue) {
     if (_companyDetails.isNotEmpty &&
         _companyDetails[0].permissions.isNotEmpty) {
-      int index = _companyDetails[0].permissions.indexWhere((p) => p.companyPermissionId == permissionId);
+      int index = _companyDetails[0]
+          .permissions
+          .indexWhere((p) => p.companyPermissionId == permissionId);
       if (index == -1) {
         index = _companyDetails[0].permissions.indexWhere((p) =>
             (permissionId == 40 && p.companyPermissionId == 17) ||
@@ -1347,7 +1410,7 @@ class SettingsProvider extends ChangeNotifier {
       } else if (customFieldModel.customFieldTypeId == 5) {
         customFieldModel.checkBoxValues = fieldListItems;
       }
-      
+
       customFieldModel.categoryId = selectedCategory?.categoryId;
 
       final response = await HttpRequest.httpPostRequest(
@@ -1403,17 +1466,16 @@ class SettingsProvider extends ChangeNotifier {
 
   Future<void> getCustomFieldCategory(BuildContext context) async {
     try {
-      final response = await HttpRequest.httpGetRequest(
-          endPoint: HttpUrls.getFieldCategory);
+      final response =
+          await HttpRequest.httpGetRequest(endPoint: HttpUrls.getFieldCategory);
 
       if (response.statusCode == 200) {
         final body = response.data;
         if (body != null && body['success'] == true) {
           final data = body['data'];
           if (data is List) {
-            customFieldCategoryList = data
-                .map((item) => CategoryModel.fromJson(item))
-                .toList();
+            customFieldCategoryList =
+                data.map((item) => CategoryModel.fromJson(item)).toList();
           }
         }
         notifyListeners();
@@ -2440,6 +2502,7 @@ class SettingsProvider extends ChangeNotifier {
             120: 'Lead Search',
             182: 'Task Aging Report',
             208: 'Task Deadline Report',
+            209: 'Task Permission ME and ALL',
           };
 
           for (var entry in customPermissions.entries) {
@@ -2453,7 +2516,10 @@ class SettingsProvider extends ChangeNotifier {
 
           SharedPreferences preferences = await SharedPreferences.getInstance();
           String loginuserId = preferences.getString('userId') ?? "";
-          if (loginuserId == userId) {
+          if (loginuserId.isEmpty ||
+              loginuserId == userId ||
+              userId == "0" ||
+              userId.isEmpty) {
             final newViewMap = <int, int>{};
             final newEditMap = <int, int>{};
             final newDeleteMap = <int, int>{};
@@ -2791,7 +2857,9 @@ class SettingsProvider extends ChangeNotifier {
             var menu = _showMenu.firstWhere((e) => e.menuId == menuId,
                 orElse: () => MenuPermissionModel(
                     menuId: menuId,
-                    menuName: menuId == 184 ? 'Rts_Vendor_Feasibility' : 'MarginVoucher',
+                    menuName: menuId == 184
+                        ? 'Rts_Vendor_Feasibility'
+                        : 'MarginVoucher',
                     menuOrder: 0,
                     menuOrderSub: 0,
                     isEdit: 1,
@@ -2800,7 +2868,7 @@ class SettingsProvider extends ChangeNotifier {
                     isView: 1,
                     menuStatus: 1,
                     menuType: 1));
-            
+
             if (!_showMenu.contains(menu)) {
               _showMenu.add(menu);
             } else {
@@ -3793,7 +3861,8 @@ class SettingsProvider extends ChangeNotifier {
             const SnackBar(content: Text('Failed to save')),
           );
         } else {
-          Provider.of<DropDownProvider>(context, listen: false).getTaskType(context, forceRefresh: true);
+          Provider.of<DropDownProvider>(context, listen: false)
+              .getTaskType(context, forceRefresh: true);
           Navigator.pop(context);
         }
       } else {
@@ -3843,7 +3912,8 @@ class SettingsProvider extends ChangeNotifier {
             const SnackBar(content: Text('Failed to save')),
           );
         } else {
-          Provider.of<DropDownProvider>(context, listen: false).getEnquiryFor(context, forceRefresh: true);
+          Provider.of<DropDownProvider>(context, listen: false)
+              .getEnquiryFor(context, forceRefresh: true);
           Navigator.pop(context);
         }
       } else {
@@ -3893,7 +3963,8 @@ class SettingsProvider extends ChangeNotifier {
             const SnackBar(content: Text('Failed to save')),
           );
         } else {
-          Provider.of<DropDownProvider>(context, listen: false).getEnquirySource(context, forceRefresh: true);
+          Provider.of<DropDownProvider>(context, listen: false)
+              .getEnquirySource(context, forceRefresh: true);
           Navigator.pop(context);
         }
       } else {
@@ -5224,6 +5295,9 @@ class SettingsProvider extends ChangeNotifier {
             77: 'Payment Reminders',
             84: 'Dashboard count',
             120: 'Lead Search',
+            182: 'Task Aging Report',
+            208: 'Task Deadline Report',
+            209: 'Task Permission ME and ALL',
           };
 
           for (var entry in customPermissionsShow.entries) {
@@ -5265,7 +5339,9 @@ class SettingsProvider extends ChangeNotifier {
             var menu = _showMenu.firstWhere((e) => e.menuId == menuId,
                 orElse: () => MenuPermissionModel(
                     menuId: menuId,
-                    menuName: menuId == 184 ? 'Rts_Vendor_Feasibility' : 'MarginVoucher',
+                    menuName: menuId == 184
+                        ? 'Rts_Vendor_Feasibility'
+                        : 'MarginVoucher',
                     menuOrder: 0,
                     menuOrderSub: 0,
                     isEdit: 1,
@@ -5274,7 +5350,7 @@ class SettingsProvider extends ChangeNotifier {
                     isView: 1,
                     menuStatus: 1,
                     menuType: 1));
-            
+
             if (!_showMenu.contains(menu)) {
               _showMenu.add(menu);
             } else {
@@ -5638,10 +5714,12 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> searchDocumentCategory(String query, BuildContext context) async {
+  Future<void> searchDocumentCategory(
+      String query, BuildContext context) async {
     try {
       final response = await HttpRequest.httpGetRequest(
-          endPoint: '${HttpUrls.searchDocumentCategory}?Document_Category_Name=$query');
+          endPoint:
+              '${HttpUrls.searchDocumentCategory}?Document_Category_Name=$query');
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -5763,7 +5841,8 @@ class SettingsProvider extends ChangeNotifier {
           documentCategoryController.clear();
           searchDocumentCategoryController.clear();
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Document Category deleted successfully')),
+            const SnackBar(
+                content: Text('Document Category deleted successfully')),
           );
         }
         notifyListeners();
