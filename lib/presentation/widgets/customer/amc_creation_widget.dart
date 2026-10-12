@@ -353,7 +353,7 @@ class _AmcCreationWidgetState extends State<AmcCreationWidget> {
                       height: 54,
                       controller:
                           customerDetailsProvider.amcProductNameController,
-                      hintText: 'Product Name *',
+                      hintText: 'Technician Name *',
                       labelText: '',
                     ),
                   ),
@@ -368,19 +368,19 @@ class _AmcCreationWidgetState extends State<AmcCreationWidget> {
                     ),
                   ),
                   const SizedBox(width: 10.0),
-                  Expanded(
-                    child: CustomTextField(
-                      readOnly: false,
-                      height: 54,
-                      controller: customerDetailsProvider.amcAmountController,
-                      hintText: 'Amount *',
-                      labelText: '',
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(
-                            RegExp(r'^\d*\.?\d*$')),
-                      ],
-                    ),
-                  ),
+                  // Expanded(
+                  //   child: CustomTextField(
+                  //     readOnly: false,
+                  //     height: 54,
+                  //     controller: customerDetailsProvider.amcAmountController,
+                  //     hintText: 'Amount *',
+                  //     labelText: '',
+                  //     inputFormatters: [
+                  //       FilteringTextInputFormatter.allow(
+                  //           RegExp(r'^\d*\.?\d*$')),
+                  //     ],
+                  //   ),
+                  // ),
                   const SizedBox(width: 10.0),
                   Expanded(
                     child: Builder(builder: (context) {
@@ -439,7 +439,7 @@ class _AmcCreationWidgetState extends State<AmcCreationWidget> {
                       decoration: InputDecoration(
                         label: RichText(
                           text: TextSpan(
-                            text: 'Installation Date *'.replaceAll('*', ''),
+                            text: 'Service Date *'.replaceAll('*', ''),
                             style: GoogleFonts.plusJakartaSans(
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
@@ -789,7 +789,8 @@ class _AmcCreationWidgetState extends State<AmcCreationWidget> {
         CustomElevatedButton(
           buttonText: 'Save',
           onPressed: () async {
-            if (customerDetailsProvider.amcAmountController.text.isNotEmpty &&
+            if (
+              // customerDetailsProvider.amcAmountController.text.isNotEmpty &&
                 customerDetailsProvider.amcServiceController.text.isNotEmpty &&
                 customerDetailsProvider
                     .amcProductNameController.text.isNotEmpty &&
