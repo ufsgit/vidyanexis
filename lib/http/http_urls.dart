@@ -44,7 +44,7 @@ class HttpUrls {
 //   static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
   // static String baseUrl =
   //     'https://ramcoelectronicsapi.trackbox.net.in/'; // Android Emulator
-  // static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
+  // static String baseUrl = 'https://cn1hct1v-3512.inc1.devtunnels.ms/';
 
   static String imgBaseUrl =
       'https://pub-b2e3330da2344ea490c08dd119392728.r2.dev/';
@@ -442,6 +442,9 @@ class HttpUrls {
   static String getPdfWorkCompletionReport =
       "lead/get_pdf_work_completion_report/";
   static String getPdfChecklist = "lead/checklist/";
+  static String getPdfWorkCompletionReportSunfix =
+      "lead/workcompletrionreportsunfix/";
+  static String getPdfChecklistSunfix = "lead/checklist_sunfix/";
   static String getPdfMarginVoucher = "lead/get_pdf_margin_voucher/";
   static String generateStatusImage = "lead/generate_image/";
   static String getCommissionReport = "lead/Get_Commission_Report";

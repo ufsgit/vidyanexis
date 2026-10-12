@@ -3271,7 +3271,106 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           ),
                                                                         );
                                                                       },
-                                                                    ), //
+                                                                    ),
+                                                                      if ((settingsprovider.menuIsViewMap[210] == 1 ||
+                                                                              settingsprovider.menuIsViewMapPrint[210] == 1) &&
+                                                                          sideprovider.name != 'Lead /')
+                                                                        CustomElevatedButton(
+                                                                          radius: 4,
+                                                                          backgroundColor:
+                                                                              AppColors.whiteColor,
+                                                                          borderColor:
+                                                                              AppColors.bluebutton,
+                                                                          textColor:
+                                                                              AppColors.bluebutton,
+                                                                          buttonText:
+                                                                              'Vendor Feasibility',
+                                                                          onPressed:
+                                                                              () async {
+                                                                            PdfActionHelper
+                                                                                .showPdfOptions(
+                                                                              context:
+                                                                                  context,
+                                                                              title:
+                                                                                  'Vendor Feasibility',
+                                                                              pdfUrl:
+                                                                                  '${HttpUrls.getPdfVendorFeasibilityReport}${widget.customerId}',
+                                                                              onGenerate:
+                                                                                  () async {
+                                                                                await Loader.showLoader(context);
+                                                                                final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfVendorFeasibilityReport}${widget.customerId}');
+                                                                                Loader.stopLoader(context);
+                                                                                return bytes ?? Uint8List(0);
+                                                                              },
+                                                                            );
+                                                                          },
+                                                                        ),
+                                                                      if ((settingsprovider.menuIsViewMap[211] == 1 ||
+                                                                              settingsprovider.menuIsViewMapPrint[211] == 1) &&
+                                                                          sideprovider.name != 'Lead /')
+                                                                        CustomElevatedButton(
+                                                                          radius: 4,
+                                                                          backgroundColor:
+                                                                              AppColors.whiteColor,
+                                                                          borderColor:
+                                                                              AppColors.bluebutton,
+                                                                          textColor:
+                                                                              AppColors.bluebutton,
+                                                                          buttonText:
+                                                                              'Work Completion Report 1',
+                                                                          onPressed:
+                                                                              () async {
+                                                                            PdfActionHelper
+                                                                                .showPdfOptions(
+                                                                              context:
+                                                                                  context,
+                                                                              title:
+                                                                                  'Work Completion Report 1',
+                                                                              pdfUrl:
+                                                                                  '${HttpUrls.getPdfWorkCompletionReportSunfix}${widget.customerId}',
+                                                                              onGenerate:
+                                                                                  () async {
+                                                                                await Loader.showLoader(context);
+                                                                                final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfWorkCompletionReportSunfix}${widget.customerId}');
+                                                                                Loader.stopLoader(context);
+                                                                                return bytes ?? Uint8List(0);
+                                                                              },
+                                                                            );
+                                                                          },
+                                                                        ),
+                                                                      if ((settingsprovider.menuIsViewMap[212] == 1 ||
+                                                                              settingsprovider.menuIsViewMapPrint[212] == 1) &&
+                                                                          sideprovider.name != 'Lead /')
+                                                                        CustomElevatedButton(
+                                                                          radius: 4,
+                                                                          backgroundColor:
+                                                                              AppColors.whiteColor,
+                                                                          borderColor:
+                                                                              AppColors.bluebutton,
+                                                                          textColor:
+                                                                              AppColors.bluebutton,
+                                                                          buttonText:
+                                                                              'Checklist 1',
+                                                                          onPressed:
+                                                                              () async {
+                                                                              PdfActionHelper
+                                                                                  .showPdfOptions(
+                                                                                context:
+                                                                                    context,
+                                                                                title:
+                                                                                    'Checklist 1',
+                                                                                pdfUrl:
+                                                                                    '${HttpUrls.getPdfChecklistSunfix}${widget.customerId}',
+                                                                                onGenerate:
+                                                                                    () async {
+                                                                                  await Loader.showLoader(context);
+                                                                                  final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfChecklistSunfix}${widget.customerId}');
+                                                                                  Loader.stopLoader(context);
+                                                                                  return bytes ?? Uint8List(0);
+                                                                                },
+                                                                              );
+                                                                            },
+                                                                        ),
                                                                   ],
                                                                 ),
                                                                 const SizedBox(
@@ -4526,7 +4625,106 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                     ),
                                                                   );
                                                                 },
-                                                              ), //
+                                                              ),
+                                                                if ((settingsprovider.menuIsViewMap[210] == 1 ||
+                                                                        settingsprovider.menuIsViewMapPrint[210] == 1) &&
+                                                                    sideprovider.name != 'Lead /')
+                                                                  CustomElevatedButton(
+                                                                    radius: 4,
+                                                                    backgroundColor:
+                                                                        AppColors.whiteColor,
+                                                                    borderColor:
+                                                                        AppColors.bluebutton,
+                                                                    textColor:
+                                                                        AppColors.bluebutton,
+                                                                    buttonText:
+                                                                        'Vendor Feasibility',
+                                                                    onPressed:
+                                                                        () async {
+                                                                      PdfActionHelper
+                                                                          .showPdfOptions(
+                                                                        context:
+                                                                            context,
+                                                                        title:
+                                                                            'Vendor Feasibility',
+                                                                        pdfUrl:
+                                                                            '${HttpUrls.getPdfVendorFeasibilityReport}${widget.customerId}',
+                                                                        onGenerate:
+                                                                            () async {
+                                                                          await Loader.showLoader(context);
+                                                                          final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfVendorFeasibilityReport}${widget.customerId}');
+                                                                          Loader.stopLoader(context);
+                                                                          return bytes ?? Uint8List(0);
+                                                                        },
+                                                                      );
+                                                                    },
+                                                                  ),
+                                                                if ((settingsprovider.menuIsViewMap[211] == 1 ||
+                                                                        settingsprovider.menuIsViewMapPrint[211] == 1) &&
+                                                                    sideprovider.name != 'Lead /')
+                                                                  CustomElevatedButton(
+                                                                    radius: 4,
+                                                                    backgroundColor:
+                                                                        AppColors.whiteColor,
+                                                                    borderColor:
+                                                                        AppColors.bluebutton,
+                                                                    textColor:
+                                                                        AppColors.bluebutton,
+                                                                    buttonText:
+                                                                        'Work Completion Report 1',
+                                                                    onPressed:
+                                                                        () async {
+                                                                      PdfActionHelper
+                                                                          .showPdfOptions(
+                                                                        context:
+                                                                            context,
+                                                                        title:
+                                                                            'Work Completion Report 1',
+                                                                        pdfUrl:
+                                                                            '${HttpUrls.getPdfWorkCompletionReportSunfix}${widget.customerId}',
+                                                                        onGenerate:
+                                                                            () async {
+                                                                          await Loader.showLoader(context);
+                                                                          final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfWorkCompletionReportSunfix}${widget.customerId}');
+                                                                          Loader.stopLoader(context);
+                                                                          return bytes ?? Uint8List(0);
+                                                                        },
+                                                                      );
+                                                                    },
+                                                                  ),
+                                                                if ((settingsprovider.menuIsViewMap[212] == 1 ||
+                                                                        settingsprovider.menuIsViewMapPrint[212] == 1) &&
+                                                                    sideprovider.name != 'Lead /')
+                                                                  CustomElevatedButton(
+                                                                    radius: 4,
+                                                                    backgroundColor:
+                                                                        AppColors.whiteColor,
+                                                                    borderColor:
+                                                                        AppColors.bluebutton,
+                                                                    textColor:
+                                                                        AppColors.bluebutton,
+                                                                    buttonText:
+                                                                        'Checklist 1',
+                                                                    onPressed:
+                                                                        () async {
+                                                                      PdfActionHelper
+                                                                          .showPdfOptions(
+                                                                        context:
+                                                                            context,
+                                                                        title:
+                                                                            'Checklist 1',
+                                                                        pdfUrl:
+                                                                            '${HttpUrls.getPdfChecklistSunfix}${widget.customerId}',
+                                                                        onGenerate:
+                                                                            () async {
+                                                                          await Loader.showLoader(context);
+                                                                          final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfChecklistSunfix}${widget.customerId}');
+                                                                          Loader.stopLoader(context);
+                                                                          return bytes ?? Uint8List(0);
+                                                                        },
+                                                                      );
+                                                                    },
+                                                                  ),
                                                             ],
                                                           ),
                                                           const SizedBox(

@@ -532,6 +532,72 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                                         );
                                       },
                                     ),
+                                   if ((settingsProvider.menuIsViewMap[210] == 1 || settingsProvider.menuIsViewMapPrint[210] == 1) && sideProvider.name != 'Lead /')
+                                     _buildActionBtn(
+                                       context,
+                                       text: 'Vendor Feasibility',
+                                       icon: Icons.description_outlined,
+                                       onTap: () async {
+                                         PdfActionHelper.showPdfOptions(
+                                           context: context,
+                                           title: 'Vendor Feasibility',
+                                           pdfUrl:
+                                               '${HttpUrls.getPdfVendorFeasibilityReport}${widget.customerId}',
+                                           onGenerate: () async {
+                                             await Loader.showLoader(context);
+                                             final bytes =
+                                                 await customerDetailsProvider
+                                                     .getAnnexurePdfBytes('${HttpUrls.getPdfVendorFeasibilityReport}${widget.customerId}');
+                                             Loader.stopLoader(context);
+                                             return bytes ?? Uint8List(0);
+                                           },
+                                         );
+                                       },
+                                     ),
+                                    if ((settingsProvider.menuIsViewMap[211] == 1 || settingsProvider.menuIsViewMapPrint[211] == 1) && sideProvider.name != 'Lead /')
+                                      _buildActionBtn(
+                                        context,
+                                        text: 'Work Completion Report 1',
+                                        icon: Icons.description_outlined,
+                                        onTap: () async {
+                                          PdfActionHelper.showPdfOptions(
+                                            context: context,
+                                            title: 'Work Completion Report 1',
+                                            pdfUrl:
+                                                '${HttpUrls.getPdfWorkCompletionReportSunfix}${widget.customerId}',
+                                            onGenerate: () async {
+                                              await Loader.showLoader(context);
+                                              final bytes =
+                                                  await customerDetailsProvider
+                                                      .getAnnexurePdfBytes('${HttpUrls.getPdfWorkCompletionReportSunfix}${widget.customerId}');
+                                              Loader.stopLoader(context);
+                                              return bytes ?? Uint8List(0);
+                                            },
+                                          );
+                                        },
+                                      ),
+                                    if ((settingsProvider.menuIsViewMap[212] == 1 || settingsProvider.menuIsViewMapPrint[212] == 1) && sideProvider.name != 'Lead /')
+                                      _buildActionBtn(
+                                        context,
+                                        text: 'Checklist 1',
+                                        icon: Icons.checklist_rtl_outlined,
+                                        onTap: () async {
+                                          PdfActionHelper.showPdfOptions(
+                                            context: context,
+                                            title: 'Checklist 1',
+                                            pdfUrl:
+                                                '${HttpUrls.getPdfChecklistSunfix}${widget.customerId}',
+                                            onGenerate: () async {
+                                              await Loader.showLoader(context);
+                                              final bytes =
+                                                  await customerDetailsProvider
+                                                      .getAnnexurePdfBytes('${HttpUrls.getPdfChecklistSunfix}${widget.customerId}');
+                                              Loader.stopLoader(context);
+                                              return bytes ?? Uint8List(0);
+                                            },
+                                          );
+                                        },
+                                      ),
                               ],
                             ),
                           ),
