@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/controller/models/amc_status_model.dart';
+import 'package:vidyanexis/controller/models/category_model.dart';
 import 'package:vidyanexis/controller/models/district_model.dart';
 import 'package:vidyanexis/controller/models/document_type_model.dart';
 import 'package:vidyanexis/controller/models/landmark_model.dart';
@@ -146,6 +147,8 @@ class DropDownProvider extends ChangeNotifier {
   List<DurationModel> get amcDuration => _amcDuration;
   List<IntervalModel> _amcInterval = [];
   List<IntervalModel> get amcInterval => _amcInterval;
+  List<CategoryModel> _categoryPeriodicService = [];
+  List<CategoryModel> get categoryPeriodicService => _categoryPeriodicService;
 
   int? _currentBranchId;
   int? _currentDepartmentId;
@@ -846,6 +849,36 @@ class DropDownProvider extends ChangeNotifier {
         IntervalModel(
             intervalsId: 3, intervalsName: 'Half Yearly', intervalsNo: 6),
         IntervalModel(intervalsId: 4, intervalsName: 'Yearly', intervalsNo: 12),
+      ];
+    }
+    notifyListeners();
+  }
+
+  void getCategoryPeriodicService(BuildContext context) async {
+    try {
+      final response =
+          await HttpRequest.httpGetRequest(endPoint: HttpUrls.getCategoryPeriodicService);
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        if (data != null) {
+          final dataItem = data['data'] ?? [];
+
+          _categoryPeriodicService = (dataItem as List<dynamic>)
+              .map((item) => CategoryModel.fromJson(item))
+              .toList();
+        }
+      }
+    } catch (e) {
+      print('Exception occurred in getIntervals: $e');
+    }
+    // Fallback hardcoded values if API fails or returns empty
+    if (_categoryPeriodicService.isEmpty) {
+      _categoryPeriodicService = [
+        CategoryModel(categoryId: 1, categoryName: 'AMC', deleteStatus: 0),
+        CategoryModel(categoryId: 2, categoryName: 'Warranty', deleteStatus: 0),
+        CategoryModel(categoryId: 3, categoryName: 'Repair', deleteStatus: 0),
       ];
     }
     notifyListeners();

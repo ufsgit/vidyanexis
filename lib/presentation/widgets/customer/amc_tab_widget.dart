@@ -271,10 +271,10 @@ class _AmcTabWidgetState extends State<AmcTabWidget> {
               children: [
                 _buildHeaderCell('#', width: 50.0),
                 _buildHeaderCell('Service Name', flex: 2),
-                _buildHeaderCell('Product Name', flex: 2),
+                _buildHeaderCell('Technician Name', flex: 2),
                 _buildHeaderCell('Category', flex: 2),
-                _buildHeaderCell('Amount', flex: 2),
-                _buildHeaderCell('Work Completion Date', flex: 2),
+                // _buildHeaderCell('Amount', flex: 2),
+                _buildHeaderCell('Service Date', flex: 2),
                 _buildHeaderCell('To Date', flex: 2),
                 _buildHeaderCell('Options', flex: 2),
               ],
@@ -307,10 +307,10 @@ class _AmcTabWidgetState extends State<AmcTabWidget> {
                               amc.categoryName,
                               flex: 2,
                             ),
-                            _buildDataCell(
-                              '₹${double.tryParse(amc.amount) ?? amc.amount}',
-                              flex: 2,
-                            ),
+                            // _buildDataCell(
+                            //   '₹${double.tryParse(amc.amount) ?? amc.amount}',
+                            //   flex: 2,
+                            // ),
                             _buildDataCell(_formatDate(amc.fromDate), flex: 2),
                             _buildDataCell(_formatDate(amc.toDate), flex: 2),
                             _buildWidgetCell(

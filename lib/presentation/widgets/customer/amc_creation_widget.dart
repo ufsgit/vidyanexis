@@ -143,6 +143,8 @@ class _AmcCreationWidgetState extends State<AmcCreationWidget> {
       dropDownProvider.setSelectedAmcTotalDurationId(0);
       dropDownProvider.getDuration(context);
       dropDownProvider.getIntervals(context);
+      dropDownProvider.getCategoryPeriodicService(context);
+      dropDownProvider.getAMCStatus(context);
       customerDetailsProvider.yearInterval = 0;
       customerDetailsProvider.monthInterval = 0;
       if (widget.isEdit) {
@@ -384,23 +386,29 @@ class _AmcCreationWidgetState extends State<AmcCreationWidget> {
                   const SizedBox(width: 10.0),
                   Expanded(
                     child: Builder(builder: (context) {
-                      final List<DropdownItem<int>> categoryItems = [
-                        DropdownItem(id: 1, name: 'AMC'),
-                        DropdownItem(id: 2, name: 'Warranty'),
-                        DropdownItem(id: 3, name: 'Repair'),
-                      ];
+                      // final List<DropdownItem<int>> categoryItems = [
+                      //   DropdownItem(id: 1, name: 'AMC'),
+                      //   DropdownItem(id: 2, name: 'Warranty'),
+                      //   DropdownItem(id: 3, name: 'Repair'),
+                      // ];
 
                       return CommonDropdown<int>(
                         hintText: 'Category',
-                        items: categoryItems,
+                        items: dropDownProvider.categoryPeriodicService
+                        .map((status) => DropdownItem<int>(
+                                id: status.categoryId,
+                                name: status.categoryName,
+                                no: status.deleteStatus,
+                              ))
+                        .toList(),
                         controller:
                             customerDetailsProvider.amcCategoryController,
                         onItemSelected: (selectedId) {
-                          final selectedItem = categoryItems.firstWhere(
-                            (item) => item.id == selectedId,
+                          final selectedItem = dropDownProvider.categoryPeriodicService.firstWhere(
+                            (item) => item.categoryId == selectedId,
                           );
                           customerDetailsProvider.updateAMCCategory(
-                              selectedId, selectedItem.name);
+                              selectedId, selectedItem.categoryName);
                         },
                         selectedValue:
                             customerDetailsProvider.selectedAMCCategory,
@@ -801,7 +809,10 @@ class _AmcCreationWidgetState extends State<AmcCreationWidget> {
                 toDate: customerDetailsProvider.toDateController.text
                     .toUniversalYyyyMmDd(),
                 cusId: widget.customerId,
-                amount: customerDetailsProvider.amcAmountController.text,
+                amount: (double.tryParse(
+                            customerDetailsProvider.amcAmountController.text) ??
+                        0)
+                    .toString(),
                 context: context,
                 description:
                     customerDetailsProvider.amcDescriptionController.text,
