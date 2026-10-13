@@ -635,33 +635,25 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
                   ),
                 ),
                 _buildCheckboxCell(
-                  widget.isPrintPermission
-                      ? settingsProvider.showViewPrint[item.menuId] == 1
-                      : settingsProvider.showView[item.menuId] == 1,
+                  true,
                   item.isView == 1,
                   (value) =>
                       updatePermission(item.menuId, 'isView', value ?? false),
                 ),
                 _buildCheckboxCell(
-                  widget.isPrintPermission
-                      ? settingsProvider.showSavePrint[item.menuId] == 1
-                      : settingsProvider.showSave[item.menuId] == 1,
+                  true,
                   item.isSave == 1,
                   (value) =>
                       updatePermission(item.menuId, 'isSave', value ?? false),
                 ),
                 _buildCheckboxCell(
-                  widget.isPrintPermission
-                      ? settingsProvider.showEditPrint[item.menuId] == 1
-                      : settingsProvider.showEdit[item.menuId] == 1,
+                  true,
                   item.isEdit == 1,
                   (value) =>
                       updatePermission(item.menuId, 'isEdit', value ?? false),
                 ),
                 _buildCheckboxCell(
-                  widget.isPrintPermission
-                      ? settingsProvider.showDeletePrint[item.menuId] == 1
-                      : settingsProvider.showDelete[item.menuId] == 1,
+                  true,
                   item.isDelete == 1,
                   (value) =>
                       updatePermission(item.menuId, 'isDelete', value ?? false),
@@ -798,38 +790,26 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
                   spacing: 12,
                   runSpacing: 12,
                   children: [
-                    if (widget.isPrintPermission
-                        ? settingsProvider.showViewPrint[item.menuId] == 1
-                        : settingsProvider.showView[item.menuId] == 1)
-                      _buildMobileCheckbox(
-                          'View',
-                          item.isView == 1,
-                          (v) => updatePermission(
-                              item.menuId, 'isView', v ?? false)),
-                    if (widget.isPrintPermission
-                        ? settingsProvider.showSavePrint[item.menuId] == 1
-                        : settingsProvider.showSave[item.menuId] == 1)
-                      _buildMobileCheckbox(
-                          'Save',
-                          item.isSave == 1,
-                          (v) => updatePermission(
-                              item.menuId, 'isSave', v ?? false)),
-                    if (widget.isPrintPermission
-                        ? settingsProvider.showEditPrint[item.menuId] == 1
-                        : settingsProvider.showEdit[item.menuId] == 1)
-                      _buildMobileCheckbox(
-                          'Edit',
-                          item.isEdit == 1,
-                          (v) => updatePermission(
-                              item.menuId, 'isEdit', v ?? false)),
-                    if (widget.isPrintPermission
-                        ? settingsProvider.showDeletePrint[item.menuId] == 1
-                        : settingsProvider.showDelete[item.menuId] == 1)
-                      _buildMobileCheckbox(
-                          'Delete',
-                          item.isDelete == 1,
-                          (v) => updatePermission(
-                              item.menuId, 'isDelete', v ?? false)),
+                    _buildMobileCheckbox(
+                        'View',
+                        item.isView == 1,
+                        (v) => updatePermission(
+                            item.menuId, 'isView', v ?? false)),
+                    _buildMobileCheckbox(
+                        'Save',
+                        item.isSave == 1,
+                        (v) => updatePermission(
+                            item.menuId, 'isSave', v ?? false)),
+                    _buildMobileCheckbox(
+                        'Edit',
+                        item.isEdit == 1,
+                        (v) => updatePermission(
+                            item.menuId, 'isEdit', v ?? false)),
+                    _buildMobileCheckbox(
+                        'Delete',
+                        item.isDelete == 1,
+                        (v) => updatePermission(
+                            item.menuId, 'isDelete', v ?? false)),
                   ],
                 ),
               ],

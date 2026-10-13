@@ -7,6 +7,8 @@ import 'package:vidyanexis/main.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_reciept.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/presentation/widgets/home/confirmation_dialog_widget.dart';
 
 class ReceiptScreen extends StatefulWidget {
@@ -136,8 +138,7 @@ class _ReceiptScreenState extends State<ReceiptScreen> {
                                                 Icons.edit_outlined,
                                                 size: 20,
                                                 color: Colors.blue),
-                                          ),
-                                        if (settingsProvider
+                                          ),                                         if (settingsProvider
                                                 .menuIsDeleteMap[18] ==
                                             1)
                                           IconButton(
@@ -171,6 +172,54 @@ class _ReceiptScreenState extends State<ReceiptScreen> {
                                               Icons.delete,
                                               size: 20,
                                               color: AppColors.textRed,
+                                            ),
+                                          ),
+                                        if (reciept.reportPath.isNotEmpty)
+                                          IconButton(
+                                            tooltip: 'View Document',
+                                            onPressed: () async {
+                                              final String path =
+                                                  reciept.reportPath.trim();
+                                              final String fullUrl =
+                                                  path.startsWith('http')
+                                                      ? path
+                                                      : HttpUrls.imgBaseUrl +
+                                                          path;
+                                              final Uri uri =
+                                                  Uri.parse(fullUrl);
+                                              try {
+                                                if (await canLaunchUrl(uri)) {
+                                                  await launchUrl(uri,
+                                                      mode: LaunchMode
+                                                          .externalApplication);
+                                                } else {
+                                                  if (context.mounted) {
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(
+                                                      const SnackBar(
+                                                        content: Text(
+                                                            'Could not open document'),
+                                                      ),
+                                                    );
+                                                  }
+                                                }
+                                              } catch (e) {
+                                                if (context.mounted) {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    SnackBar(
+                                                      content: Text(
+                                                          'Error opening document: $e'),
+                                                    ),
+                                                  );
+                                                }
+                                              }
+                                            },
+                                            icon: const Icon(
+                                              Icons.visibility_outlined,
+                                              size: 20,
+                                              color: Colors.teal,
                                             ),
                                           ),
                                       ],

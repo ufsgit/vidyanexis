@@ -12,6 +12,7 @@ class ReceiptListModel {
   final String byUserName;
   final int paymentModeId;
   final String paymentModeName;
+  final String reportPath;
 
   ReceiptListModel({
     required this.paymentModeId,
@@ -26,6 +27,7 @@ class ReceiptListModel {
     required this.deleteStatus,
     required this.byUserId,
     required this.byUserName,
+    this.reportPath = '',
   });
 
   // Factory constructor to parse JSON with null checks
@@ -43,6 +45,7 @@ class ReceiptListModel {
       deleteStatus: json['DeleteStatus'] ?? 0,
       byUserId: json['By_User_Id']?.toString() ?? '',
       byUserName: json['By_User_Name']?.toString() ?? '',
+      reportPath: json['Report_Path']?.toString() ?? '',
     );
   }
 
@@ -57,6 +60,7 @@ class ReceiptListModel {
       'DeleteStatus': deleteStatus,
       'By_User_Id': byUserId,
       'By_User_Name': byUserName,
+      'Report_Path': reportPath,
     };
   }
 }

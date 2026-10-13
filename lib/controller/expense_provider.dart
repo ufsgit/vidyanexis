@@ -28,6 +28,7 @@ import 'package:vidyanexis/http/cloudflare_upload.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/http/loader.dart';
 import 'package:vidyanexis/http/http_requests.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 
 class ExpenseProvider extends ChangeNotifier {
@@ -147,6 +148,19 @@ class ExpenseProvider extends ChangeNotifier {
     _selectedItemTypeId = id;
     notifyListeners();
   }
+
+  final TextEditingController isActiveController = TextEditingController();
+  int _selectedIsActive = 0;
+  int get selectedIsActive => _selectedIsActive;
+  set selectedIsActive(int id) {
+    _selectedIsActive = id;
+    notifyListeners();
+  }
+
+  final List<DropdownItem<int>> activeStatusList = [
+    DropdownItem<int>(id: 1, name: 'Active'),
+    DropdownItem<int>(id: 2, name: 'Inactive'),
+  ];
 
   //stock
   List<StockEntry> _stockList = [];
@@ -1535,6 +1549,8 @@ class ExpenseProvider extends ChangeNotifier {
     items.clear();
     selectedItemTypeId = 0;
     itemTypeController.clear();
+    isActiveController.clear();
+    _selectedIsActive = 0;
     clearItemFields();
   }
   //-----------------------------------------
@@ -1936,6 +1952,7 @@ class ExpenseProvider extends ChangeNotifier {
             "total": int.tryParse(itemTotalController.text) ?? 0,
             "itemMaterials": _items.map((item) => item.toJson()).toList(),
             "Description": itemDescriptionController.text.toString(),
+            "Is_Active": _selectedIsActive,
           });
 
       if (response!.statusCode == 200) {

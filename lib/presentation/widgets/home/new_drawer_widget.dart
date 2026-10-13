@@ -851,6 +851,31 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                     ],
                                   ),
                                 ),
+                              // Consumer No
+                              if (settingsProvider.consumerNoInLeadPage == 1)
+                                Expanded(
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                                          child: CustomTextField(
+                                            readOnly: false,
+                                            height: 54,
+                                            controller:
+                                                leadProvider.consumerNoController,
+                                            hintText: 'Consumer no',
+                                            labelText: '',
+                                            inputFormatters: [
+                                              FilteringTextInputFormatter.digitsOnly
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 48), // Spacer
+                                    ],
+                                  ),
+                                ),
                               // 4. Consumer Contact No
                               if (settingsProvider.consumerContactNoMandatory == 1 &&
                                   settingsProvider.menuIsViewMap[204] == 1)
@@ -1823,23 +1848,6 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                     child: CustomTextField(
                                       readOnly: false,
                                       height: 54,
-                                      controller:
-                                          leadProvider.consumerNoController,
-                                      hintText: 'Consumer no',
-                                      labelText: '',
-                                      inputFormatters: [
-                                        FilteringTextInputFormatter.digitsOnly
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 4.0),
-                                    child: CustomTextField(
-                                      readOnly: false,
-                                      height: 54,
                                       controller: leadProvider
                                           .electricalSectionController,
                                       hintText: 'Electrical Section',
@@ -1849,7 +1857,8 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                 ),
                                 Expanded(
                                   child: Padding(
-                                    padding: const EdgeInsets.only(left: 8.0),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 4.0),
                                     child: CustomTextField(
                                       readOnly: false,
                                       height: 54,
@@ -1862,6 +1871,9 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                       ],
                                     ),
                                   ),
+                                ),
+                                const Expanded(
+                                  child: SizedBox.shrink(),
                                 ),
                               ],
                             ),

@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -406,25 +406,29 @@ class _LeadCardState extends State<LeadCard> {
                                 settingsProvider, child) {
                               return Column(
                                 children: [
-                                  // Status Selection Chips
-                                  Container(
-                                    padding: const EdgeInsets.all(12),
-                                    width: double.infinity,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: const Color(0xFFCBD5E1),
-                                          width: 1.0),
-                                      borderRadius: BorderRadius.circular(4),
-                                    ),
-                                    child: isLoadingStatuses
-                                        ? const Center(child: CircularProgressIndicator())
-                                        : Wrap(
-                                            spacing: 8,
-                                            runSpacing: 8,
-                                            children: (_filteredFollowUpStatuses.isNotEmpty
-                                                    ? _filteredFollowUpStatuses
-                                                    : dropDownProvider.leadStatuses)
-                                                .map((status) {
+                                  // Status Selection Chips (Sub-statuses only)
+                                  if (isLoadingStatuses)
+                                    Container(
+                                      padding: const EdgeInsets.all(12),
+                                      width: double.infinity,
+                                      child: const Center(
+                                          child: CircularProgressIndicator()),
+                                    )
+                                  else if (_filteredFollowUpStatuses.isNotEmpty)
+                                    Container(
+                                      padding: const EdgeInsets.all(12),
+                                      width: double.infinity,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: const Color(0xFFCBD5E1),
+                                            width: 1.0),
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      child: Wrap(
+                                        spacing: 8,
+                                        runSpacing: 8,
+                                        children: _filteredFollowUpStatuses
+                                            .map((status) {
                                               final isSelected =
                                                   dropDownProvider.selectedStatusId ==
                                                 status.statusId;

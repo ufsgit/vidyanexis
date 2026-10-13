@@ -141,6 +141,7 @@ class _AddItemWidgetState extends State<AddItemWidget> {
             widget.item!.primaryCheckBox; // for item type
         expenseProvider.searchItemDropdownList(
             context: context, itemTypeId: expenseProvider.selectedItemTypeId);
+        expenseProvider.selectedIsActive = widget.item!.isActive;
         // expenseProvider.togglePrimaryCheckbox(
         //     widget.item!.primaryCheckBox == 1 ? true : false);
       }
@@ -239,6 +240,18 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                               controller: expenseProvider.itemUnitController,
                               onItemSelected: (selectedId) {
                                 expenseProvider.setItemUnit(selectedId);
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: CommonDropdown<int>(
+                              hintText: 'Is Active',
+                              selectedValue: expenseProvider.selectedIsActive,
+                              items: expenseProvider.activeStatusList,
+                              controller: expenseProvider.isActiveController,
+                              onItemSelected: (selectedId) {
+                                expenseProvider.selectedIsActive = selectedId;
                               },
                             ),
                           ),

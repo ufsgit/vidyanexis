@@ -129,8 +129,8 @@ class HttpUrls {
   static String getQuotationByMasterId =
       "quotation_master/Get_quotation_master";
   static String searchAMCStatus = 'amc_status/Search_amc_status';
-  static String amcDuration = "amc_duration/Search_amc_duration";
-  static String amcInterval = "amc_interval/Search_amc_intervals";
+  static String amcDuration = "amc_status/Search_amc_duration";
+  static String amcInterval = "amc_status/Search_amc_intervals";
   static String searchTaskReport = "task/Search_task_Report";
   static String exportTaskByCustomer = "task/Export_Task_By_Customer";
   static String searchFollowupReports = "lead/Search_Pending_Followup_Report";
@@ -532,4 +532,5 @@ class HttpUrls {
   static String deleteItemDocument = "item/Delete_Item_Document";
   static String getItemDocumentCategories = "item/Get_Item_Document_Categories";
   static String getItemDocumentsByCategory = "item/Get_Item_Documents_By_Category";
+  static String getCategoryPeriodicService = "item/Get_Category";
 }

@@ -699,7 +699,7 @@ class _tasksPageReportState extends State<TaskPage> {
   Widget _buildWebCustomerTypeDropdown(
       BuildContext context, TaskPageProvider reportsProvider) {
     const Map<int, String> labels = {
-      0: 'Combined',
+      0: 'ALL',
       1: 'Leads',
       2: 'Customers',
     };
@@ -4392,6 +4392,9 @@ class _tasksPageReportState extends State<TaskPage> {
   }
 
   Future statusDialog(TaskReportModel task) {
+    _uploadedDocUrls.clear();
+    _uploadProgress.clear();
+    _uploadingDocs.clear();
     final prefetchReportsProvider =
         Provider.of<TaskPageProvider>(context, listen: false);
     final Future<Map<String, dynamic>> locationFuture =
@@ -5445,12 +5448,24 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                         children: [
                                                                           Expanded(
                                                                             child:
-                                                                                Text(
-                                                                              doc.documentTypeName ?? '',
-                                                                              style: const TextStyle(
-                                                                                fontFamily: 'PlusJakartaSans',
-                                                                                color: Colors.black,
-                                                                                fontSize: 13,
+                                                                                Text.rich(
+                                                                              TextSpan(
+                                                                                text: doc.documentTypeName ?? '',
+                                                                                style: const TextStyle(
+                                                                                  fontFamily: 'PlusJakartaSans',
+                                                                                  color: Colors.black,
+                                                                                  fontSize: 13,
+                                                                                ),
+                                                                                children: [
+                                                                                  if (doc.isMandatory)
+                                                                                    const TextSpan(
+                                                                                      text: ' *',
+                                                                                      style: TextStyle(
+                                                                                        color: Color(0xFFDC2626),
+                                                                                        fontWeight: FontWeight.bold,
+                                                                                      ),
+                                                                                    ),
+                                                                                ],
                                                                               ),
                                                                             ),
                                                                           ),
@@ -6877,17 +6892,15 @@ class _tasksPageReportState extends State<TaskPage> {
                                                         hasPendingMandatoryDocs =
                                                         provider
                                                             .documentTypeModel
-                                                            .any((doc) => doc
-                                                                .isMandatory);
-                                                    debugPrint(
-                                                        "DEBUG: checking mandatory docs. List length: ${provider.documentTypeModel.length}");
-                                                    for (var doc in provider
-                                                        .documentTypeModel) {
-                                                      debugPrint(
-                                                          "DEBUG: Doc ${doc.documentTypeName} - isMandatory: ${doc.isMandatory}, isView: ${doc.isView}");
-                                                    }
-                                                    debugPrint(
-                                                        "DEBUG: hasPendingMandatoryDocs: $hasPendingMandatoryDocs");
+                                                            .any((doc) {
+                                                      final int docId =
+                                                          doc.documentTypeId;
+                                                      final bool isUploaded =
+                                                          _uploadedDocUrls[docId] != null &&
+                                                              _uploadedDocUrls[docId]!
+                                                                  .isNotEmpty;
+                                                      return doc.isMandatory && !isUploaded;
+                                                    });
 
                                                     if (!hasPendingMandatoryDocs ||
                                                         (ramcoAdminTaskPhoto ==

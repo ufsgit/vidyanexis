@@ -36,6 +36,8 @@ class CompanyPermission {
         return "New Dashboard Count";
       case 36:
         return "Lead Creation changes";
+      case 45:
+        return "Consumer No In Lead Page";
       default:
         return "Permission $companyPermissionId";
     }
@@ -89,6 +91,9 @@ class CompanyPermission {
           break;
         case 36:
           cap = "Lead Creation changes";
+          break;
+        case 45:
+          cap = "Consumer No In Lead Page";
           break;
       }
     }
