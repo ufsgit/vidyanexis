@@ -1109,6 +1109,7 @@ class StockUseProvider extends ChangeNotifier {
           print('---- ITEM LIST FROM BACKEND: $dataitem');
           final List<ItemListModel> items = (dataitem as List<dynamic>)
               .map((item) => ItemListModel.fromJson(item))
+              .where((item) => item.isActive == 1)
               .toList();
 
           _itemListStock = items.map((item) => ItemListStock(
