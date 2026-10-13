@@ -482,6 +482,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
           context,
           enquiryForId: dropDownProvider.selectedEnquiryForId ?? 0,
           leadId: leadProvider.customerId,
+          departmentId: settingsProvider.selectedDepartmentId,
         );
       } else {
         leadProvider.clearAllLeadControllers(context);
@@ -637,6 +638,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
             context,
             leadId: widget.isEdit ? (leadProvider.customerId ?? 0) : 0,
             enquiryForId: defaultEnquiryForId,
+            departmentId: settingsProvider.selectedDepartmentId,
           );
         }
       }
@@ -1259,6 +1261,18 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
                       branchId: settingsProvider.selectedBranchId,
                       departmentId: selectedId,
                       leadProvider: leadProvider,
+                    );
+                  }
+                  if (dropDownProvider.selectedEnquiryForId != null &&
+                      dropDownProvider.selectedEnquiryForId != 0) {
+                    leadProvider.getCustomFieldsByEnquiryForId(
+                      context,
+                      leadId: widget.isEdit
+                          ? (leadProvider.customerId ?? 0)
+                          : 0,
+                      enquiryForId:
+                          dropDownProvider.selectedEnquiryForId!,
+                      departmentId: selectedId,
                     );
                   }
                   if (mounted) setState(() {});
@@ -3227,6 +3241,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
                         leadId:
                             widget.isEdit ? (leadProvider.customerId ?? 0) : 0,
                         enquiryForId: newValue,
+                        departmentId: settingsProvider.selectedDepartmentId,
                       );
                     }
                   },
@@ -3359,10 +3374,15 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
               if (leadProvider.isLoadingEnquiryCustomFields) {
                 return const Center(child: CircularProgressIndicator());
               } else {
+                final displayedEnquiryCustomFields = widget.isEdit
+                    ? leadProvider.customFieldEnquiryFor
+                    : leadProvider.customFieldEnquiryFor
+                        .where((f) => f.isCreateNew == 1)
+                        .toList();
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (leadProvider.customFieldEnquiryFor.isNotEmpty)
+                    if (displayedEnquiryCustomFields.isNotEmpty)
                       CustomFieldSectionWidget(
                         showEditButton: true,
                         controllerKey:
@@ -3370,12 +3390,12 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
                         key: customFieldEnquirySourceKey,
                         showMore: false,
                         initialFieldValues: widget.isEdit
-                            ? leadProvider.customFieldEnquiryFor
+                            ? displayedEnquiryCustomFields
                                 .map((e) => FieldValueModel(
                                     customFieldId: e.customFieldId,
                                     value: e.datavalue))
                                 .toList()
-                            : leadProvider.customFieldEnquiryFor
+                            : displayedEnquiryCustomFields
                                 .map((e) => FieldValueModel(
                                     customFieldId: e.customFieldId,
                                     value: leadProvider.getCustomFieldValue(
@@ -3390,7 +3410,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
                             }
                           }
                         },
-                        customFields: leadProvider.customFieldEnquiryFor,
+                        customFields: displayedEnquiryCustomFields,
                         initialValues: const {},
                       ),
                   ],

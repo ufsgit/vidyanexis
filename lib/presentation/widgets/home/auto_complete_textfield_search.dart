@@ -26,6 +26,11 @@ class CustomAutocompleteSearch<T extends Object> extends StatefulWidget {
   final double? maxHeight;
   final Future<void> Function(String)? onSearch; // Async callback
   final VoidCallback? onTap;
+  final EdgeInsetsGeometry? contentPadding;
+  final Color? borderColor;
+  final Color? focusedBorderColor;
+  final Iterable<T> Function(TextEditingValue textEditingValue)?
+      customOptionsBuilder;
 
   const CustomAutocompleteSearch({
     super.key,
@@ -50,6 +55,10 @@ class CustomAutocompleteSearch<T extends Object> extends StatefulWidget {
     this.maxHeight,
     this.onSearch,
     this.onTap,
+    this.contentPadding,
+    this.borderColor,
+    this.focusedBorderColor,
+    this.customOptionsBuilder,
   });
 
   @override
@@ -62,9 +71,13 @@ class _CustomAutocompleteSearchState<T extends Object>
   late TextEditingController _textController;
   late FocusNode _localFocusNode;
   final ScrollController _scrollController = ScrollController();
+  bool _forceShowAll = false;
+  String? _lastQueryForShowAll;
 
   // Workaround to force open options programmatically
   void _forceOptionsOpen() {
+    _forceShowAll = true;
+    _lastQueryForShowAll = _textController.text.toLowerCase().trim();
     Future.microtask(() {
       if (!_localFocusNode.hasFocus) {
         _localFocusNode.requestFocus();
@@ -114,6 +127,7 @@ class _CustomAutocompleteSearchState<T extends Object>
   void dispose() {
     if (widget.controller == null) _textController.dispose();
     if (widget.focusNode == null) _localFocusNode.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -128,7 +142,18 @@ class _CustomAutocompleteSearchState<T extends Object>
         focusNode: _localFocusNode,
         textEditingController: _textController,
         optionsBuilder: (TextEditingValue textEditingValue) {
+          if (widget.customOptionsBuilder != null) {
+            return widget.customOptionsBuilder!(textEditingValue);
+          }
           final query = textEditingValue.text.toLowerCase().trim();
+
+          if (_forceShowAll) {
+            if (query == _lastQueryForShowAll) {
+              return widget.items;
+            } else {
+              _forceShowAll = false;
+            }
+          }
 
           if (query.isEmpty) {
             return widget.items;
@@ -169,7 +194,9 @@ class _CustomAutocompleteSearchState<T extends Object>
                         },
                   onTap: () {
                     widget.onTap?.call();
-                    if (!fieldFocusNode.hasFocus) {
+                    if (widget.showOptionsOnTap) {
+                      _forceOptionsOpen();
+                    } else if (!fieldFocusNode.hasFocus) {
                       fieldFocusNode.requestFocus();
                     }
                   },
@@ -207,11 +234,10 @@ class _CustomAutocompleteSearchState<T extends Object>
                       onTap: () async {
                         if (widget.onSearch != null) {
                           await widget.onSearch!(_textController.text);
-                          // Delay forcing open until after potential rebuild from state update
-                          WidgetsBinding.instance.addPostFrameCallback((_) {
-                            _forceOptionsOpen();
-                          });
                         }
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          _forceOptionsOpen();
+                        });
                       },
                       child: widget.suffixIcon ??
                           const Icon(
@@ -237,28 +263,30 @@ class _CustomAutocompleteSearchState<T extends Object>
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                       borderSide: BorderSide(
-                        color: AppColors.textGrey2,
+                        color: widget.borderColor ?? AppColors.textGrey2,
                         width: 1,
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                       borderSide: BorderSide(
-                        color: AppColors.bluebutton,
+                        color: widget.focusedBorderColor ?? AppColors.bluebutton,
                         width: 1.5,
                       ),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                       borderSide: BorderSide(
-                        color: AppStyles.isWebScreen(context)
-                            ? AppColors.textGrey2
-                            : AppColors.grey,
+                        color: widget.borderColor ??
+                            (AppStyles.isWebScreen(context)
+                                ? AppColors.textGrey2
+                                : AppColors.grey),
                         width: 1,
                       ),
                     ),
-                    contentPadding: const EdgeInsets.symmetric(
-                        vertical: 18, horizontal: 12),
+                    contentPadding: widget.contentPadding ??
+                        const EdgeInsets.symmetric(
+                            vertical: 18, horizontal: 12),
                   ),
                   readOnly: widget.disableSearch ?? false,
                   style: GoogleFonts.plusJakartaSans(
@@ -287,6 +315,10 @@ class _CustomAutocompleteSearchState<T extends Object>
           final screenHeight = MediaQuery.of(context).size.height;
           final calculatedMaxHeight = widget.maxHeight ?? (screenHeight * 0.4);
 
+          if (options.isEmpty) {
+            return const SizedBox.shrink();
+          }
+
           return GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTap: () {
@@ -306,9 +338,9 @@ class _CustomAutocompleteSearchState<T extends Object>
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(14),
                     child: Container(
+                      width: constraints.biggest.width,
                       constraints: BoxConstraints(
                         maxHeight: calculatedMaxHeight,
-                        maxWidth: constraints.biggest.width,
                       ),
                       child:
                           NotificationListener<OverscrollIndicatorNotification>(
@@ -337,6 +369,7 @@ class _CustomAutocompleteSearchState<T extends Object>
                                   onSelected(option);
                                 },
                                 child: Container(
+                                  width: double.infinity,
                                   color: Colors.white,
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(

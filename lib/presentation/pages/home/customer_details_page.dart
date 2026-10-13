@@ -316,7 +316,9 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
               Provider.of<LeadsProvider>(context, listen: false);
 
           leadsProvider.getCustomFieldsByEnquiryForId(context,
-              enquiryForId: lead.enquiryForId, leadId: lead.customerId);
+              enquiryForId: lead.enquiryForId,
+              leadId: lead.customerId,
+              departmentId: lead.departmentId);
         }
       });
       // Eager loading removed for lazy tab initialization
@@ -783,7 +785,9 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                   context,
                                                   enquiryForId:
                                                       lead.enquiryForId,
-                                                  leadId: lead.customerId);
+                                                  leadId: lead.customerId,
+                                                  departmentId:
+                                                      lead.departmentId);
                                         }
                                       });
                                     },

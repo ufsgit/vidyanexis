@@ -158,9 +158,47 @@ class _DepartmentPageState extends State<DepartmentPage> {
                                       runSpacing: 8,
                                       children: selectedFields
                                           .map((field) => Chip(
-                                                label: Text(
-                                                    field.customFieldName ??
-                                                        ''),
+                                                label: Row(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    Text(
+                                                      field.customFieldName ??
+                                                          '',
+                                                      style: const TextStyle(
+                                                          fontSize: 13),
+                                                    ),
+                                                    if (field.isCreateNew ==
+                                                        1) ...[
+                                                      const SizedBox(width: 6),
+                                                      Container(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                          horizontal: 6,
+                                                          vertical: 2,
+                                                        ),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: AppColors
+                                                              .primaryBlue,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(4),
+                                                        ),
+                                                        child: const Text(
+                                                          'Create New',
+                                                          style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontSize: 10,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ],
+                                                ),
                                                 backgroundColor: AppColors
                                                     .primaryBlue
                                                     .withOpacity(0.1),
@@ -265,36 +303,160 @@ class _DepartmentPageState extends State<DepartmentPage> {
             return AlertDialog(
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16)),
-              title: Text(
-                "Select Fields for ${enquiryFor.enquiryForName}",
-                style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600),
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      "Select Fields for ${enquiryFor.enquiryForName}",
+                      style: GoogleFonts.plusJakartaSans(
+                          fontWeight: FontWeight.w600, fontSize: 16),
+                    ),
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SizedBox(
+                        width: 50,
+                        child: Text(
+                          "Select",
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.grey.shade700,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      SizedBox(
+                        width: 75,
+                        child: Text(
+                          "Create New",
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.grey.shade700,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
               content: SizedBox(
-                width: 480,
-                height: 420,
+                width: 540,
+                height: 440,
                 child: ListView.builder(
                   itemCount: availableFields.length,
                   itemBuilder: (context, index) {
                     final field = availableFields[index];
-                    final isSelected = tempSelected
-                        .any((f) => f.customFieldId == field.customFieldId);
+                    final selectedIndex = tempSelected.indexWhere(
+                        (f) => f.customFieldId == field.customFieldId);
+                    final isSelected = selectedIndex != -1;
+                    final isCreateNew = isSelected &&
+                        (tempSelected[selectedIndex].isCreateNew == 1);
 
-                    return CheckboxListTile(
-                      title: Text(field.customFieldName ?? ""),
-                      value: isSelected,
-                      onChanged: (bool? value) {
-                        setInnerState(() {
-                          if (value == true) {
-                            if (!tempSelected.any((f) =>
-                                f.customFieldId == field.customFieldId)) {
-                              tempSelected.add(field);
-                            }
-                          } else {
-                            tempSelected.removeWhere(
-                                (f) => f.customFieldId == field.customFieldId);
-                          }
-                        });
-                      },
+                    return Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 4, vertical: 4),
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                              color: Colors.grey.shade200, width: 0.8),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: InkWell(
+                              onTap: () {
+                                setInnerState(() {
+                                  if (isSelected) {
+                                    tempSelected.removeWhere((f) =>
+                                        f.customFieldId ==
+                                        field.customFieldId);
+                                  } else {
+                                    final copy = field.copyWith();
+                                    copy.isCreateNew = 0;
+                                    tempSelected.add(copy);
+                                  }
+                                });
+                              },
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8.0),
+                                child: Text(
+                                  field.customFieldName ?? "",
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 14,
+                                    fontWeight: isSelected
+                                        ? FontWeight.w600
+                                        : FontWeight.normal,
+                                    color: isSelected
+                                        ? Colors.black87
+                                        : Colors.grey.shade700,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 50,
+                            child: Center(
+                              child: Checkbox(
+                                value: isSelected,
+                                activeColor: AppColors.primaryBlue,
+                                onChanged: (bool? value) {
+                                  setInnerState(() {
+                                    if (value == true) {
+                                      if (selectedIndex == -1) {
+                                        final copy = field.copyWith();
+                                        copy.isCreateNew = 0;
+                                        tempSelected.add(copy);
+                                      }
+                                    } else {
+                                      tempSelected.removeWhere((f) =>
+                                          f.customFieldId ==
+                                          field.customFieldId);
+                                    }
+                                  });
+                                },
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          SizedBox(
+                            width: 75,
+                            child: Center(
+                              child: Checkbox(
+                                value: isCreateNew,
+                                activeColor: AppColors.primaryBlue,
+                                onChanged: (bool? value) {
+                                  setInnerState(() {
+                                    if (value == true) {
+                                      if (selectedIndex == -1) {
+                                        final copy = field.copyWith();
+                                        copy.isCreateNew = 1;
+                                        tempSelected.add(copy);
+                                      } else {
+                                        tempSelected[selectedIndex]
+                                            .isCreateNew = 1;
+                                      }
+                                    } else {
+                                      if (selectedIndex != -1) {
+                                        tempSelected[selectedIndex]
+                                            .isCreateNew = 0;
+                                      }
+                                    }
+                                  });
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     );
                   },
                 ),

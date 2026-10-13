@@ -23,6 +23,7 @@ class CustomFieldModel {
   int? isCommercial;
   int? isChecked; // Added this property
   int? isMandatory;
+  int? isCreateNew;
   List<String>? dropDownValues;
   List<String>? checkBoxValues;
   int? quotationTypeId;
@@ -43,6 +44,7 @@ class CustomFieldModel {
     this.isCommercial,
     this.isChecked,
     this.isMandatory,
+    this.isCreateNew,
     this.createdAt,
     this.quotationTypeId,
   });
@@ -61,6 +63,7 @@ class CustomFieldModel {
     int? isCommercial,
     int? isChecked,
     int? isMandatory,
+    int? isCreateNew,
     DateTime? createdAt,
     int? quotationTypeId,
   }) =>
@@ -76,6 +79,7 @@ class CustomFieldModel {
         isCommercial: isCommercial ?? this.isCommercial,
         isChecked: isChecked ?? this.isChecked,
         isMandatory: isMandatory ?? this.isMandatory,
+        isCreateNew: isCreateNew ?? this.isCreateNew,
         dropDownValues: dropDownValues ?? this.dropDownValues,
         checkBoxValues: checkBoxValues ?? this.checkBoxValues,
         createdAt: createdAt ?? this.createdAt,
@@ -155,6 +159,37 @@ class CustomFieldModel {
     return 0;
   }
 
+  static int? _extractCreateNew(Map<String, dynamic> json) {
+    final candidateKeys = [
+      'is_create_new',
+      'isCreateNew',
+      'Is_Create_New',
+      'IsCreateNew',
+      'create_new',
+      'Create_New',
+    ];
+    for (final key in candidateKeys) {
+      if (json.containsKey(key) && json[key] != null) {
+        final val = json[key];
+        if (val == 1 || val == "1" || val == true || val == "true") return 1;
+        if (val == 0 || val == "0" || val == false || val == "false") return 0;
+        final parsed = int.tryParse(val.toString());
+        if (parsed != null) return parsed;
+      }
+    }
+    for (final entry in json.entries) {
+      final keyClean = entry.key.toLowerCase().replaceAll('_', '');
+      if (keyClean == 'iscreatenew' || keyClean == 'createnew') {
+        final val = entry.value;
+        if (val == 1 || val == "1" || val == true || val == "true") return 1;
+        if (val == 0 || val == "0" || val == false || val == "false") return 0;
+        final parsed = int.tryParse(val.toString());
+        if (parsed != null) return parsed;
+      }
+    }
+    return 0;
+  }
+
   factory CustomFieldModel.fromJson(Map<String, dynamic> json) =>
       CustomFieldModel(
         customFieldId: json["custom_field_id"] ?? json["Custom_Field_Id"],
@@ -171,6 +206,7 @@ class CustomFieldModel {
         isCommercial: json["is_commercial"] ?? json["isCommercial"],
         isChecked: _extractChecked(json),
         isMandatory: _extractMandatory(json),
+        isCreateNew: _extractCreateNew(json),
         dropDownValues: _parseValuesList(
             json["Dropdown_Values"] ?? json["dropdown_values"]),
         checkBoxValues: _parseValuesList(
@@ -218,6 +254,7 @@ class CustomFieldModel {
         "is_mandatory": isMandatory,
         "is_customfield_mandatory": isMandatory,
         "isMandatory": isMandatory,
+        "is_create_new": isCreateNew ?? 0,
         "Dropdown_Values": dropDownValues == null
             ? []
             : List<dynamic>.from(dropDownValues!.map((x) => x)),

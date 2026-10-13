@@ -14,6 +14,7 @@ class CustomFieldByStatusId {
   int? isCommercial;
   int? categoryId;
   String? categoryName;
+  int? isCreateNew;
 
   CustomFieldByStatusId({
     this.isMandatory,
@@ -31,6 +32,7 @@ class CustomFieldByStatusId {
     this.isCommercial,
     this.categoryId,
     this.categoryName,
+    this.isCreateNew,
   });
 
   CustomFieldByStatusId copyWith({
@@ -48,6 +50,7 @@ class CustomFieldByStatusId {
     int? isCommercial,
     int? categoryId,
     String? categoryName,
+    int? isCreateNew,
   }) =>
       CustomFieldByStatusId(
         isMandatory: isMandatory ?? this.isMandatory,
@@ -66,6 +69,7 @@ class CustomFieldByStatusId {
         isCommercial: isCommercial ?? this.isCommercial,
         categoryId: categoryId ?? this.categoryId,
         categoryName: categoryName ?? this.categoryName,
+        isCreateNew: isCreateNew ?? this.isCreateNew,
       );
 
   static int? _parseMandatoryValue(dynamic val) {
@@ -141,6 +145,37 @@ class CustomFieldByStatusId {
     return 0;
   }
 
+  static int? _extractCreateNew(Map<String, dynamic> json) {
+    final candidateKeys = [
+      'is_create_new',
+      'isCreateNew',
+      'Is_Create_New',
+      'IsCreateNew',
+      'create_new',
+      'Create_New',
+    ];
+    for (final key in candidateKeys) {
+      if (json.containsKey(key) && json[key] != null) {
+        final val = json[key];
+        if (val == 1 || val == "1" || val == true || val == "true") return 1;
+        if (val == 0 || val == "0" || val == false || val == "false") return 0;
+        final parsed = int.tryParse(val.toString());
+        if (parsed != null) return parsed;
+      }
+    }
+    for (final entry in json.entries) {
+      final keyClean = entry.key.toLowerCase().replaceAll('_', '');
+      if (keyClean == 'iscreatenew' || keyClean == 'createnew') {
+        final val = entry.value;
+        if (val == 1 || val == "1" || val == true || val == "true") return 1;
+        if (val == 0 || val == "0" || val == false || val == "false") return 0;
+        final parsed = int.tryParse(val.toString());
+        if (parsed != null) return parsed;
+      }
+    }
+    return 0;
+  }
+
   factory CustomFieldByStatusId.fromJson(Map<String, dynamic> json) =>
       CustomFieldByStatusId(
         isMandatory: _extractMandatory(json),
@@ -154,6 +189,7 @@ class CustomFieldByStatusId {
         isCommercial: json["is_commercial"] ?? json["isCommercial"],
         categoryId: json["Category_Id"] ?? json["category_id"],
         categoryName: json["Category_Name"] ?? json["category_name"],
+        isCreateNew: _extractCreateNew(json),
         dropdownValues: json["dropdown_values"] == null && json["Dropdown_Values"] == null
             ? []
             : List<DropdownValue>.from(
@@ -184,6 +220,7 @@ class CustomFieldByStatusId {
         "is_checked": isChecked,
         "events": isChecked,
         "is_commercial": isCommercial,
+        "is_create_new": isCreateNew,
         "Category_Id": categoryId,
         "Category_Name": categoryName,
         "dropdown_values": dropdownValues == null

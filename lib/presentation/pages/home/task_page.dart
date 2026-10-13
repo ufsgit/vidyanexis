@@ -65,9 +65,19 @@ class TaskPage extends StatefulWidget {
   State<TaskPage> createState() => _tasksPageReportState();
 }
 
+class TaskTypeFilterOption {
+  final int id;
+  final String name;
+
+  const TaskTypeFilterOption({required this.id, required this.name});
+}
+
 class _tasksPageReportState extends State<TaskPage> {
   ScrollController scrollController = ScrollController();
   TextEditingController searchController = TextEditingController();
+  final TextEditingController _taskTypeFilterController =
+      TextEditingController(text: 'All');
+  final FocusNode _taskTypeFilterFocusNode = FocusNode();
   final FocusNode searchFocusNodeWeb = FocusNode();
   final FocusNode searchFocusNodeMobile = FocusNode();
   final FocusNode staffFocusNode = FocusNode();
@@ -647,6 +657,8 @@ class _tasksPageReportState extends State<TaskPage> {
     _fixedVerticalController.dispose();
     _scrollableVerticalController.dispose();
     _docTick.dispose();
+    _taskTypeFilterController.dispose();
+    _taskTypeFilterFocusNode.dispose();
     super.dispose();
   }
 
@@ -736,6 +748,108 @@ class _tasksPageReportState extends State<TaskPage> {
     );
   }
 
+  Widget _buildTaskTypeFilter(
+      TaskPageProvider reportsProvider, DropDownProvider dropDownProvider) {
+    final taskTypeOptions = [
+      const TaskTypeFilterOption(id: 0, name: 'All'),
+      ...dropDownProvider.taskType.map(
+        (task) => TaskTypeFilterOption(
+          id: task.taskTypeId,
+          name: task.taskTypeName,
+        ),
+      ),
+    ];
+
+    final currentTaskTypeId = reportsProvider.selectedTaskType ?? 0;
+    String currentTaskTypeName = 'All';
+    if (currentTaskTypeId != 0) {
+      for (final t in dropDownProvider.taskType) {
+        if (t.taskTypeId == currentTaskTypeId) {
+          currentTaskTypeName = t.taskTypeName;
+          break;
+        }
+      }
+    }
+
+    if (!_taskTypeFilterFocusNode.hasFocus &&
+        _taskTypeFilterController.text != currentTaskTypeName) {
+      _taskTypeFilterController.text = currentTaskTypeName;
+    }
+
+    final bool isFilterActive =
+        reportsProvider.selectedTaskType != null &&
+        reportsProvider.selectedTaskType != 0;
+
+    return SizedBox(
+      width: 230,
+      child: CustomAutocompleteSearch<TaskTypeFilterOption>(
+        items: taskTypeOptions,
+        displayStringFunction: (item) => item.name,
+        defaultText: currentTaskTypeName,
+        controller: _taskTypeFilterController,
+        focusNode: _taskTypeFilterFocusNode,
+        labelText: 'Task Type',
+        suffixIcon:
+            const Icon(Icons.search, size: 20, color: AppColors.textGrey2),
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+        borderColor:
+            isFilterActive ? AppColors.primaryBlue : Colors.grey[300]!,
+        focusedBorderColor: AppColors.primaryBlue,
+        showOptionsOnTap: true,
+        maxHeight: 300,
+        customOptionsBuilder: (TextEditingValue textEditingValue) {
+          final query = textEditingValue.text.toLowerCase().trim();
+          if (query.isEmpty || query == 'all') {
+            return taskTypeOptions;
+          }
+          final matches = taskTypeOptions.where(
+              (item) => item.name.toLowerCase().contains(query));
+          if (matches.isEmpty) {
+            return taskTypeOptions;
+          }
+          return matches;
+        },
+        onSelected: (TaskTypeFilterOption selected) {
+          _taskTypeFilterController.text = selected.name;
+          reportsProvider.setTaskType(selected.id);
+          reportsProvider.goToPage(1);
+          reportsProvider.searchTaskByCustomer(context);
+        },
+        onChanged: (value) {
+          final query = value.toLowerCase().trim();
+          if (query.isEmpty) {
+            if (reportsProvider.selectedTaskType != null &&
+                reportsProvider.selectedTaskType != 0) {
+              reportsProvider.setTaskType(0);
+              reportsProvider.goToPage(1);
+              reportsProvider.searchTaskByCustomer(context);
+            }
+          }
+        },
+        onSubmitted: (value) {
+          final query = value.toLowerCase().trim();
+          if (query.isEmpty || query == 'all') {
+            reportsProvider.setTaskType(0);
+            reportsProvider.goToPage(1);
+            reportsProvider.searchTaskByCustomer(context);
+          } else {
+            final match = taskTypeOptions.firstWhere(
+              (item) => item.name.toLowerCase().trim() == query,
+              orElse: () => const TaskTypeFilterOption(id: -1, name: ''),
+            );
+            if (match.id != -1) {
+              _taskTypeFilterController.text = match.name;
+              reportsProvider.setTaskType(match.id);
+              reportsProvider.goToPage(1);
+              reportsProvider.searchTaskByCustomer(context);
+            }
+          }
+        },
+      ),
+    );
+  }
+
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -799,6 +913,7 @@ class _tasksPageReportState extends State<TaskPage> {
                 searchProvider.stopSearch();
                 reportsProvider.selectDateFilterOption(null);
                 reportsProvider.removeStatus();
+                _taskTypeFilterController.text = 'All';
                 reportsProvider.setTaskSearchCriteria(
                     '', '', '', '', '', '', '');
                 reportsProvider.goToPage(1);
@@ -1462,74 +1577,7 @@ class _tasksPageReportState extends State<TaskPage> {
                     ),
 
                     // Task Type Filter
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(4),
-                        border: Border.all(
-                            color: reportsProvider.selectedTaskType != null &&
-                                    reportsProvider.selectedTaskType != 0
-                                ? AppColors.primaryBlue
-                                : Colors.grey[300]!),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Text('Task Type: ',
-                              style: TextStyle(
-                                  fontFamily: 'PlusJakartaSans',
-                                  color: Colors.black,
-                                  fontSize: 14)),
-                          DropdownButton<int>(
-                            value: reportsProvider.selectedTaskType,
-                            hint: const Text('All',
-                                style: TextStyle(
-                                    fontFamily: 'PlusJakartaSans',
-                                    color: Colors.black,
-                                    fontSize: 14)),
-                            items: [
-                                  const DropdownMenuItem<int>(
-                                    value: 0,
-                                    child: Text('All',
-                                        style: TextStyle(
-                                            fontFamily: 'PlusJakartaSans',
-                                            color: Colors.black,
-                                            fontSize: 14)),
-                                  ),
-                                ] +
-                                provider.taskType
-                                    .map((task) => DropdownMenuItem<int>(
-                                          value: task.taskTypeId,
-                                          child: ConstrainedBox(
-                                            constraints: const BoxConstraints(
-                                                maxWidth: 150),
-                                            child: Text(
-                                              task.taskTypeName,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: const TextStyle(
-                                                  fontFamily: 'PlusJakartaSans',
-                                                  color: Colors.black,
-                                                  fontSize: 14),
-                                            ),
-                                          ),
-                                        ))
-                                    .toList(),
-                            onChanged: (int? newValue) {
-                              if (newValue != null) {
-                                reportsProvider.setTaskType(newValue);
-                                reportsProvider.goToPage(1);
-                                reportsProvider.searchTaskByCustomer(context);
-                              }
-                            },
-                            underline: Container(),
-                            isDense: true,
-                            iconSize: 18,
-                          ),
-                        ],
-                      ),
-                    ),
+                    _buildTaskTypeFilter(reportsProvider, provider),
 
                     // Enquiry For Filter
                     Container(
@@ -1695,6 +1743,7 @@ class _tasksPageReportState extends State<TaskPage> {
                           reportsProvider.removeStatus();
                           reportsProvider.setEntryType('myown');
                           searchController.clear();
+                          _taskTypeFilterController.text = 'All';
                           reportsProvider.setTaskSearchCriteria(
                               '', '', '', '', '', '', '');
                           reportsProvider.goToPage(1);

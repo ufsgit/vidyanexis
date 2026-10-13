@@ -27,6 +27,8 @@ import 'package:vidyanexis/controller/lead_details_provider.dart';
 import 'package:vidyanexis/controller/models/caption_model.dart';
 import 'package:vidyanexis/controller/models/save_lead_dropdown_model.dart';
 import 'package:vidyanexis/controller/models/search_leads_model.dart';
+import 'package:vidyanexis/controller/models/custom_field_model.dart';
+import 'package:vidyanexis/controller/models/department_custom_field_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/controller/dashboard_provider.dart';
 import 'package:vidyanexis/http/http_requests.dart';
@@ -1991,12 +1993,15 @@ class LeadsProvider extends ChangeNotifier {
   }
 
   Future<void> getCustomFieldsByEnquiryForId(BuildContext context,
-      {required int enquiryForId, required int leadId}) async {
+      {required int enquiryForId, required int leadId, int? departmentId}) async {
     try {
       _isLoadingEnquiryCustomFields = true;
-      final response = await HttpRequest.httpGetRequest(
-          endPoint:
-              '${HttpUrls.getCustomFieldByEnquiryForId}?enquiry_for_id=$enquiryForId&lead_id=$leadId');
+      String url =
+          '${HttpUrls.getCustomFieldByEnquiryForId}?enquiry_for_id=$enquiryForId&lead_id=$leadId';
+      if (departmentId != null && departmentId != 0) {
+        url += '&department_id=$departmentId';
+      }
+      final response = await HttpRequest.httpGetRequest(endPoint: url);
 
       if (response.statusCode == 200) {
         _isLoadingEnquiryCustomFields = false;
@@ -2007,7 +2012,78 @@ class LeadsProvider extends ChangeNotifier {
           _customFieldEnquiryFor = (data as List<dynamic>)
               .map((e) => CustomFieldByStatusId.fromJson(e))
               .toList();
+        } else {
+          _customFieldEnquiryFor = [];
         }
+
+        // Also sync isCreateNew from SettingsProvider department mappings if available
+        try {
+          final settingsProvider =
+              Provider.of<SettingsProvider>(context, listen: false);
+          if (departmentId != null && departmentId != 0) {
+            if (settingsProvider.departmentCustomFieldMappings.isEmpty ||
+                !settingsProvider.departmentCustomFieldMappings
+                    .any((m) => m.departmentId == departmentId)) {
+              await settingsProvider.getDepartmentCustomFields(
+                context: context,
+                departmentId: departmentId,
+              );
+            }
+
+            final deptMapping = settingsProvider.departmentCustomFieldMappings
+                .firstWhere(
+              (m) =>
+                  m.departmentId == departmentId &&
+                  m.enquiryForId == enquiryForId,
+              orElse: () => DepartmentCustomFieldMapping(
+                departmentId: 0,
+                enquiryForId: 0,
+                enquiryForName: '',
+              ),
+            );
+
+            if (deptMapping.createNewMap.isNotEmpty) {
+              for (var field in _customFieldEnquiryFor) {
+                if (deptMapping.createNewMap.containsKey(field.customFieldId)) {
+                  field.isCreateNew = deptMapping.createNewMap[field.customFieldId];
+                }
+              }
+            }
+
+            if (deptMapping.customFields.isNotEmpty) {
+              for (var field in _customFieldEnquiryFor) {
+                final mapped = deptMapping.customFields.firstWhere(
+                  (m) => m.customFieldId == field.customFieldId,
+                  orElse: () => CustomFieldModel(),
+                );
+                if (mapped.customFieldId != null && mapped.isCreateNew != null) {
+                  field.isCreateNew = mapped.isCreateNew;
+                }
+              }
+
+              if (_customFieldEnquiryFor.isEmpty) {
+                _customFieldEnquiryFor = deptMapping.customFields.map((f) {
+                  return CustomFieldByStatusId(
+                    customFieldId: f.customFieldId,
+                    customFieldName: f.customFieldName,
+                    customFieldTypeId: f.customFieldTypeId,
+                    isCreateNew: f.isCreateNew,
+                    isMandatory: f.isMandatory,
+                    dropdownValues: f.dropDownValues
+                        ?.map((d) => DropdownValue(dropdownValue: d))
+                        .toList(),
+                    checkboxValues: f.checkBoxValues
+                        ?.map((c) => CheckBoxValues(checkBoxValues: c))
+                        .toList(),
+                  );
+                }).toList();
+              }
+            }
+          }
+        } catch (e) {
+          debugPrint('Error syncing department custom fields: $e');
+        }
+
         notifyListeners();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(

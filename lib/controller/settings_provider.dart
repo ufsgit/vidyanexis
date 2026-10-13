@@ -7079,6 +7079,12 @@ class SettingsProvider extends ChangeNotifier {
             mapping.customFields = customFieldModelList
                 .where((field) =>
                     mapping.customFieldIds.contains(field.customFieldId))
+                .map((field) {
+                  final copy = field.copyWith();
+                  copy.isCreateNew =
+                      mapping.createNewMap[field.customFieldId] ?? 0;
+                  return copy;
+                })
                 .toList();
 
             return mapping;
