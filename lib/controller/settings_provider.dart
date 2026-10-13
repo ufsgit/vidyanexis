@@ -452,40 +452,17 @@ class SettingsProvider extends ChangeNotifier {
       (menuIsDeleteMap[166] ?? 0).toString() == '1';
 
   /// Task Permission ME and ALL (Menu ID: 209)
-  /// Checks company permission first (ID 19 / 42 / "Task Permission ME and ALL"),
-  /// then user menu permission (menuIsViewMap[209] == 1 or showView[209] == 1).
+  /// IsView = 1 → show ME / ALL tabs on the Task page.
+  /// IsView = 0 → hide them (user sees only their own tasks).
   bool get canViewTaskMeAndAll {
-    bool hasCompanyPermission = _taskPermissionMeAndAll == 1;
-    if (!hasCompanyPermission &&
-        _companyDetails.isNotEmpty &&
-        _companyDetails[0].permissions.isNotEmpty) {
-      for (var p in _companyDetails[0].permissions) {
-        if ((p.companyPermissionId == 19 ||
-                p.companyPermissionId == 42 ||
-                p.caption
-                    .toLowerCase()
-                    .contains('task permission me and all')) &&
-            (p.value == 1 || p.value.toString() == '1')) {
-          hasCompanyPermission = true;
-          break;
-        }
-      }
-    }
+    // Check user permission from Get_Menu_Permission (menuIsViewMap)
+    if ((_menuIsViewMap[209] ?? 0) == 1) return true;
 
-    bool hasUserPermission = (_menuIsViewMap[209] ?? 0) == 1 ||
-        (_menuIsViewMap[209] ?? 0).toString() == '1' ||
-        (_showView[209] ?? 0) == 1 ||
-        (_showView[209] ?? 0).toString() == '1';
-
-    if (!hasUserPermission && _getMenuPermission.isNotEmpty) {
-      for (var p in _getMenuPermission) {
-        if (p.menuId == 209 && (p.isView == 1 || p.isView.toString() == '1')) {
-          hasUserPermission = true;
-          break;
-        }
-      }
+    // Fallback: scan _getMenuPermission list directly
+    for (var p in _getMenuPermission) {
+      if (p.menuId == 209 && p.isView == 1) return true;
     }
-    return hasCompanyPermission && hasUserPermission;
+    return false;
   }
 
   /// Task Lead/Customer Filter (Menu ID: 213)
@@ -696,6 +673,27 @@ class SettingsProvider extends ChangeNotifier {
   int get ramcoLocationPermission => _ramcoLocationPermission;
   int _referenceNameAfterEnquiryFor = 0;
   int get referenceNameAfterEnquiryFor => _referenceNameAfterEnquiryFor;
+
+  int _consumerNoInLeadPage = 0;
+  int get consumerNoInLeadPage {
+    if (_companyDetails.isNotEmpty &&
+        _companyDetails[0].permissions.isNotEmpty) {
+      for (var p in _companyDetails[0].permissions) {
+        if (p.companyPermissionId == 45) {
+          return p.value;
+        }
+      }
+      for (var p in _companyDetails[0].permissions) {
+        final cap =
+            (p.caption.isNotEmpty ? p.caption : p.displayCaption).toLowerCase();
+        if (cap.contains('consumer no in lead page') ||
+            cap.contains('consumer_no_in_lead_page')) {
+          return p.value;
+        }
+      }
+    }
+    return _consumerNoInLeadPage;
+  }
   String get leadNameLabel =>
       _leadNameChangeToCustomerName == 1 ? 'Customer Name' : 'Lead Name';
 
@@ -863,8 +861,12 @@ class SettingsProvider extends ChangeNotifier {
       _recordVoiceNote = value;
     } else if (permissionId == 45 ||
         (caption != null &&
-            (caption.toLowerCase().contains('upload_audio') ||
-                caption.toLowerCase().contains('upload audio')))) {
+            (caption.toLowerCase().contains('consumer no in lead page') ||
+                caption.toLowerCase().contains('consumer_no_in_lead_page')))) {
+      _consumerNoInLeadPage = value;
+    } else if (caption != null &&
+        (caption.toLowerCase().contains('upload_audio') ||
+            caption.toLowerCase().contains('upload audio'))) {
       _uploadAudio = value;
     }
   }
@@ -946,6 +948,12 @@ class SettingsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setConsumerNoInLeadPage(int value) {
+    _consumerNoInLeadPage = value;
+    _syncStateToPermissionsList(45, value);
+    notifyListeners();
+  }
+
   int _customerPermissionMeAndAll = 0;
   int get customerPermissionMeAndAll => _customerPermissionMeAndAll;
 
@@ -989,6 +997,15 @@ class SettingsProvider extends ChangeNotifier {
               cap.contains('task_duplicate') ||
               cap.contains('task page duplicate') ||
               cap.contains('task_page_duplicate');
+        });
+      }
+      if (index == -1 && permissionId == 45) {
+        index = _companyDetails[0].permissions.indexWhere((p) {
+          if (p.companyPermissionId == 45) return true;
+          final cap =
+              (p.caption.isNotEmpty ? p.caption : p.displayCaption).toLowerCase();
+          return cap.contains('consumer no in lead page') ||
+              cap.contains('consumer_no_in_lead_page');
         });
       }
       if (index != -1) {
@@ -1056,6 +1073,15 @@ class SettingsProvider extends ChangeNotifier {
               cap.contains('task_duplicate') ||
               cap.contains('task page duplicate') ||
               cap.contains('task_page_duplicate');
+        });
+      }
+      if (index == -1 && permissionId == 45) {
+        index = _companyDetails[0].permissions.indexWhere((p) {
+          if (p.companyPermissionId == 45) return true;
+          final cap =
+              (p.caption.isNotEmpty ? p.caption : p.displayCaption).toLowerCase();
+          return cap.contains('consumer no in lead page') ||
+              cap.contains('consumer_no_in_lead_page');
         });
       }
       if (index != -1) {
@@ -5358,7 +5384,7 @@ class SettingsProvider extends ChangeNotifier {
             120: 'Lead Search',
             182: 'Task Aging Report',
             208: 'Task Deadline Report',
-            209: 'Task Permission ME and ALL',
+
           };
 
           for (var entry in customPermissionsShow.entries) {

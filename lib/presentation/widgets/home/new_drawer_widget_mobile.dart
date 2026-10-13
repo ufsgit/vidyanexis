@@ -1635,14 +1635,6 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
         CustomTextfieldWidgetMobile(
           focusNode: FocusNode(),
           readOnly: false,
-          controller: leadProvider.consumerNoController,
-          labelText: 'Consumer no',
-          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-        ),
-        const SizedBox(height: 10),
-        CustomTextfieldWidgetMobile(
-          focusNode: FocusNode(),
-          readOnly: false,
           controller: leadProvider.electricalSectionController,
           labelText: 'Electrical Section',
         ),
@@ -3147,6 +3139,16 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
             ),
             const SizedBox(height: 10),
           ],
+        ],
+        if (settingsProvider.consumerNoInLeadPage == 1) ...[
+          CustomTextfieldWidgetMobile(
+            focusNode: FocusNode(),
+            readOnly: false,
+            controller: leadProvider.consumerNoController,
+            labelText: 'Consumer no',
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          ),
+          const SizedBox(height: 10),
         ],
         if (settingsProvider.menuIsViewMap[204] == 1) ...[
           if (settingsProvider.consumerContactNoMandatory == 1) ...[
