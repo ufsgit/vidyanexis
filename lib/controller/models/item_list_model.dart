@@ -23,6 +23,7 @@ class ItemListModel {
   List<ItemSettings> multiItemMaterials;
   String itemDescription;
   String total;
+  int isActive;
 
   // Constructor
   ItemListModel({
@@ -47,6 +48,7 @@ class ItemListModel {
     this.priceTo = '',
     this.multiItemMaterials = const [],
     this.total = '0',
+    this.isActive = 0,
   });
 
   // Factory method to create an instance from a JSON object
@@ -76,6 +78,7 @@ class ItemListModel {
           .toList(),
       itemDescription: json['Description']?.toString() ?? '',
       total: (double.tryParse(json['Total']?.toString() ?? '0') ?? 0).toInt().toString(),
+      isActive: json["Is_Active"] ?? 0,
     );
   }
 
