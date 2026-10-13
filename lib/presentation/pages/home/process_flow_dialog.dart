@@ -1040,6 +1040,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
 
                                           return _buildDocumentTile(
                                             title: doc.documentTypeName ?? '',
+                                            isMandatory: doc.isMandatory,
                                             uploadedUrl:
                                                 _uploadedDocUrls[docId],
                                             isUploading:
@@ -1981,6 +1982,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
     String? uploadedUrl,
     double? progress,
     bool isUploading = false,
+    bool isMandatory = false,
   }) {
     final bool isUploaded = uploadedUrl != null && uploadedUrl.isNotEmpty;
 
@@ -1991,12 +1993,24 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
           onTap: (isUploaded || isUploading) ? null : onTap,
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-          title: Text(
-            title,
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: const Color(0xFF334155),
+          title: Text.rich(
+            TextSpan(
+              text: title,
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: const Color(0xFF334155),
+              ),
+              children: [
+                if (isMandatory)
+                  const TextSpan(
+                    text: ' *',
+                    style: TextStyle(
+                      color: Color(0xFFDC2626),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+              ],
             ),
           ),
           trailing: isUploaded

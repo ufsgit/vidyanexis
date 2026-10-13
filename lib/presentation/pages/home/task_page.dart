@@ -5396,12 +5396,24 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                         children: [
                                                                           Expanded(
                                                                             child:
-                                                                                Text(
-                                                                              doc.documentTypeName ?? '',
-                                                                              style: const TextStyle(
-                                                                                fontFamily: 'PlusJakartaSans',
-                                                                                color: Colors.black,
-                                                                                fontSize: 13,
+                                                                                Text.rich(
+                                                                              TextSpan(
+                                                                                text: doc.documentTypeName ?? '',
+                                                                                style: const TextStyle(
+                                                                                  fontFamily: 'PlusJakartaSans',
+                                                                                  color: Colors.black,
+                                                                                  fontSize: 13,
+                                                                                ),
+                                                                                children: [
+                                                                                  if (doc.isMandatory)
+                                                                                    const TextSpan(
+                                                                                      text: ' *',
+                                                                                      style: TextStyle(
+                                                                                        color: Color(0xFFDC2626),
+                                                                                        fontWeight: FontWeight.bold,
+                                                                                      ),
+                                                                                    ),
+                                                                                ],
                                                                               ),
                                                                             ),
                                                                           ),
