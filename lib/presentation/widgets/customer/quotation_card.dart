@@ -14,6 +14,7 @@ import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/models/quotaion_list_model.dart';
 import 'package:vidyanexis/controller/models/search_user_details_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/http/loader.dart';
 import 'package:vidyanexis/presentation/pages/home/edit_quotation_screen.dart';
 import 'package:vidyanexis/presentation/widgets/customer/pdf/print_commercial.dart';
@@ -74,6 +75,7 @@ class QuotationCard extends StatelessWidget {
     final customerDetailsProvider =
         Provider.of<CustomerDetailsProvider>(context);
     final settingsprovider = Provider.of<SettingsProvider>(context);
+    final sideprovider = Provider.of<SidebarProvider>(context);
     Color statusColor = statusId == "1"
         ? Colors.orange
         : statusId == "2"
@@ -468,6 +470,8 @@ class QuotationCard extends StatelessWidget {
                 runSpacing: 12,
                 children: [
                   if (settingsprovider.menuIsEditMap[16] == 1)
+                   if (sideprovider.name == 'Lead /' ||
+                        settingsprovider.menuIsViewMap[215] == 1)
                     CustomOutlinedSvgButton(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 8),
