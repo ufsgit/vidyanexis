@@ -687,7 +687,7 @@ class _tasksPageReportState extends State<TaskPage> {
   Widget _buildWebCustomerTypeDropdown(
       BuildContext context, TaskPageProvider reportsProvider) {
     const Map<int, String> labels = {
-      0: 'Combined',
+      0: 'ALL',
       1: 'Leads',
       2: 'Customers',
     };
