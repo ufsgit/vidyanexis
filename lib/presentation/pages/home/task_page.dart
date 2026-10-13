@@ -4343,6 +4343,9 @@ class _tasksPageReportState extends State<TaskPage> {
   }
 
   Future statusDialog(TaskReportModel task) {
+    _uploadedDocUrls.clear();
+    _uploadProgress.clear();
+    _uploadingDocs.clear();
     final prefetchReportsProvider =
         Provider.of<TaskPageProvider>(context, listen: false);
     final Future<Map<String, dynamic>> locationFuture =
@@ -6840,17 +6843,15 @@ class _tasksPageReportState extends State<TaskPage> {
                                                         hasPendingMandatoryDocs =
                                                         provider
                                                             .documentTypeModel
-                                                            .any((doc) => doc
-                                                                .isMandatory);
-                                                    debugPrint(
-                                                        "DEBUG: checking mandatory docs. List length: ${provider.documentTypeModel.length}");
-                                                    for (var doc in provider
-                                                        .documentTypeModel) {
-                                                      debugPrint(
-                                                          "DEBUG: Doc ${doc.documentTypeName} - isMandatory: ${doc.isMandatory}, isView: ${doc.isView}");
-                                                    }
-                                                    debugPrint(
-                                                        "DEBUG: hasPendingMandatoryDocs: $hasPendingMandatoryDocs");
+                                                            .any((doc) {
+                                                      final int docId =
+                                                          doc.documentTypeId;
+                                                      final bool isUploaded =
+                                                          _uploadedDocUrls[docId] != null &&
+                                                              _uploadedDocUrls[docId]!
+                                                                  .isNotEmpty;
+                                                      return doc.isMandatory && !isUploaded;
+                                                    });
 
                                                     if (!hasPendingMandatoryDocs ||
                                                         (ramcoAdminTaskPhoto ==
