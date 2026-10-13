@@ -4087,7 +4087,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
   }
 
   Future<void> saveReciept(
-      String recieptId, String customerId, BuildContext context) async {
+      String recieptId, String customerId, BuildContext context,
+      {String? filePath}) async {
     print(customerId);
     try {
       Loader.showLoader(context);
@@ -4108,7 +4109,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
           "Amount": recieptAmountController.text.toString(),
           "Customer_Id": customerId,
           "By_User_Id": int.parse(userId),
-          "By_User_Name": userName
+          "By_User_Name": userName,
+          if (filePath != null && filePath.isNotEmpty) "Report_Path": filePath,
         },
       );
 

@@ -90,6 +90,7 @@ import 'package:vidyanexis/controller/duplicate_entry_attempts_provider.dart';
 import 'package:vidyanexis/controller/location_tracking_provider.dart';
 import 'package:vidyanexis/controller/project_duration_report_provider.dart';
 import 'package:vidyanexis/controller/lead_creation_report_provider.dart';
+import 'package:vidyanexis/controller/report_upload_provider.dart';
 
 final GlobalKey<ScaffoldMessengerState> navigatorKey =
     GlobalKey<ScaffoldMessengerState>();
@@ -148,6 +149,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => LeadDetailsProvider()),
         ChangeNotifierProvider(create: (context) => CustomerProvider()),
         ChangeNotifierProvider(create: (context) => CustomerDetailsProvider()),
+        ChangeNotifierProvider(create: (context) => ReportUploadProvider()),
         ChangeNotifierProvider(create: (context) => ReportsProvider()),
         ChangeNotifierProvider(create: (context) => DashboardProvider()),
         ChangeNotifierProvider(create: (context) => ImageUploadProvider()),
