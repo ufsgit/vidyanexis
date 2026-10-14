@@ -5211,22 +5211,60 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                       ],
                                                     ),
                                                     const SizedBox(height: 16),
-                                                    Expanded(
-                                                      child: ListView.builder(
-                                                        itemCount:
-                                                            customerDetailsProvider
-                                                                .documentList
-                                                                .length,
-                                                        itemBuilder:
-                                                            (context, index) {
-                                                          var userData =
+                                                    if (customerDetailsProvider.isLoading)
+                                                      const Expanded(
+                                                        child: Center(
+                                                          child: CircularProgressIndicator(),
+                                                        ),
+                                                      )
+                                                    else if (customerDetailsProvider.documentList.isEmpty)
+                                                      Expanded(
+                                                        child: Center(
+                                                          child: Column(
+                                                            mainAxisAlignment: MainAxisAlignment.center,
+                                                            children: [
+                                                              const SizedBox(height: 80),
+                                                              Text(
+                                                                'No documents found.',
+                                                                style: GoogleFonts.plusJakartaSans(
+                                                                  fontSize: 14,
+                                                                  fontWeight: FontWeight.w600,
+                                                                  color: AppColors.textBlack,
+                                                                ),
+                                                              ),
+                                                              const SizedBox(height: 4),
+                                                              Text(
+                                                                'Start by uploading a new document',
+                                                                style: GoogleFonts.plusJakartaSans(
+                                                                  fontSize: 12,
+                                                                  fontWeight: FontWeight.w500,
+                                                                  color: AppColors.textGrey3,
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      )
+                                                    else
+                                                      Expanded(
+                                                        child: ListView.builder(
+                                                          itemCount:
                                                               customerDetailsProvider
-                                                                      .documentList[
-                                                                  index];
-                                                          userData.userName;
-                                                          List<ImageDetail>
-                                                              images = userData
-                                                                  .imageDetails;
+                                                                  .documentList
+                                                                  .length,
+                                                          itemBuilder:
+                                                              (context, index) {
+                                                            if (index >= customerDetailsProvider.documentList.length) {
+                                                              return const SizedBox.shrink();
+                                                            }
+                                                            var userData =
+                                                                customerDetailsProvider
+                                                                        .documentList[
+                                                                    index];
+                                                            userData.userName;
+                                                            List<ImageDetail>
+                                                                images = userData
+                                                                    .imageDetails;
 
                                                           return Padding(
                                                             padding:
@@ -5477,11 +5515,13 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                                 ),
                                                                               ],
                                                                             ),
-                                                                            Text(
-                                                                              DateFormat('dd/MM/yyyy h:mm a').format(DateTime.parse(image.verifiedDate)),
-                                                                              style: TextStyle(fontSize: 10, color: AppColors.textGrey4),
-                                                                              textAlign: TextAlign.center,
-                                                                            ),
+                                                                            if (image.verifiedDate.isNotEmpty &&
+                                                                                DateTime.tryParse(image.verifiedDate) != null)
+                                                                              Text(
+                                                                                DateFormat('dd/MM/yyyy h:mm a').format(DateTime.parse(image.verifiedDate)),
+                                                                                style: TextStyle(fontSize: 10, color: AppColors.textGrey4),
+                                                                                textAlign: TextAlign.center,
+                                                                              ),
                                                                           ] else if (settingsprovider.menuIsViewMap[176] ==
                                                                               1)
                                                                             Row(
@@ -5527,13 +5567,15 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                             overflow:
                                                                                 TextOverflow.ellipsis,
                                                                           ),
-                                                                          Text(
-                                                                            DateFormat('dd/MM/yyyy h:mm a').format(DateTime.parse(image.entryDate)),
-                                                                            style:
-                                                                                TextStyle(fontSize: 10, color: AppColors.textGrey4),
-                                                                            textAlign:
-                                                                                TextAlign.center,
-                                                                          ),
+                                                                          if (image.entryDate.isNotEmpty &&
+                                                                              DateTime.tryParse(image.entryDate) != null)
+                                                                            Text(
+                                                                              DateFormat('dd/MM/yyyy h:mm a').format(DateTime.parse(image.entryDate)),
+                                                                              style:
+                                                                                  TextStyle(fontSize: 10, color: AppColors.textGrey4),
+                                                                              textAlign:
+                                                                                  TextAlign.center,
+                                                                            ),
                                                                           Text(
                                                                             image.description,
                                                                             style:

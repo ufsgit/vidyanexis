@@ -43,11 +43,14 @@ class ImageDetail {
 
   factory ImageDetail.fromJson(Map<String, dynamic> json) {
     return ImageDetail(
-      filePath: json['File_Path'] ?? '',
-      imageId: json['Images_Id'] ?? 0,
-      entryDate: json['Entry_Date'] ?? '',
-      documentTypeId: json['Document_Type_Id'] ?? '',
-      documentTypeName: json['Document_Type_Name'] ?? '',
+      filePath: json['File_Path']?.toString() ?? '',
+      imageId: int.tryParse(json['Images_ID']?.toString() ??
+              json['Images_Id']?.toString() ??
+              '') ??
+          0,
+      entryDate: json['Entry_Date']?.toString() ?? '',
+      documentTypeId: json['Document_Type_Id']?.toString() ?? '',
+      documentTypeName: json['Document_Type_Name']?.toString() ?? '',
       isVerified: json['Is_Verified']?.toString() ?? '0',
       verifiedName: json['Verified_By_Name']?.toString() ?? '',
       verifiedDate: json['Verified_Date']?.toString() ?? '',
