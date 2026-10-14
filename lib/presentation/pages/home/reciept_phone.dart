@@ -136,6 +136,78 @@ class _RecieptPhoneState extends State<RecieptPhone> {
                               color: AppColors.textGrey4,
                               fontSize: 12,
                             ),
+                            const SizedBox(height: 4),
+                            if (receipt.adminApproval == 1)
+                              Row(
+                                children: [
+                                  const Icon(Icons.check_circle,
+                                      color: Colors.green, size: 14),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    'Approved by ${receipt.approvedByName?.isNotEmpty == true ? receipt.approvedByName! : 'admin'}',
+                                    style: const TextStyle(
+                                      color: Colors.green,
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              )
+                            else if (receipt.adminApproval == 2 ||
+                                receipt.isRejected == 1 ||
+                                (receipt.rejectionReason != null &&
+                                    receipt.rejectionReason!.trim().isNotEmpty))
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      const Icon(Icons.cancel_outlined,
+                                          color: Colors.red, size: 14),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        'Rejected by ${receipt.rejectedByName?.isNotEmpty == true ? receipt.rejectedByName! : 'admin'}',
+                                        style: const TextStyle(
+                                          color: Colors.red,
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  if (receipt.rejectionReason != null &&
+                                      receipt.rejectionReason!.trim().isNotEmpty) ...[
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      receipt.rejectionReason!,
+                                      style: TextStyle(
+                                        color: Colors.grey.shade700,
+                                        fontSize: 10,
+                                      ),
+                                    ),
+                                  ],
+                                ],
+                              )
+                            else
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 6, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: Colors.amber.withOpacity(0.12),
+                                  borderRadius: BorderRadius.circular(4),
+                                  border: Border.all(
+                                      color: Colors.amber.shade700,
+                                      width: 0.8),
+                                ),
+                                child: Text(
+                                  'Pending',
+                                  style: TextStyle(
+                                    color: Colors.amber.shade900,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
                           ],
                         ),
                       ),
@@ -152,7 +224,68 @@ class _RecieptPhoneState extends State<RecieptPhone> {
                     alignment: Alignment.bottomRight,
                     child: Wrap(
                       spacing: 4,
+                      crossAxisAlignment: WrapCrossAlignment.center,
                       children: [
+                        if (receipt.adminApproval == 0 &&
+                            receipt.isRejected != 1) ...[
+                          if (settingsProvider.menuIsViewMap[216] == 1)
+                            ElevatedButton(
+                              onPressed: () async {
+                                final success = await customerDetailsProvider
+                                    .updateReceiptApprovalStatus(
+                                        receipt.receiptId.toString(),
+                                        context,
+                                        widget.customerId);
+                                if (success && context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content:
+                                          Text('Status updated to Approved'),
+                                      backgroundColor: Colors.green,
+                                    ),
+                                  );
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.blue,
+                                foregroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                elevation: 0,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 6),
+                                minimumSize: Size.zero,
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              ),
+                              child: const Text('Approve',
+                                  style: TextStyle(fontSize: 11)),
+                            ),
+                          if (settingsProvider.menuIsViewMap[217] == 1)
+                            ElevatedButton(
+                              onPressed: () {
+                                _showRejectionDialog(
+                                    context,
+                                    receipt.receiptId.toString(),
+                                    widget.customerId,
+                                    customerDetailsProvider);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red,
+                                foregroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                elevation: 0,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 6),
+                                minimumSize: Size.zero,
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              ),
+                              child: const Text('Reject',
+                                  style: TextStyle(fontSize: 11)),
+                            ),
+                        ],
                         if (settingsProvider.menuIsEditMap[18] == 1)
                           IconButton(
                             constraints:
@@ -236,6 +369,113 @@ class _RecieptPhoneState extends State<RecieptPhone> {
           },
         ),
       ],
+    );
+  }
+
+  void _showRejectionDialog(
+    BuildContext context,
+    String receiptId,
+    String customerId,
+    CustomerDetailsProvider customerDetailsProvider,
+  ) {
+    final reasonController = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          title: const Row(
+            children: [
+              Icon(Icons.cancel_outlined, color: Colors.red, size: 24),
+              SizedBox(width: 8),
+              Text(
+                'Reject Receipt',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          content: Form(
+            key: formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Please provide a reason for rejecting this receipt:',
+                  style: TextStyle(fontSize: 14, color: Colors.black87),
+                ),
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: reasonController,
+                  maxLines: 3,
+                  autofocus: true,
+                  decoration: InputDecoration(
+                    hintText: 'Enter rejection reason...',
+                    hintStyle:
+                        TextStyle(fontSize: 13, color: Colors.grey.shade400),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(6),
+                      borderSide: BorderSide(color: Colors.grey.shade300),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(6),
+                      borderSide: const BorderSide(color: Colors.red),
+                    ),
+                    contentPadding: const EdgeInsets.all(12),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Rejection reason is required';
+                    }
+                    return null;
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                if (formKey.currentState?.validate() ?? false) {
+                  final reason = reasonController.text.trim();
+                  Navigator.pop(dialogContext);
+                  final success = await customerDetailsProvider
+                      .updateReceiptRejectionStatus(
+                          receiptId, reason, context, customerId);
+                  if (success && context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Receipt rejected successfully'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+              child: const Text('Reject'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
