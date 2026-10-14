@@ -35,6 +35,7 @@ class _AmcTabWidgetState extends State<AmcTabWidget> {
       final provider =
           Provider.of<CustomerDetailsProvider>(context, listen: false);
       provider.getAmc(widget.customerId, '0', context);
+      provider.getPeriodicServiceFieldsApi();
     });
   }
 
@@ -270,12 +271,31 @@ class _AmcTabWidgetState extends State<AmcTabWidget> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 _buildHeaderCell('#', width: 50.0),
-                _buildHeaderCell('Service Name', flex: 2),
-                _buildHeaderCell('Technician Name', flex: 2),
-                _buildHeaderCell('Category', flex: 2),
-                // _buildHeaderCell('Amount', flex: 2),
-                _buildHeaderCell('Service Date', flex: 2),
-                _buildHeaderCell('To Date', flex: 2),
+                if (provider.isPeriodicServiceFieldVisible(3))
+                  _buildHeaderCell(
+                      provider.getPeriodicServiceFieldName(3, 'Service Name'),
+                      flex: 2),
+                if (provider.isPeriodicServiceFieldVisible(2))
+                  _buildHeaderCell(
+                      provider.getPeriodicServiceFieldName(
+                          2, 'Technician Name'),
+                      flex: 2),
+                if (provider.isPeriodicServiceFieldVisible(4))
+                  _buildHeaderCell(
+                      provider.getPeriodicServiceFieldName(4, 'Category'),
+                      flex: 2),
+                if (provider.isPeriodicServiceFieldVisible(10))
+                  _buildHeaderCell(
+                      provider.getPeriodicServiceFieldName(10, 'Amount'),
+                      flex: 2),
+                if (provider.isPeriodicServiceFieldVisible(5))
+                  _buildHeaderCell(
+                      provider.getPeriodicServiceFieldName(5, 'Service Date'),
+                      flex: 2),
+                if (provider.isPeriodicServiceFieldVisible(8))
+                  _buildHeaderCell(
+                      provider.getPeriodicServiceFieldName(8, 'To Date'),
+                      flex: 2),
                 _buildHeaderCell('Options', flex: 2),
               ],
             ),
@@ -300,19 +320,26 @@ class _AmcTabWidgetState extends State<AmcTabWidget> {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             _buildDataCell((index + 1).toString(), width: 50.0),
-                            _buildDataCell(amc.serviceName,
-                                flex: 2, isBold: true),
-                            _buildDataCell(amc.productName, flex: 2),
-                            _buildDataCell(
-                              amc.categoryName,
-                              flex: 2,
-                            ),
-                            // _buildDataCell(
-                            //   '₹${double.tryParse(amc.amount) ?? amc.amount}',
-                            //   flex: 2,
-                            // ),
-                            _buildDataCell(_formatDate(amc.fromDate), flex: 2),
-                            _buildDataCell(_formatDate(amc.toDate), flex: 2),
+                            if (provider.isPeriodicServiceFieldVisible(3))
+                              _buildDataCell(amc.serviceName,
+                                  flex: 2, isBold: true),
+                            if (provider.isPeriodicServiceFieldVisible(2))
+                              _buildDataCell(amc.productName, flex: 2),
+                            if (provider.isPeriodicServiceFieldVisible(4))
+                              _buildDataCell(
+                                amc.categoryName,
+                                flex: 2,
+                              ),
+                            if (provider.isPeriodicServiceFieldVisible(10))
+                              _buildDataCell(
+                                '₹${double.tryParse(amc.amount) ?? amc.amount}',
+                                flex: 2,
+                              ),
+                            if (provider.isPeriodicServiceFieldVisible(5))
+                              _buildDataCell(_formatDate(amc.fromDate),
+                                  flex: 2),
+                            if (provider.isPeriodicServiceFieldVisible(8))
+                              _buildDataCell(_formatDate(amc.toDate), flex: 2),
                             _buildWidgetCell(
                               flex: 2,
                               child: Row(

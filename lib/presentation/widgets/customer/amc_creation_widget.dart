@@ -145,6 +145,7 @@ class _AmcCreationWidgetState extends State<AmcCreationWidget> {
       dropDownProvider.getIntervals(context);
       dropDownProvider.getCategoryPeriodicService(context);
       dropDownProvider.getAMCStatus(context);
+      // customerDetailsProvider.getPeriodicServiceFieldsApi();
       customerDetailsProvider.yearInterval = 0;
       customerDetailsProvider.monthInterval = 0;
       if (widget.isEdit) {
@@ -263,7 +264,8 @@ class _AmcCreationWidgetState extends State<AmcCreationWidget> {
                 ),
               ),
               const SizedBox(height: 16.0),
-              if (widget.isEdit)
+              if (widget.isEdit &&
+                  customerDetailsProvider.isPeriodicServiceFieldVisible(1))
                 DropdownButtonFormField<int>(
                   initialValue: customerDetailsProvider.selectedAMCStatus ?? 1,
                   items: dropDownProvider.amcStatus
@@ -292,7 +294,8 @@ class _AmcCreationWidgetState extends State<AmcCreationWidget> {
                   decoration: InputDecoration(
                     label: RichText(
                       text: TextSpan(
-                        text: 'Choose Status',
+                        text: customerDetailsProvider
+                            .getPeriodicServiceFieldName(1, 'Choose Status'),
                         style: GoogleFonts.plusJakartaSans(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
@@ -349,195 +352,281 @@ class _AmcCreationWidgetState extends State<AmcCreationWidget> {
               const SizedBox(height: 16.0),
               Row(
                 children: [
-                  Expanded(
-                    child: CustomTextField(
-                      readOnly: false,
-                      height: 54,
-                      controller:
-                          customerDetailsProvider.amcProductNameController,
-                      hintText: 'Technician Name *',
-                      labelText: '',
-                    ),
-                  ),
-                  const SizedBox(width: 10.0),
-                  Expanded(
-                    child: CustomTextField(
-                      readOnly: false,
-                      height: 54,
-                      controller: customerDetailsProvider.amcServiceController,
-                      hintText: 'Service *',
-                      labelText: '',
-                    ),
-                  ),
-                  const SizedBox(width: 10.0),
-                  // Expanded(
-                  //   child: CustomTextField(
-                  //     readOnly: false,
-                  //     height: 54,
-                  //     controller: customerDetailsProvider.amcAmountController,
-                  //     hintText: 'Amount *',
-                  //     labelText: '',
-                  //     inputFormatters: [
-                  //       FilteringTextInputFormatter.allow(
-                  //           RegExp(r'^\d*\.?\d*$')),
-                  //     ],
-                  //   ),
-                  // ),
-                  const SizedBox(width: 10.0),
-                  Expanded(
-                    child: Builder(builder: (context) {
-                      // final List<DropdownItem<int>> categoryItems = [
-                      //   DropdownItem(id: 1, name: 'AMC'),
-                      //   DropdownItem(id: 2, name: 'Warranty'),
-                      //   DropdownItem(id: 3, name: 'Repair'),
-                      // ];
-
-                      return CommonDropdown<int>(
-                        hintText: 'Category',
-                        items: dropDownProvider.categoryPeriodicService
-                        .map((status) => DropdownItem<int>(
-                                id: status.categoryId,
-                                name: status.categoryName,
-                                no: status.deleteStatus,
-                              ))
-                        .toList(),
+                  if (customerDetailsProvider
+                      .isPeriodicServiceFieldVisible(2)) ...[
+                    Expanded(
+                      child: CustomTextField(
+                        readOnly: false,
+                        height: 54,
                         controller:
-                            customerDetailsProvider.amcCategoryController,
-                        onItemSelected: (selectedId) {
-                          final selectedItem = dropDownProvider.categoryPeriodicService.firstWhere(
-                            (item) => item.categoryId == selectedId,
-                          );
-                          customerDetailsProvider.updateAMCCategory(
-                              selectedId, selectedItem.categoryName);
-                        },
-                        selectedValue:
-                            customerDetailsProvider.selectedAMCCategory,
-                      );
-                    }),
-                  ),
+                            customerDetailsProvider.amcProductNameController,
+                        hintText:
+                            customerDetailsProvider.getPeriodicServiceFieldName(
+                                2, 'Technician Name *'),
+                        labelText: '',
+                      ),
+                    ),
+                    const SizedBox(width: 10.0),
+                  ],
+                  if (customerDetailsProvider
+                      .isPeriodicServiceFieldVisible(3)) ...[
+                    Expanded(
+                      child: CustomTextField(
+                        readOnly: false,
+                        height: 54,
+                        controller:
+                            customerDetailsProvider.amcServiceController,
+                        hintText: customerDetailsProvider
+                            .getPeriodicServiceFieldName(3, 'Service *'),
+                        labelText: '',
+                      ),
+                    ),
+                    const SizedBox(width: 10.0),
+                  ],
+                  if (customerDetailsProvider
+                      .isPeriodicServiceFieldVisible(10)) ...[
+                    Expanded(
+                      child: CustomTextField(
+                        readOnly: false,
+                        height: 54,
+                        controller: customerDetailsProvider.amcAmountController,
+                        hintText: customerDetailsProvider
+                            .getPeriodicServiceFieldName(10, 'Amount *'),
+                        labelText: '',
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(
+                              RegExp(r'^\d*\.?\d*$')),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 10.0),
+                  ],
+                  if (customerDetailsProvider
+                      .isPeriodicServiceFieldVisible(4)) ...[
+                    Expanded(
+                      child: Builder(builder: (context) {
+                        return CommonDropdown<int>(
+                          hintText: customerDetailsProvider
+                              .getPeriodicServiceFieldName(4, 'Category'),
+                          items: dropDownProvider.categoryPeriodicService
+                              .map((status) => DropdownItem<int>(
+                                    id: status.categoryId,
+                                    name: status.categoryName,
+                                    no: status.deleteStatus,
+                                  ))
+                              .toList(),
+                          controller:
+                              customerDetailsProvider.amcCategoryController,
+                          onItemSelected: (selectedId) {
+                            final selectedItem = dropDownProvider
+                                .categoryPeriodicService
+                                .firstWhere(
+                              (item) => item.categoryId == selectedId,
+                            );
+                            customerDetailsProvider.updateAMCCategory(
+                                selectedId, selectedItem.categoryName);
+                          },
+                          selectedValue:
+                              customerDetailsProvider.selectedAMCCategory,
+                        );
+                      }),
+                    ),
+                  ],
                 ],
               ),
               const SizedBox(height: 16.0),
               Row(
                 children: [
-                  Expanded(
-                    child: TextField(
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 16, // Custom font size for the input text
-                        fontWeight: FontWeight
-                            .w600, // Custom font weight for the input text
-                        color: AppColors.textBlack, // Color for the input text
-                      ),
-                      controller: customerDetailsProvider.fromDateController,
-                      readOnly: true,
-                      onTap: () async {
-                        await _selectDate(
-                            context, true, customerDetailsProvider);
-                        String installationDate =
-                            (customerDetailsProvider.fromDateController.text)
-                                .toyyyymmdd();
+                  if (customerDetailsProvider
+                      .isPeriodicServiceFieldVisible(5)) ...[
+                    Expanded(
+                      child: TextField(
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textBlack,
+                        ),
+                        controller: customerDetailsProvider.fromDateController,
+                        readOnly: true,
+                        onTap: () async {
+                          await _selectDate(
+                              context, true, customerDetailsProvider);
+                          String installationDate =
+                              (customerDetailsProvider.fromDateController.text)
+                                  .toyyyymmdd();
 
-                        customerDetailsProvider.calculateMaintenanceDates(
-                          monthInterval: customerDetailsProvider.monthInterval,
-                          context: context,
-                          installationDate: installationDate,
-                          totalDuration: customerDetailsProvider.yearInterval,
-                        );
-                      },
-                      decoration: InputDecoration(
-                        label: RichText(
-                          text: TextSpan(
-                            text: 'Service Date *'.replaceAll('*', ''),
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: AppColors.textGrey3,
-                            ),
-                            children: const <TextSpan>[
-                              TextSpan(
-                                text: ' *', // The asterisk part
-                                style: TextStyle(
-                                    color:
-                                        Colors.red), // Red color for asterisk
+                          customerDetailsProvider.calculateMaintenanceDates(
+                            monthInterval:
+                                customerDetailsProvider.monthInterval,
+                            context: context,
+                            installationDate: installationDate,
+                            totalDuration: customerDetailsProvider.yearInterval,
+                          );
+                        },
+                        decoration: InputDecoration(
+                          label: RichText(
+                            text: TextSpan(
+                              text: customerDetailsProvider
+                                  .getPeriodicServiceFieldName(
+                                      5, 'Service Date')
+                                  .replaceAll('*', ''),
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.textGrey3,
                               ),
-                            ],
+                              children: const <TextSpan>[
+                                TextSpan(
+                                  text: ' *',
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(4),
-                          borderSide: BorderSide(
-                            color: AppColors.textGrey2,
-                            width: 1,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(4),
+                            borderSide: BorderSide(
+                              color: AppColors.textGrey2,
+                              width: 1,
+                            ),
                           ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(4),
-                          borderSide: BorderSide(
-                            color: AppColors.textGrey2,
-                            width: 1,
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(4),
+                            borderSide: BorderSide(
+                              color: AppColors.textGrey2,
+                              width: 1,
+                            ),
                           ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(4),
-                          borderSide: BorderSide(
-                            color: AppColors.textGrey2,
-                            width: 1,
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(4),
+                            borderSide: BorderSide(
+                              color: AppColors.textGrey2,
+                              width: 1,
+                            ),
                           ),
+                          hintStyle: GoogleFonts.plusJakartaSans(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.textGrey3,
+                          ),
+                          suffixIcon: const Icon(Icons.calendar_month),
                         ),
-                        hintStyle: GoogleFonts.plusJakartaSans(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.textGrey3,
-                        ),
-                        suffixIcon: const Icon(Icons.calendar_month),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 10),
+                    const SizedBox(width: 10),
+                  ],
                   //periodic interval
-                  Expanded(
-                    child: Builder(builder: (context) {
-                      var items = dropDownProvider.amcInterval
-                          .map((status) => DropdownItem<int>(
-                                id: status.intervalsId,
-                                name: status.intervalsName,
-                                no: status.intervalsNo,
-                              ))
-                          .toList();
+                  if (customerDetailsProvider
+                      .isPeriodicServiceFieldVisible(6)) ...[
+                    Expanded(
+                      child: Builder(builder: (context) {
+                        var items = dropDownProvider.amcInterval
+                            .map((status) => DropdownItem<int>(
+                                  id: status.intervalsId,
+                                  name: status.intervalsName,
+                                  no: status.intervalsNo,
+                                ))
+                            .toList();
 
-                      // Ensure selected item exists in list
-                      if (widget.isEdit &&
-                          widget.amc != null &&
-                          !items.any(
-                              (e) => e.id == widget.amc!.periodIntervalId)) {
-                        items.add(DropdownItem(
-                          id: widget.amc!.periodIntervalId,
-                          name: _getIntervalName(widget.amc!.periodIntervalId),
-                          no: widget.amc!.periodIntervalNo,
-                        ));
-                      }
+                        if (widget.isEdit &&
+                            widget.amc != null &&
+                            !items.any(
+                                (e) => e.id == widget.amc!.periodIntervalId)) {
+                          items.add(DropdownItem(
+                            id: widget.amc!.periodIntervalId,
+                            name:
+                                _getIntervalName(widget.amc!.periodIntervalId),
+                            no: widget.amc!.periodIntervalNo,
+                          ));
+                        }
 
-                      return CommonDropdown<int>(
-                          hintText: 'Periodic Interval',
+                        return CommonDropdown<int>(
+                            hintText: customerDetailsProvider
+                                .getPeriodicServiceFieldName(
+                                    6, 'Periodic Interval'),
+                            items: items,
+                            controller: customerDetailsProvider
+                                .amcPeriodIntervalController,
+                            onItemSelected: (selectedId) {
+                              dropDownProvider
+                                  .setSelectedAmcPeriodicIntervalId(selectedId);
+
+                              final selectedItem = items.firstWhere(
+                                (status) => status.id == selectedId,
+                              );
+
+                              customerDetailsProvider
+                                  .amcPeriodIntervalController
+                                  .text = selectedItem.name;
+
+                              String installationDate = (customerDetailsProvider
+                                      .fromDateController.text)
+                                  .toyyyymmdd();
+
+                              customerDetailsProvider.monthInterval =
+                                  selectedItem.no!;
+
+                              customerDetailsProvider.calculateMaintenanceDates(
+                                monthInterval:
+                                    customerDetailsProvider.monthInterval,
+                                context: context,
+                                installationDate: installationDate,
+                                totalDuration:
+                                    customerDetailsProvider.yearInterval,
+                              );
+                            },
+                            selectedValue:
+                                dropDownProvider.amcPeriodIntervalId);
+                      }),
+                    ),
+                    const SizedBox(width: 10),
+                  ],
+                  if (customerDetailsProvider
+                      .isPeriodicServiceFieldVisible(7)) ...[
+                    Expanded(
+                      child: Builder(builder: (context) {
+                        var items = dropDownProvider.amcDuration
+                            .map((status) => DropdownItem<int>(
+                                  id: status.durationId,
+                                  name: status.durationName,
+                                  no: status.durationNo,
+                                ))
+                            .toList();
+
+                        if (widget.isEdit &&
+                            widget.amc != null &&
+                            !items.any(
+                                (e) => e.id == widget.amc!.totalDurationId)) {
+                          items.add(DropdownItem(
+                            id: widget.amc!.totalDurationId,
+                            name: _getDurationName(widget.amc!.totalDurationId),
+                            no: widget.amc!.totalDurationNo,
+                          ));
+                        }
+
+                        return CommonDropdown<int>(
+                          hintText: customerDetailsProvider
+                              .getPeriodicServiceFieldName(
+                                  7, 'Select Total Duration'),
                           items: items,
                           controller: customerDetailsProvider
-                              .amcPeriodIntervalController,
+                              .amcTotalDurationController,
                           onItemSelected: (selectedId) {
                             dropDownProvider
-                                .setSelectedAmcPeriodicIntervalId(selectedId);
+                                .setSelectedAmcTotalDurationId(selectedId);
 
                             final selectedItem = items.firstWhere(
                               (status) => status.id == selectedId,
                             );
 
-                            customerDetailsProvider.amcPeriodIntervalController
+                            customerDetailsProvider.amcTotalDurationController
                                 .text = selectedItem.name;
 
                             String installationDate = (customerDetailsProvider
                                     .fromDateController.text)
                                 .toyyyymmdd();
 
-                            customerDetailsProvider.monthInterval =
+                            customerDetailsProvider.yearInterval =
                                 selectedItem.no!;
 
                             customerDetailsProvider.calculateMaintenanceDates(
@@ -549,130 +638,78 @@ class _AmcCreationWidgetState extends State<AmcCreationWidget> {
                                   customerDetailsProvider.yearInterval,
                             );
                           },
-                          selectedValue: dropDownProvider.amcPeriodIntervalId);
-                    }),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Builder(builder: (context) {
-                      var items = dropDownProvider.amcDuration
-                          .map((status) => DropdownItem<int>(
-                                id: status.durationId,
-                                name: status.durationName,
-                                no: status.durationNo,
-                              ))
-                          .toList();
-
-                      // Ensure selected item exists in list
-                      if (widget.isEdit &&
-                          widget.amc != null &&
-                          !items.any(
-                              (e) => e.id == widget.amc!.totalDurationId)) {
-                        items.add(DropdownItem(
-                          id: widget.amc!.totalDurationId,
-                          name: _getDurationName(widget.amc!.totalDurationId),
-                          no: widget.amc!.totalDurationNo,
-                        ));
-                      }
-
-                      return CommonDropdown<int>(
-                        hintText: 'Select Total Duration',
-                        items: items,
-                        controller:
-                            customerDetailsProvider.amcTotalDurationController,
-                        onItemSelected: (selectedId) {
-                          dropDownProvider
-                              .setSelectedAmcTotalDurationId(selectedId);
-
-                          final selectedItem = items.firstWhere(
-                            (status) => status.id == selectedId,
-                          );
-
-                          customerDetailsProvider.amcTotalDurationController
-                              .text = selectedItem.name;
-
-                          String installationDate =
-                              (customerDetailsProvider.fromDateController.text)
-                                  .toyyyymmdd();
-
-                          customerDetailsProvider.yearInterval =
-                              selectedItem.no!;
-
-                          customerDetailsProvider.calculateMaintenanceDates(
-                            monthInterval:
-                                customerDetailsProvider.monthInterval,
-                            context: context,
-                            installationDate: installationDate,
-                            totalDuration: customerDetailsProvider.yearInterval,
-                          );
-                        },
-                        selectedValue: dropDownProvider.amcTotalDurationlId,
-                      );
-                    }),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: TextField(
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 16, // Custom font size for the input text
-                        fontWeight: FontWeight
-                            .w600, // Custom font weight for the input text
-                        color: AppColors.textBlack, // Color for the input text
-                      ),
-                      controller: customerDetailsProvider.toDateController,
-                      readOnly: true,
-                      // onTap: () =>
-                      //     _selectDate(context, false, customerDetailsProvider),
-                      decoration: InputDecoration(
-                        label: RichText(
-                          text: TextSpan(
-                            text: 'Expiry Date *',
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: AppColors.textGrey3,
+                          selectedValue: dropDownProvider.amcTotalDurationlId,
+                        );
+                      }),
+                    ),
+                    const SizedBox(width: 10),
+                  ],
+                  if (customerDetailsProvider
+                      .isPeriodicServiceFieldVisible(8)) ...[
+                    Expanded(
+                      child: TextField(
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textBlack,
+                        ),
+                        controller: customerDetailsProvider.toDateController,
+                        readOnly: true,
+                        decoration: InputDecoration(
+                          label: RichText(
+                            text: TextSpan(
+                              text: customerDetailsProvider
+                                  .getPeriodicServiceFieldName(
+                                      8, 'Expiry Date *'),
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.textGrey3,
+                              ),
                             ),
                           ),
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(4),
-                          borderSide: BorderSide(
-                            color: AppColors.textGrey2,
-                            width: 1,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(4),
+                            borderSide: BorderSide(
+                              color: AppColors.textGrey2,
+                              width: 1,
+                            ),
                           ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(4),
-                          borderSide: BorderSide(
-                            color: AppColors.textGrey2,
-                            width: 1,
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(4),
+                            borderSide: BorderSide(
+                              color: AppColors.textGrey2,
+                              width: 1,
+                            ),
                           ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(4),
-                          borderSide: BorderSide(
-                            color: AppColors.textGrey2,
-                            width: 1,
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(4),
+                            borderSide: BorderSide(
+                              color: AppColors.textGrey2,
+                              width: 1,
+                            ),
                           ),
+                          hintStyle: GoogleFonts.plusJakartaSans(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.textGrey3,
+                          ),
+                          suffixIcon: const Icon(Icons.calendar_month),
                         ),
-                        hintStyle: GoogleFonts.plusJakartaSans(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.textGrey3,
-                        ),
-                        suffixIcon: const Icon(Icons.calendar_month),
                       ),
                     ),
-                  ),
+                  ],
                 ],
               ),
-              if (customerDetailsProvider.maintenanceDates.isNotEmpty)
+              if (customerDetailsProvider.maintenanceDates.isNotEmpty &&
+                  customerDetailsProvider.isPeriodicServiceFieldVisible(9))
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 16.0),
                     Text(
-                      'Service Periods:',
+                      customerDetailsProvider.getPeriodicServiceFieldName(
+                          9, 'Service Periods:'),
                       style: GoogleFonts.plusJakartaSans(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
