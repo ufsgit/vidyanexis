@@ -533,4 +533,6 @@ class HttpUrls {
   static String getItemDocumentCategories = "item/Get_Item_Document_Categories";
   static String getItemDocumentsByCategory = "item/Get_Item_Documents_By_Category";
   static String getCategoryPeriodicService = "item/Get_Category";
+  static String getPeriodicServiceFields =
+      "amc_status/Get_Periodic_Service_Fields";
 }

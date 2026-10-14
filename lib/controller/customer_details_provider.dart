@@ -68,6 +68,7 @@ import 'package:vidyanexis/controller/side_bar_provider.dart';
 import '../http/http_urls.dart';
 import 'models/production_chart_item.dart';
 import 'models/quotation_field_model.dart';
+import 'models/periodic_service_field_model.dart';
 import 'package:vidyanexis/controller/models/payment_model.dart';
 import 'package:vidyanexis/controller/models/follow_up_history_model.dart';
 import 'package:vidyanexis/controller/models/expense_management_model.dart';
@@ -371,6 +372,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
       _quotationListByMaster;
 
   List<QuotationField> _quotationFields = [];
+  List<PeriodicServiceField> _periodicServiceFields = [];
   final TabState<List<TaskCustomerModel>> taskListState = TabState();
   final TabState<List<DocumentListModel>> documentListState = TabState();
   final TabState<List<QuatationListModel>> quotationListState = TabState();
@@ -381,6 +383,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
   final TabState<List<PaymentModel>> paymentListState = TabState();
 
   List<QuotationField> get quotationFields => _quotationFields;
+  List<PeriodicServiceField> get periodicServiceFields => _periodicServiceFields;
 
   List<FollowUpHistoryModel> _followUpHistory = [];
   List<FollowUpHistoryModel> get followUpHistory => _followUpHistory;
@@ -1690,6 +1693,77 @@ class CustomerDetailsProvider extends ChangeNotifier {
       );
       return field.captionLoad == 1 || field.captionLoad == 2;
     } catch (e) {
+      return false;
+    }
+  }
+
+  // ── Periodic Service Fields ──────────────────────────────────────────────
+
+  Future<void> getPeriodicServiceFieldsApi() async {
+    try {
+      final response = await HttpRequest.httpGetRequest(
+          endPoint: HttpUrls.getPeriodicServiceFields);
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data != null && data['data'] != null && data['data'] is List) {
+          _periodicServiceFields = (data['data'] as List)
+              .map((e) => PeriodicServiceField.fromJson(e))
+              .toList();
+        } else if (data != null && data is List) {
+          _periodicServiceFields =
+              data.map((e) => PeriodicServiceField.fromJson(e)).toList();
+        } else {
+          _periodicServiceFields = [];
+        }
+      } else {
+        _periodicServiceFields = [];
+      }
+      notifyListeners();
+    } catch (e) {
+      print('Exception occurred in getPeriodicServiceFieldsApi: $e');
+      _periodicServiceFields = [];
+      notifyListeners();
+    }
+  }
+
+  /// Returns the caption from the API if captionLoad == 2, otherwise [defaultName].
+  String getPeriodicServiceFieldName(int fieldId, String defaultName) {
+    if (_periodicServiceFields.isEmpty) return defaultName;
+    try {
+      final field = _periodicServiceFields.firstWhere(
+        (e) => e.periodicServiceFieldsId == fieldId,
+      );
+      return (field.periodicServiceFieldsName != null &&
+              field.periodicServiceFieldsName!.isNotEmpty)
+          ? field.periodicServiceFieldsName!
+          : defaultName;
+    } catch (_) {
+      return defaultName;
+    }
+  }
+
+  /// Returns true if the field should be visible (is_visibility == 1).
+  bool isPeriodicServiceFieldVisible(int fieldId) {
+    if (_periodicServiceFields.isEmpty) return true; // default: show all
+    try {
+      final field = _periodicServiceFields.firstWhere(
+        (e) => e.periodicServiceFieldsId == fieldId,
+      );
+      return field.isVisibility == 1;
+    } catch (_) {
+      return true;
+    }
+  }
+
+  bool isPeriodicServiceFieldCaptionLoad(int fieldId) {
+    if (_periodicServiceFields.isEmpty) return false;
+    try {
+      final field = _periodicServiceFields.firstWhere(
+        (e) => e.periodicServiceFieldsId == fieldId,
+      );
+      return field.captionLoad == 1 || field.captionLoad == 2;
+    } catch (_) {
       return false;
     }
   }
