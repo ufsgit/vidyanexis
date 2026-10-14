@@ -126,6 +126,9 @@ class CustomerDetailsProvider extends ChangeNotifier {
   bool _isSavingExpense = false;
   bool get isSavingExpense => _isSavingExpense;
 
+  bool _isSavingReciept = false;
+  bool get isSavingReciept => _isSavingReciept;
+
   void clearExpenseDetails() {
     expenseDescriptionController.clear();
     expenseAmountController.clear();
@@ -2125,18 +2128,43 @@ class CustomerDetailsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void addOrEditItem(BuildContext context) {
+  bool addOrEditItem(BuildContext context) {
     // Validate input fields
-    bool priceMissing = false;
+    final List<String> missingFields = [];
+
+    if (isQuotationFieldVisible(1) && itemNameController.text.trim().isEmpty) {
+      missingFields.add(getQuotationFieldName(1, 'Item Name'));
+    }
+    if (isQuotationFieldVisible(87) && itemHsnController.text.trim().isEmpty) {
+      missingFields.add(getQuotationFieldName(87, 'HSN'));
+    }
+    if (isQuotationFieldVisible(2) && itemMrpController.text.trim().isEmpty) {
+      missingFields.add(getQuotationFieldName(2, 'As Per Standard Warranty'));
+    }
+    if (isQuotationFieldVisible(3) && itemUnitController.text.trim().isEmpty) {
+      missingFields.add(getQuotationFieldName(3, 'As Per Standards'));
+    }
     if (isQuotationFieldVisible(4)) {
-      priceMissing = itemPriceController.text.isEmpty;
+      final priceText = itemPriceController.text.trim();
+      if (priceText.isEmpty || double.tryParse(priceText) == null) {
+        missingFields.add(getQuotationFieldName(4, 'Price'));
+      }
+    }
+    if (isQuotationFieldVisible(5)) {
+      final qtyText = itemQuantityController.text.trim();
+      final qty = int.tryParse(qtyText);
+      if (qtyText.isEmpty || qty == null || qty <= 0) {
+        missingFields.add(getQuotationFieldName(5, 'Quantity'));
+      }
+    }
+    if (isQuotationFieldVisible(6)) {
+      final gstText = itemGstPercentController.text.trim();
+      if (gstText.isEmpty || double.tryParse(gstText) == null) {
+        missingFields.add(getQuotationFieldName(6, 'GST %'));
+      }
     }
 
-    bool itemNameMissing = false;
-    if (isQuotationFieldVisible(1)) {
-      itemNameMissing = itemNameController.text.isEmpty;
-    }
-    if (priceMissing || itemNameMissing) {
+    if (missingFields.isNotEmpty) {
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -2148,12 +2176,47 @@ class CustomerDetailsProvider extends ChangeNotifier {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            content: const Text(
-              'Missing Details',
-              style: TextStyle(
-                color: Colors.black87,
-                fontSize: 16,
-              ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Please fill in the following mandatory field(s):',
+                  style: TextStyle(
+                    color: Colors.black87,
+                    fontSize: 15,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                ...missingFields.map(
+                  (field) => Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 3.0),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          '• ',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        Expanded(
+                          child: Text(
+                            field,
+                            style: const TextStyle(
+                              color: Colors.black87,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15),
@@ -2176,30 +2239,30 @@ class CustomerDetailsProvider extends ChangeNotifier {
           );
         },
       );
-      return;
+      return false;
     }
 
     calculateTotalAmount();
 
     // Create the new item
-    final unitPrice = double.tryParse(itemPriceController.text) ?? 0.0;
-    final mrp = itemMrpController.text;
-    final gstPercent = double.tryParse(itemGstPercentController.text) ?? 0.0;
-    final adCess = double.tryParse(itemAdCessController.text) ?? 0.0;
-    final gst = double.tryParse(itemGstController.text) ?? 0.0;
-    final quantity = int.tryParse(itemQuantityController.text) ?? 1;
-    final amount = double.tryParse(itemTotalController.text) ?? 0.0;
+    final unitPrice = double.tryParse(itemPriceController.text.trim()) ?? 0.0;
+    final mrp = itemMrpController.text.trim();
+    final gstPercent = double.tryParse(itemGstPercentController.text.trim()) ?? 0.0;
+    final adCess = double.tryParse(itemAdCessController.text.trim()) ?? 0.0;
+    final gst = double.tryParse(itemGstController.text.trim()) ?? 0.0;
+    final quantity = int.tryParse(itemQuantityController.text.trim()) ?? 1;
+    final amount = double.tryParse(itemTotalController.text.trim()) ?? 0.0;
 
     final newItem = Item(
-      ItemName: itemNameController.text,
-      Hsn: itemHsnController.text,
+      ItemName: itemNameController.text.trim(),
+      Hsn: itemHsnController.text.trim(),
       UnitPrice: unitPrice,
       Quantity: quantity,
       MRP: mrp,
       GST: gst,
       GSTPercent: gstPercent,
       AdCESS: adCess,
-      Unit: itemUnitController.text,
+      Unit: itemUnitController.text.trim(),
       Amount: amount,
     );
 
@@ -2216,6 +2279,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     updateSubtotal();
     clearItemFields();
     notifyListeners(); // Trigger UI updates
+    return true;
   }
 
   void updateSubtotal() {
@@ -4218,8 +4282,11 @@ class CustomerDetailsProvider extends ChangeNotifier {
   Future<void> saveReciept(
       String recieptId, String customerId, BuildContext context,
       {String? filePath}) async {
+    if (_isSavingReciept) return;
     print(customerId);
     try {
+      _isSavingReciept = true;
+      notifyListeners();
       Loader.showLoader(context);
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -4237,20 +4304,22 @@ class CustomerDetailsProvider extends ChangeNotifier {
           "Description": recieptDescriptionController.text.toString(),
           "Amount": recieptAmountController.text.toString(),
           "Customer_Id": customerId,
-          "By_User_Id": int.parse(userId),
+          "By_User_Id": int.tryParse(userId) ?? 0,
           "By_User_Name": userName,
           if (filePath != null && filePath.isNotEmpty) "Report_Path": filePath,
         },
       );
 
-      if (response!.statusCode == 200) {
+      if (!context.mounted) return;
+      Loader.stopLoader(context);
+
+      if (response != null && response.statusCode == 200) {
         final data = response.data;
         log('Success');
 
         clearRecieptDetails();
 
         Navigator.pop(context);
-        Loader.stopLoader(context);
         getRecieptListApi(customerId, context);
         getInvoiceRecieptTotal(customerId, context);
         print(data);
@@ -4258,20 +4327,26 @@ class CustomerDetailsProvider extends ChangeNotifier {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Server Error')),
         );
-        Loader.stopLoader(context);
       }
     } catch (e) {
       print('Exception occurred: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred')),
-      );
-      Loader.stopLoader(context);
+      if (context.mounted) {
+        Loader.stopLoader(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('An error occurred')),
+        );
+      }
+    } finally {
+      _isSavingReciept = false;
+      notifyListeners();
     }
   }
 
   void clearRecieptDetails() {
     recieptAmountController.clear();
     recieptDescriptionController.clear();
+    _isSavingReciept = false;
+    notifyListeners();
   }
 
   void clearPaymentDetails() {
@@ -4982,7 +5057,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     commercialTotalController.text = totalWithGst.toStringAsFixed(2);
   }
 
-  void addOrEditCommercialItem(BuildContext context) {
+  bool addOrEditCommercialItem(BuildContext context) {
     // Validate input fields
     bool itemNameMissing = false;
     if (isQuotationFieldVisible(1)) {
@@ -5028,7 +5103,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
           );
         },
       );
-      return;
+      return false;
     }
 
     // Create the new commercial item
@@ -5059,6 +5134,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     print(_commercialItems.map((e) => e.toJson()).toList());
     commercialTotalCalculator();
     notifyListeners(); // Trigger UI updates
+    return true;
   }
 
   void clearCommercialItemFields() {

@@ -39,7 +39,30 @@ class CustomElevatedButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return isLoading
-        ? const Center(child: CircularProgressIndicator())
+        ? ElevatedButton(
+            onPressed: null,
+            style: ElevatedButton.styleFrom(
+                backgroundColor: backgroundColor,
+                disabledBackgroundColor: backgroundColor,
+                side: BorderSide(color: borderColor),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(radius),
+                ),
+                padding: AppStyles.isWebScreen(context)
+                    ? EdgeInsets.symmetric(
+                        horizontal: horizontalPadding, vertical: verticalPadding)
+                    : EdgeInsets.symmetric(
+                        horizontal: horizontalPadding, vertical: 0),
+                elevation: elevation),
+            child: SizedBox(
+              width: 18,
+              height: 18,
+              child: CircularProgressIndicator(
+                strokeWidth: 2.5,
+                valueColor: AlwaysStoppedAnimation<Color>(textColor),
+              ),
+            ),
+          )
         : ElevatedButton(
             onPressed: onPressed,
             style: ElevatedButton.styleFrom(
