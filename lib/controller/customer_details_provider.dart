@@ -4205,13 +4205,10 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
   Future<void> getDocument(String customerId, BuildContext context) async {
     _isLoading = true;
+    _documentList.clear();
     notifyListeners();
 
     try {
-      SharedPreferences preferences = await SharedPreferences.getInstance();
-      String userId = preferences.getString('userId') ?? "";
-      _documentList.clear();
-
       final response = await HttpRequest.httpGetRequest(
           endPoint: '${HttpUrls.getDocumentList}?Customer_Id=$customerId');
 
