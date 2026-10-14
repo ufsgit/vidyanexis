@@ -37,7 +37,9 @@ class CompanyPermission {
       case 36:
         return "Lead Creation changes";
       case 45:
-        return "Consumer No In Lead Page";
+        return "Enquiry source add at new lead";
+      case 46:
+        return "Status add at new lead";
       default:
         return "Permission $companyPermissionId";
     }
@@ -93,7 +95,10 @@ class CompanyPermission {
           cap = "Lead Creation changes";
           break;
         case 45:
-          cap = "Consumer No In Lead Page";
+          cap = "Enquiry source add at new lead";
+          break;
+        case 46:
+          cap = "Status add at new lead";
           break;
       }
     }

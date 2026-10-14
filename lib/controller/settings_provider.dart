@@ -679,11 +679,6 @@ class SettingsProvider extends ChangeNotifier {
     if (_companyDetails.isNotEmpty &&
         _companyDetails[0].permissions.isNotEmpty) {
       for (var p in _companyDetails[0].permissions) {
-        if (p.companyPermissionId == 45) {
-          return p.value;
-        }
-      }
-      for (var p in _companyDetails[0].permissions) {
         final cap =
             (p.caption.isNotEmpty ? p.caption : p.displayCaption).toLowerCase();
         if (cap.contains('consumer no in lead page') ||
@@ -693,6 +688,50 @@ class SettingsProvider extends ChangeNotifier {
       }
     }
     return _consumerNoInLeadPage;
+  }
+
+  int _enquirySourceAddAtNewLead = 0;
+  int get enquirySourceAddAtNewLead {
+    if (_companyDetails.isNotEmpty &&
+        _companyDetails[0].permissions.isNotEmpty) {
+      for (var p in _companyDetails[0].permissions) {
+        if (p.companyPermissionId == 45) {
+          return p.value;
+        }
+      }
+      for (var p in _companyDetails[0].permissions) {
+        final cap =
+            (p.caption.isNotEmpty ? p.caption : p.displayCaption).toLowerCase();
+        if (cap.contains('enquiry source add at new lead') ||
+            cap.contains('enquiry_source_add_at_new_lead') ||
+            (cap.contains('enquiry source') && cap.contains('add'))) {
+          return p.value;
+        }
+      }
+    }
+    return _enquirySourceAddAtNewLead;
+  }
+
+  int _statusAddAtNewLead = 0;
+  int get statusAddAtNewLead {
+    if (_companyDetails.isNotEmpty &&
+        _companyDetails[0].permissions.isNotEmpty) {
+      for (var p in _companyDetails[0].permissions) {
+        if (p.companyPermissionId == 46) {
+          return p.value;
+        }
+      }
+      for (var p in _companyDetails[0].permissions) {
+        final cap =
+            (p.caption.isNotEmpty ? p.caption : p.displayCaption).toLowerCase();
+        if (cap.contains('status add at new lead') ||
+            cap.contains('status_add_at_new_lead') ||
+            (cap.contains('status') && cap.contains('add') && cap.contains('lead'))) {
+          return p.value;
+        }
+      }
+    }
+    return _statusAddAtNewLead;
   }
   String get leadNameLabel =>
       _leadNameChangeToCustomerName == 1 ? 'Customer Name' : 'Lead Name';
@@ -861,8 +900,23 @@ class SettingsProvider extends ChangeNotifier {
       _recordVoiceNote = value;
     } else if (permissionId == 45 ||
         (caption != null &&
-            (caption.toLowerCase().contains('consumer no in lead page') ||
-                caption.toLowerCase().contains('consumer_no_in_lead_page')))) {
+            (caption.toLowerCase().contains('enquiry source add at new lead') ||
+                caption.toLowerCase().contains('enquiry_source_add_at_new_lead')))) {
+      if (caption != null &&
+          (caption.toLowerCase().contains('consumer no in lead page') ||
+              caption.toLowerCase().contains('consumer_no_in_lead_page'))) {
+        _consumerNoInLeadPage = value;
+      } else {
+        _enquirySourceAddAtNewLead = value;
+      }
+    } else if (permissionId == 46 ||
+        (caption != null &&
+            (caption.toLowerCase().contains('status add at new lead') ||
+                caption.toLowerCase().contains('status_add_at_new_lead')))) {
+      _statusAddAtNewLead = value;
+    } else if (caption != null &&
+        (caption.toLowerCase().contains('consumer no in lead page') ||
+            caption.toLowerCase().contains('consumer_no_in_lead_page'))) {
       _consumerNoInLeadPage = value;
     } else if (caption != null &&
         (caption.toLowerCase().contains('upload_audio') ||
@@ -954,6 +1008,18 @@ class SettingsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setEnquirySourceAddAtNewLead(int value) {
+    _enquirySourceAddAtNewLead = value;
+    _syncStateToPermissionsList(45, value);
+    notifyListeners();
+  }
+
+  void setStatusAddAtNewLead(int value) {
+    _statusAddAtNewLead = value;
+    _syncStateToPermissionsList(46, value);
+    notifyListeners();
+  }
+
   int _customerPermissionMeAndAll = 0;
   int get customerPermissionMeAndAll => _customerPermissionMeAndAll;
 
@@ -1004,8 +1070,19 @@ class SettingsProvider extends ChangeNotifier {
           if (p.companyPermissionId == 45) return true;
           final cap =
               (p.caption.isNotEmpty ? p.caption : p.displayCaption).toLowerCase();
-          return cap.contains('consumer no in lead page') ||
+          return cap.contains('enquiry source add at new lead') ||
+              cap.contains('enquiry_source_add_at_new_lead') ||
+              cap.contains('consumer no in lead page') ||
               cap.contains('consumer_no_in_lead_page');
+        });
+      }
+      if (index == -1 && permissionId == 46) {
+        index = _companyDetails[0].permissions.indexWhere((p) {
+          if (p.companyPermissionId == 46) return true;
+          final cap =
+              (p.caption.isNotEmpty ? p.caption : p.displayCaption).toLowerCase();
+          return cap.contains('status add at new lead') ||
+              cap.contains('status_add_at_new_lead');
         });
       }
       if (index != -1) {
@@ -1080,8 +1157,19 @@ class SettingsProvider extends ChangeNotifier {
           if (p.companyPermissionId == 45) return true;
           final cap =
               (p.caption.isNotEmpty ? p.caption : p.displayCaption).toLowerCase();
-          return cap.contains('consumer no in lead page') ||
+          return cap.contains('enquiry source add at new lead') ||
+              cap.contains('enquiry_source_add_at_new_lead') ||
+              cap.contains('consumer no in lead page') ||
               cap.contains('consumer_no_in_lead_page');
+        });
+      }
+      if (index == -1 && permissionId == 46) {
+        index = _companyDetails[0].permissions.indexWhere((p) {
+          if (p.companyPermissionId == 46) return true;
+          final cap =
+              (p.caption.isNotEmpty ? p.caption : p.displayCaption).toLowerCase();
+          return cap.contains('status add at new lead') ||
+              cap.contains('status_add_at_new_lead');
         });
       }
       if (index != -1) {

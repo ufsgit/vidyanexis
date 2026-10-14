@@ -1428,7 +1428,8 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
                     selectedValue: dropDownProvider.selectedFollowUpId,
                   ),
                 ),
-                IconButton(
+                if (settingsProvider.statusAddAtNewLead == 1)
+                  IconButton(
                   tooltip: "Add Followup Status",
                   icon: Icon(Icons.add_circle, color: AppColors.primaryViolet),
                   onPressed: () {
@@ -2924,7 +2925,8 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  IconButton(
+                  if (settingsProvider.enquirySourceAddAtNewLead == 1)
+                    IconButton(
                     tooltip: "Add Enquiry Source",
                     icon:
                         Icon(Icons.add_circle, color: AppColors.primaryViolet),
