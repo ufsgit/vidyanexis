@@ -805,6 +805,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
   final TextEditingController amcPeriodIntervalController =
       TextEditingController();
   final TextEditingController amcCategoryController = TextEditingController();
+  final TextEditingController nextServiceDateController = TextEditingController();
 
   int? _selectedAMCStatus;
   int? get selectedAMCStatus => _selectedAMCStatus;
@@ -2057,6 +2058,54 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
   set maintenanceDates(List<MaintenanceDate> newDates) {
     _maintenanceDates = List.from(newDates);
+    updateNextServiceDateFromList();
+  }
+
+  /// Finds the earliest incomplete service date and sets
+  void updateNextServiceDateFromList() {
+    try {
+      final next = _maintenanceDates.firstWhere(
+        (d) => d.completed != 1,
+        orElse: () => MaintenanceDate(date: '', completed: 0),
+      );
+      if (next.date.isNotEmpty) {
+        nextServiceDateController.text = next.date.toDDMMYYYY();
+      } else {
+        nextServiceDateController.clear();
+      }
+    } catch (_) {
+      nextServiceDateController.clear();
+    }
+    notifyListeners();
+  }
+
+  /// Updates the date of the current "next" (first incomplete) service period
+  /// when the user picks a new Next Service Date. Keeps list + controller in sync.
+  void updateNextServiceDateInList(String newDisplayDate) {
+    if (newDisplayDate.isEmpty) return;
+
+    final idx = _maintenanceDates.indexWhere((d) => d.completed != 1);
+    if (idx < 0) return;
+
+    final ymd = newDisplayDate.toyyyymmdd();
+    final old = _maintenanceDates[idx];
+    _maintenanceDates[idx] = MaintenanceDate(
+      date: ymd,
+      completed: old.completed,
+    );
+    nextServiceDateController.text = newDisplayDate;
+    notifyListeners();
+  }
+
+  /// Marks a service period completed / incomplete and refreshes next-service date.
+  void updateMaintenanceCompleted(int index, bool completed) {
+    if (index < 0 || index >= _maintenanceDates.length) return;
+    final old = _maintenanceDates[index];
+    _maintenanceDates[index] = MaintenanceDate(
+      date: old.date,
+      completed: completed ? 1 : 0,
+    );
+    updateNextServiceDateFromList();
   }
 
   void updateTotalAmount(int total) {
@@ -2665,6 +2714,12 @@ class CustomerDetailsProvider extends ChangeNotifier {
     amcDescriptionController.clear();
     amcServiceController.clear();
     amcProductNameController.clear();
+    nextServiceDateController.clear();
+    _maintenanceDates = [];
+    amcTotalDurationController.clear();
+    amcPeriodIntervalController.clear();
+    amcCategoryController.clear();
+    updateAMCCategory(0,'');
   }
 
   void updateTaskType(int value, String taskTypeName) {
@@ -5339,6 +5394,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
       ));
     }
 
+    updateNextServiceDateFromList();
     notifyListeners();
   }
 

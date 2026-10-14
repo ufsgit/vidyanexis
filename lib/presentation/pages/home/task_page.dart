@@ -5331,7 +5331,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
-                                                Text('Pending Documents',
+                                                /*
                                                     style: TextStyle(
                                                         fontFamily:
                                                             'PlusJakartaSans',
@@ -5339,7 +5339,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                         color: Colors
                                                             .grey.shade600,
                                                         fontWeight:
-                                                            FontWeight.w500)),
+                                                            FontWeight.w500)), */
                                                 const SizedBox(height: 4),
                                                 Container(
                                                   width: double.infinity,
@@ -5550,6 +5550,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                                             );
                                                           },
                                                         ),
+                                                      if (hasDocs && !isDocumentButtonEnabled)
+                                                        _buildUploadOtherDocTile(context, task),
                                                       if (hasMandatory)
                                                         ...reportsProvider
                                                             .statusData
@@ -7722,6 +7724,68 @@ class _tasksPageReportState extends State<TaskPage> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+ 
+
+  Widget _buildUploadOtherDocTile(BuildContext context, TaskReportModel task) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 6, bottom: 2),
+      child: InkWell(
+        onTap: () async {
+          await showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (context) => ImageUploadAlert(
+              customerId: task.customerId.toString(),
+              taskId: task.taskId.toString(),
+            ),
+          );
+        },
+        borderRadius: BorderRadius.circular(4),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF8FAFC),
+            borderRadius: BorderRadius.circular(4),
+            border: Border.all(color: const Color(0xFFE2E8F0)),
+          ),
+          child: Row(
+            children: [
+              const Expanded(
+                child: Row(
+                  children: [
+                    Icon(Icons.add_circle_outline, size: 16, color: AppColors.appViolet),
+                    SizedBox(width: 6),
+                    Text(
+                      'Upload another document',
+                      style: TextStyle(
+                        fontFamily: 'PlusJakartaSans',
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.appViolet,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: AppColors.appViolet.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: const Icon(
+                  Icons.upload_file_rounded,
+                  size: 16,
+                  color: AppColors.appViolet,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

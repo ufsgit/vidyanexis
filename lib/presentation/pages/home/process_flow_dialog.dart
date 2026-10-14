@@ -1001,7 +1001,65 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                 return Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    _buildSectionHeader('PENDING DOCUMENTS'),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        _buildSectionHeader('PENDING DOCUMENTS'),
+                                        InkWell(
+                                          onTap: () async {
+                                            await showDialog(
+                                              barrierDismissible: false,
+                                              context: context,
+                                              builder: (context) =>
+                                                  ImageUploadAlert(
+                                                customerId: widget
+                                                    .task.customerId
+                                                    .toString(),
+                                                taskId: widget.task.taskId
+                                                    .toString(),
+                                              ),
+                                            );
+                                          },
+                                          borderRadius:
+                                              BorderRadius.circular(4),
+                                          child: Container(
+                                            margin: const EdgeInsets.only(
+                                                right: 4, bottom: 2),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 8, vertical: 3),
+                                            decoration: BoxDecoration(
+                                              color: AppColors.appViolet
+                                                  .withOpacity(0.08),
+                                              borderRadius:
+                                                  BorderRadius.circular(4),
+                                              border: Border.all(
+                                                  color: AppColors.appViolet
+                                                      .withOpacity(0.3)),
+                                            ),
+                                            child: const Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Icon(Icons.upload_file_rounded,
+                                                    size: 14,
+                                                    color: AppColors.appViolet),
+                                                SizedBox(width: 4),
+                                                Text(
+                                                  'Upload Other',
+                                                  style: TextStyle(
+                                                    fontFamily:
+                                                        'PlusJakartaSans',
+                                                    fontSize: 11,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: AppColors.appViolet,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                     const SizedBox(height: 8),
                                     Container(
                                       decoration: BoxDecoration(

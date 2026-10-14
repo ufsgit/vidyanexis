@@ -1113,7 +1113,8 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                         ),
                                       ),
                                     ),
-                                    SizedBox(
+                                    if (settingsProvider.enquirySourceAddAtNewLead == 1)
+                                      SizedBox(
                                       width: 48,
                                       child: IconButton(
                                         tooltip: "Add Enquiry Source",
@@ -2358,10 +2359,12 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                                   .selectedFollowUpId,
                                             ),
                                           ),
-                                          SizedBox(
+                                          if (settingsProvider.statusAddAtNewLead == 1)
+                                       SizedBox(
                                             width: 10,
                                           ),
-                                          IconButton(
+                                          if (settingsProvider.statusAddAtNewLead == 1)
+                                            IconButton(
                                             alignment: Alignment.center,
                                             tooltip: "Add Followup Status",
                                             icon: Icon(Icons.add_circle,
