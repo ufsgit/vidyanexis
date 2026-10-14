@@ -25,6 +25,11 @@ import 'package:vidyanexis/presentation/pages/home/refund_form_page.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_checklist_management_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/payment_tab_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_payment_widget.dart';
+import 'package:vidyanexis/controller/models/form_settings_provider.dart';
+import 'package:vidyanexis/controller/payment_schedule_provider.dart';
+import 'package:vidyanexis/controller/invoice_tab_provider.dart';
+import 'package:vidyanexis/controller/stock_use_provider.dart';
+import 'package:vidyanexis/controller/stockreturn_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
@@ -298,6 +303,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
   @override
   void initState() {
     super.initState();
+    _refreshAnimationController = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // final sidebarProvider =
       //     Provider.of<SidebarProvider>(context, listen: false);
@@ -335,6 +344,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
   }
 
   late TabController _tabController;
+  late AnimationController _refreshAnimationController;
   List<Tab> _tabs = [];
   bool _isControllerInitialized = false;
   Key _checklistKey = UniqueKey();
@@ -430,53 +440,127 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
     }
   }
 
-  void _fetchDataForCurrentTab() {
-    if (_tabController.index < 0 || _tabController.index >= _tabs.length)
+  void _fetchDataForCurrentTab({bool forceRefresh = false}) {
+    if (!_isControllerInitialized ||
+        _tabController.index < 0 ||
+        _tabController.index >= _tabs.length) {
       return;
+    }
     String currentTabName = _tabs[_tabController.index].text ?? "";
     final provider =
         Provider.of<CustomerDetailsProvider>(context, listen: false);
 
     switch (currentTabName) {
       case "Info":
+        provider.fetchLeadDetails(widget.customerId, context).then((_) {
+          if (provider.leadDetails != null &&
+              provider.leadDetails!.isNotEmpty) {
+            final lead = provider.leadDetails!.first;
+            try {
+              final leadsProvider =
+                  Provider.of<LeadsProvider>(context, listen: false);
+              leadsProvider.getCustomFieldsByEnquiryForId(context,
+                  enquiryForId: lead.enquiryForId,
+                  leadId: lead.customerId,
+                  departmentId: lead.departmentId);
+            } catch (_) {}
+          }
+        });
         break;
       case "Summary":
-        // provider.getTaskOverview(...) // if needed
+        provider.getCustomerTaskOverview(widget.customerId);
         break;
       case "Tasks":
         provider.getTaskList(widget.customerId, context);
         break;
       case "Quotations":
-        provider.fetchQuotationListIfNeeded(widget.customerId, context);
+        if (forceRefresh) {
+          provider.getQuatationList(widget.customerId, context);
+        } else {
+          provider.fetchQuotationListIfNeeded(widget.customerId, context);
+        }
         break;
       case "Documents":
         provider.getDocument(widget.customerId, context);
         break;
       case "Forms":
-        provider.getTaskDocument(widget.customerId, context);
+        try {
+          Provider.of<FormProvider>(context, listen: false)
+              .getFormDataByCustomer(widget.customerId);
+        } catch (_) {}
+        break;
+      case "Complaints":
+        provider.getServiceList(widget.customerId, context);
+        break;
+      case "Periodic Service":
+        provider.getAmc(widget.customerId, '0', context);
         break;
       case "History":
         provider.getFollowUpHistory(widget.customerId, context);
         break;
-      case "Edit History":
-        provider.getLeadHistoryReport(widget.customerId, context);
-        break;
       case "Receipt":
         provider.getRecieptListApi(widget.customerId, context);
         break;
-      case "Periodic Service":
-        // provider.getServiceList(widget.customerId, context);
-        // provider.getAmc(widget.customerId, '0', context);
-        // final dropDownProvider =
-        //     Provider.of<DropDownProvider>(context, listen: false);
-        // dropDownProvider.getAMCStatus(context);
-        //passing directly in amc.tab.widget.dart
+      case "Expense":
+        provider.getExpenseListApi(widget.customerId, context,
+            forceRefresh: true);
+        break;
+      case "CheckList Management":
+        setState(() {
+          _checklistKey = UniqueKey();
+        });
+        try {
+          Provider.of<SettingsProvider>(context, listen: false)
+              .getDocumentCheckList(context);
+        } catch (_) {}
+        break;
+      case "Payment Schedule":
+        try {
+          Provider.of<PaymentScheduleProvider>(context, listen: false)
+              .getPaymentScheduleList(widget.customerId, context);
+        } catch (_) {}
+        break;
+      case "Payment":
+        provider.getPaymentListApi(widget.customerId, context);
+        break;
+      case "Refund Form":
+        provider.getRefundDetails(widget.customerId, context);
+        break;
+      case "Invoice":
+        try {
+          Provider.of<InvoiceTabProvider>(context, listen: false)
+              .getInvoiceByCustomer(widget.customerId, context);
+          provider.getQuatationList(widget.customerId, context);
+          provider.getRecieptListApi(widget.customerId, context);
+        } catch (_) {}
+        break;
+      case "Check list ":
+        try {
+          final stockuseprovider =
+              Provider.of<StockUseProvider>(context, listen: false);
+          stockuseprovider.searchItemListStock(context);
+          stockuseprovider.searchStockUseList(
+              context: context, customerId: widget.customerId);
+        } catch (_) {}
+        break;
+      case "Stock Return":
+        try {
+          final stockReturnProvider =
+              Provider.of<StockreturnProvider>(context, listen: false);
+          stockReturnProvider.searchItemListStock(context);
+          stockReturnProvider.searchStockReturnList(
+              context: context, customerId: widget.customerId);
+        } catch (_) {}
+        break;
+      case "Edit History":
+        provider.getLeadHistoryReport(widget.customerId, context);
         break;
     }
   }
 
   @override
   void dispose() {
+    _refreshAnimationController.dispose();
     if (_isControllerInitialized) {
       _tabController.dispose();
     }
@@ -1076,10 +1160,14 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                 constraints: const BoxConstraints(),
                                 tooltip: "Refresh",
                                 onPressed: () {
-                                  _fetchDataForCurrentTab();
+                                  _refreshAnimationController.forward(from: 0.0);
+                                  _fetchDataForCurrentTab(forceRefresh: true);
                                 },
-                                icon: const Icon(Icons.refresh,
-                                    color: AppColors.primaryBlue, size: 20),
+                                icon: RotationTransition(
+                                  turns: _refreshAnimationController,
+                                  child: const Icon(Icons.refresh,
+                                      color: AppColors.primaryBlue, size: 20),
+                                ),
                               ),
                               if (settingsprovider.menuIsSaveMap[13] == 1 &&
                                   _isControllerInitialized &&
@@ -4983,7 +5071,9 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                             if (settingsprovider
                                                     .menuIsViewMap[16] ==
                                                 1)
-                                              customerDetailsProvider.isLoading
+                                              customerDetailsProvider.isLoading ||
+                                                      customerDetailsProvider
+                                                          .isQuotationListLoading
                                                   ? const Center(
                                                       child:
                                                           CircularProgressIndicator())
@@ -6419,11 +6509,15 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
     const borderColor = Color(0xFFE9EDF1);
 
     if (customerDetailsProvider.isQuotationListLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return const Expanded(
+        child: Center(child: CircularProgressIndicator()),
+      );
     }
 
     return filteredQuotations.isEmpty
-        ? const Center(child: Text("No Quotations available."))
+        ? const Expanded(
+            child: Center(child: Text("No Quotations available.")),
+          )
         : !AppStyles.isWebScreen(context)
             ? Expanded(
                 child: ListView.builder(
