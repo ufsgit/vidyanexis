@@ -348,6 +348,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
   List<Tab> _tabs = [];
   bool _isControllerInitialized = false;
   Key _checklistKey = UniqueKey();
+  int? _lastFetchedTabIndex;
 
   bool _canScrollLeft = false;
   bool _canScrollRight = false;
@@ -427,7 +428,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
           length: _tabs.length, vsync: this, initialIndex: initialIndex);
       _tabController.addListener(() {
         if (!_tabController.indexIsChanging) {
-          _fetchDataForCurrentTab();
+          _fetchDataForCurrentTab(tabIndex: _tabController.index);
           setState(() {});
         }
       });
@@ -435,18 +436,23 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
 
       // Fetch data for the initially selected tab
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        _fetchDataForCurrentTab();
+        _fetchDataForCurrentTab(forceRefresh: true);
       });
     }
   }
 
-  void _fetchDataForCurrentTab({bool forceRefresh = false}) {
-    if (!_isControllerInitialized ||
-        _tabController.index < 0 ||
-        _tabController.index >= _tabs.length) {
+  void _fetchDataForCurrentTab({bool forceRefresh = false, int? tabIndex}) {
+    final activeIndex =
+        tabIndex ?? (_isControllerInitialized ? _tabController.index : -1);
+    if (activeIndex < 0 || activeIndex >= _tabs.length) {
       return;
     }
-    String currentTabName = _tabs[_tabController.index].text ?? "";
+    if (!forceRefresh && _lastFetchedTabIndex == activeIndex) {
+      return;
+    }
+    _lastFetchedTabIndex = activeIndex;
+
+    String currentTabName = _tabs[activeIndex].text ?? "";
     final provider =
         Provider.of<CustomerDetailsProvider>(context, listen: false);
 
@@ -474,11 +480,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
         provider.getTaskList(widget.customerId, context);
         break;
       case "Quotations":
-        if (forceRefresh) {
-          provider.getQuatationList(widget.customerId, context);
-        } else {
-          provider.fetchQuotationListIfNeeded(widget.customerId, context);
-        }
+        provider.getQuatationList(widget.customerId, context);
         break;
       case "Documents":
         provider.getDocument(widget.customerId, context);
@@ -1111,6 +1113,11 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                     ),
                                     child: TabBar(
                                       controller: _tabController,
+                                      onTap: (index) {
+                                        _fetchDataForCurrentTab(
+                                            forceRefresh: true,
+                                            tabIndex: index);
+                                      },
                                       labelColor: AppColors.primaryBlue,
                                       unselectedLabelColor:
                                           const Color(0xFF64748B),
