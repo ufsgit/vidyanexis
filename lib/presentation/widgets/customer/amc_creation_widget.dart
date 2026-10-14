@@ -699,6 +699,61 @@ class _AmcCreationWidgetState extends State<AmcCreationWidget> {
                       ),
                     ),
                   ],
+                  // ===== Next Service Date =====
+                  if (customerDetailsProvider
+                      .isPeriodicServiceFieldVisible(11)) ...[
+                    Expanded(
+                      child: TextField(
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textBlack,
+                        ),
+                        controller:
+                            customerDetailsProvider.nextServiceDateController,
+                        readOnly: true,
+                        onTap: () async {
+                          await _selectNextServiceDate(
+                              context, customerDetailsProvider);
+                        },
+                        decoration: InputDecoration(
+                          label: RichText(
+                            text: TextSpan(
+                              text: customerDetailsProvider
+                                  .getPeriodicServiceFieldName(
+                                      11, 'Next Service Date'),
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.textGrey3,
+                              ),
+                            ),
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(4),
+                            borderSide: BorderSide(
+                                color: AppColors.textGrey2, width: 1),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(4),
+                            borderSide: BorderSide(
+                                color: AppColors.textGrey2, width: 1),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(4),
+                            borderSide: BorderSide(
+                                color: AppColors.textGrey2, width: 1),
+                          ),
+                          hintStyle: GoogleFonts.plusJakartaSans(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.textGrey3,
+                          ),
+                          suffixIcon: const Icon(Icons.calendar_month),
+                        ),
+                      ),
+                    ),
+                  ],
                 ],
               ),
               if (customerDetailsProvider.maintenanceDates.isNotEmpty &&
@@ -717,7 +772,7 @@ class _AmcCreationWidgetState extends State<AmcCreationWidget> {
                       ),
                     ),
                     const SizedBox(height: 8.0),
-                    if (customerDetailsProvider.maintenanceDates.length > 1)
+                    if (customerDetailsProvider.maintenanceDates.isNotEmpty)
                       Container(
                         padding: const EdgeInsets.all(12.0),
                         decoration: BoxDecoration(
@@ -777,14 +832,10 @@ class _AmcCreationWidgetState extends State<AmcCreationWidget> {
                                   Checkbox(
                                     value: (dateString.completed == 1),
                                     onChanged: (bool? value) {
-                                      setState(() {
-                                        customerDetailsProvider
-                                                .maintenanceDates[index + 1] =
-                                            MaintenanceDate(
-                                          date: dateString.date,
-                                          completed: (value ?? false) ? 1 : 0,
-                                        );
-                                      });
+                                      customerDetailsProvider
+                                          .updateMaintenanceCompleted(
+                                              index, value ?? false);
+                                      setState(() {});
                                     },
                                     activeColor: AppColors.primaryBlue,
                                   ),
@@ -908,6 +959,45 @@ class _AmcCreationWidgetState extends State<AmcCreationWidget> {
         ),
       ],
     );
+  }
+
+  /// Date picker for Next Service Date. Updates the corresponding entry
+  /// in the maintenanceDates list automatically.
+  Future<void> _selectNextServiceDate(
+      BuildContext context, CustomerDetailsProvider provider) async {
+    DateTime initial = DateTime.now();
+    try {
+      if (provider.nextServiceDateController.text.isNotEmpty) {
+        initial = DateFormat('dd-MM-yyyy')
+            .parse(provider.nextServiceDateController.text);
+      }
+    } catch (_) {}
+
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: initial,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: AppColors.appViolet,
+              onPrimary: Colors.white,
+              surface: Colors.white,
+              onSurface: AppColors.textBlack,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (picked != null) {
+      final formattedDate = DateFormat('dd-MM-yyyy').format(picked);
+      provider.updateNextServiceDateInList(formattedDate);
+      setState(() {}); // refresh the service-periods list UI
+    }
   }
 }
 
