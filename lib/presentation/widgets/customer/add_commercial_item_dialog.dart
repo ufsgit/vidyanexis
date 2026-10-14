@@ -240,8 +240,11 @@ class _AddCommercialItemDialogState extends State<AddCommercialItemDialog> {
                     child: CustomElevatedButton(
                       buttonText: 'Save',
                       onPressed: () {
-                        provider.addOrEditCommercialItem(context);
-                        Navigator.pop(context);
+                        final isSaved =
+                            provider.addOrEditCommercialItem(context);
+                        if (isSaved) {
+                          Navigator.pop(context);
+                        }
                       },
                       backgroundColor: AppColors.appViolet,
                       borderColor: AppColors.appViolet,

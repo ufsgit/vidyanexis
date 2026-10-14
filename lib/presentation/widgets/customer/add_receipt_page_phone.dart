@@ -58,14 +58,15 @@ class _AddReceiptPagePhoneState extends State<AddReceiptPagePhone> {
         onLeadingPressed: () {
           Navigator.of(context).pop();
         },
-        onSavePressed: () async {
-          if (customerDetailsProvider.recieptAmountController.text.isNotEmpty) {
-            await customerDetailsProvider.saveReciept(
-                widget.recieptId, widget.customerId, context);
-            if (widget.isEdit) {
-              Navigator.pop(context);
-            }
-          } else {
+        onSavePressed: customerDetailsProvider.isSavingReciept
+            ? () {}
+            : () async {
+                if (customerDetailsProvider.isSavingReciept) return;
+                if (customerDetailsProvider
+                    .recieptAmountController.text.isNotEmpty) {
+                  await customerDetailsProvider.saveReciept(
+                      widget.recieptId, widget.customerId, context);
+                } else {
             showDialog(
               context: context,
               builder: (BuildContext context) {
