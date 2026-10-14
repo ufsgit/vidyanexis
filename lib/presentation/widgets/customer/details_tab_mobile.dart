@@ -5,6 +5,7 @@ import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/lead_details_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
+import 'package:vidyanexis/presentation/widgets/customer/category_download_dialog.dart';
 import 'package:vidyanexis/presentation/widgets/customer/label_value_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/tile_widget.dart';
 
@@ -598,6 +599,20 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                                           );
                                         },
                                       ),
+                                _buildActionBtn(
+                                  context,
+                                  text: 'Download Document',
+                                  icon: Icons.download_outlined,
+                                  onTap: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) =>
+                                          DocumentCategoryDownloadDialog(
+                                        customerId: widget.customerId,
+                                      ),
+                                    );
+                                  },
+                                ),
                               ],
                             ),
                           ),

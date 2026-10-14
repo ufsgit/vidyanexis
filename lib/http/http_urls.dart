@@ -208,6 +208,8 @@ class HttpUrls {
   static String deleteAMC = "amc/Delete_amc";
   static String deleteQuotation = "quotation_master/Delete_quotation_master";
   static String deleteReciept = "service/Delete_Receipt";
+  static String updateReceiptApproval = "service/Update_Receipt_Approval";
+  static String updateReceiptRejection = "service/Update_Receipt_Rejection";
   static String addDocumentType = "settings/Save_document_type";
   static String deleteDocumentType = "settings/Delete_document_type";
   static String searchWorkSummary = "user_details/Search_Work_Summary";

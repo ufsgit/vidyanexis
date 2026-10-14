@@ -6054,6 +6054,110 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
+  Future<bool> updateReceiptApprovalStatus(
+      String receiptId, BuildContext context, String customerId) async {
+    try {
+      Loader.showLoader(context);
+      final preferences = await SharedPreferences.getInstance();
+      final String userId = preferences.getString('userId') ?? "";
+      final String userName = preferences.getString('userName') ?? "";
+
+      final bodyData = {
+        "Receipt_Id": int.tryParse(receiptId) ?? receiptId,
+        "Admin_Approval": 1,
+        "Approved_By": int.tryParse(userId) ?? userId,
+        "Approved_By_Name": userName,
+      };
+
+      final response = await HttpRequest.httpPostRequest(
+        endPoint: HttpUrls.updateReceiptApproval,
+        bodyData: bodyData,
+        menuId: 216,
+      );
+
+      if (!context.mounted) return false;
+      Loader.stopLoader(context);
+
+      if (response?.statusCode == 200 || response?.statusCode == 201) {
+        await getRecieptListApi(customerId, context);
+        if (context.mounted) {
+          await getInvoiceRecieptTotal(customerId, context);
+        }
+        return true;
+      } else {
+        final errorMsg = response?.data is Map && response?.data['message'] != null
+            ? response?.data['message'].toString()
+            : 'Failed to update approval status (Status: ${response?.statusCode})';
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(errorMsg ?? 'Failed to update approval status'), backgroundColor: Colors.red),
+        );
+      }
+      return false;
+    } catch (e) {
+      debugPrint('Error updating receipt approval status: $e');
+      if (context.mounted) {
+        Loader.stopLoader(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error updating approval status: $e'), backgroundColor: Colors.red),
+        );
+      }
+      return false;
+    }
+  }
+
+  Future<bool> updateReceiptRejectionStatus(
+      String receiptId, String rejectionReason, BuildContext context, String customerId) async {
+    try {
+      Loader.showLoader(context);
+      final preferences = await SharedPreferences.getInstance();
+      final String userId = preferences.getString('userId') ?? "";
+      final String userName = preferences.getString('userName') ?? "";
+
+      final bodyData = {
+        "Receipt_Id": int.tryParse(receiptId) ?? receiptId,
+        "Admin_Approval": 2,
+        "Is_Rejected": 1,
+        "Rejected_By": int.tryParse(userId) ?? userId,
+        "Rejected_By_Name": userName,
+        "Rejection_Reason": rejectionReason,
+      };
+
+      final response = await HttpRequest.httpPostRequest(
+        endPoint: HttpUrls.updateReceiptRejection,
+        bodyData: bodyData,
+        menuId: 217,
+      );
+
+      if (!context.mounted) return false;
+      Loader.stopLoader(context);
+
+      if (response?.statusCode == 200 || response?.statusCode == 201) {
+        await getRecieptListApi(customerId, context);
+        if (context.mounted) {
+          await getInvoiceRecieptTotal(customerId, context);
+        }
+        return true;
+      } else {
+        final errorMsg = response?.data is Map && response?.data['message'] != null
+            ? response?.data['message'].toString()
+            : 'Failed to update rejection status (Status: ${response?.statusCode})';
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(errorMsg ?? 'Failed to update rejection status'), backgroundColor: Colors.red),
+        );
+      }
+      return false;
+    } catch (e) {
+      debugPrint('Error updating receipt rejection status: $e');
+      if (context.mounted) {
+        Loader.stopLoader(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error updating rejection status: $e'), backgroundColor: Colors.red),
+        );
+      }
+      return false;
+    }
+  }
+
   Future<bool> checkQuotationConvert(
       String masterId, BuildContext context, String customerId) async {
     try {

@@ -67,11 +67,11 @@ class CustomerOutstandingReportProvider extends ChangeNotifier {
   }
 
   void selectDateFilterOption(int? index) {
+    _selectedDateFilterIndex = index;
     if (index == null) {
-      _selectedDateFilterIndex = 5; // Default to Financial Year
-      _setFinancialYearDates();
+      _fromDate = null;
+      _toDate = null;
     } else {
-      _selectedDateFilterIndex = index;
       setDateFilterByIndex(index);
     }
     notifyListeners();
@@ -127,11 +127,21 @@ class CustomerOutstandingReportProvider extends ChangeNotifier {
     }
   }
 
+  void clearDateFilter(BuildContext context) {
+    _fromDate = null;
+    _toDate = null;
+    _selectedDateFilterIndex = null;
+    notifyListeners();
+    getReport(context);
+  }
+
   void resetFilters(BuildContext context) {
     _search = '';
     _selectedEnquirySourceId = null;
-    _selectedDateFilterIndex = 5;
-    _setFinancialYearDates();
+    _selectedDateFilterIndex = null;
+    _fromDate = null;
+    _toDate = null;
+    notifyListeners();
     getReport(context);
   }
 

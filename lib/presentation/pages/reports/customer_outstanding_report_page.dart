@@ -40,6 +40,14 @@ class _CustomerOutstandingReportPageState
   }
 
   @override
+  void dispose() {
+    searchController.dispose();
+    searchFocusNodeWeb.dispose();
+    searchFocusNodeMobile.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     if (!AppStyles.isWebScreen(context)) {
       return const CustomerOutstandingReportMobile();
@@ -136,7 +144,13 @@ class _CustomerOutstandingReportPageState
                             }
                           });
                         },
-                        onSubmitted: (val) => provider.getReport(context),
+                        onSubmitted: (val) {
+                          provider.setSearch(val.trim());
+                          provider.getReport(context);
+                        },
+                        onChanged: (val) {
+                          provider.setSearch(val.trim());
+                        },
                         decoration: InputDecoration(
                           hintText: 'Search here....',
                           hintStyle: GoogleFonts.plusJakartaSans(
@@ -149,6 +163,7 @@ class _CustomerOutstandingReportPageState
                               horizontal: 16, vertical: 10),
                           suffixIcon: GestureDetector(
                             onTap: () {
+                              provider.setSearch(searchController.text.trim());
                               provider.getReport(context);
                             },
                             child: const Icon(Icons.search,
@@ -224,7 +239,10 @@ class _CustomerOutstandingReportPageState
                       _buildEnquirySourceDropdown(context, provider),
                       const Spacer(),
                       CommonReportResetButton(
-                        onReset: () => provider.resetFilters(context),
+                        onReset: () {
+                          searchController.clear();
+                          provider.resetFilters(context);
+                        },
                         label: 'Clear All',
                       ),
                     ],
@@ -598,8 +616,12 @@ class _CustomerOutstandingReportPageState
                         final bool isSelected =
                             provider.selectedDateFilterIndex == index;
                         return ChoiceChip(
-                          onSelected: (_) {
-                            provider.selectDateFilterOption(index);
+                          onSelected: (selected) {
+                            if (selected) {
+                              provider.selectDateFilterOption(index);
+                            } else {
+                              provider.selectDateFilterOption(null);
+                            }
                           },
                           selected: isSelected,
                           shape: RoundedRectangleBorder(
@@ -658,8 +680,7 @@ class _CustomerOutstandingReportPageState
                                     BorderSide(color: Colors.grey[300]!),
                               ),
                               hintText: provider.fromDate != null
-                                  ? '${provider.fromDate!.toLocal()}'
-                                      .split(' ')[0]
+                                  ? provider.formattedFromDate
                                   : 'From',
                               hintStyle: GoogleFonts.plusJakartaSans(
                                 fontSize: 13,
@@ -690,8 +711,7 @@ class _CustomerOutstandingReportPageState
                                     BorderSide(color: Colors.grey[300]!),
                               ),
                               hintText: provider.toDate != null
-                                  ? '${provider.toDate!.toLocal()}'
-                                      .split(' ')[0]
+                                  ? provider.formattedToDate
                                   : 'To',
                               hintStyle: GoogleFonts.plusJakartaSans(
                                 fontSize: 13,
@@ -736,7 +756,7 @@ class _CustomerOutstandingReportPageState
                       child: TextButton(
                         onPressed: () {
                           Navigator.pop(contextx);
-                          provider.resetFilters(context);
+                          provider.clearDateFilter(context);
                         },
                         style: TextButton.styleFrom(
                           backgroundColor: AppColors.textRed.withOpacity(0.08),

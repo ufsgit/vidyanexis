@@ -437,6 +437,51 @@ class _BillingDetailsPagePhoneState extends State<BillingDetailsPagePhone> {
                           color: AppColors.textGrey4,
                           fontSize: 12,
                         ),
+                        const SizedBox(height: 2),
+                        if (payment.adminApproval == 1)
+                          Row(
+                            children: [
+                              const Icon(Icons.check_circle,
+                                  color: Colors.green, size: 14),
+                              const SizedBox(width: 4),
+                              Text(
+                                'Approved by ${payment.approvedByName?.isNotEmpty == true ? payment.approvedByName! : 'admin'}',
+                                style: const TextStyle(
+                                  color: Colors.green,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          )
+                        else if (payment.adminApproval == 2 ||
+                            payment.isRejected == 1 ||
+                            (payment.rejectionReason != null &&
+                                payment.rejectionReason!.trim().isNotEmpty))
+                          Row(
+                            children: [
+                              const Icon(Icons.cancel_outlined,
+                                  color: Colors.red, size: 14),
+                              const SizedBox(width: 4),
+                              Text(
+                                'Rejected by ${payment.rejectedByName?.isNotEmpty == true ? payment.rejectedByName! : 'admin'}',
+                                style: const TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          )
+                        else
+                          Text(
+                            'Pending',
+                            style: TextStyle(
+                              color: Colors.amber.shade900,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                       ],
                     ),
                   ),

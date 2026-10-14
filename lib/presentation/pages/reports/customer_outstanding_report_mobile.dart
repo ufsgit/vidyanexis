@@ -220,7 +220,10 @@ class _CustomerOutstandingReportMobileState
                         width: double.infinity,
                         child: CommonReportResetButton(
                           label: 'Reset All Filters',
-                          onReset: () => provider.resetFilters(context),
+                          onReset: () {
+                            searchController.clear();
+                            provider.resetFilters(context);
+                          },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
                             foregroundColor: AppColors.textRed,
@@ -383,7 +386,11 @@ class _CustomerOutstandingReportMobileState
                       label: Text(dateButtonTitles[index]),
                       selected: provider.selectedDateFilterIndex == index,
                       onSelected: (selected) {
-                        provider.selectDateFilterOption(index);
+                        if (selected) {
+                          provider.selectDateFilterOption(index);
+                        } else {
+                          provider.selectDateFilterOption(null);
+                        }
                       },
                     );
                   }),
@@ -427,6 +434,14 @@ class _CustomerOutstandingReportMobileState
               ],
             ),
             actions: [
+              TextButton(
+                onPressed: () {
+                  provider.clearDateFilter(context);
+                  Navigator.pop(context);
+                },
+                child: const Text('Clear Filter',
+                    style: TextStyle(color: Colors.red)),
+              ),
               TextButton(
                   onPressed: () => Navigator.pop(context),
                   child: const Text('Close')),

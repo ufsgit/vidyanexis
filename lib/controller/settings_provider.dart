@@ -472,6 +472,22 @@ class SettingsProvider extends ChangeNotifier {
       (_menuIsViewMap[213] ?? 0) == 1 ||
       (_menuIsViewMap[213] ?? 0).toString() == '1';
 
+  /// Receipt Approval Permissions:
+  /// Menu ID 214: Auto Receipt Approval
+  /// Menu ID 216: Receipt Approval Button
+  /// Menu ID 217: Receipt Rejection Button
+  bool get hasAutoReceiptApproval =>
+      (_menuIsViewMap[214] ?? 0) == 1 ||
+      (_menuIsViewMap[214] ?? 0).toString() == '1';
+
+  bool get canApproveReceipt =>
+      (_menuIsViewMap[216] ?? 0) == 1 ||
+      (_menuIsViewMap[216] ?? 0).toString() == '1';
+
+  bool get canRejectReceipt =>
+      (_menuIsViewMap[217] ?? 0) == 1 ||
+      (_menuIsViewMap[217] ?? 0).toString() == '1';
+
   //show checkbox
   final Map<int, int> _showView = {};
   Map<int, int> get showView => _showView;
