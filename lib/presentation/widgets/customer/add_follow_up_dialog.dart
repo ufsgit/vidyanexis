@@ -132,6 +132,7 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
       if (dropDownProvider.searchUserDetails.isEmpty) {
         dropDownProvider.getUserDetails(context);
       }
+      await dropDownProvider.getFollowUpStatus(context, "");
 
       // Fetch specific sub-statuses for the current status
       // Prioritize widget.statusId, then provider's selectedStatusId
