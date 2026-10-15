@@ -7,6 +7,7 @@ import 'package:vidyanexis/constants/enums.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/leads_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/job_sheet_page.dart';
 import 'package:vidyanexis/presentation/widgets/common/document_preview_dialog.dart';
 import 'package:vidyanexis/presentation/widgets/customer/upload_image.dart';
@@ -167,10 +168,17 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
             children: [
               GestureDetector(
                 onTap: () {
+                  bool fromLead = widget.task.isLead == '1' ? true : false;
+                  final sideprovider = Provider.of<SidebarProvider>(context,listen: false);
+                  if (widget.task.isLead == '1'){
+                    sideprovider.name = 'Lead /';
+                  } else {
+                    sideprovider.name = 'Customer /';
+                  }
                   Navigator.push(context, MaterialPageRoute(
                     builder: (context) {
                       return CustomerDetailPageMobile(
-                          fromLead: false, customerId: widget.task.customerId);
+                          fromLead: fromLead, customerId: widget.task.customerId);
                     },
                   ));
                 },

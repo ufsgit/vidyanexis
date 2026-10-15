@@ -53,6 +53,7 @@ class TaskReportModel {
   final String consumerNo;
   final String leadDuration;
   final String overdue;
+  final String isLead;
 
   DateTime? get parsedCreationDate {
     final dateStr = entryDate.trim();
@@ -150,6 +151,7 @@ class TaskReportModel {
     required this.consumerNo,
     required this.leadDuration,
     required this.overdue,
+    this.isLead = '0',
   });
 
   factory TaskReportModel.fromJson(Map<String, dynamic> json) {
@@ -305,6 +307,7 @@ class TaskReportModel {
       consumerNo: json['Consumer_Number']?.toString() ?? '',
       leadDuration: json['Lead_Age_Days']?.toString() ?? '',
       overdue: json['Overdue']?.toString() ?? '',
+      isLead: json['Is_Lead']?.toString() ?? '0',
     );
   }
 
