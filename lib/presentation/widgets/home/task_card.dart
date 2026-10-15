@@ -8,6 +8,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/models/task_report_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_action_widget.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:vidyanexis/utils/extensions.dart';
@@ -364,12 +365,19 @@ class _TaskCardState extends State<TaskCard> {
   Widget _buildViewButton(BuildContext context) {
     return CustomActionButton(
       onTap: () {
+        bool fromLead = widget.task.isLead == '1' ? true : false;
+        final sideprovider = Provider.of<SidebarProvider>(context,listen: false);
+        if (widget.task.isLead == '1'){
+          sideprovider.name = 'Lead /';
+        } else {
+          sideprovider.name = 'Customer /';
+        }
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => CustomerDetailPageMobile(
               customerId: widget.task.customerId,
-              fromLead: true,
+              fromLead: fromLead,
             ),
           ),
         );

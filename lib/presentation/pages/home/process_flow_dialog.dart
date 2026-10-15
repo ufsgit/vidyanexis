@@ -7,6 +7,7 @@ import 'package:vidyanexis/constants/enums.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/leads_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/job_sheet_page.dart';
 import 'package:vidyanexis/presentation/widgets/common/document_preview_dialog.dart';
 import 'package:vidyanexis/presentation/widgets/customer/upload_image.dart';
@@ -167,10 +168,17 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
             children: [
               GestureDetector(
                 onTap: () {
+                  bool fromLead = widget.task.isLead == '1' ? true : false;
+                  final sideprovider = Provider.of<SidebarProvider>(context,listen: false);
+                  if (widget.task.isLead == '1'){
+                    sideprovider.name = 'Lead /';
+                  } else {
+                    sideprovider.name = 'Customer /';
+                  }
                   Navigator.push(context, MaterialPageRoute(
                     builder: (context) {
                       return CustomerDetailPageMobile(
-                          fromLead: false, customerId: widget.task.customerId);
+                          fromLead: fromLead, customerId: widget.task.customerId);
                     },
                   ));
                 },
@@ -1990,18 +1998,36 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
     required dynamic doc,
     required TaskPageProvider reportsProvider,
   }) async {
-    final int docId = doc.documentTypeId ?? 0;
+    final int docId = doc.documentTypeId;
+
+    // Guard: skip if the server returned a document type with no valid ID.
+    if (docId == 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+              'Cannot upload: this document type has no valid ID. '
+              'Please contact your administrator.'),
+        ),
+      );
+      return;
+    }
 
     final imageProvider =
         Provider.of<ImageUploadProvider>(context, listen: false);
-    imageProvider.clearFiles();
+    // Do NOT call clearFiles() here — files from other rows must be preserved
+    // so all pending documents are uploaded together in one batch.
     imageProvider.setCutomerId(widget.task.customerId.toString());
     imageProvider.updateDocumentType(docId, doc.documentTypeName);
 
     await _showPickOptions(context, imageProvider);
-    if (imageProvider.fileInfoList.isEmpty) return;
 
-    final file = imageProvider.fileInfoList.first;
+    // Check only files belonging to THIS document type
+    final pickedForThisDoc = imageProvider.fileInfoList
+        .where((f) => f['docTypeId'] == docId)
+        .toList();
+    if (pickedForThisDoc.isEmpty) return;
+
+    final file = pickedForThisDoc.first;
     final fileName = file['name'] as String? ?? 'document';
     final bytes = file['data'] as Uint8List?;
     final mime = file['mimeType'] as String?;
@@ -2013,7 +2039,9 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
       mimeType: mime,
     );
     if (shouldUpload != true) {
-      imageProvider.clearFiles();
+      // Remove only the files the user just picked for this doc type;
+      // keep everything else staged.
+      imageProvider.removeFilesForDocType(docId);
       return;
     }
 

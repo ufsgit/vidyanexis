@@ -80,7 +80,7 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                               spacing: 6.0,
                               runSpacing: 6.0,
                               children: [
-                                if (settingsProvider.menuIsViewMap[61] == 1)
+                                if (settingsProvider.menuIsViewMap[61] == 1 && sideProvider.name != 'Lead /')
                                   _buildActionBtn(
                                     context,
                                     text: 'KSEB',
@@ -101,7 +101,7 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                                       );
                                     },
                                   ),
-                                if (settingsProvider.menuIsViewMap[63] == 1)
+                                if (settingsProvider.menuIsViewMap[63] == 1 && sideProvider.name != 'Lead /')
                                   _buildActionBtn(
                                     context,
                                     text: 'Vendor Agreement',
@@ -122,7 +122,7 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                                       );
                                     },
                                   ),
-                                if (settingsProvider.menuIsViewMap[62] == 1)
+                                if (settingsProvider.menuIsViewMap[62] == 1 && sideProvider.name != 'Lead /')
                                   _buildActionBtn(
                                     context,
                                     text: 'Vendor Feasibility',
@@ -143,7 +143,7 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                                       );
                                     },
                                   ),
-                                if (settingsProvider.menuIsViewMap[101] == 1)
+                                if (settingsProvider.menuIsViewMap[101] == 1 && sideProvider.name != 'Lead /')
                                   _buildActionBtn(
                                     context,
                                     text: 'Annexure 1',
@@ -166,7 +166,7 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                                       );
                                     },
                                   ),
-                                if (settingsProvider.menuIsViewMap[102] == 1)
+                                if (settingsProvider.menuIsViewMap[102] == 1 && sideProvider.name != 'Lead /')
                                   _buildActionBtn(
                                     context,
                                     text: 'Annexure 2',
@@ -189,7 +189,7 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                                       );
                                     },
                                   ),
-                                if (settingsProvider.menuIsViewMap[103] == 1)
+                                if (settingsProvider.menuIsViewMap[103] == 1 && sideProvider.name != 'Lead /')
                                   _buildActionBtn(
                                     context,
                                     text: 'Annexure 3',
@@ -212,7 +212,7 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                                       );
                                     },
                                   ),
-                                if (settingsProvider.menuIsViewMap[105] == 1)
+                                if (settingsProvider.menuIsViewMap[105] == 1 && sideProvider.name != 'Lead /')
                                   _buildActionBtn(
                                     context,
                                     text: 'Net Meter',
@@ -235,7 +235,7 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                                       );
                                     },
                                   ),
-                                if (settingsProvider.menuIsViewMap[106] == 1)
+                                if (settingsProvider.menuIsViewMap[106] == 1 && sideProvider.name != 'Lead /')
                                   _buildActionBtn(
                                     context,
                                     text: 'MNRE Agreement',
@@ -258,7 +258,7 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                                       );
                                     },
                                   ),
-                                if (settingsProvider.menuIsViewMap[107] == 1)
+                                if (settingsProvider.menuIsViewMap[107] == 1 && sideProvider.name != 'Lead /')
                                   _buildActionBtn(
                                     context,
                                     text: 'Loan Agreement',
@@ -281,7 +281,7 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                                       );
                                     },
                                   ),
-                                if (settingsProvider.menuIsViewMap[108] == 1)
+                                if (settingsProvider.menuIsViewMap[108] == 1 && sideProvider.name != 'Lead /')
                                   _buildActionBtn(
                                     context,
                                     text: 'Schedule',
@@ -304,7 +304,7 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                                       );
                                     },
                                   ),
-                                if (settingsProvider.menuIsViewMap[109] == 1)
+                                if (settingsProvider.menuIsViewMap[109] == 1 && sideProvider.name != 'Lead /')
                                   _buildActionBtn(
                                     context,
                                     text: 'Completion Report',
@@ -327,7 +327,7 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                                       );
                                     },
                                   ),
-                                if (settingsProvider.menuIsViewMap[110] == 1)
+                                if (settingsProvider.menuIsViewMap[110] == 1 && sideProvider.name != 'Lead /')
                                   _buildActionBtn(
                                     context,
                                     text: 'KSEB Net Meter',
@@ -350,7 +350,7 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                                       );
                                     },
                                   ),
-                                if (settingsProvider.menuIsViewMap[111] == 1)
+                                if (settingsProvider.menuIsViewMap[111] == 1 && sideProvider.name != 'Lead /')
                                   _buildActionBtn(
                                     context,
                                     text: 'Agreement A3s',
