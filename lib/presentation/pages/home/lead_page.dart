@@ -464,6 +464,9 @@ class _LeadsPageState extends State<LeadPage> {
     if (settingsProvider.consumerNameMandatory == 1) scrollableTableWidth += 150.0;
     if (settingsProvider.consumerContactNoMandatory == 1) scrollableTableWidth += 150.0;
     if (settingsProvider.ramcoLocationPermission == 1) scrollableTableWidth += 150.0;
+    if (settingsProvider.sunexpertHideLead == 1) {
+      scrollableTableWidth -= 920.0; // sum of all hidden columns
+    }
 
     // Calculate dynamic heights for table
     final double screenHeight = MediaQuery.of(context).size.height;
@@ -1630,6 +1633,9 @@ class _LeadsPageState extends State<LeadPage> {
                                         ),
                                         child: Row(
                                           children: [
+                                            if (settingsProvider
+                                                    .sunexpertHideLead !=
+                                                1)
                                             TableWidget(
                                               width: 150,
                                               padding: EdgeInsets.symmetric(
@@ -1686,6 +1692,9 @@ class _LeadsPageState extends State<LeadPage> {
                                                 ),
                                               ),
                                             ),
+                                            if (settingsProvider
+                                                    .sunexpertHideLead !=
+                                                1)
                                             TableWidget(
                                               width: 150,
                                               padding:
@@ -1701,6 +1710,9 @@ class _LeadsPageState extends State<LeadPage> {
                                                 ),
                                               ),
                                             ),
+                                            if (settingsProvider
+                                                    .sunexpertHideLead !=
+                                                1)
                                             TableWidget(
                                               width: 120,
                                               padding:
@@ -1772,6 +1784,9 @@ class _LeadsPageState extends State<LeadPage> {
                                                 ),
                                               ),
                                             ),
+                                            if (settingsProvider
+                                                    .sunexpertHideLead !=
+                                                1)
                                             TableWidget(
                                               width: 110,
                                               padding: EdgeInsets.symmetric(
@@ -1786,6 +1801,9 @@ class _LeadsPageState extends State<LeadPage> {
                                                 ),
                                               ),
                                             ),
+                                            if (settingsProvider
+                                                    .sunexpertHideLead !=
+                                                1)
                                             TableWidget(
                                               width: 120,
                                               padding: EdgeInsets.symmetric(
@@ -1800,6 +1818,9 @@ class _LeadsPageState extends State<LeadPage> {
                                                 ),
                                               ),
                                             ),
+                                            if (settingsProvider
+                                                    .sunexpertHideLead !=
+                                                1)
                                             TableWidget(
                                               width: 120,
                                               padding: EdgeInsets.symmetric(
@@ -1814,6 +1835,9 @@ class _LeadsPageState extends State<LeadPage> {
                                                 ),
                                               ),
                                             ),
+                                            if (settingsProvider
+                                                    .sunexpertHideLead !=
+                                                1)
                                             TableWidget(
                                               width: 150,
                                               padding: EdgeInsets.symmetric(
@@ -1964,6 +1988,9 @@ class _LeadsPageState extends State<LeadPage> {
                                                         CrossAxisAlignment
                                                             .center,
                                                     children: [
+                                                      if (settingsProvider
+                                                              .sunexpertHideLead !=
+                                                          1)
                                                       TableWidget(
                                                         padding: EdgeInsets
                                                             .symmetric(
@@ -2245,6 +2272,9 @@ class _LeadsPageState extends State<LeadPage> {
                                                           ),
                                                         ),
                                                       ),
+                                                      if (settingsProvider
+                                                              .sunexpertHideLead !=
+                                                          1)
                                                       TableWidget(
                                                         width: 150,
                                                         alignment: Alignment
@@ -2385,6 +2415,9 @@ class _LeadsPageState extends State<LeadPage> {
                                                           ),
                                                         ),
                                                       ),
+                                                      if (settingsProvider
+                                                              .sunexpertHideLead !=
+                                                          1)
                                                       TableWidget(
                                                         padding:
                                                             const EdgeInsets
@@ -2522,6 +2555,9 @@ class _LeadsPageState extends State<LeadPage> {
                                                           ),
                                                         ),
                                                       ),
+                                                      if (settingsProvider
+                                                              .sunexpertHideLead !=
+                                                          1)
                                                       TableWidget(
                                                         width: 110,
                                                         alignment: Alignment
@@ -2542,6 +2578,9 @@ class _LeadsPageState extends State<LeadPage> {
                                                           ),
                                                         ),
                                                       ),
+                                                      if (settingsProvider
+                                                              .sunexpertHideLead !=
+                                                          1)
                                                       TableWidget(
                                                         padding: EdgeInsets
                                                             .symmetric(
@@ -2562,6 +2601,9 @@ class _LeadsPageState extends State<LeadPage> {
                                                           ),
                                                         ),
                                                       ),
+                                                      if (settingsProvider
+                                                              .sunexpertHideLead !=
+                                                          1)
                                                       TableWidget(
                                                         padding: EdgeInsets
                                                             .symmetric(
@@ -2582,6 +2624,9 @@ class _LeadsPageState extends State<LeadPage> {
                                                           ),
                                                         ),
                                                       ),
+                                                      if (settingsProvider
+                                                              .sunexpertHideLead !=
+                                                          1)
                                                       TableWidget(
                                                         width: 150,
                                                         alignment: Alignment
