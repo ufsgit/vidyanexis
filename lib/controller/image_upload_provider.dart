@@ -325,6 +325,24 @@ class ImageUploadProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Removes only the files that belong to [docTypeId].
+  /// Useful when the user cancels a per-row preview without disturbing
+  /// files already staged for other document types.
+  void removeFilesForDocType(int docTypeId) {
+    _fileInfoList.removeWhere((f) => f['docTypeId'] == docTypeId);
+    _images.clear(); // _images / _pdfs mirror _fileInfoList; rebuild them
+    _pdfs.clear();
+    for (var f in _fileInfoList) {
+      final data = f['data'] as Uint8List;
+      if (f['type'] == 'pdf' || f['type'] == 'document') {
+        _pdfs.add(data);
+      } else {
+        _images.add(data);
+      }
+    }
+    notifyListeners();
+  }
+
   void removeImage(Uint8List image) {
     _images.remove(image);
     notifyListeners();
@@ -532,9 +550,21 @@ class ImageUploadProvider extends ChangeNotifier {
       }
 
       bool anySuccess = false;
+      bool skippedInvalidType = false;
 
       for (var entry in groupedFiles.entries) {
         int? typeId = entry.key;
+
+        // ── Guard: never send Document_Type_Id 0 or null to the API ──
+        if (typeId == null || typeId == 0) {
+          debugPrint(
+              '[ImageUploadProvider] Skipping ${entry.value.length} file(s) '
+              'with invalid Document_Type_Id ($typeId). '
+              'Check that updateDocumentType() is called before addFileMobile().');
+          skippedInvalidType = true;
+          continue;
+        }
+
         List<Map<String, dynamic>> files = entry.value;
         List<Map<String, String>> currentUploadedPaths = [];
 
@@ -558,7 +588,7 @@ class ImageUploadProvider extends ChangeNotifier {
             bodyData: {
               "Images_Id": 0,
               "Customer_Id": customerId,
-              "Document_Type_Id": typeId ?? 0,
+              "Document_Type_Id": typeId,
               "File_Paths": currentUploadedPaths,
               "User_Details_Id": userId,
               "Description": getDescription(typeId),
@@ -570,6 +600,17 @@ class ImageUploadProvider extends ChangeNotifier {
             anySuccess = true;
           }
         }
+      }
+
+      if (skippedInvalidType && !anySuccess) {
+        scaffoldMessenger.showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Upload skipped: document type not selected. '
+              'Please select a document type before uploading.'),
+          ),
+        );
+        return [];
       }
 
       if (anySuccess) {
