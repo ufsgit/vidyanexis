@@ -7,6 +7,9 @@ class Enquirysourcemodel {
   final String sourceCategoryName;
   final int deleteStatus;
   List<CustomFieldByStatusId>? customFields;
+  final int underSourceId;
+  final String underSourceName;
+  final double commissionPercent;
 
   // Constructor
   Enquirysourcemodel({
@@ -16,6 +19,9 @@ class Enquirysourcemodel {
     required this.sourceCategoryName,
     required this.deleteStatus,
     this.customFields,
+    this.underSourceId = 0,
+    this.underSourceName = '',
+    this.commissionPercent = 0.0,
   });
 
   // Factory method to create an instance from JSON with default values if necessary
@@ -32,6 +38,27 @@ class Enquirysourcemodel {
           ? []
           : List<CustomFieldByStatusId>.from(json["custom_fields"]!
               .map((x) => CustomFieldByStatusId.fromJson(x))),
+      underSourceId: json["Under_Source_Id"] != null
+          ? int.tryParse(json["Under_Source_Id"].toString()) ?? 0
+          : (json["under_source_id"] != null
+              ? int.tryParse(json["under_source_id"].toString()) ?? 0
+              : (json["Under_Source"] != null
+                  ? int.tryParse(json["Under_Source"].toString()) ?? 0
+                  : 0)),
+      underSourceName: json["Under_Source_Name"] ??
+          json["under_source_name"] ??
+          '',
+      commissionPercent: json["Commission_Percentage"] != null
+          ? double.tryParse(json["Commission_Percentage"].toString()) ?? 0.0
+          : (json["Commission_Percent"] != null
+              ? double.tryParse(json["Commission_Percent"].toString()) ?? 0.0
+              : (json["commission_percent"] != null
+                  ? double.tryParse(json["commission_percent"].toString()) ?? 0.0
+                  : (json["Commission"] != null
+                      ? double.tryParse(json["Commission"].toString()) ?? 0.0
+                      : (json["commission"] != null
+                          ? double.tryParse(json["commission"].toString()) ?? 0.0
+                          : 0.0)))),
     );
   }
 
@@ -44,6 +71,12 @@ class Enquirysourcemodel {
       "custom_fields": customFields == null
           ? []
           : List<dynamic>.from(customFields!.map((x) => x.toJson())),
+      'Under_Source_Id': underSourceId,
+      'Under_Source_Name': underSourceName,
+      'Commission_Percentage': commissionPercent,
+      'Commission_Percent': commissionPercent,
+      'Commission': commissionPercent,
+      'commission_percent': commissionPercent,
     };
   }
 }

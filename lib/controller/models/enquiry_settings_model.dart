@@ -13,6 +13,9 @@ class EnquirySourceModel {
   final String contact2;
   final String address;
   final String description;
+  final int underSourceId;
+  final String underSourceName;
+  final double commissionPercent;
 
   // Constructor
   EnquirySourceModel({
@@ -30,6 +33,9 @@ class EnquirySourceModel {
     this.contact2 = '',
     this.address = '',
     this.description = '',
+    this.underSourceId = 0,
+    this.underSourceName = '',
+    this.commissionPercent = 0.0,
   });
 
   // Factory method to create an instance from JSON with default values if necessary
@@ -51,6 +57,27 @@ class EnquirySourceModel {
       contact2: json['Contact_2'] ?? '',
       address: json['Address'] ?? '',
       description: json['Description'] ?? '',
+      underSourceId: json["Under_Source_Id"] != null
+          ? int.tryParse(json["Under_Source_Id"].toString()) ?? 0
+          : (json["under_source_id"] != null
+              ? int.tryParse(json["under_source_id"].toString()) ?? 0
+              : (json["Under_Source"] != null
+                  ? int.tryParse(json["Under_Source"].toString()) ?? 0
+                  : 0)),
+      underSourceName: json["Under_Source_Name"] ??
+          json["under_source_name"] ??
+          '',
+      commissionPercent: json["Commission_Percentage"] != null
+          ? double.tryParse(json["Commission_Percentage"].toString()) ?? 0.0
+          : (json["Commission_Percent"] != null
+              ? double.tryParse(json["Commission_Percent"].toString()) ?? 0.0
+              : (json["commission_percent"] != null
+                  ? double.tryParse(json["commission_percent"].toString()) ?? 0.0
+                  : (json["Commission"] != null
+                      ? double.tryParse(json["Commission"].toString()) ?? 0.0
+                      : (json["commission"] != null
+                          ? double.tryParse(json["commission"].toString()) ?? 0.0
+                          : 0.0)))),
     );
   }
 
@@ -69,6 +96,12 @@ class EnquirySourceModel {
       'Contact_2': contact2,
       'Address': address,
       'Description': description,
+      'Under_Source_Id': underSourceId,
+      'Under_Source_Name': underSourceName,
+      'Commission_Percentage': commissionPercent,
+      'Commission_Percent': commissionPercent,
+      'Commission': commissionPercent,
+      'commission_percent': commissionPercent,
     };
   }
 }

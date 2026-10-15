@@ -99,13 +99,61 @@ class _EnquirySourceContentState extends State<EnquirySourceContent> {
                                 decoration: BoxDecoration(
                                     color: AppColors.surfaceGrey,
                                     borderRadius: BorderRadius.circular(4)),
-                                child: Text(
-                                  settingsProvider.searchEnquiryStatus[index]
-                                      .enquirySourceName,
-                                  style: GoogleFonts.plusJakartaSans(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.black),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      settingsProvider.searchEnquiryStatus[index]
+                                          .enquirySourceName,
+                                      style: GoogleFonts.plusJakartaSans(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.black),
+                                    ),
+                                    () {
+                                      final item = settingsProvider
+                                          .searchEnquiryStatus[index];
+                                      String underName = item.underSourceName;
+                                      if (underName.isEmpty &&
+                                          item.underSourceId != 0) {
+                                        final matches = settingsProvider
+                                            .searchEnquiryStatus
+                                            .where((p) =>
+                                                p.enquirySourceId ==
+                                                item.underSourceId);
+                                        if (matches.isNotEmpty) {
+                                          underName =
+                                              matches.first.enquirySourceName;
+                                        }
+                                      }
+                                      final hasUnder = underName.isNotEmpty;
+                                      final hasComm =
+                                          item.commissionPercent > 0;
+                                      if (!hasUnder && !hasComm) {
+                                        return const SizedBox.shrink();
+                                      }
+                                      final commText = item.commissionPercent %
+                                                  1 ==
+                                              0
+                                          ? '${item.commissionPercent.toInt()}%'
+                                          : '${item.commissionPercent}%';
+                                      return Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 8.0),
+                                        child: Text(
+                                          hasUnder && hasComm
+                                              ? '(Under: $underName • $commText)'
+                                              : (hasUnder
+                                                  ? '(Under: $underName)'
+                                                  : '($commText)'),
+                                          style: GoogleFonts.plusJakartaSans(
+                                              fontSize: 11,
+                                              fontWeight: FontWeight.w400,
+                                              color: AppColors.textGrey3),
+                                        ),
+                                      );
+                                    }(),
+                                  ],
                                 ),
                               ),
                             ),

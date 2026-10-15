@@ -4259,6 +4259,9 @@ class SettingsProvider extends ChangeNotifier {
     required BuildContext context,
     required String statusId,
     required String statusName,
+    int? underSourceId,
+    String? underSourceName,
+    double? commissionPercent,
     int isMoreDetails = 0,
     String contactPerson = '',
     String phone = '',
@@ -4276,6 +4279,13 @@ class SettingsProvider extends ChangeNotifier {
         "Enquiry_Source_Id": statusId,
         "Enquiry_Source_Name": statusName,
         "Is_More_Details": isMoreDetails,
+        "Under_Source_Id": underSourceId ?? 0,
+        "Under_Source_Name": underSourceName ?? '',
+        "under_source_id": underSourceId ?? 0,
+        "Commission_Percent": commissionPercent ?? 0.0,
+        "Commission_Percentage": commissionPercent ?? 0.0,
+        "Commission": commissionPercent ?? 0.0,
+        "commission_percent": commissionPercent ?? 0.0,
       };
 
       if (isMoreDetails == 1) {
@@ -4301,7 +4311,7 @@ class SettingsProvider extends ChangeNotifier {
         setSourceId(0);
 
         final data = response.data;
-        searchEnquiryStatusData('', context);
+        await searchEnquiryStatusData('', context);
         Loader.stopLoader(context);
         Navigator.pop(context, statusName);
 

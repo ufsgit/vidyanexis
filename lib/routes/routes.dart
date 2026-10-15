@@ -30,6 +30,7 @@ import 'package:vidyanexis/presentation/pages/reports/task_deadline_report_scree
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/pages/reports/lead_creation_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/lead_creation_details_screen.dart';
+import 'package:vidyanexis/presentation/pages/reports/source_category_summary_screen.dart';
 
 final GoRouter appRouter = GoRouter(
   debugLogDiagnostics: true, // Helpful for debugging
@@ -208,6 +209,12 @@ final GoRouter appRouter = GoRouter(
       path: CustomerOutstandingReportPage.route,
       pageBuilder: (context, state) {
         return fadeTransition(const CustomerOutstandingReportPage());
+      },
+    ),
+    GoRoute(
+      path: SourceCategorySummaryReportScreen.route,
+      pageBuilder: (context, state) {
+        return fadeTransition(const SourceCategorySummaryReportScreen());
       },
     ),
     GoRoute(

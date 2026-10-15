@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
 import 'package:vidyanexis/controller/models/enquiry_settings_model.dart';
 
@@ -34,6 +37,9 @@ class AddEnquirySource extends StatefulWidget {
 class _AddEnquirySourceState extends State<AddEnquirySource> {
   List<Map<String, dynamic>> selectedFields = [];
   bool _showMoreDetails = false;
+  int? _selectedUnderSourceId;
+  late final TextEditingController _underSourceController;
+  late final TextEditingController commissionController;
   late final TextEditingController contactPersonController;
   late final TextEditingController phoneController;
   late final TextEditingController emailController;
@@ -50,6 +56,13 @@ class _AddEnquirySourceState extends State<AddEnquirySource> {
     // }
     if (settingsProvider.enquirySourceController.text.trim().isEmpty) {
       return 'Please enter Enquiry Source';
+    }
+
+    if (commissionController.text.trim().isNotEmpty) {
+      final comm = double.tryParse(commissionController.text.trim());
+      if (comm == null || comm < 0 || comm > 100) {
+        return 'Please enter a valid Commission % (0 - 100)';
+      }
     }
 
     // if (settingsProvider.selectedColor == null) {
@@ -104,6 +117,17 @@ class _AddEnquirySourceState extends State<AddEnquirySource> {
   void initState() {
     super.initState();
     final model = widget.model;
+    _selectedUnderSourceId =
+        (model != null && model.underSourceId != 0) ? model.underSourceId : null;
+    _underSourceController =
+        TextEditingController(text: model?.underSourceName ?? '');
+    commissionController = TextEditingController(
+      text: (model != null && model.commissionPercent != 0)
+          ? (model.commissionPercent % 1 == 0
+              ? model.commissionPercent.toInt().toString()
+              : model.commissionPercent.toString())
+          : '',
+    );
     contactPersonController =
         TextEditingController(text: model?.contactPerson ?? '');
     phoneController = TextEditingController(text: model?.phone ?? '');
@@ -117,26 +141,53 @@ class _AddEnquirySourceState extends State<AddEnquirySource> {
 
     _showMoreDetails = model != null && model.isMoreDetails == 1;
 
-    if (widget.isEdit) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        final settingsProvider =
-            Provider.of<SettingsProvider>(context, listen: false);
-        settingsProvider.enquirySourceController.text = widget.status;
-        // settingsProvider.sourceCategoryEnquiryController.text =
-        //     widget.sourceName;
-        // settingsProvider.setSourceId(int.parse(widget.sourceId));
-      });
-    } else {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       final settingsProvider =
           Provider.of<SettingsProvider>(context, listen: false);
-      settingsProvider.enquirySourceController.clear();
-      settingsProvider.sourceCategoryEnquiryController.clear();
-      settingsProvider.setSourceId(0);
-    }
+      if (settingsProvider.searchEnquiryStatus.isEmpty) {
+        settingsProvider.searchEnquiryStatusData('', context);
+      }
+      if (widget.isEdit) {
+        settingsProvider.enquirySourceController.text = widget.status;
+        if (model != null &&
+            model.commissionPercent != 0 &&
+            commissionController.text.isEmpty) {
+          commissionController.text = model.commissionPercent % 1 == 0
+              ? model.commissionPercent.toInt().toString()
+              : model.commissionPercent.toString();
+        }
+        if (_selectedUnderSourceId != null &&
+            _selectedUnderSourceId != 0 &&
+            _underSourceController.text.isEmpty) {
+          final matched = settingsProvider.searchEnquiryStatus.firstWhere(
+            (e) => e.enquirySourceId == _selectedUnderSourceId,
+            orElse: () => EnquirySourceModel(
+              enquirySourceId: 0,
+              enquirySourceName: '',
+              sourceCategoryId: 0,
+              sourceCategoryName: '',
+              deleteStatus: 0,
+            ),
+          );
+          if (matched.enquirySourceId != 0) {
+            _underSourceController.text = matched.enquirySourceName;
+          }
+        }
+      } else {
+        settingsProvider.enquirySourceController.clear();
+        settingsProvider.sourceCategoryEnquiryController.clear();
+        settingsProvider.setSourceId(0);
+        _selectedUnderSourceId = null;
+        _underSourceController.clear();
+        commissionController.clear();
+      }
+    });
   }
 
   @override
   void dispose() {
+    _underSourceController.dispose();
+    commissionController.dispose();
     contactPersonController.dispose();
     phoneController.dispose();
     emailController.dispose();
@@ -151,6 +202,13 @@ class _AddEnquirySourceState extends State<AddEnquirySource> {
   @override
   Widget build(BuildContext context) {
     final settingsProvider = Provider.of<SettingsProvider>(context);
+    final int currentEditId = int.tryParse(widget.editId) ?? 0;
+    final availableSources = settingsProvider.searchEnquiryStatus.where((source) {
+      if (widget.isEdit && currentEditId != 0 && source.enquirySourceId == currentEditId) {
+        return false;
+      }
+      return true;
+    }).toList();
 
     return AlertDialog(
       backgroundColor: Colors.white,
@@ -168,6 +226,9 @@ class _AddEnquirySourceState extends State<AddEnquirySource> {
           IconButton(
             onPressed: () {
               settingsProvider.enquirySourceController.clear();
+              _selectedUnderSourceId = null;
+              _underSourceController.clear();
+              commissionController.clear();
               Navigator.pop(context);
             },
             icon: const Icon(Icons.close),
@@ -187,6 +248,83 @@ class _AddEnquirySourceState extends State<AddEnquirySource> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const SizedBox(
+                height: 10,
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: CommonDropdown<int>(
+                      hintText: 'Under source',
+                      selectedValue: (_selectedUnderSourceId != null &&
+                              _selectedUnderSourceId != 0)
+                          ? _selectedUnderSourceId
+                          : null,
+                      controller: _underSourceController,
+                      items: [
+                        DropdownItem<int>(id: 0, name: '-- None --'),
+                        ...availableSources.map(
+                          (source) => DropdownItem<int>(
+                            id: source.enquirySourceId,
+                            name: source.enquirySourceName,
+                          ),
+                        ),
+                      ],
+                      suffixIcon: (_selectedUnderSourceId != null &&
+                              _selectedUnderSourceId != 0)
+                          ? IconButton(
+                              icon: const Icon(Icons.clear,
+                                  size: 18, color: AppColors.textGrey2),
+                              splashRadius: 16,
+                              onPressed: () {
+                                setState(() {
+                                  _selectedUnderSourceId = null;
+                                  _underSourceController.clear();
+                                });
+                              },
+                            )
+                          : null,
+                      onItemSelected: (int value) {
+                        setState(() {
+                          if (value == 0) {
+                            _selectedUnderSourceId = null;
+                            _underSourceController.clear();
+                          } else {
+                            _selectedUnderSourceId = value;
+                            final selected = availableSources.firstWhere(
+                              (s) => s.enquirySourceId == value,
+                              orElse: () => EnquirySourceModel(
+                                enquirySourceId: 0,
+                                enquirySourceName: '',
+                                sourceCategoryId: 0,
+                                sourceCategoryName: '',
+                                deleteStatus: 0,
+                              ),
+                            );
+                            _underSourceController.text =
+                                selected.enquirySourceName;
+                          }
+                        });
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: CustomTextField(
+                      readOnly: false,
+                      height: 54,
+                      controller: commissionController,
+                      hintText: 'Commission %',
+                      labelText: '',
+                      maxLines: 1,
+                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
               const SizedBox(
                 height: 10,
               ),
@@ -430,6 +568,9 @@ class _AddEnquirySourceState extends State<AddEnquirySource> {
           onPressed: () {
             settingsProvider.enquirySourceController.clear();
             settingsProvider.sourceCategoryEnquiryController.clear();
+            _selectedUnderSourceId = null;
+            _underSourceController.clear();
+            commissionController.clear();
             Navigator.pop(context);
           },
           radius: 4,
@@ -446,10 +587,19 @@ class _AddEnquirySourceState extends State<AddEnquirySource> {
               return;
             }
 
-            settingsProvider.addEnquiryName(
+            await settingsProvider.addEnquiryName(
               context: context,
               statusId: widget.editId,
               statusName: settingsProvider.enquirySourceController.text,
+              underSourceId: _underSourceController.text.trim().isEmpty
+                  ? 0
+                  : (_selectedUnderSourceId ?? 0),
+              underSourceName: _underSourceController.text.trim().isEmpty
+                  ? ''
+                  : _underSourceController.text.trim(),
+              commissionPercent: commissionController.text.trim().isEmpty
+                  ? 0.0
+                  : (double.tryParse(commissionController.text.trim()) ?? 0.0),
               isMoreDetails: _showMoreDetails ? 1 : 0,
               contactPerson:
                   _showMoreDetails ? contactPersonController.text : '',
@@ -461,6 +611,14 @@ class _AddEnquirySourceState extends State<AddEnquirySource> {
               address: _showMoreDetails ? addressController.text : '',
               description: _showMoreDetails ? descriptionController.text : '',
             );
+
+            try {
+              if (context.mounted) {
+                final dropDownProvider =
+                    Provider.of<DropDownProvider>(context, listen: false);
+                dropDownProvider.getEnquirySource(context, forceRefresh: true);
+              }
+            } catch (_) {}
           },
           radius: 4,
           backgroundColor: AppColors.secondaryBlue,

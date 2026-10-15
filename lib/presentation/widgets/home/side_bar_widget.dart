@@ -42,21 +42,24 @@ class _CustomSidebarState extends State<CustomSidebar> {
   bool isReportsExpanded = false;
   bool _isLoggingOut = false;
 
+  bool _isReportOption(SidebarOption option) {
+    final title = option.title;
+    return title.contains('Report') ||
+        title.contains('Summary') ||
+        title == 'Sales Pipeline' ||
+        title == 'Task Calendar' ||
+        title == 'Source category Summary';
+  }
+
   List<SidebarOption> getNonReportOptions() {
     return widget.options
-        .where((option) =>
-            !option.title.contains('Report') &&
-            option.title != 'Sales Pipeline' &&
-            option.title != 'Task Calendar')
+        .where((option) => !_isReportOption(option))
         .toList();
   }
 
   List<SidebarOption> getReportOptions() {
     return widget.options
-        .where((option) =>
-            option.title.contains('Report') ||
-            option.title == 'Sales Pipeline' ||
-            option.title == 'Task Calendar')
+        .where((option) => _isReportOption(option))
         .toList();
   }
 

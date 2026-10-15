@@ -27,6 +27,7 @@ import 'package:vidyanexis/presentation/pages/location/location_tracking_page.da
 import 'package:vidyanexis/presentation/pages/login/login_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/complaint_page_reports_mobile.dart';
 import 'package:vidyanexis/presentation/pages/reports/enquiry_source_summary_report_screen.dart';
+import 'package:vidyanexis/presentation/pages/reports/source_category_summary_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/employee_summary_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/employee_lead_summary_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/employee_sales_customer_report_screen.dart';
@@ -135,6 +136,11 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
         {
           'title': 'Enquiry Source Reports',
           'page': const EnquirySourceSummaryReportScreen()
+        },
+      if ((settingsProvider.menuIsViewMap[218] ?? 0).toString() == '1')
+        {
+          'title': 'Source category Summary',
+          'page': const SourceCategorySummaryReportScreen()
         },
       if (settingsProvider.menuIsViewMap[119].toString() == '1' ||
           settingsProvider.menuIsViewMap[89].toString() == '1')

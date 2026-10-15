@@ -175,6 +175,7 @@ class HttpUrls {
   static String saveSourceCategory = "lead/Save_Source_Category";
   static String searchSourceCategoty = "lead/Get_All_Source_Category";
   static String deleteSourceCategory = "lead/Delete_Source_Category";
+  static String sourceCategorySummary = "Source_Category_Summary";
   static String enquirySourceConversionReport =
       "lead/Enquiry_Source_Conversion_Report";
   static String leadProgressReport = "lead/Lead_Progress_Report";

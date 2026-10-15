@@ -33,6 +33,7 @@ import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/task_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/enquiry_source_summary_report_screen.dart';
+import 'package:vidyanexis/presentation/pages/reports/source_category_summary_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/employee_sales_customer_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/employee_summary_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/employee_lead_summary_report_screen.dart';
@@ -435,6 +436,12 @@ class _HomePageState extends State<HomePage> {
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: EnquirySourceSummaryReportScreen()),
         ),
+      if ((settingsProvider.menuIsViewMap[218] ?? 0).toString() == '1')
+        SidebarOption(
+          title: 'Source category Summary',
+          iconPath: 'assets/images/Reports.svg',
+          baseContent: const Center(child: SourceCategorySummaryReportScreen()),
+        ),
       if (settingsProvider.menuIsViewMap[119].toString() == '1' ||
           settingsProvider.menuIsViewMap[89].toString() == '1')
         SidebarOption(
@@ -652,8 +659,10 @@ class _HomePageState extends State<HomePage> {
             sideProvider.selectedName == 'Settings' ||
             (AppStyles.isWebScreen(context) &&
                 (sideProvider.selectedName.contains('Report') ||
+                    sideProvider.selectedName.contains('Summary') ||
                     sideProvider.selectedName == 'Sales Pipeline' ||
-                    sideProvider.selectedName == 'Task Calendar'));
+                    sideProvider.selectedName == 'Task Calendar' ||
+                    sideProvider.selectedName == 'Source category Summary'));
     return Scaffold(
       appBar: hideMainAppBar
           ? null

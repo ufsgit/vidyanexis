@@ -39,6 +39,7 @@ import 'package:vidyanexis/controller/employee_summary_provider.dart';
 import 'package:vidyanexis/controller/employee_lead_summary_provider.dart';
 import 'package:vidyanexis/controller/employee_sales_report_provider.dart';
 import 'package:vidyanexis/controller/enquiry_for_summary_provider.dart';
+import 'package:vidyanexis/controller/source_category_summary_provider.dart';
 import 'package:vidyanexis/controller/expense_provider.dart';
 import 'package:vidyanexis/controller/feedback_provider.dart';
 import 'package:vidyanexis/controller/feedback_report_provider.dart';
@@ -179,6 +180,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => EmployeeLeadSummaryProvider()),
         ChangeNotifierProvider(create: (_) => EmployeeSalesReportProvider()),
         ChangeNotifierProvider(create: (_) => EnquiryForSummaryProvider()),
+        ChangeNotifierProvider(create: (_) => SourceCategorySummaryProvider()),
         ChangeNotifierProvider(create: (_) => EnquiryReportProvider()),
         ChangeNotifierProvider(create: (_) => ProcessFlowProvider()),
         ChangeNotifierProvider(create: (_) => CheckInOutProvider()),
