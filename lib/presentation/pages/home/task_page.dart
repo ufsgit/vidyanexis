@@ -2579,6 +2579,12 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                                   padding: const EdgeInsets.symmetric(vertical: 6),
                                                                                   child: InkWell(
                                                                                     onTap: () {
+                                                                                      final sideprovider = Provider.of<SidebarProvider>(context,listen: false);
+                                                                                      if (task.isLead == '1'){
+                                                                                        sideprovider.name = 'Lead /';
+                                                                                      } else {
+                                                                                        sideprovider.name = 'Customer /';
+                                                                                      }
                                                                                       context.push('${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
                                                                                     },
                                                                                     child: Tooltip(
@@ -4490,6 +4496,12 @@ class _tasksPageReportState extends State<TaskPage> {
                               const SizedBox(width: 6),
                               InkWell(
                                 onTap: () {
+                                  final sideprovider = Provider.of<SidebarProvider>(context,listen: false);
+                                  if (task.isLead == '1'){
+                                    sideprovider.name = 'Lead /';
+                                  } else {
+                                    sideprovider.name = 'Customer /';
+                                  }
                                   context.push(
                                       '${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
                                 },
