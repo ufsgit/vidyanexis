@@ -4395,6 +4395,8 @@ class _tasksPageReportState extends State<TaskPage> {
     _uploadedDocUrls.clear();
     _uploadProgress.clear();
     _uploadingDocs.clear();
+    // Clear any previously staged files so each dialog session starts fresh.
+    Provider.of<ImageUploadProvider>(context, listen: false).clearFiles();
     final prefetchReportsProvider =
         Provider.of<TaskPageProvider>(context, listen: false);
     final Future<Map<String, dynamic>> locationFuture =
@@ -7619,18 +7621,36 @@ class _tasksPageReportState extends State<TaskPage> {
     required String customerId,
     required String taskId,
   }) async {
-    final int docId = doc.documentTypeId ?? 0;
+    final int docId = doc.documentTypeId;
+
+    // Guard: skip if the server returned a document type with no valid ID.
+    if (docId == 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+              'Cannot upload: this document type has no valid ID. '
+              'Please contact your administrator.'),
+        ),
+      );
+      return;
+    }
 
     final imageProvider =
         Provider.of<ImageUploadProvider>(context, listen: false);
-    imageProvider.clearFiles();
+    // Do NOT call clearFiles() here — files from other rows must be preserved
+    // so all pending documents are batched together in uploadAllDocumentsGrouped.
     imageProvider.setCutomerId(customerId);
     imageProvider.updateDocumentType(docId, doc.documentTypeName);
 
     await imageProvider.addFileMobile();
-    if (imageProvider.fileInfoList.isEmpty) return;
 
-    final file = imageProvider.fileInfoList.first;
+    // Only examine files belonging to this specific document type.
+    final pickedForThisDoc = imageProvider.fileInfoList
+        .where((f) => f['docTypeId'] == docId)
+        .toList();
+    if (pickedForThisDoc.isEmpty) return;
+
+    final file = pickedForThisDoc.first;
     final shouldUpload = await showDocumentPreviewDialog(
       context: context,
       fileName: file['name'] as String? ?? 'document',
@@ -7638,7 +7658,9 @@ class _tasksPageReportState extends State<TaskPage> {
       mimeType: file['mimeType'] as String?,
     );
     if (shouldUpload != true) {
-      imageProvider.clearFiles();
+      // Remove only the files just picked for this doc type;
+      // leave everything else staged for other rows.
+      imageProvider.removeFilesForDocType(docId);
       return;
     }
 
