@@ -647,6 +647,7 @@ class SettingsProvider extends ChangeNotifier {
   int _ramcoHistory = 0;
   int _ramcoAdminTaskPhoto = 0;
   int _sunexpertHideLead = 0;
+  int _customerStatusBlock = 0;
   int? _selectedStatusId;
 
   int get toggleValue => _toggleValue;
@@ -703,6 +704,7 @@ class SettingsProvider extends ChangeNotifier {
   int get ramcoHistory => _ramcoHistory;
   int get ramcoAdminTaskPhoto => _ramcoAdminTaskPhoto;
   int get sunexpertHideLead => _sunexpertHideLead;
+  int get customerStatusBlock => _customerStatusBlock;
 
   int _recordVoiceNote = 0;
   int get recordVoiceNote => _recordVoiceNote;
@@ -979,6 +981,11 @@ class SettingsProvider extends ChangeNotifier {
             (caption.toLowerCase().contains('sunexpert_hide_lead') ||
                 caption.toLowerCase().contains('sunexpert hide lead'))) {
       _sunexpertHideLead = value;
+    } else if (permissionId == 52 ||
+        caption != null &&
+            (caption.toLowerCase().contains('customer_status_block') ||
+                caption.toLowerCase().contains('customer status block'))) {
+      _customerStatusBlock = value;
     }
   }
 
@@ -1050,6 +1057,12 @@ class SettingsProvider extends ChangeNotifier {
   void setSunexpertHideLead(int value) {
     _sunexpertHideLead = value;
     _syncStateToPermissionsList(48, value);
+    notifyListeners();
+  }
+
+  void setCustomerStatusBlock(int value) {
+    _customerStatusBlock = value;
+    _syncStateToPermissionsList(52, value);
     notifyListeners();
   }
 
@@ -5493,6 +5506,7 @@ class SettingsProvider extends ChangeNotifier {
     _ramcoHistory = 0;
     _ramcoAdminTaskPhoto = 0;
     _sunexpertHideLead = 0;
+    _customerStatusBlock = 0;
     notifyListeners();
   }
 

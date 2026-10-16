@@ -407,7 +407,9 @@ class _LeadCardState extends State<LeadCard> {
                               return Column(
                                 children: [
                                   // Status Selection Chips (Sub-statuses only)
-                                  if (isLoadingStatuses)
+                                  if (settingsProvider.customerStatusBlock == 1 && !widget.isLead)
+                                    const SizedBox.shrink()
+                                  else if (isLoadingStatuses)
                                     Container(
                                       padding: const EdgeInsets.all(12),
                                       width: double.infinity,

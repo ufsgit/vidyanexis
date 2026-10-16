@@ -1642,8 +1642,14 @@ class _CustomerPageState extends State<CustomerPage> {
                                                       vertical: 4.0,
                                                       horizontal: 8.0),
                                               data: InkWell(
-                                                onTap: () => _onStatusClick(
-                                                    context, lead),
+                                                onTap: () {
+                                                  settingsProvider
+                                                              .customerStatusBlock ==
+                                                          1
+                                                      ? () {}
+                                                      : _onStatusClick(
+                                                          context, lead);
+                                                },
                                                 child: Container(
                                                   padding:
                                                       lead.statusName.isNotEmpty
