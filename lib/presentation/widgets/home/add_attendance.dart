@@ -435,7 +435,7 @@ class _AddAttendanceWidgetState extends State<AddAttendanceWidget> {
                   if (success) {
                     Loader.stopLoader(context);
                     loaderShown = false;
-                    if (mounted) {
+                    if (context.mounted) {
                       setState(() {
                         isCheckedIn = false;
                       });
@@ -454,7 +454,7 @@ class _AddAttendanceWidgetState extends State<AddAttendanceWidget> {
                   if (success) {
                     Loader.stopLoader(context);
                     loaderShown = false;
-                    if (mounted) {
+                    if (context.mounted) {
                       setState(() {
                         isCheckedIn = true;
                       });
