@@ -112,6 +112,10 @@ class _CustomerPageState extends State<CustomerPage> {
       userName = preferences.getString('userName') ?? "";
       userType = preferences.getString('userType') ?? "";
 
+      if (!settingsProvider.canViewCustomerMeAndAll) {
+        customerProvider.setEntryType('myown');
+      }
+
       customerProvider.setSearchCriteria('', '', '');
       settingsProvider.searchBranch(context);
       settingsProvider.searchDepartment('', context);
@@ -266,8 +270,7 @@ class _CustomerPageState extends State<CustomerPage> {
                             crossAxisAlignment: WrapCrossAlignment.center,
                             children: [
                               // Entry Type Filter
-                              if (settingsProvider.customerPermissionMeAndAll ==
-                                  1)
+                              if (settingsProvider.canViewCustomerMeAndAll)
                                 Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [

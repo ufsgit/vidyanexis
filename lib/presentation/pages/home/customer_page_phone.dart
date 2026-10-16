@@ -88,6 +88,9 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
       final settingsProvider =
           Provider.of<SettingsProvider>(context, listen: false);
       final customerProvider = _customerProvider!;
+      if (!settingsProvider.canViewCustomerMeAndAll) {
+        customerProvider.setEntryType('myown');
+      }
       customerProvider.setSearchCriteria(
         '',
         '',
@@ -224,7 +227,7 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
         },
         // onChanged: _onSearchChanged,
         searchController: searchController,
-        customActionWidget: settingsProvider.customerPermissionMeAndAll == 1
+        customActionWidget: settingsProvider.canViewCustomerMeAndAll
             ? Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 4.0),
                 child: MeAllToggleSwitch(

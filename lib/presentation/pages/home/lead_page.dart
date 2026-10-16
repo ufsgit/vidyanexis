@@ -145,6 +145,9 @@ class _LeadsPageState extends State<LeadPage> {
       userId = int.tryParse(preferences.getString('userId') ?? "0") ?? 0;
       userName = preferences.getString('userName') ?? "";
       userType = preferences.getString('userType') ?? "";
+      if (!settingsProvider.canViewLeadMeAndAll) {
+        leadProvider.setEntryType('myown');
+      }
       leadProvider.setSearchCriteria('', '', '');
       await leadProvider.getSearchLeads(context);
       provider.getUserDetails(context);
@@ -534,7 +537,7 @@ class _LeadsPageState extends State<LeadPage> {
                           crossAxisAlignment: WrapCrossAlignment.center,
                           children: [
                             // Entry Type Filter
-                            if (settingsProvider.leadPermissionMeAndAll == 1)
+                            if (settingsProvider.canViewLeadMeAndAll)
                               Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [

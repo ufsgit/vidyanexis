@@ -465,6 +465,40 @@ class SettingsProvider extends ChangeNotifier {
     return false;
   }
 
+  /// Lead Permission ME and ALL (Menu ID: 219)
+  /// IsView = 1 → show ME / ALL tabs on the Lead page.
+  /// IsView = 0 → hide them (user sees only their own leads).
+  bool get canViewLeadMeAndAll {
+    // Check user permission from Get_Menu_Permission (menuIsViewMap)
+    if ((_menuIsViewMap[219] ?? 0) == 1 ||
+        (_menuIsViewMap[219] ?? 0).toString() == '1') return true;
+
+    // Fallback: scan _getMenuPermission list directly
+    for (var p in _getMenuPermission) {
+      if (p.menuId == 219 && (p.isView == 1 || p.isView.toString() == '1')) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /// Customer Permission ME and ALL (Menu ID: 220)
+  /// IsView = 1 → show ME / ALL tabs on the Customer page.
+  /// IsView = 0 → hide them (user sees only their own customers).
+  bool get canViewCustomerMeAndAll {
+    // Check user permission from Get_Menu_Permission (menuIsViewMap)
+    if ((_menuIsViewMap[220] ?? 0) == 1 ||
+        (_menuIsViewMap[220] ?? 0).toString() == '1') return true;
+
+    // Fallback: scan _getMenuPermission list directly
+    for (var p in _getMenuPermission) {
+      if (p.menuId == 220 && (p.isView == 1 || p.isView.toString() == '1')) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   /// Task Lead/Customer Filter (Menu ID: 213)
   /// Shows the Combined / Lead / Customer dropdown on the Task page
   /// only when the user permission IsView == 1.
@@ -2689,6 +2723,36 @@ class SettingsProvider extends ChangeNotifier {
                 isDelete: 0));
           }
 
+          if (!_getMenuPermission.any((element) => element.menuId == 209)) {
+            _getMenuPermission.add(GetMenuPermissionModel(
+                menuId: 209,
+                menuName: 'Task Permission ME and ALL',
+                isView: 0,
+                isSave: 0,
+                isEdit: 0,
+                isDelete: 0));
+          }
+
+          if (!_getMenuPermission.any((element) => element.menuId == 219)) {
+            _getMenuPermission.add(GetMenuPermissionModel(
+                menuId: 219,
+                menuName: 'Lead Permission ME and ALL',
+                isView: 0,
+                isSave: 0,
+                isEdit: 0,
+                isDelete: 0));
+          }
+
+          if (!_getMenuPermission.any((element) => element.menuId == 220)) {
+            _getMenuPermission.add(GetMenuPermissionModel(
+                menuId: 220,
+                menuName: 'Customer Permission ME and ALL',
+                isView: 0,
+                isSave: 0,
+                isEdit: 0,
+                isDelete: 0));
+          }
+
           // Register Dashboard Tabs and new Report IDs
           final Map<int, String> customPermissions = {
             49: 'Leads Overview',
@@ -2707,6 +2771,8 @@ class SettingsProvider extends ChangeNotifier {
             182: 'Task Aging Report',
             208: 'Task Deadline Report',
             209: 'Task Permission ME and ALL',
+            219: 'Lead Permission ME and ALL',
+            220: 'Customer Permission ME and ALL',
           };
 
           for (var entry in customPermissions.entries) {
@@ -5512,7 +5578,9 @@ class SettingsProvider extends ChangeNotifier {
             120: 'Lead Search',
             182: 'Task Aging Report',
             208: 'Task Deadline Report',
-
+            209: 'Task Permission ME and ALL',
+            219: 'Lead Permission ME and ALL',
+            220: 'Customer Permission ME and ALL',
           };
 
           for (var entry in customPermissionsShow.entries) {
@@ -5573,6 +5641,32 @@ class SettingsProvider extends ChangeNotifier {
               menu.isEdit = 1;
               menu.isSave = 1;
               menu.isDelete = 1;
+            }
+          }
+
+          // Ensure ME and ALL permissions are available in _showMenu
+          for (var menuId in [209, 219, 220]) {
+            var menu = _showMenu.firstWhere((e) => e.menuId == menuId,
+                orElse: () => MenuPermissionModel(
+                    menuId: menuId,
+                    menuName: menuId == 209
+                        ? 'Task Permission ME and ALL'
+                        : menuId == 219
+                            ? 'Lead Permission ME and ALL'
+                            : 'Customer Permission ME and ALL',
+                    menuOrder: 0,
+                    menuOrderSub: 0,
+                    isEdit: 0,
+                    isSave: 0,
+                    isDelete: 0,
+                    isView: 1,
+                    menuStatus: 1,
+                    menuType: 1));
+
+            if (!_showMenu.contains(menu)) {
+              _showMenu.add(menu);
+            } else {
+              menu.isView = 1;
             }
           }
 

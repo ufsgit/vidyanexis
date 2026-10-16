@@ -108,6 +108,9 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
           Provider.of<SettingsProvider>(context, listen: false);
 
       final leadProvider = Provider.of<LeadsProvider>(context, listen: false);
+      if (!settingsProvider.canViewLeadMeAndAll) {
+        leadProvider.setEntryType('myown');
+      }
       final provider = Provider.of<DropDownProvider>(context, listen: false);
       SharedPreferences preferences = await SharedPreferences.getInstance();
       userId = int.tryParse(preferences.getString('userId') ?? "0") ?? 0;
@@ -274,7 +277,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
               },
               // onChanged: _onSearchChanged,
               searchController: searchController,
-              customActionWidget: settingsProvider.leadPermissionMeAndAll == 1
+              customActionWidget: settingsProvider.canViewLeadMeAndAll
                   ? Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 4.0),
                       child: MeAllToggleSwitch(
@@ -362,7 +365,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                 _refreshData();
               },
               searchController: searchController,
-              customActionWidget: settingsProvider.leadPermissionMeAndAll == 1
+              customActionWidget: settingsProvider.canViewLeadMeAndAll
                   ? Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 4.0),
                       child: MeAllToggleSwitch(
