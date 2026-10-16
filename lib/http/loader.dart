@@ -1,11 +1,13 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 
 class Loader {
   static int _loaderCount = 0;
   static BuildContext? _currentLoaderContext;
+  static Route<dynamic>? _currentLoaderRoute;
   static bool _isDismissing = false; // prevents concurrent dismiss
 
   static Future<void> showLoader(BuildContext context,
@@ -29,6 +31,7 @@ class Loader {
         useRootNavigator: true,
         builder: (ctx) {
           _currentLoaderContext = ctx;
+          _currentLoaderRoute = ModalRoute.of(ctx);
 
           // Race-condition safety: if stop already happened, dismiss after this frame
           if (_loaderCount <= 0) {
@@ -115,19 +118,26 @@ class Loader {
     _isDismissing = true;
 
     final ctx = _currentLoaderContext;
+    final route = _currentLoaderRoute;
     _currentLoaderContext = null; // clear early to avoid double-pop
+    _currentLoaderRoute = null;
 
     if (ctx == null || !ctx.mounted) {
       _isDismissing = false;
       return;
     }
 
-    // Critical: schedule the pop on the next frame so Navigator is never locked
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    void doDismiss() {
       try {
         if (ctx.mounted) {
           final navigator = Navigator.of(ctx, rootNavigator: true);
-          if (navigator.canPop()) {
+          if (route != null && route.isActive) {
+            if (route.isCurrent) {
+              navigator.pop();
+            } else {
+              navigator.removeRoute(route);
+            }
+          } else if (navigator.canPop()) {
             navigator.pop();
           }
         }
@@ -136,6 +146,12 @@ class Loader {
       } finally {
         _isDismissing = false;
       }
-    });
+    }
+
+    if (WidgetsBinding.instance.schedulerPhase == SchedulerPhase.idle) {
+      doDismiss();
+    } else {
+      WidgetsBinding.instance.addPostFrameCallback((_) => doDismiss());
+    }
   }
 }

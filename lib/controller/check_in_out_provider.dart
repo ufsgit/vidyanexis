@@ -365,8 +365,8 @@ class CheckInOutProvider extends ChangeNotifier {
         log('Success');
         getSearchTaskReport(context);
 
-        Navigator.pop(context);
         Loader.stopLoader(context);
+        Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Attendance Saved')),
         );

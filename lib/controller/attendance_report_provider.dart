@@ -368,8 +368,8 @@ class AttendanceReportProvider extends ChangeNotifier {
       LocationSettings locationSettings;
       if (kIsWeb) {
         locationSettings = WebSettings(
-          accuracy: LocationAccuracy.high,
-          maximumAge: Duration.zero,
+          accuracy: LocationAccuracy.medium,
+          maximumAge: const Duration(minutes: 5),
         );
       } else {
         locationSettings = const LocationSettings(
@@ -382,7 +382,7 @@ class AttendanceReportProvider extends ChangeNotifier {
       try {
         position = await Geolocator.getCurrentPosition(
           locationSettings: locationSettings,
-        ).timeout(const Duration(seconds: 15));
+        ).timeout(kIsWeb ? const Duration(seconds: 4) : const Duration(seconds: 15));
       } catch (e) {
         log('Timeout or error getting current position: $e');
         
@@ -435,6 +435,9 @@ class AttendanceReportProvider extends ChangeNotifier {
   Future<String> getAddressFromCoordinates(
       double latitude, double longitude) async {
     try {
+      if (kIsWeb) {
+        return '';
+      }
       // Ensure GeocodingPlatform.instance is available and not null
       final geocoding = GeocodingPlatform.instance;
       if (geocoding != null) {
@@ -608,7 +611,7 @@ class AttendanceReportProvider extends ChangeNotifier {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (BuildContext context) {
+      builder: (BuildContext dialogContext) {
         return Dialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -653,7 +656,7 @@ class AttendanceReportProvider extends ChangeNotifier {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: () => Navigator.pop(dialogContext),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF1F2937),
                       foregroundColor: Colors.white,

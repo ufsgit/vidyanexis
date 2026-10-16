@@ -404,6 +404,7 @@ class _AddAttendanceWidgetState extends State<AddAttendanceWidget> {
                       validateInputs(context, attendanceProvider);
                   if (validationErrorAfterRetry != null) {
                     Loader.stopLoader(context);
+                    loaderShown = false;
                     showErrorDialog(context, validationErrorAfterRetry);
                     return;
                   }
@@ -428,16 +429,18 @@ class _AddAttendanceWidgetState extends State<AddAttendanceWidget> {
                     context,
                     checkOutTime: DateTime.now().toString(),
                     employeeCode: employeeCode,
-                    closeOnSuccess: true,
+                    closeOnSuccess: false,
                     showLoading: false,
                   );
                   if (success) {
-                    setState(() {
-                      isCheckedIn = false;
-                    });
                     Loader.stopLoader(context);
                     loaderShown = false;
-                    attendanceProvider.showSuccessDialog(context, false);
+                    if (mounted) {
+                      setState(() {
+                        isCheckedIn = false;
+                      });
+                      attendanceProvider.showSuccessDialog(context, false);
+                    }
                   }
                 } else {
                   success = await attendanceProvider.saveAttendance(
@@ -449,12 +452,14 @@ class _AddAttendanceWidgetState extends State<AddAttendanceWidget> {
                     showLoading: false,
                   );
                   if (success) {
-                    setState(() {
-                      isCheckedIn = true;
-                    });
                     Loader.stopLoader(context);
                     loaderShown = false;
-                    attendanceProvider.showSuccessDialog(context, true);
+                    if (mounted) {
+                      setState(() {
+                        isCheckedIn = true;
+                      });
+                      attendanceProvider.showSuccessDialog(context, true);
+                    }
                   }
                 }
               } catch (e) {
