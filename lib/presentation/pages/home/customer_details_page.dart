@@ -2574,6 +2574,92 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                     ),
                                                                   ],
                                                                 ),
+                                                                  // Additional Details
+                                                                  CustomerCard(
+                                                                    title:
+                                                                        "Additional Details",
+                                                                    content: [
+                                                                      DetailRow(
+                                                                        label:
+                                                                            "Electrical Section",
+                                                                        value: customerDetailsProvider.leadDetails![0].electricalSection == 'null'
+                                                                            ? ''
+                                                                            : customerDetailsProvider.leadDetails![0].electricalSection,
+                                                                      ),
+                                                                      const SizedBox(
+                                                                          height:
+                                                                              2),
+                                                                      DetailRow(
+                                                                        label:
+                                                                            "Connected load",
+                                                                        value: customerDetailsProvider.leadDetails![0].connectedLoad == 0
+                                                                            ? ''
+                                                                            : customerDetailsProvider.leadDetails![0].connectedLoad
+                                                                                .toString()
+                                                                                .replaceAll(RegExp(r'\.0$'), ''),
+                                                                      ),
+                                                                      const SizedBox(
+                                                                          height:
+                                                                              2),
+                                                                      DetailRow(
+                                                                        label:
+                                                                            "REP",
+                                                                        value: customerDetailsProvider.leadDetails![0].rep == 'null'
+                                                                            ? ''
+                                                                            : customerDetailsProvider.leadDetails![0].rep,
+                                                                      ),
+                                                                      const SizedBox(
+                                                                          height:
+                                                                              2),
+                                                                      DetailRow(
+                                                                        label:
+                                                                            "Lead By",
+                                                                        value: customerDetailsProvider.leadDetails![0].leadBy == 'null'
+                                                                            ? ''
+                                                                            : customerDetailsProvider.leadDetails![0].leadBy,
+                                                                      ),
+                                                                      const SizedBox(
+                                                                          height:
+                                                                              2),
+                                                                      DetailRow(
+                                                                        label:
+                                                                            "Work Type",
+                                                                        value: customerDetailsProvider.leadDetails![0].workTypeName == 'null'
+                                                                            ? ''
+                                                                            : customerDetailsProvider.leadDetails![0].workTypeName,
+                                                                      ),
+                                                                      const SizedBox(
+                                                                          height:
+                                                                              2),
+                                                                      DetailRow(
+                                                                        label:
+                                                                            "Roof Type",
+                                                                        value: customerDetailsProvider.leadDetails![0].roofTypeName == 'null'
+                                                                            ? ''
+                                                                            : customerDetailsProvider.leadDetails![0].roofTypeName,
+                                                                      ),
+                                                                      const SizedBox(
+                                                                          height:
+                                                                              2),
+                                                                      DetailRow(
+                                                                        label:
+                                                                            "Work Completion Date",
+                                                                        value: customerDetailsProvider.leadDetails![0].workCompletionDateDisplay == 'null'
+                                                                            ? ''
+                                                                            : customerDetailsProvider.leadDetails![0].workCompletionDateDisplay,
+                                                                      ),
+                                                                      const SizedBox(
+                                                                          height:
+                                                                              2),
+                                                                      DetailRow(
+                                                                        label:
+                                                                            "Any Additional Comments",
+                                                                        value: customerDetailsProvider.leadDetails![0].additionalComments == 'null'
+                                                                            ? ''
+                                                                            : customerDetailsProvider.leadDetails![0].additionalComments,
+                                                                      ),
+                                                                    ],
+                                                                  ),
                                                               ],
                                                             ),
                                                           ),
@@ -3915,7 +4001,85 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                 ],
                                                               ),
                                                             ],
-                                                          ), // Additional Details
+                                                          ),
+                                                            // Additional Details
+                                                            CustomerCard(
+                                                              title:
+                                                                  "Additional Details",
+                                                              content: [
+                                                                DetailRow(
+                                                                  label:
+                                                                      "Electrical Section",
+                                                                  value: customerDetailsProvider.leadDetails![0].electricalSection == 'null'
+                                                                      ? ''
+                                                                      : customerDetailsProvider.leadDetails![0].electricalSection,
+                                                                ),
+                                                                const SizedBox(
+                                                                    height: 2),
+                                                                DetailRow(
+                                                                  label:
+                                                                      "Connected load",
+                                                                  value: customerDetailsProvider.leadDetails![0].connectedLoad == 0
+                                                                      ? ''
+                                                                      : customerDetailsProvider.leadDetails![0].connectedLoad
+                                                                          .toString()
+                                                                          .replaceAll(RegExp(r'\.0$'), ''),
+                                                                ),
+                                                                const SizedBox(
+                                                                    height: 2),
+                                                                DetailRow(
+                                                                  label: "REP",
+                                                                  value: customerDetailsProvider.leadDetails![0].rep == 'null'
+                                                                      ? ''
+                                                                      : customerDetailsProvider.leadDetails![0].rep,
+                                                                ),
+                                                                const SizedBox(
+                                                                    height: 2),
+                                                                DetailRow(
+                                                                  label:
+                                                                      "Lead By",
+                                                                  value: customerDetailsProvider.leadDetails![0].leadBy == 'null'
+                                                                      ? ''
+                                                                      : customerDetailsProvider.leadDetails![0].leadBy,
+                                                                ),
+                                                                const SizedBox(
+                                                                    height: 2),
+                                                                DetailRow(
+                                                                  label:
+                                                                      "Work Type",
+                                                                  value: customerDetailsProvider.leadDetails![0].workTypeName == 'null'
+                                                                      ? ''
+                                                                      : customerDetailsProvider.leadDetails![0].workTypeName,
+                                                                ),
+                                                                const SizedBox(
+                                                                    height: 2),
+                                                                DetailRow(
+                                                                  label:
+                                                                      "Roof Type",
+                                                                  value: customerDetailsProvider.leadDetails![0].roofTypeName == 'null'
+                                                                      ? ''
+                                                                      : customerDetailsProvider.leadDetails![0].roofTypeName,
+                                                                ),
+                                                                const SizedBox(
+                                                                    height: 2),
+                                                                DetailRow(
+                                                                  label:
+                                                                      "Work Completion Date",
+                                                                  value: customerDetailsProvider.leadDetails![0].workCompletionDateDisplay == 'null'
+                                                                      ? ''
+                                                                      : customerDetailsProvider.leadDetails![0].workCompletionDateDisplay,
+                                                                ),
+                                                                const SizedBox(
+                                                                    height: 2),
+                                                                DetailRow(
+                                                                  label:
+                                                                      "Any Additional Comments",
+                                                                  value: customerDetailsProvider.leadDetails![0].additionalComments == 'null'
+                                                                      ? ''
+                                                                      : customerDetailsProvider.leadDetails![0].additionalComments,
+                                                                ),
+                                                              ],
+                                                            ),
                                                           Wrap(
                                                             spacing: 10,
                                                             runSpacing: 10,
