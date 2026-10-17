@@ -30,6 +30,7 @@ class ImageUploadAlert extends StatefulWidget {
 class _ImageUploadAlertState extends State<ImageUploadAlert> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
+  bool _isUploading = false;
 
   @override
   void dispose() {
@@ -67,8 +68,10 @@ class _ImageUploadAlertState extends State<ImageUploadAlert> {
       return name.contains(_searchQuery.toLowerCase().trim());
     }).toList();
 
-    return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+    return PopScope(
+      canPop: !_isUploading,
+      child: Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
       child: Container(
         padding: const EdgeInsets.all(24),
         width: AppStyles.isWebScreen(context)
@@ -414,10 +417,12 @@ class _ImageUploadAlertState extends State<ImageUploadAlert> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 CustomElevatedButton(
-                  onPressed: () {
-                    provider.clearFiles();
-                    Navigator.pop(context);
-                  },
+                  onPressed: _isUploading
+                      ? null
+                      : () {
+                          provider.clearFiles();
+                          Navigator.pop(context);
+                        },
                   buttonText: 'Cancel',
                   backgroundColor: Colors.white,
                   borderColor: AppColors.textGrey2,
@@ -426,20 +431,35 @@ class _ImageUploadAlertState extends State<ImageUploadAlert> {
                 ),
                 const SizedBox(width: 12),
                 CustomElevatedButton(
-                  onPressed: () async {
-                    provider.setCutomerId(widget.customerId);
-                    if (provider.fileInfoList.isNotEmpty) {
-                      await provider.uploadAllDocumentsGrouped(
-                        context,
-                        taskId: widget.taskId,
-                      );
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text('Pick at least one document')),
-                      );
-                    }
-                  },
+                  isLoading: _isUploading,
+                  onPressed: _isUploading
+                      ? null
+                      : () async {
+                          if (_isUploading) return;
+                          provider.setCutomerId(widget.customerId);
+                          if (provider.fileInfoList.isNotEmpty) {
+                            setState(() {
+                              _isUploading = true;
+                            });
+                            try {
+                              await provider.uploadAllDocumentsGrouped(
+                                context,
+                                taskId: widget.taskId,
+                              );
+                            } finally {
+                              if (mounted) {
+                                setState(() {
+                                  _isUploading = false;
+                                });
+                              }
+                            }
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text('Pick at least one document')),
+                            );
+                          }
+                        },
                   buttonText: 'Upload Documents',
                   backgroundColor: AppColors.appViolet,
                   borderColor: AppColors.appViolet,
@@ -451,6 +471,7 @@ class _ImageUploadAlertState extends State<ImageUploadAlert> {
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }

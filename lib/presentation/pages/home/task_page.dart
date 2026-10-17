@@ -7655,6 +7655,7 @@ class _tasksPageReportState extends State<TaskPage> {
     imageProvider.updateDocumentType(docId, doc.documentTypeName);
 
     await imageProvider.addFileMobile();
+    if (!context.mounted) return;
 
     // Only examine files belonging to this specific document type.
     final pickedForThisDoc = imageProvider.fileInfoList
@@ -7668,55 +7669,58 @@ class _tasksPageReportState extends State<TaskPage> {
       fileName: file['name'] as String? ?? 'document',
       bytes: file['data'] as Uint8List?,
       mimeType: file['mimeType'] as String?,
+      onUpload: () async {
+        // start progress
+        _uploadingDocs.add(docId);
+        _uploadProgress[docId] = 0.05;
+        _refreshDocs();
+
+        Timer? progressTimer;
+        progressTimer = Timer.periodic(const Duration(milliseconds: 300), (_) {
+          if (!_uploadingDocs.contains(docId)) {
+            progressTimer?.cancel();
+            return;
+          }
+          final p = _uploadProgress[docId] ?? 0;
+          if (p < 0.9) {
+            _uploadProgress[docId] = p + 0.07;
+            _refreshDocs();
+          }
+        });
+
+        try {
+          final urls = await imageProvider.uploadAllDocumentsGrouped(
+            context,
+            shouldPop: false,
+            taskId: taskId,
+          );
+
+          progressTimer.cancel();
+          _uploadProgress[docId] = 1.0;
+          _refreshDocs();
+          await Future.delayed(const Duration(milliseconds: 200));
+
+          _uploadingDocs.remove(docId);
+          _uploadProgress.remove(docId);
+          if (urls.isNotEmpty) {
+            _uploadedDocUrls[docId] = urls.first;
+          }
+          _refreshDocs();
+          return urls.isNotEmpty;
+        } catch (_) {
+          progressTimer.cancel();
+          _uploadingDocs.remove(docId);
+          _uploadProgress.remove(docId);
+          _refreshDocs();
+          rethrow;
+        }
+      },
     );
     if (shouldUpload != true) {
       // Remove only the files just picked for this doc type;
       // leave everything else staged for other rows.
       imageProvider.removeFilesForDocType(docId);
       return;
-    }
-
-    // start progress
-    _uploadingDocs.add(docId);
-    _uploadProgress[docId] = 0.05;
-    _refreshDocs();
-
-    Timer? progressTimer;
-    progressTimer = Timer.periodic(const Duration(milliseconds: 300), (_) {
-      if (!_uploadingDocs.contains(docId)) {
-        progressTimer?.cancel();
-        return;
-      }
-      final p = _uploadProgress[docId] ?? 0;
-      if (p < 0.9) {
-        _uploadProgress[docId] = p + 0.07;
-        _refreshDocs();
-      }
-    });
-
-    try {
-      final urls = await imageProvider.uploadAllDocumentsGrouped(
-        context,
-        shouldPop: false,
-        taskId: taskId,
-      );
-
-      progressTimer.cancel();
-      _uploadProgress[docId] = 1.0;
-      _refreshDocs();
-      await Future.delayed(const Duration(milliseconds: 200));
-
-      _uploadingDocs.remove(docId);
-      _uploadProgress.remove(docId);
-      if (urls.isNotEmpty) {
-        _uploadedDocUrls[docId] = urls.first;
-      }
-      _refreshDocs();
-    } catch (_) {
-      progressTimer.cancel();
-      _uploadingDocs.remove(docId);
-      _uploadProgress.remove(docId);
-      _refreshDocs();
     }
   }
 

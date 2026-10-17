@@ -103,7 +103,9 @@ class _CommercialCustomFieldsTableWidgetState
                                   hasData = true;
                                 }
                               } else {
-                                if (provider.commercialTableRowControllers[col.customFieldId]?.text.isNotEmpty == true) {
+                                final text = provider.commercialTableRowTexts[col.customFieldId] ??
+                                    provider.commercialTableRowControllers[col.customFieldId]?.text;
+                                if (text != null && text.trim().isNotEmpty) {
                                   hasData = true;
                                 }
                               }
@@ -152,7 +154,9 @@ class _CommercialCustomFieldsTableWidgetState
                                         hasData = true;
                                       }
                                     } else {
-                                      if (provider.commercialTableRowControllers[col.customFieldId]?.text.isNotEmpty == true) {
+                                      final text = provider.commercialTableRowTexts[col.customFieldId] ??
+                                          provider.commercialTableRowControllers[col.customFieldId]?.text;
+                                      if (text != null && text.trim().isNotEmpty) {
                                         hasData = true;
                                       }
                                     }
@@ -332,6 +336,9 @@ class _CommercialCustomFieldsTableWidgetState
         alignment: Alignment.centerLeft,
         child: TextField(
           controller: provider.getCommercialTableRowController(col.customFieldId!),
+          onChanged: (val) {
+            provider.updateCommercialTableRowText(col.customFieldId!, val);
+          },
           decoration: InputDecoration(
             hintText: 'Enter ${col.customFieldName}',
             hintStyle: const TextStyle(fontSize: 12, color: Colors.grey),

@@ -181,7 +181,11 @@ class CustomFieldByStatusId {
         isMandatory: _extractMandatory(json),
         customFieldId: json["custom_field_id"] ?? json["Custom_Field_Id"],
         customFieldName: json["custom_field_name"] ?? json["Custom_Field_Name"],
-        datavalue: json["datavalue"] ?? json["DataValue"] ?? "",
+        datavalue: json["datavalue"] ??
+            json["DataValue"] ??
+            json["value"] ??
+            json["Value"] ??
+            "",
         customFieldTypeId: json["custom_field_type_id"] ?? json["Custom_Field_Type_Id"],
         isQuotationCustom: json["quotation_custom"] ?? json["isQuotationCustom"],
         isViewInQuotation: json["view_in_quotation"] ?? json["isViewInQuotation"],
@@ -223,6 +227,8 @@ class CustomFieldByStatusId {
         "is_create_new": isCreateNew,
         "Category_Id": categoryId,
         "Category_Name": categoryName,
+        "datavalue": datavalue,
+        "value": datavalue,
         "dropdown_values": dropdownValues == null
             ? []
             : List<dynamic>.from(dropdownValues!.map((x) => x.toJson())),

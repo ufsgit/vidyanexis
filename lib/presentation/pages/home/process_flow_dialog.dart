@@ -2020,6 +2020,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
     imageProvider.updateDocumentType(docId, doc.documentTypeName);
 
     await _showPickOptions(context, imageProvider);
+    if (!context.mounted) return;
 
     // Check only files belonging to THIS document type
     final pickedForThisDoc = imageProvider.fileInfoList
@@ -2037,68 +2038,71 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
       fileName: fileName,
       bytes: bytes,
       mimeType: mime,
+      onUpload: () async {
+        setState(() {
+          _uploadingDocs.add(docId);
+          _uploadProgress[docId] = 0.05;
+        });
+
+        Timer? progressTimer;
+        progressTimer = Timer.periodic(const Duration(milliseconds: 120), (_) {
+          if (!_uploadingDocs.contains(docId)) {
+            progressTimer?.cancel();
+            return;
+          }
+          setState(() {
+            final current = _uploadProgress[docId] ?? 0.0;
+            if (current < 0.9) {
+              _uploadProgress[docId] = current + 0.04;
+            }
+          });
+        });
+
+        try {
+          final uploadedUrls = await imageProvider.uploadAllDocumentsGrouped(
+            context,
+            shouldPop: false,
+            taskId: widget.task.taskId.toString(),
+          );
+
+          progressTimer.cancel();
+
+          if (uploadedUrls.isNotEmpty) {
+            // finish bar to 100%
+            setState(() {
+              _uploadProgress[docId] = 1.0;
+            });
+            await Future.delayed(const Duration(milliseconds: 250));
+
+            // keep in list, only mark uploaded — NO fetchTaskTypes
+            setState(() {
+              _uploadingDocs.remove(docId);
+              _uploadProgress.remove(docId);
+              _uploadedDocUrls[docId] = uploadedUrls.first;
+            });
+            return true;
+          } else {
+            setState(() {
+              _uploadingDocs.remove(docId);
+              _uploadProgress.remove(docId);
+            });
+            return false;
+          }
+        } catch (e) {
+          progressTimer.cancel();
+          setState(() {
+            _uploadingDocs.remove(docId);
+            _uploadProgress.remove(docId);
+          });
+          rethrow;
+        }
+      },
     );
     if (shouldUpload != true) {
       // Remove only the files the user just picked for this doc type;
       // keep everything else staged.
       imageProvider.removeFilesForDocType(docId);
       return;
-    }
-
-    // Gmail-style: progress on the row only
-    setState(() {
-      _uploadingDocs.add(docId);
-      _uploadProgress[docId] = 0.05;
-    });
-
-    Timer? progressTimer;
-    progressTimer = Timer.periodic(const Duration(milliseconds: 120), (_) {
-      if (!_uploadingDocs.contains(docId)) {
-        progressTimer?.cancel();
-        return;
-      }
-      setState(() {
-        final current = _uploadProgress[docId] ?? 0.0;
-        if (current < 0.9) {
-          _uploadProgress[docId] = current + 0.04;
-        }
-      });
-    });
-
-    try {
-      final uploadedUrls = await imageProvider.uploadAllDocumentsGrouped(
-        context,
-        shouldPop: false,
-        taskId: widget.task.taskId.toString(),
-      );
-
-      progressTimer.cancel();
-
-      if (uploadedUrls.isNotEmpty) {
-        // finish bar to 100%
-        setState(() {
-          _uploadProgress[docId] = 1.0;
-        });
-        await Future.delayed(const Duration(milliseconds: 250));
-
-        // keep in list, only mark uploaded — NO fetchTaskTypes
-        setState(() {
-          _uploadingDocs.remove(docId);
-          _uploadProgress.remove(docId);
-          _uploadedDocUrls[docId] = uploadedUrls.first;
-        });
-      } else {
-        setState(() {
-          _uploadingDocs.remove(docId);
-          _uploadProgress.remove(docId);
-        });
-      }
-    } catch (e) {
-      progressTimer.cancel();
-      setState(() {
-        _uploadingDocs.remove(docId);
-        _uploadProgress.remove(docId);
-      });
     }
   }
 

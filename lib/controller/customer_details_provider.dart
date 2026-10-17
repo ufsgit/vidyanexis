@@ -181,17 +181,28 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
   final Map<int, TextEditingController> commercialTableRowControllers = {};
   final Map<int, String> commercialTableRowDropdowns = {};
+  final Map<int, String> commercialTableRowTexts = {};
 
   int? _editingCommercialRowIndex;
   int? get editingCommercialRowIndex => _editingCommercialRowIndex;
 
-  void initCommercialTableRow() {
-    commercialTableRowControllers.clear();
-    commercialTableRowDropdowns.clear();
-    _editingCommercialRowIndex = null;
+  void initCommercialTableRow({bool clearExisting = false}) {
+    if (clearExisting) {
+      commercialTableRowControllers.clear();
+      commercialTableRowDropdowns.clear();
+      commercialTableRowTexts.clear();
+      _editingCommercialRowIndex = null;
+    }
     for (var field in _commercialCustomFields) {
-      commercialTableRowControllers[field.customFieldId!] =
-          TextEditingController();
+      if (field.customFieldId != null) {
+        if (!commercialTableRowControllers.containsKey(field.customFieldId!)) {
+          commercialTableRowControllers[field.customFieldId!] =
+              TextEditingController(
+                  text: commercialTableRowTexts[field.customFieldId!] ?? '');
+        } else if (clearExisting) {
+          commercialTableRowControllers[field.customFieldId!]!.clear();
+        }
+      }
     }
   }
 
@@ -200,9 +211,19 @@ class CustomerDetailsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void updateCommercialTableRowText(int id, String value) {
+    commercialTableRowTexts[id] = value;
+    if (commercialTableRowControllers.containsKey(id)) {
+      if (commercialTableRowControllers[id]!.text != value) {
+        commercialTableRowControllers[id]!.text = value;
+      }
+    }
+  }
+
   TextEditingController getCommercialTableRowController(int fieldId) {
     if (!commercialTableRowControllers.containsKey(fieldId)) {
-      commercialTableRowControllers[fieldId] = TextEditingController();
+      commercialTableRowControllers[fieldId] =
+          TextEditingController(text: commercialTableRowTexts[fieldId] ?? '');
     }
     return commercialTableRowControllers[fieldId]!;
   }
@@ -242,7 +263,9 @@ class CustomerDetailsProvider extends ChangeNotifier {
       if (field.customFieldTypeId == 3 || field.customFieldTypeId == 4) {
         val = commercialTableRowDropdowns[field.customFieldId!] ?? '';
       } else {
-        val = commercialTableRowControllers[field.customFieldId!]?.text ?? '';
+        val = commercialTableRowTexts[field.customFieldId!] ??
+            commercialTableRowControllers[field.customFieldId!]?.text ??
+            '';
       }
       clonedField.datavalue = val;
 
@@ -256,6 +279,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
       controller.clear();
     }
     commercialTableRowDropdowns.clear();
+    commercialTableRowTexts.clear();
     _editingCommercialRowIndex = null;
     notifyListeners();
   }
@@ -273,6 +297,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
           controller.clear();
         }
         commercialTableRowDropdowns.clear();
+        commercialTableRowTexts.clear();
       } else if (_editingCommercialRowIndex != null &&
           rowIndex < _editingCommercialRowIndex!) {
         _editingCommercialRowIndex = _editingCommercialRowIndex! - 1;
@@ -295,6 +320,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
         if (field.customFieldTypeId == 3 || field.customFieldTypeId == 4) {
           commercialTableRowDropdowns[realId] = val;
         } else {
+          commercialTableRowTexts[realId] = val;
           getCommercialTableRowController(realId).text = val;
         }
       }
@@ -310,17 +336,48 @@ class CustomerDetailsProvider extends ChangeNotifier {
         _editingCommercialRowIndex! < rows.length) {
       var rowToEdit = rows[_editingCommercialRowIndex!];
 
+      int minVirtualId = -1000;
+      virtualToRealCommercialFieldId.keys.forEach((vId) {
+        if (vId < minVirtualId) minVirtualId = vId;
+      });
+      int virtualIdCounter = minVirtualId - 1;
+
       for (var field in _commercialCustomFields) {
         int realId = field.customFieldId!;
         var existingField = rowToEdit[realId];
+        String val = '';
+        if (field.customFieldTypeId == 3 || field.customFieldTypeId == 4) {
+          val = commercialTableRowDropdowns[realId] ?? '';
+        } else {
+          val = commercialTableRowTexts[realId] ??
+              commercialTableRowControllers[realId]?.text ??
+              '';
+        }
+
         if (existingField != null) {
-          String val = '';
-          if (field.customFieldTypeId == 3 || field.customFieldTypeId == 4) {
-            val = commercialTableRowDropdowns[realId] ?? '';
-          } else {
-            val = commercialTableRowControllers[realId]?.text ?? '';
-          }
           existingField.datavalue = val;
+        } else {
+          final clonedField = CustomFieldByStatusId.fromJson(field.toJson());
+          clonedField.isChecked = 1;
+          clonedField.datavalue = val;
+          final vId = virtualIdCounter--;
+          virtualToRealCommercialFieldId[vId] = realId;
+          clonedField.customFieldId = vId;
+
+          int lastIndex = -1;
+          for (var ef in rowToEdit.values) {
+            final idx = _selectedCommercialFields.indexOf(ef);
+            if (idx > lastIndex) {
+              lastIndex = idx;
+            }
+          }
+          if (lastIndex != -1 &&
+              lastIndex + 1 <= _selectedCommercialFields.length) {
+            _selectedCommercialFields.insert(lastIndex + 1, clonedField);
+          } else {
+            _selectedCommercialFields.add(clonedField);
+          }
+          rowToEdit[realId] = clonedField;
         }
       }
 
@@ -328,6 +385,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
         controller.clear();
       }
       commercialTableRowDropdowns.clear();
+      commercialTableRowTexts.clear();
       _editingCommercialRowIndex = null;
       notifyListeners();
     }
@@ -1613,6 +1671,11 @@ class CustomerDetailsProvider extends ChangeNotifier {
             _commercialCustomFields = fieldsData
                 .map((e) => CustomFieldByStatusId.fromJson(e))
                 .toList();
+            initCommercialTableRow();
+            if (_savedMasterCustomFields.isNotEmpty &&
+                _selectedCommercialFields.isEmpty) {
+              populateCustomFieldsFromMaster(_savedMasterCustomFields);
+            }
           } else {
             _commercialCustomFields = [];
           }
@@ -3948,6 +4011,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     commercialDescriptionController.clear();
     commercialTableRowControllers.clear();
     commercialTableRowDropdowns.clear();
+    commercialTableRowTexts.clear();
     customFieldQuotationKey.currentState?.resetForm();
     quotationDescriptionController.clear();
     quotationDescription2Controller.clear();
@@ -5847,9 +5911,15 @@ class CustomerDetailsProvider extends ChangeNotifier {
     int virtualIdCounter = -1000;
 
     for (var masterField in masterCustomFields) {
-      final fieldId =
-          int.tryParse(masterField['custom_field_id']?.toString() ?? '');
-      final value = masterField['value']?.toString();
+      final fieldId = int.tryParse(
+          masterField['custom_field_id']?.toString() ??
+              masterField['Custom_Field_Id']?.toString() ??
+              masterField['field_id']?.toString() ??
+              '');
+      final value = masterField['value']?.toString() ??
+          masterField['datavalue']?.toString() ??
+          masterField['DataValue']?.toString() ??
+          masterField['Value']?.toString();
 
       if (fieldId != null) {
         // Update the model list so it's consistent
@@ -5870,7 +5940,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
             // Clone to support duplicates
             final clonedField = CustomFieldByStatusId.fromJson(
                 _commercialCustomFields[i].toJson());
-            clonedField.datavalue = value;
+            clonedField.datavalue = value ?? '';
             clonedField.isChecked = 1;
 
             // Assign virtual ID
