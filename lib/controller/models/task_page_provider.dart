@@ -735,6 +735,8 @@ class TaskPageProvider extends ChangeNotifier {
   }
 
   void clearAllFilters() {
+    _selectedStatus = null;
+    _selectedUser = null;
     _selectedTaskType = null;
     _selectedEnquiryFor = null;
     _selectedDepartment = null;

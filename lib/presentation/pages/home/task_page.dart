@@ -72,12 +72,32 @@ class TaskTypeFilterOption {
   const TaskTypeFilterOption({required this.id, required this.name});
 }
 
+class StatusFilterOption {
+  final int id;
+  final String name;
+
+  const StatusFilterOption({required this.id, required this.name});
+}
+
+class UserFilterOption {
+  final int id;
+  final String name;
+
+  const UserFilterOption({required this.id, required this.name});
+}
+
 class _tasksPageReportState extends State<TaskPage> {
   ScrollController scrollController = ScrollController();
   TextEditingController searchController = TextEditingController();
   final TextEditingController _taskTypeFilterController =
       TextEditingController(text: 'All');
   final FocusNode _taskTypeFilterFocusNode = FocusNode();
+  final TextEditingController _statusFilterController =
+      TextEditingController(text: 'All');
+  final FocusNode _statusFilterFocusNode = FocusNode();
+  final TextEditingController _assignedToFilterController =
+      TextEditingController(text: 'All');
+  final FocusNode _assignedToFilterFocusNode = FocusNode();
   final FocusNode searchFocusNodeWeb = FocusNode();
   final FocusNode searchFocusNodeMobile = FocusNode();
   final FocusNode staffFocusNode = FocusNode();
@@ -659,6 +679,10 @@ class _tasksPageReportState extends State<TaskPage> {
     _docTick.dispose();
     _taskTypeFilterController.dispose();
     _taskTypeFilterFocusNode.dispose();
+    _statusFilterController.dispose();
+    _statusFilterFocusNode.dispose();
+    _assignedToFilterController.dispose();
+    _assignedToFilterFocusNode.dispose();
     super.dispose();
   }
 
@@ -744,6 +768,212 @@ class _tasksPageReportState extends State<TaskPage> {
             }
           },
         ),
+      ),
+    );
+  }
+
+  Widget _buildStatusFilter(
+      TaskPageProvider reportsProvider, DropDownProvider dropDownProvider) {
+    final statusOptions = [
+      const StatusFilterOption(id: 0, name: 'All'),
+      ...dropDownProvider.taskStatuses
+          .where((status) => status.statusId != null)
+          .map(
+            (status) => StatusFilterOption(
+              id: status.statusId!,
+              name: StatusUtils.getDisplayStatus(status.statusName ?? ''),
+            ),
+          ),
+    ];
+
+    final currentStatusId = reportsProvider.selectedStatus ?? 0;
+    String currentStatusName = 'All';
+    if (currentStatusId != 0) {
+      for (final s in dropDownProvider.taskStatuses) {
+        if (s.statusId == currentStatusId) {
+          currentStatusName = StatusUtils.getDisplayStatus(s.statusName ?? '');
+          break;
+        }
+      }
+    }
+
+    if (!_statusFilterFocusNode.hasFocus &&
+        _statusFilterController.text != currentStatusName) {
+      _statusFilterController.text = currentStatusName;
+    }
+
+    final bool isFilterActive =
+        reportsProvider.selectedStatus != null &&
+        reportsProvider.selectedStatus != 0;
+
+    return SizedBox(
+      width: 230,
+      child: CustomAutocompleteSearch<StatusFilterOption>(
+        items: statusOptions,
+        displayStringFunction: (item) => item.name,
+        defaultText: currentStatusName,
+        controller: _statusFilterController,
+        focusNode: _statusFilterFocusNode,
+        labelText: 'Status',
+        suffixIcon:
+            const Icon(Icons.search, size: 20, color: AppColors.textGrey2),
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+        borderColor:
+            isFilterActive ? AppColors.primaryBlue : Colors.grey[300]!,
+        focusedBorderColor: AppColors.primaryBlue,
+        showOptionsOnTap: true,
+        maxHeight: 300,
+        customOptionsBuilder: (TextEditingValue textEditingValue) {
+          final query = textEditingValue.text.toLowerCase().trim();
+          if (query.isEmpty || query == 'all') {
+            return statusOptions;
+          }
+          final matches = statusOptions.where(
+              (item) => item.name.toLowerCase().contains(query));
+          if (matches.isEmpty) {
+            return statusOptions;
+          }
+          return matches;
+        },
+        onSelected: (StatusFilterOption selected) {
+          _statusFilterController.text = selected.name;
+          reportsProvider.setStatus(selected.id);
+          reportsProvider.goToPage(1);
+          reportsProvider.searchTaskByCustomer(context);
+        },
+        onChanged: (value) {
+          final query = value.toLowerCase().trim();
+          if (query.isEmpty) {
+            if (reportsProvider.selectedStatus != null &&
+                reportsProvider.selectedStatus != 0) {
+              reportsProvider.setStatus(0);
+              reportsProvider.goToPage(1);
+              reportsProvider.searchTaskByCustomer(context);
+            }
+          }
+        },
+        onSubmitted: (value) {
+          final query = value.toLowerCase().trim();
+          if (query.isEmpty || query == 'all') {
+            reportsProvider.setStatus(0);
+            reportsProvider.goToPage(1);
+            reportsProvider.searchTaskByCustomer(context);
+          } else {
+            final match = statusOptions.firstWhere(
+              (item) => item.name.toLowerCase().trim() == query,
+              orElse: () => const StatusFilterOption(id: -1, name: ''),
+            );
+            if (match.id != -1) {
+              _statusFilterController.text = match.name;
+              reportsProvider.setStatus(match.id);
+              reportsProvider.goToPage(1);
+              reportsProvider.searchTaskByCustomer(context);
+            }
+          }
+        },
+      ),
+    );
+  }
+
+  Widget _buildAssignedToFilter(
+      TaskPageProvider reportsProvider, DropDownProvider dropDownProvider) {
+    final userOptions = [
+      const UserFilterOption(id: 0, name: 'All'),
+      ...dropDownProvider.searchUserDetails.map(
+        (user) => UserFilterOption(
+          id: user.userDetailsId,
+          name: user.userDetailsName,
+        ),
+      ),
+    ];
+
+    final currentUserId = reportsProvider.selectedUser ?? 0;
+    String currentUserName = 'All';
+    if (currentUserId != 0) {
+      for (final u in dropDownProvider.searchUserDetails) {
+        if (u.userDetailsId == currentUserId) {
+          currentUserName = u.userDetailsName;
+          break;
+        }
+      }
+    }
+
+    if (!_assignedToFilterFocusNode.hasFocus &&
+        _assignedToFilterController.text != currentUserName) {
+      _assignedToFilterController.text = currentUserName;
+    }
+
+    final bool isFilterActive =
+        reportsProvider.selectedUser != null &&
+        reportsProvider.selectedUser != 0;
+
+    return SizedBox(
+      width: 230,
+      child: CustomAutocompleteSearch<UserFilterOption>(
+        items: userOptions,
+        displayStringFunction: (item) => item.name,
+        defaultText: currentUserName,
+        controller: _assignedToFilterController,
+        focusNode: _assignedToFilterFocusNode,
+        labelText: 'Assigned To',
+        suffixIcon:
+            const Icon(Icons.search, size: 20, color: AppColors.textGrey2),
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+        borderColor:
+            isFilterActive ? AppColors.primaryBlue : Colors.grey[300]!,
+        focusedBorderColor: AppColors.primaryBlue,
+        showOptionsOnTap: true,
+        maxHeight: 300,
+        customOptionsBuilder: (TextEditingValue textEditingValue) {
+          final query = textEditingValue.text.toLowerCase().trim();
+          if (query.isEmpty || query == 'all') {
+            return userOptions;
+          }
+          final matches = userOptions.where(
+              (item) => item.name.toLowerCase().contains(query));
+          if (matches.isEmpty) {
+            return userOptions;
+          }
+          return matches;
+        },
+        onSelected: (UserFilterOption selected) {
+          _assignedToFilterController.text = selected.name;
+          reportsProvider.setUserFilterStatus(selected.id);
+          reportsProvider.goToPage(1);
+          reportsProvider.searchTaskByCustomer(context);
+        },
+        onChanged: (value) {
+          final query = value.toLowerCase().trim();
+          if (query.isEmpty) {
+            if (reportsProvider.selectedUser != null &&
+                reportsProvider.selectedUser != 0) {
+              reportsProvider.setUserFilterStatus(0);
+              reportsProvider.goToPage(1);
+              reportsProvider.searchTaskByCustomer(context);
+            }
+          }
+        },
+        onSubmitted: (value) {
+          final query = value.toLowerCase().trim();
+          if (query.isEmpty || query == 'all') {
+            reportsProvider.setUserFilterStatus(0);
+            reportsProvider.goToPage(1);
+            reportsProvider.searchTaskByCustomer(context);
+          } else {
+            final match = userOptions.firstWhere(
+              (item) => item.name.toLowerCase().trim() == query,
+              orElse: () => const UserFilterOption(id: -1, name: ''),
+            );
+            if (match.id != -1) {
+              _assignedToFilterController.text = match.name;
+              reportsProvider.setUserFilterStatus(match.id);
+              reportsProvider.goToPage(1);
+              reportsProvider.searchTaskByCustomer(context);
+            }
+          }
+        },
       ),
     );
   }
@@ -914,6 +1144,8 @@ class _tasksPageReportState extends State<TaskPage> {
                 reportsProvider.selectDateFilterOption(null);
                 reportsProvider.removeStatus();
                 _taskTypeFilterController.text = 'All';
+                _statusFilterController.text = 'All';
+                _assignedToFilterController.text = 'All';
                 reportsProvider.setTaskSearchCriteria(
                     '', '', '', '', '', '', '');
                 reportsProvider.goToPage(1);
@@ -1398,75 +1630,7 @@ class _tasksPageReportState extends State<TaskPage> {
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     // Status Filter
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(4),
-                        border: Border.all(
-                            color: reportsProvider.selectedStatus != null &&
-                                    reportsProvider.selectedStatus != 0
-                                ? AppColors.primaryBlue
-                                : Colors.grey[300]!),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Text('Status: ',
-                              style: TextStyle(
-                                  fontFamily: 'PlusJakartaSans',
-                                  color: Colors.black,
-                                  fontSize: 14)),
-                          DropdownButton<int>(
-                            value: reportsProvider.selectedStatus,
-                            hint: const Text('All',
-                                style: TextStyle(
-                                    fontFamily: 'PlusJakartaSans',
-                                    color: Colors.black,
-                                    fontSize: 14)),
-                            items: [
-                                  const DropdownMenuItem<int>(
-                                    value: 0,
-                                    child: Text('All',
-                                        style: TextStyle(
-                                            fontFamily: 'PlusJakartaSans',
-                                            color: Colors.black,
-                                            fontSize: 14)),
-                                  ),
-                                ] +
-                                provider.taskStatuses
-                                    .map((status) => DropdownMenuItem<int>(
-                                          value: status.statusId,
-                                          child: ConstrainedBox(
-                                            constraints: const BoxConstraints(
-                                                maxWidth: 150),
-                                            child: Text(
-                                              StatusUtils.getDisplayStatus(
-                                                  status.statusName ?? ''),
-                                              overflow: TextOverflow.ellipsis,
-                                              style: const TextStyle(
-                                                  fontFamily: 'PlusJakartaSans',
-                                                  color: Colors.black,
-                                                  fontSize: 14),
-                                            ),
-                                          ),
-                                        ))
-                                    .toList(),
-                            onChanged: (int? newValue) {
-                              if (newValue != null) {
-                                reportsProvider.setStatus(newValue);
-                                reportsProvider.goToPage(1);
-                                reportsProvider.searchTaskByCustomer(context);
-                              }
-                            },
-                            underline: Container(),
-                            isDense: true,
-                            iconSize: 18,
-                          ),
-                        ],
-                      ),
-                    ),
+                    _buildStatusFilter(reportsProvider, provider),
 
                     // Date Filter
                     GestureDetector(
@@ -1507,74 +1671,7 @@ class _tasksPageReportState extends State<TaskPage> {
                     ),
 
                     // Assigned To Filter
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(4),
-                        border: Border.all(
-                            color: reportsProvider.selectedUser != null &&
-                                    reportsProvider.selectedUser != 0
-                                ? AppColors.primaryBlue
-                                : Colors.grey[300]!),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Text('Assigned To: ',
-                              style: TextStyle(
-                                  fontFamily: 'PlusJakartaSans',
-                                  color: Colors.black,
-                                  fontSize: 14)),
-                          DropdownButton<int>(
-                            value: reportsProvider.selectedUser,
-                            hint: const Text('All',
-                                style: TextStyle(
-                                    fontFamily: 'PlusJakartaSans',
-                                    color: Colors.black,
-                                    fontSize: 14)),
-                            items: [
-                                  const DropdownMenuItem<int>(
-                                    value: 0,
-                                    child: Text('All',
-                                        style: TextStyle(
-                                            fontFamily: 'PlusJakartaSans',
-                                            color: Colors.black,
-                                            fontSize: 14)),
-                                  ),
-                                ] +
-                                provider.searchUserDetails
-                                    .map((user) => DropdownMenuItem<int>(
-                                          value: user.userDetailsId,
-                                          child: ConstrainedBox(
-                                            constraints: const BoxConstraints(
-                                                maxWidth: 150),
-                                            child: Text(
-                                              user.userDetailsName,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: const TextStyle(
-                                                  fontFamily: 'PlusJakartaSans',
-                                                  color: Colors.black,
-                                                  fontSize: 14),
-                                            ),
-                                          ),
-                                        ))
-                                    .toList(),
-                            onChanged: (int? newValue) {
-                              if (newValue != null) {
-                                reportsProvider.setUserFilterStatus(newValue);
-                                reportsProvider.goToPage(1);
-                                reportsProvider.searchTaskByCustomer(context);
-                              }
-                            },
-                            underline: Container(),
-                            isDense: true,
-                            iconSize: 18,
-                          ),
-                        ],
-                      ),
-                    ),
+                    _buildAssignedToFilter(reportsProvider, provider),
 
                     // Task Type Filter
                     _buildTaskTypeFilter(reportsProvider, provider),
@@ -1744,6 +1841,8 @@ class _tasksPageReportState extends State<TaskPage> {
                           reportsProvider.setEntryType('myown');
                           searchController.clear();
                           _taskTypeFilterController.text = 'All';
+                          _statusFilterController.text = 'All';
+                          _assignedToFilterController.text = 'All';
                           reportsProvider.setTaskSearchCriteria(
                               '', '', '', '', '', '', '');
                           reportsProvider.goToPage(1);
@@ -2005,6 +2104,9 @@ class _tasksPageReportState extends State<TaskPage> {
                               reportsProvider.removeStatus();
                               reportsProvider.setEntryType('myown');
                               searchController.clear();
+                              _taskTypeFilterController.text = 'All';
+                              _statusFilterController.text = 'All';
+                              _assignedToFilterController.text = 'All';
                               reportsProvider.setTaskSearchCriteria(
                                   '', '', '', '', '', '', '');
                               reportsProvider.goToPage(1);
