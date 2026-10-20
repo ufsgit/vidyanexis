@@ -310,7 +310,8 @@ class _tasksPageReportState extends State<TaskPage> {
       final settingsProvider =
           Provider.of<SettingsProvider>(context, listen: false);
       if (!settingsProvider.canViewTaskMeAndAll) {
-        reportsProvider.setEntryType('myown');
+        reportsProvider.setEntryType(
+            settingsProvider.hasTaskPermissionAll ? 'all' : 'myown');
       }
 
       customerProvider.resetExpansion();
@@ -1741,7 +1742,11 @@ class _tasksPageReportState extends State<TaskPage> {
                         onPressed: () {
                           reportsProvider.selectDateFilterOption(null);
                           reportsProvider.removeStatus();
-                          reportsProvider.setEntryType('myown');
+                          reportsProvider.setEntryType(
+                              (!settingsProvider.canViewTaskMeAndAll &&
+                                      settingsProvider.hasTaskPermissionAll)
+                                  ? 'all'
+                                  : 'myown');
                           searchController.clear();
                           _taskTypeFilterController.text = 'All';
                           reportsProvider.setTaskSearchCriteria(
@@ -2003,7 +2008,11 @@ class _tasksPageReportState extends State<TaskPage> {
                             onPressed: () {
                               reportsProvider.selectDateFilterOption(null);
                               reportsProvider.removeStatus();
-                              reportsProvider.setEntryType('myown');
+                              reportsProvider.setEntryType(
+                                  (!settingsProvider.canViewTaskMeAndAll &&
+                                          settingsProvider.hasTaskPermissionAll)
+                                      ? 'all'
+                                      : 'myown');
                               searchController.clear();
                               reportsProvider.setTaskSearchCriteria(
                                   '', '', '', '', '', '', '');

@@ -456,11 +456,30 @@ class SettingsProvider extends ChangeNotifier {
   /// IsView = 0 → hide them (user sees only their own tasks).
   bool get canViewTaskMeAndAll {
     // Check user permission from Get_Menu_Permission (menuIsViewMap)
-    if ((_menuIsViewMap[209] ?? 0) == 1) return true;
+    if ((_menuIsViewMap[209] ?? 0) == 1 ||
+        (_menuIsViewMap[209] ?? 0).toString() == '1') return true;
 
     // Fallback: scan _getMenuPermission list directly
     for (var p in _getMenuPermission) {
-      if (p.menuId == 209 && p.isView == 1) return true;
+      if (p.menuId == 209 && (p.isView == 1 || p.isView.toString() == '1')) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /// Task Permission All (Menu ID: 221)
+  /// When ME and ALL buttons are hidden (Menu 209 IsView == 0):
+  /// IsView = 1 → default Entry_Type is 'all'
+  /// IsView = 0 → default Entry_Type is 'myown'
+  bool get hasTaskPermissionAll {
+    if ((_menuIsViewMap[221] ?? 0) == 1 ||
+        (_menuIsViewMap[221] ?? 0).toString() == '1') return true;
+
+    for (var p in _getMenuPermission) {
+      if (p.menuId == 221 && (p.isView == 1 || p.isView.toString() == '1')) {
+        return true;
+      }
     }
     return false;
   }
@@ -2766,6 +2785,16 @@ class SettingsProvider extends ChangeNotifier {
                 isDelete: 0));
           }
 
+          if (!_getMenuPermission.any((element) => element.menuId == 221)) {
+            _getMenuPermission.add(GetMenuPermissionModel(
+                menuId: 221,
+                menuName: 'Task Permission All',
+                isView: 0,
+                isSave: 0,
+                isEdit: 0,
+                isDelete: 0));
+          }
+
           // Register Dashboard Tabs and new Report IDs
           final Map<int, String> customPermissions = {
             49: 'Leads Overview',
@@ -2786,6 +2815,7 @@ class SettingsProvider extends ChangeNotifier {
             209: 'Task Permission ME and ALL',
             219: 'Lead Permission ME and ALL',
             220: 'Customer Permission ME and ALL',
+            221: 'Task Permission All',
           };
 
           for (var entry in customPermissions.entries) {
@@ -5595,6 +5625,7 @@ class SettingsProvider extends ChangeNotifier {
             209: 'Task Permission ME and ALL',
             219: 'Lead Permission ME and ALL',
             220: 'Customer Permission ME and ALL',
+            221: 'Task Permission All',
           };
 
           for (var entry in customPermissionsShow.entries) {
@@ -5659,7 +5690,7 @@ class SettingsProvider extends ChangeNotifier {
           }
 
           // Ensure ME and ALL permissions are available in _showMenu
-          for (var menuId in [209, 219, 220]) {
+          for (var menuId in [209, 219, 220, 221]) {
             var menu = _showMenu.firstWhere((e) => e.menuId == menuId,
                 orElse: () => MenuPermissionModel(
                     menuId: menuId,
@@ -5667,7 +5698,9 @@ class SettingsProvider extends ChangeNotifier {
                         ? 'Task Permission ME and ALL'
                         : menuId == 219
                             ? 'Lead Permission ME and ALL'
-                            : 'Customer Permission ME and ALL',
+                            : menuId == 220
+                                ? 'Customer Permission ME and ALL'
+                                : 'Task Permission All',
                     menuOrder: 0,
                     menuOrderSub: 0,
                     isEdit: 0,
