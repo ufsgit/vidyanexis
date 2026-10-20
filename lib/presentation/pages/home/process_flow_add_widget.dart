@@ -16,6 +16,7 @@ import 'package:vidyanexis/controller/models/task_type_status_model.dart';
 import 'package:vidyanexis/controller/models/task_flow_model.dart';
 import 'package:vidyanexis/controller/process_flow_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/models/custom_field_model.dart';
 import 'package:vidyanexis/constants/enums.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
@@ -259,6 +260,8 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                   final isWeb = AppStyles.isWebScreen(context);
                   final settingsProvider =
                       Provider.of<SettingsProvider>(context);
+                  final dropDownProvider =
+                      Provider.of<DropDownProvider>(context);
 
                   final enquiryForDropdown = CommonDropdown<EnquiryForModel>(
                     hintText: 'Enquiry For *',
@@ -550,11 +553,26 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                               name: status.branchName!,
                             ))
                         .toList(),
-                    onItemSelected: (int? newValue) {
+                    onItemSelected: (int? newValue) async {
                       if (newValue != null) {
                         processFlowProvider.taskFlowModel.branchId = newValue;
+                        processFlowProvider.taskFlowModel.userId = 0;
                         processFlowProvider.setTaskFlowModel(
                             processFlowProvider.taskFlowModel);
+                        final deptId =
+                            processFlowProvider.taskFlowModel.departmentId;
+                        if (deptId != null && deptId > 0) {
+                          await dropDownProvider.fetchStaffByDepartment(
+                            context: context,
+                            branchId: newValue,
+                            departmentId: deptId,
+                          );
+                        } else {
+                          dropDownProvider.filterStaffByBranchAndDepartment(
+                            branchId: newValue,
+                            departmentId: null,
+                          );
+                        }
                       }
                     },
                     selectedValue: processFlowProvider.taskFlowModel.branchId,
@@ -568,22 +586,56 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                               name: status.departmentName,
                             ))
                         .toList(),
-                    onItemSelected: (int? newValue) {
+                    onItemSelected: (int? newValue) async {
                       if (newValue != null) {
                         processFlowProvider.taskFlowModel.departmentId =
                             newValue;
+                        processFlowProvider.taskFlowModel.userId = 0;
                         processFlowProvider.setTaskFlowModel(
                             processFlowProvider.taskFlowModel);
                       }
                       processFlowProvider.taskFlowModel.taskTypeId = 0;
+                      processFlowProvider.taskFlowModel.userId = 0;
                       processFlowProvider
                           .setTaskFlowModel(processFlowProvider.taskFlowModel);
                       _taskTypeByDepartmentFuture =
                           processFlowProvider.getTaskTypeByDepartment(
                               context, newValue.toString());
+                      await dropDownProvider.fetchStaffByDepartment(
+                        context: context,
+                        branchId:
+                            processFlowProvider.taskFlowModel.branchId,
+                        departmentId: newValue,
+                      );
+                      if (mounted) setState(() {});
                     },
                     selectedValue:
                         processFlowProvider.taskFlowModel.departmentId ?? 0,
+                  );
+
+                  final hasDepartment =
+                      (processFlowProvider.taskFlowModel.departmentId ?? 0) >
+                          0;
+
+                  final userDropdown = CommonDropdown<int>(
+                    hintText: 'User',
+                    items: dropDownProvider.filteredStaffData
+                        .map((staff) => DropdownItem<int>(
+                              id: staff.userDetailsId,
+                              name: staff.userDetailsName,
+                            ))
+                        .toList(),
+                    onItemSelected: (int? newValue) {
+                      processFlowProvider.taskFlowModel.userId =
+                          newValue ?? 0;
+                      processFlowProvider.setTaskFlowModel(
+                          processFlowProvider.taskFlowModel);
+                    },
+                    selectedValue:
+                        (processFlowProvider.taskFlowModel.userId > 0)
+                            ? processFlowProvider.taskFlowModel.userId
+                            : null,
+                    enabled: hasDepartment,
                   );
 
                   final showUserCheckboxWidget = Tooltip(
@@ -856,15 +908,34 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                       ),
                       const SizedBox(height: 16),
                       isWeb
-                          ? Row(
+                          ? Column(
                               children: [
-                                Expanded(child: branchDropdown),
-                                const SizedBox(width: 10),
-                                Expanded(child: departmentDropdown),
-                                const SizedBox(width: 10),
-                                Expanded(child: departmentTaskTypeDropdown),
-                                const SizedBox(width: 10),
-                                showUserCheckboxWidget,
+                                Row(
+                                  children: [
+                                    Expanded(child: branchDropdown),
+                                    const SizedBox(width: 10),
+                                    Expanded(child: departmentDropdown),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                        child: departmentTaskTypeDropdown),
+                                    const SizedBox(width: 10),
+                                    showUserCheckboxWidget,
+                                  ],
+                                ),
+                                if (hasDepartment) ...[
+                                  const SizedBox(height: 16),
+                                  Row(
+                                    children: [
+                                      Expanded(child: userDropdown),
+                                      const SizedBox(width: 10),
+                                      const Expanded(child: SizedBox()),
+                                      const SizedBox(width: 10),
+                                      const Expanded(child: SizedBox()),
+                                      const SizedBox(width: 10),
+                                      const SizedBox(width: 48),
+                                    ],
+                                  ),
+                                ],
                               ],
                             )
                           : Column(
@@ -874,6 +945,10 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                                 departmentDropdown,
                                 const SizedBox(height: 16),
                                 departmentTaskTypeDropdown,
+                                if (hasDepartment) ...[
+                                  const SizedBox(height: 16),
+                                  userDropdown,
+                                ],
                                 const SizedBox(height: 16),
                                 showUserCheckboxWidget,
                               ],
@@ -902,6 +977,12 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                                 selectedTaskFlowIndex = null;
                                 processFlowProvider.taskFlowModel =
                                     TaskFlowModel();
+                                Provider.of<DropDownProvider>(context,
+                                        listen: false)
+                                    .filterStaffByBranchAndDepartment(
+                                  branchId: null,
+                                  departmentId: null,
+                                );
                                 setState(() {});
                               },
                               child: const Text('Cancel Editing'),
@@ -1997,30 +2078,44 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
     emptyModel.branchId = null;
     emptyModel.departmentId = null;
     emptyModel.taskTypeId = null;
+    emptyModel.userId = 0;
 
     // Set the empty model using the provider method
     processFlowProvider.setTaskFlowModel(emptyModel);
 
+    final dropDownProvider =
+        Provider.of<DropDownProvider>(context, listen: false);
+    dropDownProvider.filterStaffByBranchAndDepartment(
+      branchId: null,
+      departmentId: null,
+    );
+
     // setState(() {});
   }
 
-  void _editTaskFlow(int index, TaskFlowModel task, List<BranchModel> branches,
-      List<DepartmentModel> departments, List<TaskTypeModel> taskTypes) {
+  Future<void> _editTaskFlow(
+      int index,
+      TaskFlowModel task,
+      List<BranchModel> branches,
+      List<DepartmentModel> departments,
+      List<TaskTypeModel> taskTypes) async {
     isEditingTaskFlow = true;
     selectedTaskFlowIndex = index;
 
     // Set the task flow model for editing
     processFlowProvider.setTaskFlowModel(task);
 
-    // branchController.text = branches
-    //     .where((element)=> element.branchId ==task.branchId).firstOrNull?.branchName??"na";
-    // departmentController.text = departments
-    //     .where((element)=> element.departmentId==task.departmentId).firstOrNull?.departmentName??"na";
-    //
-    // flowTaskTypeController.text = taskTypes
-    //     .where((element)=> element.taskTypeId==task.taskTypeId).firstOrNull?.taskTypeName??"na";
+    final dropDownProvider =
+        Provider.of<DropDownProvider>(context, listen: false);
+    if (task.departmentId != null && task.departmentId! > 0) {
+      await dropDownProvider.fetchStaffByDepartment(
+        context: context,
+        branchId: task.branchId,
+        departmentId: task.departmentId,
+      );
+    }
 
-    setState(() {});
+    if (mounted) setState(() {});
   }
 
   Widget _buildTaskFlowList(List<TaskTypeModel> taskTypes,
@@ -2105,6 +2200,8 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
           itemBuilder: (context, index) {
             final task = processFlowProvider.taskFlowList[index];
 
+            final dropDownProvider =
+                Provider.of<DropDownProvider>(context, listen: false);
             final branchName = branches
                     .where((element) => element.branchId == task.branchId)
                     .firstOrNull
@@ -2121,6 +2218,19 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                     .firstOrNull
                     ?.taskTypeName ??
                 "N/A";
+            final userName = task.userId > 0
+                ? (dropDownProvider.searchUserDetails
+                        .where(
+                            (element) => element.userDetailsId == task.userId)
+                        .firstOrNull
+                        ?.userDetailsName ??
+                    dropDownProvider.filteredStaffData
+                        .where(
+                            (element) => element.userDetailsId == task.userId)
+                        .firstOrNull
+                        ?.userDetailsName ??
+                    'User #${task.userId}')
+                : null;
 
             return Container(
               margin: const EdgeInsets.only(bottom: 12),
@@ -2182,7 +2292,9 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                               const SizedBox(width: 4),
                               Expanded(
                                 child: Text(
-                                  '$branchName | $deptName',
+                                  userName != null
+                                      ? '$branchName | $deptName | $userName'
+                                      : '$branchName | $deptName',
                                   style: GoogleFonts.plusJakartaSans(
                                     fontSize: 12,
                                     color: const Color(0xFF64748B),
@@ -2200,12 +2312,12 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         InkWell(
-                          onTap: () {
-                            _editTaskFlow(
-                                index, task, branches, departments, taskTypes);
+                          onTap: () async {
                             _taskTypeByDepartmentFuture =
                                 processFlowProvider.getTaskTypeByDepartment(
                                     context, task.departmentId.toString());
+                            await _editTaskFlow(
+                                index, task, branches, departments, taskTypes);
                           },
                           child: Container(
                             padding: const EdgeInsets.all(6),

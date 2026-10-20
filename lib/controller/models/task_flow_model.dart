@@ -13,12 +13,14 @@ class TaskFlowModel {
   int? branchId;
   int? departmentId;
   int? taskTypeId;
+  int userId;
   int showUser;
 
   TaskFlowModel({
     this.branchId,
     this.departmentId,
     this.taskTypeId,
+    this.userId = 0,
     this.showUser = 0,
   });
 
@@ -26,12 +28,14 @@ class TaskFlowModel {
     int? branchId,
     int? departmentId,
     int? taskTypeId,
+    int? userId,
     int? showUser,
   }) =>
       TaskFlowModel(
         branchId: branchId ?? this.branchId,
         departmentId: departmentId ?? this.departmentId,
         taskTypeId: taskTypeId ?? this.taskTypeId,
+        userId: userId ?? this.userId,
         showUser: showUser ?? this.showUser,
       );
 
@@ -39,6 +43,9 @@ class TaskFlowModel {
         branchId: json["branch_id"],
         departmentId: json["department_id"],
         taskTypeId: json["task_type_id"],
+        userId: int.tryParse(
+                (json["user_id"] ?? json["User_Id"] ?? 0).toString()) ??
+            0,
         showUser: json["Show_User"] ?? 0,
       );
 
@@ -46,6 +53,7 @@ class TaskFlowModel {
         "branch_id": branchId,
         "department_id": departmentId,
         "task_type_id": taskTypeId,
+        "user_id": userId,
         "Show_User": showUser,
       };
 }

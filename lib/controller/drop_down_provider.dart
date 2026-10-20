@@ -258,7 +258,22 @@ class DropDownProvider extends ChangeNotifier {
             staffDeptList.contains(dept) || transferDeptList.contains(dept));
         if (!matchesDept) return false;
 
-
+        // Filter by branch when a branch is selected (same as new drawer)
+        if (branchId != null &&
+            branchId.toString().trim().isNotEmpty &&
+            branchId.toString().trim() != "0") {
+          final targetBranch = branchId.toString().trim();
+          final staffBranchStr = (staff.branchId ?? '').toString().trim();
+          final staffBranchList =
+              (staffBranchStr.isEmpty || staffBranchStr == "0")
+                  ? <String>[]
+                  : staffBranchStr
+                      .split(',')
+                      .map((e) => e.trim())
+                      .where((e) => e.isNotEmpty)
+                      .toList();
+          if (!staffBranchList.contains(targetBranch)) return false;
+        }
 
         return true;
       }).toList();
