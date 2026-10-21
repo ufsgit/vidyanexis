@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
@@ -56,6 +57,11 @@ class _AddCustomFieldState extends State<AddCustomField> {
         settingsProvider.fieldNameid == 3 || settingsProvider.fieldNameid == 5;
     if (requiresFieldList && settingsProvider.fieldListItems.isEmpty) {
       return 'Please add at least one item in the Field List';
+    }
+
+    if (settingsProvider.isCustomerView &&
+        settingsProvider.customerOrderController.text.trim().isEmpty) {
+      return 'Please enter order';
     }
 
     return null;
@@ -143,6 +149,12 @@ class _AddCustomFieldState extends State<AddCustomField> {
             .toggleCommercial(widget.customFieldTypeModel?.isCommercial == 1);
         settingsProvider
             .toggleIsChecked(widget.customFieldTypeModel?.isChecked == 1);
+        settingsProvider.toggleCustomerView(
+            widget.customFieldTypeModel?.customerView == 1);
+        settingsProvider.customerOrderController.text =
+            widget.customFieldTypeModel?.order != null
+                ? widget.customFieldTypeModel!.order.toString()
+                : "";
         customerDetailsProvider.selectedQuotationType =
             widget.customFieldTypeModel?.quotationTypeId ?? 0;
             
@@ -163,11 +175,13 @@ class _AddCustomFieldState extends State<AddCustomField> {
         settingsProvider.fieldTypeController.clear();
         settingsProvider.categoryController.clear();
         settingsProvider.fieldListItems.clear();
+        settingsProvider.customerOrderController.clear();
         settingsProvider.setCategory(null);
         settingsProvider.toggleQuotationCustom(false);
         settingsProvider.toggleViewInQuotation(false);
         settingsProvider.toggleCommercial(false);
         settingsProvider.toggleIsChecked(false);
+        settingsProvider.toggleCustomerView(false);
         customerDetailsProvider.selectedQuotationType = 0;
         customerDetailsProvider.quotationTypeController.clear();
         // settingsProvider.setFieldId(0);
@@ -274,10 +288,22 @@ class _AddCustomFieldState extends State<AddCustomField> {
                   controlAffinity: ListTileControlAffinity.leading,
                   contentPadding: EdgeInsets.zero,
                 ),
+                CheckboxListTile(
+                  title: const Text("View Customer"),
+                  value: settingsProvider.isCustomerView,
+                  onChanged: (value) {
+                    settingsProvider.toggleCustomerView(value!);
+                  },
+                  controlAffinity: ListTileControlAffinity.leading,
+                  contentPadding: EdgeInsets.zero,
+                ),
               ] else
-                Row(
+                Wrap(
+                  spacing: 16,
+                  runSpacing: 8,
                   children: [
-                    Expanded(
+                    SizedBox(
+                      width: 175,
                       child: CheckboxListTile(
                         title: const Text("Quotation Custom"),
                         value: settingsProvider.isQuotationCustom,
@@ -288,7 +314,8 @@ class _AddCustomFieldState extends State<AddCustomField> {
                         contentPadding: EdgeInsets.zero,
                       ),
                     ),
-                    Expanded(
+                    SizedBox(
+                      width: 175,
                       child: CheckboxListTile(
                         title: const Text("View In Quotation"),
                         value: settingsProvider.isViewInQuotation,
@@ -300,7 +327,8 @@ class _AddCustomFieldState extends State<AddCustomField> {
                       ),
                     ),
                     if (settingsProvider.commercialProposal == 1)
-                      Expanded(
+                      SizedBox(
+                        width: 160,
                         child: CheckboxListTile(
                           title: const Text("Commercial"),
                           value: settingsProvider.isCommercial,
@@ -311,7 +339,8 @@ class _AddCustomFieldState extends State<AddCustomField> {
                           contentPadding: EdgeInsets.zero,
                         ),
                       ),
-                    Expanded(
+                    SizedBox(
+                      width: 140,
                       child: CheckboxListTile(
                         title: const Text("Events"),
                         value: settingsProvider.isChecked,
@@ -322,8 +351,34 @@ class _AddCustomFieldState extends State<AddCustomField> {
                         contentPadding: EdgeInsets.zero,
                       ),
                     ),
+                    SizedBox(
+                      width: 165,
+                      child: CheckboxListTile(
+                        title: const Text("View Customer"),
+                        value: settingsProvider.isCustomerView,
+                        onChanged: (value) {
+                          settingsProvider.toggleCustomerView(value!);
+                        },
+                        controlAffinity: ListTileControlAffinity.leading,
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                    ),
                   ],
                 ),
+              if (settingsProvider.isCustomerView) ...[
+                const SizedBox(height: 16),
+                CustomTextField(
+                  readOnly: false,
+                  height: 54,
+                  controller: settingsProvider.customerOrderController,
+                  hintText: 'Order*',
+                  labelText: '',
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                  ],
+                ),
+              ],
               const SizedBox(height: 16),
               if (settingsProvider.isViewInQuotation)
                 CommonDropdown(
@@ -500,6 +555,7 @@ class _AddCustomFieldState extends State<AddCustomField> {
                         onPressed: () {
                           settingsProvider.fieldNameController.clear();
                           settingsProvider.fieldTypeController.clear();
+                          settingsProvider.customerOrderController.clear();
                           Navigator.pop(context);
                         },
                         radius: 4,
@@ -537,6 +593,11 @@ class _AddCustomFieldState extends State<AddCustomField> {
                               settingsProvider.isCommercial ? 1 : 0;
                           customFieldTypeModel.isChecked =
                               settingsProvider.isChecked ? 1 : 0;
+                          customFieldTypeModel.customerView =
+                              settingsProvider.isCustomerView ? 1 : 0;
+                          customFieldTypeModel.order = settingsProvider.isCustomerView
+                              ? int.tryParse(settingsProvider.customerOrderController.text.trim()) ?? 0
+                              : 0;
 
                           final navigator = Navigator.of(context);
                           await settingsProvider.saveCustomField(
@@ -577,6 +638,7 @@ class _AddCustomFieldState extends State<AddCustomField> {
             icon: const Icon(Icons.close, color: Colors.black),
             onPressed: () {
               settingsProvider.fieldNameController.clear();
+              settingsProvider.customerOrderController.clear();
               Navigator.pop(context);
             },
           ),
@@ -601,6 +663,7 @@ class _AddCustomFieldState extends State<AddCustomField> {
           IconButton(
             onPressed: () {
               settingsProvider.fieldNameController.clear();
+              settingsProvider.customerOrderController.clear();
               Navigator.pop(context);
             },
             icon: const Icon(Icons.close),
@@ -614,6 +677,7 @@ class _AddCustomFieldState extends State<AddCustomField> {
           onPressed: () {
             settingsProvider.fieldNameController.clear();
             settingsProvider.fieldTypeController.clear();
+            settingsProvider.customerOrderController.clear();
             Navigator.pop(context);
           },
           radius: 4,
@@ -645,6 +709,11 @@ class _AddCustomFieldState extends State<AddCustomField> {
                 settingsProvider.isCommercial ? 1 : 0;
             customFieldTypeModel.isChecked =
                 settingsProvider.isChecked ? 1 : 0;
+            customFieldTypeModel.customerView =
+                settingsProvider.isCustomerView ? 1 : 0;
+            customFieldTypeModel.order = settingsProvider.isCustomerView
+                ? int.tryParse(settingsProvider.customerOrderController.text.trim()) ?? 0
+                : 0;
             customFieldTypeModel.quotationTypeId =
                 customerDetailsProvider.selectedQuotationType;
 

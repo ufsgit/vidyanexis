@@ -15,6 +15,8 @@ class CustomFieldByStatusId {
   int? categoryId;
   String? categoryName;
   int? isCreateNew;
+  int? customerView;
+  int? order;
 
   CustomFieldByStatusId({
     this.isMandatory,
@@ -33,6 +35,8 @@ class CustomFieldByStatusId {
     this.categoryId,
     this.categoryName,
     this.isCreateNew,
+    this.customerView,
+    this.order,
   });
 
   CustomFieldByStatusId copyWith({
@@ -51,6 +55,8 @@ class CustomFieldByStatusId {
     int? categoryId,
     String? categoryName,
     int? isCreateNew,
+    int? customerView,
+    int? order,
   }) =>
       CustomFieldByStatusId(
         isMandatory: isMandatory ?? this.isMandatory,
@@ -70,6 +76,8 @@ class CustomFieldByStatusId {
         categoryId: categoryId ?? this.categoryId,
         categoryName: categoryName ?? this.categoryName,
         isCreateNew: isCreateNew ?? this.isCreateNew,
+        customerView: customerView ?? this.customerView,
+        order: order ?? this.order,
       );
 
   static int? _parseMandatoryValue(dynamic val) {
@@ -176,6 +184,89 @@ class CustomFieldByStatusId {
     return 0;
   }
 
+  static int? _extractCustomerView(Map<String, dynamic> json) {
+    final candidateKeys = [
+      'customer_view',
+      'custemer_view',
+      'Customer_View',
+      'Custemer_View',
+      'view_customer',
+      'view_in_customer',
+      'View_Customer',
+      'View_In_Customer',
+      'is_customer_view',
+      'isCustomerView',
+      'Is_Customer_View',
+      'IsCustomerView',
+    ];
+    for (final key in candidateKeys) {
+      if (json.containsKey(key) && json[key] != null) {
+        final val = json[key];
+        if (val == 1 || val == "1" || val == true || val == "true") return 1;
+        if (val == 0 || val == "0" || val == false || val == "false") return 0;
+        final parsed = int.tryParse(val.toString());
+        if (parsed != null) return parsed;
+      }
+    }
+    for (final entry in json.entries) {
+      final keyClean = entry.key.toLowerCase().replaceAll('_', '');
+      if (keyClean == 'customerview' ||
+          keyClean == 'custemerview' ||
+          keyClean == 'viewcustomer' ||
+          keyClean == 'viewincustomer' ||
+          keyClean == 'iscustomerview') {
+        final val = entry.value;
+        if (val == 1 || val == "1" || val == true || val == "true") return 1;
+        if (val == 0 || val == "0" || val == false || val == "false") return 0;
+        final parsed = int.tryParse(val.toString());
+        if (parsed != null) return parsed;
+      }
+    }
+    return 0;
+  }
+
+  static int? _extractOrder(Map<String, dynamic> json) {
+    final candidateKeys = [
+      'order',
+      'Order',
+      'orders',
+      'Orders',
+      'order_no',
+      'Order_No',
+      'order_by',
+      'Order_By',
+      'customer_order',
+      'Customer_Order',
+      'custemer_order',
+      'Custemer_Order',
+      'view_order',
+      'View_Order',
+      'customer_view_order',
+      'Customer_View_Order',
+    ];
+    for (final key in candidateKeys) {
+      if (json.containsKey(key) && json[key] != null) {
+        final parsed = int.tryParse(json[key].toString());
+        if (parsed != null) return parsed;
+      }
+    }
+    for (final entry in json.entries) {
+      final keyClean = entry.key.toLowerCase().replaceAll('_', '');
+      if (keyClean == 'order' ||
+          keyClean == 'orders' ||
+          keyClean == 'orderno' ||
+          keyClean == 'orderby' ||
+          keyClean == 'customerorder' ||
+          keyClean == 'custemerorder' ||
+          keyClean == 'vieworder' ||
+          keyClean == 'customervieworder') {
+        final parsed = int.tryParse(entry.value.toString());
+        if (parsed != null) return parsed;
+      }
+    }
+    return null;
+  }
+
   factory CustomFieldByStatusId.fromJson(Map<String, dynamic> json) =>
       CustomFieldByStatusId(
         isMandatory: _extractMandatory(json),
@@ -194,6 +285,8 @@ class CustomFieldByStatusId {
         categoryId: json["Category_Id"] ?? json["category_id"],
         categoryName: json["Category_Name"] ?? json["category_name"],
         isCreateNew: _extractCreateNew(json),
+        customerView: _extractCustomerView(json),
+        order: _extractOrder(json),
         dropdownValues: json["dropdown_values"] == null && json["Dropdown_Values"] == null
             ? []
             : List<DropdownValue>.from(
@@ -225,6 +318,8 @@ class CustomFieldByStatusId {
         "events": isChecked,
         "is_commercial": isCommercial,
         "is_create_new": isCreateNew,
+        "view_in_customer": customerView,
+        "order": order,
         "Category_Id": categoryId,
         "Category_Name": categoryName,
         "datavalue": datavalue,

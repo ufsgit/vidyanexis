@@ -1103,7 +1103,265 @@ class _CustomerPageState extends State<CustomerPage> {
         : (showLeadCode ? 780.0 : 630.0);
     final bool showLocation = settingsProvider.menuIsViewMap[142] == 1;
     final bool showRamcoLocation = settingsProvider.ramcoLocationPermission == 1;
-    final double scrollableWidth = 1260.0 + (showLocation ? 140.0 : 0);
+
+    // Collect unique custom fields across customer data
+    final Map<dynamic, CustomerCustomField> uniqueCustomFields = {};
+    for (var lead in customerProvider.customerData) {
+      for (var cf in lead.customFields) {
+        final key = cf.customFieldId != 0 ? cf.customFieldId : cf.customFieldName;
+        if (key != null && key != '' && key != 0 && !uniqueCustomFields.containsKey(key)) {
+          uniqueCustomFields[key] = cf;
+        }
+      }
+    }
+    final List<CustomerCustomField> customFieldColumns = uniqueCustomFields.values.toList();
+
+    final List<_CustomerTableColumn> scrollableColumns = [
+      _CustomerTableColumn(
+        order: 1.0,
+        width: 140.0,
+        header: const TableWidget(
+          width: 140,
+          title: 'AMC Date',
+          fontWeight: FontWeight.normal,
+          padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+          color: Color(0xFFFFFFFF),
+        ),
+        cellBuilder: (lead) => TableWidget(
+          width: 140,
+          fontSize: 12,
+          fontWeight: FontWeight.normal,
+          padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 8.0),
+          title: lead.amcDateDisplay,
+        ),
+      ),
+      _CustomerTableColumn(
+        order: 2.0,
+        width: 190.0,
+        header: const TableWidget(
+          width: 190,
+          title: 'Work Completion Date',
+          fontWeight: FontWeight.normal,
+          padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+          color: Color(0xFFFFFFFF),
+        ),
+        cellBuilder: (lead) => TableWidget(
+          width: 190,
+          fontSize: 12,
+          fontWeight: FontWeight.normal,
+          padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+          title: lead.workCompletionDateDisplay,
+        ),
+      ),
+      _CustomerTableColumn(
+        order: 3.0,
+        width: 220.0,
+        header: const TableWidget(
+          width: 220,
+          title: 'Remarks',
+          fontWeight: FontWeight.normal,
+          padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+          color: Color(0xFFFFFFFF),
+        ),
+        cellBuilder: (lead) => TableWidget(
+          width: 220,
+          fontSize: 12,
+          fontWeight: FontWeight.normal,
+          padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 8.0),
+          title: lead.remark,
+        ),
+      ),
+      _CustomerTableColumn(
+        order: 5.0,
+        width: 160.0,
+        header: const TableWidget(
+          width: 160,
+          title: 'Follow Up Status',
+          fontWeight: FontWeight.normal,
+          padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+          color: Color(0xFFFFFFFF),
+        ),
+        cellBuilder: (lead) => TableWidget(
+          width: 160,
+          padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+          data: InkWell(
+            onTap: () {
+              settingsProvider.customerStatusBlock == 1
+                  ? () {}
+                  : _onStatusClick(context, lead);
+            },
+            child: Container(
+              padding: lead.statusName.isNotEmpty
+                  ? const EdgeInsets.symmetric(horizontal: 8, vertical: 4)
+                  : EdgeInsets.zero,
+              decoration: BoxDecoration(
+                color: parseColor(lead.colorCode).withOpacity(0.12),
+                borderRadius: BorderRadius.circular(6),
+                border: Border.all(
+                  color: parseColor(lead.colorCode).withOpacity(0.5),
+                  width: 0.5,
+                ),
+              ),
+              child: Text(
+                lead.statusName,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+                style: TextStyle(
+                  fontFamily: 'PlusJakartaSans',
+                  color: parseColor(lead.colorCode),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+      _CustomerTableColumn(
+        order: 6.0,
+        width: 140.0,
+        header: const TableWidget(
+          width: 140,
+          title: 'Follow Up Date',
+          fontWeight: FontWeight.normal,
+          padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+          color: Color(0xFFFFFFFF),
+        ),
+        cellBuilder: (lead) => TableWidget(
+          width: 140,
+          fontSize: 12,
+          fontWeight: FontWeight.normal,
+          padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+          title: lead.nextFollowUpDate.isNotEmpty
+              ? lead.nextFollowUpDate.toDayMonthYearFormat()
+              : '',
+        ),
+      ),
+      _CustomerTableColumn(
+        order: 7.0,
+        width: 140.0,
+        header: const TableWidget(
+          width: 140,
+          title: 'Consumer No.',
+          fontWeight: FontWeight.normal,
+          padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+          color: Color(0xFFFFFFFF),
+        ),
+        cellBuilder: (lead) => TableWidget(
+          width: 140,
+          fontSize: 12,
+          fontWeight: FontWeight.normal,
+          padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 8.0),
+          title: lead.consumerNo,
+        ),
+      ),
+      _CustomerTableColumn(
+        order: 8.0,
+        width: 150.0,
+        header: const TableWidget(
+          width: 150,
+          title: 'Assigned Staff',
+          fontWeight: FontWeight.normal,
+          padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+          color: Color(0xFFFFFFFF),
+        ),
+        cellBuilder: (lead) => TableWidget(
+          width: 150,
+          fontSize: 12,
+          fontWeight: FontWeight.normal,
+          padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 8.0),
+          title: lead.toUserName,
+        ),
+      ),
+      if (showRamcoLocation)
+        _CustomerTableColumn(
+          order: 10.0,
+          width: 120.0,
+          header: const TableWidget(
+            width: 120,
+            title: 'Location',
+            fontWeight: FontWeight.normal,
+            padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+            color: Color(0xFFFFFFFF),
+          ),
+          cellBuilder: (lead) => TableWidget(
+            width: 120,
+            fontSize: 12,
+            fontWeight: FontWeight.normal,
+            padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+            title: ((lead.location?.toString() ?? '').trim().isNotEmpty)
+                ? 'Yes'
+                : 'No',
+          ),
+        ),
+      if (showLocation)
+        _CustomerTableColumn(
+          order: 11.0,
+          width: 140.0,
+          header: const TableWidget(
+            width: 140,
+            title: 'Location',
+            fontWeight: FontWeight.normal,
+            padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+            color: Color(0xFFFFFFFF),
+          ),
+          cellBuilder: (lead) => TableWidget(
+            width: 140,
+            fontSize: 12,
+            fontWeight: FontWeight.normal,
+            padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+            title: lead.locationName ?? '',
+          ),
+        ),
+    ];
+
+    for (var cf in customFieldColumns) {
+      final double colOrder = cf.order > 0 ? cf.order.toDouble() : 99.0;
+      const double colWidth = 200.0;
+      scrollableColumns.add(
+        _CustomerTableColumn(
+          order: colOrder,
+          width: colWidth,
+          header: TableWidget(
+            width: colWidth,
+            title: cf.customFieldName,
+            fontWeight: FontWeight.normal,
+            padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+            color: const Color(0xFFFFFFFF),
+          ),
+          cellBuilder: (lead) {
+            final matchingCf = lead.customFields.firstWhere(
+              (c) =>
+                  (cf.customFieldId != 0 && c.customFieldId == cf.customFieldId) ||
+                  (cf.customFieldId == 0 && c.customFieldName == cf.customFieldName),
+              orElse: () => CustomerCustomField(),
+            );
+            return TableWidget(
+              width: colWidth,
+              fontSize: 12,
+              fontWeight: FontWeight.normal,
+              padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 8.0),
+              data: Tooltip(
+                message: matchingCf.datavalue,
+                child: Text(
+                  matchingCf.datavalue,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontFamily: 'PlusJakartaSans',
+                    color: Colors.black,
+                    fontSize: 12,
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      );
+    }
+
+    scrollableColumns.sort((a, b) => a.order.compareTo(b.order));
+    final double scrollableWidth = scrollableColumns.fold(0.0, (sum, col) => sum + col.width);
 
     return Scrollbar(
       controller: _scrollableVerticalController,
@@ -1552,91 +1810,9 @@ class _CustomerPageState extends State<CustomerPage> {
                           ),
                         ),
                         child: Row(
-                          children: [
-                            const TableWidget(
-                              width: 140,
-                              title: 'AMC Date',
-                              fontWeight: FontWeight.normal,
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 4.0, horizontal: 8.0),
-                              color: Color(0xFFFFFFFF),
-                            ),
-                            const TableWidget(
-                              width: 190,
-                              title: 'Work Completion Date',
-                              fontWeight: FontWeight.normal,
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 4.0, horizontal: 8.0),
-                              color: Color(0xFFFFFFFF),
-                            ),
-                            const TableWidget(
-                              width: 220,
-                              title: 'Remarks',
-                              fontWeight: FontWeight.normal,
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 4.0, horizontal: 8.0),
-                              color: Color(0xFFFFFFFF),
-                            ),
-                            const TableWidget(
-                              width: 160,
-                              title: 'Follow Up Status',
-                              fontWeight: FontWeight.normal,
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 4.0, horizontal: 8.0),
-                              color: Color(0xFFFFFFFF),
-                            ),
-                            const TableWidget(
-                              width: 140,
-                              title: 'Follow Up Date',
-                              fontWeight: FontWeight.normal,
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 4.0, horizontal: 8.0),
-                              color: Color(0xFFFFFFFF),
-                            ),
-                            const TableWidget(
-                              width: 140,
-                              title: 'Consumer No.',
-                              fontWeight: FontWeight.normal,
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 4.0, horizontal: 8.0),
-                              color: Color(0xFFFFFFFF),
-                            ),
-                            const TableWidget(
-                              width: 150,
-                              title: 'Assigned Staff',
-                              fontWeight: FontWeight.normal,
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 4.0, horizontal: 8.0),
-                              color: Color(0xFFFFFFFF),
-                            ),
-                            // if (!showRamcoLocation)
-                            //   const TableWidget(
-                            //     width: 120,
-                            //     title: 'Location',
-                            //     fontWeight: FontWeight.normal,
-                            //     padding: EdgeInsets.symmetric(
-                            //         vertical: 4.0, horizontal: 8.0),
-                            //     color: Color(0xFFFFFFFF),
-                            //   ),
-                            if (showRamcoLocation)
-                              const TableWidget(
-                                width: 120,
-                                title: 'Location',
-                                fontWeight: FontWeight.normal,
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 4.0, horizontal: 8.0),
-                                color: Color(0xFFFFFFFF),
-                              ),
-                            if (showLocation)
-                              const TableWidget(
-                                width: 140,
-                                title: 'Location',
-                                fontWeight: FontWeight.normal,
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 4.0, horizontal: 8.0),
-                                color: Color(0xFFFFFFFF),
-                              ),
-                          ],
+                          children: scrollableColumns
+                              .map((col) => col.header)
+                              .toList(),
                         ),
                       ),
                       // Scrollable Data Rows
@@ -1681,201 +1857,10 @@ class _CustomerPageState extends State<CustomerPage> {
                                           border: Border(bottom: BorderSide(color: Colors.grey.shade200)),
                                         ),
                                         child: Row(
-                                          children: [
-                                            TableWidget(
-                                              width: 140,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.normal,
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 6.0,
-                                                      horizontal: 8.0),
-                                              title: lead.amcDateDisplay,
-                                            ),
-                                            TableWidget(
-                                              width: 190,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.normal,
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 4.0,
-                                                      horizontal: 8.0),
-                                              title: lead
-                                                  .workCompletionDateDisplay,
-                                            ),
-                                            TableWidget(
-                                              width: 220,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.normal,
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 6.0,
-                                                      horizontal: 8.0),
-                                              title: lead.remark,
-                                            ),
-                                            TableWidget(
-                                              width: 160,
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 4.0,
-                                                      horizontal: 8.0),
-                                              data: InkWell(
-                                                onTap: () {
-                                                  settingsProvider
-                                                              .customerStatusBlock ==
-                                                          1
-                                                      ? () {}
-                                                      : _onStatusClick(
-                                                          context, lead);
-                                                },
-                                                child: Container(
-                                                  padding:
-                                                      lead.statusName.isNotEmpty
-                                                          ? const EdgeInsets
-                                                              .symmetric(
-                                                              horizontal: 8,
-                                                              vertical: 4)
-                                                          : EdgeInsets.zero,
-                                                  decoration: BoxDecoration(
-                                                    color: parseColor(
-                                                            lead.colorCode)
-                                                        .withOpacity(0.12),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            6),
-                                                    border: Border.all(
-                                                        color: parseColor(
-                                                                lead.colorCode)
-                                                            .withOpacity(0.5),
-                                                        width: 0.5),
-                                                  ),
-                                                  child: Text(
-                                                    lead.statusName,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    maxLines: 1,
-                                                    style: TextStyle(fontFamily: 'PlusJakartaSans', 
-                                                      color: parseColor(
-                                                          lead.colorCode),
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 12,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            TableWidget(
-                                              width: 140,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.normal,
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 4.0,
-                                                      horizontal: 8.0),
-                                              title: lead.nextFollowUpDate
-                                                      .isNotEmpty
-                                                  ? lead.nextFollowUpDate
-                                                      .toDayMonthYearFormat()
-                                                  : '',
-                                            ),
-                                            TableWidget(
-                                              width: 140,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.normal,
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 6.0,
-                                                      horizontal: 8.0),
-                                              title: lead.consumerNo,
-                                            ),
-                                            TableWidget(
-                                              width: 150,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.normal,
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 6.0,
-                                                      horizontal: 8.0),
-                                              title: lead.toUserName,
-                                            ),
-                                            // if (!showRamcoLocation)
-                                            //   SizedBox(
-                                            //     width: 120,
-                                            //     child: Padding(
-                                            //       padding: const EdgeInsets.symmetric(
-                                            //           vertical: 4.0, horizontal: 8.0),
-                                            //       child: InkWell(
-                                            //         onTap: () {
-                                            //           String? validLink;
-                                            //         if (lead.location != null && lead.location != 'null' && lead.location!.trim().isNotEmpty) validLink = lead.location;
-                                            //         else if (lead.mapLink != null && lead.mapLink != 'null' && lead.mapLink!.trim().isNotEmpty) validLink = lead.mapLink;
-                                            //         else if (lead.latitude != null && lead.latitude != 'null' && lead.latitude!.trim().isNotEmpty && lead.longitude != null && lead.longitude != 'null' && lead.longitude!.trim().isNotEmpty) {
-                                            //           validLink = 'https://www.google.com/maps?q=${lead.latitude},${lead.longitude}';
-                                            //         }
-                                                    
-                                            //         if (validLink != null) {
-                                            //           _openMaps(validLink);
-                                            //         }
-                                            //       },
-                                            //       child: Builder(
-                                            //         builder: (context) {
-                                            //           bool hasLink = (lead.location != null && lead.location != 'null' && lead.location!.trim().isNotEmpty) ||
-                                            //                          (lead.mapLink != null && lead.mapLink != 'null' && lead.mapLink!.trim().isNotEmpty) ||
-                                            //                          (lead.latitude != null && lead.latitude != 'null' && lead.latitude!.trim().isNotEmpty && lead.longitude != null && lead.longitude != 'null' && lead.longitude!.trim().isNotEmpty);
-                                                      
-                                            //           String displayText = '-';
-                                            //           if (lead.locationName != null && lead.locationName!.trim().isNotEmpty && lead.locationName != 'null') {
-                                            //             displayText = lead.locationName!;
-                                            //           } else if (hasLink) {
-                                            //             displayText = 'View Map';
-                                            //           }
-                                                      
-                                            //           return Text(
-                                            //             displayText,
-                                            //             style: TextStyle(
-                                            //               fontSize: 12,
-                                            //               color: hasLink ? Colors.blue : Colors.black87,
-                                            //               decoration: hasLink ? TextDecoration.underline : TextDecoration.none,
-                                            //             ),
-                                            //             maxLines: 1,
-                                            //             overflow: TextOverflow.ellipsis,
-                                            //           );
-                                            //         }
-                                            //       ),
-                                            //     ),
-                                            //   ),
-                                            // ),
-                                            if (showRamcoLocation)
-                                              TableWidget(
-                                                width: 120,
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.normal,
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 4.0,
-                                                        horizontal: 8.0),
-                                                // location is maplink
-                                                title: ((lead.location
-                                                                ?.toString() ??
-                                                            '')
-                                                        .trim()
-                                                        .isNotEmpty)
-                                                    ? 'Yes'
-                                                    : 'No',
-                                              ),
-                                            if (showLocation)
-                                              TableWidget(
-                                                width: 140,
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.normal,
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 4.0,
-                                                        horizontal: 8.0),
-                                                title: lead.locationName ?? '',
-                                              ),
-                                          ],
+                                          children: scrollableColumns
+                                              .map((col) =>
+                                                  col.cellBuilder(lead))
+                                              .toList(),
                                         ),
                                       ),
                                     );
@@ -1984,6 +1969,37 @@ class _CustomerPageState extends State<CustomerPage> {
                         style: const TextStyle(fontFamily: 'PlusJakartaSans', 
                             fontSize: 12, color: Colors.black87),
                       ),
+                    if (lead.customFields.isNotEmpty) ...[
+                      ...lead.customFields
+                          .where((cf) => cf.datavalue.trim().isNotEmpty)
+                          .map((cf) => Padding(
+                                padding: const EdgeInsets.only(top: 4.0),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      '${cf.customFieldName}: ',
+                                      style: TextStyle(
+                                        fontFamily: 'PlusJakartaSans',
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.grey.shade700,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Text(
+                                        cf.datavalue,
+                                        style: TextStyle(
+                                          fontFamily: 'PlusJakartaSans',
+                                          fontSize: 12,
+                                          color: Colors.grey.shade800,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )),
+                    ],
                     const SizedBox(height: 12),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
@@ -3584,5 +3600,19 @@ class _StatusMultiSelectDialogState extends State<_StatusMultiSelectDialog> {
       ),
     );
   }
+}
+
+class _CustomerTableColumn {
+  final double order;
+  final Widget header;
+  final Widget Function(SearchLeadModel lead) cellBuilder;
+  final double width;
+
+  _CustomerTableColumn({
+    required this.order,
+    required this.header,
+    required this.cellBuilder,
+    required this.width,
+  });
 }
 
