@@ -1959,6 +1959,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
               ),
               if (customerDetailsProvider.items.isNotEmpty &&
                   customerDetailsProvider.isQuotationFieldVisible(34)) ...[
+                if (settingsProvider.menuIsViewMap[221] == 1) // for only admin
                 Row(
                   mainAxisAlignment: AppStyles.isWebScreen(context)
                       ? MainAxisAlignment.end
