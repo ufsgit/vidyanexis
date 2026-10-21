@@ -4715,10 +4715,10 @@ class _tasksPageReportState extends State<TaskPage> {
                           Provider.of<AudioFileProvider>(context, listen: false)
                               .clearAudios();
 
-                          formProvider.getFormDataByCustomer(
-                            task.customerId.toString(),
-                            enquiryForId: task.enquiryForId.toString(),
-                          );
+                          // formProvider.getFormDataByCustomer(
+                          //   task.customerId.toString(),
+                          //   enquiryForId: task.enquiryForId.toString(),
+                          // );
                           formProvider.fetchAvailableFields(context);
 
                           // Pre-fill Description and Follow-Up Date if available
@@ -4798,14 +4798,14 @@ class _tasksPageReportState extends State<TaskPage> {
                                                     Provider.of<FormProvider>(
                                                         context,
                                                         listen: false);
-                                                await formProvider
-                                                    .getFormDataByCustomer(
-                                                  task.customerId.toString(),
-                                                  enquiryForId: task
-                                                      .enquiryForId
-                                                      .toString(),
-                                                  taskTypeId: tId.toString(),
-                                                );
+                                                // await formProvider
+                                                //     .getFormDataByCustomer(
+                                                //   task.customerId.toString(),
+                                                //   enquiryForId: task
+                                                //       .enquiryForId
+                                                //       .toString(),
+                                                //   taskTypeId: tId.toString(),
+                                                // );
                                                 formProvider
                                                     .fetchAvailableFields(
                                                         context);
@@ -4907,15 +4907,15 @@ class _tasksPageReportState extends State<TaskPage> {
                                                       Provider.of<FormProvider>(
                                                           context,
                                                           listen: false);
-                                                  await formProvider
-                                                      .getFormDataByCustomer(
-                                                    task.customerId.toString(),
-                                                    enquiryForId: task
-                                                        .enquiryForId
-                                                        .toString(),
-                                                    taskTypeId: task.taskTypeId
-                                                        .toString(),
-                                                  );
+                                                  // await formProvider
+                                                  //     .getFormDataByCustomer(
+                                                  //   task.customerId.toString(),
+                                                  //   enquiryForId: task
+                                                  //       .enquiryForId
+                                                  //       .toString(),
+                                                  //   taskTypeId: task.taskTypeId
+                                                  //       .toString(),
+                                                  // );
                                                   formProvider
                                                       .fetchAvailableFields(
                                                           context);
