@@ -275,6 +275,7 @@ class SettingsProvider extends ChangeNotifier {
   final TextEditingController fieldNameController = TextEditingController();
   final TextEditingController fieldTypeController = TextEditingController();
   final TextEditingController fieldListController = TextEditingController();
+  final TextEditingController customerOrderController = TextEditingController();
   List<String> fieldListItems = [];
 
   //tasktype
@@ -4952,6 +4953,9 @@ class SettingsProvider extends ChangeNotifier {
   bool _isChecked = false;
   bool get isChecked => _isChecked;
 
+  bool _isCustomerView = false;
+  bool get isCustomerView => _isCustomerView;
+
   void toggleEnquiryForVisible(bool value) {
     _isEnquiryForVisible = value;
     notifyListeners();
@@ -4974,6 +4978,14 @@ class SettingsProvider extends ChangeNotifier {
 
   void toggleIsChecked(bool value) {
     _isChecked = value;
+    notifyListeners();
+  }
+
+  void toggleCustomerView(bool value) {
+    _isCustomerView = value;
+    if (!value) {
+      customerOrderController.clear();
+    }
     notifyListeners();
   }
 

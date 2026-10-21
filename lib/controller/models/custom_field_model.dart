@@ -27,6 +27,8 @@ class CustomFieldModel {
   List<String>? dropDownValues;
   List<String>? checkBoxValues;
   int? quotationTypeId;
+  int? customerView;
+  int? order;
 
   DateTime? createdAt;
 
@@ -47,6 +49,8 @@ class CustomFieldModel {
     this.isCreateNew,
     this.createdAt,
     this.quotationTypeId,
+    this.customerView,
+    this.order,
   });
 
   CustomFieldModel copyWith({
@@ -66,6 +70,8 @@ class CustomFieldModel {
     int? isCreateNew,
     DateTime? createdAt,
     int? quotationTypeId,
+    int? customerView,
+    int? order,
   }) =>
       CustomFieldModel(
         customFieldId: customFieldId ?? this.customFieldId,
@@ -84,6 +90,8 @@ class CustomFieldModel {
         checkBoxValues: checkBoxValues ?? this.checkBoxValues,
         createdAt: createdAt ?? this.createdAt,
         quotationTypeId: quotationTypeId ?? this.quotationTypeId,
+        customerView: customerView ?? this.customerView,
+        order: order ?? this.order,
       );
 
   static int? _parseMandatoryValue(dynamic val) {
@@ -190,6 +198,89 @@ class CustomFieldModel {
     return 0;
   }
 
+  static int? _extractCustomerView(Map<String, dynamic> json) {
+    final candidateKeys = [
+      'customer_view',
+      'custemer_view',
+      'Customer_View',
+      'Custemer_View',
+      'view_customer',
+      'view_in_customer',
+      'View_Customer',
+      'View_In_Customer',
+      'is_customer_view',
+      'isCustomerView',
+      'Is_Customer_View',
+      'IsCustomerView',
+    ];
+    for (final key in candidateKeys) {
+      if (json.containsKey(key) && json[key] != null) {
+        final val = json[key];
+        if (val == 1 || val == "1" || val == true || val == "true") return 1;
+        if (val == 0 || val == "0" || val == false || val == "false") return 0;
+        final parsed = int.tryParse(val.toString());
+        if (parsed != null) return parsed;
+      }
+    }
+    for (final entry in json.entries) {
+      final keyClean = entry.key.toLowerCase().replaceAll('_', '');
+      if (keyClean == 'customerview' ||
+          keyClean == 'custemerview' ||
+          keyClean == 'viewcustomer' ||
+          keyClean == 'viewincustomer' ||
+          keyClean == 'iscustomerview') {
+        final val = entry.value;
+        if (val == 1 || val == "1" || val == true || val == "true") return 1;
+        if (val == 0 || val == "0" || val == false || val == "false") return 0;
+        final parsed = int.tryParse(val.toString());
+        if (parsed != null) return parsed;
+      }
+    }
+    return 0;
+  }
+
+  static int? _extractOrder(Map<String, dynamic> json) {
+    final candidateKeys = [
+      'order',
+      'Order',
+      'orders',
+      'Orders',
+      'order_no',
+      'Order_No',
+      'order_by',
+      'Order_By',
+      'customer_order',
+      'Customer_Order',
+      'custemer_order',
+      'Custemer_Order',
+      'view_order',
+      'View_Order',
+      'customer_view_order',
+      'Customer_View_Order',
+    ];
+    for (final key in candidateKeys) {
+      if (json.containsKey(key) && json[key] != null) {
+        final parsed = int.tryParse(json[key].toString());
+        if (parsed != null) return parsed;
+      }
+    }
+    for (final entry in json.entries) {
+      final keyClean = entry.key.toLowerCase().replaceAll('_', '');
+      if (keyClean == 'order' ||
+          keyClean == 'orders' ||
+          keyClean == 'orderno' ||
+          keyClean == 'orderby' ||
+          keyClean == 'customerorder' ||
+          keyClean == 'custemerorder' ||
+          keyClean == 'vieworder' ||
+          keyClean == 'customervieworder') {
+        final parsed = int.tryParse(entry.value.toString());
+        if (parsed != null) return parsed;
+      }
+    }
+    return null;
+  }
+
   factory CustomFieldModel.fromJson(Map<String, dynamic> json) =>
       CustomFieldModel(
         customFieldId: json["custom_field_id"] ?? json["Custom_Field_Id"],
@@ -207,6 +298,8 @@ class CustomFieldModel {
         isChecked: _extractChecked(json),
         isMandatory: _extractMandatory(json),
         isCreateNew: _extractCreateNew(json),
+        customerView: _extractCustomerView(json),
+        order: _extractOrder(json),
         dropDownValues: _parseValuesList(
             json["Dropdown_Values"] ?? json["dropdown_values"]),
         checkBoxValues: _parseValuesList(
@@ -255,6 +348,8 @@ class CustomFieldModel {
         "is_customfield_mandatory": isMandatory,
         "isMandatory": isMandatory,
         "is_create_new": isCreateNew ?? 0,
+        "view_in_customer": customerView ?? 0,
+        "order": order ?? 0,
         "Dropdown_Values": dropDownValues == null
             ? []
             : List<dynamic>.from(dropDownValues!.map((x) => x)),

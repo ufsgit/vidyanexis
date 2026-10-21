@@ -373,7 +373,7 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                                       );
                                     },
                                   ),
-                                 if ((settingsProvider.menuIsViewMap[184] == 1 || settingsProvider.menuIsViewMapPrint[184] == 1) && sideProvider.name != 'Lead /')
+                                 if ((settingsProvider.menuIsViewMap[223] == 1 || settingsProvider.menuIsViewMapPrint[223] == 1) && sideProvider.name != 'Lead /')
                                    _buildActionBtn(
                                      context,
                                      text: 'Rts Vender feasibility',
@@ -511,7 +511,7 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                                         );
                                       },
                                     ),
-                                  if ((settingsProvider.menuIsViewMap[184] == 1 || settingsProvider.menuIsViewMapPrint[184] == 1) && sideProvider.name != 'Lead /')
+                                  if ((settingsProvider.menuIsViewMap[222] == 1 || settingsProvider.menuIsViewMapPrint[222] == 1) && sideProvider.name != 'Lead /')
                                     _buildActionBtn(
                                       context,
                                       text: 'Vendor Feasibility Report',
@@ -599,6 +599,7 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                                           );
                                         },
                                       ),
+                                if (settingsProvider.menuIsViewMap[224] == 1)
                                 _buildActionBtn(
                                   context,
                                   text: 'Download Document',

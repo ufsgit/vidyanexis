@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:vidyanexis/utils/extensions.dart';
 
 class SearchLeadModel {
@@ -148,6 +149,7 @@ class SearchLeadModel {
   final int branchId;
   final int rowNo;
   final List<AudioFileLead> audioFiles;
+  final List<CustomerCustomField> customFields;
   final String amount;
 
   String? appointmentDate;
@@ -342,6 +344,7 @@ class SearchLeadModel {
     this.latitude,
     this.longitude,
     this.mapLink,
+    this.customFields = const [],
   });
 
   factory SearchLeadModel.fromJson(Map<String, dynamic> json) {
@@ -453,6 +456,39 @@ class SearchLeadModel {
               .map((item) => AudioFileLead.fromJson(item))
               .toList()
           : [],
+      customFields: () {
+        final rawCf = json['Custom_Fields'] ??
+            json['custom_fields'] ??
+            json['Custom_fields'] ??
+            json['customFields'];
+        if (rawCf == null) return <CustomerCustomField>[];
+        if (rawCf is List) {
+          return rawCf
+              .map((item) => item is Map<String, dynamic>
+                  ? CustomerCustomField.fromJson(item)
+                  : (item is Map
+                      ? CustomerCustomField.fromJson(
+                          Map<String, dynamic>.from(item))
+                      : CustomerCustomField()))
+              .toList();
+        }
+        if (rawCf is String && rawCf.trim().startsWith('[')) {
+          try {
+            final decoded = jsonDecode(rawCf.trim());
+            if (decoded is List) {
+              return decoded
+                  .map((item) => item is Map<String, dynamic>
+                      ? CustomerCustomField.fromJson(item)
+                      : (item is Map
+                          ? CustomerCustomField.fromJson(
+                              Map<String, dynamic>.from(item))
+                          : CustomerCustomField()))
+                  .toList();
+            }
+          } catch (_) {}
+        }
+        return <CustomerCustomField>[];
+      }(),
       totalProjectCost: parseString(json['Total_Project_Cost']),
       commission: parseString(json['Commission']),
       consumerName: parseString(json['Consumer_Name']),
@@ -603,6 +639,7 @@ class SearchLeadModel {
       "Location_Name": locationName,
       "Closed_Date": closedDate,
       'Audio_Files': audioFiles.map((item) => item.toJson()).toList(),
+      'Custom_Fields': customFields.map((item) => item.toJson()).toList(),
       "Total_Project_Cost": totalProjectCost,
       "Commission": commission,
       "Consumer_Name": consumerName,
@@ -708,6 +745,7 @@ class SearchLeadModel {
     String? leadCode,
     String? leadCode2,
     List<AudioFileLead>? audioFiles,
+    List<CustomerCustomField>? customFields,
     String? leadDuration,
     String? priorityName,
     String? priorityId,
@@ -720,6 +758,7 @@ class SearchLeadModel {
       leadCode: leadCode ?? this.leadCode,
       leadCode2: leadCode2 ?? this.leadCode2,
       audioFiles: audioFiles ?? this.audioFiles,
+      customFields: customFields ?? this.customFields,
       leadDuration: leadDuration ?? this.leadDuration,
       customerId: customerId ?? this.customerId,
       customerName: customerName ?? this.customerName,
@@ -845,5 +884,49 @@ class AudioFileLead {
         "File_Path": filePath,
         "File_Name": fileName,
         "File_Type": fileType,
+      };
+}
+
+class CustomerCustomField {
+  final int order;
+  final String datavalue;
+  final int customFieldId;
+  final String customFieldName;
+
+  CustomerCustomField({
+    this.order = 0,
+    this.datavalue = '',
+    this.customFieldId = 0,
+    this.customFieldName = '',
+  });
+
+  factory CustomerCustomField.fromJson(Map<String, dynamic> json) {
+    int parseInt(dynamic value) {
+      if (value == null) return 0;
+      if (value is int) return value;
+      if (value is String) return int.tryParse(value) ?? 0;
+      return 0;
+    }
+
+    String parseString(dynamic value) => value?.toString() ?? '';
+
+    return CustomerCustomField(
+      order: parseInt(json['order'] ?? json['Order']),
+      datavalue: parseString(
+          json['datavalue'] ?? json['data_value'] ?? json['DataValue']),
+      customFieldId: parseInt(json['custom_field_id'] ??
+          json['Custom_Field_Id'] ??
+          json['customFieldId']),
+      customFieldName: parseString(json['custom_field_name'] ??
+          json['Custom_Field_Name'] ??
+          json['customFieldName']),
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'order': order,
+        'datavalue': datavalue,
+        'custom_field_id': customFieldId,
+        'custom_field_name': customFieldName,
       };
 }

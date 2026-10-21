@@ -611,6 +611,8 @@ class CustomFieldWidgetBuilder {
       customFieldName: field.customFieldName,
       isQuotationCustom: field.isQuotationCustom,
       isViewInQuotation: field.isViewInQuotation,
+      customerView: field.customerView,
+      order: field.order,
       dropDownValues:
           field.dropdownValues?.map((x) => x.dropdownValue ?? '').toList() ??
               [],

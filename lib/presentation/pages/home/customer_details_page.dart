@@ -3407,8 +3407,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                             );
                                                                           },
                                                                         ),
-                                                                      if ((settingsprovider.menuIsViewMap[184] == 1 ||
-                                                                              settingsprovider.menuIsViewMapPrint[184] == 1) &&
+                                                                      if ((settingsprovider.menuIsViewMap[222] == 1 ||
+                                                                              settingsprovider.menuIsViewMapPrint[222] == 1) &&
                                                                           sideprovider.name != 'Lead /')
                                                                         CustomElevatedButton(
                                                                           radius: 4,
@@ -3430,7 +3430,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                             );
                                                                           },
                                                                         ),
-                                                                  
+                                                                  if (settingsprovider.menuIsViewMap[224] == 1)
                                                                     CustomElevatedButton(
                                                                       radius: 4,
                                                                       backgroundColor:
@@ -4696,8 +4696,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                     );
                                                                   },
                                                                 ),
-                                                              if ((settingsprovider.menuIsViewMap[184] == 1 ||
-                                                                      settingsprovider.menuIsViewMapPrint[184] == 1) &&
+                                                              if ((settingsprovider.menuIsViewMap[223] == 1 ||
+                                                                      settingsprovider.menuIsViewMapPrint[223] == 1) &&
                                                                   sideprovider.name != 'Lead /')
                                                                 CustomElevatedButton(
                                                                   radius: 4,
