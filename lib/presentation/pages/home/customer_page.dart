@@ -39,6 +39,42 @@ import 'package:vidyanexis/utils/excel_action_helper.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 import 'dart:developer';
 import 'package:go_router/go_router.dart';
+import 'package:vidyanexis/presentation/widgets/home/auto_complete_textfield_search.dart';
+
+class CustomerStatusFilterOption {
+  final int id;
+  final String name;
+
+  const CustomerStatusFilterOption({required this.id, required this.name});
+}
+
+class CustomerUserFilterOption {
+  final int id;
+  final String name;
+
+  const CustomerUserFilterOption({required this.id, required this.name});
+}
+
+class CustomerEnquiryForFilterOption {
+  final int id;
+  final String name;
+
+  const CustomerEnquiryForFilterOption({required this.id, required this.name});
+}
+
+class CustomerEnquirySourceFilterOption {
+  final int id;
+  final String name;
+
+  const CustomerEnquirySourceFilterOption({required this.id, required this.name});
+}
+
+class CustomerDepartmentFilterOption {
+  final int id;
+  final String name;
+
+  const CustomerDepartmentFilterOption({required this.id, required this.name});
+}
 
 class CustomerPage extends StatefulWidget {
   const CustomerPage({super.key});
@@ -57,6 +93,27 @@ class _CustomerPageState extends State<CustomerPage> {
   TextEditingController searchController = TextEditingController();
   final FocusNode searchFocusNodeWeb = FocusNode();
   final FocusNode searchFocusNodeMobile = FocusNode();
+
+  final TextEditingController _statusFilterController =
+      TextEditingController(text: 'All');
+  final FocusNode _statusFilterFocusNode = FocusNode();
+
+  final TextEditingController _assignedStaffFilterController =
+      TextEditingController(text: 'All');
+  final FocusNode _assignedStaffFilterFocusNode = FocusNode();
+
+  final TextEditingController _enquiryForFilterController =
+      TextEditingController(text: 'All');
+  final FocusNode _enquiryForFilterFocusNode = FocusNode();
+
+  final TextEditingController _enquirySourceFilterController =
+      TextEditingController(text: 'All');
+  final FocusNode _enquirySourceFilterFocusNode = FocusNode();
+
+  final TextEditingController _departmentFilterController =
+      TextEditingController(text: 'All');
+  final FocusNode _departmentFilterFocusNode = FocusNode();
+
   final _horizontalScrollController = ScrollController();
   late final ScrollController _fixedVerticalController;
   late final ScrollController _scrollableVerticalController;
@@ -154,6 +211,20 @@ class _CustomerPageState extends State<CustomerPage> {
     _fixedVerticalController.dispose();
     _scrollableVerticalController.dispose();
     _horizontalScrollController.dispose();
+    searchController.dispose();
+    scrollController.dispose();
+    searchFocusNodeWeb.dispose();
+    searchFocusNodeMobile.dispose();
+    _statusFilterController.dispose();
+    _statusFilterFocusNode.dispose();
+    _assignedStaffFilterController.dispose();
+    _assignedStaffFilterFocusNode.dispose();
+    _enquiryForFilterController.dispose();
+    _enquiryForFilterFocusNode.dispose();
+    _enquirySourceFilterController.dispose();
+    _enquirySourceFilterFocusNode.dispose();
+    _departmentFilterController.dispose();
+    _departmentFilterFocusNode.dispose();
     super.dispose();
   }
 
@@ -918,18 +989,20 @@ class _CustomerPageState extends State<CustomerPage> {
                           ),
                         ),
                       ),
-                      _buildAssignedStaffFilter(customerProvider),
-                      _buildEnquiryForFilter(customerProvider),
-                      _buildEnquirySourceFilter(customerProvider),
-                      _buildBranchFilter(customerProvider),
+                      if (userType == '1') ...[
+                        _buildAssignedStaffFilter(customerProvider, provider),
+                      ],
+                      _buildEnquiryForFilter(customerProvider, provider),
+                      _buildEnquirySourceFilter(customerProvider, provider),
+                      _buildBranchFilter(customerProvider, settingsProvider),
                       if (customerProvider.fromDate != null ||
                           customerProvider.toDate != null ||
                           customerProvider.amcFromDate != null ||
                           customerProvider.amcToDate != null ||
                           customerProvider.wcFromDate != null ||
                           customerProvider.wcToDate != null ||
-                          (customerProvider.selectedStatusIds.isNotEmpty &&
-                              customerProvider.selectedStatusIds.first != 0) ||
+                          (customerProvider.selectedStatus != null &&
+                              customerProvider.selectedStatus != 0) ||
                           (customerProvider.selectedUser != null &&
                               customerProvider.selectedUser != 0) ||
                           (customerProvider.selectedEnquiryFor != null &&
@@ -943,6 +1016,11 @@ class _CustomerPageState extends State<CustomerPage> {
                           onPressed: () {
                             customerProvider.clearAllFilters();
                             searchController.clear();
+                            _statusFilterController.text = 'All';
+                            _assignedStaffFilterController.text = 'All';
+                            _enquiryForFilterController.text = 'All';
+                            _enquirySourceFilterController.text = 'All';
+                            _departmentFilterController.text = 'All';
                             customerProvider.getSearchCustomers(context,
                                 isSilent: true);
                           },
@@ -2743,434 +2821,531 @@ class _CustomerPageState extends State<CustomerPage> {
 
   Widget _buildStatusFilter(
       CustomerProvider customerProvider, DropDownProvider dropDownProvider) {
-    final bool hasSelection = customerProvider.selectedStatusIds.isNotEmpty &&
-        customerProvider.selectedStatusIds.first != 0;
+    final filteredStatuses = dropDownProvider.followUpData
+        .where((e) =>
+            (e.viewInId == 2 || e.isRegistered == 1) && e.statusId != null)
+        .toList();
+    final sourceStatuses = filteredStatuses.isNotEmpty
+        ? filteredStatuses
+        : dropDownProvider.followUpData
+            .where((e) => e.statusId != null)
+            .toList();
 
-    // Build label text from selected statuses
-    String labelText = 'All';
-    if (hasSelection) {
-      final selectedNames = dropDownProvider.followUpData
-          .where((s) => customerProvider.selectedStatusIds.contains(s.statusId))
-          .map((s) => s.statusName ?? '')
-          .toList();
-      labelText = selectedNames.join(', ');
-    }
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(4),
-        border: Border.all(
-          color: hasSelection ? AppColors.primaryBlue : Colors.grey[300]!,
+    final statusOptions = [
+      const CustomerStatusFilterOption(id: 0, name: 'All'),
+      ...sourceStatuses.map(
+        (status) => CustomerStatusFilterOption(
+          id: status.statusId!,
+          name: status.statusName ?? '',
         ),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          GestureDetector(
-            onTap: () async {
-              // Use a bottom sheet / dialog for multi-select
-              await showDialog(
-                context: context,
-                barrierColor: Colors.transparent,
-                builder: (ctx) {
-                  return _StatusMultiSelectDialog(
-                    allStatuses: dropDownProvider.followUpData
-                        .where((e) => e.viewInId == 2 || e.isRegistered == 1)
-                        .toList(),
-                    selectedIds:
-                        List<int>.from(customerProvider.selectedStatusIds),
-                    onApply: (selectedIds) {
-                      if (selectedIds.isEmpty || selectedIds.contains(0)) {
-                        customerProvider.toggleStatus(0);
-                      } else {
-                        customerProvider.toggleStatus(0); // resets to [0]
-                        for (final id in selectedIds) {
-                          customerProvider.toggleStatus(id);
-                        }
-                      }
-                      customerProvider.setSearchCriteria(
-                        customerProvider.search,
-                        customerProvider.formattedFromDate,
-                        customerProvider.formattedToDate,
-                      );
-                      customerProvider.getSearchCustomers(context,
-                          isSilent: true);
-                    },
-                  );
-                },
+    ];
+
+    final currentStatusId = customerProvider.selectedStatus ?? 0;
+    String currentStatusName = 'All';
+    if (currentStatusId != 0) {
+      for (final s in sourceStatuses) {
+        if (s.statusId == currentStatusId) {
+          currentStatusName = s.statusName ?? '';
+          break;
+        }
+      }
+    }
+
+    if (!_statusFilterFocusNode.hasFocus &&
+        _statusFilterController.text != currentStatusName) {
+      _statusFilterController.text = currentStatusName;
+    }
+
+    final bool isFilterActive =
+        customerProvider.selectedStatus != null &&
+        customerProvider.selectedStatus != 0;
+
+    return SizedBox(
+      width: 230,
+      child: CustomAutocompleteSearch<CustomerStatusFilterOption>(
+        items: statusOptions,
+        displayStringFunction: (item) => item.name,
+        defaultText: currentStatusName,
+        controller: _statusFilterController,
+        focusNode: _statusFilterFocusNode,
+        labelText: 'Status',
+        suffixIcon:
+            const Icon(Icons.search, size: 20, color: AppColors.textGrey2),
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+        borderColor:
+            isFilterActive ? AppColors.primaryBlue : Colors.grey[300]!,
+        focusedBorderColor: AppColors.primaryBlue,
+        showOptionsOnTap: true,
+        maxHeight: 300,
+        customOptionsBuilder: (TextEditingValue textEditingValue) {
+          final query = textEditingValue.text.toLowerCase().trim();
+          if (query.isEmpty || query == 'all') {
+            return statusOptions;
+          }
+          final matches = statusOptions.where(
+              (item) => item.name.toLowerCase().contains(query));
+          if (matches.isEmpty) {
+            return statusOptions;
+          }
+          return matches;
+        },
+        onSelected: (CustomerStatusFilterOption selected) {
+          _statusFilterController.text = selected.name;
+          customerProvider.setStatus(selected.id);
+          customerProvider.setSearchCriteria(
+            searchController.text,
+            customerProvider.formattedFromDate,
+            customerProvider.formattedToDate,
+          );
+          customerProvider.getSearchCustomers(context, isSilent: true);
+        },
+        onChanged: (value) {
+          final query = value.toLowerCase().trim();
+          if (query.isEmpty) {
+            if (customerProvider.selectedStatus != null &&
+                customerProvider.selectedStatus != 0) {
+              customerProvider.setStatus(0);
+              customerProvider.setSearchCriteria(
+                searchController.text,
+                customerProvider.formattedFromDate,
+                customerProvider.formattedToDate,
               );
-            },
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ConstrainedBox(
-                  constraints: BoxConstraints(
-                      maxWidth: MediaQuery.of(context).size.width * 0.2),
-                  child: Text(
-                    'Status: $labelText',
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontFamily: 'PlusJakartaSans', 
-                      color:
-                          hasSelection ? AppColors.primaryBlue : Colors.black87,
-                      fontSize: 14,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 4),
-                Icon(
-                  Icons.arrow_drop_down,
-                  size: 18,
-                  color: hasSelection ? AppColors.primaryBlue : Colors.black45,
-                ),
-              ],
-            ),
-          ),
-          if (hasSelection) ...[
-            const SizedBox(width: 4),
-            GestureDetector(
-              onTap: () {
-                customerProvider.toggleStatus(0); // Reset to All
-                customerProvider.setSearchCriteria(
-                  customerProvider.search,
-                  customerProvider.formattedFromDate,
-                  customerProvider.formattedToDate,
-                );
-                customerProvider.getSearchCustomers(context, isSilent: true);
-              },
-              child: Icon(
-                Icons.close,
-                size: 16,
-                color: AppColors.primaryBlue,
-              ),
-            ),
-          ],
-        ],
+              customerProvider.getSearchCustomers(context, isSilent: true);
+            }
+          }
+        },
+        onSubmitted: (value) {
+          final query = value.toLowerCase().trim();
+          if (query.isEmpty || query == 'all') {
+            customerProvider.setStatus(0);
+            customerProvider.setSearchCriteria(
+              searchController.text,
+              customerProvider.formattedFromDate,
+              customerProvider.formattedToDate,
+            );
+            customerProvider.getSearchCustomers(context, isSilent: true);
+          } else {
+            final match = statusOptions.firstWhere(
+              (item) => item.name.toLowerCase().trim() == query,
+              orElse: () => const CustomerStatusFilterOption(id: -1, name: ''),
+            );
+            if (match.id != -1) {
+              _statusFilterController.text = match.name;
+              customerProvider.setStatus(match.id);
+              customerProvider.setSearchCriteria(
+                searchController.text,
+                customerProvider.formattedFromDate,
+                customerProvider.formattedToDate,
+              );
+              customerProvider.getSearchCustomers(context, isSilent: true);
+            }
+          }
+        },
       ),
     );
   }
 
-  Widget _buildAssignedStaffFilter(CustomerProvider customerProvider) {
-    return Consumer<DropDownProvider>(
-      builder: (context, dropDownProvider, child) {
-        bool isAdmin = userType == '1';
+  Widget _buildAssignedStaffFilter(
+      CustomerProvider customerProvider, DropDownProvider dropDownProvider) {
+    bool isAdmin = userType == '1';
+    if (!isAdmin) {
+      return const SizedBox();
+    }
 
-        if (!isAdmin) {
-          return const SizedBox();
+    final staffOptions = [
+      const CustomerUserFilterOption(id: 0, name: 'All'),
+      ...dropDownProvider.searchUserDetails.map(
+        (user) => CustomerUserFilterOption(
+          id: user.userDetailsId,
+          name: user.userDetailsName,
+        ),
+      ),
+    ];
+
+    final currentUserId = customerProvider.selectedUser ?? 0;
+    String currentUserName = 'All';
+    if (currentUserId != 0) {
+      for (final u in dropDownProvider.searchUserDetails) {
+        if (u.userDetailsId == currentUserId) {
+          currentUserName = u.userDetailsName;
+          break;
         }
-        int dropdownValue;
-        List<DropdownMenuItem<int>> dropdownItems;
+      }
+    }
 
-        if (isAdmin) {
-          // Admin: Show all users with "All" option
-          dropdownItems = [
-                const DropdownMenuItem<int>(
-                  value: 0,
-                  child: Text(
-                    'All',
-                    style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
-                  ),
-                ),
-              ] +
-              dropDownProvider.searchUserDetails
-                  .map((user) => DropdownMenuItem<int>(
-                        value: user.userDetailsId,
-                        child: ConstrainedBox(
-                          constraints: const BoxConstraints(maxWidth: 150),
-                          child: Text(
-                            user.userDetailsName,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
-                          ),
-                        ),
-                      ))
-                  .toList();
-          dropdownValue = customerProvider.selectedUser ?? 0;
-        } else {
-          // Non-admin staff: Show only their own name
-          dropdownItems = [
-            DropdownMenuItem<int>(
-              value: userId, // Use userId from state
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 150),
-                child: Text(
-                  userName.isNotEmpty ? userName : 'Current User',
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
-                ),
-              ),
-            ),
-          ];
-          dropdownValue = userId;
+    if (!_assignedStaffFilterFocusNode.hasFocus &&
+        _assignedStaffFilterController.text != currentUserName) {
+      _assignedStaffFilterController.text = currentUserName;
+    }
+
+    final bool isFilterActive =
+        customerProvider.selectedUser != null &&
+        customerProvider.selectedUser != 0;
+
+    return SizedBox(
+      width: 230,
+      child: CustomAutocompleteSearch<CustomerUserFilterOption>(
+        items: staffOptions,
+        displayStringFunction: (item) => item.name,
+        defaultText: currentUserName,
+        controller: _assignedStaffFilterController,
+        focusNode: _assignedStaffFilterFocusNode,
+        labelText: 'Assigned Staff',
+        suffixIcon:
+            const Icon(Icons.search, size: 20, color: AppColors.textGrey2),
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+        borderColor:
+            isFilterActive ? AppColors.primaryBlue : Colors.grey[300]!,
+        focusedBorderColor: AppColors.primaryBlue,
+        showOptionsOnTap: true,
+        maxHeight: 300,
+        customOptionsBuilder: (TextEditingValue textEditingValue) {
+          final query = textEditingValue.text.toLowerCase().trim();
+          if (query.isEmpty || query == 'all') {
+            return staffOptions;
+          }
+          final matches = staffOptions.where(
+              (item) => item.name.toLowerCase().contains(query));
+          if (matches.isEmpty) {
+            return staffOptions;
+          }
+          return matches;
+        },
+        onSelected: (CustomerUserFilterOption selected) {
+          _assignedStaffFilterController.text = selected.name;
+          customerProvider.setUserFilterStatus(selected.id);
+          customerProvider.getSearchCustomers(context, isSilent: true);
+        },
+        onChanged: (value) {
+          final query = value.toLowerCase().trim();
+          if (query.isEmpty) {
+            if (customerProvider.selectedUser != null &&
+                customerProvider.selectedUser != 0) {
+              customerProvider.setUserFilterStatus(0);
+              customerProvider.getSearchCustomers(context, isSilent: true);
+            }
+          }
+        },
+        onSubmitted: (value) {
+          final query = value.toLowerCase().trim();
+          if (query.isEmpty || query == 'all') {
+            customerProvider.setUserFilterStatus(0);
+            customerProvider.getSearchCustomers(context, isSilent: true);
+          } else {
+            final match = staffOptions.firstWhere(
+              (item) => item.name.toLowerCase().trim() == query,
+              orElse: () => const CustomerUserFilterOption(id: -1, name: ''),
+            );
+            if (match.id != -1) {
+              _assignedStaffFilterController.text = match.name;
+              customerProvider.setUserFilterStatus(match.id);
+              customerProvider.getSearchCustomers(context, isSilent: true);
+            }
+          }
+        },
+      ),
+    );
+  }
+
+  Widget _buildEnquiryForFilter(
+      CustomerProvider customerProvider, DropDownProvider dropDownProvider) {
+    final enquiryForOptions = [
+      const CustomerEnquiryForFilterOption(id: 0, name: 'All'),
+      ...dropDownProvider.enquiryForList.map(
+        (e) => CustomerEnquiryForFilterOption(
+          id: e.enquiryForId,
+          name: e.enquiryForName,
+        ),
+      ),
+    ];
+
+    final currentEnquiryForId = customerProvider.selectedEnquiryFor ?? 0;
+    String currentEnquiryForName = 'All';
+    if (currentEnquiryForId != 0) {
+      for (final e in dropDownProvider.enquiryForList) {
+        if (e.enquiryForId == currentEnquiryForId) {
+          currentEnquiryForName = e.enquiryForName;
+          break;
         }
+      }
+    }
 
-        return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(4),
-            border: Border.all(
-              color: (customerProvider.selectedUser != null &&
-                      customerProvider.selectedUser != 0)
-                  ? AppColors.primaryBlue
-                  : Colors.grey[300]!,
-            ),
-          ),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<int>(
-              value: dropdownValue,
-              hint: const Text('Assigned Staff: All',
-                  style: TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 14, color: Colors.black87)),
-              items: dropdownItems,
-              selectedItemBuilder: (BuildContext context) {
-                return dropdownItems.map<Widget>((DropdownMenuItem<int> item) {
-                  return Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text('Assigned Staff: ',
-                          style:
-                              TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 14, color: Colors.black87)),
-                      item.child,
-                    ],
-                  );
-                }).toList();
-              },
-              onChanged: isAdmin
-                  ? (int? newValue) {
-                      if (newValue != null) {
-                        customerProvider.setUserFilterStatus(newValue);
-                      }
-                      customerProvider.getSearchCustomers(context,
-                          isSilent: true);
-                    }
-                  : null,
-              isDense: true,
-              iconSize: 18,
-              disabledHint: Text(
-                'Assigned Staff: ${userName.isNotEmpty ? userName : 'Current User'}',
-                style: const TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 14, color: Colors.black87),
-              ),
-            ),
-          ),
-        );
-      },
+    if (!_enquiryForFilterFocusNode.hasFocus &&
+        _enquiryForFilterController.text != currentEnquiryForName) {
+      _enquiryForFilterController.text = currentEnquiryForName;
+    }
+
+    final bool isFilterActive =
+        customerProvider.selectedEnquiryFor != null &&
+        customerProvider.selectedEnquiryFor != 0;
+
+    return SizedBox(
+      width: 230,
+      child: CustomAutocompleteSearch<CustomerEnquiryForFilterOption>(
+        items: enquiryForOptions,
+        displayStringFunction: (item) => item.name,
+        defaultText: currentEnquiryForName,
+        controller: _enquiryForFilterController,
+        focusNode: _enquiryForFilterFocusNode,
+        labelText: 'Enquiry For',
+        suffixIcon:
+            const Icon(Icons.search, size: 20, color: AppColors.textGrey2),
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+        borderColor:
+            isFilterActive ? AppColors.primaryBlue : Colors.grey[300]!,
+        focusedBorderColor: AppColors.primaryBlue,
+        showOptionsOnTap: true,
+        maxHeight: 300,
+        customOptionsBuilder: (TextEditingValue textEditingValue) {
+          final query = textEditingValue.text.toLowerCase().trim();
+          if (query.isEmpty || query == 'all') {
+            return enquiryForOptions;
+          }
+          final matches = enquiryForOptions.where(
+              (item) => item.name.toLowerCase().contains(query));
+          if (matches.isEmpty) {
+            return enquiryForOptions;
+          }
+          return matches;
+        },
+        onSelected: (CustomerEnquiryForFilterOption selected) {
+          _enquiryForFilterController.text = selected.name;
+          customerProvider.setEnquiryForFilter(selected.id);
+          customerProvider.getSearchCustomers(context, isSilent: true);
+        },
+        onChanged: (value) {
+          final query = value.toLowerCase().trim();
+          if (query.isEmpty) {
+            if (customerProvider.selectedEnquiryFor != null &&
+                customerProvider.selectedEnquiryFor != 0) {
+              customerProvider.setEnquiryForFilter(0);
+              customerProvider.getSearchCustomers(context, isSilent: true);
+            }
+          }
+        },
+        onSubmitted: (value) {
+          final query = value.toLowerCase().trim();
+          if (query.isEmpty || query == 'all') {
+            customerProvider.setEnquiryForFilter(0);
+            customerProvider.getSearchCustomers(context, isSilent: true);
+          } else {
+            final match = enquiryForOptions.firstWhere(
+              (item) => item.name.toLowerCase().trim() == query,
+              orElse: () =>
+                  const CustomerEnquiryForFilterOption(id: -1, name: ''),
+            );
+            if (match.id != -1) {
+              _enquiryForFilterController.text = match.name;
+              customerProvider.setEnquiryForFilter(match.id);
+              customerProvider.getSearchCustomers(context, isSilent: true);
+            }
+          }
+        },
+      ),
     );
   }
 
-  Widget _buildEnquiryForFilter(CustomerProvider customerProvider) {
-    return Consumer<DropDownProvider>(
-      builder: (context, dropDownProvider, child) {
-        final List<DropdownMenuItem<int>> items = [
-              const DropdownMenuItem<int>(
-                value: 0,
-                child: Text(
-                  'All',
-                  style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
-                ),
-              ),
-            ] +
-            dropDownProvider.enquiryForList
-                .map((item) => DropdownMenuItem<int>(
-                      value: item.enquiryForId,
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 150),
-                        child: Text(
-                          item.enquiryForName,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
-                        ),
-                      ),
-                    ))
-                .toList();
+  Widget _buildEnquirySourceFilter(
+      CustomerProvider customerProvider, DropDownProvider dropDownProvider) {
+    final enquirySourceOptions = [
+      const CustomerEnquirySourceFilterOption(id: 0, name: 'All'),
+      ...dropDownProvider.enquiryData.map(
+        (e) => CustomerEnquirySourceFilterOption(
+          id: e.enquirySourceId,
+          name: e.enquirySourceName,
+        ),
+      ),
+    ];
 
-        return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(4),
-            border: Border.all(
-              color: (customerProvider.selectedEnquiryFor != null &&
-                      customerProvider.selectedEnquiryFor != 0)
-                  ? AppColors.primaryBlue
-                  : Colors.grey[300]!,
-            ),
-          ),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<int>(
-              value: customerProvider.selectedEnquiryFor ?? 0,
-              hint: const Text('Enquiry For: All',
-                  style: TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 14, color: Colors.black87)),
-              items: items,
-              selectedItemBuilder: (BuildContext context) {
-                return items.map<Widget>((DropdownMenuItem<int> item) {
-                  return Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text('Enquiry For: ',
-                          style:
-                              TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 14, color: Colors.black87)),
-                      item.child,
-                    ],
-                  );
-                }).toList();
-              },
-              onChanged: (int? newValue) {
-                if (newValue != null) {
-                  customerProvider.setEnquiryForFilter(newValue);
-                }
-                customerProvider.getSearchCustomers(context, isSilent: true);
-              },
-              isDense: true,
-              iconSize: 18,
-            ),
-          ),
-        );
-      },
+    final currentEnquirySourceId = customerProvider.selectedEnquirySource ?? 0;
+    String currentEnquirySourceName = 'All';
+    if (currentEnquirySourceId != 0) {
+      for (final e in dropDownProvider.enquiryData) {
+        if (e.enquirySourceId == currentEnquirySourceId) {
+          currentEnquirySourceName = e.enquirySourceName;
+          break;
+        }
+      }
+    }
+
+    if (!_enquirySourceFilterFocusNode.hasFocus &&
+        _enquirySourceFilterController.text != currentEnquirySourceName) {
+      _enquirySourceFilterController.text = currentEnquirySourceName;
+    }
+
+    final bool isFilterActive =
+        customerProvider.selectedEnquirySource != null &&
+        customerProvider.selectedEnquirySource != 0;
+
+    return SizedBox(
+      width: 230,
+      child: CustomAutocompleteSearch<CustomerEnquirySourceFilterOption>(
+        items: enquirySourceOptions,
+        displayStringFunction: (item) => item.name,
+        defaultText: currentEnquirySourceName,
+        controller: _enquirySourceFilterController,
+        focusNode: _enquirySourceFilterFocusNode,
+        labelText: 'Enquiry Source',
+        suffixIcon:
+            const Icon(Icons.search, size: 20, color: AppColors.textGrey2),
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+        borderColor:
+            isFilterActive ? AppColors.primaryBlue : Colors.grey[300]!,
+        focusedBorderColor: AppColors.primaryBlue,
+        showOptionsOnTap: true,
+        maxHeight: 300,
+        customOptionsBuilder: (TextEditingValue textEditingValue) {
+          final query = textEditingValue.text.toLowerCase().trim();
+          if (query.isEmpty || query == 'all') {
+            return enquirySourceOptions;
+          }
+          final matches = enquirySourceOptions.where(
+              (item) => item.name.toLowerCase().contains(query));
+          if (matches.isEmpty) {
+            return enquirySourceOptions;
+          }
+          return matches;
+        },
+        onSelected: (CustomerEnquirySourceFilterOption selected) {
+          _enquirySourceFilterController.text = selected.name;
+          customerProvider.setEnquirySourceFilter(selected.id);
+          customerProvider.getSearchCustomers(context, isSilent: true);
+        },
+        onChanged: (value) {
+          final query = value.toLowerCase().trim();
+          if (query.isEmpty) {
+            if (customerProvider.selectedEnquirySource != null &&
+                customerProvider.selectedEnquirySource != 0) {
+              customerProvider.setEnquirySourceFilter(0);
+              customerProvider.getSearchCustomers(context, isSilent: true);
+            }
+          }
+        },
+        onSubmitted: (value) {
+          final query = value.toLowerCase().trim();
+          if (query.isEmpty || query == 'all') {
+            customerProvider.setEnquirySourceFilter(0);
+            customerProvider.getSearchCustomers(context, isSilent: true);
+          } else {
+            final match = enquirySourceOptions.firstWhere(
+              (item) => item.name.toLowerCase().trim() == query,
+              orElse: () =>
+                  const CustomerEnquirySourceFilterOption(id: -1, name: ''),
+            );
+            if (match.id != -1) {
+              _enquirySourceFilterController.text = match.name;
+              customerProvider.setEnquirySourceFilter(match.id);
+              customerProvider.getSearchCustomers(context, isSilent: true);
+            }
+          }
+        },
+      ),
     );
   }
 
-  Widget _buildEnquirySourceFilter(CustomerProvider customerProvider) {
-    return Consumer<DropDownProvider>(
-      builder: (context, dropDownProvider, child) {
-        final List<DropdownMenuItem<int>> items = [
-              const DropdownMenuItem<int>(
-                value: 0,
-                child: Text(
-                  'All',
-                  style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
-                ),
-              ),
-            ] +
-            dropDownProvider.enquiryData
-                .map((item) => DropdownMenuItem<int>(
-                      value: item.enquirySourceId,
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 150),
-                        child: Text(
-                          item.enquirySourceName,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
-                        ),
-                      ),
-                    ))
-                .toList();
+  Widget _buildBranchFilter(
+      CustomerProvider customerProvider, SettingsProvider settingsProvider) {
+    final departmentOptions = [
+      const CustomerDepartmentFilterOption(id: 0, name: 'All'),
+      ...settingsProvider.branchModel
+          .where((branch) => branch.branchId != null)
+          .map(
+            (branch) => CustomerDepartmentFilterOption(
+              id: branch.branchId!,
+              name: branch.branchName ?? '',
+            ),
+          ),
+    ];
 
-        return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(4),
-            border: Border.all(
-              color: (customerProvider.selectedEnquirySource != null &&
-                      customerProvider.selectedEnquirySource != 0)
-                  ? AppColors.primaryBlue
-                  : Colors.grey[300]!,
-            ),
-          ),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<int>(
-              value: customerProvider.selectedEnquirySource ?? 0,
-              hint: const Text('Enquiry Source: All',
-                  style: TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 14, color: Colors.black87)),
-              items: items,
-              selectedItemBuilder: (BuildContext context) {
-                return items.map<Widget>((DropdownMenuItem<int> item) {
-                  return Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text('Enquiry Source: ',
-                          style:
-                              TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 14, color: Colors.black87)),
-                      item.child,
-                    ],
-                  );
-                }).toList();
-              },
-              onChanged: (int? newValue) {
-                if (newValue != null) {
-                  customerProvider.setEnquirySourceFilter(newValue);
-                }
-                customerProvider.getSearchCustomers(context, isSilent: true);
-              },
-              isDense: true,
-              iconSize: 18,
-            ),
-          ),
-        );
-      },
-    );
-  }
+    final currentBranchId = customerProvider.selectedBranch ?? 0;
+    String currentBranchName = 'All';
+    if (currentBranchId != 0) {
+      for (final b in settingsProvider.branchModel) {
+        if (b.branchId == currentBranchId) {
+          currentBranchName = b.branchName ?? '';
+          break;
+        }
+      }
+    }
 
-  Widget _buildBranchFilter(CustomerProvider customerProvider) {
-    return Consumer<SettingsProvider>(
-      builder: (context, settingsProvider, child) {
-        final List<DropdownMenuItem<int>> items = [
-              const DropdownMenuItem<int>(
-                value: 0,
-                child: Text(
-                  'All',
-                  style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
-                ),
-              ),
-            ] +
-            settingsProvider.branchModel
-                .map((branch) => DropdownMenuItem<int>(
-                      value: branch.branchId,
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 150),
-                        child: Text(
-                          branch.branchName ?? '',
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
-                        ),
-                      ),
-                    ))
-                .toList();
+    if (!_departmentFilterFocusNode.hasFocus &&
+        _departmentFilterController.text != currentBranchName) {
+      _departmentFilterController.text = currentBranchName;
+    }
 
-        return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(4),
-            border: Border.all(
-              color: (customerProvider.selectedBranch != null &&
-                      customerProvider.selectedBranch != 0)
-                  ? AppColors.primaryBlue
-                  : Colors.grey[300]!,
-            ),
-          ),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<int>(
-              value: customerProvider.selectedBranch ?? 0,
-              hint: const Text('Department: All',
-                  style: TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 14, color: Colors.black87)),
-              items: items,
-              selectedItemBuilder: (BuildContext context) {
-                return items.map<Widget>((DropdownMenuItem<int> item) {
-                  return Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text('Department: ',
-                          style:
-                              TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 14, color: Colors.black87)),
-                      item.child,
-                    ],
-                  );
-                }).toList();
-              },
-              onChanged: (int? newValue) {
-                if (newValue != null) {
-                  customerProvider.setBranchFilter(newValue);
-                }
-                customerProvider.getSearchCustomers(context, isSilent: true);
-              },
-              isDense: true,
-              iconSize: 18,
-            ),
-          ),
-        );
-      },
+    final bool isFilterActive =
+        customerProvider.selectedBranch != null &&
+        customerProvider.selectedBranch != 0;
+
+    return SizedBox(
+      width: 230,
+      child: CustomAutocompleteSearch<CustomerDepartmentFilterOption>(
+        items: departmentOptions,
+        displayStringFunction: (item) => item.name,
+        defaultText: currentBranchName,
+        controller: _departmentFilterController,
+        focusNode: _departmentFilterFocusNode,
+        labelText: 'Department',
+        suffixIcon:
+            const Icon(Icons.search, size: 20, color: AppColors.textGrey2),
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+        borderColor:
+            isFilterActive ? AppColors.primaryBlue : Colors.grey[300]!,
+        focusedBorderColor: AppColors.primaryBlue,
+        showOptionsOnTap: true,
+        maxHeight: 300,
+        customOptionsBuilder: (TextEditingValue textEditingValue) {
+          final query = textEditingValue.text.toLowerCase().trim();
+          if (query.isEmpty || query == 'all') {
+            return departmentOptions;
+          }
+          final matches = departmentOptions.where(
+              (item) => item.name.toLowerCase().contains(query));
+          if (matches.isEmpty) {
+            return departmentOptions;
+          }
+          return matches;
+        },
+        onSelected: (CustomerDepartmentFilterOption selected) {
+          _departmentFilterController.text = selected.name;
+          customerProvider.setBranchFilter(selected.id);
+          customerProvider.getSearchCustomers(context, isSilent: true);
+        },
+        onChanged: (value) {
+          final query = value.toLowerCase().trim();
+          if (query.isEmpty) {
+            if (customerProvider.selectedBranch != null &&
+                customerProvider.selectedBranch != 0) {
+              customerProvider.setBranchFilter(0);
+              customerProvider.getSearchCustomers(context, isSilent: true);
+            }
+          }
+        },
+        onSubmitted: (value) {
+          final query = value.toLowerCase().trim();
+          if (query.isEmpty || query == 'all') {
+            customerProvider.setBranchFilter(0);
+            customerProvider.getSearchCustomers(context, isSilent: true);
+          } else {
+            final match = departmentOptions.firstWhere(
+              (item) => item.name.toLowerCase().trim() == query,
+              orElse: () =>
+                  const CustomerDepartmentFilterOption(id: -1, name: ''),
+            );
+            if (match.id != -1) {
+              _departmentFilterController.text = match.name;
+              customerProvider.setBranchFilter(match.id);
+              customerProvider.getSearchCustomers(context, isSilent: true);
+            }
+          }
+        },
+      ),
     );
   }
 

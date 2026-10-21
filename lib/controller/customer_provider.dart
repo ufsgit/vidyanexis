@@ -463,6 +463,13 @@ class CustomerProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setStatus(int? value) {
+    _selectedStatus = value;
+    _selectedStatusIds = [value ?? 0];
+    _isFilter = true;
+    notifyListeners();
+  }
+
   void setUserFilterStatus(int? value) {
     _selectedUser = value;
     _selectedUserIds = [value ?? 0];

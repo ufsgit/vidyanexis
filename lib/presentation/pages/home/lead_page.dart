@@ -39,6 +39,42 @@ import 'package:vidyanexis/presentation/widgets/customer/add_quotation.dart';
 import 'package:vidyanexis/presentation/widgets/customer/upload_image.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
+import 'package:vidyanexis/presentation/widgets/home/auto_complete_textfield_search.dart';
+
+class LeadStatusFilterOption {
+  final int id;
+  final String name;
+
+  const LeadStatusFilterOption({required this.id, required this.name});
+}
+
+class LeadUserFilterOption {
+  final int id;
+  final String name;
+
+  const LeadUserFilterOption({required this.id, required this.name});
+}
+
+class LeadEnquiryForFilterOption {
+  final int id;
+  final String name;
+
+  const LeadEnquiryForFilterOption({required this.id, required this.name});
+}
+
+class LeadEnquirySourceFilterOption {
+  final int id;
+  final String name;
+
+  const LeadEnquirySourceFilterOption({required this.id, required this.name});
+}
+
+class LeadDepartmentFilterOption {
+  final int id;
+  final String name;
+
+  const LeadDepartmentFilterOption({required this.id, required this.name});
+}
 
 class LeadPage extends StatefulWidget {
   final bool fromDashBoard;
@@ -55,6 +91,26 @@ class _LeadsPageState extends State<LeadPage> {
   TextEditingController leadIdController = TextEditingController();
   FocusNode searchFocusNodeWeb = FocusNode();
   FocusNode searchFocusNodeMobile = FocusNode();
+
+  final TextEditingController _statusFilterController =
+      TextEditingController(text: 'All');
+  final FocusNode _statusFilterFocusNode = FocusNode();
+
+  final TextEditingController _assignedStaffFilterController =
+      TextEditingController(text: 'All');
+  final FocusNode _assignedStaffFilterFocusNode = FocusNode();
+
+  final TextEditingController _enquiryForFilterController =
+      TextEditingController(text: 'All');
+  final FocusNode _enquiryForFilterFocusNode = FocusNode();
+
+  final TextEditingController _enquirySourceFilterController =
+      TextEditingController(text: 'All');
+  final FocusNode _enquirySourceFilterFocusNode = FocusNode();
+
+  final TextEditingController _departmentFilterController =
+      TextEditingController(text: 'All');
+  final FocusNode _departmentFilterFocusNode = FocusNode();
   // final ScrollController _horizontalScrollController = ScrollController();
   // final ScrollController _verticalScrollController = ScrollController();
   final _horizontalScrollController = ScrollController();
@@ -117,6 +173,16 @@ class _LeadsPageState extends State<LeadPage> {
     searchController.dispose();
     leadIdController.dispose();
     scrollController.dispose();
+    _statusFilterController.dispose();
+    _statusFilterFocusNode.dispose();
+    _assignedStaffFilterController.dispose();
+    _assignedStaffFilterFocusNode.dispose();
+    _enquiryForFilterController.dispose();
+    _enquiryForFilterFocusNode.dispose();
+    _enquirySourceFilterController.dispose();
+    _enquirySourceFilterFocusNode.dispose();
+    _departmentFilterController.dispose();
+    _departmentFilterFocusNode.dispose();
     super.dispose();
   }
 
@@ -951,11 +1017,11 @@ class _LeadsPageState extends State<LeadPage> {
                       ),
                     ),
                     if (userType == '1') ...[
-                      _buildAssignedStaffFilter(leadProvider),
+                      _buildAssignedStaffFilter(leadProvider, provider),
                     ],
-                    _buildEnquiryForFilter(leadProvider),
-                    _buildEnquirySourceFilter(leadProvider),
-                    _buildBranchFilter(leadProvider),
+                    _buildEnquiryForFilter(leadProvider, provider),
+                    _buildEnquirySourceFilter(leadProvider, provider),
+                    _buildBranchFilter(leadProvider, settingsProvider),
                     _buildPriorityFilter(leadProvider),
                     if (leadProvider.fromDate != null ||
                         leadProvider.toDate != null ||
@@ -977,6 +1043,11 @@ class _LeadsPageState extends State<LeadPage> {
                           leadProvider.clearAllFilters();
                           searchController.clear();
                           leadIdController.clear();
+                          _statusFilterController.text = 'All';
+                          _assignedStaffFilterController.text = 'All';
+                          _enquiryForFilterController.text = 'All';
+                          _enquirySourceFilterController.text = 'All';
+                          _departmentFilterController.text = 'All';
                           leadProvider.getSearchLeads(context);
                         },
                         style: ElevatedButton.styleFrom(
@@ -3135,270 +3206,374 @@ class _LeadsPageState extends State<LeadPage> {
     );
   }
 
-  Widget _buildAssignedStaffFilter(LeadsProvider leadProvider) {
-    return Consumer<DropDownProvider>(
-      builder: (context, dropDownProvider, child) {
-        bool isAdmin = userType == '1';
+  Widget _buildAssignedStaffFilter(
+      LeadsProvider leadsProvider, DropDownProvider dropDownProvider) {
+    bool isAdmin = userType == '1';
+    if (!isAdmin) {
+      return const SizedBox();
+    }
 
-        if (!isAdmin) {
-          return const SizedBox();
+    final staffOptions = [
+      const LeadUserFilterOption(id: 0, name: 'All'),
+      ...dropDownProvider.searchUserDetails.map(
+        (user) => LeadUserFilterOption(
+          id: user.userDetailsId,
+          name: user.userDetailsName,
+        ),
+      ),
+    ];
+
+    final currentUserId = leadsProvider.selectedUser ?? 0;
+    String currentUserName = 'All';
+    if (currentUserId != 0) {
+      for (final u in dropDownProvider.searchUserDetails) {
+        if (u.userDetailsId == currentUserId) {
+          currentUserName = u.userDetailsName;
+          break;
         }
-        int dropdownValue;
-        List<DropdownMenuItem<int>> dropdownItems;
+      }
+    }
 
-        if (isAdmin) {
-          // Admin: Show all users with "All" option
-          dropdownItems = [
-                const DropdownMenuItem<int>(
-                  value: 0,
-                  child: Text(
-                    'All',
-                    style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
-                  ),
-                ),
-              ] +
-              dropDownProvider.searchUserDetails
-                  .map((user) => DropdownMenuItem<int>(
-                        value: user.userDetailsId,
-                        child: ConstrainedBox(
-                          constraints: const BoxConstraints(maxWidth: 150),
-                          child: Text(
-                            user.userDetailsName ?? '',
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
-                          ),
-                        ),
-                      ))
-                  .toList();
-          dropdownValue = leadProvider.selectedUser ?? 0;
-        } else {
-          // Non-admin staff: Show only their own name
-          dropdownItems = [
-            DropdownMenuItem<int>(
-              value: userId, // Use userId from state
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 150),
-                child: Text(
-                  userName.isNotEmpty ? userName : 'Current User',
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
-                ),
-              ),
-            ),
-          ];
-          dropdownValue = userId;
-        }
+    if (!_assignedStaffFilterFocusNode.hasFocus &&
+        _assignedStaffFilterController.text != currentUserName) {
+      _assignedStaffFilterController.text = currentUserName;
+    }
 
-        return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(4),
-            border: Border.all(
-              color: (leadProvider.selectedUser != null &&
-                      leadProvider.selectedUser != 0)
-                  ? AppColors.primaryBlue
-                  : Colors.grey[300]!,
-            ),
-          ),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<int>(
-              value: dropdownValue,
-              hint: const Text('Assigned Staff: All',
-                  style: TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 14, color: Colors.black87)),
-              items: dropdownItems,
-              selectedItemBuilder: (BuildContext context) {
-                return dropdownItems.map<Widget>((DropdownMenuItem<int> item) {
-                  return Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text('Assigned Staff: ',
-                          style:
-                              TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 14, color: Colors.black87)),
-                      item.child,
-                    ],
-                  );
-                }).toList();
-              },
-              onChanged: isAdmin
-                  ? (int? newValue) {
-                      if (newValue != null) {
-                        leadProvider.setUserFilterStatus(newValue);
-                      }
-                      String status = leadProvider.selectedStatus.toString();
-                      String fromDate = leadProvider.formattedFromDate;
-                      String toDate = leadProvider.formattedToDate;
-                      String enquiryFor =
-                          leadProvider.selectedEnquiryFor.toString();
-                      print(
-                          'Selected Status: $status, Selected From Date: $fromDate, Selected To Date: $toDate, Selected Enquiry For: $enquiryFor');
-                      leadProvider.setSearchCriteria(
-                          searchController.text, fromDate, toDate);
-                      leadProvider.getSearchLeads(context);
-                    }
-                  : null,
-              isDense: true,
-              iconSize: 18,
-              disabledHint: Text(
-                'Assigned Staff: ${userName.isNotEmpty ? userName : 'Current User'}',
-                style: const TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 14, color: Colors.black87),
-              ),
-            ),
-          ),
-        );
-      },
+    final bool isFilterActive =
+        leadsProvider.selectedUser != null &&
+        leadsProvider.selectedUser != 0;
+
+    return SizedBox(
+      width: 230,
+      child: CustomAutocompleteSearch<LeadUserFilterOption>(
+        items: staffOptions,
+        displayStringFunction: (item) => item.name,
+        defaultText: currentUserName,
+        controller: _assignedStaffFilterController,
+        focusNode: _assignedStaffFilterFocusNode,
+        labelText: 'Assigned Staff',
+        suffixIcon:
+            const Icon(Icons.search, size: 20, color: AppColors.textGrey2),
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+        borderColor:
+            isFilterActive ? AppColors.primaryBlue : Colors.grey[300]!,
+        focusedBorderColor: AppColors.primaryBlue,
+        showOptionsOnTap: true,
+        maxHeight: 300,
+        customOptionsBuilder: (TextEditingValue textEditingValue) {
+          final query = textEditingValue.text.toLowerCase().trim();
+          if (query.isEmpty || query == 'all') {
+            return staffOptions;
+          }
+          final matches = staffOptions.where(
+              (item) => item.name.toLowerCase().contains(query));
+          if (matches.isEmpty) {
+            return staffOptions;
+          }
+          return matches;
+        },
+        onSelected: (LeadUserFilterOption selected) {
+          _assignedStaffFilterController.text = selected.name;
+          leadsProvider.setUserFilterStatus(selected.id);
+          leadsProvider.setSearchCriteria(
+            searchController.text,
+            leadsProvider.formattedFromDate,
+            leadsProvider.formattedToDate,
+            leadId: leadIdController.text,
+          );
+          leadsProvider.getSearchLeads(context);
+        },
+        onChanged: (value) {
+          final query = value.toLowerCase().trim();
+          if (query.isEmpty) {
+            if (leadsProvider.selectedUser != null &&
+                leadsProvider.selectedUser != 0) {
+              leadsProvider.setUserFilterStatus(0);
+              leadsProvider.setSearchCriteria(
+                searchController.text,
+                leadsProvider.formattedFromDate,
+                leadsProvider.formattedToDate,
+                leadId: leadIdController.text,
+              );
+              leadsProvider.getSearchLeads(context);
+            }
+          }
+        },
+        onSubmitted: (value) {
+          final query = value.toLowerCase().trim();
+          if (query.isEmpty || query == 'all') {
+            leadsProvider.setUserFilterStatus(0);
+            leadsProvider.setSearchCriteria(
+              searchController.text,
+              leadsProvider.formattedFromDate,
+              leadsProvider.formattedToDate,
+              leadId: leadIdController.text,
+            );
+            leadsProvider.getSearchLeads(context);
+          } else {
+            final match = staffOptions.firstWhere(
+              (item) => item.name.toLowerCase().trim() == query,
+              orElse: () => const LeadUserFilterOption(id: -1, name: ''),
+            );
+            if (match.id != -1) {
+              _assignedStaffFilterController.text = match.name;
+              leadsProvider.setUserFilterStatus(match.id);
+              leadsProvider.setSearchCriteria(
+                searchController.text,
+                leadsProvider.formattedFromDate,
+                leadsProvider.formattedToDate,
+                leadId: leadIdController.text,
+              );
+              leadsProvider.getSearchLeads(context);
+            }
+          }
+        },
+      ),
     );
   }
 
-  Widget _buildEnquiryForFilter(LeadsProvider leadProvider) {
-    return Consumer<DropDownProvider>(
-      builder: (context, dropDownProvider, child) {
-        final List<DropdownMenuItem<int>> items = [
-              const DropdownMenuItem<int>(
-                value: 0,
-                child: Text(
-                  'All',
-                  style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
-                ),
-              ),
-            ] +
-            dropDownProvider.enquiryForList
-                .map((user) => DropdownMenuItem<int>(
-                      value: user.enquiryForId,
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 150),
-                        child: Text(
-                          user.enquiryForName,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
-                        ),
-                      ),
-                    ))
-                .toList();
+  Widget _buildEnquiryForFilter(
+      LeadsProvider leadsProvider, DropDownProvider dropDownProvider) {
+    final enquiryForOptions = [
+      const LeadEnquiryForFilterOption(id: 0, name: 'All'),
+      ...dropDownProvider.enquiryForList.map(
+        (e) => LeadEnquiryForFilterOption(
+          id: e.enquiryForId,
+          name: e.enquiryForName,
+        ),
+      ),
+    ];
 
-        return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(4),
-            border: Border.all(
-              color: (leadProvider.selectedEnquiryFor != null &&
-                      leadProvider.selectedEnquiryFor != 0)
-                  ? AppColors.primaryBlue
-                  : Colors.grey[300]!,
-            ),
-          ),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<int>(
-              value: leadProvider.selectedEnquiryFor ?? 0,
-              hint: const Text('Enquiry For: All',
-                  style: TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 14, color: Colors.black87)),
-              items: items,
-              selectedItemBuilder: (BuildContext context) {
-                return items.map<Widget>((DropdownMenuItem<int> item) {
-                  return Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text('Enquiry For: ',
-                          style:
-                              TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 14, color: Colors.black87)),
-                      item.child,
-                    ],
-                  );
-                }).toList();
-              },
-              onChanged: (int? newValue) {
-                if (newValue != null) {
-                  leadProvider.setEnquiryForFilter(newValue);
-                }
-                String fromDate = leadProvider.formattedFromDate;
-                String toDate = leadProvider.formattedToDate;
-                leadProvider.setSearchCriteria(
-                    searchController.text, fromDate, toDate);
-                leadProvider.getSearchLeads(context);
-              },
-              isDense: true,
-              iconSize: 18,
-            ),
-          ),
-        );
-      },
+    final currentEnquiryForId = leadsProvider.selectedEnquiryFor ?? 0;
+    String currentEnquiryForName = 'All';
+    if (currentEnquiryForId != 0) {
+      for (final e in dropDownProvider.enquiryForList) {
+        if (e.enquiryForId == currentEnquiryForId) {
+          currentEnquiryForName = e.enquiryForName;
+          break;
+        }
+      }
+    }
+
+    if (!_enquiryForFilterFocusNode.hasFocus &&
+        _enquiryForFilterController.text != currentEnquiryForName) {
+      _enquiryForFilterController.text = currentEnquiryForName;
+    }
+
+    final bool isFilterActive =
+        leadsProvider.selectedEnquiryFor != null &&
+        leadsProvider.selectedEnquiryFor != 0;
+
+    return SizedBox(
+      width: 230,
+      child: CustomAutocompleteSearch<LeadEnquiryForFilterOption>(
+        items: enquiryForOptions,
+        displayStringFunction: (item) => item.name,
+        defaultText: currentEnquiryForName,
+        controller: _enquiryForFilterController,
+        focusNode: _enquiryForFilterFocusNode,
+        labelText: 'Enquiry For',
+        suffixIcon:
+            const Icon(Icons.search, size: 20, color: AppColors.textGrey2),
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+        borderColor:
+            isFilterActive ? AppColors.primaryBlue : Colors.grey[300]!,
+        focusedBorderColor: AppColors.primaryBlue,
+        showOptionsOnTap: true,
+        maxHeight: 300,
+        customOptionsBuilder: (TextEditingValue textEditingValue) {
+          final query = textEditingValue.text.toLowerCase().trim();
+          if (query.isEmpty || query == 'all') {
+            return enquiryForOptions;
+          }
+          final matches = enquiryForOptions.where(
+              (item) => item.name.toLowerCase().contains(query));
+          if (matches.isEmpty) {
+            return enquiryForOptions;
+          }
+          return matches;
+        },
+        onSelected: (LeadEnquiryForFilterOption selected) {
+          _enquiryForFilterController.text = selected.name;
+          leadsProvider.setEnquiryForFilter(selected.id);
+          leadsProvider.setSearchCriteria(
+            searchController.text,
+            leadsProvider.formattedFromDate,
+            leadsProvider.formattedToDate,
+            leadId: leadIdController.text,
+          );
+          leadsProvider.getSearchLeads(context);
+        },
+        onChanged: (value) {
+          final query = value.toLowerCase().trim();
+          if (query.isEmpty) {
+            if (leadsProvider.selectedEnquiryFor != null &&
+                leadsProvider.selectedEnquiryFor != 0) {
+              leadsProvider.setEnquiryForFilter(0);
+              leadsProvider.setSearchCriteria(
+                searchController.text,
+                leadsProvider.formattedFromDate,
+                leadsProvider.formattedToDate,
+                leadId: leadIdController.text,
+              );
+              leadsProvider.getSearchLeads(context);
+            }
+          }
+        },
+        onSubmitted: (value) {
+          final query = value.toLowerCase().trim();
+          if (query.isEmpty || query == 'all') {
+            leadsProvider.setEnquiryForFilter(0);
+            leadsProvider.setSearchCriteria(
+              searchController.text,
+              leadsProvider.formattedFromDate,
+              leadsProvider.formattedToDate,
+              leadId: leadIdController.text,
+            );
+            leadsProvider.getSearchLeads(context);
+          } else {
+            final match = enquiryForOptions.firstWhere(
+              (item) => item.name.toLowerCase().trim() == query,
+              orElse: () => const LeadEnquiryForFilterOption(id: -1, name: ''),
+            );
+            if (match.id != -1) {
+              _enquiryForFilterController.text = match.name;
+              leadsProvider.setEnquiryForFilter(match.id);
+              leadsProvider.setSearchCriteria(
+                searchController.text,
+                leadsProvider.formattedFromDate,
+                leadsProvider.formattedToDate,
+                leadId: leadIdController.text,
+              );
+              leadsProvider.getSearchLeads(context);
+            }
+          }
+        },
+      ),
     );
   }
 
-  Widget _buildEnquirySourceFilter(LeadsProvider leadProvider) {
-    return Consumer<DropDownProvider>(
-      builder: (context, dropDownProvider, child) {
-        final List<DropdownMenuItem<int>> items = [
-              const DropdownMenuItem<int>(
-                value: 0,
-                child: Text(
-                  'All',
-                  style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
-                ),
-              ),
-            ] +
-            dropDownProvider.enquiryData
-                .map((user) => DropdownMenuItem<int>(
-                      value: user.enquirySourceId,
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 150),
-                        child: Text(
-                          user.enquirySourceName,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
-                        ),
-                      ),
-                    ))
-                .toList();
+  Widget _buildEnquirySourceFilter(
+      LeadsProvider leadsProvider, DropDownProvider dropDownProvider) {
+    final enquirySourceOptions = [
+      const LeadEnquirySourceFilterOption(id: 0, name: 'All'),
+      ...dropDownProvider.enquiryData.map(
+        (e) => LeadEnquirySourceFilterOption(
+          id: e.enquirySourceId,
+          name: e.enquirySourceName,
+        ),
+      ),
+    ];
 
-        return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(4),
-            border: Border.all(
-              color: (leadProvider.selectedEnquirySource != null &&
-                      leadProvider.selectedEnquirySource != 0)
-                  ? AppColors.primaryBlue
-                  : Colors.grey[300]!,
-            ),
-          ),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<int>(
-              value: leadProvider.selectedEnquirySource ?? 0,
-              hint: const Text('Enquiry Source: All',
-                  style: TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 14, color: Colors.black87)),
-              items: items,
-              selectedItemBuilder: (BuildContext context) {
-                return items.map<Widget>((DropdownMenuItem<int> item) {
-                  return Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text('Enquiry Source: ',
-                          style:
-                              TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 14, color: Colors.black87)),
-                      item.child,
-                    ],
-                  );
-                }).toList();
-              },
-              onChanged: (int? newValue) {
-                if (newValue != null) {
-                  leadProvider.setEnquirySourceFilter(newValue);
-                }
-                String fromDate = leadProvider.formattedFromDate;
-                String toDate = leadProvider.formattedToDate;
-                leadProvider.setSearchCriteria(
-                    searchController.text, fromDate, toDate);
-                leadProvider.getSearchLeads(context);
-              },
-              isDense: true,
-              iconSize: 18,
-            ),
-          ),
-        );
-      },
+    final currentEnquirySourceId = leadsProvider.selectedEnquirySource ?? 0;
+    String currentEnquirySourceName = 'All';
+    if (currentEnquirySourceId != 0) {
+      for (final e in dropDownProvider.enquiryData) {
+        if (e.enquirySourceId == currentEnquirySourceId) {
+          currentEnquirySourceName = e.enquirySourceName;
+          break;
+        }
+      }
+    }
+
+    if (!_enquirySourceFilterFocusNode.hasFocus &&
+        _enquirySourceFilterController.text != currentEnquirySourceName) {
+      _enquirySourceFilterController.text = currentEnquirySourceName;
+    }
+
+    final bool isFilterActive =
+        leadsProvider.selectedEnquirySource != null &&
+        leadsProvider.selectedEnquirySource != 0;
+
+    return SizedBox(
+      width: 230,
+      child: CustomAutocompleteSearch<LeadEnquirySourceFilterOption>(
+        items: enquirySourceOptions,
+        displayStringFunction: (item) => item.name,
+        defaultText: currentEnquirySourceName,
+        controller: _enquirySourceFilterController,
+        focusNode: _enquirySourceFilterFocusNode,
+        labelText: 'Enquiry Source',
+        suffixIcon:
+            const Icon(Icons.search, size: 20, color: AppColors.textGrey2),
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+        borderColor:
+            isFilterActive ? AppColors.primaryBlue : Colors.grey[300]!,
+        focusedBorderColor: AppColors.primaryBlue,
+        showOptionsOnTap: true,
+        maxHeight: 300,
+        customOptionsBuilder: (TextEditingValue textEditingValue) {
+          final query = textEditingValue.text.toLowerCase().trim();
+          if (query.isEmpty || query == 'all') {
+            return enquirySourceOptions;
+          }
+          final matches = enquirySourceOptions.where(
+              (item) => item.name.toLowerCase().contains(query));
+          if (matches.isEmpty) {
+            return enquirySourceOptions;
+          }
+          return matches;
+        },
+        onSelected: (LeadEnquirySourceFilterOption selected) {
+          _enquirySourceFilterController.text = selected.name;
+          leadsProvider.setEnquirySourceFilter(selected.id);
+          leadsProvider.setSearchCriteria(
+            searchController.text,
+            leadsProvider.formattedFromDate,
+            leadsProvider.formattedToDate,
+            leadId: leadIdController.text,
+          );
+          leadsProvider.getSearchLeads(context);
+        },
+        onChanged: (value) {
+          final query = value.toLowerCase().trim();
+          if (query.isEmpty) {
+            if (leadsProvider.selectedEnquirySource != null &&
+                leadsProvider.selectedEnquirySource != 0) {
+              leadsProvider.setEnquirySourceFilter(0);
+              leadsProvider.setSearchCriteria(
+                searchController.text,
+                leadsProvider.formattedFromDate,
+                leadsProvider.formattedToDate,
+                leadId: leadIdController.text,
+              );
+              leadsProvider.getSearchLeads(context);
+            }
+          }
+        },
+        onSubmitted: (value) {
+          final query = value.toLowerCase().trim();
+          if (query.isEmpty || query == 'all') {
+            leadsProvider.setEnquirySourceFilter(0);
+            leadsProvider.setSearchCriteria(
+              searchController.text,
+              leadsProvider.formattedFromDate,
+              leadsProvider.formattedToDate,
+              leadId: leadIdController.text,
+            );
+            leadsProvider.getSearchLeads(context);
+          } else {
+            final match = enquirySourceOptions.firstWhere(
+              (item) => item.name.toLowerCase().trim() == query,
+              orElse: () => const LeadEnquirySourceFilterOption(id: -1, name: ''),
+            );
+            if (match.id != -1) {
+              _enquirySourceFilterController.text = match.name;
+              leadsProvider.setEnquirySourceFilter(match.id);
+              leadsProvider.setSearchCriteria(
+                searchController.text,
+                leadsProvider.formattedFromDate,
+                leadsProvider.formattedToDate,
+                leadId: leadIdController.text,
+              );
+              leadsProvider.getSearchLeads(context);
+            }
+          }
+        },
+      ),
     );
   }
 
@@ -3482,79 +3657,127 @@ class _LeadsPageState extends State<LeadPage> {
     );
   }
 
-  Widget _buildBranchFilter(LeadsProvider leadProvider) {
-    return Consumer<SettingsProvider>(
-      builder: (context, settingsProvider, child) {
-        final List<DropdownMenuItem<int>> items = [
-              const DropdownMenuItem<int>(
-                value: 0,
-                child: Text(
-                  'All',
-                  style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
-                ),
-              ),
-            ] +
-            settingsProvider.branchModel
-                .map((branch) => DropdownMenuItem<int>(
-                      value: branch.branchId,
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 150),
-                        child: Text(
-                          branch.branchName ?? '',
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14),
-                        ),
-                      ),
-                    ))
-                .toList();
+  Widget _buildBranchFilter(
+      LeadsProvider leadsProvider, SettingsProvider settingsProvider) {
+    final departmentOptions = [
+      const LeadDepartmentFilterOption(id: 0, name: 'All'),
+      ...settingsProvider.branchModel
+          .where((branch) => branch.branchId != null)
+          .map(
+            (branch) => LeadDepartmentFilterOption(
+              id: branch.branchId!,
+              name: branch.branchName ?? '',
+            ),
+          ),
+    ];
 
-        return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(4),
-            border: Border.all(
-              color: (leadProvider.selectedBranch != null &&
-                      leadProvider.selectedBranch != 0)
-                  ? AppColors.primaryBlue
-                  : Colors.grey[300]!,
-            ),
-          ),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<int>(
-              value: leadProvider.selectedBranch ?? 0,
-              hint: const Text('Department: All',
-                  style: TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 14, color: Colors.black87)),
-              items: items,
-              selectedItemBuilder: (BuildContext context) {
-                return items.map<Widget>((DropdownMenuItem<int> item) {
-                  return Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text('Department: ',
-                          style:
-                              TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 14, color: Colors.black87)),
-                      item.child,
-                    ],
-                  );
-                }).toList();
-              },
-              onChanged: (int? newValue) {
-                if (newValue != null) {
-                  leadProvider.setBranchFilter(newValue);
-                }
-                String fromDate = leadProvider.formattedFromDate;
-                String toDate = leadProvider.formattedToDate;
-                leadProvider.setSearchCriteria(
-                    searchController.text, fromDate, toDate);
-                leadProvider.getSearchLeads(context);
-              },
-              isDense: true,
-              iconSize: 18,
-            ),
-          ),
-        );
-      },
+    final currentBranchId = leadsProvider.selectedBranch ?? 0;
+    String currentBranchName = 'All';
+    if (currentBranchId != 0) {
+      for (final b in settingsProvider.branchModel) {
+        if (b.branchId == currentBranchId) {
+          currentBranchName = b.branchName ?? '';
+          break;
+        }
+      }
+    }
+
+    if (!_departmentFilterFocusNode.hasFocus &&
+        _departmentFilterController.text != currentBranchName) {
+      _departmentFilterController.text = currentBranchName;
+    }
+
+    final bool isFilterActive =
+        leadsProvider.selectedBranch != null &&
+        leadsProvider.selectedBranch != 0;
+
+    return SizedBox(
+      width: 230,
+      child: CustomAutocompleteSearch<LeadDepartmentFilterOption>(
+        items: departmentOptions,
+        displayStringFunction: (item) => item.name,
+        defaultText: currentBranchName,
+        controller: _departmentFilterController,
+        focusNode: _departmentFilterFocusNode,
+        labelText: 'Department',
+        suffixIcon:
+            const Icon(Icons.search, size: 20, color: AppColors.textGrey2),
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+        borderColor:
+            isFilterActive ? AppColors.primaryBlue : Colors.grey[300]!,
+        focusedBorderColor: AppColors.primaryBlue,
+        showOptionsOnTap: true,
+        maxHeight: 300,
+        customOptionsBuilder: (TextEditingValue textEditingValue) {
+          final query = textEditingValue.text.toLowerCase().trim();
+          if (query.isEmpty || query == 'all') {
+            return departmentOptions;
+          }
+          final matches = departmentOptions.where(
+              (item) => item.name.toLowerCase().contains(query));
+          if (matches.isEmpty) {
+            return departmentOptions;
+          }
+          return matches;
+        },
+        onSelected: (LeadDepartmentFilterOption selected) {
+          _departmentFilterController.text = selected.name;
+          leadsProvider.setBranchFilter(selected.id);
+          leadsProvider.setSearchCriteria(
+            searchController.text,
+            leadsProvider.formattedFromDate,
+            leadsProvider.formattedToDate,
+            leadId: leadIdController.text,
+          );
+          leadsProvider.getSearchLeads(context);
+        },
+        onChanged: (value) {
+          final query = value.toLowerCase().trim();
+          if (query.isEmpty) {
+            if (leadsProvider.selectedBranch != null &&
+                leadsProvider.selectedBranch != 0) {
+              leadsProvider.setBranchFilter(0);
+              leadsProvider.setSearchCriteria(
+                searchController.text,
+                leadsProvider.formattedFromDate,
+                leadsProvider.formattedToDate,
+                leadId: leadIdController.text,
+              );
+              leadsProvider.getSearchLeads(context);
+            }
+          }
+        },
+        onSubmitted: (value) {
+          final query = value.toLowerCase().trim();
+          if (query.isEmpty || query == 'all') {
+            leadsProvider.setBranchFilter(0);
+            leadsProvider.setSearchCriteria(
+              searchController.text,
+              leadsProvider.formattedFromDate,
+              leadsProvider.formattedToDate,
+              leadId: leadIdController.text,
+            );
+            leadsProvider.getSearchLeads(context);
+          } else {
+            final match = departmentOptions.firstWhere(
+              (item) => item.name.toLowerCase().trim() == query,
+              orElse: () => const LeadDepartmentFilterOption(id: -1, name: ''),
+            );
+            if (match.id != -1) {
+              _departmentFilterController.text = match.name;
+              leadsProvider.setBranchFilter(match.id);
+              leadsProvider.setSearchCriteria(
+                searchController.text,
+                leadsProvider.formattedFromDate,
+                leadsProvider.formattedToDate,
+                leadId: leadIdController.text,
+              );
+              leadsProvider.getSearchLeads(context);
+            }
+          }
+        },
+      ),
     );
   }
 
@@ -3756,108 +3979,124 @@ class _LeadsPageState extends State<LeadPage> {
 
   Widget _buildStatusFilter(
       LeadsProvider leadsProvider, DropDownProvider dropDownProvider) {
-    final bool hasSelection = leadsProvider.selectedStatusIds.isNotEmpty &&
-        leadsProvider.selectedStatusIds.first != 0;
-
-    // Build label text from selected statuses
-    String labelText = 'All';
-    if (hasSelection) {
-      final selectedNames = dropDownProvider.leadStatuses
-          .where((s) => leadsProvider.selectedStatusIds.contains(s.statusId))
-          .map((s) => s.statusName ?? '')
-          .toList();
-      labelText = selectedNames.join(', ');
-    }
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(4),
-        border: Border.all(
-          color: hasSelection ? AppColors.primaryBlue : Colors.grey[300]!,
-        ),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          GestureDetector(
-            onTap: () async {
-              // Use a bottom sheet / dialog for multi-select
-              await showDialog(
-                context: context,
-                barrierColor: Colors.transparent,
-                builder: (ctx) {
-                  return _StatusMultiSelectDialog(
-                    allStatuses: dropDownProvider.leadStatuses,
-                    selectedIds:
-                        List<int>.from(leadsProvider.selectedStatusIds),
-                    onApply: (selectedIds) {
-                      if (selectedIds.isEmpty || selectedIds.contains(0)) {
-                        leadsProvider.toggleStatus(0);
-                      } else {
-                        // Reset first to clear [0] or others if needed
-                        leadsProvider.toggleStatus(0); // This resets to [0]
-                        for (final id in selectedIds) {
-                          leadsProvider.toggleStatus(id);
-                        }
-                      }
-                      leadsProvider.setSearchCriteria(
-                        searchController.text,
-                        leadsProvider.fromDateS,
-                        leadsProvider.toDateS,
-                      );
-                      leadsProvider.getSearchLeads(context);
-                    },
-                  );
-                },
-              );
-            },
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ConstrainedBox(
-                  constraints: BoxConstraints(
-                      maxWidth: MediaQuery.of(context).size.width * 0.2),
-                  child: Text(
-                    'Status: $labelText',
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontFamily: 'PlusJakartaSans', 
-                      color:
-                          hasSelection ? AppColors.primaryBlue : Colors.black87,
-                      fontSize: 14,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 4),
-                Icon(
-                  Icons.arrow_drop_down,
-                  size: 18,
-                  color: hasSelection ? AppColors.primaryBlue : Colors.black45,
-                ),
-              ],
+    final statusOptions = [
+      const LeadStatusFilterOption(id: 0, name: 'All'),
+      ...dropDownProvider.leadStatuses
+          .where((status) => status.statusId != null)
+          .map(
+            (status) => LeadStatusFilterOption(
+              id: status.statusId!,
+              name: status.statusName ?? '',
             ),
           ),
-          if (hasSelection) ...[
-            const SizedBox(width: 4),
-            GestureDetector(
-              onTap: () {
-                leadsProvider.toggleStatus(0); // Reset to All
-                leadsProvider.setSearchCriteria(
-                  searchController.text,
-                  leadsProvider.fromDateS,
-                  leadsProvider.toDateS,
-                );
-                leadsProvider.getSearchLeads(context);
-              },
-              child: Icon(
-                Icons.close,
-                size: 16,
-                color: AppColors.primaryBlue,
-              ),
-            ),
-          ],
-        ],
+    ];
+
+    final currentStatusId = leadsProvider.selectedStatus ?? 0;
+    String currentStatusName = 'All';
+    if (currentStatusId != 0) {
+      for (final s in dropDownProvider.leadStatuses) {
+        if (s.statusId == currentStatusId) {
+          currentStatusName = s.statusName ?? '';
+          break;
+        }
+      }
+    }
+
+    if (!_statusFilterFocusNode.hasFocus &&
+        _statusFilterController.text != currentStatusName) {
+      _statusFilterController.text = currentStatusName;
+    }
+
+    final bool isFilterActive =
+        leadsProvider.selectedStatus != null &&
+        leadsProvider.selectedStatus != 0;
+
+    return SizedBox(
+      width: 230,
+      child: CustomAutocompleteSearch<LeadStatusFilterOption>(
+        items: statusOptions,
+        displayStringFunction: (item) => item.name,
+        defaultText: currentStatusName,
+        controller: _statusFilterController,
+        focusNode: _statusFilterFocusNode,
+        labelText: 'Status',
+        suffixIcon:
+            const Icon(Icons.search, size: 20, color: AppColors.textGrey2),
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+        borderColor:
+            isFilterActive ? AppColors.primaryBlue : Colors.grey[300]!,
+        focusedBorderColor: AppColors.primaryBlue,
+        showOptionsOnTap: true,
+        maxHeight: 300,
+        customOptionsBuilder: (TextEditingValue textEditingValue) {
+          final query = textEditingValue.text.toLowerCase().trim();
+          if (query.isEmpty || query == 'all') {
+            return statusOptions;
+          }
+          final matches = statusOptions.where(
+              (item) => item.name.toLowerCase().contains(query));
+          if (matches.isEmpty) {
+            return statusOptions;
+          }
+          return matches;
+        },
+        onSelected: (LeadStatusFilterOption selected) {
+          _statusFilterController.text = selected.name;
+          leadsProvider.setStatus(selected.id);
+          leadsProvider.setSearchCriteria(
+            searchController.text,
+            leadsProvider.formattedFromDate,
+            leadsProvider.formattedToDate,
+            leadId: leadIdController.text,
+          );
+          leadsProvider.getSearchLeads(context);
+        },
+        onChanged: (value) {
+          final query = value.toLowerCase().trim();
+          if (query.isEmpty) {
+            if (leadsProvider.selectedStatus != null &&
+                leadsProvider.selectedStatus != 0) {
+              leadsProvider.setStatus(0);
+              leadsProvider.setSearchCriteria(
+                searchController.text,
+                leadsProvider.formattedFromDate,
+                leadsProvider.formattedToDate,
+                leadId: leadIdController.text,
+              );
+              leadsProvider.getSearchLeads(context);
+            }
+          }
+        },
+        onSubmitted: (value) {
+          final query = value.toLowerCase().trim();
+          if (query.isEmpty || query == 'all') {
+            leadsProvider.setStatus(0);
+            leadsProvider.setSearchCriteria(
+              searchController.text,
+              leadsProvider.formattedFromDate,
+              leadsProvider.formattedToDate,
+              leadId: leadIdController.text,
+            );
+            leadsProvider.getSearchLeads(context);
+          } else {
+            final match = statusOptions.firstWhere(
+              (item) => item.name.toLowerCase().trim() == query,
+              orElse: () => const LeadStatusFilterOption(id: -1, name: ''),
+            );
+            if (match.id != -1) {
+              _statusFilterController.text = match.name;
+              leadsProvider.setStatus(match.id);
+              leadsProvider.setSearchCriteria(
+                searchController.text,
+                leadsProvider.formattedFromDate,
+                leadsProvider.formattedToDate,
+                leadId: leadIdController.text,
+              );
+              leadsProvider.getSearchLeads(context);
+            }
+          }
+        },
       ),
     );
   }
