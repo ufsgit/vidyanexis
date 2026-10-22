@@ -104,12 +104,12 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
       formProvider.clearForms();
 
       // Initial proactive fetch
-      formProvider.getFormDataByCustomer(
-        widget.task.customerId.toString(),
-        taskTypeId: widget.task.taskTypeId.toString(),
-        enquiryForId: widget.task.enquiryForId.toString(),
-        taskId: widget.task.taskId.toString(),
-      );
+      // formProvider.getFormDataByCustomer(
+      //   widget.task.customerId.toString(),
+      //   taskTypeId: widget.task.taskTypeId.toString(),
+      //   enquiryForId: widget.task.enquiryForId.toString(),
+      //   taskId: widget.task.taskId.toString(),
+      // );
     });
   }
 
@@ -255,14 +255,14 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
 
                 // Always ensure forms are fetched with the determined initial task type
                 // The provider's internal check will still prevent redundant network calls
-                final formProvider =
-                    Provider.of<FormProvider>(context, listen: false);
-                formProvider.getFormDataByCustomer(
-                  customerId.toString(),
-                  taskTypeId: tasktypeId.toString(),
-                  enquiryForId: enquiryForId.toString(),
-                  taskId: widget.task.taskId.toString(),
-                );
+                // final formProvider =
+                //     Provider.of<FormProvider>(context, listen: false);
+                // formProvider.getFormDataByCustomer(
+                //   customerId.toString(),
+                //   taskTypeId: tasktypeId.toString(),
+                //   enquiryForId: enquiryForId.toString(),
+                //   taskId: widget.task.taskId.toString(),
+                // );
               });
             }
 
@@ -346,12 +346,12 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                             listen: false);
                                     debugPrint(
                                         "DEBUG: Status changed to ${status.statusName}, refreshing forms for taskTypeId: $tasktypeId");
-                                    await formProvider.getFormDataByCustomer(
-                                      customerId.toString(),
-                                      taskTypeId: tasktypeId.toString(),
-                                      enquiryForId: enquiryForId.toString(),
-                                      taskId: widget.task.taskId.toString(),
-                                    );
+                                    // await formProvider.getFormDataByCustomer(
+                                    //   customerId.toString(),
+                                    //   taskTypeId: tasktypeId.toString(),
+                                    //   enquiryForId: enquiryForId.toString(),
+                                    //   taskId: widget.task.taskId.toString(),
+                                    // );
                                   },
                                   child: AnimatedContainer(
                                     duration: const Duration(milliseconds: 200),

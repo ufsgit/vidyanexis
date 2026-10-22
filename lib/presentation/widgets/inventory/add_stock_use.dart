@@ -1,4 +1,4 @@
-import 'dart:async';
+ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -521,7 +521,10 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
 
               // Bottom buttons
               Container(
-                padding: const EdgeInsets.all(20),
+                padding: EdgeInsets.symmetric(
+                  horizontal: AppStyles.isWebScreen(context) ? 20 : 12,
+                  vertical: 16,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   boxShadow: [
@@ -541,7 +544,10 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
                       child: OutlinedButton(
                         onPressed: () => Navigator.pop(context),
                         style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          padding: EdgeInsets.symmetric(
+                            vertical: 14,
+                            horizontal: AppStyles.isWebScreen(context) ? 16 : 8,
+                          ),
                           side: const BorderSide(color: Color(0xFFE2E8F0)),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(4)),
@@ -555,7 +561,7 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 8),
                     ResponsiveButtonWrapper(
                       child: OutlinedButton.icon(
                         onPressed: () => _exportCheckedItems(expenseProvider),
@@ -569,14 +575,17 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
                         ),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: AppColors.secondaryBlue,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          padding: EdgeInsets.symmetric(
+                            vertical: 14,
+                            horizontal: AppStyles.isWebScreen(context) ? 16 : 6,
+                          ),
                           side: BorderSide(color: AppColors.secondaryBlue),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(4)),
                         ),
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 8),
                     ResponsiveButtonWrapper(
                       child: ElevatedButton(
                         onPressed: () async {
@@ -596,7 +605,10 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
                           backgroundColor: AppColors.secondaryBlue,
                           foregroundColor: Colors.white,
                           elevation: 0,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          padding: EdgeInsets.symmetric(
+                            vertical: 14,
+                            horizontal: AppStyles.isWebScreen(context) ? 16 : 8,
+                          ),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(4)),
                         ),
@@ -645,6 +657,134 @@ class _ItemTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = MediaQuery.of(context).size.width < 600;
+
+    if (isMobile) {
+      return Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: item.isChecked ? const Color(0xFFF0F7FF) : Colors.white,
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(
+            color: item.isChecked
+                ? const Color(0xFF3B82F6)
+                : const Color(0xFFE2E8F0),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Transform.scale(
+                  scale: 0.9,
+                  child: Checkbox(
+                    value: item.isChecked,
+                    onChanged: onCheckChanged,
+                    activeColor: const Color(0xFF3B82F6),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4)),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        item.itemName,
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: const Color(0xFF1E293B),
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        [
+                          if (item.categoryName.isNotEmpty) item.categoryName,
+                          if (item.unitName.isNotEmpty) item.unitName,
+                        ].join(' • '),
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 12,
+                          color: const Color(0xFF64748B),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.delete_outline_rounded,
+                      color: Color(0xFFEF4444), size: 22),
+                  onPressed: onDelete,
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Padding(
+              padding: const EdgeInsets.only(left: 40),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Total: ${item.total}',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF64748B),
+                    ),
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Qty: ',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: const Color(0xFF64748B),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 65,
+                        child: TextFormField(
+                          initialValue: item.quantity.toString(),
+                          keyboardType: TextInputType.number,
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          decoration: InputDecoration(
+                            hintText: 'Qty',
+                            contentPadding:
+                                const EdgeInsets.symmetric(vertical: 6),
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(4)),
+                            isDense: true,
+                          ),
+                          onChanged: onQuantityChanged,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'^\d*\.?\d{0,2}')),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
