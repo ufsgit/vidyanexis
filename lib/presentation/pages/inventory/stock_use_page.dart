@@ -39,59 +39,116 @@ class _StockUsePageState extends State<StockUsePage> {
     final settingsProvider = Provider.of<SettingsProvider>(context);
     final isMobile = !AppStyles.isWebScreen(context);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildHeader(context, stockuseprovider, settingsProvider, isMobile),
-        if (stockuseprovider.isFilter)
-          _buildFilterPanel(context, stockuseprovider),
-        const SizedBox(height: 12),
-        stockuseprovider.stockUseList.isEmpty
-            ? _buildEmptyState()
-            : ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: stockuseprovider.stockUseList.length,
-                itemBuilder: (context, index) {
-                  final stockUse = stockuseprovider.stockUseList[index];
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: InventoryListItem(
-                      title: stockUse.description.isNotEmpty
-                          ? stockUse.description
-                          : 'Check list Entry',
-                      subtitle: 'Date: ${stockUse.date}',
-                      description: 'Entry ID: ${stockUse.stockUseId}',
-                      onEdit: settingsProvider.menuIsEditMap[78] == 1
-                          ? () async {
-                              stockuseprovider.getStockUseDetails(
-                                  context: context,
-                                  masterId: stockUse.stockUseId.toString());
-                              showDialog(
-                                barrierDismissible: false,
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AddStockUseWidget(
-                                      customerId: widget.customerId,
-                                      isEdit: true,
-                                      editId: stockUse.stockUseId,
-                                      stockUse: stockUse);
-                                },
-                              );
-                            }
-                          : null,
-                      onDelete: settingsProvider.menuIsDeleteMap[78] == 1
-                          ? () {
-                              _showDeleteDialog(context, stockuseprovider,
-                                  stockUse.stockUseId);
-                            }
-                          : null,
-                    ),
-                  );
-                },
-              ),
-      ],
+    final content = Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: isMobile ? 16 : 0,
+        vertical: isMobile ? 8 : 0,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildHeader(context, stockuseprovider, settingsProvider, isMobile),
+          if (stockuseprovider.isFilter)
+            _buildFilterPanel(context, stockuseprovider),
+          const SizedBox(height: 12),
+          stockuseprovider.stockUseList.isEmpty
+              ? _buildEmptyState()
+              : ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: stockuseprovider.stockUseList.length,
+                  itemBuilder: (context, index) {
+                    final stockUse = stockuseprovider.stockUseList[index];
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: InventoryListItem(
+                        title: stockUse.description.isNotEmpty
+                            ? stockUse.description
+                            : 'Check list Entry',
+                        subtitle: 'Date: ${stockUse.date}',
+                        description: 'Entry ID: ${stockUse.stockUseId}',
+                        onTap: settingsProvider.menuIsEditMap[78] == 1 && isMobile
+                            ? () async {
+                                await stockuseprovider.getStockUseDetails(
+                                    context: context,
+                                    masterId: stockUse.stockUseId.toString());
+                                if (context.mounted) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => AddStockUseWidget(
+                                          customerId: widget.customerId,
+                                          isEdit: true,
+                                          editId: stockUse.stockUseId,
+                                          stockUse: stockUse),
+                                    ),
+                                  );
+                                }
+                              }
+                            : null,
+                        onEdit: settingsProvider.menuIsEditMap[78] == 1
+                            ? () async {
+                                await stockuseprovider.getStockUseDetails(
+                                    context: context,
+                                    masterId: stockUse.stockUseId.toString());
+                                if (context.mounted) {
+                                  if (isMobile) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => AddStockUseWidget(
+                                            customerId: widget.customerId,
+                                            isEdit: true,
+                                            editId: stockUse.stockUseId,
+                                            stockUse: stockUse),
+                                      ),
+                                    );
+                                  } else {
+                                    showDialog(
+                                      barrierDismissible: false,
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AddStockUseWidget(
+                                            customerId: widget.customerId,
+                                            isEdit: true,
+                                            editId: stockUse.stockUseId,
+                                            stockUse: stockUse);
+                                      },
+                                    );
+                                  }
+                                }
+                              }
+                            : null,
+                        onDelete: settingsProvider.menuIsDeleteMap[78] == 1
+                            ? () {
+                                _showDeleteDialog(context, stockuseprovider,
+                                    stockUse.stockUseId);
+                              }
+                            : null,
+                      ),
+                    );
+                  },
+                ),
+        ],
+      ),
     );
+
+    if (isMobile) {
+      return RefreshIndicator(
+        onRefresh: () async {
+          await stockuseprovider.searchStockUseList(
+            context: context,
+            customerId: widget.customerId.toString(),
+          );
+        },
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: content,
+        ),
+      );
+    }
+
+    return content;
   }
 
   Widget _buildHeader(BuildContext context, StockUseProvider provider,
@@ -99,49 +156,64 @@ class _StockUsePageState extends State<StockUsePage> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisAlignment:
+            isMobile ? MainAxisAlignment.spaceBetween : MainAxisAlignment.end,
         children: [
-          CustomFilterButton(
-            onPressed: () => provider.toggleFilter(),
-            isFilter: provider.isFilter,
-          ),
-          if (widget.customerId != 0 && settings.menuIsSaveMap[78] == 1)
-            const SizedBox(width: 8),
-          if (widget.customerId != 0 && settings.menuIsSaveMap[78] == 1)
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AddStockUseWidget(
-                      isEdit: false,
-                      editId: 0,
-                      customerId: widget.customerId,
-                    ),
-                  ),
-                );
-              },
-              child: Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  color: AppColors.secondaryBlue,
-                  borderRadius: BorderRadius.circular(4),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.secondaryBlue.withOpacity(0.3),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: const Icon(
-                  Icons.add_rounded,
-                  color: Colors.white,
-                  size: 26,
-                ),
+          if (isMobile)
+            Text(
+              'Check list',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                color: const Color(0xFF1E293B),
               ),
             ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CustomFilterButton(
+                onPressed: () => provider.toggleFilter(),
+                isFilter: provider.isFilter,
+              ),
+              if (widget.customerId != 0 && settings.menuIsSaveMap[78] == 1)
+                const SizedBox(width: 8),
+              if (widget.customerId != 0 && settings.menuIsSaveMap[78] == 1)
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AddStockUseWidget(
+                          isEdit: false,
+                          editId: 0,
+                          customerId: widget.customerId,
+                        ),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: AppColors.secondaryBlue,
+                      borderRadius: BorderRadius.circular(4),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.secondaryBlue.withOpacity(0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: const Icon(
+                      Icons.add_rounded,
+                      color: Colors.white,
+                      size: 26,
+                    ),
+                  ),
+                ),
+            ],
+          ),
         ],
       ),
     );
@@ -216,76 +288,78 @@ class _StockUsePageState extends State<StockUsePage> {
           return AlertDialog(
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text('Choose Date',
-                    style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 16),
-                Wrap(
-                  spacing: 8,
-                  children: [
-                    'Yesterday',
-                    'Today',
-                    'Tomorrow',
-                    'This Week',
-                    'This Month'
-                  ]
-                      .asMap()
-                      .entries
-                      .map((e) => ActionChip(
-                            label: Text(e.value),
-                            onPressed: () {
-                              reportsProvider.setDateFilter(e.value);
-                              reportsProvider.selectDateFilterOption(e.key);
-                            },
-                            backgroundColor:
-                                reportsProvider.selectedDateFilterIndex == e.key
-                                    ? AppColors.primaryBlue
-                                    : Colors.white,
-                            labelStyle: TextStyle(
-                                color:
-                                    reportsProvider.selectedDateFilterIndex ==
-                                            e.key
-                                        ? Colors.white
-                                        : Colors.black),
-                          ))
-                      .toList(),
-                ),
-                const SizedBox(height: 16),
-                TextField(
-                  readOnly: true,
-                  onTap: () => reportsProvider.selectDate(context, true),
-                  decoration: InputDecoration(
-                    labelText: 'Pick a date',
-                    hintText: reportsProvider.fromDate != null
-                        ? reportsProvider.formattedFromDate
-                        : 'Select',
-                    suffixIcon: const Icon(Icons.calendar_month),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(4)),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text('Choose Date',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 16),
+                  Wrap(
+                    spacing: 8,
+                    children: [
+                      'Yesterday',
+                      'Today',
+                      'Tomorrow',
+                      'This Week',
+                      'This Month'
+                    ]
+                        .asMap()
+                        .entries
+                        .map((e) => ActionChip(
+                              label: Text(e.value),
+                              onPressed: () {
+                                reportsProvider.setDateFilter(e.value);
+                                reportsProvider.selectDateFilterOption(e.key);
+                              },
+                              backgroundColor:
+                                  reportsProvider.selectedDateFilterIndex == e.key
+                                      ? AppColors.primaryBlue
+                                      : Colors.white,
+                              labelStyle: TextStyle(
+                                  color:
+                                      reportsProvider.selectedDateFilterIndex ==
+                                              e.key
+                                          ? Colors.white
+                                          : Colors.black),
+                            ))
+                        .toList(),
                   ),
-                ),
-                const SizedBox(height: 16),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      reportsProvider.searchStockUseList(
-                          context: context,
-                          customerId: widget.customerId.toString());
-                    },
-                    style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4)),
-                        backgroundColor: AppColors.primaryBlue,
-                        foregroundColor: Colors.white),
-                    child: const Text('Apply'),
+                  const SizedBox(height: 16),
+                  TextField(
+                    readOnly: true,
+                    onTap: () => reportsProvider.selectDate(context, true),
+                    decoration: InputDecoration(
+                      labelText: 'Pick a date',
+                      hintText: reportsProvider.fromDate != null
+                          ? reportsProvider.formattedFromDate
+                          : 'Select',
+                      suffixIcon: const Icon(Icons.calendar_month),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(4)),
+                    ),
                   ),
-                )
-              ],
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        reportsProvider.searchStockUseList(
+                            context: context,
+                            customerId: widget.customerId.toString());
+                      },
+                      style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4)),
+                          backgroundColor: AppColors.primaryBlue,
+                          foregroundColor: Colors.white),
+                      child: const Text('Apply'),
+                    ),
+                  )
+                ],
+              ),
             ),
           );
         },

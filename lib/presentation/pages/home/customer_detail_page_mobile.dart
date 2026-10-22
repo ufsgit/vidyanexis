@@ -25,6 +25,7 @@ import 'package:vidyanexis/presentation/widgets/customer/documents_list_page_pho
 import 'package:vidyanexis/presentation/widgets/customer/periodic_services_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/customer/edit_history_tab_widget.dart';
 
+import 'package:vidyanexis/presentation/pages/inventory/stock_use_page.dart';
 import 'package:vidyanexis/presentation/widgets/customer/task_list_page_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/confirmation_dialog_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget_mobile.dart';
@@ -68,7 +69,7 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile> {
 
     if (widget.initialTab != null) {
       final index = tabLabels.indexWhere(
-          (label) => label.toLowerCase() == widget.initialTab!.toLowerCase());
+          (label) => label.trim().toLowerCase() == widget.initialTab!.trim().toLowerCase());
       if (index != -1) {
         _selectedIndex = index;
       }
@@ -166,7 +167,12 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile> {
       tabLabels.add("Invoice");
       tabPages.add(InvoiceTabPage(customerId: widget.customerId.toString()));
     }
-    
+
+    if (settingsprovider.menuIsViewMap[78] == 1) {
+      tabLabels.add("Check list");
+      tabPages.add(StockUsePage(customerId: widget.customerId));
+    }
+
     if (settingsprovider.menuIsViewMap[178] == 1) {
       tabLabels.add("Edit History");
       tabPages
@@ -180,6 +186,11 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile> {
     final leadDetailsProvider = Provider.of<LeadDetailsProvider>(context);
     final customerDetailsProvider =
         Provider.of<CustomerDetailsProvider>(context);
+
+    _buildTabs(settingsprovider);
+    if (_selectedIndex >= tabLabels.length) {
+      _selectedIndex = 0;
+    }
 
     Color getAvatarColor(String name) {
       final colors = [
