@@ -247,9 +247,9 @@ class _AmcCreationWidgetState extends State<AmcCreationWidget> {
       content: Container(
         color: Colors.white,
         width: AppStyles.isWebScreen(context)
-            ? MediaQuery.of(context).size.width / 2
-            : MediaQuery.of(context).size.width,
-        height: MediaQuery.sizeOf(context).height / 2,
+            ? MediaQuery.of(context).size.width * 0.8
+            : MediaQuery.of(context).size.width * 0.95,
+        height: MediaQuery.sizeOf(context).height * 0.75,
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -698,6 +698,7 @@ class _AmcCreationWidgetState extends State<AmcCreationWidget> {
                         ),
                       ),
                     ),
+                    const SizedBox(width: 10),
                   ],
                   // ===== Next Service Date =====
                   if (customerDetailsProvider
