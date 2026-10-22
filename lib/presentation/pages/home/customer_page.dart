@@ -346,11 +346,11 @@ class _CustomerPageState extends State<CustomerPage> {
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     GestureDetector(
+                                      behavior: HitTestBehavior.opaque,
                                       onTap: () {
                                         customerProvider.setEntryType('myown');
                                         customerProvider.getSearchCustomers(
-                                            context,
-                                            isSilent: true);
+                                            context);
                                       },
                                       child: Container(
                                         padding:
@@ -386,11 +386,11 @@ class _CustomerPageState extends State<CustomerPage> {
                                     ),
                                     const SizedBox(width: 16),
                                     GestureDetector(
+                                      behavior: HitTestBehavior.opaque,
                                       onTap: () {
                                         customerProvider.setEntryType('all');
                                         customerProvider.getSearchCustomers(
-                                            context,
-                                            isSilent: true);
+                                            context);
                                       },
                                       child: Container(
                                         padding:

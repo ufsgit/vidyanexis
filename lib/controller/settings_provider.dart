@@ -456,6 +456,8 @@ class SettingsProvider extends ChangeNotifier {
   /// IsView = 1 → show ME / ALL tabs on the Task page.
   /// IsView = 0 → hide them (user sees only their own tasks).
   bool get canViewTaskMeAndAll {
+    if (_taskPermissionMeAndAll == 1) return true;
+
     // Check user permission from Get_Menu_Permission (menuIsViewMap)
     if ((_menuIsViewMap[209] ?? 0) == 1 ||
         (_menuIsViewMap[209] ?? 0).toString() == '1') return true;
@@ -489,6 +491,8 @@ class SettingsProvider extends ChangeNotifier {
   /// IsView = 1 → show ME / ALL tabs on the Lead page.
   /// IsView = 0 → hide them (user sees only their own leads).
   bool get canViewLeadMeAndAll {
+    if (_leadPermissionMeAndAll == 1) return true;
+
     // Check user permission from Get_Menu_Permission (menuIsViewMap)
     if ((_menuIsViewMap[219] ?? 0) == 1 ||
         (_menuIsViewMap[219] ?? 0).toString() == '1') return true;
@@ -506,6 +510,9 @@ class SettingsProvider extends ChangeNotifier {
   /// IsView = 1 → show ME / ALL tabs on the Customer page.
   /// IsView = 0 → hide them (user sees only their own customers).
   bool get canViewCustomerMeAndAll {
+    // Check company permission as well so companies with this setting enabled still see it
+    if (_customerPermissionMeAndAll == 1) return true;
+
     // Check user permission from Get_Menu_Permission (menuIsViewMap)
     if ((_menuIsViewMap[220] ?? 0) == 1 ||
         (_menuIsViewMap[220] ?? 0).toString() == '1') return true;

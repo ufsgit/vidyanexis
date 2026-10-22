@@ -115,6 +115,13 @@ class CustomerProvider extends ChangeNotifier {
   String get entryType => _entryType;
   void setEntryType(String value) {
     _entryType = value;
+    _startLimit = 1;
+    _endLimit = 20;
+    currentPage = 1;
+    hasMoreData = true;
+    if (scrollController.hasClients) {
+      scrollController.jumpTo(0);
+    }
     notifyListeners();
   }
 
