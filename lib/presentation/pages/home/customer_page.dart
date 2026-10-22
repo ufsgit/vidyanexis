@@ -1746,7 +1746,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                                         ),
                                                       ),
                                                       if (settingsProvider
-                                                        .menuIsViewMap[225] ==
+                                                        .menuIsViewMap[226] ==
                                                     1)
                                                   (onHover) => MenuItemButton(
                                                         onHover: onHover,

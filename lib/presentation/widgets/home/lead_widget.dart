@@ -1247,7 +1247,7 @@ class _LeadCardState extends State<LeadCard> {
                             color: Colors.blueGrey,
                           ),
                           const SizedBox(width: 4),
-                          if (settingsProvider.menuIsViewMap[225] == 1)
+                          if (settingsProvider.menuIsViewMap[226] == 1)
                           _buildActionButton(
                             onTap: () {
                               showDialog(
