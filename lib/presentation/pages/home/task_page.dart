@@ -51,6 +51,7 @@ import 'package:vidyanexis/controller/models/add_task_model.dart';
 import 'package:vidyanexis/controller/models/search_user_details_model.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_task.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_task_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/customer/add_reciept.dart';
 import 'package:vidyanexis/utils/status_utils.dart';
 import 'package:vidyanexis/controller/models/form_settings_provider.dart';
 import 'package:vidyanexis/controller/models/form_model.dart';
@@ -4627,6 +4628,45 @@ class _tasksPageReportState extends State<TaskPage> {
                                   ),
                                 ),
                               ),
+                              if (settingsProvider.menuIsViewMap[225] == 1) ...[
+                              const SizedBox(width: 12),
+                              SizedBox(
+                                height: 28,
+                                child: TextButton.icon(
+                                  style: TextButton.styleFrom(
+                                    backgroundColor: const Color(0xFF2563EB),
+                                    foregroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                                    minimumSize: Size.zero,
+                                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                  ),
+                                  icon: const Icon(Icons.add, size: 14),
+                                  label: const Text(
+                                    'Receipt',
+                                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                                  ),
+                                  onPressed: () {
+                                    final cdProvider = Provider.of<CustomerDetailsProvider>(context, listen: false);
+                                    cdProvider.customerId = task.customerId.toString();
+                                    cdProvider.clearRecieptDetails();
+                                    showDialog(
+                                      context: context,
+                                      barrierDismissible: false,
+                                      builder: (BuildContext context) {
+                                        return RecieptCreationWidget(
+                                          recieptId: '0',
+                                          isEdit: false,
+                                          customerId: task.customerId.toString(),
+                                        );
+                                      },
+                                    );
+                                  },
+                                ),
+                              ),
+                              ],
                             ],
                           ),
                         ),

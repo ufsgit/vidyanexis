@@ -32,6 +32,8 @@ import 'package:vidyanexis/presentation/widgets/home/custom_field_section_widget
 import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 import 'package:vidyanexis/controller/audio_file_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/task_audio_recording_widget.dart';
+import 'package:vidyanexis/controller/customer_details_provider.dart';
+import 'package:vidyanexis/presentation/widgets/customer/add_receipt_page_phone.dart';
 
 class ProcessFlowDialog extends StatefulWidget {
   final TaskReportModel task;
@@ -205,6 +207,44 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
             ],
           ),
         ),
+        actions: [
+          if (settingsProvider.menuIsViewMap[225] == 1)
+            Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: TextButton.icon(
+                style: TextButton.styleFrom(
+                  backgroundColor: const Color(0xFF2563EB),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  minimumSize: Size.zero,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                icon: const Icon(Icons.add, size: 16),
+                label: const Text(
+                  'Receipt',
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                ),
+                onPressed: () {
+                  final cdProvider = Provider.of<CustomerDetailsProvider>(context, listen: false);
+                  cdProvider.customerId = widget.task.customerId.toString();
+                  cdProvider.clearRecieptDetails();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AddReceiptPagePhone(
+                        recieptId: '0',
+                        isEdit: false,
+                        customerId: widget.task.customerId.toString(),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+        ],
       ),
       body: FutureBuilder<List<TaskTypeStatusModel>>(
         future: statusOptionsFuture,
