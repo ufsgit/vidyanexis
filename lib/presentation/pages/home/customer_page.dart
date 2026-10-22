@@ -1745,6 +1745,74 @@ class _CustomerPageState extends State<CustomerPage> {
                                                           ],
                                                         ),
                                                       ),
+                                                      if (settingsProvider
+                                                        .menuIsViewMap[225] ==
+                                                    1)
+                                                  (onHover) => MenuItemButton(
+                                                        onHover: onHover,
+                                                        onPressed: () {
+                                                          showDialog(
+                                                            context: context,
+                                                            builder:
+                                                                (BuildContext
+                                                                    context) {
+                                                              return AlertDialog(
+                                                                title: const Text(
+                                                                    'Delete All Tasks'),
+                                                                content:
+                                                                    const Text(
+                                                                  'Are you sure you want to delete all tasks for this lead? This action cannot be undone.',
+                                                                ),
+                                                                actions: [
+                                                                  TextButton(
+                                                                    onPressed: () =>
+                                                                        Navigator.of(context)
+                                                                            .pop(),
+                                                                    child: const Text(
+                                                                        'Cancel'),
+                                                                  ),
+                                                                  TextButton(
+                                                                    onPressed:
+                                                                        () {
+                                                                      final leadsProvider = Provider.of<
+                                                                              LeadsProvider>(
+                                                                          context,
+                                                                          listen:
+                                                                              false);
+                                                                      leadsProvider
+                                                                          .deleteAllTasks(
+                                                                        context:
+                                                                            context,
+                                                                        customerId: lead
+                                                                            .customerId
+                                                                            .toString(),
+                                                                      );
+                                                                    },
+                                                                    child:
+                                                                        const Text(
+                                                                      'Delete',
+                                                                      style: TextStyle(
+                                                                          color:
+                                                                              Colors.redAccent),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              );
+                                                            },
+                                                          );
+                                                        },
+                                                        child: Row(
+                                                          children: [
+                                                            Icon(Icons.delete,
+                                                                size: 18,
+                                                                color: Colors
+                                                                    .redAccent),
+                                                            SizedBox(width: 8),
+                                                            Text(
+                                                                'Delete All Tasks'),
+                                                          ],
+                                                        ),
+                                                      ),
                                               ],
                                             ),
                                           ],

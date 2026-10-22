@@ -538,4 +538,5 @@ class HttpUrls {
   static String getCategoryPeriodicService = "item/Get_Category";
   static String getPeriodicServiceFields =
       "amc_status/Get_Periodic_Service_Fields";
+  static String deleteAllTasks = "task/Delete_Task_By_Customer";
 }

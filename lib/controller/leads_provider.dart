@@ -2837,4 +2837,35 @@ class LeadsProvider extends ChangeNotifier {
       log('Error converting lead: $e');
     }
   }
+
+  Future<void> deleteAllTasks(
+      {required String customerId, required BuildContext context}) async {
+    try {
+      final response = await HttpRequest.httpDeleteRequest(
+          endPoint: '${HttpUrls.deleteAllTasks}/$customerId');
+          
+      if (response != null && response.statusCode == 200) {
+        Fluttertoast.showToast(
+            msg: "All tasks deleted successfully",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.green,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }
+    } catch (e) {
+      log('Exception occurred: $e');
+      Fluttertoast.showToast(
+          msg: "Failed to delete all tasks",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    } finally {
+      Navigator.of(context).pop();
+    }
+  }
 }

@@ -1247,11 +1247,46 @@ class _LeadCardState extends State<LeadCard> {
                             color: Colors.blueGrey,
                           ),
                           const SizedBox(width: 4),
-                          const Expanded(child: SizedBox()),
-                          const SizedBox(width: 4),
-                          const Expanded(child: SizedBox()),
-                          const SizedBox(width: 4),
-                          const Expanded(child: SizedBox()),
+                          if (settingsProvider.menuIsViewMap[225] == 1)
+                          _buildActionButton(
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: const Text('Delete All Tasks'),
+                                    content: const Text(
+                                      'Are you sure you want to delete all tasks for this lead? This action cannot be undone.',
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.of(context).pop(),
+                                        child: const Text('Cancel'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          leadsProvider.deleteAllTasks(
+                                            context: context,
+                                            customerId: widget.lead.customerId
+                                                .toString(),
+                                          );
+                                        },
+                                        child: const Text(
+                                          'Delete',
+                                          style: TextStyle(
+                                              color: Colors.redAccent),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
+                            icon: Icons.delete_outline,
+                            text: 'Delete All Tasks',
+                            color: Colors.redAccent,
+                          ),
                           const SizedBox(width: 4),
                           const Expanded(child: SizedBox()),
                         ],
