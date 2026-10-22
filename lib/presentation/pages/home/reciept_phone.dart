@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
+import 'package:vidyanexis/controller/lead_details_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/main.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_receipt_page_phone.dart';
@@ -29,10 +32,194 @@ class _RecieptPhoneState extends State<RecieptPhone> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final cdProvider =
           Provider.of<CustomerDetailsProvider>(context, listen: false);
-      // cdProvider.getRecieptListApi(widget.customerId.toString(), context);
+      cdProvider.getRecieptListApi(widget.customerId.toString(), context);
+      if (cdProvider.leadDetails == null || cdProvider.leadDetails!.isEmpty) {
+        cdProvider.fetchLeadDetails(widget.customerId.toString(), context);
+      }
     });
 
     super.initState();
+  }
+
+  double _getProjectCost(CustomerDetailsProvider provider,
+      [LeadDetailsProvider? ldProvider]) {
+    if (provider.leadDetails != null && provider.leadDetails!.isNotEmpty) {
+      final lead = provider.leadDetails![0];
+      if (lead.projectCost > 0) {
+        return lead.projectCost;
+      }
+      final parsedTotal =
+          double.tryParse(lead.totalProjectCost.replaceAll(',', '').trim()) ??
+              0.0;
+      if (parsedTotal > 0) {
+        return parsedTotal;
+      }
+    }
+    if (ldProvider != null &&
+        ldProvider.leadDetails != null &&
+        ldProvider.leadDetails!.isNotEmpty) {
+      final lead = ldProvider.leadDetails![0];
+      if (lead.projectCost > 0) {
+        return lead.projectCost;
+      }
+      final parsedTotal =
+          double.tryParse(lead.totalProjectCost.replaceAll(',', '').trim()) ??
+              0.0;
+      if (parsedTotal > 0) {
+        return parsedTotal;
+      }
+    }
+    return 0.0;
+  }
+
+  double _getCollectedAmount(CustomerDetailsProvider provider) {
+    return provider.receiptList
+        .where((item) => item.adminApproval == 1 && item.isRejected != 1)
+        .fold<double>(0.0, (sum, item) => sum + item.amount);
+  }
+
+  double _getPendingAmount(CustomerDetailsProvider provider) {
+    return provider.receiptList
+        .where((item) => item.adminApproval == 0 && item.isRejected != 1)
+        .fold<double>(0.0, (sum, item) => sum + item.amount);
+  }
+
+  Widget _buildSummaryCardsMobile({
+    required double projectCost,
+    required double collectedAmount,
+    required double balanceAmount,
+    double pendingAmount = 0.0,
+  }) {
+    final currencyFormat = NumberFormat.currency(
+      locale: 'en_IN',
+      symbol: '₹ ',
+      decimalDigits: 2,
+    );
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+      child: Column(
+        children: [
+          _buildMobileMetricTile(
+            title: 'Total Project Cost',
+            amount: currencyFormat.format(projectCost),
+            icon: Icons.assignment_outlined,
+            iconColor: const Color(0xFF2563EB),
+            iconBgColor: const Color(0xFFEFF6FF),
+            borderColor: const Color(0xFFDBEAFE),
+          ),
+          const SizedBox(height: 8),
+          _buildMobileMetricTile(
+            title: 'Collected Amount',
+            amount: currencyFormat.format(collectedAmount),
+            subtitle: pendingAmount > 0
+                ? 'Pending: ${currencyFormat.format(pendingAmount)}'
+                : 'Approved only',
+            icon: Icons.check_circle_outline_rounded,
+            iconColor: const Color(0xFF16A34A),
+            iconBgColor: const Color(0xFFDCFCE7),
+            borderColor: const Color(0xFFBBF7D0),
+          ),
+          const SizedBox(height: 8),
+          _buildMobileMetricTile(
+            title: 'Balance Amount',
+            amount: currencyFormat.format(balanceAmount),
+            icon: Icons.account_balance_wallet_outlined,
+            iconColor: balanceAmount < 0
+                ? const Color(0xFF16A34A)
+                : const Color(0xFFEA580C),
+            iconBgColor: balanceAmount < 0
+                ? const Color(0xFFDCFCE7)
+                : const Color(0xFFFFEDD5),
+            borderColor: balanceAmount < 0
+                ? const Color(0xFFBBF7D0)
+                : const Color(0xFFFED7AA),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMobileMetricTile({
+    required String title,
+    required String amount,
+    required IconData icon,
+    required Color iconColor,
+    required Color iconBgColor,
+    required Color borderColor,
+    String? subtitle,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: borderColor, width: 1.2),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: iconBgColor,
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Icon(icon, color: iconColor, size: 20),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  title,
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: const Color(0xFF64748B),
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  amount,
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                    color: const Color(0xFF0F172A),
+                    letterSpacing: -0.2,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                if (subtitle != null) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w500,
+                      color: const Color(0xFF64748B),
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -62,17 +249,6 @@ class _RecieptPhoneState extends State<RecieptPhone> {
                         customerId: widget.customerId);
                   },
                 ));
-
-                // showDialog(
-                //   context: context,
-                //   barrierDismissible: false,
-                //   builder: (BuildContext context) {
-                //     return RecieptCreationWidget(
-                //         recieptId: '0',
-                //         isEdit: false,
-                //         customerId: widget.customerId);
-                //   },
-                // );
               },
               backgroundColor: AppColors.bluebutton,
               borderColor: AppColors.bluebutton,
@@ -87,11 +263,25 @@ class _RecieptPhoneState extends State<RecieptPhone> {
         Provider.of<CustomerDetailsProvider>(context);
     final settingsProvider =
         Provider.of<SettingsProvider>(context, listen: false);
+    final leadDetailsProvider =
+        Provider.of<LeadDetailsProvider>(context, listen: false);
+
+    final projectCost =
+        _getProjectCost(customerDetailsProvider, leadDetailsProvider);
+    final collectedAmount = _getCollectedAmount(customerDetailsProvider);
+    final pendingAmount = _getPendingAmount(customerDetailsProvider);
+    final balanceAmount = projectCost - collectedAmount;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 16),
+        _buildSummaryCardsMobile(
+          projectCost: projectCost,
+          collectedAmount: collectedAmount,
+          balanceAmount: balanceAmount,
+          pendingAmount: pendingAmount,
+        ),
+        const SizedBox(height: 8),
         ListView.separated(
           physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true,

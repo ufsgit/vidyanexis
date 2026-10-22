@@ -1,3 +1,4 @@
+import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 
@@ -30,10 +31,205 @@ class _ReceiptScreenState extends State<ReceiptScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final cdProvider =
           Provider.of<CustomerDetailsProvider>(context, listen: false);
-      // cdProvider.getRecieptListApi(widget.customerId.toString(), context); // Fetched by parent tab controller
+      cdProvider.getRecieptListApi(widget.customerId.toString(), context);
+      if (cdProvider.leadDetails == null || cdProvider.leadDetails!.isEmpty) {
+        cdProvider.fetchLeadDetails(widget.customerId.toString(), context);
+      }
     });
 
     super.initState();
+  }
+
+  double _getProjectCost(CustomerDetailsProvider provider) {
+    if (provider.leadDetails != null && provider.leadDetails!.isNotEmpty) {
+      final lead = provider.leadDetails![0];
+      if (lead.projectCost > 0) {
+        return lead.projectCost;
+      }
+      final parsedTotal =
+          double.tryParse(lead.totalProjectCost.replaceAll(',', '').trim()) ?? 0.0;
+      if (parsedTotal > 0) {
+        return parsedTotal;
+      }
+    }
+    return 0.0;
+  }
+
+  double _getCollectedAmount(CustomerDetailsProvider provider) {
+    return provider.receiptList
+        .where((item) => item.adminApproval == 1 && item.isRejected != 1)
+        .fold<double>(0.0, (sum, item) => sum + item.amount);
+  }
+
+  double _getPendingAmount(CustomerDetailsProvider provider) {
+    return provider.receiptList
+        .where((item) => item.adminApproval == 0 && item.isRejected != 1)
+        .fold<double>(0.0, (sum, item) => sum + item.amount);
+  }
+
+  Widget _buildSummaryCards({
+    required double projectCost,
+    required double collectedAmount,
+    required double balanceAmount,
+    double pendingAmount = 0.0,
+  }) {
+    final currencyFormat = NumberFormat.currency(
+      locale: 'en_IN',
+      symbol: '₹ ',
+      decimalDigits: 2,
+    );
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isNarrow = constraints.maxWidth < 650;
+
+        final cards = [
+          _buildMetricCard(
+            title: 'Total Project Cost',
+            amount: currencyFormat.format(projectCost),
+            icon: Icons.assignment_outlined,
+            iconColor: const Color(0xFF2563EB),
+            iconBgColor: const Color(0xFFEFF6FF),
+            borderColor: const Color(0xFFDBEAFE),
+          ),
+          _buildMetricCard(
+            title: 'Collected Amount',
+            amount: currencyFormat.format(collectedAmount),
+            subtitle: pendingAmount > 0
+                ? 'Pending: ${currencyFormat.format(pendingAmount)}'
+                : 'Approved only',
+            icon: Icons.check_circle_outline_rounded,
+            iconColor: const Color(0xFF16A34A),
+            iconBgColor: const Color(0xFFDCFCE7),
+            borderColor: const Color(0xFFBBF7D0),
+          ),
+          _buildMetricCard(
+            title: 'Balance Amount',
+            amount: currencyFormat.format(balanceAmount),
+            icon: Icons.account_balance_wallet_outlined,
+            iconColor: balanceAmount < 0
+                ? const Color(0xFF16A34A)
+                : const Color(0xFFEA580C),
+            iconBgColor: balanceAmount < 0
+                ? const Color(0xFFDCFCE7)
+                : const Color(0xFFFFEDD5),
+            borderColor: balanceAmount < 0
+                ? const Color(0xFFBBF7D0)
+                : const Color(0xFFFED7AA),
+          ),
+        ];
+
+        if (isNarrow) {
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Column(
+              children: cards
+                  .map((card) => Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: card,
+                      ))
+                  .toList(),
+            ),
+          );
+        }
+
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: Row(
+            children: cards
+                .map((card) => Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        child: card,
+                      ),
+                    ))
+                .toList(),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildMetricCard({
+    required String title,
+    required String amount,
+    required IconData icon,
+    required Color iconColor,
+    required Color iconBgColor,
+    required Color borderColor,
+    String? subtitle,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: borderColor, width: 1.2),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: iconBgColor,
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Icon(icon, color: iconColor, size: 22),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  title,
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: const Color(0xFF64748B),
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  amount,
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: const Color(0xFF0F172A),
+                    letterSpacing: -0.2,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                if (subtitle != null) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w500,
+                      color: const Color(0xFF64748B),
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -42,21 +238,26 @@ class _ReceiptScreenState extends State<ReceiptScreen> {
     settingsProvider = Provider.of<SettingsProvider>(context);
     const borderColor = Color(0xFFE9EDF1);
 
+    final projectCost = _getProjectCost(customerDetailsProvider);
+    final collectedAmount = _getCollectedAmount(customerDetailsProvider);
+    final pendingAmount = _getPendingAmount(customerDetailsProvider);
+    final balanceAmount = projectCost - collectedAmount;
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              const SizedBox(
-                height: 10,
-              ),
-              const SizedBox(
-                height: 10,
+              _buildSummaryCards(
+                projectCost: projectCost,
+                collectedAmount: collectedAmount,
+                balanceAmount: balanceAmount,
+                pendingAmount: pendingAmount,
               ),
               Expanded(
                 child: Container(
-                  margin: const EdgeInsets.only(top: 10),
+                  margin: const EdgeInsets.only(top: 4),
                   decoration: const BoxDecoration(
                     border: Border(
                       top: BorderSide(color: borderColor),

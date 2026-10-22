@@ -502,6 +502,9 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
         break;
       case "Receipt":
         provider.getRecieptListApi(widget.customerId, context);
+        if (provider.leadDetails == null || provider.leadDetails!.isEmpty) {
+          provider.fetchLeadDetails(widget.customerId, context);
+        }
         break;
       case "Expense":
         provider.getExpenseListApi(widget.customerId, context,
