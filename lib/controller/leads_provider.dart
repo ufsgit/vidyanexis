@@ -1685,18 +1685,18 @@ class LeadsProvider extends ChangeNotifier {
         }
 
         if (customerIdFlag == -2) {
-          Loader.stopLoader(context);
+          // Loader.stopLoader(context);
           alert(context, "Email Already Exists");
         } else if (customerIdFlag == -1) {
-          Loader.stopLoader(context);
+          // Loader.stopLoader(context);
           if (leadMobileExistedCheck == 1) {
             alert(context, "Mobile No. Already Exists");
           }
         } else if (customerIdFlag == -3) {
-          Loader.stopLoader(context);
+          // Loader.stopLoader(context);
           alert(context, "Consumer No. Already Exists");
         } else if (customerIdFlag == -4) {
-          Loader.stopLoader(context);
+          // Loader.stopLoader(context);
           alert(context, "Aadhar No. Already Exists");
         } else {
           log('Success');
@@ -2451,6 +2451,7 @@ class LeadsProvider extends ChangeNotifier {
 
   void alert(BuildContext context, String message) {
     showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -2475,6 +2476,7 @@ class LeadsProvider extends ChangeNotifier {
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
+                Loader.stopLoader(context);
               },
               child: Text(
                 'OK',
