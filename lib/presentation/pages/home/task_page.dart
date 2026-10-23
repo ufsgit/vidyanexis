@@ -4280,6 +4280,115 @@ class _tasksPageReportState extends State<TaskPage> {
                                         onPressed: saving
                                             ? null
                                             : () async {
+                                                // Follow-up Date Mandatory Check
+                                                final bool isFollowupDateRequired =
+                                                    selectedStatus.value.followup == 1 ||
+                                                    selectedStatus.value.viewDateFollowup == 1;
+                                                if (isFollowupDateRequired &&
+                                                    reportsProvider.followUpDateController.text.trim().isEmpty) {
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (BuildContext context) {
+                                                      return AlertDialog(
+                                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                                                        titlePadding: const EdgeInsets.fromLTRB(24, 24, 24, 8),
+                                                        contentPadding: const EdgeInsets.fromLTRB(24, 0, 24, 16),
+                                                        actionsPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                                                        title: Row(
+                                                          children: [
+                                                            Icon(Icons.warning_amber_rounded, color: AppColors.darkGreen),
+                                                            const SizedBox(width: 10),
+                                                            const Text(
+                                                              "Unable to Save",
+                                                              style: TextStyle(
+                                                                fontFamily: 'PlusJakartaSans',
+                                                                color: Colors.black,
+                                                                fontWeight: FontWeight.bold,
+                                                                fontSize: 20,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        content: const Text(
+                                                          "Follow-up Date Missing",
+                                                          style: TextStyle(
+                                                            fontFamily: 'PlusJakartaSans',
+                                                            color: Colors.black,
+                                                            fontSize: 16,
+                                                          ),
+                                                        ),
+                                                        actions: [
+                                                          TextButton(
+                                                            style: TextButton.styleFrom(
+                                                              foregroundColor: Colors.white,
+                                                              backgroundColor: AppColors.darkGreen,
+                                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                                                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                                                            ),
+                                                            onPressed: () => Navigator.of(context).pop(),
+                                                            child: const Text("OK"),
+                                                          ),
+                                                        ],
+                                                      );
+                                                    },
+                                                  );
+                                                  return;
+                                                }
+
+                                                // Follow-up Time Mandatory Check
+                                                final bool isFollowupTimeRequired =
+                                                    selectedStatus.value.isTime == 1;
+                                                if (isFollowupTimeRequired &&
+                                                    reportsProvider.followUpTimeController.text.trim().isEmpty) {
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (BuildContext context) {
+                                                      return AlertDialog(
+                                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                                                        titlePadding: const EdgeInsets.fromLTRB(24, 24, 24, 8),
+                                                        contentPadding: const EdgeInsets.fromLTRB(24, 0, 24, 16),
+                                                        actionsPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                                                        title: Row(
+                                                          children: [
+                                                            Icon(Icons.warning_amber_rounded, color: AppColors.darkGreen),
+                                                            const SizedBox(width: 10),
+                                                            const Text(
+                                                              "Unable to Save",
+                                                              style: TextStyle(
+                                                                fontFamily: 'PlusJakartaSans',
+                                                                color: Colors.black,
+                                                                fontWeight: FontWeight.bold,
+                                                                fontSize: 20,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        content: const Text(
+                                                          "Follow-up Time Missing",
+                                                          style: TextStyle(
+                                                            fontFamily: 'PlusJakartaSans',
+                                                            color: Colors.black,
+                                                            fontSize: 16,
+                                                          ),
+                                                        ),
+                                                        actions: [
+                                                          TextButton(
+                                                            style: TextButton.styleFrom(
+                                                              foregroundColor: Colors.white,
+                                                              backgroundColor: AppColors.darkGreen,
+                                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                                                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                                                            ),
+                                                            onPressed: () => Navigator.of(context).pop(),
+                                                            child: const Text("OK"),
+                                                          ),
+                                                        ],
+                                                      );
+                                                    },
+                                                  );
+                                                  return;
+                                                }
+
                                                 // Custom Fields Mandatory Check
                                                 final bool hasMandatoryCustomFields =
                                                     reportsProvider.showCustomFields.any((f) => f.isMandatory == 1);
@@ -6729,6 +6838,229 @@ class _tasksPageReportState extends State<TaskPage> {
                                                             1;
 
                                                     //Remark Mandatory Check
+                                                    // Follow-up Date Mandatory Check
+                                                    final bool
+                                                        isFollowupDateRequired =
+                                                        selectedStatus.value.followup == 1 ||
+                                                        selectedStatus.value.viewDateFollowup == 1;
+                                                    if (isFollowupDateRequired &&
+                                                        provider
+                                                            .followUpDateController
+                                                            .text
+                                                            .trim()
+                                                            .isEmpty) {
+                                                      showDialog(
+                                                        context: context,
+                                                        builder: (BuildContext
+                                                            context) {
+                                                          return AlertDialog(
+                                                            shape: RoundedRectangleBorder(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            4)),
+                                                            titlePadding:
+                                                                const EdgeInsets
+                                                                    .fromLTRB(
+                                                                    24,
+                                                                    24,
+                                                                    24,
+                                                                    8),
+                                                            contentPadding:
+                                                                const EdgeInsets
+                                                                    .fromLTRB(
+                                                                    24,
+                                                                    0,
+                                                                    24,
+                                                                    16),
+                                                            actionsPadding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        16,
+                                                                    vertical:
+                                                                        10),
+                                                            title: Row(
+                                                              children: [
+                                                                Icon(
+                                                                    Icons
+                                                                        .warning_amber_rounded,
+                                                                    color: AppColors
+                                                                        .darkGreen),
+                                                                const SizedBox(
+                                                                    width: 10),
+                                                                const Text(
+                                                                  "Unable to Save",
+                                                                  style: TextStyle(
+                                                                    fontFamily:
+                                                                        'PlusJakartaSans',
+                                                                    color: Colors
+                                                                        .black,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    fontSize: 20,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                             ),
+                                                            content: const Text(
+                                                              "Follow-up Date Missing",
+                                                              style: TextStyle(
+                                                                fontFamily:
+                                                                    'PlusJakartaSans',
+                                                                color: Colors
+                                                                    .black,
+                                                                fontSize: 16,
+                                                              ),
+                                                            ),
+                                                            actions: [
+                                                              TextButton(
+                                                                style: TextButton
+                                                                    .styleFrom(
+                                                                  foregroundColor:
+                                                                      Colors
+                                                                          .white,
+                                                                  backgroundColor:
+                                                                      AppColors
+                                                                          .darkGreen,
+                                                                  shape: RoundedRectangleBorder(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              4)),
+                                                                  padding: const EdgeInsets
+                                                                      .symmetric(
+                                                                      horizontal:
+                                                                          20,
+                                                                      vertical:
+                                                                          10),
+                                                                ),
+                                                                onPressed: () =>
+                                                                    Navigator.of(
+                                                                            context)
+                                                                        .pop(),
+                                                                child:
+                                                                    const Text(
+                                                                        "OK"),
+                                                              ),
+                                                            ],
+                                                          );
+                                                        },
+                                                      );
+                                                      return;
+                                                    }
+
+                                                    // Follow-up Time Mandatory Check
+                                                    final bool
+                                                        isFollowupTimeRequired =
+                                                        selectedStatus.value.isTime == 1;
+                                                    if (isFollowupTimeRequired &&
+                                                        provider
+                                                            .followUpTimeController
+                                                            .text
+                                                            .trim()
+                                                            .isEmpty) {
+                                                      showDialog(
+                                                        context: context,
+                                                        builder: (BuildContext
+                                                            context) {
+                                                          return AlertDialog(
+                                                            shape: RoundedRectangleBorder(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            4)),
+                                                            titlePadding:
+                                                                const EdgeInsets
+                                                                    .fromLTRB(
+                                                                    24,
+                                                                    24,
+                                                                    24,
+                                                                    8),
+                                                            contentPadding:
+                                                                const EdgeInsets
+                                                                    .fromLTRB(
+                                                                    24,
+                                                                    0,
+                                                                    24,
+                                                                    16),
+                                                            actionsPadding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        16,
+                                                                    vertical:
+                                                                        10),
+                                                            title: Row(
+                                                              children: [
+                                                                Icon(
+                                                                    Icons
+                                                                        .warning_amber_rounded,
+                                                                    color: AppColors
+                                                                        .darkGreen),
+                                                                const SizedBox(
+                                                                    width: 10),
+                                                                const Text(
+                                                                  "Unable to Save",
+                                                                  style: TextStyle(
+                                                                    fontFamily:
+                                                                        'PlusJakartaSans',
+                                                                    color: Colors
+                                                                        .black,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    fontSize: 20,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                             ),
+                                                            content: const Text(
+                                                              "Follow-up Time Missing",
+                                                              style: TextStyle(
+                                                                fontFamily:
+                                                                    'PlusJakartaSans',
+                                                                color: Colors
+                                                                    .black,
+                                                                fontSize: 16,
+                                                              ),
+                                                            ),
+                                                            actions: [
+                                                              TextButton(
+                                                                style: TextButton
+                                                                    .styleFrom(
+                                                                  foregroundColor:
+                                                                      Colors
+                                                                          .white,
+                                                                  backgroundColor:
+                                                                      AppColors
+                                                                          .darkGreen,
+                                                                  shape: RoundedRectangleBorder(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              4)),
+                                                                  padding: const EdgeInsets
+                                                                      .symmetric(
+                                                                      horizontal:
+                                                                          20,
+                                                                      vertical:
+                                                                          10),
+                                                                ),
+                                                                onPressed: () =>
+                                                                    Navigator.of(
+                                                                            context)
+                                                                        .pop(),
+                                                                child:
+                                                                    const Text(
+                                                                        "OK"),
+                                                              ),
+                                                            ],
+                                                          );
+                                                        },
+                                                      );
+                                                      return;
+                                                    }
+
                                                     int remarkMandatoty =
                                                         settingsProvider
                                                             .taskRemarkMandatory;
@@ -7543,14 +7875,25 @@ class _tasksPageReportState extends State<TaskPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Follow-up Date',
-          style: TextStyle(
-            fontFamily: 'PlusJakartaSans',
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-            color: Colors.grey.shade600,
-            letterSpacing: 0.3,
+        Text.rich(
+          TextSpan(
+            text: 'Follow-up Date',
+            style: TextStyle(
+              fontFamily: 'PlusJakartaSans',
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey.shade600,
+              letterSpacing: 0.3,
+            ),
+            children: const [
+              TextSpan(
+                text: ' *',
+                style: TextStyle(
+                  color: Color(0xFFDC2626),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
           ),
         ),
         const SizedBox(height: 6),
@@ -7611,14 +7954,25 @@ class _tasksPageReportState extends State<TaskPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Follow-up Time',
-          style: TextStyle(
-            fontFamily: 'PlusJakartaSans',
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-            color: Colors.grey.shade600,
-            letterSpacing: 0.3,
+        Text.rich(
+          TextSpan(
+            text: 'Follow-up Time',
+            style: TextStyle(
+              fontFamily: 'PlusJakartaSans',
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey.shade600,
+              letterSpacing: 0.3,
+            ),
+            children: const [
+              TextSpan(
+                text: ' *',
+                style: TextStyle(
+                  color: Color(0xFFDC2626),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
           ),
         ),
         const SizedBox(height: 6),
