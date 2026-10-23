@@ -6,6 +6,7 @@ import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/report_upload_provider.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
 
@@ -26,53 +27,66 @@ class RecieptCreationWidget extends StatefulWidget {
 class _RecieptCreationWidgetState extends State<RecieptCreationWidget> {
   bool _isSaving = false;
 
+  void _showMissingDetailsDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            'Cannot save',
+            style: TextStyle(
+              color: AppColors.appViolet,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: Text(
+            message,
+            style: const TextStyle(
+              color: Colors.black87,
+              fontSize: 16,
+            ),
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(4),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text(
+                'OK',
+                style: TextStyle(
+                  color: AppColors.appViolet,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<void> _handleSave(
     CustomerDetailsProvider customerDetailsProvider,
     ReportUploadProvider reportUploadProvider,
+    SettingsProvider settingsProvider,
   ) async {
     if (_isSaving || customerDetailsProvider.isSavingReciept) return;
 
     final amount = customerDetailsProvider.recieptAmountController.text.trim();
     if (amount.isEmpty) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text(
-              'Cannot save',
-              style: TextStyle(
-                color: AppColors.appViolet,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            content: const Text(
-              'Missing Details',
-              style: TextStyle(
-                color: Colors.black87,
-                fontSize: 16,
-              ),
-            ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(4),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Text(
-                  'OK',
-                  style: TextStyle(
-                    color: AppColors.appViolet,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-              ),
-            ],
-          );
-        },
-      );
+      _showMissingDetailsDialog('Missing Details');
+      return;
+    }
+
+    // Permission 227: document is mandatory when menuIsViewMap[227] == 1
+    final bool isDocumentMandatory =
+        (settingsProvider.menuIsViewMap[227] ?? 0) == 1;
+    if (isDocumentMandatory && reportUploadProvider.selectedFileBytes == null) {
+      _showMissingDetailsDialog('Please attach a document before saving.');
       return;
     }
 
@@ -111,8 +125,11 @@ class _RecieptCreationWidgetState extends State<RecieptCreationWidget> {
     final customerDetailsProvider =
         Provider.of<CustomerDetailsProvider>(context);
     final reportUploadProvider = Provider.of<ReportUploadProvider>(context);
+    final settingsProvider = Provider.of<SettingsProvider>(context);
     final bool isSavingNow =
         _isSaving || customerDetailsProvider.isSavingReciept;
+    final bool isDocumentMandatory =
+        (settingsProvider.menuIsViewMap[227] ?? 0) == 1;
 
     return PopScope(
       canPop: !isSavingNow,
@@ -178,12 +195,21 @@ class _RecieptCreationWidgetState extends State<RecieptCreationWidget> {
                 keyboardType: TextInputType.multiline,
               ),
               const SizedBox(height: 16.0),
-              Text(
-                'Document / Report',
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.textGrey1,
+              RichText(
+                text: TextSpan(
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.textGrey1,
+                  ),
+                  children: [
+                    const TextSpan(text: 'Document / Report'),
+                    if (isDocumentMandatory)
+                      const TextSpan(
+                        text: ' *',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                  ],
                 ),
               ),
               const SizedBox(height: 8.0),
@@ -332,8 +358,11 @@ class _RecieptCreationWidgetState extends State<RecieptCreationWidget> {
             isLoading: isSavingNow,
             onPressed: isSavingNow
                 ? null
-                : () =>
-                    _handleSave(customerDetailsProvider, reportUploadProvider),
+                : () => _handleSave(
+                    customerDetailsProvider,
+                    reportUploadProvider,
+                    settingsProvider,
+                  ),
             backgroundColor: AppColors.appViolet,
             borderColor: AppColors.appViolet,
             textColor: AppColors.whiteColor,
