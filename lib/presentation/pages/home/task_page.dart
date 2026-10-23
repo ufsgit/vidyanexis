@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/controller/image_upload_provider.dart';
+import 'package:vidyanexis/controller/models/document_type_model.dart';
 import 'package:vidyanexis/controller/models/priority_model.dart';
 import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'dart:async';
@@ -51,6 +52,7 @@ import 'package:vidyanexis/controller/models/add_task_model.dart';
 import 'package:vidyanexis/controller/models/search_user_details_model.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_task.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_task_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/customer/add_reciept.dart';
 import 'package:vidyanexis/utils/status_utils.dart';
 import 'package:vidyanexis/controller/models/form_settings_provider.dart';
 import 'package:vidyanexis/controller/models/form_model.dart';
@@ -4627,6 +4629,45 @@ class _tasksPageReportState extends State<TaskPage> {
                                   ),
                                 ),
                               ),
+                              if (settingsProvider.menuIsViewMap[225] == 1) ...[
+                              const SizedBox(width: 12),
+                              SizedBox(
+                                height: 28,
+                                child: TextButton.icon(
+                                  style: TextButton.styleFrom(
+                                    backgroundColor: const Color(0xFF2563EB),
+                                    foregroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                                    minimumSize: Size.zero,
+                                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                  ),
+                                  icon: const Icon(Icons.add, size: 14),
+                                  label: const Text(
+                                    'Receipt',
+                                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                                  ),
+                                  onPressed: () {
+                                    final cdProvider = Provider.of<CustomerDetailsProvider>(context, listen: false);
+                                    cdProvider.customerId = task.customerId.toString();
+                                    cdProvider.clearRecieptDetails();
+                                    showDialog(
+                                      context: context,
+                                      barrierDismissible: false,
+                                      builder: (BuildContext context) {
+                                        return RecieptCreationWidget(
+                                          recieptId: '0',
+                                          isEdit: false,
+                                          customerId: task.customerId.toString(),
+                                        );
+                                      },
+                                    );
+                                  },
+                                ),
+                              ),
+                              ],
                             ],
                           ),
                         ),
@@ -5495,7 +5536,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                                               CustomElevatedButton(
                                                             onPressed:
                                                                 () async {
-                                                              await showDialog(
+                                                              final result =
+                                                                  await showDialog(
                                                                 barrierDismissible:
                                                                     false,
                                                                 context:
@@ -5506,7 +5548,15 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                   customerId: task
                                                                       .customerId
                                                                       .toString(),
+                                                                  taskId: task
+                                                                      .taskId
+                                                                      .toString(),
                                                                 ),
+                                                              );
+                                                              if (!context.mounted) return;
+                                                              _handleUploadedDocumentsResult(
+                                                                result: result,
+                                                                context: context,
                                                               );
                                                             },
                                                             buttonText:
@@ -7880,12 +7930,75 @@ class _tasksPageReportState extends State<TaskPage> {
 
  
 
+  void _handleUploadedDocumentsResult({
+    required dynamic result,
+    required BuildContext context,
+  }) {
+    final imageProvider =
+        Provider.of<ImageUploadProvider>(context, listen: false);
+    final reportsProvider =
+        Provider.of<TaskPageProvider>(context, listen: false);
+    final dropDownProvider =
+        Provider.of<DropDownProvider>(context, listen: false);
+
+    List<dynamic> uploadedList = [];
+    if (result is List && result.isNotEmpty) {
+      uploadedList = result;
+    } else if (imageProvider.lastUploadedDocuments.isNotEmpty) {
+      uploadedList = List.from(imageProvider.lastUploadedDocuments);
+    }
+
+    if (uploadedList.isNotEmpty) {
+      for (var item in uploadedList) {
+        if (item is Map) {
+          final int docId = item['documentTypeId'] as int? ?? 0;
+          String docName = item['documentTypeName'] as String? ?? '';
+          final String url = item['url'] as String? ?? '';
+
+          if (docId != 0) {
+            if (url.isNotEmpty) {
+              _uploadedDocUrls[docId] = url;
+            }
+
+            if (docName.isEmpty) {
+              try {
+                final matched = dropDownProvider.documentType.firstWhere(
+                  (d) => d.documentTypeId == docId,
+                );
+                docName = matched.documentTypeName ?? '';
+              } catch (_) {}
+            }
+
+            final existingIndex = reportsProvider.documentTypeModel
+                .indexWhere((d) => d.documentTypeId == docId);
+
+            if (existingIndex == -1) {
+              reportsProvider.addOrUpdateDocumentType(
+                DocumentTypeModel(
+                  documentTypeId: docId,
+                  documentTypeName: docName.isNotEmpty ? docName : 'Document',
+                  deleteStatus: 0,
+                  isMandatory: false,
+                  isView: false,
+                ),
+              );
+            }
+          }
+        }
+      }
+      _refreshDocs();
+      if (mounted) {
+        setState(() {});
+      }
+    }
+  }
+
   Widget _buildUploadOtherDocTile(BuildContext context, TaskReportModel task) {
     return Padding(
       padding: const EdgeInsets.only(top: 6, bottom: 2),
       child: InkWell(
         onTap: () async {
-          await showDialog(
+          final result = await showDialog(
             barrierDismissible: false,
             context: context,
             builder: (context) => ImageUploadAlert(
@@ -7893,6 +8006,9 @@ class _tasksPageReportState extends State<TaskPage> {
               taskId: task.taskId.toString(),
             ),
           );
+
+          if (!context.mounted) return;
+          _handleUploadedDocumentsResult(result: result, context: context);
         },
         borderRadius: BorderRadius.circular(4),
         child: Container(

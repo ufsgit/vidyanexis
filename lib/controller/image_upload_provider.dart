@@ -30,6 +30,8 @@ class ImageUploadProvider extends ChangeNotifier {
   String customerId = '0';
   final List<Map<String, dynamic>> _fileInfoList = [];
   List<Map<String, dynamic>> get fileInfoList => _fileInfoList;
+  List<Map<String, dynamic>> _lastUploadedDocuments = [];
+  List<Map<String, dynamic>> get lastUploadedDocuments => _lastUploadedDocuments;
   String? _selectedDocumentTypeName;
   String? get selectedDocumentTypeName => _selectedDocumentTypeName;
 
@@ -551,6 +553,7 @@ class ImageUploadProvider extends ChangeNotifier {
 
       bool anySuccess = false;
       bool skippedInvalidType = false;
+      final List<Map<String, dynamic>> uploadedDocResults = [];
 
       for (var entry in groupedFiles.entries) {
         int? typeId = entry.key;
@@ -598,6 +601,16 @@ class ImageUploadProvider extends ChangeNotifier {
 
           if (response != null && response.statusCode == 200) {
             anySuccess = true;
+            String docTypeName = files.first['docTypeName']?.toString() ?? '';
+            String firstUrl = currentUploadedPaths.first['File_Path'] ?? '';
+            uploadedDocResults.add({
+              'documentTypeId': typeId,
+              'documentTypeName': docTypeName,
+              'url': firstUrl,
+              'urls': currentUploadedPaths
+                  .map((p) => p['File_Path'] as String)
+                  .toList(),
+            });
           }
         }
       }
@@ -614,12 +627,13 @@ class ImageUploadProvider extends ChangeNotifier {
       }
 
       if (anySuccess) {
+        _lastUploadedDocuments = List.from(uploadedDocResults);
         scaffoldMessenger.showSnackBar(
           const SnackBar(content: Text('Documents uploaded successfully')),
         );
         clearFiles();
         customerDetailsProvider.getDocument(customerId, context);
-        if (shouldPop) navigator.pop(true);
+        if (shouldPop) navigator.pop(uploadedDocResults);
         return uploadedUrls;
       } else {
         scaffoldMessenger.showSnackBar(

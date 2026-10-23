@@ -38,6 +38,17 @@ class TaskPageProvider extends ChangeNotifier {
   List<TaskTypeModel> get taskTypeModel => _taskTypeModel;
   List<DocumentTypeModel> _documentTypeModel = [];
   List<DocumentTypeModel> get documentTypeModel => _documentTypeModel;
+
+  void addOrUpdateDocumentType(DocumentTypeModel doc) {
+    final index = _documentTypeModel
+        .indexWhere((d) => d.documentTypeId == doc.documentTypeId);
+    if (index == -1) {
+      _documentTypeModel.add(doc);
+    } else {
+      _documentTypeModel[index] = doc;
+    }
+    notifyListeners();
+  }
   List<MandatoryStatusModel> _statusData = [];
   List<MandatoryStatusModel> get statusData => _statusData;
   List<TaskReportModel> _taskData = [];
