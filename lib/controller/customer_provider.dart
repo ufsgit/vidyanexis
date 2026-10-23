@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/models/search_leads_model.dart';
+import 'package:vidyanexis/controller/models/customer_field_model.dart';
 import 'package:vidyanexis/controller/models/mandatory_status_model.dart';
 import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/http_urls.dart';
@@ -92,6 +93,77 @@ class CustomerProvider extends ChangeNotifier {
   int? get selectedStatus => _selectedStatus;
   bool get isFilter => _isFilter;
   List<SearchLeadModel> get customerData => _customerData;
+
+  List<CustomerField> _customerFields = [];
+  List<CustomerField> get customerFields => _customerFields;
+
+  Future<void> getCustomerFieldsApi() async {
+    try {
+      final response = await HttpRequest.httpGetRequest(
+          endPoint: HttpUrls.getCustomerFields);
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data != null && data is List) {
+          _customerFields =
+              data.map((e) => CustomerField.fromJson(e)).toList();
+        } else if (data != null &&
+            data['data'] != null &&
+            data['data'] is List) {
+          _customerFields = (data['data'] as List)
+              .map((e) => CustomerField.fromJson(e))
+              .toList();
+        } else {
+          _customerFields = [];
+        }
+      } else {
+        _customerFields = [];
+      }
+    } catch (e) {
+      print('Exception occurred in getCustomerFieldsApi: $e');
+      _customerFields = [];
+    }
+    notifyListeners();
+  }
+
+  String getCustomerFieldName(int fieldId, String defaultName) {
+    if (_customerFields.isEmpty) return defaultName;
+    try {
+      final field = _customerFields.firstWhere(
+        (e) => e.customerFieldsId == fieldId,
+      );
+      return (field.customerFieldsName != null &&
+              field.customerFieldsName!.isNotEmpty)
+          ? field.customerFieldsName!
+          : defaultName;
+    } catch (_) {
+      return defaultName;
+    }
+  }
+
+  bool isCustomerFieldVisible(int fieldId) {
+    if (_customerFields.isEmpty) return true;
+    try {
+      final field = _customerFields.firstWhere(
+        (e) => e.customerFieldsId == fieldId,
+      );
+      return field.isVisibility == 1;
+    } catch (_) {
+      return true;
+    }
+  }
+
+  double getCustomerFieldSort(int fieldId, double defaultSort) {
+    if (_customerFields.isEmpty) return defaultSort;
+    try {
+      final field = _customerFields.firstWhere(
+        (e) => e.customerFieldsId == fieldId,
+      );
+      return (field.sort ?? defaultSort).toDouble();
+    } catch (_) {
+      return defaultSort;
+    }
+  }
 
   String _search = '';
   String _fromDateS = '';

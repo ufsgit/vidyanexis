@@ -184,6 +184,7 @@ class _CustomerPageState extends State<CustomerPage> {
         customerProvider.setSortOption(0, context); // existing Default
       }
 
+      customerProvider.getCustomerFieldsApi();
       customerProvider.getSearchCustomers(context, isSilent: true);
       final provider = Provider.of<DropDownProvider>(context, listen: false);
       // Load all statuses by default (no ViewIn_Id) so the dropdown shows everything.
@@ -1098,13 +1099,52 @@ class _CustomerPageState extends State<CustomerPage> {
   ) {
     final bool showCustomerCode = settingsProvider.menuIsViewMap[184] == 1;
     final bool showLeadCode = settingsProvider.showLeadCode == 1;
-    final double fixedWidth = showCustomerCode
-        ? (showLeadCode ? 930.0 : 780.0)
-        : (showLeadCode ? 780.0 : 630.0);
     final bool showLocation = settingsProvider.menuIsViewMap[142] == 1;
     final bool showRamcoLocation = settingsProvider.ramcoLocationPermission == 1;
 
-    // Collect unique custom fields across customer data
+    final bool apiLoaded = customerProvider.customerFields.isNotEmpty;
+
+    // Sort fields by API sort value, show only visible ones
+    final sortedFields = List.of(customerProvider.customerFields)
+      ..sort((a, b) => (a.sort ?? 99).compareTo(b.sort ?? 99));
+
+    // Helper: is a field ID visible — if API not loaded, always show
+    bool visible(int id) => !apiLoaded || customerProvider.isCustomerFieldVisible(id);
+    // Helper: get field name — if API not loaded, use fallback
+    String fieldName(int id, String fallback) => !apiLoaded
+        ? fallback
+        : customerProvider.getCustomerFieldName(id, fallback);
+
+    // Fixed section: Sl No + Customer Code + Lead Code + Name + Place + Mobile
+    // (fields 1,2,3 are always in the fixed/frozen left panel)
+    final double fixedWidth = 80.0 +
+        (showCustomerCode ? 150.0 : 0.0) +
+        (showLeadCode ? 150.0 : 0.0) +
+        (visible(1) ? 230.0 : 0.0) +
+        (visible(3) ? 140.0 : 0.0);
+
+    // Scrollable fields: 2 (Place), 4-11 in API sort order (11 = custom fields position)
+    // If API not loaded, show all in default order ignoring sort/visibility
+    final scrollableFieldIds = !apiLoaded
+        ? [2, 4, 5, 6, 7, 8, 9, 11, 10]
+        : sortedFields
+            .where((f) => f.isVisibility == 1)
+            .map((f) => f.customerFieldsId!)
+            .toList();
+
+    Widget headerCell(double w, String title) => TableWidget(
+          width: w, title: title, fontWeight: FontWeight.normal,
+          padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+          color: const Color(0xFFFFFFFF),
+        );
+
+    Widget textCell(double w, String text) => TableWidget(
+          width: w, fontSize: 12, fontWeight: FontWeight.normal,
+          padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 8.0),
+          title: text,
+        );
+
+    // Collect unique custom fields from customer data
     final Map<dynamic, CustomerCustomField> uniqueCustomFields = {};
     for (var lead in customerProvider.customerData) {
       for (var cf in lead.customFields) {
@@ -1114,254 +1154,124 @@ class _CustomerPageState extends State<CustomerPage> {
         }
       }
     }
-    final List<CustomerCustomField> customFieldColumns = uniqueCustomFields.values.toList();
+    final List<CustomerCustomField> customFieldColumns = uniqueCustomFields.values.toList()
+      ..sort((a, b) => a.order.compareTo(b.order));
 
-    final List<_CustomerTableColumn> scrollableColumns = [
-      _CustomerTableColumn(
-        order: 1.0,
-        width: 140.0,
-        header: const TableWidget(
-          width: 140,
-          title: 'AMC Date',
-          fontWeight: FontWeight.normal,
-          padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
-          color: Color(0xFFFFFFFF),
-        ),
-        cellBuilder: (lead) => TableWidget(
-          width: 140,
-          fontSize: 12,
-          fontWeight: FontWeight.normal,
-          padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 8.0),
-          title: lead.amcDateDisplay,
-        ),
-      ),
-      _CustomerTableColumn(
-        order: 2.0,
-        width: 190.0,
-        header: const TableWidget(
-          width: 190,
-          title: 'Work Completion Date',
-          fontWeight: FontWeight.normal,
-          padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
-          color: Color(0xFFFFFFFF),
-        ),
-        cellBuilder: (lead) => TableWidget(
-          width: 190,
-          fontSize: 12,
-          fontWeight: FontWeight.normal,
-          padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
-          title: lead.workCompletionDateDisplay,
-        ),
-      ),
-      _CustomerTableColumn(
-        order: 3.0,
-        width: 220.0,
-        header: const TableWidget(
-          width: 220,
-          title: 'Remarks',
-          fontWeight: FontWeight.normal,
-          padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
-          color: Color(0xFFFFFFFF),
-        ),
-        cellBuilder: (lead) => TableWidget(
-          width: 220,
-          fontSize: 12,
-          fontWeight: FontWeight.normal,
-          padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 8.0),
-          title: lead.remark,
-        ),
-      ),
-      _CustomerTableColumn(
-        order: 5.0,
-        width: 160.0,
-        header: const TableWidget(
-          width: 160,
-          title: 'Follow Up Status',
-          fontWeight: FontWeight.normal,
-          padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
-          color: Color(0xFFFFFFFF),
-        ),
-        cellBuilder: (lead) => TableWidget(
-          width: 160,
-          padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
-          data: InkWell(
-            onTap: () {
-              settingsProvider.customerStatusBlock == 1
-                  ? () {}
-                  : _onStatusClick(context, lead);
-            },
-            child: Container(
-              padding: lead.statusName.isNotEmpty
-                  ? const EdgeInsets.symmetric(horizontal: 8, vertical: 4)
-                  : EdgeInsets.zero,
-              decoration: BoxDecoration(
-                color: parseColor(lead.colorCode).withOpacity(0.12),
-                borderRadius: BorderRadius.circular(6),
-                border: Border.all(
-                  color: parseColor(lead.colorCode).withOpacity(0.5),
-                  width: 0.5,
-                ),
-              ),
-              child: Text(
-                lead.statusName,
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-                style: TextStyle(
-                  fontFamily: 'PlusJakartaSans',
-                  color: parseColor(lead.colorCode),
-                  fontWeight: FontWeight.bold,
-                  fontSize: 12,
+    Widget _buildScrollableHeader() {
+      return Row(children: [
+        for (final id in scrollableFieldIds) ...[
+          if (id == 2)  headerCell(180, fieldName(2, 'Place')),
+          if (id == 4)  headerCell(140, fieldName(4, 'AMC Date')),
+          if (id == 5)  headerCell(190, fieldName(5, 'Work Completion Date')),
+          if (id == 6)  headerCell(220, fieldName(6, 'Remarks')),
+          if (id == 7)  headerCell(160, fieldName(7, 'Follow Up Status')),
+          if (id == 8)  headerCell(140, fieldName(8, 'Follow Up Date')),
+          if (id == 9)  headerCell(140, fieldName(9, 'Consumer No')),
+          if (id == 10) headerCell(150, fieldName(10, 'Assigned Staff')),
+          if (id == 11) ...[
+            for (final cf in customFieldColumns)
+              headerCell(200, cf.customFieldName),
+          ],
+        ],
+        if (showRamcoLocation) headerCell(120, 'Location'),
+        if (showLocation)      headerCell(140, 'Location'),
+      ]);
+    }
+
+    Widget _buildScrollableRow(SearchLeadModel lead) {
+      return Row(children: [
+        for (final id in scrollableFieldIds) ...[
+          if (id == 2)  textCell(180, lead.displayPlace),
+          if (id == 4)  textCell(140, lead.amcDateDisplay),
+          if (id == 5)  textCell(190, lead.workCompletionDateDisplay),
+          if (id == 6)  textCell(220, lead.remark),
+          if (id == 7)
+            TableWidget(
+              width: 160,
+              padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+              data: InkWell(
+                onTap: () => settingsProvider.customerStatusBlock == 1
+                    ? null
+                    : _onStatusClick(context, lead),
+                child: Container(
+                  padding: lead.statusName.isNotEmpty
+                      ? const EdgeInsets.symmetric(horizontal: 8, vertical: 4)
+                      : EdgeInsets.zero,
+                  decoration: BoxDecoration(
+                    color: parseColor(lead.colorCode).withOpacity(0.12),
+                    borderRadius: BorderRadius.circular(6),
+                    border: Border.all(
+                        color: parseColor(lead.colorCode).withOpacity(0.5),
+                        width: 0.5),
+                  ),
+                  child: Text(lead.statusName,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      style: TextStyle(
+                          fontFamily: 'PlusJakartaSans',
+                          color: parseColor(lead.colorCode),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12)),
                 ),
               ),
             ),
-          ),
-        ),
-      ),
-      _CustomerTableColumn(
-        order: 6.0,
-        width: 140.0,
-        header: const TableWidget(
-          width: 140,
-          title: 'Follow Up Date',
-          fontWeight: FontWeight.normal,
-          padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
-          color: Color(0xFFFFFFFF),
-        ),
-        cellBuilder: (lead) => TableWidget(
-          width: 140,
-          fontSize: 12,
-          fontWeight: FontWeight.normal,
-          padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
-          title: lead.nextFollowUpDate.isNotEmpty
-              ? lead.nextFollowUpDate.toDayMonthYearFormat()
-              : '',
-        ),
-      ),
-      _CustomerTableColumn(
-        order: 7.0,
-        width: 140.0,
-        header: const TableWidget(
-          width: 140,
-          title: 'Consumer No.',
-          fontWeight: FontWeight.normal,
-          padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
-          color: Color(0xFFFFFFFF),
-        ),
-        cellBuilder: (lead) => TableWidget(
-          width: 140,
-          fontSize: 12,
-          fontWeight: FontWeight.normal,
-          padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 8.0),
-          title: lead.consumerNo,
-        ),
-      ),
-      _CustomerTableColumn(
-        order: 8.0,
-        width: 150.0,
-        header: const TableWidget(
-          width: 150,
-          title: 'Assigned Staff',
-          fontWeight: FontWeight.normal,
-          padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
-          color: Color(0xFFFFFFFF),
-        ),
-        cellBuilder: (lead) => TableWidget(
-          width: 150,
-          fontSize: 12,
-          fontWeight: FontWeight.normal,
-          padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 8.0),
-          title: lead.toUserName,
-        ),
-      ),
-      if (showRamcoLocation)
-        _CustomerTableColumn(
-          order: 10.0,
-          width: 120.0,
-          header: const TableWidget(
-            width: 120,
-            title: 'Location',
-            fontWeight: FontWeight.normal,
-            padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
-            color: Color(0xFFFFFFFF),
-          ),
-          cellBuilder: (lead) => TableWidget(
-            width: 120,
-            fontSize: 12,
-            fontWeight: FontWeight.normal,
-            padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
-            title: ((lead.location?.toString() ?? '').trim().isNotEmpty)
-                ? 'Yes'
-                : 'No',
-          ),
-        ),
-      if (showLocation)
-        _CustomerTableColumn(
-          order: 11.0,
-          width: 140.0,
-          header: const TableWidget(
-            width: 140,
-            title: 'Location',
-            fontWeight: FontWeight.normal,
-            padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
-            color: Color(0xFFFFFFFF),
-          ),
-          cellBuilder: (lead) => TableWidget(
-            width: 140,
-            fontSize: 12,
-            fontWeight: FontWeight.normal,
-            padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
-            title: lead.locationName ?? '',
-          ),
-        ),
-    ];
-
-    for (var cf in customFieldColumns) {
-      final double colOrder = cf.order > 0 ? cf.order.toDouble() : 99.0;
-      const double colWidth = 200.0;
-      scrollableColumns.add(
-        _CustomerTableColumn(
-          order: colOrder,
-          width: colWidth,
-          header: TableWidget(
-            width: colWidth,
-            title: cf.customFieldName,
-            fontWeight: FontWeight.normal,
-            padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
-            color: const Color(0xFFFFFFFF),
-          ),
-          cellBuilder: (lead) {
-            final matchingCf = lead.customFields.firstWhere(
-              (c) =>
-                  (cf.customFieldId != 0 && c.customFieldId == cf.customFieldId) ||
-                  (cf.customFieldId == 0 && c.customFieldName == cf.customFieldName),
-              orElse: () => CustomerCustomField(),
-            );
-            return TableWidget(
-              width: colWidth,
-              fontSize: 12,
-              fontWeight: FontWeight.normal,
-              padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 8.0),
-              data: Tooltip(
-                message: matchingCf.datavalue,
-                child: Text(
-                  matchingCf.datavalue,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontFamily: 'PlusJakartaSans',
-                    color: Colors.black,
-                    fontSize: 12,
+          if (id == 8)
+            textCell(140, lead.nextFollowUpDate.isNotEmpty
+                ? lead.nextFollowUpDate.toDayMonthYearFormat()
+                : ''),
+          if (id == 9)  textCell(140, lead.consumerNo),
+          if (id == 10) textCell(150, lead.toUserName),
+          if (id == 11) ...[
+            for (final cf in customFieldColumns)
+              TableWidget(
+                width: 200,
+                fontSize: 12,
+                fontWeight: FontWeight.normal,
+                padding:
+                    const EdgeInsets.symmetric(vertical: 6.0, horizontal: 8.0),
+                data: Tooltip(
+                  message: lead.customFields
+                      .firstWhere(
+                        (c) =>
+                            (cf.customFieldId != 0 &&
+                                c.customFieldId == cf.customFieldId) ||
+                            (cf.customFieldId == 0 &&
+                                c.customFieldName == cf.customFieldName),
+                        orElse: () => CustomerCustomField(),
+                      )
+                      .datavalue,
+                  child: Text(
+                    lead.customFields
+                        .firstWhere(
+                          (c) =>
+                              (cf.customFieldId != 0 &&
+                                  c.customFieldId == cf.customFieldId) ||
+                              (cf.customFieldId == 0 &&
+                                  c.customFieldName == cf.customFieldName),
+                          orElse: () => CustomerCustomField(),
+                        )
+                        .datavalue,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                        fontFamily: 'PlusJakartaSans',
+                        color: Colors.black,
+                        fontSize: 12),
                   ),
                 ),
               ),
-            );
-          },
-        ),
-      );
+          ],
+        ],
+        if (showRamcoLocation)
+          textCell(120, (lead.location?.toString() ?? '').trim().isNotEmpty ? 'Yes' : 'No'),
+        if (showLocation) textCell(140, lead.locationName ?? ''),
+      ]);
     }
 
-    scrollableColumns.sort((a, b) => a.order.compareTo(b.order));
-    final double scrollableWidth = scrollableColumns.fold(0.0, (sum, col) => sum + col.width);
+    final double scrollableWidth = scrollableFieldIds.fold(0.0, (sum, id) {
+      final w = {2: 180.0, 4: 140.0, 5: 190.0, 6: 220.0, 7: 160.0, 8: 140.0, 9: 140.0, 10: 150.0, 11: customFieldColumns.length * 200.0};
+      return sum + (w[id] ?? 0.0);
+    }) + (showRamcoLocation ? 120.0 : 0.0) + (showLocation ? 140.0 : 0.0);
 
     return Scrollbar(
       controller: _scrollableVerticalController,
@@ -1415,25 +1325,19 @@ class _CustomerPageState extends State<CustomerPage> {
                               vertical: 4.0, horizontal: 8.0),
                           color: Color(0xFFFFFFFF),
                         ), // lead code
-                      const TableWidget(
+                      if (visible(1))
+                      TableWidget(
                         width: 230,
-                        title: 'Customer Name',
+                        title: fieldName(1, 'Customer Name'),
                         fontWeight: FontWeight.normal,
                         padding: EdgeInsets.symmetric(
                             vertical: 4.0, horizontal: 8.0),
                         color: Color(0xFFFFFFFF),
                       ),
-                      const TableWidget(
-                        width: 180,
-                        title: 'Place',
-                        fontWeight: FontWeight.normal,
-                        padding: EdgeInsets.symmetric(
-                            vertical: 4.0, horizontal: 8.0),
-                        color: Color(0xFFFFFFFF),
-                      ),
-                      const TableWidget(
+                      if (visible(3))
+                      TableWidget(
                         width: 140,
-                        title: 'Mobile no',
+                        title: fieldName(3, 'Mobile no'),
                         fontWeight: FontWeight.normal,
                         padding: EdgeInsets.symmetric(
                             vertical: 4.0, horizontal: 8.0),
@@ -1509,6 +1413,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                               vertical: 6.0, horizontal: 8.0),
                                           title: lead.leadCode,
                                         ), // lead code
+                                      if (visible(1))
                                       TableWidget(
                                         width: 230,
                                         padding: const EdgeInsets.symmetric(
@@ -1818,22 +1723,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                           ],
                                         ),
                                       ),
-                                      TableWidget(
-                                        width: 180,
-                                        fontSize: 12,
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 6.0, horizontal: 8.0),
-                                        data: Tooltip(
-                                          message: lead.displayPlace,
-                                          child: Text(
-                                            lead.displayPlace,
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style:
-                                                const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 12),
-                                          ),
-                                        ),
-                                      ),
+                                      if (visible(3))
                                       TableWidget(
                                         width: 140,
                                         fontSize: 12,
@@ -1877,11 +1767,7 @@ class _CustomerPageState extends State<CustomerPage> {
                             bottomRight: Radius.circular(8),
                           ),
                         ),
-                        child: Row(
-                          children: scrollableColumns
-                              .map((col) => col.header)
-                              .toList(),
-                        ),
+                        child: _buildScrollableHeader(),
                       ),
                       // Scrollable Data Rows
                       Expanded(
@@ -1924,12 +1810,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                           color: index == _hoveredRowIndex ? const Color(0xFFE2E8F0) : (index % 2 == 0 ? const Color(0xFFE8EDF2) : const Color(0xFFF5F5F5)),
                                           border: Border(bottom: BorderSide(color: Colors.grey.shade200)),
                                         ),
-                                        child: Row(
-                                          children: scrollableColumns
-                                              .map((col) =>
-                                                  col.cellBuilder(lead))
-                                              .toList(),
-                                        ),
+                                        child: _buildScrollableRow(lead),
                                       ),
                                     );
                                   },
