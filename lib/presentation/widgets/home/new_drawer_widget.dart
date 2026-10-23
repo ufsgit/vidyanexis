@@ -830,6 +830,86 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                   ],
                                 ),
                               ),
+                              // 11. Enquiry Source
+                              Expanded(
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(right: 4.0),
+                                        child: CommonDropdown<int>(
+                                          hintText:
+                                              'Enquiry Source${settingsProvider.enquirySourceMandatory == 1 ? '*' : ''}',
+                                          items: dropDownProvider.enquiryData
+                                              .map((source) => DropdownItem<int>(
+                                                    id: source.enquirySourceId,
+                                                    name: source.enquirySourceName ?? '',
+                                                  ))
+                                              .toList(),
+                                          controller: leadProvider.enquirySourceController,
+                                          onItemSelected: (selectedId) {
+                                            dropDownProvider.setSelectedEnquirySourceId(selectedId);
+                                            final selectedItem = dropDownProvider.enquiryData
+                                                .firstWhere((source) => source.enquirySourceId == selectedId);
+                                            leadProvider.enquirySourceController.text =
+                                                selectedItem.enquirySourceName ?? '';
+                                          },
+                                          selectedValue: dropDownProvider.selectedEnquirySourceId,
+                                        ),
+                                      ),
+                                    ),
+                                    if (settingsProvider.enquirySourceAddAtNewLead == 1)
+                                      SizedBox(
+                                      width: 48,
+                                      child: IconButton(
+                                        tooltip: "Add Enquiry Source",
+                                        icon: Icon(Icons.add_circle, color: AppColors.primaryViolet),
+                                        onPressed: () {
+                                          showDialog(
+                                            barrierDismissible: false,
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return const AddEnquirySource(
+                                                editId: '0',
+                                                isEdit: false,
+                                                status: '',
+                                              );
+                                            },
+                                          ).then((value) {
+                                            if (context.mounted) {
+                                              dropDownProvider.getEnquirySource(context);
+                                            }
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              // 7. Reference Name
+                              if (settingsProvider.leadCreationChanges != 1 &&
+                                  settingsProvider.menuIsViewMap[201] == 1 &&
+                                  settingsProvider.referenceNameAfterEnquiryFor != 1)
+                                Expanded(
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                                          child: CustomTextField(
+                                            height: 54,
+                                            controller: leadProvider.referenceNameController,
+                                            hintText: 'Reference Name',
+                                            labelText: '',
+                                            showError: dropDownProvider.showValidation &&
+                                                !_isFieldValid(leadProvider.referenceNameController.text),
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 48), // Spacer for alignment
+                                    ],
+                                  ),
+                                ),
                               // 3. Consumer Name
                               if (settingsProvider.consumerNameMandatory == 1 &&
                                   settingsProvider.menuIsViewMap[149] == 1)
@@ -965,30 +1045,6 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                     ],
                                   ),
                                 ),
-                              // 7. Reference Name
-                              if (settingsProvider.leadCreationChanges != 1 &&
-                                  settingsProvider.menuIsViewMap[201] == 1 &&
-                                  settingsProvider.referenceNameAfterEnquiryFor != 1)
-                                Expanded(
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                                          child: CustomTextField(
-                                            height: 54,
-                                            controller: leadProvider.referenceNameController,
-                                            hintText: 'Reference Name',
-                                            labelText: '',
-                                            showError: dropDownProvider.showValidation &&
-                                                !_isFieldValid(leadProvider.referenceNameController.text),
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 48), // Spacer for alignment
-                                    ],
-                                  ),
-                                ),
                               // 8. Priority
                               if (settingsProvider.leadCreationChanges != 1 &&
                                   settingsProvider.menuIsViewMap[197] == 1)
@@ -1085,62 +1141,6 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                     ],
                                   ),
                                 ),
-                              // 11. Enquiry Source
-                              Expanded(
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(right: 4.0),
-                                        child: CommonDropdown<int>(
-                                          hintText:
-                                              'Enquiry Source${settingsProvider.enquirySourceMandatory == 1 ? '*' : ''}',
-                                          items: dropDownProvider.enquiryData
-                                              .map((source) => DropdownItem<int>(
-                                                    id: source.enquirySourceId,
-                                                    name: source.enquirySourceName ?? '',
-                                                  ))
-                                              .toList(),
-                                          controller: leadProvider.enquirySourceController,
-                                          onItemSelected: (selectedId) {
-                                            dropDownProvider.setSelectedEnquirySourceId(selectedId);
-                                            final selectedItem = dropDownProvider.enquiryData
-                                                .firstWhere((source) => source.enquirySourceId == selectedId);
-                                            leadProvider.enquirySourceController.text =
-                                                selectedItem.enquirySourceName ?? '';
-                                          },
-                                          selectedValue: dropDownProvider.selectedEnquirySourceId,
-                                        ),
-                                      ),
-                                    ),
-                                    if (settingsProvider.enquirySourceAddAtNewLead == 1)
-                                      SizedBox(
-                                      width: 48,
-                                      child: IconButton(
-                                        tooltip: "Add Enquiry Source",
-                                        icon: Icon(Icons.add_circle, color: AppColors.primaryViolet),
-                                        onPressed: () {
-                                          showDialog(
-                                            barrierDismissible: false,
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return const AddEnquirySource(
-                                                editId: '0',
-                                                isEdit: false,
-                                                status: '',
-                                              );
-                                            },
-                                          ).then((value) {
-                                            if (context.mounted) {
-                                              dropDownProvider.getEnquirySource(context);
-                                            }
-                                          });
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
                               // 12. Enquiry For
                               if (settingsProvider.menuIsViewMap[203] == 1)
                                 Expanded(
