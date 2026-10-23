@@ -1172,6 +1172,7 @@ class _CustomerPageState extends State<CustomerPage> {
             for (final cf in customFieldColumns)
               headerCell(200, cf.customFieldName),
           ],
+          if (id == 12) headerCell(150, fieldName(12, 'Balance Amount')),
         ],
         if (showRamcoLocation) headerCell(120, 'Location'),
         if (showLocation)      headerCell(140, 'Location'),
@@ -1261,6 +1262,7 @@ class _CustomerPageState extends State<CustomerPage> {
                 ),
               ),
           ],
+          if (id == 12) textCell(150, lead.balanceAmount),
         ],
         if (showRamcoLocation)
           textCell(120, (lead.location?.toString() ?? '').trim().isNotEmpty ? 'Yes' : 'No'),
@@ -1269,7 +1271,7 @@ class _CustomerPageState extends State<CustomerPage> {
     }
 
     final double scrollableWidth = scrollableFieldIds.fold(0.0, (sum, id) {
-      final w = {2: 180.0, 4: 140.0, 5: 190.0, 6: 220.0, 7: 160.0, 8: 140.0, 9: 140.0, 10: 150.0, 11: customFieldColumns.length * 200.0};
+      final w = {2: 180.0, 4: 140.0, 5: 190.0, 6: 220.0, 7: 160.0, 8: 140.0, 9: 140.0, 10: 150.0, 11: customFieldColumns.length * 200.0, 12: 150.0};
       return sum + (w[id] ?? 0.0);
     }) + (showRamcoLocation ? 120.0 : 0.0) + (showLocation ? 140.0 : 0.0);
 

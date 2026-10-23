@@ -58,6 +58,7 @@ class SearchLeadModel {
   final String priorityColor;
   final String amcDate;
   final String workCompletionDate;
+  final String balanceAmount;
 
   String get amcDateDisplay {
     final trimmed = amcDate.trim();
@@ -345,6 +346,7 @@ class SearchLeadModel {
     this.longitude,
     this.mapLink,
     this.customFields = const [],
+    this.balanceAmount = '',
   });
 
   factory SearchLeadModel.fromJson(Map<String, dynamic> json) {
@@ -500,6 +502,7 @@ class SearchLeadModel {
       priorityName: parseString(json['Priority_Name']),
       priorityId: parseString(json['Priority_Id']),
       priorityColor: parseString(json['Priority_Color']),
+      balanceAmount: parseString(json['Balance_Amount']),
       amcDate: parseString(json['AMC_To_Date'] ??
           json['AMC_To_date'] ??
           json['AMC_Date'] ??
@@ -752,6 +755,7 @@ class SearchLeadModel {
     String? priorityColor,
     String? amcDate,
     String? workCompletionDate,
+    String? balanceAmount,
   }) {
     return SearchLeadModel(
       amount: amount ?? this.amount,
@@ -852,6 +856,7 @@ class SearchLeadModel {
       priorityColor: priorityColor ?? this.priorityColor,
       amcDate: amcDate ?? this.amcDate,
       workCompletionDate: workCompletionDate ?? this.workCompletionDate,
+      balanceAmount: balanceAmount ?? this.balanceAmount,
     );
   }
 
