@@ -2281,6 +2281,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                       120 +
                                       140 +
                                       180 +
+                                      180 +
                                       150 +
                                       140 +
                                       120 +
@@ -3030,6 +3031,20 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                     .white,
                                                               ),
                                                               TableWidget(
+                                                                width: 180,
+                                                                title:
+                                                                    'Remark',
+                                                                fontSize: 13,
+                                                                padding: const EdgeInsets
+                                                                    .symmetric(
+                                                                    vertical:
+                                                                        4.0,
+                                                                    horizontal:
+                                                                        12.0),
+                                                                color: Colors
+                                                                    .white,
+                                                              ),
+                                                              TableWidget(
                                                                 width: 150,
                                                                 padding: const EdgeInsets
                                                                     .symmetric(
@@ -3331,6 +3346,32 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                             child:
                                                                                 Text(
                                                                               task.description ?? '',
+                                                                              overflow: TextOverflow.ellipsis,
+                                                                              maxLines: 1,
+                                                                              style: const TextStyle(
+                                                                                fontFamily: 'PlusJakartaSans',
+                                                                                fontSize: 13,
+                                                                                color: Color(0xFF334155),
+                                                                                fontWeight: FontWeight.w500,
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                        // Remark
+                                                                        TableWidget(
+                                                                          width:
+                                                                              180,
+                                                                          padding: const EdgeInsets
+                                                                              .symmetric(
+                                                                              vertical: 4.0,
+                                                                              horizontal: 12.0),
+                                                                          data:
+                                                                              Tooltip(
+                                                                            message:
+                                                                                task.remark ?? '',
+                                                                            child:
+                                                                                Text(
+                                                                              task.remark ?? '',
                                                                               overflow: TextOverflow.ellipsis,
                                                                               maxLines: 1,
                                                                               style: const TextStyle(
