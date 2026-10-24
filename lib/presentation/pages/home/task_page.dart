@@ -4048,6 +4048,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                               onTap: () {
                                                 selectedStatus.value = status;
                                                 selectedSubStatus.value = null;
+                                                _uploadedDocUrls.clear();
+                                                _uploadedDocImageIds.clear();
                                               },
                                             );
                                           }).toList(),
@@ -4977,6 +4979,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                               onTap: () async {
                                                 selectedStatus.value = status;
                                                 selectedSubStatus.value = null;
+                                                _uploadedDocUrls.clear();
+                                                _uploadedDocImageIds.clear();
                                                 int sId = status.statusId ?? 0;
                                                 int tId =
                                                     status.taskTypeId ?? 0;

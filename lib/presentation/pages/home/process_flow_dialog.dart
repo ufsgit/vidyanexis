@@ -370,6 +370,8 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                     setState(() {
                                       selectedStatus = status;
                                       selectedSubStatus = null;
+                                      _uploadedDocUrls.clear();
+                                      _uploadedDocImageIds.clear();
                                     });
 
                                     int statusId = selectedStatus.statusId ?? 0;
