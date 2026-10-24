@@ -173,7 +173,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               GestureDetector(
-                onTap: () {
+                onTap: () async{
                   bool fromLead = widget.task.isLead == '1' ? true : false;
                   final sideprovider = Provider.of<SidebarProvider>(context,listen: false);
                   if (widget.task.isLead == '1'){
@@ -181,12 +181,30 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                   } else {
                     sideprovider.name = 'Customer /';
                   }
-                  Navigator.push(context, MaterialPageRoute(
+                  await Navigator.push(context, MaterialPageRoute(
                     builder: (context) {
                       return CustomerDetailPageMobile(
                           fromLead: fromLead, customerId: widget.task.customerId);
                     },
                   ));
+
+                  // Only runs when user returns from customer details
+                  if (!mounted) return;
+
+                  setState(() {
+                    _uploadedDocUrls.clear();
+                    _uploadedDocImageIds.clear();
+                    selectedSubStatus = null;
+                  });
+
+                  await Provider.of<TaskPageProvider>(context, listen: false)
+                      .fetchTaskTypes(
+                    selectedStatus.taskTypeId ?? 0,
+                    selectedStatus.statusId ?? 0,
+                    widget.task.customerId,
+                    widget.task.enquiryForId,
+                    context,
+                  );
                 },
                 child: Text(
                   widget.task.customerName,
