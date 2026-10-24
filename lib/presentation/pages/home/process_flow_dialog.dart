@@ -58,6 +58,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
   bool showFollowUpDate = false;
   FocusNode staffFocusNode = FocusNode();
   final Map<int, String> _uploadedDocUrls = {}; // docTypeId → url
+  final Map<int, String> _uploadedDocImageIds = {};
   final Map<int, double> _uploadProgress = {}; // docTypeId → 0.0–1.0
   final Set<int> _uploadingDocs = {}; // currently uploading
 
@@ -74,6 +75,8 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
       final formProvider = Provider.of<FormProvider>(context, listen: false);
       reportsProvider.clearTaskUserAssignments();
       reportsProvider.descriptionController.clear();
+      _uploadedDocUrls.clear();
+      _uploadedDocImageIds.clear(); // ADD
       final imageProvider =
           Provider.of<ImageUploadProvider>(context, listen: false);
       imageProvider.clearFiles();
@@ -1153,6 +1156,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                             isUploading:
                                                 _uploadingDocs.contains(docId),
                                             progress: _uploadProgress[docId],
+                                            docId: docId, // ADD
                                             onTap: () => _handleDocumentUpload(
                                               context: context,
                                               doc: doc,
@@ -2297,6 +2301,16 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
               _uploadProgress.remove(docId);
               _uploadedDocUrls[docId] = uploadedUrls.first;
             });
+            // ADD
+            final imageId = await _findImageIdByUrl(
+              widget.task.customerId.toString(),
+              uploadedUrls.first,
+            );
+            if (imageId != null && imageId != '0' && mounted) {
+              setState(() {
+                _uploadedDocImageIds[docId] = imageId;
+              });
+            }
             return true;
           } else {
             setState(() {
@@ -2330,6 +2344,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
     double? progress,
     bool isUploading = false,
     bool isMandatory = false,
+    int? docId, // ADD
   }) {
     final bool isUploaded = uploadedUrl != null && uploadedUrl.isNotEmpty;
 
@@ -2376,6 +2391,21 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
                     ),
+                    // ADD THIS
+                    TextButton.icon(
+                      onPressed: docId == null
+                          ? null
+                          : () => _deleteDoc(
+                              docId, widget.task.customerId.toString()),
+                      icon: const Icon(Icons.delete_outline, size: 16),
+                      label: const Text('Delete'),
+                      style: TextButton.styleFrom(
+                        foregroundColor: const Color(0xFFDC2626),
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        minimumSize: Size.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                    ),
                     const SizedBox(width: 4),
                     const Icon(Icons.check_circle,
                         color: Colors.green, size: 18),
@@ -2405,6 +2435,67 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
         ),
       ],
     );
+  }
+
+  Future<String?> _findImageIdByUrl(String customerId, String url) async {
+    final cd = Provider.of<CustomerDetailsProvider>(context, listen: false);
+    await cd.getDocument(customerId, context);
+    final fileName = url.split('/').last;
+    for (final group in cd.documentList) {
+      for (final img in group.imageDetails) {
+        final path = img.filePath.toString();
+        if (path == url ||
+            path.endsWith(fileName) ||
+            url.endsWith(path.split('/').last)) {
+          return img.imageId.toString();
+        }
+      }
+    }
+    return null;
+  }
+
+  Future<void> _deleteDoc(int docId, String customerId) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Confirm Deletion'),
+        content: const Text('Are you sure you want to delete this file?'),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    String? imageId = _uploadedDocImageIds[docId];
+    if (imageId == null || imageId == '0') {
+      final url = _uploadedDocUrls[docId];
+      if (url != null) imageId = await _findImageIdByUrl(customerId, url);
+    }
+    if (imageId == null || imageId == '0') {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Cannot delete: image not found')),
+        );
+      }
+      return;
+    }
+
+    await Provider.of<CustomerDetailsProvider>(context, listen: false)
+        .deleteImage(context, imageId, customerId);
+
+    if (!mounted) return;
+    setState(() {
+      _uploadedDocUrls.remove(docId);
+      _uploadedDocImageIds.remove(docId);
+    });
   }
 
   void _openViewer(BuildContext context, String url, String title) {

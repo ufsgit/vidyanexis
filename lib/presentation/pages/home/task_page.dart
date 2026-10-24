@@ -116,6 +116,7 @@ class _tasksPageReportState extends State<TaskPage> {
   final Set<int> _uploadingDocs = {};
   final Map<int, double> _uploadProgress = {}; // 0.0 → 1.0
   final Map<int, String> _uploadedDocUrls = {};
+  final Map<int, String> _uploadedDocImageIds = {};
   final ValueNotifier<int> _docTick = ValueNotifier(0);
 
   void _refreshDocs() => _docTick.value++;
@@ -4662,6 +4663,7 @@ class _tasksPageReportState extends State<TaskPage> {
 
   Future statusDialog(TaskReportModel task) {
     _uploadedDocUrls.clear();
+    _uploadedDocImageIds.clear(); // ADD
     _uploadProgress.clear();
     _uploadingDocs.clear();
     // Clear any previously staged files so each dialog session starts fresh.
@@ -5813,6 +5815,18 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                                       fontWeight: FontWeight.w600,
                                                                                     ),
                                                                                   ),
+                                                                                ),
+                                                                                const SizedBox(width: 10),
+                                                                                // ADD THIS
+                                                                                InkWell(
+                                                                                  onTap: () => _deleteDoc(docId, task.customerId.toString()),
+                                                                                  child: const Text('Delete',
+                                                                                      style: TextStyle(
+                                                                                        fontFamily: 'PlusJakartaSans',
+                                                                                        color: Color(0xFFDC2626),
+                                                                                        fontSize: 13,
+                                                                                        fontWeight: FontWeight.w600,
+                                                                                      )),
                                                                                 ),
                                                                                 const SizedBox(width: 6),
                                                                                 const Icon(Icons.check_circle, color: Colors.green, size: 18),
@@ -8260,6 +8274,12 @@ class _tasksPageReportState extends State<TaskPage> {
           _uploadProgress.remove(docId);
           if (urls.isNotEmpty) {
             _uploadedDocUrls[docId] = urls.first;
+
+            // ADD
+            final imageId = await _findImageIdByUrl(customerId, urls.first);
+            if (imageId != null && imageId != '0') {
+              _uploadedDocImageIds[docId] = imageId;
+            }
           }
           _refreshDocs();
           return urls.isNotEmpty;
@@ -8278,6 +8298,68 @@ class _tasksPageReportState extends State<TaskPage> {
       imageProvider.removeFilesForDocType(docId);
       return;
     }
+  }
+
+  Future<String?> _findImageIdByUrl(String customerId, String url) async {
+    final cd = Provider.of<CustomerDetailsProvider>(context, listen: false);
+    await cd.getDocument(customerId, context);
+    final fileName = url.split('/').last;
+    for (final group in cd.documentList) {
+      for (final img in group.imageDetails) {
+        final path = img.filePath.toString();
+        if (path == url ||
+            path.endsWith(fileName) ||
+            url.endsWith(path.split('/').last)) {
+          return img.imageId.toString();
+        }
+      }
+    }
+    return null;
+  }
+
+  Future<void> _deleteDoc(int docId, String customerId) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Confirm Deletion'),
+        content: const Text('Are you sure you want to delete this file?'),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    String? imageId = _uploadedDocImageIds[docId];
+    if (imageId == null || imageId == '0') {
+      final url = _uploadedDocUrls[docId];
+      if (url != null) imageId = await _findImageIdByUrl(customerId, url);
+    }
+    if (imageId == null || imageId == '0') {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Cannot delete: image not found')),
+        );
+      }
+      return;
+    }
+
+    await Provider.of<CustomerDetailsProvider>(context, listen: false)
+        .deleteImage(context, imageId, customerId);
+
+    if (!mounted) return;
+    setState(() {
+      _uploadedDocUrls.remove(docId);
+      _uploadedDocImageIds.remove(docId);
+    });
+    _refreshDocs();
   }
 
   void _openViewer(BuildContext context, String url, String title) {
