@@ -1619,6 +1619,7 @@ class CustomFieldWidgetBuilder {
       enabled: enabled,
       validator: customValidator,
       suffixIcon: const Icon(Icons.search),
+      disableSearch: true,
       onSelected: (DropdownValue selected) {
         onFieldValueChanged(selected.dropdownValue);
       },

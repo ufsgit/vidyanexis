@@ -154,6 +154,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
     final settingsProvider = Provider.of<SettingsProvider>(context);
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: const Color(0xFFF8FAFC), // Subtle grey background
       appBar: AppBar(
         backgroundColor: Colors.white,
