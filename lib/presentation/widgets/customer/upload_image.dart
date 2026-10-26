@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
@@ -203,11 +204,43 @@ class _ImageUploadAlertState extends State<ImageUploadAlert> {
                                             Padding(
                                               padding:
                                                   const EdgeInsets.only(top: 2),
-                                              child: CustomText(
-                                                '$selectedCount file${selectedCount > 1 ? 's' : ''} added',
-                                                fontSize: 11,
-                                                color: AppColors.appViolet,
-                                                fontWeight: FontWeight.w600,
+                                              child: Row(
+                                                children: [
+                                                  CustomText(
+                                                    '$selectedCount file${selectedCount > 1 ? 's' : ''} added',
+                                                    fontSize: 11,
+                                                    color: AppColors.appViolet,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                  const SizedBox(width: 8),
+                                                  InkWell(
+                                                    onTap: () {
+                                                      final file = provider
+                                                          .fileInfoList
+                                                          .firstWhere((e) =>
+                                                              e['docTypeId'] ==
+                                                              docType
+                                                                  .documentTypeId);
+                                                      _showPreview(
+                                                          context, file);
+                                                    },
+                                                    child: const Text(
+                                                      'View',
+                                                      style: TextStyle(
+                                                        fontFamily:
+                                                            'PlusJakartaSans',
+                                                        fontSize: 11,
+                                                        color:
+                                                            Color(0xFF1A7AE8),
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        decoration:
+                                                            TextDecoration
+                                                                .underline,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
                                             ),
                                         ],
@@ -218,7 +251,7 @@ class _ImageUploadAlertState extends State<ImageUploadAlert> {
                                         provider.updateDocumentType(
                                             docType.documentTypeId,
                                             docType.documentTypeName);
-                                        await provider.addFileMobile();
+                                        _showPickOptions(context, provider);
                                       },
                                       child: Container(
                                         padding: const EdgeInsets.all(6),
@@ -376,13 +409,35 @@ class _ImageUploadAlertState extends State<ImageUploadAlert> {
                                     ],
                                   ),
                                 ),
-                                IconButton(
-                                  onPressed: () {
-                                    provider.fileInfoList.removeAt(index);
-                                    provider.notifyListeners();
-                                  },
-                                  icon: const Icon(Icons.delete_outline,
-                                      color: Colors.red, size: 20),
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    InkWell(
+                                      onTap: () =>
+                                          _showPreview(context, fileInfo),
+                                      child: const Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 8.0),
+                                        child: Text(
+                                          'View',
+                                          style: TextStyle(
+                                            fontFamily: 'PlusJakartaSans',
+                                            color: Color(0xFF1A7AE8),
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    IconButton(
+                                      onPressed: () {
+                                        provider.fileInfoList.removeAt(index);
+                                        provider.notifyListeners();
+                                      },
+                                      icon: const Icon(Icons.delete_outline,
+                                          color: Colors.red, size: 20),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
@@ -474,4 +529,127 @@ class _ImageUploadAlertState extends State<ImageUploadAlert> {
     ),
   );
 }
+  void _showPickOptions(
+      BuildContext context, ImageUploadProvider provider) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.camera_alt, color: Color(0xFF1A7AE8)),
+              title: const Text('Take Photo'),
+              onTap: () async {
+                Navigator.pop(context);
+                await provider.addPhotoMobile(allowCamera: true);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library, color: Color(0xFF1A7AE8)),
+              title: const Text('Choose from Gallery'),
+              onTap: () async {
+                Navigator.pop(context);
+                await provider.addPhotoMobile(allowCamera: false);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.description, color: Color(0xFF1A7AE8)),
+              title: const Text('Upload Document'),
+              onTap: () async {
+                Navigator.pop(context);
+                await provider.addFileMobile();
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showPreview(BuildContext context, Map<String, dynamic> fileInfo) {
+    final dynamic rawData = fileInfo['data'];
+    Uint8List? fileData;
+    if (rawData is Uint8List) {
+      fileData = rawData;
+    } else if (rawData is List<int>) {
+      fileData = Uint8List.fromList(rawData);
+    }
+    final String fileName = fileInfo['name'] as String? ?? 'File';
+    final String mimeType = fileInfo['mimeType'] as String? ?? '';
+    final String type = fileInfo['type'] as String? ?? 'image';
+    final isImage = type == 'image' ||
+        mimeType.startsWith('image/') ||
+        fileName.toLowerCase().endsWith('.jpg') ||
+        fileName.toLowerCase().endsWith('.jpeg') ||
+        fileName.toLowerCase().endsWith('.png') ||
+        fileName.toLowerCase().endsWith('.webp');
+
+    showDialog(
+      context: context,
+      builder: (ctx) => Dialog(
+        backgroundColor: Colors.black,
+        insetPadding: EdgeInsets.zero,
+        child: Stack(
+          children: [
+            Center(
+              child: isImage && fileData != null
+                  ? InteractiveViewer(
+                      child: Image.memory(
+                        fileData,
+                        fit: BoxFit.contain,
+                        errorBuilder: (_, __, ___) => const Icon(
+                          Icons.broken_image,
+                          color: Colors.white,
+                          size: 64,
+                        ),
+                      ),
+                    )
+                  : Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          type == 'pdf'
+                              ? Icons.picture_as_pdf
+                              : Icons.insert_drive_file,
+                          size: 72,
+                          color: Colors.white70,
+                        ),
+                        const SizedBox(height: 12),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 24),
+                          child: Text(
+                            fileName,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                                color: Colors.white, fontSize: 14),
+                          ),
+                        ),
+                      ],
+                    ),
+            ),
+            Positioned(
+              top: 40,
+              right: 16,
+              child: IconButton(
+                icon: const Icon(Icons.close, color: Colors.white, size: 28),
+                onPressed: () => Navigator.pop(ctx),
+              ),
+            ),
+            Positioned(
+              top: 48,
+              left: 16,
+              child: Text(
+                fileName,
+                style: const TextStyle(color: Colors.white, fontSize: 16),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }

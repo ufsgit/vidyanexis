@@ -23,6 +23,7 @@ import 'package:provider/provider.dart';
 
 import 'package:vidyanexis/controller/models/form_settings_provider.dart';
 import 'package:vidyanexis/controller/models/form_model.dart';
+import 'package:vidyanexis/controller/models/document_type_model.dart';
 
 import 'package:vidyanexis/controller/image_upload_provider.dart';
 import 'package:intl/intl.dart';
@@ -1051,14 +1052,21 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                       const SizedBox(height: 8),
                                       CustomElevatedButton(
                                         onPressed: () async {
-                                          await showDialog(
+                                          final result = await showDialog(
                                             barrierDismissible: false,
                                             context: context,
                                             builder: (context) =>
                                                 ImageUploadAlert(
                                               customerId: widget.task.customerId
                                                   .toString(),
+                                              taskId: widget.task.taskId
+                                                  .toString(),
                                             ),
+                                          );
+                                          if (!context.mounted) return;
+                                          _handleUploadedDocumentsResult(
+                                            result: result,
+                                            context: context,
                                           );
                                         },
                                         buttonText: 'Upload Documents',
@@ -1068,6 +1076,69 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                         radius: 4,
                                       ),
                                       const SizedBox(height: 8),
+                                      if (reportsProvider
+                                          .documentTypeModel.isNotEmpty) ...[
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(4),
+                                            border: Border.all(
+                                                color: const Color(0xFFE2E8F0)),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black
+                                                    .withOpacity(0.02),
+                                                blurRadius: 10,
+                                                offset: const Offset(0, 4),
+                                              ),
+                                            ],
+                                          ),
+                                          child: ListView.separated(
+                                            shrinkWrap: true,
+                                            padding: EdgeInsets.zero,
+                                            physics:
+                                                const NeverScrollableScrollPhysics(),
+                                            itemCount: reportsProvider
+                                                .documentTypeModel.length,
+                                            separatorBuilder:
+                                                (context, index) =>
+                                                    const Divider(
+                                                        height: 1,
+                                                        indent: 16,
+                                                        endIndent: 16,
+                                                        color:
+                                                            Color(0xFFF1F5F9)),
+                                            itemBuilder: (context, index) {
+                                              final doc = reportsProvider
+                                                  .documentTypeModel[index];
+                                              final docId =
+                                                  doc.documentTypeId ?? 0;
+
+                                              return _buildDocumentTile(
+                                                title:
+                                                    doc.documentTypeName ?? '',
+                                                isMandatory: doc.isMandatory,
+                                                uploadedUrl:
+                                                    _uploadedDocUrls[docId],
+                                                isUploading: _uploadingDocs
+                                                    .contains(docId),
+                                                progress:
+                                                    _uploadProgress[docId],
+                                                docId: docId,
+                                                onTap: () =>
+                                                    _handleDocumentUpload(
+                                                  context: context,
+                                                  doc: doc,
+                                                  reportsProvider:
+                                                      reportsProvider,
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                        const SizedBox(height: 8),
+                                      ],
                                     ],
                                   );
                                 }
@@ -1082,7 +1153,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                         _buildSectionHeader('PENDING DOCUMENTS'),
                                         InkWell(
                                           onTap: () async {
-                                            await showDialog(
+                                            final result = await showDialog(
                                               barrierDismissible: false,
                                               context: context,
                                               builder: (context) =>
@@ -1093,6 +1164,11 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                                 taskId: widget.task.taskId
                                                     .toString(),
                                               ),
+                                            );
+                                            if (!context.mounted) return;
+                                            _handleUploadedDocumentsResult(
+                                              result: result,
+                                              context: context,
                                             );
                                           },
                                           borderRadius:
@@ -2221,6 +2297,22 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
+              leading: const Icon(Icons.camera_alt, color: Color(0xFF1A7AE8)),
+              title: const Text('Take Photo'),
+              onTap: () async {
+                await provider.addPhotoMobile(allowCamera: true);
+                if (context.mounted) Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library, color: Color(0xFF1A7AE8)),
+              title: const Text('Choose from Gallery'),
+              onTap: () async {
+                await provider.addPhotoMobile(allowCamera: false);
+                if (context.mounted) Navigator.pop(context);
+              },
+            ),
+            ListTile(
               leading: const Icon(Icons.description, color: Color(0xFF1A7AE8)),
               title: const Text('Upload Document'),
               onTap: () async {
@@ -2399,34 +2491,36 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
               ? Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    TextButton.icon(
-                      onPressed: () =>
-                          _openViewer(context, uploadedUrl!, title),
-                      icon: const Icon(Icons.visibility, size: 16),
-                      label: const Text('View'),
-                      style: TextButton.styleFrom(
-                        foregroundColor: const Color(0xFF1A7AE8),
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        minimumSize: Size.zero,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    InkWell(
+                      onTap: () =>
+                          _openViewer(context, uploadedUrl, title),
+                      child: const Text(
+                        'View',
+                        style: TextStyle(
+                          fontFamily: 'PlusJakartaSans',
+                          color: Color(0xFF1A7AE8),
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
-                    // ADD THIS
-                    TextButton.icon(
-                      onPressed: docId == null
+                    const SizedBox(width: 10),
+                    InkWell(
+                      onTap: docId == null
                           ? null
                           : () => _deleteDoc(
                               docId, widget.task.customerId.toString()),
-                      icon: const Icon(Icons.delete_outline, size: 16),
-                      label: const Text('Delete'),
-                      style: TextButton.styleFrom(
-                        foregroundColor: const Color(0xFFDC2626),
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        minimumSize: Size.zero,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      child: const Text(
+                        'Delete',
+                        style: TextStyle(
+                          fontFamily: 'PlusJakartaSans',
+                          color: Color(0xFFDC2626),
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: 6),
                     const Icon(Icons.check_circle,
                         color: Colors.green, size: 18),
                   ],
@@ -2557,5 +2651,76 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
         ),
       ),
     );
+  }
+  void _handleUploadedDocumentsResult({
+    required dynamic result,
+    required BuildContext context,
+  }) async {
+    final imageProvider =
+        Provider.of<ImageUploadProvider>(context, listen: false);
+    final reportsProvider =
+        Provider.of<TaskPageProvider>(context, listen: false);
+    final dropDownProvider =
+        Provider.of<DropDownProvider>(context, listen: false);
+
+    List<dynamic> uploadedList = [];
+    if (result is List && result.isNotEmpty) {
+      uploadedList = result;
+    } else if (imageProvider.lastUploadedDocuments.isNotEmpty) {
+      uploadedList = List.from(imageProvider.lastUploadedDocuments);
+    }
+
+    if (uploadedList.isNotEmpty) {
+      for (var item in uploadedList) {
+        if (item is Map) {
+          final int docId = item['documentTypeId'] as int? ?? 0;
+          String docName = item['documentTypeName'] as String? ?? '';
+          final String url = item['url'] as String? ?? '';
+
+          if (docId != 0) {
+            if (url.isNotEmpty) {
+              _uploadedDocUrls[docId] = url;
+            }
+
+            if (docName.isEmpty) {
+              try {
+                final matched = dropDownProvider.documentType.firstWhere(
+                  (d) => d.documentTypeId == docId,
+                );
+                docName = matched.documentTypeName;
+              } catch (_) {}
+            }
+
+            final existingIndex = reportsProvider.documentTypeModel
+                .indexWhere((d) => d.documentTypeId == docId);
+
+            if (existingIndex == -1) {
+              reportsProvider.addOrUpdateDocumentType(
+                DocumentTypeModel(
+                  documentTypeId: docId,
+                  documentTypeName: docName.isNotEmpty ? docName : 'Document',
+                  deleteStatus: 0,
+                  isMandatory: false,
+                  isView: false,
+                ),
+              );
+            }
+
+            if (url.isNotEmpty) {
+              final imageId = await _findImageIdByUrl(
+                widget.task.customerId.toString(),
+                url,
+              );
+              if (imageId != null && imageId != '0' && mounted) {
+                _uploadedDocImageIds[docId] = imageId;
+              }
+            }
+          }
+        }
+      }
+      if (mounted) {
+        setState(() {});
+      }
+    }
   }
 }
