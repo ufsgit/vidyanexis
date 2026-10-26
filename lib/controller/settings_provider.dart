@@ -453,12 +453,13 @@ class SettingsProvider extends ChangeNotifier {
       (menuIsDeleteMap[166] ?? 0).toString() == '1';
 
   /// Task Permission ME and ALL (Menu ID: 209)
-  /// IsView = 1 → show ME / ALL tabs on the Task page.
-  /// IsView = 0 → hide them (user sees only their own tasks).
+  /// If Company permission is 0 → hidden for all users (no check needed).
+  /// If Company permission is 1 → check User Menu Permission (IsView = 1 to show, 0 to hide).
   bool get canViewTaskMeAndAll {
-    if (_taskPermissionMeAndAll == 1) return true;
+    // 1. First check company permission: if 0, do not check anything, hide button
+    if (_taskPermissionMeAndAll != 1) return false;
 
-    // Check user permission from Get_Menu_Permission (menuIsViewMap)
+    // 2. If company permission is 1, check user menu permission (menuIsViewMap)
     if ((_menuIsViewMap[209] ?? 0) == 1 ||
         (_menuIsViewMap[209] ?? 0).toString() == '1') return true;
 
@@ -488,12 +489,13 @@ class SettingsProvider extends ChangeNotifier {
   }
 
   /// Lead Permission ME and ALL (Menu ID: 219)
-  /// IsView = 1 → show ME / ALL tabs on the Lead page.
-  /// IsView = 0 → hide them (user sees only their own leads).
+  /// If Company permission is 0 → hidden for all users (no check needed).
+  /// If Company permission is 1 → check User Menu Permission (IsView = 1 to show, 0 to hide).
   bool get canViewLeadMeAndAll {
-    if (_leadPermissionMeAndAll == 1) return true;
+    // 1. First check company permission: if 0, do not check anything, hide button
+    if (_leadPermissionMeAndAll != 1) return false;
 
-    // Check user permission from Get_Menu_Permission (menuIsViewMap)
+    // 2. If company permission is 1, check user menu permission (menuIsViewMap)
     if ((_menuIsViewMap[219] ?? 0) == 1 ||
         (_menuIsViewMap[219] ?? 0).toString() == '1') return true;
 
@@ -507,13 +509,13 @@ class SettingsProvider extends ChangeNotifier {
   }
 
   /// Customer Permission ME and ALL (Menu ID: 220)
-  /// IsView = 1 → show ME / ALL tabs on the Customer page.
-  /// IsView = 0 → hide them (user sees only their own customers).
+  /// If Company permission is 0 → hidden for all users (no check needed).
+  /// If Company permission is 1 → check User Menu Permission (IsView = 1 to show, 0 to hide).
   bool get canViewCustomerMeAndAll {
-    // Check company permission as well so companies with this setting enabled still see it
-    if (_customerPermissionMeAndAll == 1) return true;
+    // 1. First check company permission: if 0, do not check anything, hide button
+    if (_customerPermissionMeAndAll != 1) return false;
 
-    // Check user permission from Get_Menu_Permission (menuIsViewMap)
+    // 2. If company permission is 1, check user menu permission (menuIsViewMap)
     if ((_menuIsViewMap[220] ?? 0) == 1 ||
         (_menuIsViewMap[220] ?? 0).toString() == '1') return true;
 
