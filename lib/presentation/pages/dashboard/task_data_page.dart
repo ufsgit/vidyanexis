@@ -4,21 +4,26 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/controller/models/task_page_provider.dart';
 import 'package:vidyanexis/controller/models/task_report_model.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/http_urls.dart';
+import 'package:vidyanexis/presentation/pages/home/process_flow_dialog.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/presentation/widgets/home/task_card.dart';
 
 class TotalTaskDataPage extends StatefulWidget {
+  final String source;
   final String fromDate;
   final String toDate;
   final int user;
 
   const TotalTaskDataPage({
     super.key,
+    required this.source,
     required this.fromDate,
     required this.toDate,
     required this.user,
@@ -147,7 +152,7 @@ class _TotalTaskDataPageState extends State<TotalTaskDataPage> {
           "Page_Index2": endLimit.toString(),
           "Enquiry_For_Id": "0",
           "Enquiry_Source_Id": "0",
-          "Source": "Total_Task",
+          "Source": widget.source,
         },
       );
 
@@ -262,12 +267,17 @@ class _TotalTaskDataPageState extends State<TotalTaskDataPage> {
   Widget build(BuildContext context) {
     final isMobile = !AppStyles.isWebScreen(context);
     final sideProvider = Provider.of<SidebarProvider>(context);
+    final title = widget.source
+        .replaceAll('_', ' ')
+        .split(' ')
+        .map((w) => w.isNotEmpty ? w[0].toUpperCase() + w.substring(1) : w)
+        .join(' ');
 
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: isMobile
           ? CustomAppBar(
-              title: 'Total Task',
+              title: title,
               showFilterIcon: false,
               onSearchTap: () => sideProvider.startSearch(),
               onClearTap: () {
@@ -298,9 +308,9 @@ class _TotalTaskDataPageState extends State<TotalTaskDataPage> {
                         const Icon(Icons.arrow_back, color: Color(0xFF152D70)),
                   ),
                   const SizedBox(width: 8),
-                  const Text(
-                    'Total Task',
-                    style: TextStyle(
+                  Text(
+                    title,
+                    style: const TextStyle(
                       fontSize: 24,
                       color: Color(0xFF152D70),
                       fontWeight: FontWeight.w600,
@@ -343,6 +353,22 @@ class _TotalTaskDataPageState extends State<TotalTaskDataPage> {
               ),
             ),
 
+          if (isMobile) ...[
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  CustomText(
+                    'Total Tasks: $_totalCount',
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.textGrey3,
+                  ),
+                ],
+              ),
+            ),
+          ],
           // ========== BODY ==========
           Expanded(
             child: _isLoading
@@ -394,11 +420,29 @@ class _TotalTaskDataPageState extends State<TotalTaskDataPage> {
                     _expandedIndex = _expandedIndex == index ? null : index;
                   });
                 },
-                showStatusUpdate: (ctx, t) {},
+                showStatusUpdate: (ctx, t) {
+                  final reportsProvider = Provider.of<TaskPageProvider>(context,listen: false);
+                  reportsProvider.selectedTaskTypeIds.clear();
+                  reportsProvider.taskTypeModel.clear();
+                  statusDialogMobile(t).then((value) {
+                    if (value == true) {
+                      reportsProvider.searchTaskByCustomer(context);
+                    }
+                  });
+                },
               ),
             ],
           );
         },
+      ),
+    );
+  }
+
+  Future statusDialogMobile(TaskReportModel task) {
+    return Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ProcessFlowDialog(task: task),
       ),
     );
   }

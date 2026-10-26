@@ -63,6 +63,16 @@ class DashboardCountTab extends StatelessWidget {
           settingsProvider.menuIsViewMap[138] == 1)
         'Completed_Leads',
       if (settingsProvider.menuIsViewMap[187] == 1) 'Total_Task',
+      if (settingsProvider.menuIsViewMap[228] == 1)
+        'Converted_Customers',
+      if (settingsProvider.menuIsViewMap[229] == 1)
+        'Converted_Documents_Pending',
+      if (settingsProvider.menuIsViewMap[230] == 1)
+        'On_Hold_Leads',
+      if (settingsProvider.menuIsViewMap[231] == 1)
+        'Follow_Up_Tasks',
+      if (settingsProvider.menuIsViewMap[232] == 1)
+        'No_Feasibility_Tasks',
     ];
     final items = dashBoardProvider.leadCountMap.entries
         .where((e) => allowedKeys.contains(e.key))
@@ -127,11 +137,14 @@ class DashboardCountTab extends StatelessWidget {
                 count: count,
                 theme: theme,
                 onTap: () {
-                  if (keyword == 'Total_Task') {
+                  if (keyword == 'Total_Task' ||
+                      keyword == 'Follow_Up_Tasks' ||
+                      keyword == 'No_Feasibility_Tasks') {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => TotalTaskDataPage(
+                          source: keyword,
                           fromDate: dashBoardProvider.formattedFromDate,
                           toDate: dashBoardProvider.formattedToDate,
                           user: dashBoardProvider.selectedUser,
@@ -189,6 +202,16 @@ class DashboardCountTab extends StatelessWidget {
         return _CardTheme(cyan, Icons.block_outlined);
       case 'Transferred_Leads':
         return _CardTheme(purple, Icons.swap_horiz_outlined);
+      case 'Converted_Customers':
+        return _CardTheme(emerald, Icons.swap_horiz_outlined);
+      case 'Converted_Documents_Pending':
+        return _CardTheme(cyan, Icons.swap_horiz_outlined);
+      case 'On_Hold_Leads':
+        return _CardTheme(orange, Icons.pending_actions_outlined);
+      case 'Follow_Up_Tasks':
+        return _CardTheme(purple, Icons.calendar_today_outlined);
+      case 'No_Feasibility_Tasks':
+        return _CardTheme(red, Icons.error_outline);
       default:
         return _CardTheme(purple, Icons.insert_chart_outlined);
     }
