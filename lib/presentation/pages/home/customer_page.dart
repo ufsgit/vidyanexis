@@ -77,7 +77,8 @@ class CustomerDepartmentFilterOption {
 }
 
 class CustomerPage extends StatefulWidget {
-  const CustomerPage({super.key});
+  final bool fromDashBoard;
+  const CustomerPage({super.key, this.fromDashBoard=false});
   static _CustomerPageState? _currentState;
 
   static void callFunction(int customerId) {
@@ -336,6 +337,30 @@ class _CustomerPageState extends State<CustomerPage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
+                          if (widget.fromDashBoard) ...[
+                            InkWell(
+                              onTap: () {
+                                Navigator.pop(context);
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color:
+                                      AppColors.secondaryBlue.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Icon(
+                                  Icons.arrow_back,
+                                  size: 20,
+                                  color: AppColors.textGrey4,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 8,
+                            ),
+                            Spacer()
+                          ],
                           Wrap(
                             spacing: 8,
                             runSpacing: 8,

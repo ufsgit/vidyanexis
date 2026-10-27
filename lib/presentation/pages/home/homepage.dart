@@ -548,7 +548,7 @@ class _HomePageState extends State<HomePage> {
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: LeadStatusReportScreen()),
         ),
-      if (settingsProvider.menuIsViewMap[56].toString() == '1') 
+      if (settingsProvider.menuIsViewMap[56].toString() == '1')
         SidebarOption(
           title: 'Lead Creation Report',
           iconPath: 'assets/images/Reports.svg',
@@ -687,8 +687,18 @@ class _HomePageState extends State<HomePage> {
                   onPressed: () => Scaffold.of(context).openDrawer(),
                 ),
               ),
-              title: ['Leads', 'DashBoard', 'Customers', 'Lead Search', 'Task']
-                      .contains(sideProvider.selectedName)
+              title: [
+                if (settingsProvider.menuIsViewMap[3].toString() == '1')
+                  'Leads',
+                if (settingsProvider.menuIsViewMap[12].toString() == '1')
+                  'DashBoard',
+                if (settingsProvider.menuIsViewMap[4].toString() == '1')
+                  'Customers',
+                if (settingsProvider.menuIsViewMap[120].toString() == '1')
+                  'Lead Search',
+                if (settingsProvider.menuIsViewMap[35].toString() == '1')
+                  'Task',
+              ].contains(sideProvider.selectedName)
                   ? Text(
                       sideProvider.selectedName == 'Task'
                           ? 'Tasks'
@@ -906,47 +916,37 @@ class _HomePageState extends State<HomePage> {
           Expanded(
             child: Consumer<SidebarProvider>(
               builder: (context, provider, child) {
-                Widget baseContent = const LeadPage();
+                Widget baseContent = sidebarOptions.isNotEmpty
+                    ? sidebarOptions.first.baseContent
+                    : const SizedBox.shrink();
+
                 Widget? overlayContent;
 
                 if (sidebarOptions.isNotEmpty) {
-                  SidebarOption? selectedOption;
-                  try {
-                    // First try to find by name
-                    var matchingOptions = sidebarOptions
-                        .where(
-                            (option) => option.title == provider.selectedName)
-                        .toList();
+                  // Find the selected page only if the user has permission for it.
+                  final matchingOptions = sidebarOptions
+                      .where((option) => option.title == provider.selectedName)
+                      .toList();
 
-                    if (matchingOptions.isNotEmpty) {
-                      selectedOption = matchingOptions.first;
-                    } else if (provider.selectedIndex < sidebarOptions.length) {
-                      // Fallback to index if name match fails
-                      selectedOption = sidebarOptions[provider.selectedIndex];
-                    }
-                  } catch (e) {
-                    // ignore
-                  }
+                  // If the selected page is unavailable, use the first permitted page.
+                  final selectedOption = matchingOptions.isNotEmpty
+                      ? matchingOptions.first
+                      : sidebarOptions.first;
 
-                  if (selectedOption != null) {
-                    baseContent = selectedOption.baseContent;
-                    overlayContent = selectedOption.title ==
-                            "Leads" // For 'Leads' section
-                        ? (provider.replaceLead
-                            ? null // No overlay if replaceLead is true
-                            : CustomerDetailsScreen(
-                                customerId: provider.customerId,
-                                report: 'false',
-                              )) // Overlay for 'Leads'
-                        : selectedOption.title ==
-                                "Customers" // For 'Customers' section
-                            ? (provider.replaceCustomer
-                                ? null // No overlay if replaceCustomer is true
-                                : CustomerDetailsScreen(
-                                    customerId: provider.customerId,
-                                    report: 'false',
-                                  )) // Overlay for 'Customers'
-                            : null; // Default case, no overlay
+                  baseContent = selectedOption.baseContent;
+
+                  if (selectedOption.title == 'Leads' &&
+                      !provider.replaceLead) {
+                    overlayContent = CustomerDetailsScreen(
+                      customerId: provider.customerId,
+                      report: 'false',
+                    );
+                  } else if (selectedOption.title == 'Customers' &&
+                      !provider.replaceCustomer) {
+                    overlayContent = CustomerDetailsScreen(
+                      customerId: provider.customerId,
+                      report: 'false',
+                    );
                   }
                 }
 
@@ -954,14 +954,12 @@ class _HomePageState extends State<HomePage> {
                   color: Colors.grey.shade50,
                   child: Stack(
                     children: [
-                      baseContent, // The main content displayed at the bottom
-                      if (overlayContent !=
-                          null) // Show overlay content if it's not null
+                      baseContent,
+                      if (overlayContent != null)
                         Positioned.fill(
                           child: Material(
-                            color: Colors
-                                .black54, // Optional dim background behind overlay
-                            child: overlayContent,
+                            color: Colors.black54,
+                            child: overlayContent!,
                           ),
                         ),
                     ],
