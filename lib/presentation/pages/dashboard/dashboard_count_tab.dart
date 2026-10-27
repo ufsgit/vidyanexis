@@ -216,21 +216,28 @@ class DashboardCountTab extends StatelessWidget {
                   debugPrint('Status ID: $statusId');
 
                   // Let the current frame finish so the UI feels responsive
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) async {
                     if (keyword == 'Total_Task' ||
                         keyword == 'Follow_Up_Tasks' ||
                         keyword == 'No_Feasibility_Tasks' ||
                         keyword == 'Converted_Documents_Pending') {
-                      // Tasks
+                      // Task
                       context.read<TaskPageProvider>().setDashboardStatus(0);
                       if (statusId != null) {
                         context
                             .read<TaskPageProvider>()
                             .setDashboardStatus(statusId);
                       }
-                      isWeb
-                          ? side.updateSelectedName('Task')
-                          : side.setReportPage(const TaskPage());
+                      if (isWeb) {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) =>
+                                  const TaskPage(fromDashBoard: true)),
+                        );
+                      } else {
+                        side.setReportPage(const TaskPage());
+                      }
                     } else if (keyword == 'Converted_Customers' ||
                         keyword == 'On_Hold_Leads') {
                       // Customer
@@ -241,13 +248,17 @@ class DashboardCountTab extends StatelessWidget {
                             .setDashboardStatus(statusId);
                       }
                       if (isWeb) {
-                        side.updateSelectedName('Customers');
-                        side.replaceWidgetCustomer(true, '');
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) =>
+                                  const CustomerPage(fromDashBoard: true)),
+                        );
                       } else {
                         side.setReportPage(const CustomerPagePhone());
                       }
                     } else {
-                      //Lead
+                      // Lead
                       context.read<LeadsProvider>().setDashboardStatus(0);
                       if (statusId != null) {
                         context
@@ -255,8 +266,12 @@ class DashboardCountTab extends StatelessWidget {
                             .setDashboardStatus(statusId);
                       }
                       if (isWeb) {
-                        side.updateSelectedName('Leads');
-                        side.replaceWidget(true, '');
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) =>
+                                  const LeadPage(fromDashBoard: true)),
+                        );
                       } else {
                         side.setReportPage(const LeadPagePhone());
                       }

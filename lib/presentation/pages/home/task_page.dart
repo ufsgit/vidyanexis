@@ -61,7 +61,8 @@ import 'package:vidyanexis/presentation/widgets/home/task_audio_recording_widget
 
 class TaskPage extends StatefulWidget {
   final int? initialStatusFilter;
-  const TaskPage({super.key, this.initialStatusFilter});
+  final bool fromDashBoard;
+  const TaskPage({super.key, this.initialStatusFilter,this.fromDashBoard=false});
 
   @override
   State<TaskPage> createState() => _tasksPageReportState();
@@ -1262,6 +1263,29 @@ class _tasksPageReportState extends State<TaskPage> {
                   ? Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
+                        if (widget.fromDashBoard) ...[
+                          InkWell(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: AppColors.secondaryBlue.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Icon(
+                                Icons.arrow_back,
+                                size: 20,
+                                color: AppColors.textGrey4,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 8,
+                          ),
+                          Spacer()
+                        ],
                         Row(
                           children: [
                             if (widget.initialStatusFilter != null) ...[
