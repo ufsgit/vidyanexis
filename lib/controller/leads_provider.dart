@@ -2868,4 +2868,20 @@ class LeadsProvider extends ChangeNotifier {
       Navigator.of(context).pop();
     }
   }
+  void setDashboardStatus(int statusId) {
+    _selectedStatus = statusId;
+    _selectedStatusIds = [statusId];
+    _status = statusId.toString();
+
+    _startLimit = 1;
+    _endLimit = 20;
+    currentPage = 1;
+    hasMoreData = true;
+
+    _leadData.clear();
+
+    debugPrint('Lead Dashboard Status: $selectedStatusIds');
+
+    notifyListeners();
+  }
 }

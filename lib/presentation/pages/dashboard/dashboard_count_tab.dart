@@ -1,10 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/controller/customer_provider.dart';
 import 'package:vidyanexis/controller/dashboard_provider.dart';
+import 'package:vidyanexis/controller/leads_provider.dart';
+import 'package:vidyanexis/controller/models/task_page_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/customer_data_page.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/lead_data_page.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/task_data_page.dart';
+import 'package:vidyanexis/presentation/pages/home/customer_page.dart';
+import 'package:vidyanexis/presentation/pages/home/customer_page_phone.dart';
+import 'package:vidyanexis/presentation/pages/home/lead_page.dart';
+import 'package:vidyanexis/presentation/pages/home/lead_page_phone.dart';
+import 'package:vidyanexis/presentation/pages/home/task_page.dart';
 
 class DashboardCountTab extends StatelessWidget {
   final DashboardProvider dashBoardProvider;
@@ -63,18 +73,13 @@ class DashboardCountTab extends StatelessWidget {
       if (settingsProvider.menuIsViewMap[129] == 1 ||
           settingsProvider.menuIsViewMap[138] == 1)
         'Completed_Leads',
-      if (settingsProvider.menuIsViewMap[187] == 1) 
-        'Total_Task',
-      if (settingsProvider.menuIsViewMap[228] == 1)
-        'Converted_Customers',
+      if (settingsProvider.menuIsViewMap[187] == 1) 'Total_Task',
+      if (settingsProvider.menuIsViewMap[228] == 1) 'Converted_Customers',
       if (settingsProvider.menuIsViewMap[229] == 1)
         'Converted_Documents_Pending',
-      if (settingsProvider.menuIsViewMap[230] == 1)
-        'On_Hold_Leads',
-      if (settingsProvider.menuIsViewMap[231] == 1)
-        'Follow_Up_Tasks',
-      if (settingsProvider.menuIsViewMap[232] == 1)
-        'No_Feasibility_Tasks',
+      if (settingsProvider.menuIsViewMap[230] == 1) 'On_Hold_Leads',
+      if (settingsProvider.menuIsViewMap[231] == 1) 'Follow_Up_Tasks',
+      if (settingsProvider.menuIsViewMap[232] == 1) 'No_Feasibility_Tasks',
     ];
     final items = dashBoardProvider.leadCountMap.entries
         .where((e) => allowedKeys.contains(e.key))
@@ -97,7 +102,8 @@ class DashboardCountTab extends StatelessWidget {
       child: LayoutBuilder(
         builder: (context, constraints) {
           int crossAxisCount = 2; // Mobile gets 2 cards per row
-          double aspectRatio = 1.2; // Default for mobile to avoid 5.7px overflow
+          double aspectRatio =
+              1.2; // Default for mobile to avoid 5.7px overflow
 
           if (constraints.maxWidth > 1200) {
             crossAxisCount = 4; // 4 cards per row for large screens (4, 4, 1)
@@ -138,53 +144,124 @@ class DashboardCountTab extends StatelessWidget {
                 keyword: keyword,
                 count: count,
                 theme: theme,
-                onTap: () async {
-                  if (keyword == 'Total_Task' ||
-                      keyword == 'Follow_Up_Tasks' ||
-                      keyword == 'No_Feasibility_Tasks'||
-                      keyword == 'Converted_Documents_Pending') {
-                    await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => TotalTaskDataPage(
-                          source: keyword,
-                          fromDate: dashBoardProvider.formattedFromDate,
-                          toDate: dashBoardProvider.formattedToDate,
-                          user: dashBoardProvider.selectedUser,
-                        ),
-                      ),
-                    );
-                  } else if (keyword == 'Converted_Customers' ||
-                      keyword == 'On_Hold_Leads') {
-                    await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => CustomerDataPage(
-                          source: keyword,
-                          fromDate: dashBoardProvider.formattedFromDate,
-                          toDate: dashBoardProvider.formattedToDate,
-                          user: dashBoardProvider.selectedUser,
-                        ),
-                      ),
-                    );
-                  } else {
-                    await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => LeadDataPage(
-                          source: keyword,
-                          fromDate: dashBoardProvider.formattedFromDate,
-                          toDate: dashBoardProvider.formattedToDate,
-                          user: dashBoardProvider.selectedUser,
-                        ),
-                      ),
-                    );
+                // onTap: () async {
+                //   if (keyword == 'Total_Task' ||
+                //       keyword == 'Follow_Up_Tasks' ||
+                //       keyword == 'No_Feasibility_Tasks'||
+                //       keyword == 'Converted_Documents_Pending') {
+                //     await Navigator.push(
+                //       context,
+                //       MaterialPageRoute(
+                //         builder: (context) => TotalTaskDataPage(
+                //           source: keyword,
+                //           fromDate: dashBoardProvider.formattedFromDate,
+                //           toDate: dashBoardProvider.formattedToDate,
+                //           user: dashBoardProvider.selectedUser,
+                //         ),
+                //       ),
+                //     );
+                //   } else if (keyword == 'Converted_Customers' ||
+                //       keyword == 'On_Hold_Leads') {
+                //     await Navigator.push(
+                //       context,
+                //       MaterialPageRoute(
+                //         builder: (context) => CustomerDataPage(
+                //           source: keyword,
+                //           fromDate: dashBoardProvider.formattedFromDate,
+                //           toDate: dashBoardProvider.formattedToDate,
+                //           user: dashBoardProvider.selectedUser,
+                //         ),
+                //       ),
+                //     );
+                //   } else {
+                //     await Navigator.push(
+                //       context,
+                //       MaterialPageRoute(
+                //         builder: (context) => LeadDataPage(
+                //           source: keyword,
+                //           fromDate: dashBoardProvider.formattedFromDate,
+                //           toDate: dashBoardProvider.formattedToDate,
+                //           user: dashBoardProvider.selectedUser,
+                //         ),
+                //       ),
+                //     );
+                //   }
+
+                //   // Refresh counts when user returns from any card page
+                //   if (context.mounted) {
+                //     await dashBoardProvider.getLeadDashboardCount(context: context);
+                //   }
+                // },
+                onTap: () {
+                  final side =
+                      Provider.of<SidebarProvider>(context, listen: false);
+                  final isWeb = AppStyles.isWebScreen(context);
+                  int? statusId;
+
+                  if (keyword == 'Converted_Documents_Pending') {
+                    statusId = dashBoardProvider
+                        .leadCountMap['Converted_Documents_Pending_Status_Id'];
+                  } else if (keyword == 'On_Hold_Leads') {
+                    statusId = dashBoardProvider
+                        .leadCountMap['On_Hold_Leads_Status_Id'];
+                  } else if (keyword == 'Follow_Up_Tasks') {
+                    statusId = dashBoardProvider
+                        .leadCountMap['Follow_Up_Tasks_Status_Id'];
+                  } else if (keyword == 'No_Feasibility_Tasks') {
+                    statusId = dashBoardProvider
+                        .leadCountMap['No_Feasibility_Tasks_Status_Id'];
                   }
 
-                  // Refresh counts when user returns from any card page
-                  if (context.mounted) {
-                    await dashBoardProvider.getLeadDashboardCount(context: context);
-                  }
+                  debugPrint('Keyword: $keyword');
+                  debugPrint('Status ID: $statusId');
+
+                  // Let the current frame finish so the UI feels responsive
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (keyword == 'Total_Task' ||
+                        keyword == 'Follow_Up_Tasks' ||
+                        keyword == 'No_Feasibility_Tasks' ||
+                        keyword == 'Converted_Documents_Pending') {
+                      // Tasks
+                      context.read<TaskPageProvider>().setDashboardStatus(0);
+                      if (statusId != null) {
+                        context
+                            .read<TaskPageProvider>()
+                            .setDashboardStatus(statusId);
+                      }
+                      isWeb
+                          ? side.updateSelectedName('Task')
+                          : side.setReportPage(const TaskPage());
+                    } else if (keyword == 'Converted_Customers' ||
+                        keyword == 'On_Hold_Leads') {
+                      // Customer
+                      context.read<CustomerProvider>().setDashboardStatus(0);
+                      if (statusId != null) {
+                        context
+                            .read<CustomerProvider>()
+                            .setDashboardStatus(statusId);
+                      }
+                      if (isWeb) {
+                        side.updateSelectedName('Customers');
+                        side.replaceWidgetCustomer(true, '');
+                      } else {
+                        side.setReportPage(const CustomerPagePhone());
+                      }
+                    } else {
+                      //Lead
+                      context.read<LeadsProvider>().setDashboardStatus(0);
+                      if (statusId != null) {
+                        context
+                            .read<LeadsProvider>()
+                            .setDashboardStatus(statusId);
+                      }
+                      if (isWeb) {
+                        side.updateSelectedName('Leads');
+                        side.replaceWidget(true, '');
+                      } else {
+                        side.setReportPage(const LeadPagePhone());
+                      }
+                    }
+                  });
                 },
               );
             },

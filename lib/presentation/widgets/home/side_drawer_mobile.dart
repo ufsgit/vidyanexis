@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vidyanexis/controller/login_controller.dart';
+import 'package:vidyanexis/presentation/pages/home/dashboard_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/attendance_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/ta_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/travel_allowance/travel_allowance_page.dart';
@@ -306,6 +307,16 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
               physics: const BouncingScrollPhysics(),
               children: [
                 const SizedBox(height: 12),
+                if (settingsProvider.menuIsViewMap[12].toString() == '1')
+                  _buildModernMenuItem(
+                    context: context,
+                    title: 'DashBoard',
+                    iconPath: 'assets/images/dashboard_icon.svg',
+                    page: const DashBoardPage(),
+                    activeColor: const Color(0xFF63B3ED),
+                    lightColor: const Color(0xFFE6F5FF),
+                    sideProvider: sideProvider,
+                  ),
                 if (settingsProvider.menuIsViewMap[29].toString() == '1')
                   _buildModernMenuItem(
                     context: context,

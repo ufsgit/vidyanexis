@@ -1375,4 +1375,20 @@ class CustomerProvider extends ChangeNotifier {
       );
     }
   }
+  void setDashboardStatus(int statusId) {
+    _selectedStatus = statusId;
+    _selectedStatusIds = [statusId];
+    _status = statusId.toString();
+
+    _startLimit = 1;
+    _endLimit = 20;
+    currentPage = 1;
+    hasMoreData = true;
+
+    _customerData.clear();
+
+    debugPrint('Customer Dashboard Status: $_status');
+
+    notifyListeners();
+  }
 }

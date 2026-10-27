@@ -1678,4 +1678,31 @@ class TaskPageProvider extends ChangeNotifier {
       return false;
     }
   }
+  
+  bool _isDashboardStatus = false;
+  bool get isDashboardStatus => _isDashboardStatus;
+
+  void clearDashboardStatusFlag() {
+    _isDashboardStatus = false;
+  }
+
+  void setDashboardStatus(int statusId) {
+    _selectedStatus = statusId;
+    _selectedStatusIds = [statusId];
+    _Status = statusId == 0 ? '0' : statusId.toString();
+
+    _pageIndex = 1;
+    _pageSize = 20;
+    _totalSize = 0;
+    _totalPages = 1;
+
+    _taskData.clear();
+    _taskReport.clear();
+
+    _isDashboardStatus = true;
+
+    debugPrint('Dashboard Task Status: $_selectedStatusIds');
+
+    notifyListeners();
+  }
 }

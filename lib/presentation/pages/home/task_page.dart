@@ -327,7 +327,9 @@ class _tasksPageReportState extends State<TaskPage> {
 
       _updateScreenType();
       _setupScrollListener();
-      reportsProvider.removeStatus();
+      if (!reportsProvider.isDashboardStatus) {
+        reportsProvider.removeStatus();
+      }
       searchProvider.stopSearch();
 
       final settingsProvider =
@@ -368,6 +370,7 @@ class _tasksPageReportState extends State<TaskPage> {
         settingsProvider.getCompanyDetails();
         settingsProvider.getMenuPermissionData(uid, context);
       });
+      reportsProvider.clearDashboardStatusFlag();
     });
   }
 
