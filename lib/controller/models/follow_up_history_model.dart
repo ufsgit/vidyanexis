@@ -7,6 +7,7 @@ class FollowUpHistoryModel {
   String? assignedToName;
   String? assignedByName;
   String? statusId;
+  String? colorCode;
 
   FollowUpHistoryModel(
       {this.followUpId,
@@ -16,7 +17,8 @@ class FollowUpHistoryModel {
       this.statusName,
       this.assignedToName,
       this.assignedByName,
-      this.statusId});
+      this.statusId,
+      this.colorCode});
 
   FollowUpHistoryModel.fromJson(Map<String, dynamic> json) {
     followUpId = json['FollowUp_Id']?.toString() ??
@@ -32,6 +34,7 @@ class FollowUpHistoryModel {
     assignedByName = json['Assigned_By_Name']?.toString() ??
         json['By_User_Name']?.toString();
     statusId = json['Status_Id']?.toString();
+    colorCode = json['Color_Code']?.toString();
   }
 
   Map<String, dynamic> toJson() {
@@ -44,6 +47,7 @@ class FollowUpHistoryModel {
     data['Assigned_To_Name'] = assignedToName;
     data['Assigned_By_Name'] = assignedByName;
     data['Status_Id'] = statusId;
+    data['Color_Code'] = colorCode;
     return data;
   }
 }

@@ -65,8 +65,8 @@ class FollowUpTabWidget extends StatelessWidget {
                 _buildHeaderCell('#', width: 50.0),
                 _buildHeaderCell('Follow-up Date', flex: 2),
                 _buildHeaderCell('Status', flex: 2),
-                _buildHeaderCell('Assigned To', flex: 2),
-                _buildHeaderCell('Assigned By', flex: 2),
+                _buildHeaderCell('To', flex: 2),
+                _buildHeaderCell('By', flex: 2),
                 _buildHeaderCell('Next Follow-up', flex: 2),
                 _buildHeaderCell('Remarks', flex: 3),
                 _buildHeaderCell('Options', flex: 1, textAlign: TextAlign.center),
@@ -132,7 +132,7 @@ class FollowUpTabWidget extends StatelessWidget {
     );
   }
 
-  /// Mobile List View with clean card layout
+  /// Mobile List View with clean card layout matching second image
   Widget _buildMobileList(
       BuildContext context, CustomerDetailsProvider provider) {
     return ListView.builder(
@@ -169,28 +169,34 @@ class FollowUpTabWidget extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: AppColors.primaryBlue.withValues(alpha: 0.1),
-                      shape: BoxShape.circle,
+              Expanded(
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryBlue.withValues(alpha: 0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.history,
+                          size: 16, color: AppColors.primaryBlue),
                     ),
-                    child: const Icon(Icons.history,
-                        size: 16, color: AppColors.primaryBlue),
-                  ),
-                  const SizedBox(width: 12),
-                  Text(
-                    _formatDate(history.followUpDate ?? ''),
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                      color: Colors.black87,
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: Text(
+                        _formatDate(history.followUpDate ?? ''),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                          color: Colors.black87,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
+              const SizedBox(width: 8),
               _buildStatusCell(history),
             ],
           ),
@@ -203,10 +209,8 @@ class FollowUpTabWidget extends StatelessWidget {
             spacing: 24,
             runSpacing: 12,
             children: [
-              _buildInfoColumn(
-                  'Assigned To', _buildUserCell(history.assignedToName)),
-              _buildInfoColumn(
-                  'Assigned By', _buildUserCell(history.assignedByName)),
+              _buildInfoColumn('To', _buildUserCell(history.assignedToName)),
+              _buildInfoColumn('By', _buildUserCell(history.assignedByName)),
               _buildInfoColumn(
                 'Next Follow-up',
                 _buildNextFollowUpCell(history.nextFollowUpDate),
@@ -243,7 +247,8 @@ class FollowUpTabWidget extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8, vertical: 3),
                           decoration: BoxDecoration(
-                            color: AppColors.primaryBlue.withValues(alpha: 0.08),
+                            color: AppColors.primaryBlue
+                                .withValues(alpha: 0.08),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: const Row(
@@ -278,6 +283,24 @@ class FollowUpTabWidget extends StatelessWidget {
           ],
         ],
       ),
+    );
+  }
+
+  Widget _buildInfoColumn(String label, Widget child) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 11,
+            color: Colors.grey,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: 6),
+        child,
+      ],
     );
   }
 
@@ -515,24 +538,6 @@ class FollowUpTabWidget extends StatelessWidget {
           constraints: const BoxConstraints(),
           onPressed: () => _openEditDialog(context, history),
         ),
-      ],
-    );
-  }
-
-  Widget _buildInfoColumn(String label, Widget child) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 11,
-            color: Colors.grey,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: 6),
-        child,
       ],
     );
   }

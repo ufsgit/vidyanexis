@@ -604,6 +604,833 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
   //   ];
   // }
 
+  void _onBackPressed(
+      SidebarProvider sideprovider,
+      LeadsProvider leadProvider,
+      CustomerProvider customerProvider,
+      LeadDetailsProvider leadDetailsProvider) {
+    if (Navigator.of(context).canPop()) {
+      Navigator.of(context).pop();
+      return;
+    }
+    sideprovider.replaceWidget(true, '');
+    sideprovider.replaceWidgetCustomer(true, '');
+    AppStyles.isWebScreen(context)
+        ? leadProvider.getSearchLeads(context,
+            isSilent: true, isWebPagination: true)
+        : leadProvider.getSearchLeads(context, isSilent: true);
+    AppStyles.isWebScreen(context)
+        ? customerProvider.getSearchCustomers(context, isSilent: true)
+        : customerProvider.getSearchCustomers(context, isSilent: true);
+    leadDetailsProvider.fetchLeadDetailsNoContext(widget.customerId);
+  }
+
+  void _onEditCustomer(
+      LeadDetailsProvider leadDetailsProvider,
+      LeadsProvider leadProvider,
+      DropDownProvider dropDownProvider,
+      CustomerDetailsProvider customerDetailsProvider) async {
+    await leadDetailsProvider.fetchLeadDetails(widget.customerId, context);
+    leadProvider.setCutomerId(int.parse(widget.customerId));
+    leadProvider.enquirySourceController.text =
+        leadDetailsProvider.leadDetails![0].enquirySourceName.toString();
+    leadProvider.enquiryForController.text =
+        leadDetailsProvider.leadDetails![0].enquiryForName.toString();
+    dropDownProvider.selectedEnquirySourceId =
+        leadDetailsProvider.leadDetails![0].enquirySourceId;
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return const NewLeadDrawerWidget(
+          isEdit: true,
+        );
+      },
+    );
+    customerDetailsProvider
+        .fetchLeadDetails(widget.customerId, context)
+        .then((value) {
+      if (customerDetailsProvider.leadDetails != null &&
+          customerDetailsProvider.leadDetails!.isNotEmpty) {
+        final lead = customerDetailsProvider.leadDetails!.first;
+        final leadsProvider =
+            Provider.of<LeadsProvider>(context, listen: false);
+        leadsProvider.getCustomFieldsByEnquiryForId(context,
+            enquiryForId: lead.enquiryForId,
+            leadId: lead.customerId,
+            departmentId: lead.departmentId);
+      }
+    });
+  }
+
+  void _onDeleteCustomer(
+      SidebarProvider sideprovider,
+      LeadsProvider leadProvider,
+      CustomerProvider customerProvider) {
+    showConfirmationDialog(
+      context: context,
+      title: 'Delete Customer/Lead',
+      content:
+          'Are you sure you want to delete this ${sideprovider.name == 'Lead /' ? 'lead' : 'customer'}?',
+      onCancel: () => Navigator.of(context).pop(),
+      onConfirm: () async {
+        Navigator.of(context).pop();
+        if (sideprovider.name == 'Lead /') {
+          await leadProvider.deleteLead(context, widget.customerId);
+        } else {
+          await customerProvider.deleteCustomer(context, widget.customerId);
+        }
+
+        if (context.mounted) {
+          leadProvider.removeLeadFromList(widget.customerId);
+          customerProvider.removeCustomerFromList(widget.customerId);
+
+          if (Navigator.of(context).canPop()) {
+            Navigator.of(context).pop();
+          } else {
+            sideprovider.replaceWidget(true, '');
+            sideprovider.replaceWidgetCustomer(true, '');
+          }
+
+          customerProvider.getSearchCustomers(context, isSilent: true);
+        }
+      },
+    );
+  }
+
+  void _onExportPdf(
+      CustomerDetailsProvider customerDetailsProvider,
+      SettingsProvider settingsprovider,
+      LeadsProvider leadProvider) async {
+    if (customerDetailsProvider.leadDetails != null &&
+        customerDetailsProvider.leadDetails!.isNotEmpty) {
+      final companyName = settingsprovider.companyDetails.isNotEmpty
+          ? settingsprovider.companyDetails[0].companyName
+          : '3rd Eye Security Systems';
+      await generateCustomerDetailsPdf(
+        customerData: customerDetailsProvider.leadDetails![0],
+        customFields: leadProvider.customFieldEnquiryFor ?? [],
+        companyName: companyName,
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No details available to export'),
+        ),
+      );
+    }
+  }
+
+  void _onDownloadImage(CustomerDetailsProvider customerDetailsProvider) async {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Download started...')),
+    );
+    final bytes = await customerDetailsProvider.getAnnexurePdfBytes(
+        '${HttpUrls.generateStatusImage}${widget.customerId}');
+    if (bytes != null && bytes.isNotEmpty) {
+      String extension = 'png';
+      if (bytes.length >= 4 &&
+          bytes[0] == 0x25 &&
+          bytes[1] == 0x50 &&
+          bytes[2] == 0x44 &&
+          bytes[3] == 0x46) {
+        extension = 'pdf';
+      } else if (bytes.length >= 2 && bytes[0] == 0xFF && bytes[1] == 0xD8) {
+        extension = 'jpg';
+      }
+
+      final latestProvider =
+          Provider.of<CustomerDetailsProvider>(context, listen: false);
+      String customerName = '';
+      if (latestProvider.leadDetails != null &&
+          latestProvider.leadDetails!.isNotEmpty) {
+        customerName = latestProvider.leadDetails![0].customerName ?? '';
+      }
+      if (customerName.isEmpty) {
+        final leadDetailsProv =
+            Provider.of<LeadDetailsProvider>(context, listen: false);
+        if (leadDetailsProv.leadDetails != null &&
+            leadDetailsProv.leadDetails!.isNotEmpty) {
+          customerName = leadDetailsProv.leadDetails![0].customerName ?? '';
+        }
+      }
+      if (customerName.isEmpty) {
+        final leadProv = Provider.of<LeadsProvider>(context, listen: false);
+        customerName = leadProv.leadNameController.text;
+      }
+
+      customerName =
+          customerName.replaceAll(RegExp(r'[^a-zA-Z0-9_\-]'), '_');
+      if (customerName.trim().isEmpty) {
+        customerName = 'Customer_${widget.customerId}';
+      }
+
+      String fileName = '${customerName}_Image.$extension';
+
+      await FileDownloader.saveFile(bytes, fileName);
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Download complete!')),
+        );
+      }
+    } else {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to download image')),
+        );
+      }
+    }
+  }
+
+  void _openCreateTaskDialog(CustomerDetailsProvider customerDetailsProvider) {
+    customerDetailsProvider.customerId = widget.customerId;
+    customerDetailsProvider.clearTaskDetails();
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return TaskCreationWidget(
+          isEdit: false,
+          taskId: '0',
+        );
+      },
+    );
+  }
+
+  void _openAddChecklistDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AddCheckListManagementWidget(
+          documentChecklistModel: DocumentChecklistModel(),
+        );
+      },
+    ).then((value) {
+      if (value == true) {
+        setState(() {
+          _checklistKey = UniqueKey();
+        });
+      }
+    });
+  }
+
+  void _openAddPeriodicServiceDialog(
+      CustomerDetailsProvider customerDetailsProvider) {
+    customerDetailsProvider.customerId = widget.customerId;
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return AmcCreationWidget(
+            amcId: '0', customerId: widget.customerId, isEdit: false);
+      },
+    );
+  }
+
+  void _openAddReceiptDialog(CustomerDetailsProvider customerDetailsProvider) {
+    customerDetailsProvider.customerId = widget.customerId;
+    customerDetailsProvider.clearRecieptDetails();
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return RecieptCreationWidget(
+            recieptId: '0', customerId: widget.customerId, isEdit: false);
+      },
+    );
+  }
+
+  void _openAddComplaintDialog(
+      CustomerDetailsProvider customerDetailsProvider) {
+    customerDetailsProvider.customerId = widget.customerId;
+    customerDetailsProvider.clearServiceDetails();
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return ServiceCreationWidget(
+            taskId: '0', isEdit: false, customerId: widget.customerId);
+      },
+    );
+  }
+
+  void _openAddPaymentDialog(CustomerDetailsProvider customerDetailsProvider) {
+    customerDetailsProvider.clearPaymentDetails();
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AddPaymentWidget(customerId: widget.customerId);
+      },
+    );
+  }
+
+  void _openNewQuotationPage(CustomerDetailsProvider customerDetailsProvider) {
+    if (customerDetailsProvider.hasPendingApprovalQuotation()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+              'Approval pending quotations are there , please clear that'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+    customerDetailsProvider.customerId = widget.customerId;
+    customerDetailsProvider.qsubsidyAmountController.text = '0';
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => QuotationCreationWidget(
+            quotationId: '0',
+            isEdit: false,
+            customerId: widget.customerId),
+      ),
+    );
+  }
+
+  Widget _buildTabBarWidget({required bool isMobile}) {
+    return NotificationListener<Notification>(
+      onNotification: (notification) {
+        if (notification is ScrollNotification ||
+            notification is ScrollMetricsNotification) {
+          final metrics = notification is ScrollNotification
+              ? notification.metrics
+              : (notification as ScrollMetricsNotification).metrics;
+          if (metrics.maxScrollExtent > 0) {
+            setState(() {
+              _canScrollLeft = metrics.pixels > 5;
+              _canScrollRight = metrics.pixels < metrics.maxScrollExtent - 5;
+            });
+          } else {
+            if (_canScrollLeft || _canScrollRight) {
+              setState(() {
+                _canScrollLeft = false;
+                _canScrollRight = false;
+              });
+            }
+          }
+        }
+        return false;
+      },
+      child: Container(
+        height: isMobile ? 40 : 42,
+        margin: EdgeInsets.symmetric(
+            horizontal: isMobile ? 4 : 12, vertical: isMobile ? 2 : 8),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF1F5F9),
+          borderRadius: BorderRadius.circular(4),
+        ),
+        child: TabBar(
+          controller: _tabController,
+          onTap: (index) {
+            _fetchDataForCurrentTab(forceRefresh: true, tabIndex: index);
+            if (isMobile) {
+              setState(() {});
+            }
+          },
+          labelColor: AppColors.primaryBlue,
+          unselectedLabelColor: const Color(0xFF64748B),
+          indicator: BoxDecoration(
+            borderRadius: BorderRadius.circular(4),
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.04),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          indicatorPadding:
+              const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+          indicatorSize: TabBarIndicatorSize.tab,
+          tabAlignment: TabAlignment.start,
+          isScrollable: true,
+          physics: const BouncingScrollPhysics(),
+          dividerColor: Colors.transparent,
+          labelPadding: const EdgeInsets.symmetric(horizontal: 14),
+          labelStyle: GoogleFonts.plusJakartaSans(
+              fontWeight: FontWeight.w700, fontSize: isMobile ? 12 : 13),
+          unselectedLabelStyle: GoogleFonts.plusJakartaSans(
+              fontWeight: FontWeight.w600, fontSize: isMobile ? 12 : 13),
+          tabs: _tabs,
+        ),
+      ),
+    );
+  }
+
+  Widget? _buildMobileFloatingActionButton(
+      SettingsProvider settingsprovider,
+      CustomerDetailsProvider customerDetailsProvider) {
+    if (!_isControllerInitialized ||
+        _tabs.isEmpty ||
+        _tabController.index < 0 ||
+        _tabController.index >= _tabs.length) {
+      return null;
+    }
+    final currentTab = _tabs[_tabController.index].text;
+
+    if (currentTab == "Tasks" && settingsprovider.menuIsSaveMap[13] == 1) {
+      return FloatingActionButton.extended(
+        backgroundColor: AppColors.primaryBlue,
+        foregroundColor: Colors.white,
+        icon: const Icon(Icons.add),
+        label: const Text('Create Task'),
+        onPressed: () => _openCreateTaskDialog(customerDetailsProvider),
+      );
+    }
+
+    if (currentTab == "CheckList Management" &&
+        settingsprovider.menuIsSaveMap[37] == 1) {
+      return FloatingActionButton.extended(
+        backgroundColor: AppColors.primaryBlue,
+        foregroundColor: Colors.white,
+        icon: const Icon(Icons.add),
+        label: const Text('Add Checklist'),
+        onPressed: _openAddChecklistDialog,
+      );
+    }
+
+    if (currentTab == "Periodic Service" &&
+        settingsprovider.menuIsSaveMap[15] == 1) {
+      return FloatingActionButton.extended(
+        backgroundColor: AppColors.primaryBlue,
+        foregroundColor: Colors.white,
+        icon: const Icon(Icons.add),
+        label: const Text('Add Periodic Service'),
+        onPressed: () => _openAddPeriodicServiceDialog(customerDetailsProvider),
+      );
+    }
+
+    if (currentTab == "Receipt" && settingsprovider.menuIsSaveMap[18] == 1) {
+      return FloatingActionButton.extended(
+        backgroundColor: AppColors.primaryBlue,
+        foregroundColor: Colors.white,
+        icon: const Icon(Icons.add),
+        label: const Text('Add Receipt'),
+        onPressed: () => _openAddReceiptDialog(customerDetailsProvider),
+      );
+    }
+
+    if (currentTab == "Complaints" && settingsprovider.menuIsSaveMap[14] == 1) {
+      return FloatingActionButton.extended(
+        backgroundColor: AppColors.primaryBlue,
+        foregroundColor: Colors.white,
+        icon: const Icon(Icons.add),
+        label: const Text('Add Complaint'),
+        onPressed: () => _openAddComplaintDialog(customerDetailsProvider),
+      );
+    }
+
+    if (currentTab == "Payment" && settingsprovider.menuIsSaveMap[81] == 1) {
+      return FloatingActionButton.extended(
+        backgroundColor: AppColors.primaryBlue,
+        foregroundColor: Colors.white,
+        icon: const Icon(Icons.add),
+        label: const Text('Add Payment'),
+        onPressed: () => _openAddPaymentDialog(customerDetailsProvider),
+      );
+    }
+
+    if (currentTab == "Quotations" && settingsprovider.menuIsSaveMap[16] == 1) {
+      return FloatingActionButton.extended(
+        backgroundColor: AppColors.primaryBlue,
+        foregroundColor: Colors.white,
+        icon: const Icon(Icons.add),
+        label: const Text('New Quotation'),
+        onPressed: () => _openNewQuotationPage(customerDetailsProvider),
+      );
+    }
+
+    return null;
+  }
+
+  Widget _buildWebHeader(
+    BuildContext context,
+    SidebarProvider sideprovider,
+    LeadsProvider leadProvider,
+    CustomerProvider customerProvider,
+    LeadDetailsProvider leadDetailsProvider,
+    CustomerDetailsProvider customerDetailsProvider,
+    SettingsProvider settingsprovider,
+    DropDownProvider dropDownProvider,
+  ) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 0),
+      color: Colors.white,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          InkWell(
+            onTap: () => _onBackPressed(
+                sideprovider, leadProvider, customerProvider, leadDetailsProvider),
+            child: const Icon(
+              Icons.arrow_back,
+              size: 18,
+              color: Color(0xFF152D70),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Text(
+            customerDetailsProvider.leadDetails != null &&
+                    customerDetailsProvider.leadDetails!.isNotEmpty
+                ? customerDetailsProvider.leadDetails![0].customerName
+                : '',
+            style: const TextStyle(
+                fontSize: 18,
+                color: Color(0xFF152D70),
+                fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(width: 10),
+          if (settingsprovider.menuIsEditMap[
+                  sideprovider.name == 'Lead /' ? 3 : 4] == 1)
+            IconButton(
+              onPressed: () => _onEditCustomer(leadDetailsProvider, leadProvider,
+                  dropDownProvider, customerDetailsProvider),
+              icon: const Icon(Icons.edit),
+            ),
+          if (settingsprovider.menuIsDeleteMap[
+                  sideprovider.name == 'Lead /' ? 3 : 4] == 1)
+            IconButton(
+              onPressed: () => _onDeleteCustomer(
+                  sideprovider, leadProvider, customerProvider),
+              icon: const Icon(Icons.delete_outline, color: Colors.red),
+            ),
+          if (settingsprovider.menuIsViewMap[169] == 1 ||
+              settingsprovider.menuIsViewMap[169].toString() == '1')
+            IconButton(
+              tooltip: 'Export PDF',
+              icon: const Icon(Icons.picture_as_pdf, color: Colors.blue),
+              onPressed: () => _onExportPdf(
+                  customerDetailsProvider, settingsprovider, leadProvider),
+            ),
+          if (settingsprovider.menuIsViewMap[179] == 1 ||
+              settingsprovider.menuIsViewMap[179].toString() == '1')
+            IconButton(
+              tooltip: 'Download Image',
+              icon: const Icon(Icons.download, color: Colors.blue),
+              onPressed: () => _onDownloadImage(customerDetailsProvider),
+            ),
+          const SizedBox(width: 20),
+          if (_canScrollLeft)
+            IconButton(
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
+              onPressed: () => _scrollTabs(-150),
+              icon: const Icon(Icons.arrow_back_ios_new, size: 16),
+            ),
+          Expanded(
+            child: _buildTabBarWidget(isMobile: false),
+          ),
+          if (_canScrollRight)
+            IconButton(
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
+              onPressed: () => _scrollTabs(150),
+              icon: const Icon(Icons.arrow_forward_ios, size: 16),
+            ),
+          IconButton(
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+            tooltip: "Refresh",
+            onPressed: () {
+              _refreshAnimationController.forward(from: 0.0);
+              _fetchDataForCurrentTab(forceRefresh: true);
+            },
+            icon: RotationTransition(
+              turns: _refreshAnimationController,
+              child: const Icon(Icons.refresh,
+                  color: AppColors.primaryBlue, size: 20),
+            ),
+          ),
+          if (settingsprovider.menuIsSaveMap[13] == 1 &&
+              _isControllerInitialized &&
+              _tabs.isNotEmpty &&
+              _tabs[_tabController.index].text == "Tasks")
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: ElevatedButton.icon(
+                onPressed: () => _openCreateTaskDialog(customerDetailsProvider),
+                icon: const Icon(Icons.add),
+                label: const Text('Create Task'),
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4)),
+                  backgroundColor: AppColors.primaryBlue,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16, vertical: 12),
+                ),
+              ),
+            ),
+          if (settingsprovider.menuIsSaveMap[37] == 1 &&
+              _isControllerInitialized &&
+              _tabs.isNotEmpty &&
+              _tabs[_tabController.index].text == "CheckList Management")
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: ElevatedButton.icon(
+                onPressed: _openAddChecklistDialog,
+                icon: const Icon(Icons.add),
+                label: const Text('Add Checklist'),
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4)),
+                  backgroundColor: AppColors.primaryBlue,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16, vertical: 12),
+                ),
+              ),
+            ),
+          if (settingsprovider.menuIsSaveMap[15] == 1 &&
+              _isControllerInitialized &&
+              _tabs.isNotEmpty &&
+              _tabs[_tabController.index].text == "Periodic Service")
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: ElevatedButton.icon(
+                onPressed: () =>
+                    _openAddPeriodicServiceDialog(customerDetailsProvider),
+                icon: const Icon(Icons.add),
+                label: const Text('Add Periodic Service'),
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4)),
+                  backgroundColor: AppColors.primaryBlue,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16, vertical: 12),
+                ),
+              ),
+            ),
+          if (settingsprovider.menuIsSaveMap[18] == 1 &&
+              _isControllerInitialized &&
+              _tabs.isNotEmpty &&
+              _tabs[_tabController.index].text == "Receipt")
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: ElevatedButton.icon(
+                onPressed: () =>
+                    _openAddReceiptDialog(customerDetailsProvider),
+                icon: const Icon(Icons.add),
+                label: const Text('Add Receipt'),
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4)),
+                  backgroundColor: AppColors.primaryBlue,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16, vertical: 12),
+                ),
+              ),
+            ),
+          if (settingsprovider.menuIsSaveMap[14] == 1 &&
+              _isControllerInitialized &&
+              _tabs.isNotEmpty &&
+              _tabs[_tabController.index].text == "Complaints")
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: ElevatedButton.icon(
+                onPressed: () =>
+                    _openAddComplaintDialog(customerDetailsProvider),
+                icon: const Icon(Icons.add),
+                label: const Text('Add Complaint'),
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4)),
+                  backgroundColor: AppColors.primaryBlue,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16, vertical: 12),
+                ),
+              ),
+            ),
+          if (settingsprovider.menuIsSaveMap[81] == 1 &&
+              _isControllerInitialized &&
+              _tabs.isNotEmpty &&
+              _tabs[_tabController.index].text == "Payment")
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: ElevatedButton.icon(
+                onPressed: () =>
+                    _openAddPaymentDialog(customerDetailsProvider),
+                icon: const Icon(Icons.add),
+                label: const Text('Add Payment'),
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4)),
+                  backgroundColor: AppColors.primaryBlue,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16, vertical: 12),
+                ),
+              ),
+            ),
+          if (settingsprovider.menuIsSaveMap[16] == 1 &&
+              _isControllerInitialized &&
+              _tabs.isNotEmpty &&
+              _tabs[_tabController.index].text == "Quotations")
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: ElevatedButton.icon(
+                onPressed: () =>
+                    _openNewQuotationPage(customerDetailsProvider),
+                icon: const Icon(Icons.add),
+                label: const Text('New Quotation '),
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4)),
+                  backgroundColor: AppColors.primaryBlue,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16, vertical: 12),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMobileHeader(
+    BuildContext context,
+    SidebarProvider sideprovider,
+    LeadsProvider leadProvider,
+    CustomerProvider customerProvider,
+    LeadDetailsProvider leadDetailsProvider,
+    CustomerDetailsProvider customerDetailsProvider,
+    SettingsProvider settingsprovider,
+    DropDownProvider dropDownProvider,
+  ) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Row 1: App Bar
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+          color: Colors.white,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              InkWell(
+                onTap: () => _onBackPressed(
+                    sideprovider, leadProvider, customerProvider, leadDetailsProvider),
+                child: const Padding(
+                  padding: EdgeInsets.all(4.0),
+                  child: Icon(
+                    Icons.arrow_back,
+                    size: 20,
+                    color: Color(0xFF152D70),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  customerDetailsProvider.leadDetails != null &&
+                          customerDetailsProvider.leadDetails!.isNotEmpty
+                      ? customerDetailsProvider.leadDetails![0].customerName
+                      : '',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.plusJakartaSans(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                    color: const Color(0xFF152D70),
+                  ),
+                ),
+              ),
+              if (settingsprovider.menuIsEditMap[
+                      sideprovider.name == 'Lead /' ? 3 : 4] == 1)
+                IconButton(
+                  constraints: const BoxConstraints(),
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                  onPressed: () => _onEditCustomer(leadDetailsProvider, leadProvider,
+                      dropDownProvider, customerDetailsProvider),
+                  icon: const Icon(Icons.edit, size: 20),
+                ),
+              if (settingsprovider.menuIsDeleteMap[
+                      sideprovider.name == 'Lead /' ? 3 : 4] == 1)
+                IconButton(
+                  constraints: const BoxConstraints(),
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                  onPressed: () => _onDeleteCustomer(
+                      sideprovider, leadProvider, customerProvider),
+                  icon: const Icon(Icons.delete_outline, color: Colors.red, size: 20),
+                ),
+              if (settingsprovider.menuIsViewMap[169] == 1 ||
+                  settingsprovider.menuIsViewMap[169].toString() == '1')
+                IconButton(
+                  constraints: const BoxConstraints(),
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                  tooltip: 'Export PDF',
+                  icon: const Icon(Icons.picture_as_pdf, color: Colors.blue, size: 20),
+                  onPressed: () => _onExportPdf(
+                      customerDetailsProvider, settingsprovider, leadProvider),
+                ),
+              if (settingsprovider.menuIsViewMap[179] == 1 ||
+                  settingsprovider.menuIsViewMap[179].toString() == '1')
+                IconButton(
+                  constraints: const BoxConstraints(),
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                  tooltip: 'Download Image',
+                  icon: const Icon(Icons.download, color: Colors.blue, size: 20),
+                  onPressed: () => _onDownloadImage(customerDetailsProvider),
+                ),
+            ],
+          ),
+        ),
+        // Row 2: Tabs Row (Next row of the app bar)
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            border: Border(
+              bottom: BorderSide(color: Color(0xFFE2E8F0), width: 1.0),
+            ),
+          ),
+          child: Row(
+            children: [
+              if (_canScrollLeft)
+                IconButton(
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                  onPressed: () => _scrollTabs(-150),
+                  icon: const Icon(Icons.arrow_back_ios_new, size: 16),
+                ),
+              Expanded(
+                child: _buildTabBarWidget(isMobile: true),
+              ),
+              if (_canScrollRight)
+                IconButton(
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                  onPressed: () => _scrollTabs(150),
+                  icon: const Icon(Icons.arrow_forward_ios, size: 16),
+                ),
+              IconButton(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                constraints: const BoxConstraints(),
+                tooltip: "Refresh",
+                onPressed: () {
+                  _refreshAnimationController.forward(from: 0.0);
+                  _fetchDataForCurrentTab(forceRefresh: true);
+                },
+                icon: RotationTransition(
+                  turns: _refreshAnimationController,
+                  child: const Icon(Icons.refresh,
+                      color: AppColors.primaryBlue, size: 20),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final leadProvider = Provider.of<LeadsProvider>(context);
@@ -686,6 +1513,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
         },
         child: Scaffold(
           key: _scaffoldKey,
+          floatingActionButton: !AppStyles.isWebScreen(context)
+              ? _buildMobileFloatingActionButton(
+                  settingsprovider, customerDetailsProvider)
+              : null,
           // appBar: screenWidth < _breakpoint
           //     ? AppBar(
           //         backgroundColor: Colors.white,
@@ -752,700 +1583,27 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                           const SizedBox(
                             height: 20,
                           ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20.0, vertical: 0),
-                          color: Colors.white,
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              InkWell(
-                                onTap: () {
-                                  // Check if we can pop (pushed via Navigator/GoRouter)
-                                  if (Navigator.of(context).canPop()) {
-                                    Navigator.of(context).pop();
-                                    return;
-                                  }
-
-                                  // Fallback for embedded views (mostly old web logic)
-                                  sideprovider.replaceWidget(true, '');
-                                  sideprovider.replaceWidgetCustomer(true, '');
-                                  AppStyles.isWebScreen(context)
-                                      ? leadProvider.getSearchLeads(context, isSilent: true, isWebPagination: true)
-                                      : leadProvider.getSearchLeads(context, isSilent: true);
-                                  AppStyles.isWebScreen(context)
-                                      ? customerProvider
-                                          .getSearchCustomers(context, isSilent: true)
-                                      : customerProvider
-                                          .getSearchCustomers(context, isSilent: true);
-                                  leadDetailsProvider.fetchLeadDetailsNoContext(
-                                      widget.customerId);
-                                },
-                                child: Icon(
-                                  Icons.arrow_back,
-                                  size: 18,
-                                  color: Color(0xFF152D70),
-                                ),
+                        AppStyles.isWebScreen(context)
+                            ? _buildWebHeader(
+                                context,
+                                sideprovider,
+                                leadProvider,
+                                customerProvider,
+                                leadDetailsProvider,
+                                customerDetailsProvider,
+                                settingsprovider,
+                                dropDownProvider,
+                              )
+                            : _buildMobileHeader(
+                                context,
+                                sideprovider,
+                                leadProvider,
+                                customerProvider,
+                                leadDetailsProvider,
+                                customerDetailsProvider,
+                                settingsprovider,
+                                dropDownProvider,
                               ),
-                              const SizedBox(width: 10),
-                              AppStyles.isWebScreen(context)
-                                  ? Text(
-                                      customerDetailsProvider.leadDetails !=
-                                                  null &&
-                                              customerDetailsProvider
-                                                  .leadDetails!.isNotEmpty
-                                          ? customerDetailsProvider
-                                              .leadDetails![0].customerName
-                                          : '',
-                                      style: const TextStyle(
-                                          fontSize: 18,
-                                          color: Color(0xFF152D70),
-                                          fontWeight: FontWeight.w600),
-                                    )
-                                  : Expanded(
-                                      child: Text(
-                                        customerDetailsProvider.leadDetails !=
-                                                    null &&
-                                                customerDetailsProvider
-                                                    .leadDetails!.isNotEmpty
-                                            ? customerDetailsProvider
-                                                .leadDetails![0].customerName
-                                            : '',
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 18),
-                                      ),
-                                    ),
-                              const SizedBox(width: 10),
-                              if (settingsprovider.menuIsEditMap[
-                                      sideprovider.name == 'Lead /' ? 3 : 4] ==
-                                  1)
-                                IconButton(
-                                    onPressed: () async {
-                                      await leadDetailsProvider
-                                          .fetchLeadDetails(
-                                              widget.customerId, context);
-                                      // await leadProvider
-                                      //     .getLeadDropdowns(context);
-                                      leadProvider.setCutomerId(
-                                          int.parse(widget.customerId));
-                                      leadProvider
-                                              .enquirySourceController.text =
-                                          leadDetailsProvider
-                                              .leadDetails![0].enquirySourceName
-                                              .toString();
-                                      leadProvider.enquiryForController.text =
-                                          leadDetailsProvider
-                                              .leadDetails![0].enquiryForName
-                                              .toString();
-
-                                      dropDownProvider.selectedEnquirySourceId =
-                                          leadDetailsProvider
-                                              .leadDetails![0].enquirySourceId;
-
-                                      await showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return const NewLeadDrawerWidget(
-                                            isEdit: true,
-                                          );
-                                        },
-                                      );
-                                      customerDetailsProvider
-                                          .fetchLeadDetails(
-                                              widget.customerId, context)
-                                          .then((value) {
-                                        if (customerDetailsProvider
-                                                    .leadDetails !=
-                                                null &&
-                                            customerDetailsProvider
-                                                .leadDetails!.isNotEmpty) {
-                                          final lead = customerDetailsProvider
-                                              .leadDetails!.first;
-                                          final leadsProvider =
-                                              Provider.of<LeadsProvider>(
-                                                  context,
-                                                  listen: false);
-
-                                          leadsProvider
-                                              .getCustomFieldsByEnquiryForId(
-                                                  context,
-                                                  enquiryForId:
-                                                      lead.enquiryForId,
-                                                  leadId: lead.customerId,
-                                                  departmentId:
-                                                      lead.departmentId);
-                                        }
-                                      });
-                                    },
-                                    icon: const Icon(Icons.edit)),
-                              if (settingsprovider.menuIsDeleteMap[
-                                      sideprovider.name == 'Lead /' ? 3 : 4] ==
-                                  1)
-                                IconButton(
-                                  onPressed: () {
-                                    showConfirmationDialog(
-                                      context: context,
-                                      title: 'Delete Customer/Lead',
-                                      content:
-                                          'Are you sure you want to delete this ${sideprovider.name == 'Lead /' ? 'lead' : 'customer'}?',
-                                      onCancel: () =>
-                                          Navigator.of(context).pop(),
-                                      onConfirm: () async {
-                                        // Close confirmation dialog first to avoid blocking the loader
-                                        Navigator.of(context).pop();
-
-                                        // Perform deletion while page is still mounted
-                                        if (sideprovider.name == 'Lead /') {
-                                          await leadProvider.deleteLead(
-                                              context, widget.customerId);
-                                        } else {
-                                          await customerProvider.deleteCustomer(
-                                              context, widget.customerId);
-                                        }
-
-                                        if (context.mounted) {
-                                          // Optimistic removal from lists
-                                          leadProvider.removeLeadFromList(
-                                              widget.customerId);
-                                          customerProvider
-                                              .removeCustomerFromList(
-                                                  widget.customerId);
-
-                                          // Now go back from details page
-                                          if (Navigator.of(context).canPop()) {
-                                            Navigator.of(context).pop();
-                                          } else {
-                                            // Fallback for embedded views (Web logic)
-                                            sideprovider.replaceWidget(
-                                                true, '');
-                                            sideprovider.replaceWidgetCustomer(
-                                                true, '');
-                                          }
-
-                                          // Refresh the list silently on the previous page
-                                          customerProvider
-                                              .getSearchCustomers(context, isSilent: true);
-                                        }
-                                      },
-                                    );
-                                  },
-                                  icon: const Icon(Icons.delete_outline,
-                                      color: Colors.red),
-                                ),
-                              if (settingsprovider.menuIsViewMap[169] == 1 ||
-                                  settingsprovider.menuIsViewMap[169]
-                                          .toString() ==
-                                      '1')
-                                IconButton(
-                                  tooltip: 'Export PDF',
-                                  icon: const Icon(Icons.picture_as_pdf,
-                                      color: Colors.blue),
-                                  onPressed: () async {
-                                    if (customerDetailsProvider.leadDetails !=
-                                            null &&
-                                        customerDetailsProvider
-                                            .leadDetails!.isNotEmpty) {
-                                      final companyName = settingsprovider
-                                              .companyDetails.isNotEmpty
-                                          ? settingsprovider
-                                              .companyDetails[0].companyName
-                                          : '3rd Eye Security Systems';
-                                      await generateCustomerDetailsPdf(
-                                        customerData: customerDetailsProvider
-                                            .leadDetails![0],
-                                        customFields: leadProvider
-                                                .customFieldEnquiryFor ??
-                                            [],
-                                        companyName: companyName,
-                                      );
-                                    } else {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        const SnackBar(
-                                            content: Text(
-                                                'No details available to export')),
-                                      );
-                                    }
-                                  },
-                                ),
-                              if (settingsprovider.menuIsViewMap[179] == 1 ||
-                                  settingsprovider.menuIsViewMap[179]
-                                          .toString() ==
-                                      '1')
-                                IconButton(
-                                  tooltip: 'Download Image',
-                                  icon: const Icon(Icons.download,
-                                      color: Colors.blue),
-                                  onPressed: () async {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                          content: Text('Download started...')),
-                                    );
-                                    final bytes = await customerDetailsProvider
-                                        .getAnnexurePdfBytes(
-                                            '${HttpUrls.generateStatusImage}${widget.customerId}');
-                                    if (bytes != null && bytes.isNotEmpty) {
-                                      String extension = 'png';
-                                      if (bytes.length >= 4 &&
-                                          bytes[0] == 0x25 &&
-                                          bytes[1] == 0x50 &&
-                                          bytes[2] == 0x44 &&
-                                          bytes[3] == 0x46) {
-                                        extension = 'pdf';
-                                      } else if (bytes.length >= 2 &&
-                                          bytes[0] == 0xFF &&
-                                          bytes[1] == 0xD8) {
-                                        extension = 'jpg';
-                                      }
-
-                                      final latestProvider =
-                                          Provider.of<CustomerDetailsProvider>(
-                                              context,
-                                              listen: false);
-                                      String customerName = '';
-                                      if (latestProvider.leadDetails != null &&
-                                          latestProvider
-                                              .leadDetails!.isNotEmpty) {
-                                        customerName = latestProvider
-                                                .leadDetails![0].customerName ??
-                                            '';
-                                      }
-                                      if (customerName.isEmpty) {
-                                        final leadDetailsProv =
-                                            Provider.of<LeadDetailsProvider>(
-                                                context,
-                                                listen: false);
-                                        if (leadDetailsProv.leadDetails !=
-                                                null &&
-                                            leadDetailsProv
-                                                .leadDetails!.isNotEmpty) {
-                                          customerName = leadDetailsProv
-                                                  .leadDetails![0]
-                                                  .customerName ??
-                                              '';
-                                        }
-                                      }
-                                      if (customerName.isEmpty) {
-                                        final leadProv =
-                                            Provider.of<LeadsProvider>(context,
-                                                listen: false);
-                                        customerName =
-                                            leadProv.leadNameController.text;
-                                      }
-
-                                      customerName = customerName.replaceAll(
-                                          RegExp(r'[^a-zA-Z0-9_\-]'), '_');
-                                      if (customerName.trim().isEmpty) {
-                                        customerName =
-                                            'Customer_$widget.customerId';
-                                      }
-
-                                      String fileName =
-                                          '${customerName}_Image.$extension';
-
-                                      await FileDownloader.saveFile(
-                                          bytes, fileName);
-                                      if (context.mounted) {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          const SnackBar(
-                                              content:
-                                                  Text('Download complete!')),
-                                        );
-                                      }
-                                    } else {
-                                      if (context.mounted) {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          const SnackBar(
-                                              content: Text(
-                                                  'Failed to download image')),
-                                        );
-                                      }
-                                    }
-                                  },
-                                ),
-                              const SizedBox(width: 20),
-                              if (_canScrollLeft)
-                                IconButton(
-                                  padding: EdgeInsets.zero,
-                                  constraints: const BoxConstraints(),
-                                  onPressed: () => _scrollTabs(-150),
-                                  icon: const Icon(Icons.arrow_back_ios_new,
-                                      size: 16),
-                                ),
-                              Expanded(
-                                child: NotificationListener<Notification>(
-                                  onNotification: (notification) {
-                                    if (notification is ScrollNotification ||
-                                        notification
-                                            is ScrollMetricsNotification) {
-                                      final metrics = notification
-                                              is ScrollNotification
-                                          ? notification.metrics
-                                          : (notification
-                                                  as ScrollMetricsNotification)
-                                              .metrics;
-                                      if (metrics.maxScrollExtent > 0) {
-                                        setState(() {
-                                          _canScrollLeft = metrics.pixels > 5;
-                                          _canScrollRight = metrics.pixels <
-                                              metrics.maxScrollExtent - 5;
-                                        });
-                                      } else {
-                                        if (_canScrollLeft || _canScrollRight) {
-                                          setState(() {
-                                            _canScrollLeft = false;
-                                            _canScrollRight = false;
-                                          });
-                                        }
-                                      }
-                                    }
-                                    return false;
-                                  },
-                                  child: Container(
-                                    height: 42,
-                                    margin: const EdgeInsets.symmetric(
-                                        horizontal: 12, vertical: 8),
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFFF1F5F9),
-                                      borderRadius: BorderRadius.circular(4),
-                                    ),
-                                    child: TabBar(
-                                      controller: _tabController,
-                                      onTap: (index) {
-                                        _fetchDataForCurrentTab(
-                                            forceRefresh: true,
-                                            tabIndex: index);
-                                      },
-                                      labelColor: AppColors.primaryBlue,
-                                      unselectedLabelColor:
-                                          const Color(0xFF64748B),
-                                      indicator: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(4),
-                                        color: Colors.white,
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color:
-                                                Colors.black.withOpacity(0.04),
-                                            blurRadius: 4,
-                                            offset: const Offset(0, 2),
-                                          ),
-                                        ],
-                                      ),
-                                      indicatorPadding:
-                                          const EdgeInsets.symmetric(
-                                              vertical: 4, horizontal: 4),
-                                      indicatorSize: TabBarIndicatorSize.tab,
-                                      tabAlignment: TabAlignment.start,
-                                      isScrollable: true,
-                                      dividerColor: Colors.transparent,
-                                      labelPadding: const EdgeInsets.symmetric(
-                                          horizontal: 14),
-                                      labelStyle: GoogleFonts.plusJakartaSans(
-                                          fontWeight: FontWeight.w700,
-                                          fontSize: 13),
-                                      unselectedLabelStyle:
-                                          GoogleFonts.plusJakartaSans(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 13),
-                                      tabs: _tabs,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              if (_canScrollRight)
-                                IconButton(
-                                  padding: EdgeInsets.zero,
-                                  constraints: const BoxConstraints(),
-                                  onPressed: () => _scrollTabs(150),
-                                  icon: const Icon(Icons.arrow_forward_ios,
-                                      size: 16),
-                                ),
-                              IconButton(
-                                padding: EdgeInsets.zero,
-                                constraints: const BoxConstraints(),
-                                tooltip: "Refresh",
-                                onPressed: () {
-                                  _refreshAnimationController.forward(from: 0.0);
-                                  _fetchDataForCurrentTab(forceRefresh: true);
-                                },
-                                icon: RotationTransition(
-                                  turns: _refreshAnimationController,
-                                  child: const Icon(Icons.refresh,
-                                      color: AppColors.primaryBlue, size: 20),
-                                ),
-                              ),
-                              if (settingsprovider.menuIsSaveMap[13] == 1 &&
-                                  _isControllerInitialized &&
-                                  _tabs[_tabController.index].text == "Tasks")
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8.0),
-                                  child: ElevatedButton.icon(
-                                    onPressed: () {
-                                      customerDetailsProvider.customerId =
-                                          widget.customerId;
-                                      customerDetailsProvider
-                                          .clearTaskDetails();
-                                      showDialog(
-                                        barrierDismissible: false,
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return TaskCreationWidget(
-                                            isEdit: false,
-                                            taskId: '0',
-                                          );
-                                        },
-                                      );
-                                    },
-                                    icon: const Icon(Icons.add),
-                                    label: const Text('Create Task'),
-                                    style: ElevatedButton.styleFrom(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(4)),
-                                      backgroundColor: AppColors.primaryBlue,
-                                      foregroundColor: Colors.white,
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 16, vertical: 12),
-                                    ),
-                                  ),
-                                ),
-                              if (settingsprovider.menuIsSaveMap[37] == 1 &&
-                                  _isControllerInitialized &&
-                                  _tabs[_tabController.index].text ==
-                                      "CheckList Management")
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8.0),
-                                  child: ElevatedButton.icon(
-                                    onPressed: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return AddCheckListManagementWidget(
-                                            documentChecklistModel:
-                                                DocumentChecklistModel(),
-                                          );
-                                        },
-                                      ).then((value) {
-                                        if (value == true) {
-                                          setState(() {
-                                            _checklistKey = UniqueKey();
-                                          });
-                                        }
-                                      });
-                                    },
-                                    icon: const Icon(Icons.add),
-                                    label: const Text('Add Checklist'),
-                                    style: ElevatedButton.styleFrom(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(4)),
-                                      backgroundColor: AppColors.primaryBlue,
-                                      foregroundColor: Colors.white,
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 16, vertical: 12),
-                                    ),
-                                  ),
-                                ),
-                              if (settingsprovider.menuIsSaveMap[15] == 1 &&
-                                  _isControllerInitialized &&
-                                  _tabs[_tabController.index].text ==
-                                      "Periodic Service")
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8.0),
-                                  child: ElevatedButton.icon(
-                                    onPressed: () {
-                                      customerDetailsProvider.customerId =
-                                          widget.customerId;
-                                      showDialog(
-                                        barrierDismissible: false,
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return AmcCreationWidget(
-                                              amcId: '0',
-                                              customerId: widget.customerId,
-                                              isEdit: false);
-                                        },
-                                      );
-                                    },
-                                    icon: const Icon(Icons.add),
-                                    label: const Text('Add Periodic Service'),
-                                    style: ElevatedButton.styleFrom(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(4)),
-                                      backgroundColor: AppColors.primaryBlue,
-                                      foregroundColor: Colors.white,
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 16, vertical: 12),
-                                    ),
-                                  ),
-                                ),
-                              if (settingsprovider.menuIsSaveMap[18] == 1 &&
-                                  _isControllerInitialized &&
-                                  _tabs[_tabController.index].text == "Receipt")
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8.0),
-                                  child: ElevatedButton.icon(
-                                    onPressed: () {
-                                      customerDetailsProvider.customerId =
-                                          widget.customerId;
-                                      customerDetailsProvider
-                                          .clearRecieptDetails();
-                                      showDialog(
-                                        barrierDismissible: false,
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return RecieptCreationWidget(
-                                              recieptId: '0',
-                                              customerId: widget.customerId,
-                                              isEdit: false);
-                                        },
-                                      );
-                                    },
-                                    icon: const Icon(Icons.add),
-                                    label: const Text('Add Receipt'),
-                                    style: ElevatedButton.styleFrom(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(4)),
-                                      backgroundColor: AppColors.primaryBlue,
-                                      foregroundColor: Colors.white,
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 16, vertical: 12),
-                                    ),
-                                  ),
-                                ),
-                              if (settingsprovider.menuIsSaveMap[14] == 1 &&
-                                  _isControllerInitialized &&
-                                  _tabs[_tabController.index].text ==
-                                      "Complaints")
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8.0),
-                                  child: ElevatedButton.icon(
-                                    onPressed: () {
-                                      customerDetailsProvider.customerId =
-                                          widget.customerId;
-                                      customerDetailsProvider
-                                          .clearServiceDetails();
-                                      showDialog(
-                                        context: context,
-                                        barrierDismissible: false,
-                                        builder: (BuildContext context) {
-                                          return ServiceCreationWidget(
-                                              taskId: '0',
-                                              isEdit: false,
-                                              customerId: widget.customerId);
-                                        },
-                                      );
-                                    },
-                                    icon: const Icon(Icons.add),
-                                    label: const Text('Add Complaint'),
-                                    style: ElevatedButton.styleFrom(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(4)),
-                                      backgroundColor: AppColors.primaryBlue,
-                                      foregroundColor: Colors.white,
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 16, vertical: 12),
-                                    ),
-                                  ),
-                                ),
-                              if (settingsprovider.menuIsSaveMap[81] == 1 &&
-                                  _isControllerInitialized &&
-                                  _tabs[_tabController.index].text == "Payment")
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8.0),
-                                  child: ElevatedButton.icon(
-                                    onPressed: () {
-                                      customerDetailsProvider
-                                          .clearPaymentDetails();
-                                      showDialog(
-                                        context: context,
-                                        barrierDismissible: false,
-                                        builder: (BuildContext context) {
-                                          return AddPaymentWidget(
-                                              customerId: widget.customerId);
-                                        },
-                                      );
-                                    },
-                                    icon: const Icon(Icons.add),
-                                    label: const Text('Add Payment'),
-                                    style: ElevatedButton.styleFrom(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(4)),
-                                      backgroundColor: AppColors.primaryBlue,
-                                      foregroundColor: Colors.white,
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 16, vertical: 12),
-                                    ),
-                                  ),
-                                ),
-                              if (settingsprovider.menuIsSaveMap[16] == 1 &&
-                                  _isControllerInitialized &&
-                                  _tabs[_tabController.index].text ==
-                                      "Quotations")
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8.0),
-                                  child: ElevatedButton.icon(
-                                    onPressed: () {
-                                      if (customerDetailsProvider
-                                          .hasPendingApprovalQuotation()) {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          const SnackBar(
-                                            content: Text(
-                                                'Approval pending quotations are there , please clear that'),
-                                            backgroundColor: Colors.red,
-                                          ),
-                                        );
-                                        return;
-                                      }
-                                      customerDetailsProvider.customerId =
-                                          widget.customerId;
-                                      customerDetailsProvider
-                                          .qsubsidyAmountController.text = '0';
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              QuotationCreationWidget(
-                                                  quotationId: '0',
-                                                  isEdit: false,
-                                                  customerId:
-                                                      widget.customerId),
-                                        ),
-                                      );
-                                    },
-                                    icon: const Icon(Icons.add),
-                                    label: const Text('New Quotation '),
-                                    style: ElevatedButton.styleFrom(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(4)),
-                                      backgroundColor: AppColors.primaryBlue,
-                                      foregroundColor: Colors.white,
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 16, vertical: 12),
-                                    ),
-                                  ),
-                                ),
-                            ],
-                          ),
-                        ),
                         //down
                         Expanded(
                           child: Row(

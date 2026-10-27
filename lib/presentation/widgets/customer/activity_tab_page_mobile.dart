@@ -3,17 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:vidyanexis/constants/app_colors.dart';
-import 'package:vidyanexis/controller/drop_down_provider.dart';
+import 'package:vidyanexis/constants/app_colors.dart' hide StatusUtils;
 import 'package:vidyanexis/controller/lead_details_provider.dart';
-import 'package:vidyanexis/controller/leads_provider.dart';
+import 'package:vidyanexis/controller/models/follow_up_history.dart';
 import 'package:vidyanexis/controller/models/search_leads_model.dart';
-import 'package:vidyanexis/controller/settings_provider.dart';
-import 'package:vidyanexis/presentation/widgets/customer/add_follow_up_dialog.dart';
-import 'package:vidyanexis/presentation/widgets/home/visit_history_widget.dart';
-import 'package:vidyanexis/controller/lead_check_in_provider.dart';
-import 'package:vidyanexis/utils/extensions.dart';
 import 'package:vidyanexis/presentation/widgets/home/edit_remark_dialog.dart';
+import 'package:vidyanexis/utils/status_utils.dart';
 
 class ActivityTabPage extends StatefulWidget {
   final SearchLeadModel? lead;
@@ -173,11 +168,6 @@ class _ActivityTabPageState extends State<ActivityTabPage> {
       final leadDetailsProvider =
           Provider.of<LeadDetailsProvider>(context, listen: false);
       leadDetailsProvider.fetchFollowUpHistory(widget.customerId.toString());
-
-      final leadCheckInProvider =
-          Provider.of<LeadCheckInProvider>(context, listen: false);
-      leadCheckInProvider.fetchLeadCheckInReports(
-          context, widget.customerId.toString());
     });
     super.initState();
   }
@@ -196,132 +186,9 @@ class _ActivityTabPageState extends State<ActivityTabPage> {
   Widget build(BuildContext context) {
     final leadDetailsProvider = Provider.of<LeadDetailsProvider>(context);
 
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-          backgroundColor: AppColors.whiteColor,
-          body: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Activity',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        color: const Color(0xFF1E293B),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        final settingsProvider = Provider.of<SettingsProvider>(
-                            context,
-                            listen: false);
-
-                        final leadsProvider =
-                            Provider.of<LeadsProvider>(context, listen: false);
-                        leadsProvider.statusController.clear();
-                        leadsProvider.assignToFollowUpController.clear();
-                        leadsProvider.messageController.clear();
-                        leadsProvider.nextFollowUpDateController.clear();
-                        final dropDownProvider = Provider.of<DropDownProvider>(
-                            context,
-                            listen: false);
-                        dropDownProvider.selectedStatusId = null;
-                        dropDownProvider.selectedUserId = null;
-                        leadsProvider.setCutomerId(
-                            int.parse(widget.customerId.toString()));
-
-                        dropDownProvider.selectedStatusId =
-                            int.parse(widget.lead?.statusId.toString() ?? "0");
-                        dropDownProvider.selectedUserId =
-                            int.parse(widget.lead?.toUserId.toString() ?? "0");
-                        leadsProvider.setCutomerId(widget.customerId);
-                        leadsProvider.statusController.text =
-                            widget.lead?.statusName ?? "";
-                        leadsProvider.branchController.text =
-                            widget.lead?.branchName ?? "";
-                        settingsProvider.selectedBranchId =
-                            widget.lead?.branchId ?? 0;
-                        leadsProvider.assignToFollowUpController.text =
-                            widget.lead?.toUserName ?? "";
-                        leadsProvider.departmentController.text =
-                            widget.lead?.departmentName ?? "";
-                        settingsProvider.selectedDepartmentId =
-                            int.parse(widget.lead?.departmentId ?? "0");
-                        leadsProvider.nextFollowUpDateController.text =
-                            (widget.lead?.nextFollowUpDate ?? '').isNotEmpty
-                                ? DateFormat('dd MMM yyyy').format(
-                                    DateTime.tryParse(
-                                            widget.lead!.nextFollowUpDate) ??
-                                        DateTime(2000, 1, 1))
-                                : '';
-                        leadsProvider.messageController.clear();
-                        Navigator.push(context, MaterialPageRoute(
-                          builder: (context) {
-                            return AddFollowupDialog(
-                              customerName: widget.lead?.customerName ?? '',
-                              statusId: widget.lead?.statusId.toString() ?? '0',
-                              amount: widget.lead?.amount,
-                            );
-                          },
-                        ));
-                      },
-                      child: Container(
-                        width: 44,
-                        height: 44,
-                        decoration: BoxDecoration(
-                          color: AppColors.secondaryBlue,
-                          borderRadius: BorderRadius.circular(4),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.secondaryBlue.withOpacity(0.3),
-                              blurRadius: 8,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: const Icon(
-                          Icons.add_rounded,
-                          color: Colors.white,
-                          size: 26,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                color: AppColors.whiteColor,
-                child: TabBar(
-                  dividerHeight: 0,
-                  indicatorColor: AppColors.primaryBlue,
-                  labelColor: AppColors.primaryBlue,
-                  unselectedLabelColor: AppColors.textGrey3,
-                  labelStyle: GoogleFonts.plusJakartaSans(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  indicatorSize: TabBarIndicatorSize.label,
-                  tabs: const [
-                    Tab(text: "ACTIVITY"),
-                    Tab(text: "VISITS"),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: TabBarView(
-                  children: [
-                    _buildActivityFlow(leadDetailsProvider),
-                    _buildVisitFlow(),
-                  ],
-                ),
-              ),
-            ],
-          )),
+    return Scaffold(
+      backgroundColor: AppColors.whiteColor,
+      body: _buildActivityFlow(leadDetailsProvider),
     );
   }
 
@@ -355,271 +222,418 @@ class _ActivityTabPageState extends State<ActivityTabPage> {
       );
     }
 
-    return ListView.separated(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      separatorBuilder: (context, index) => const SizedBox(height: 12),
+    return ListView.builder(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       itemCount: leadDetailsProvider.followUpHistory!.length,
       itemBuilder: (context, index) {
         final lead = leadDetailsProvider.followUpHistory![index];
-
-        return Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(4),
-            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.03),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(4),
-                            border: Border.all(color: AppColors.grey)),
-                        height: 32,
-                        width: 32,
-                        child: Center(
-                          child: Image.asset(
-                            'assets/images/lead_icon_4.png',
-                            height: 16,
-                            width: 16,
-                            color: AppColors.parseColor(lead.colorCode),
-                          ),
-                        )),
-                    const SizedBox(width: 4),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Text(
-                            lead.statusName,
-                            style: GoogleFonts.plusJakartaSans(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                color: AppColors.textBlack),
-                          ),
-                          const SizedBox(height: 2),
-                          RichText(
-                            text: TextSpan(
-                              style: GoogleFonts.plusJakartaSans(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w400,
-                                color: AppColors.textGrey3,
-                              ),
-                              children: [
-                                const TextSpan(text: 'by '),
-                                TextSpan(
-                                  text: lead.byUserName,
-                                  style: GoogleFonts.plusJakartaSans(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppColors.textGrey3,
-                                  ),
-                                ),
-                                const TextSpan(text: ' to '),
-                                TextSpan(
-                                  text: lead.toUserName,
-                                  style: GoogleFonts.plusJakartaSans(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppColors.textGrey3,
-                                  ),
-                                ),
-                                TextSpan(
-                                  text: ' • ${lead.entryDate.toDate()}',
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          if (lead.remark.isNotEmpty)
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    lead.remark,
-                                    softWrap: true,
-                                    style: GoogleFonts.plusJakartaSans(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400,
-                                      color: AppColors.textBlack,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                InkWell(
-                                  onTap: () {
-                                    EditRemarkDialog.show(
-                                      context,
-                                      customerId: widget.customerId.toString(),
-                                      followUpId: lead.followUpId,
-                                      initialRemark: lead.remark,
-                                      statusId: lead.statusId,
-                                      statusName: lead.statusName,
-                                      toUserName: lead.toUserName,
-                                      followUpDate: lead.nextFollowUpDate,
-                                    );
-                                  },
-                                  borderRadius: BorderRadius.circular(4),
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8, vertical: 3),
-                                    decoration: BoxDecoration(
-                                      color: AppColors.primaryBlue
-                                          .withOpacity(0.08),
-                                      borderRadius: BorderRadius.circular(4),
-                                    ),
-                                    child: const Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(
-                                          Icons.edit_outlined,
-                                          size: 12,
-                                          color: AppColors.primaryBlue,
-                                        ),
-                                        SizedBox(width: 4),
-                                        Text(
-                                          'Edit',
-                                          style: TextStyle(
-                                            fontSize: 11,
-                                            fontWeight: FontWeight.w600,
-                                            color: AppColors.primaryBlue,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          if (lead.remark.isNotEmpty) const SizedBox(height: 8),
-                          RichText(
-                            text: TextSpan(
-                              style: GoogleFonts.plusJakartaSans(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w400,
-                                color: AppColors.textGrey3,
-                              ),
-                              children: [
-                                const TextSpan(text: 'Next Follow-up, '),
-                                TextSpan(
-                                  text: lead.nextFollowUpDate.toWeekdayDate(),
-                                  style: GoogleFonts.plusJakartaSans(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppColors.textGrey3,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                if (lead.audios.isNotEmpty) ...[
-                  const Text("Audio", style: TextStyle(color: Colors.grey)),
-                  const SizedBox(height: 6),
-                  Row(
-                    children: [
-                      InkWell(
-                        onTap: () async {
-                          final url = lead.audios.first.filePath ?? '';
-                          if (url.isEmpty) return;
-                          await _togglePlay(
-                            url: url,
-                            audioIndex: index,
-                          );
-                        },
-                        child: Container(
-                          width: 36,
-                          height: 36,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFF6F7F9),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: Icon((_playingState != null &&
-                                  _playingState!.audioParentIndex == index &&
-                                  _playingState!.isPlaying)
-                              ? Icons.pause
-                              : Icons.play_arrow),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: SliderTheme(
-                          data: const SliderThemeData(trackHeight: 2),
-                          child: Slider(
-                            min: 0,
-                            max: (_playingState != null &&
-                                    _playingState!.audioParentIndex == index
-                                ? _playingState!.duration.inMilliseconds
-                                    .toDouble()
-                                    .clamp(0.0, double.infinity)
-                                : 1.0),
-                            value: (_playingState != null &&
-                                    _playingState!.audioParentIndex == index
-                                ? _playingState!.position.inMilliseconds
-                                    .clamp(0,
-                                        _playingState!.duration.inMilliseconds)
-                                    .toDouble()
-                                : 0.0),
-                            onChanged: (_playingState != null &&
-                                    _playingState!.audioParentIndex == index)
-                                ? (v) async {
-                                    final pos =
-                                        Duration(milliseconds: v.toInt());
-                                    await _playingState!.player?.seek(pos);
-                                  }
-                                : null,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                          (_playingState != null &&
-                                  _playingState!.audioParentIndex == index)
-                              ? '${_format(_playingState!.position)} / ${_format(_playingState!.duration)}'
-                              : '${_format(Duration.zero)} / ${_format(Duration.zero)}',
-                          style: const TextStyle(
-                              fontSize: 12, color: Colors.grey)),
-                    ],
-                  ),
-                ],
-              ],
-            ),
-          ),
-        );
+        return _buildActivityCard(context, lead, index);
       },
     );
   }
 
-  Widget _buildVisitFlow() {
-    return Consumer<LeadCheckInProvider>(
-      builder: (context, provider, child) {
-        if (provider.isLoading) {
-          return const Center(child: CircularProgressIndicator());
-        }
+  Widget _buildActivityCard(
+      BuildContext context, FollowUpHistory lead, int index) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(4),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+        border: Border.all(color: const Color(0xFFE9EDF1)),
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Top Row: Date & Status badge
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryBlue.withValues(alpha: 0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.history,
+                        size: 16,
+                        color: AppColors.primaryBlue,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: Text(
+                        _formatDate(lead.entryDate),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                          color: Colors.black87,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              _buildStatusBadge(lead),
+            ],
+          ),
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 12),
+            child: Divider(color: Color(0xFFE9EDF1), height: 1),
+          ),
+          // Assignment & Next Follow up
+          Wrap(
+            spacing: 24,
+            runSpacing: 12,
+            children: [
+              _buildInfoColumn(
+                'To',
+                _buildUserCell(lead.toUserName),
+              ),
+              _buildInfoColumn(
+                'By',
+                _buildUserCell(lead.byUserName),
+              ),
+              if (lead.nextFollowUpDate.isNotEmpty)
+                _buildInfoColumn(
+                  'Next Follow-up',
+                  _buildNextFollowUpCell(lead.nextFollowUpDate),
+                ),
+            ],
+          ),
+          if (lead.remark.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF8FAFC),
+                borderRadius: BorderRadius.circular(4),
+                border: Border.all(color: const Color(0xFFE9EDF1)),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Remarks',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: Colors.grey,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          EditRemarkDialog.show(
+                            context,
+                            customerId: widget.customerId.toString(),
+                            followUpId: lead.followUpId,
+                            initialRemark: lead.remark,
+                            statusId: lead.statusId,
+                            statusName: lead.statusName,
+                            toUserName: lead.toUserName,
+                            followUpDate: lead.nextFollowUpDate,
+                          );
+                        },
+                        borderRadius: BorderRadius.circular(4),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: AppColors.primaryBlue
+                                .withValues(alpha: 0.08),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.edit_outlined,
+                                size: 12,
+                                color: AppColors.primaryBlue,
+                              ),
+                              SizedBox(width: 4),
+                              Text(
+                                'Edit',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.primaryBlue,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    lead.remark,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      color: Colors.black87,
+                      height: 1.4,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+          if (lead.audios.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            _buildAudioPlayer(lead, index),
+          ],
+        ],
+      ),
+    );
+  }
 
-        final history = provider.getHistoryForCustomer(widget.customerId);
-        return SingleChildScrollView(
-          child: VisitHistoryWidget(history: history),
-        );
-      },
+  Widget _buildStatusBadge(FollowUpHistory lead) {
+    Color bgColor = const Color(0xFFD9FAD9);
+    Color textColor = const Color(0xFF407537);
+
+    if (lead.statusId > 0) {
+      bgColor = StatusUtils.getStatusColor(lead.statusId);
+      textColor = StatusUtils.getStatusTextColor(lead.statusId);
+    } else {
+      final s = lead.statusName.toLowerCase();
+      if (s.contains('not') ||
+          s.contains('lost') ||
+          s.contains('reject') ||
+          s.contains('cancel') ||
+          s.contains('drop')) {
+        bgColor = const Color(0xFFFEE2E2);
+        textColor = const Color(0xFFDC2626);
+      } else if (s.contains('pending') ||
+          s.contains('hold') ||
+          s.contains('wait')) {
+        bgColor = const Color(0xFFFEF3C7);
+        textColor = const Color(0xFFD97706);
+      } else if (lead.colorCode.isNotEmpty) {
+        final c = AppColors.parseColor(lead.colorCode);
+        bgColor = c.withValues(alpha: 0.15);
+        textColor = c;
+      }
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Text(
+        lead.statusName.isNotEmpty ? lead.statusName : 'Follow up',
+        style: TextStyle(
+          color: textColor,
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildUserCell(String userName) {
+    if (userName.isEmpty || userName == 'null') {
+      return const Text("-",
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+            color: AppColors.textBlack,
+          ));
+    }
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        CircleAvatar(
+          radius: 10,
+          backgroundColor: getAvatarColor(userName),
+          child: Text(
+            userName[0].toUpperCase(),
+            style: const TextStyle(
+              fontSize: 10,
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Flexible(
+          child: Text(
+            userName,
+            style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: AppColors.textBlack,
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildNextFollowUpCell(String nextFollowUpDate) {
+    final dateFormatted = _formatDate(nextFollowUpDate, includeTime: false);
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const Icon(Icons.calendar_today_outlined,
+            size: 14, color: AppColors.textGrey3),
+        const SizedBox(width: 6),
+        Flexible(
+          child: Text(
+            dateFormatted,
+            style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: AppColors.textBlack,
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildInfoColumn(String label, Widget child) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 11,
+            color: Colors.grey,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: 6),
+        child,
+      ],
+    );
+  }
+
+  String _formatDate(String dateStr, {bool includeTime = true}) {
+    if (dateStr.isEmpty || dateStr == 'null') return '-';
+    try {
+      String cleaned = dateStr
+          .replaceFirst(RegExp(r'00:00:00\.000\s*'), '')
+          .replaceFirst(RegExp(r'\.000.*$'), '')
+          .trim()
+          .replaceAll(RegExp(r'\s+'), ' ');
+
+      final dateTime = DateTime.tryParse(cleaned);
+      if (dateTime != null) {
+        return includeTime
+            ? DateFormat('dd MMM yyyy hh:mm:ss a').format(dateTime)
+            : DateFormat('dd MMM yyyy').format(dateTime);
+      }
+
+      try {
+        final parts = cleaned.split('-');
+        if (parts.length == 3 &&
+            parts[0].length == 2 &&
+            parts[2].length == 4) {
+          final dt = DateTime(
+              int.parse(parts[2]), int.parse(parts[1]), int.parse(parts[0]));
+          return DateFormat('dd MMM yyyy').format(dt);
+        }
+      } catch (_) {}
+
+      return dateStr;
+    } catch (e) {
+      return dateStr;
+    }
+  }
+
+  Widget _buildAudioPlayer(FollowUpHistory lead, int index) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text("Audio", style: TextStyle(color: Colors.grey, fontSize: 11)),
+        const SizedBox(height: 6),
+        Row(
+          children: [
+            InkWell(
+              onTap: () async {
+                final url = lead.audios.first.filePath ?? '';
+                if (url.isEmpty) return;
+                await _togglePlay(
+                  url: url,
+                  audioIndex: index,
+                );
+              },
+              child: Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF6F7F9),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Icon((_playingState != null &&
+                        _playingState!.audioParentIndex == index &&
+                        _playingState!.isPlaying)
+                    ? Icons.pause
+                    : Icons.play_arrow),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: SliderTheme(
+                data: const SliderThemeData(trackHeight: 2),
+                child: Slider(
+                  min: 0,
+                  max: (_playingState != null &&
+                          _playingState!.audioParentIndex == index
+                      ? _playingState!.duration.inMilliseconds
+                          .toDouble()
+                          .clamp(0.0, double.infinity)
+                      : 1.0),
+                  value: (_playingState != null &&
+                          _playingState!.audioParentIndex == index
+                      ? _playingState!.position.inMilliseconds
+                          .clamp(
+                              0, _playingState!.duration.inMilliseconds)
+                          .toDouble()
+                      : 0.0),
+                  onChanged: (_playingState != null &&
+                          _playingState!.audioParentIndex == index)
+                      ? (v) async {
+                          final pos = Duration(milliseconds: v.toInt());
+                          await _playingState!.player?.seek(pos);
+                        }
+                      : null,
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Text(
+                (_playingState != null &&
+                        _playingState!.audioParentIndex == index)
+                    ? '${_format(_playingState!.position)} / ${_format(_playingState!.duration)}'
+                    : '${_format(Duration.zero)} / ${_format(Duration.zero)}',
+                style: const TextStyle(fontSize: 12, color: Colors.grey)),
+          ],
+        ),
+      ],
     );
   }
 }

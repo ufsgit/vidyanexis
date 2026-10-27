@@ -68,8 +68,13 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile> {
     _buildTabs(settingsprovider);
 
     if (widget.initialTab != null) {
-      final index = tabLabels.indexWhere(
-          (label) => label.trim().toLowerCase() == widget.initialTab!.trim().toLowerCase());
+      final target = widget.initialTab!.trim().toLowerCase();
+      final index = tabLabels.indexWhere((label) {
+        final l = label.trim().toLowerCase();
+        return l == target ||
+            (target == 'activity' && l == 'history') ||
+            (target == 'history' && l == 'activity');
+      });
       if (index != -1) {
         _selectedIndex = index;
       }
@@ -119,7 +124,7 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile> {
     }
 
     if (settingsprovider.menuIsViewMap[100] == 1) {
-      tabLabels.add("Activity");
+      tabLabels.add("History");
       tabPages.add(
           ActivityTabPage(lead: widget.lead, customerId: widget.customerId));
     }
