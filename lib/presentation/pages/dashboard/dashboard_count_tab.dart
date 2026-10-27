@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/controller/dashboard_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/presentation/pages/dashboard/customer_data_page.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/lead_data_page.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/task_data_page.dart';
 
@@ -62,7 +63,8 @@ class DashboardCountTab extends StatelessWidget {
       if (settingsProvider.menuIsViewMap[129] == 1 ||
           settingsProvider.menuIsViewMap[138] == 1)
         'Completed_Leads',
-      if (settingsProvider.menuIsViewMap[187] == 1) 'Total_Task',
+      if (settingsProvider.menuIsViewMap[187] == 1) 
+        'Total_Task',
       if (settingsProvider.menuIsViewMap[228] == 1)
         'Converted_Customers',
       if (settingsProvider.menuIsViewMap[229] == 1)
@@ -136,11 +138,12 @@ class DashboardCountTab extends StatelessWidget {
                 keyword: keyword,
                 count: count,
                 theme: theme,
-                onTap: () {
+                onTap: () async {
                   if (keyword == 'Total_Task' ||
                       keyword == 'Follow_Up_Tasks' ||
-                      keyword == 'No_Feasibility_Tasks') {
-                    Navigator.push(
+                      keyword == 'No_Feasibility_Tasks'||
+                      keyword == 'Converted_Documents_Pending') {
+                    await Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => TotalTaskDataPage(
@@ -151,8 +154,21 @@ class DashboardCountTab extends StatelessWidget {
                         ),
                       ),
                     );
+                  } else if (keyword == 'Converted_Customers' ||
+                      keyword == 'On_Hold_Leads') {
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CustomerDataPage(
+                          source: keyword,
+                          fromDate: dashBoardProvider.formattedFromDate,
+                          toDate: dashBoardProvider.formattedToDate,
+                          user: dashBoardProvider.selectedUser,
+                        ),
+                      ),
+                    );
                   } else {
-                    Navigator.push(
+                    await Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => LeadDataPage(
@@ -163,6 +179,11 @@ class DashboardCountTab extends StatelessWidget {
                         ),
                       ),
                     );
+                  }
+
+                  // Refresh counts when user returns from any card page
+                  if (context.mounted) {
+                    await dashBoardProvider.getLeadDashboardCount(context: context);
                   }
                 },
               );
@@ -365,7 +386,7 @@ class _DashboardCardState extends State<_DashboardCard> {
                     Text(
                       widget.count.toString(),
                       style: const TextStyle(
-                        fontSize: 32,
+                        fontSize: 28,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
@@ -375,12 +396,12 @@ class _DashboardCardState extends State<_DashboardCard> {
                     Text(
                       displayTitle,
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 12,
                         fontWeight: FontWeight.w600,
                         color: Colors.white.withOpacity(0.9),
                         letterSpacing: 0.5,
                       ),
-                      maxLines: 1,
+                      maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ],
