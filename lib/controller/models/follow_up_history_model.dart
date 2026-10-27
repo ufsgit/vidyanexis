@@ -8,6 +8,8 @@ class FollowUpHistoryModel {
   String? assignedByName;
   String? statusId;
   String? colorCode;
+  String? taskTypeName;
+  String? departmentName;
 
   FollowUpHistoryModel(
       {this.followUpId,
@@ -18,7 +20,9 @@ class FollowUpHistoryModel {
       this.assignedToName,
       this.assignedByName,
       this.statusId,
-      this.colorCode});
+      this.colorCode,
+      this.taskTypeName,
+      this.departmentName});
 
   FollowUpHistoryModel.fromJson(Map<String, dynamic> json) {
     followUpId = json['FollowUp_Id']?.toString() ??
@@ -35,6 +39,12 @@ class FollowUpHistoryModel {
         json['By_User_Name']?.toString();
     statusId = json['Status_Id']?.toString();
     colorCode = json['Color_Code']?.toString();
+    taskTypeName = json['Task_Type_Name']?.toString() ??
+        json['task_type_name']?.toString() ??
+        json['Task_Type']?.toString();
+    departmentName = json['Department_Name']?.toString() ??
+        json['department_name']?.toString() ??
+        json['Department']?.toString();
   }
 
   Map<String, dynamic> toJson() {
@@ -48,6 +58,8 @@ class FollowUpHistoryModel {
     data['Assigned_By_Name'] = assignedByName;
     data['Status_Id'] = statusId;
     data['Color_Code'] = colorCode;
+    data['Task_Type_Name'] = taskTypeName;
+    data['Department_Name'] = departmentName;
     return data;
   }
 }

@@ -12,6 +12,8 @@ class FollowUpHistory {
   final String colorCode;
   final int followUp;
   final List<FollowUpAudio> audios;
+  final String taskTypeName;
+  final String departmentName;
 
   FollowUpHistory({
     this.followUpId = '',
@@ -27,6 +29,8 @@ class FollowUpHistory {
     required this.followUp,
     required this.colorCode,
     required this.audios,
+    this.taskTypeName = '',
+    this.departmentName = '',
   });
 
   factory FollowUpHistory.fromJson(Map<String, dynamic> json) {
@@ -52,6 +56,14 @@ class FollowUpHistory {
           ? List<FollowUpAudio>.from((json['Audio_Files'] as List)
               .map((audio) => FollowUpAudio.fromJson(audio)))
           : <FollowUpAudio>[],
+      taskTypeName: json['Task_Type_Name']?.toString() ??
+          json['task_type_name']?.toString() ??
+          json['Task_Type']?.toString() ??
+          '',
+      departmentName: json['Department_Name']?.toString() ??
+          json['department_name']?.toString() ??
+          json['Department']?.toString() ??
+          '',
     );
   }
 }

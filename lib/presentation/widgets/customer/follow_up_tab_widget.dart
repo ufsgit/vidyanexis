@@ -5,6 +5,7 @@ import 'package:vidyanexis/constants/app_colors.dart' hide StatusUtils;
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/models/follow_up_history_model.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/edit_remark_dialog.dart';
 import 'package:vidyanexis/utils/status_utils.dart';
 
@@ -16,6 +17,8 @@ class FollowUpTabWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final settingsProvider = Provider.of<SettingsProvider>(context);
+
     return Consumer<CustomerDetailsProvider>(
       builder: (context, provider, child) {
         if (provider.isFollowUpHistoryLoading) {
@@ -35,18 +38,29 @@ class FollowUpTabWidget extends StatelessWidget {
           );
         }
 
+        final bool isRamcoHistory = settingsProvider.ramcoHistory == 1;
+
+        final bool showTaskType = isRamcoHistory ||
+            provider.followUpHistory.any((h) =>
+                h.taskTypeName != null && h.taskTypeName!.trim().isNotEmpty);
+
+        final bool showDepartment = (!isRamcoHistory) ||
+            provider.followUpHistory.any((h) =>
+                h.departmentName != null && h.departmentName!.trim().isNotEmpty);
+
         if (!AppStyles.isWebScreen(context)) {
-          return _buildMobileList(context, provider);
+          return _buildMobileList(
+              context, provider, showTaskType, showDepartment);
         }
 
-        return _buildWebTable(context, provider);
+        return _buildWebTable(context, provider, showTaskType, showDepartment);
       },
     );
   }
 
   /// Web Table View matching the Tasks tab design
-  Widget _buildWebTable(
-      BuildContext context, CustomerDetailsProvider provider) {
+  Widget _buildWebTable(BuildContext context, CustomerDetailsProvider provider,
+      bool showTaskType, bool showDepartment) {
     return Container(
       margin: const EdgeInsets.only(top: 10),
       decoration: const BoxDecoration(
@@ -65,8 +79,10 @@ class FollowUpTabWidget extends StatelessWidget {
                 _buildHeaderCell('#', width: 50.0),
                 _buildHeaderCell('Follow-up Date', flex: 2),
                 _buildHeaderCell('Status', flex: 2),
-                _buildHeaderCell('To', flex: 2),
-                _buildHeaderCell('By', flex: 2),
+                if (showTaskType) _buildHeaderCell('Task Types', flex: 2),
+                if (showDepartment) _buildHeaderCell('Department', flex: 2),
+                _buildHeaderCell('Assigned To', flex: 2),
+                _buildHeaderCell('Assigned By', flex: 2),
                 _buildHeaderCell('Next Follow-up', flex: 2),
                 _buildHeaderCell('Remarks', flex: 3),
                 _buildHeaderCell('Options', flex: 1, textAlign: TextAlign.center),
@@ -98,6 +114,16 @@ class FollowUpTabWidget extends StatelessWidget {
                             flex: 2,
                             child: _buildStatusCell(history),
                           ),
+                          if (showTaskType)
+                            _buildWidgetCell(
+                              flex: 2,
+                              child: _buildTaskTypeCell(history.taskTypeName),
+                            ),
+                          if (showDepartment)
+                            _buildWidgetCell(
+                              flex: 2,
+                              child: _buildDepartmentCell(history.departmentName),
+                            ),
                           _buildWidgetCell(
                             flex: 2,
                             child: _buildUserCell(history.assignedToName),
@@ -133,20 +159,21 @@ class FollowUpTabWidget extends StatelessWidget {
   }
 
   /// Mobile List View with clean card layout matching second image
-  Widget _buildMobileList(
-      BuildContext context, CustomerDetailsProvider provider) {
+  Widget _buildMobileList(BuildContext context,
+      CustomerDetailsProvider provider, bool showTaskType, bool showDepartment) {
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       itemCount: provider.followUpHistory.length,
       itemBuilder: (context, index) {
         final history = provider.followUpHistory[index];
-        return _buildMobileCard(context, history, index);
+        return _buildMobileCard(
+            context, history, index, showTaskType, showDepartment);
       },
     );
   }
 
-  Widget _buildMobileCard(
-      BuildContext context, FollowUpHistoryModel history, int index) {
+  Widget _buildMobileCard(BuildContext context, FollowUpHistoryModel history,
+      int index, bool showTaskType, bool showDepartment) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -209,6 +236,16 @@ class FollowUpTabWidget extends StatelessWidget {
             spacing: 24,
             runSpacing: 12,
             children: [
+              if (showTaskType)
+                _buildInfoColumn(
+                  'Task Types',
+                  _buildTaskTypeCell(history.taskTypeName),
+                ),
+              if (showDepartment)
+                _buildInfoColumn(
+                  'Department',
+                  _buildDepartmentCell(history.departmentName),
+                ),
               _buildInfoColumn('To', _buildUserCell(history.assignedToName)),
               _buildInfoColumn('By', _buildUserCell(history.assignedByName)),
               _buildInfoColumn(
@@ -434,6 +471,54 @@ class FollowUpTabWidget extends StatelessWidget {
             fontSize: 11,
             fontWeight: FontWeight.w600,
           ),
+          overflow: TextOverflow.ellipsis,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTaskTypeCell(String? taskTypeName) {
+    final text = (taskTypeName != null &&
+            taskTypeName.trim().isNotEmpty &&
+            taskTypeName != 'null')
+        ? taskTypeName.trim()
+        : '-';
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Tooltip(
+        message: text,
+        child: Text(
+          text,
+          style: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: AppColors.textBlack,
+          ),
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDepartmentCell(String? departmentName) {
+    final text = (departmentName != null &&
+            departmentName.trim().isNotEmpty &&
+            departmentName != 'null')
+        ? departmentName.trim()
+        : '-';
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Tooltip(
+        message: text,
+        child: Text(
+          text,
+          style: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: AppColors.textBlack,
+          ),
+          maxLines: 2,
           overflow: TextOverflow.ellipsis,
         ),
       ),
