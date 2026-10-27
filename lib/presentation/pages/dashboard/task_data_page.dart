@@ -2078,6 +2078,55 @@ class _TotalTaskDataPageState extends State<TotalTaskDataPage> {
                                 },
                               ),
 
+                              // Process Flow / Mandatory Task message banner
+                              Consumer<TaskPageProvider>(
+                                builder: (context, reportsProvider, child) {
+                                  if (reportsProvider.processFlowMessage ==
+                                          null ||
+                                      reportsProvider
+                                          .processFlowMessage!.trim().isEmpty) {
+                                    return const SizedBox.shrink();
+                                  }
+                                  return Container(
+                                    width: double.infinity,
+                                    margin: const EdgeInsets.only(
+                                        top: 10, bottom: 6),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 14, vertical: 10),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFFEF2F2),
+                                      borderRadius:
+                                          BorderRadius.circular(4),
+                                      border: Border.all(
+                                          color: const Color(0xFFFCA5A5)),
+                                    ),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const Icon(
+                                          Icons.warning_amber_rounded,
+                                          color: Color(0xFFDC2626),
+                                          size: 20,
+                                        ),
+                                        const SizedBox(width: 10),
+                                        Expanded(
+                                          child: Text(
+                                            reportsProvider.processFlowMessage!,
+                                            style:
+                                                GoogleFonts.plusJakartaSans(
+                                              color: const Color(0xFF991B1B),
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
+
                               // CustomField
                               Consumer<TaskPageProvider>(
                                 builder: (context, reportsProvider, child) {
@@ -3572,6 +3621,123 @@ class _TotalTaskDataPageState extends State<TotalTaskDataPage> {
                                                         .of<TaskPageProvider>(
                                                             context,
                                                             listen: false);
+                                                    if (provider.processFlowMessage !=
+                                                            null &&
+                                                        provider
+                                                            .processFlowMessage!
+                                                            .trim()
+                                                            .isNotEmpty) {
+                                                      showDialog(
+                                                        context: context,
+                                                        builder: (BuildContext
+                                                            context) {
+                                                          return AlertDialog(
+                                                            shape:
+                                                                RoundedRectangleBorder(
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(
+                                                                                4)),
+                                                            titlePadding:
+                                                                const EdgeInsets
+                                                                    .fromLTRB(
+                                                                    24,
+                                                                    24,
+                                                                    24,
+                                                                    8),
+                                                            contentPadding:
+                                                                const EdgeInsets
+                                                                    .fromLTRB(
+                                                                    24,
+                                                                    0,
+                                                                    24,
+                                                                    16),
+                                                            actionsPadding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        16,
+                                                                    vertical:
+                                                                        10),
+                                                            title: Row(
+                                                              children: [
+                                                                const Icon(
+                                                                    Icons
+                                                                        .warning_amber_rounded,
+                                                                    color: Color(
+                                                                        0xFFDC2626)),
+                                                                const SizedBox(
+                                                                    width: 10),
+                                                                const Text(
+                                                                    "Cannot Proceed",
+                                                                    style: TextStyle(
+                                                                        fontFamily:
+                                                                            'PlusJakartaSans',
+                                                                        color: Colors
+                                                                            .black,
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .bold,
+                                                                        fontSize:
+                                                                            20)),
+                                                              ],
+                                                            ),
+                                                            content: Container(
+                                                              width: 450,
+                                                              constraints:
+                                                                  const BoxConstraints(
+                                                                      maxWidth:
+                                                                          400,
+                                                                      maxHeight:
+                                                                          400),
+                                                              child: Text(
+                                                                provider
+                                                                    .processFlowMessage!,
+                                                                style:
+                                                                    const TextStyle(
+                                                                  fontFamily:
+                                                                      'PlusJakartaSans',
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontSize: 15,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            actions: [
+                                                              TextButton(
+                                                                style: TextButton
+                                                                    .styleFrom(
+                                                                  foregroundColor:
+                                                                      Colors
+                                                                          .white,
+                                                                  backgroundColor:
+                                                                      AppColors
+                                                                          .darkGreen,
+                                                                  shape: RoundedRectangleBorder(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              4)),
+                                                                  padding: const EdgeInsets
+                                                                      .symmetric(
+                                                                      horizontal:
+                                                                          20,
+                                                                      vertical:
+                                                                          10),
+                                                                ),
+                                                                onPressed: () =>
+                                                                    Navigator.of(
+                                                                            context)
+                                                                        .pop(),
+                                                                child: const Text(
+                                                                    "OK"),
+                                                              ),
+                                                            ],
+                                                          );
+                                                        },
+                                                      );
+                                                      return;
+                                                    }
+
                                                     if (provider.statusData
                                                         .isNotEmpty) {
                                                       List<String>

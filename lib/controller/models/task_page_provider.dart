@@ -49,6 +49,7 @@ class TaskPageProvider extends ChangeNotifier {
     }
     notifyListeners();
   }
+
   List<MandatoryStatusModel> _statusData = [];
   List<MandatoryStatusModel> get statusData => _statusData;
   List<TaskReportModel> _taskData = [];
@@ -158,11 +159,13 @@ class TaskPageProvider extends ChangeNotifier {
   int? _expandedIndex;
   int? get expandedIndex => _expandedIndex;
   int _flowId = 0;
+  String? _processFlowMessage;
+  String? get processFlowMessage => _processFlowMessage;
 
   Map<String, int> _taskTypeToUserMap = {};
   Map<String, int> get taskTypeToUserMap => _taskTypeToUserMap;
 
-  int _selectedPriority = 0;  // for filter
+  int _selectedPriority = 0; // for filter
   int get selectedPriority => _selectedPriority;
   void setPriorityFilter(int priorityId) {
     _selectedPriority = priorityId;
@@ -190,6 +193,7 @@ class TaskPageProvider extends ChangeNotifier {
     _showCustomFields = [];
     _selectedTaskTypeIds.clear();
     _taskTypeToUserMap.clear();
+    _processFlowMessage = null;
     notifyListeners();
   }
 
@@ -909,15 +913,21 @@ class TaskPageProvider extends ChangeNotifier {
             });
           } else if (_selectedSortOption == 3) {
             if (_sortOrder == 'ASC') {
-              _taskReport.sort((a, b) => (a.nextFollowupDate ?? '').compareTo(b.nextFollowupDate ?? ''));
+              _taskReport.sort((a, b) => (a.nextFollowupDate ?? '')
+                  .compareTo(b.nextFollowupDate ?? ''));
             } else {
-              _taskReport.sort((a, b) => (b.nextFollowupDate ?? '').compareTo(a.nextFollowupDate ?? ''));
+              _taskReport.sort((a, b) => (b.nextFollowupDate ?? '')
+                  .compareTo(a.nextFollowupDate ?? ''));
             }
           } else if (_selectedSortOption == 4) {
             if (_sortOrder == 'ASC') {
-              _taskReport.sort((a, b) => a.customerName.toLowerCase().compareTo(b.customerName.toLowerCase()));
+              _taskReport.sort((a, b) => a.customerName
+                  .toLowerCase()
+                  .compareTo(b.customerName.toLowerCase()));
             } else {
-              _taskReport.sort((a, b) => b.customerName.toLowerCase().compareTo(a.customerName.toLowerCase()));
+              _taskReport.sort((a, b) => b.customerName
+                  .toLowerCase()
+                  .compareTo(a.customerName.toLowerCase()));
             }
           }
         }
@@ -959,7 +969,8 @@ class TaskPageProvider extends ChangeNotifier {
       if (_Status.isEmpty || _Status == 'null') _Status = '0';
       if (_TaskType.isEmpty || _TaskType == 'null') _TaskType = '0';
       if (_enquiryForS.isEmpty || _enquiryForS == 'null') _enquiryForS = '0';
-      if (_Department_Id.isEmpty || _Department_Id == 'null') _Department_Id = '0';
+      if (_Department_Id.isEmpty || _Department_Id == 'null')
+        _Department_Id = '0';
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
@@ -1045,7 +1056,8 @@ class TaskPageProvider extends ChangeNotifier {
                     : "",
             "Followup_Time":
                 statusModel.isTime == 1 ? followUpTimeController.text : "",
-            "Tasks": _selectedTaskTypeIds.map((id) => id.split('_').first).join(","),
+            "Tasks":
+                _selectedTaskTypeIds.map((id) => id.split('_').first).join(","),
             "CustomFields": customFieldsData,
             "flow_id": _flowId,
             "Sub_Status_Id": subStatus?.subStatusId,
@@ -1386,9 +1398,27 @@ class TaskPageProvider extends ChangeNotifier {
           }
           customFieldData ??= [];
           final enquiry = data['enquiry'] ?? [];
-          if (enquiry.isNotEmpty) {
-            _flowId = enquiry.first['FlowId'] ?? 0;
-            print("FlowId: ${_flowId.toString()}");
+          if (enquiry is List && enquiry.isNotEmpty) {
+            final firstEnquiry = enquiry.first;
+            if (firstEnquiry is Map) {
+              _flowId = firstEnquiry['FlowId'] ?? 0;
+              final msg = firstEnquiry['message'];
+              if (msg != null &&
+                  msg.toString().trim().isNotEmpty &&
+                  msg.toString().trim().toLowerCase() != 'null') {
+                _processFlowMessage = msg.toString().trim();
+              } else {
+                _processFlowMessage = null;
+              }
+            } else {
+              _flowId = 0;
+              _processFlowMessage = null;
+            }
+            print(
+                "FlowId: ${_flowId.toString()} | ProcessFlowMessage: $_processFlowMessage");
+          } else {
+            _flowId = 0;
+            _processFlowMessage = null;
           }
 
           debugPrint(
@@ -1414,11 +1444,13 @@ class TaskPageProvider extends ChangeNotifier {
               .map((item) => MandatoryStatusModel.fromJson(item))
               .toList();
 
-          debugPrint("DEBUG fetchTaskTypes raw customFieldData: $customFieldData");
+          debugPrint(
+              "DEBUG fetchTaskTypes raw customFieldData: $customFieldData");
           _showCustomFields = (customFieldData as List)
               .map((e) => CustomFieldByStatusId.fromJson(e))
               .toList();
-          debugPrint("DEBUG fetchTaskTypes parsed _showCustomFields: ${_showCustomFields.map((f) => '${f.customFieldName}: id=${f.customFieldId}, isMandatory=${f.isMandatory}, typeId=${f.customFieldTypeId}').toList()}");
+          debugPrint(
+              "DEBUG fetchTaskTypes parsed _showCustomFields: ${_showCustomFields.map((f) => '${f.customFieldName}: id=${f.customFieldId}, isMandatory=${f.isMandatory}, typeId=${f.customFieldTypeId}').toList()}");
 
           // Update forms in FormProvider if present
           final formProvider =
@@ -1512,9 +1544,27 @@ class TaskPageProvider extends ChangeNotifier {
           final formsData = data['forms'] ?? [];
           // final customFieldData = data['show_custom_field'] ?? [];
           final enquiry = data['enquiry'] ?? [];
-          if (enquiry.isNotEmpty) {
-            _flowId = enquiry.first['FlowId'] ?? 0;
-            print("FlowId: ${_flowId.toString()}");
+          if (enquiry is List && enquiry.isNotEmpty) {
+            final firstEnquiry = enquiry.first;
+            if (firstEnquiry is Map) {
+              _flowId = firstEnquiry['FlowId'] ?? 0;
+              final msg = firstEnquiry['message'];
+              if (msg != null &&
+                  msg.toString().trim().isNotEmpty &&
+                  msg.toString().trim().toLowerCase() != 'null') {
+                _processFlowMessage = msg.toString().trim();
+              } else {
+                _processFlowMessage = null;
+              }
+            } else {
+              _flowId = 0;
+              _processFlowMessage = null;
+            }
+            print(
+                "FlowId: ${_flowId.toString()} | ProcessFlowMessage: $_processFlowMessage");
+          } else {
+            _flowId = 0;
+            _processFlowMessage = null;
           }
 
           debugPrint(
@@ -1559,11 +1609,13 @@ class TaskPageProvider extends ChangeNotifier {
           }
           customFieldData ??= [];
           if (customFieldData.isNotEmpty) {
-            debugPrint("DEBUG withCustomFields raw customFieldData: $customFieldData");
+            debugPrint(
+                "DEBUG withCustomFields raw customFieldData: $customFieldData");
             _showCustomFields = (customFieldData as List)
                 .map((e) => CustomFieldByStatusId.fromJson(e))
                 .toList();
-            debugPrint("DEBUG withCustomFields parsed _showCustomFields: ${_showCustomFields.map((f) => '${f.customFieldName}: id=${f.customFieldId}, isMandatory=${f.isMandatory}, typeId=${f.customFieldTypeId}').toList()}");
+            debugPrint(
+                "DEBUG withCustomFields parsed _showCustomFields: ${_showCustomFields.map((f) => '${f.customFieldName}: id=${f.customFieldId}, isMandatory=${f.isMandatory}, typeId=${f.customFieldTypeId}').toList()}");
           }
           // Update forms in FormProvider if present
           final formProvider =
@@ -1605,7 +1657,8 @@ class TaskPageProvider extends ChangeNotifier {
     }
   }
 
-  Future<bool> transferTasks({required List<int> taskIds, required int toUserId}) async {
+  Future<bool> transferTasks(
+      {required List<int> taskIds, required int toUserId}) async {
     try {
       final response = await HttpRequest.httpPostRequest(
         endPoint: HttpUrls.transferTasks,
@@ -1615,7 +1668,8 @@ class TaskPageProvider extends ChangeNotifier {
         },
       );
 
-      if (response != null && (response.statusCode == 200 || response.statusCode == 201)) {
+      if (response != null &&
+          (response.statusCode == 200 || response.statusCode == 201)) {
         return true;
       }
       return false;

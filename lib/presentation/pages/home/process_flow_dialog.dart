@@ -509,6 +509,51 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                             ),
                           ],
 
+                          // Process Flow / Mandatory Task message banner
+                          Consumer<TaskPageProvider>(
+                            builder: (context, reportsProvider, child) {
+                              if (reportsProvider.processFlowMessage == null ||
+                                  reportsProvider
+                                      .processFlowMessage!.trim().isEmpty) {
+                                return const SizedBox.shrink();
+                              }
+                              return Container(
+                                width: double.infinity,
+                                margin:
+                                    const EdgeInsets.only(top: 10, bottom: 6),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 14, vertical: 10),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFFEF2F2),
+                                  borderRadius: BorderRadius.circular(4),
+                                  border:
+                                      Border.all(color: const Color(0xFFFCA5A5)),
+                                ),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Icon(
+                                      Icons.warning_amber_rounded,
+                                      color: Color(0xFFDC2626),
+                                      size: 20,
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: Text(
+                                        reportsProvider.processFlowMessage!,
+                                        style: GoogleFonts.plusJakartaSans(
+                                          color: const Color(0xFF991B1B),
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+
                           const SizedBox(height: 8),
 
                           // CustomField
@@ -1377,6 +1422,37 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                 ? null
                                 : () async {
                                     // Validation logic
+                                    if (reportsProvider.processFlowMessage !=
+                                            null &&
+                                        reportsProvider
+                                            .processFlowMessage!
+                                            .trim()
+                                            .isNotEmpty) {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialog(
+                                          title: const Row(
+                                            children: [
+                                              Icon(Icons.warning_amber_rounded,
+                                                  color: Color(0xFFDC2626)),
+                                              SizedBox(width: 8),
+                                              Text("Cannot Proceed"),
+                                            ],
+                                          ),
+                                          content: Text(
+                                              reportsProvider.processFlowMessage!),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(context),
+                                              child: const Text("OK"),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                      return;
+                                    }
+
                                     if (reportsProvider.statusData.isNotEmpty) {
                                       // Show warning (reusing existing alert logic but styled)
                                       showDialog(
