@@ -14,6 +14,7 @@ import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/http/loader.dart';
 import 'package:vidyanexis/controller/dashboard_provider.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_follow_up_dialog.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
@@ -642,6 +643,22 @@ class _LeadDataPageState extends State<LeadDataPage> {
                       ),
                     ),
                     const SizedBox(width: 16),
+                  ],
+                ),
+              ),
+            if (isMobile)
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    CustomText(
+                      'Total Leads: $_totalCount',
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.textGrey3,
+                    ),
                   ],
                 ),
               ),
