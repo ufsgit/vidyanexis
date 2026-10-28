@@ -5366,7 +5366,7 @@ class _tasksPageReportState extends State<TaskPage> {
                               ),
                               const SizedBox(height: 20),
 
-                              // Row 2: New Task + Department
+                              // Row 2: Next Task + Department
                               Consumer<TaskPageProvider>(
                                 builder: (context, reportsProvider, child) {
                                   if (reportsProvider.taskTypeModel.isEmpty) {
@@ -5396,7 +5396,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                 children: [
                                                   Expanded(
                                                     flex: 2,
-                                                    child: Text('New Task',
+                                                    child: Text('Next Task',
                                                         style: TextStyle(
                                                             fontFamily:
                                                                 'PlusJakartaSans',
