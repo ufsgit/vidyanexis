@@ -14,9 +14,9 @@ class CloudflareUpload {
     BuildContext context,
   ) async {
     try {
-      final accessKey = "65cb84d8b8d8a2880efd1100dababc31";
+      final accessKey = "7f65bfd9d28447dc89319a743704c5d1";
       final secretKey =
-          "28be688805e41781c41cf5c66f3e56add70f7d0699e3d7acdbc71cb23fac30a1";
+          "8454d66179bd0d85c5337a2370b5c1df5ec4e1f0212ae700b1731b09d2144b89";
       final bucketName = "vidyanexis";
       final accountId = "538b13d4d239da205337637dc6b57ff0";
 
@@ -147,9 +147,9 @@ class CloudflareUpload {
     BuildContext context,
   ) async {
     try {
-      final accessKey = "65cb84d8b8d8a2880efd1100dababc31";
+      final accessKey = "7f65bfd9d28447dc89319a743704c5d1";
       final secretKey =
-          "28be688805e41781c41cf5c66f3e56add70f7d0699e3d7acdbc71cb23fac30a1";
+          "8454d66179bd0d85c5337a2370b5c1df5ec4e1f0212ae700b1731b09d2144b89";
       final bucketName = "vidyanexis";
       final accountId = "538b13d4d239da205337637dc6b57ff0";
 
