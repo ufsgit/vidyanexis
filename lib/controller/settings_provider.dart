@@ -756,6 +756,8 @@ class SettingsProvider extends ChangeNotifier {
   int get ramcoLocationPermission => _ramcoLocationPermission;
   int _referenceNameAfterEnquiryFor = 0;
   int get referenceNameAfterEnquiryFor => _referenceNameAfterEnquiryFor;
+  int _futureSolarDashboard = 0;
+  int get futureSolarDashboard => _futureSolarDashboard;
 
   int _consumerNoInLeadPage = 0;
   int get consumerNoInLeadPage {
@@ -1015,6 +1017,10 @@ class SettingsProvider extends ChangeNotifier {
             (caption.toLowerCase().contains('customer_status_block') ||
                 caption.toLowerCase().contains('customer status block'))) {
       _customerStatusBlock = value;
+    } else if (caption != null &&
+        (caption.toLowerCase().contains('future_solar_dashboard') ||
+            caption.toLowerCase().contains('future solar dashboard'))) {
+      _futureSolarDashboard = value;
     }
   }
 
@@ -1092,6 +1098,12 @@ class SettingsProvider extends ChangeNotifier {
   void setCustomerStatusBlock(int value) {
     _customerStatusBlock = value;
     _syncStateToPermissionsList(52, value);
+    notifyListeners();
+  }
+
+  void setFutureSolarDashboard(int value) {
+    _futureSolarDashboard = value;
+    _syncStateToPermissionsList(55, value);
     notifyListeners();
   }
 
@@ -5558,6 +5570,7 @@ class SettingsProvider extends ChangeNotifier {
     _ramcoAdminTaskPhoto = 0;
     _sunexpertHideLead = 0;
     _customerStatusBlock = 0;
+    _futureSolarDashboard = 0;
     notifyListeners();
   }
 
