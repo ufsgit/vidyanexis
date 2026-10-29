@@ -638,7 +638,7 @@ class _CustomerDataPageState extends State<CustomerDataPage> {
   ) {
     final sideProvider = Provider.of<SidebarProvider>(context, listen: false);
 
-    final bool showCustomerCode = settingsProvider.showCustomerCode == 1;
+    final bool showCustomerCode = settingsProvider.menuIsViewMap[184] == 1;
     final bool showLeadCode = settingsProvider.showLeadCode == 1;
     final bool showLocation = settingsProvider.menuIsViewMap[142] == 1;
     final bool showRamcoLocation = settingsProvider.ramcoLocationPermission == 1;
@@ -971,11 +971,13 @@ class _CustomerDataPageState extends State<CustomerDataPage> {
                                     fontWeight: FontWeight.normal,
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 6.0, horizontal: 8.0),
-                                    title: lead.displayCustomerCode.isNotEmpty
-                                        ? lead.displayCustomerCode
-                                        : lead.getDisplayLeadCode(
-                                            settingsProvider
-                                                .leadCodeWithEnquiryCode),
+                                    title: settingsProvider.showCustomerCode == 1
+                                        ? lead.customerCode
+                                        : (lead.registrationNo.isNotEmpty
+                                            ? lead.registrationNo
+                                            : lead.getDisplayLeadCode(
+                                                settingsProvider
+                                                    .leadCodeWithEnquiryCode)),
                                   ),
                                 if (visible(1))
                                   TableWidget(

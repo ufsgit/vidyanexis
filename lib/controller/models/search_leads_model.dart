@@ -139,8 +139,7 @@ class SearchLeadModel {
   final String registrationNo;
   final String customerCode;
 
-  String get displayCustomerCode =>
-      customerCode.isNotEmpty ? customerCode : registrationNo;
+  String get displayCustomerCode => customerCode;
   final int enquiryForId;
   final String stageId;
   final String stageName;
@@ -425,15 +424,9 @@ class SearchLeadModel {
       customerCode: parseString(
         json['Customer_Code'] ??
             json['Customer_code'] ??
-            json['customer_code'] ??
-            json['Registration_No'],
-      ),
-      registrationNo: parseString(
-        json['Registration_No'] ??
-            json['Customer_Code'] ??
-            json['Customer_code'] ??
             json['customer_code'],
       ),
+      registrationNo: parseString(json['Registration_No']),
       enquiryForId: parseInt(json['Enquiry_For_Id']),
       stageId: parseString(json['Stage_Id']),
       stageName: parseString(json['Stage_Name']),

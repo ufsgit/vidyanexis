@@ -29,27 +29,32 @@ void main() {
       expect(perm2.value, 1);
     });
 
-    test('SearchLeadModel displays customerCode or registrationNo correctly', () {
-      final leadWithCode = SearchLeadModel.fromJson({
+    test('SearchLeadModel parses customerCode and registrationNo separately', () {
+      final leadWithBoth = SearchLeadModel.fromJson({
         'Customer_Name': 'Customer A',
         'Lead_Code': '-14',
-        'Customer_Code': '27',
-        'Registration_No': '27',
+        'Customer_Code': 'CUST-001',
+        'Registration_No': 'REG-27',
       });
-      expect(leadWithCode.displayCustomerCode, '27');
+      expect(leadWithBoth.customerCode, 'CUST-001');
+      expect(leadWithBoth.registrationNo, 'REG-27');
+      expect(leadWithBoth.displayCustomerCode, 'CUST-001');
 
       final leadWithRegOnly = SearchLeadModel.fromJson({
         'Customer_Name': 'Customer B',
         'Lead_Code': '-1',
         'Registration_No': '23',
       });
-      expect(leadWithRegOnly.displayCustomerCode, '23');
+      expect(leadWithRegOnly.customerCode, '');
+      expect(leadWithRegOnly.registrationNo, '23');
+      expect(leadWithRegOnly.displayCustomerCode, '');
 
       final leadWithNoCode = SearchLeadModel.fromJson({
         'Customer_Name': 'Customer C',
         'Lead_Code': '-6',
       });
-      expect(leadWithNoCode.displayCustomerCode, '');
+      expect(leadWithNoCode.customerCode, '');
+      expect(leadWithNoCode.registrationNo, '');
     });
 
     test('Permission 56 resolution logic', () {
@@ -87,6 +92,40 @@ void main() {
       final emptyPerms = <CompanyPermission>[];
       expect(resolveShowCustomerCode(emptyPerms, 0), 0);
       expect(resolveShowCustomerCode(emptyPerms, 1), 1);
+    });
+
+    test('Menu ID 184 and Company Permission 56 switching rule', () {
+      final lead = SearchLeadModel.fromJson({
+        'Customer_Name': 'Test Min',
+        'Lead_Code': '-14',
+        'Customer_Code': 'CC-999',
+        'Registration_No': '27',
+      });
+
+      // Helper function simulating customer table column logic
+      String? getCustomerCodeColumnValue({
+        required int menu184View,
+        required int companyPermission56,
+      }) {
+        final bool showColumn = menu184View == 1;
+        if (!showColumn) return null; // Column is hidden when menu 184 is not 1
+
+        return companyPermission56 == 1
+            ? lead.customerCode
+            : lead.registrationNo;
+      }
+
+      // 1. When Menu 184 is 0 (disabled), column is NOT displayed
+      expect(getCustomerCodeColumnValue(menu184View: 0, companyPermission56: 0), isNull);
+      expect(getCustomerCodeColumnValue(menu184View: 0, companyPermission56: 1), isNull);
+
+      // 2. When Menu 184 is 1 (enabled) and Permission 56 is 0 (disabled)
+      // Must display Registration_No ("27")
+      expect(getCustomerCodeColumnValue(menu184View: 1, companyPermission56: 0), '27');
+
+      // 3. When Menu 184 is 1 (enabled) and Permission 56 is 1 (enabled)
+      // Must display Customer_Code ("CC-999")
+      expect(getCustomerCodeColumnValue(menu184View: 1, companyPermission56: 1), 'CC-999');
     });
   });
 }

@@ -1132,7 +1132,7 @@ class _CustomerPageState extends State<CustomerPage> {
     double tableHeaderHeight,
   ) {
 
-    final bool showCustomerCode = settingsProvider.showCustomerCode == 1;
+    final bool showCustomerCode = settingsProvider.menuIsViewMap[184] == 1;
     final bool showLeadCode = settingsProvider.showLeadCode == 1;
     final bool showLocation = settingsProvider.menuIsViewMap[142] == 1;
     final bool showRamcoLocation = settingsProvider.ramcoLocationPermission == 1;
@@ -1450,7 +1450,9 @@ class _CustomerPageState extends State<CustomerPage> {
                                           fontWeight: FontWeight.normal,
                                           padding: const EdgeInsets.symmetric(
                                               vertical: 6.0, horizontal: 8.0),
-                                          title: lead.displayCustomerCode,
+                                          title: settingsProvider.showCustomerCode == 1
+                                              ? lead.customerCode
+                                              : lead.registrationNo,
                                         ),
                                       if (visible(1))
                                       TableWidget(
@@ -1873,7 +1875,7 @@ class _CustomerPageState extends State<CustomerPage> {
     SettingsProvider settingsProvider,
     DropDownProvider provider,
   ) {
-    final bool showCustomerCode = settingsProvider.showCustomerCode == 1;
+    final bool showCustomerCode = settingsProvider.menuIsViewMap[184] == 1;
     final bool showRamcoLocation = settingsProvider.ramcoLocationPermission == 1;
 
     return customerProvider.customerData.isEmpty
@@ -1932,12 +1934,20 @@ class _CustomerPageState extends State<CustomerPage> {
                       style:
                           TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 12, color: Colors.grey.shade600),
                     ),
-                    if (showCustomerCode && lead.displayCustomerCode.isNotEmpty)
+                    if (showCustomerCode &&
+                        (settingsProvider.showCustomerCode == 1
+                            ? lead.customerCode.isNotEmpty
+                            : lead.registrationNo.isNotEmpty))
                       Padding(
                         padding: const EdgeInsets.only(top: 4.0),
                         child: Text(
-                          'Customer Code: ${lead.displayCustomerCode}',
-                          style: TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 12, color: Colors.grey.shade700),
+                          settingsProvider.showCustomerCode == 1
+                              ? 'Customer Code: ${lead.customerCode}'
+                              : 'Reg No: ${lead.registrationNo}',
+                          style: TextStyle(
+                              fontFamily: 'PlusJakartaSans',
+                              fontSize: 12,
+                              color: Colors.grey.shade700),
                         ),
                       ),
                     if (showRamcoLocation)
