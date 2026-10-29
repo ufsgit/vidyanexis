@@ -137,6 +137,10 @@ class SearchLeadModel {
   final String registeredBy;
   final String registeredDate;
   final String registrationNo;
+  final String customerCode;
+
+  String get displayCustomerCode =>
+      customerCode.isNotEmpty ? customerCode : registrationNo;
   final int enquiryForId;
   final String stageId;
   final String stageName;
@@ -296,6 +300,7 @@ class SearchLeadModel {
     required this.registeredBy,
     required this.registeredDate,
     required this.registrationNo,
+    this.customerCode = '',
     required this.enquiryForId,
     required this.stageId,
     required this.stageName,
@@ -417,7 +422,18 @@ class SearchLeadModel {
       isRegistered: json['Is_Registered'],
       registeredBy: parseString(json['Registered_By']),
       registeredDate: parseString(json['Registered_Date']),
-      registrationNo: parseString(json['Registration_No']),
+      customerCode: parseString(
+        json['Customer_Code'] ??
+            json['Customer_code'] ??
+            json['customer_code'] ??
+            json['Registration_No'],
+      ),
+      registrationNo: parseString(
+        json['Registration_No'] ??
+            json['Customer_Code'] ??
+            json['Customer_code'] ??
+            json['customer_code'],
+      ),
       enquiryForId: parseInt(json['Enquiry_For_Id']),
       stageId: parseString(json['Stage_Id']),
       stageName: parseString(json['Stage_Name']),
@@ -610,6 +626,7 @@ class SearchLeadModel {
       'Registered_By': registeredBy,
       'Registered_Date': registeredDate,
       'Registration_No': registrationNo,
+      'Customer_Code': customerCode,
       'Enquiry_For_Id': enquiryForId,
       'Stage_Id': stageId,
       'Stage_Name': stageName,
@@ -708,6 +725,7 @@ class SearchLeadModel {
     String? registeredBy,
     String? registeredDate,
     String? registrationNo,
+    String? customerCode,
     int? enquiryForId,
     String? stageId,
     String? stageName,
@@ -815,6 +833,7 @@ class SearchLeadModel {
       registeredBy: registeredBy ?? this.registeredBy,
       registeredDate: registeredDate ?? this.registeredDate,
       registrationNo: registrationNo ?? this.registrationNo,
+      customerCode: customerCode ?? this.customerCode,
       enquiryForId: enquiryForId ?? this.enquiryForId,
       stageId: stageId ?? this.stageId,
       stageName: stageName ?? this.stageName,

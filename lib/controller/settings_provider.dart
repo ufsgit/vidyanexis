@@ -677,6 +677,7 @@ class SettingsProvider extends ChangeNotifier {
   int _ramcoAdminTaskPhoto = 0;
   int _sunexpertHideLead = 0;
   int _customerStatusBlock = 0;
+  int _showCustomerCode = 0;
   int? _selectedStatusId;
 
   int get toggleValue => _toggleValue;
@@ -734,6 +735,30 @@ class SettingsProvider extends ChangeNotifier {
   int get ramcoAdminTaskPhoto => _ramcoAdminTaskPhoto;
   int get sunexpertHideLead => _sunexpertHideLead;
   int get customerStatusBlock => _customerStatusBlock;
+  int get showCustomerCode {
+    if (_companyDetails.isNotEmpty &&
+        _companyDetails[0].permissions.isNotEmpty) {
+      for (var p in _companyDetails[0].permissions) {
+        if (p.companyPermissionId == 56 || p.companyPermissionId.toString() == '56') {
+          return (p.value == 1 || p.value.toString() == '1') ? 1 : 0;
+        }
+      }
+      for (var p in _companyDetails[0].permissions) {
+        final cap =
+            (p.caption.isNotEmpty ? p.caption : p.displayCaption).trim().toLowerCase();
+        if (cap == 'customer code' || cap == 'customer_code') {
+          return (p.value == 1 || p.value.toString() == '1') ? 1 : 0;
+        }
+      }
+    }
+    return (_showCustomerCode == 1 || _showCustomerCode.toString() == '1') ? 1 : 0;
+  }
+
+  void setShowCustomerCode(int value) {
+    _showCustomerCode = value;
+    _syncStateToPermissionsList(56, value);
+    notifyListeners();
+  }
 
   int _recordVoiceNote = 0;
   int get recordVoiceNote => _recordVoiceNote;
@@ -1015,6 +1040,11 @@ class SettingsProvider extends ChangeNotifier {
             (caption.toLowerCase().contains('customer_status_block') ||
                 caption.toLowerCase().contains('customer status block'))) {
       _customerStatusBlock = value;
+    } else if (permissionId == 56 ||
+        (caption != null &&
+            (caption.toLowerCase().contains('customer_code') ||
+                caption.toLowerCase().contains('customer code')))) {
+      _showCustomerCode = value;
     }
   }
 
@@ -1190,6 +1220,14 @@ class SettingsProvider extends ChangeNotifier {
               cap.contains('status_add_at_new_lead');
         });
       }
+      if (index == -1 && permissionId == 56) {
+        index = _companyDetails[0].permissions.indexWhere((p) {
+          if (p.companyPermissionId == 56 || p.companyPermissionId.toString() == '56') return true;
+          final cap =
+              (p.caption.isNotEmpty ? p.caption : p.displayCaption).trim().toLowerCase();
+          return cap == 'customer code' || cap == 'customer_code';
+        });
+      }
       if (index != -1) {
         final old = _companyDetails[0].permissions[index];
         _companyDetails[0].permissions[index] = CompanyPermission(
@@ -1275,6 +1313,14 @@ class SettingsProvider extends ChangeNotifier {
               (p.caption.isNotEmpty ? p.caption : p.displayCaption).toLowerCase();
           return cap.contains('status add at new lead') ||
               cap.contains('status_add_at_new_lead');
+        });
+      }
+      if (index == -1 && permissionId == 56) {
+        index = _companyDetails[0].permissions.indexWhere((p) {
+          if (p.companyPermissionId == 56 || p.companyPermissionId.toString() == '56') return true;
+          final cap =
+              (p.caption.isNotEmpty ? p.caption : p.displayCaption).trim().toLowerCase();
+          return cap == 'customer code' || cap == 'customer_code';
         });
       }
       if (index != -1) {
@@ -5553,6 +5599,7 @@ class SettingsProvider extends ChangeNotifier {
     _newDashboardCount = 0;
     _leadCreationChanges = 0;
     _showLeadCode = 0;
+    _showCustomerCode = 0;
     _ramcoSort = 0;
     _ramcoHistory = 0;
     _ramcoAdminTaskPhoto = 0;

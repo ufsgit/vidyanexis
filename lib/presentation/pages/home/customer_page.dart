@@ -177,6 +177,7 @@ class _CustomerPageState extends State<CustomerPage> {
       customerProvider.setSearchCriteria('', '', '');
       settingsProvider.searchBranch(context);
       settingsProvider.searchDepartment('', context);
+      settingsProvider.getCompanyDetails();
 
       //only for ramco
       if (settingsProvider.ramcoSort == 1) {
@@ -1122,7 +1123,8 @@ class _CustomerPageState extends State<CustomerPage> {
     double rowHeight,
     double tableHeaderHeight,
   ) {
-    final bool showCustomerCode = settingsProvider.menuIsViewMap[184] == 1;
+
+    final bool showCustomerCode = settingsProvider.showCustomerCode == 1;
     final bool showLeadCode = settingsProvider.showLeadCode == 1;
     final bool showLocation = settingsProvider.menuIsViewMap[142] == 1;
     final bool showRamcoLocation = settingsProvider.ramcoLocationPermission == 1;
@@ -1140,11 +1142,11 @@ class _CustomerPageState extends State<CustomerPage> {
         ? fallback
         : customerProvider.getCustomerFieldName(id, fallback);
 
-    // Fixed section: Sl No + Customer Code + Lead Code + Name + Place + Mobile
+    // Fixed section: Sl No + Lead Code (if enabled) + Customer Code + Name + Mobile
     // (fields 1,2,3 are always in the fixed/frozen left panel)
     final double fixedWidth = 80.0 +
-        (showCustomerCode ? 150.0 : 0.0) +
         (showLeadCode ? 150.0 : 0.0) +
+        (showCustomerCode ? 150.0 : 0.0) +
         (visible(1) ? 230.0 : 0.0) +
         (visible(3) ? 140.0 : 0.0);
 
@@ -1336,15 +1338,6 @@ class _CustomerPageState extends State<CustomerPage> {
                             vertical: 4.0, horizontal: 12.0),
                         color: Color(0xFFFFFFFF),
                       ),
-                      if (showCustomerCode)
-                        const TableWidget(
-                          width: 150,
-                          title: 'Customer Code',
-                          fontWeight: FontWeight.normal,
-                          padding: EdgeInsets.symmetric(
-                              vertical: 4.0, horizontal: 8.0),
-                          color: Color(0xFFFFFFFF),
-                        ),
                       if (showLeadCode)
                         const TableWidget(
                           width: 150,
@@ -1354,6 +1347,15 @@ class _CustomerPageState extends State<CustomerPage> {
                               vertical: 4.0, horizontal: 8.0),
                           color: Color(0xFFFFFFFF),
                         ), // lead code
+                      if (showCustomerCode)
+                        const TableWidget(
+                          width: 150,
+                          title: 'Customer Code',
+                          fontWeight: FontWeight.normal,
+                          padding: EdgeInsets.symmetric(
+                              vertical: 4.0, horizontal: 8.0),
+                          color: Color(0xFFFFFFFF),
+                        ),
                       if (visible(1))
                       TableWidget(
                         width: 230,
@@ -1424,15 +1426,6 @@ class _CustomerPageState extends State<CustomerPage> {
                                                 1)
                                             .toString(),
                                       ),
-                                      if (showCustomerCode)
-                                        TableWidget(
-                                          width: 150,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.normal,
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 6.0, horizontal: 8.0),
-                                          title: lead.registrationNo,
-                                        ),
                                       if (showLeadCode)
                                         TableWidget(
                                           width: 150,
@@ -1442,6 +1435,15 @@ class _CustomerPageState extends State<CustomerPage> {
                                               vertical: 6.0, horizontal: 8.0),
                                           title: lead.leadCode,
                                         ), // lead code
+                                      if (showCustomerCode)
+                                        TableWidget(
+                                          width: 150,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.normal,
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 6.0, horizontal: 8.0),
+                                          title: lead.displayCustomerCode,
+                                        ),
                                       if (visible(1))
                                       TableWidget(
                                         width: 230,
@@ -1863,7 +1865,7 @@ class _CustomerPageState extends State<CustomerPage> {
     SettingsProvider settingsProvider,
     DropDownProvider provider,
   ) {
-    final bool showCustomerCode = settingsProvider.menuIsViewMap[184] == 1;
+    final bool showCustomerCode = settingsProvider.showCustomerCode == 1;
     final bool showRamcoLocation = settingsProvider.ramcoLocationPermission == 1;
 
     return customerProvider.customerData.isEmpty
@@ -1922,11 +1924,11 @@ class _CustomerPageState extends State<CustomerPage> {
                       style:
                           TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 12, color: Colors.grey.shade600),
                     ),
-                    if (showCustomerCode && lead.registrationNo.isNotEmpty)
+                    if (showCustomerCode && lead.displayCustomerCode.isNotEmpty)
                       Padding(
                         padding: const EdgeInsets.only(top: 4.0),
                         child: Text(
-                          'Reg No: ${lead.registrationNo}',
+                          'Customer Code: ${lead.displayCustomerCode}',
                           style: TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 12, color: Colors.grey.shade700),
                         ),
                       ),

@@ -96,6 +96,7 @@ class _CustomerDataPageState extends State<CustomerDataPage> {
       dropDownProvider.getUserDetails(context);
       settingsProvider.searchBranch(context);
       settingsProvider.searchDepartment('', context);
+      settingsProvider.getCompanyDetails();
 
       if (mounted) setState(() {});
     });
@@ -637,7 +638,7 @@ class _CustomerDataPageState extends State<CustomerDataPage> {
   ) {
     final sideProvider = Provider.of<SidebarProvider>(context, listen: false);
 
-    final bool showCustomerCode = settingsProvider.menuIsViewMap[184] == 1;
+    final bool showCustomerCode = settingsProvider.showCustomerCode == 1;
     final bool showLeadCode = settingsProvider.showLeadCode == 1;
     final bool showLocation = settingsProvider.menuIsViewMap[142] == 1;
     final bool showRamcoLocation = settingsProvider.ramcoLocationPermission == 1;
@@ -654,8 +655,8 @@ class _CustomerDataPageState extends State<CustomerDataPage> {
         : customerProvider.getCustomerFieldName(id, fallback);
 
     final double fixedWidth = 80.0 +
-        (showCustomerCode ? 150.0 : 0.0) +
         (showLeadCode ? 150.0 : 0.0) +
+        (showCustomerCode ? 150.0 : 0.0) +
         (visible(1) ? 230.0 : 0.0) +
         (visible(3) ? 140.0 : 0.0);
 
@@ -869,19 +870,19 @@ class _CustomerDataPageState extends State<CustomerDataPage> {
                             vertical: 4.0, horizontal: 12.0),
                         color: Color(0xFFFFFFFF),
                       ),
-                      if (showCustomerCode)
+                      if (showLeadCode)
                         const TableWidget(
                           width: 150,
-                          title: 'Customer Code',
+                          title: 'Lead Code',
                           fontWeight: FontWeight.normal,
                           padding: EdgeInsets.symmetric(
                               vertical: 4.0, horizontal: 8.0),
                           color: Color(0xFFFFFFFF),
                         ),
-                      if (showLeadCode)
+                      if (showCustomerCode)
                         const TableWidget(
                           width: 150,
-                          title: 'Lead Code',
+                          title: 'Customer Code',
                           fontWeight: FontWeight.normal,
                           padding: EdgeInsets.symmetric(
                               vertical: 4.0, horizontal: 8.0),
@@ -954,17 +955,6 @@ class _CustomerDataPageState extends State<CustomerDataPage> {
                                       ? lead.rowNo.toString()
                                       : (_startLimit + index).toString(),
                                 ),
-                                if (showCustomerCode)
-                                  TableWidget(
-                                    width: 150,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.normal,
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 6.0, horizontal: 8.0),
-                                    title: lead.getDisplayLeadCode(
-                                        settingsProvider
-                                            .leadCodeWithEnquiryCode),
-                                  ),
                                 if (showLeadCode)
                                   TableWidget(
                                     width: 150,
@@ -973,6 +963,19 @@ class _CustomerDataPageState extends State<CustomerDataPage> {
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 6.0, horizontal: 8.0),
                                     title: lead.customerId.toString(),
+                                  ),
+                                if (showCustomerCode)
+                                  TableWidget(
+                                    width: 150,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.normal,
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 6.0, horizontal: 8.0),
+                                    title: lead.displayCustomerCode.isNotEmpty
+                                        ? lead.displayCustomerCode
+                                        : lead.getDisplayLeadCode(
+                                            settingsProvider
+                                                .leadCodeWithEnquiryCode),
                                   ),
                                 if (visible(1))
                                   TableWidget(

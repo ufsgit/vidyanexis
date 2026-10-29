@@ -40,17 +40,21 @@ class CompanyPermission {
         return "Enquiry source add at new lead";
       case 46:
         return "Status add at new lead";
+      case 56:
+        return "Customer code";
       default:
         return "Permission $companyPermissionId";
     }
   }
 
   factory CompanyPermission.fromJson(Map<String, dynamic> json) {
-    int id = json['Company_Permission_Id'] ??
-        json['company_permission_id'] ??
-        json['Company_Permission_ID'] ??
-        json['Permission_Id'] ??
-        json['permission_id'] ??
+    int id = int.tryParse((json['Company_Permission_Id'] ??
+            json['company_permission_id'] ??
+            json['Company_Permission_ID'] ??
+            json['Permission_Id'] ??
+            json['permission_id'] ??
+            0)
+        .toString()) ??
         0;
     String cap = json['Caption'] ??
         json['caption'] ??
@@ -100,12 +104,23 @@ class CompanyPermission {
         case 46:
           cap = "Status add at new lead";
           break;
+        case 56:
+          cap = "Customer code";
+          break;
       }
     }
+    int val = int.tryParse((json['Value'] ??
+            json['value'] ??
+            json['VALUE'] ??
+            json['Status'] ??
+            json['status'] ??
+            0)
+        .toString()) ??
+        0;
     return CompanyPermission(
       companyPermissionId: id,
       caption: cap,
-      value: json['Value'] ?? json['value'] ?? json['VALUE'] ?? json['Status'] ?? json['status'] ?? 0,
+      value: val,
     );
   }
 
