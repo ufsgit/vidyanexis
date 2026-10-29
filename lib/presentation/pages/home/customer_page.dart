@@ -358,7 +358,15 @@ class _CustomerPageState extends State<CustomerPage> {
                               ),
                             ),
                             const SizedBox(
-                              width: 8,
+                              width: 20,
+                            ),
+                            Text(
+                              'Customers',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 22,
+                                color: const Color(0xFF1E293B),
+                                fontWeight: FontWeight.w700,
+                              ),
                             ),
                             Spacer()
                           ],

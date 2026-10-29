@@ -572,7 +572,7 @@ class _LeadsPageState extends State<LeadPage> {
                       children: [
                         Row(
                           children: [
-                            if (widget.fromDashBoard)
+                            if (widget.fromDashBoard) ...[
                               InkWell(
                                 onTap: () {
                                   Navigator.pop(context);
@@ -591,10 +591,19 @@ class _LeadsPageState extends State<LeadPage> {
                                   ),
                                 ),
                               ),
-                            if (widget.fromDashBoard)
                               const SizedBox(
-                                width: 8,
+                                width: 20,
                               ),
+                              Text(
+                                'Leads',
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 22,
+                                  color: const Color(0xFF1E293B),
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              Spacer()
+                            ]
                           ],
                         ),
                         Wrap(

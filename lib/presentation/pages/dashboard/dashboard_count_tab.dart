@@ -143,56 +143,10 @@ class DashboardCountTab extends StatelessWidget {
               return _DashboardCard(
                 keyword: keyword,
                 count: count,
-                theme: theme,
-                // onTap: () async {
-                //   if (keyword == 'Total_Task' ||
-                //       keyword == 'Follow_Up_Tasks' ||
-                //       keyword == 'No_Feasibility_Tasks'||
-                //       keyword == 'Converted_Documents_Pending') {
-                //     await Navigator.push(
-                //       context,
-                //       MaterialPageRoute(
-                //         builder: (context) => TotalTaskDataPage(
-                //           source: keyword,
-                //           fromDate: dashBoardProvider.formattedFromDate,
-                //           toDate: dashBoardProvider.formattedToDate,
-                //           user: dashBoardProvider.selectedUser,
-                //         ),
-                //       ),
-                //     );
-                //   } else if (keyword == 'Converted_Customers' ||
-                //       keyword == 'On_Hold_Leads') {
-                //     await Navigator.push(
-                //       context,
-                //       MaterialPageRoute(
-                //         builder: (context) => CustomerDataPage(
-                //           source: keyword,
-                //           fromDate: dashBoardProvider.formattedFromDate,
-                //           toDate: dashBoardProvider.formattedToDate,
-                //           user: dashBoardProvider.selectedUser,
-                //         ),
-                //       ),
-                //     );
-                //   } else {
-                //     await Navigator.push(
-                //       context,
-                //       MaterialPageRoute(
-                //         builder: (context) => LeadDataPage(
-                //           source: keyword,
-                //           fromDate: dashBoardProvider.formattedFromDate,
-                //           toDate: dashBoardProvider.formattedToDate,
-                //           user: dashBoardProvider.selectedUser,
-                //         ),
-                //       ),
-                //     );
-                //   }
-
-                //   // Refresh counts when user returns from any card page
-                //   if (context.mounted) {
-                //     await dashBoardProvider.getLeadDashboardCount(context: context);
-                //   }
-                // },
-                onTap: () {
+                theme: theme,  
+                onTap: () async {
+                  //Only for future solar
+                  if (settingsProvider.futureSolarDashboard == 1) {
                   final side =
                       Provider.of<SidebarProvider>(context, listen: false);
                   final isWeb = AppStyles.isWebScreen(context);
@@ -277,7 +231,57 @@ class DashboardCountTab extends StatelessWidget {
                       }
                     }
                   });
-                },
+                  } else {
+                    // for every other project except future solar
+                    if (keyword == 'Total_Task' ||
+                        keyword == 'Follow_Up_Tasks' ||
+                        keyword == 'No_Feasibility_Tasks' ||
+                        keyword == 'Converted_Documents_Pending') {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => TotalTaskDataPage(
+                            source: keyword,
+                            fromDate: dashBoardProvider.formattedFromDate,
+                            toDate: dashBoardProvider.formattedToDate,
+                            user: dashBoardProvider.selectedUser,
+                          ),
+                        ),
+                      );
+                    } else if (keyword == 'Converted_Customers' ||
+                        keyword == 'On_Hold_Leads') {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CustomerDataPage(
+                            source: keyword,
+                            fromDate: dashBoardProvider.formattedFromDate,
+                            toDate: dashBoardProvider.formattedToDate,
+                            user: dashBoardProvider.selectedUser,
+                          ),
+                        ),
+                      );
+                    } else {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => LeadDataPage(
+                            source: keyword,
+                            fromDate: dashBoardProvider.formattedFromDate,
+                            toDate: dashBoardProvider.formattedToDate,
+                            user: dashBoardProvider.selectedUser,
+                          ),
+                        ),
+                      );
+                    }
+
+                    // Refresh counts when user returns from any card page
+                    if (context.mounted) {
+                      await dashBoardProvider.getLeadDashboardCount(
+                          context: context);
+                    }
+                  }
+                },  
               );
             },
           );

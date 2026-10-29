@@ -69,7 +69,7 @@ class _UsersContentState extends State<UsersContent> {
   @override
   Widget build(BuildContext context) {
     final settingsProvider = Provider.of<SettingsProvider>(context);
-    const double minContentWidth = 1380.0;
+    const double minContentWidth = 1520.0;
     return LayoutBuilder(
       builder: (context, constraints) {
         return Column(
@@ -160,6 +160,19 @@ class _UsersContentState extends State<UsersContent> {
                                       alignment: Alignment.centerLeft,
                                       child: Text(
                                         'Department',
+                                        style: GoogleFonts.plusJakartaSans(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w600,
+                                            color: const Color(0xFF475569)),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 140,
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        'Designation',
                                         style: GoogleFonts.plusJakartaSans(
                                             fontSize: 13,
                                             fontWeight: FontWeight.w600,
@@ -441,6 +454,59 @@ class _UsersContentState extends State<UsersContent> {
                                                           fontWeight:
                                                               FontWeight.w500,
                                                           color: Colors.purple,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              )
+                                            : const SizedBox(),
+                                      ),
+                                      SizedBox(
+                                        width: 140,
+                                        child: (settingsProvider
+                                                    .searchUserDetails[index]
+                                                    .designation
+                                                    .trim()
+                                                    .isNotEmpty &&
+                                                settingsProvider
+                                                        .searchUserDetails[
+                                                            index]
+                                                        .designation
+                                                        .trim()
+                                                        .toLowerCase() !=
+                                                    'null')
+                                            ? Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Flexible(
+                                                    child: Container(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 8,
+                                                          vertical: 4),
+                                                      decoration: BoxDecoration(
+                                                        color: const Color(
+                                                            0xFFF0FDFA),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(4),
+                                                      ),
+                                                      child: Text(
+                                                        settingsProvider
+                                                            .searchUserDetails[
+                                                                index]
+                                                            .designation
+                                                            .trim(),
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        style: GoogleFonts
+                                                            .plusJakartaSans(
+                                                          fontSize: 12,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: const Color(
+                                                              0xFF0F766E),
                                                         ),
                                                       ),
                                                     ),
@@ -936,7 +1002,73 @@ class _UsersContentState extends State<UsersContent> {
                                                     color: AppColors.textBlack,
                                                   ),
                                                 ),
-                                                const SizedBox(height: 2),
+                                                if (user.designation
+                                                        .trim()
+                                                        .isNotEmpty &&
+                                                    user.designation
+                                                            .trim()
+                                                            .toLowerCase() !=
+                                                        'null') ...[
+                                                  const SizedBox(height: 3),
+                                                  Row(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: [
+                                                      Container(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                horizontal: 6,
+                                                                vertical: 2),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: const Color(
+                                                              0xFFF0FDFA),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(4),
+                                                          border: Border.all(
+                                                              color: const Color(
+                                                                  0xFFCCFBF1)),
+                                                        ),
+                                                        child: Row(
+                                                          mainAxisSize:
+                                                              MainAxisSize.min,
+                                                          children: [
+                                                            const Icon(
+                                                              Icons
+                                                                  .badge_outlined,
+                                                              size: 12,
+                                                              color: Color(
+                                                                  0xFF0F766E),
+                                                            ),
+                                                            const SizedBox(
+                                                                width: 4),
+                                                            Flexible(
+                                                              child: Text(
+                                                                user.designation
+                                                                    .trim(),
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                                style: GoogleFonts
+                                                                    .plusJakartaSans(
+                                                                  fontSize: 11,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                  color: const Color(
+                                                                      0xFF0F766E),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                                const SizedBox(height: 3),
                                                 Text(
                                                   user.email,
                                                   style: GoogleFonts

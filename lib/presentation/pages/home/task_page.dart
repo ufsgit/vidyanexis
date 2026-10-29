@@ -1282,7 +1282,15 @@ class _tasksPageReportState extends State<TaskPage> {
                             ),
                           ),
                           const SizedBox(
-                            width: 8,
+                            width: 20,
+                          ),
+                          Text(
+                            'Tasks',
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 22,
+                              color: const Color(0xFF1E293B),
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
                           Spacer()
                         ],
