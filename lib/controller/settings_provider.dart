@@ -452,6 +452,10 @@ class SettingsProvider extends ChangeNotifier {
   bool get hasTravelAllowanceDeletePermission =>
       (menuIsDeleteMap[166] ?? 0).toString() == '1';
 
+  /// Task Count Summary Permission (Menu ID: 233)
+  bool get hasTaskCountSummaryPermission =>
+      (menuIsViewMap[233] ?? 0).toString() == '1';
+
   /// Task Permission ME and ALL (Menu ID: 209)
   /// If Company permission is 0 → hidden for all users (no check needed).
   /// If Company permission is 1 → check User Menu Permission (IsView = 1 to show, 0 to hide).
@@ -2886,6 +2890,7 @@ class SettingsProvider extends ChangeNotifier {
             219: 'Lead Permission ME and ALL',
             220: 'Customer Permission ME and ALL',
             221: 'Task Permission All',
+            233: 'Task Count Summary',
           };
 
           for (var entry in customPermissions.entries) {
@@ -5709,6 +5714,7 @@ class SettingsProvider extends ChangeNotifier {
             219: 'Lead Permission ME and ALL',
             220: 'Customer Permission ME and ALL',
             221: 'Task Permission All',
+            233: 'Task Count Summary',
           };
 
           for (var entry in customPermissionsShow.entries) {

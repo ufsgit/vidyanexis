@@ -228,7 +228,7 @@ class TaskReportModel {
         return loc;
       }(),
       description: json['Description'] ?? '',
-      remark: json['Remarks'] ?? '',
+      remark: (json['Remarks'] ?? json['Remark'] ?? '').toString(),
       entryDate: (json['Entry_Date'] ??
                   json['created_at'] ??
                   json['createdAt'] ??
@@ -290,7 +290,7 @@ class TaskReportModel {
       address2: json['Address2'] ?? '',
       address3: json['Address3'] ?? '',
       address4: json['Address4'] ?? '',
-      toUserName: json['To_User_Name'] ?? '',
+      toUserName: (json['To_User_Name'] ?? json['User_Details_Name'] ?? '').toString(),
       colorCode: json["Color_Code"] == null
           ? Colors.black
           : AppColors.parseColor(json["Color_Code"]),
@@ -307,7 +307,7 @@ class TaskReportModel {
       priorityName: json['Priority_Name']?.toString() ?? '',
       priorityId: json['Priority_Id']?.toString() ?? '',
       priorityColor: json['Priority_Color']?.toString() ?? '',
-      consumerNo: json['Consumer_Number']?.toString() ?? '',
+      consumerNo: (json['consumer_number'] ?? json['Consumer_Number'] ?? '').toString(),
       leadDuration: json['Lead_Age_Days']?.toString() ?? '',
       overdue: json['Overdue']?.toString() ?? '',
       isLead: json['Is_Lead']?.toString() ?? '0',

@@ -34,6 +34,7 @@ import 'package:vidyanexis/presentation/pages/travel_allowance/travel_allowance_
 import 'package:vidyanexis/controller/location_tracking_provider.dart';
 import 'package:vidyanexis/presentation/pages/location/location_tracking_page.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/lead_flow_tab.dart';
+import 'package:vidyanexis/presentation/pages/dashboard/task_count_summary_tab.dart';
 
 class DashBoardPage extends StatefulWidget {
   const DashBoardPage({super.key});
@@ -99,6 +100,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
         if (userType == "1") 9,
         if (settingsProvider.hasTravelAllowancePermission) 10,
         11, // Lead Flow
+        if ((settingsProvider.menuIsViewMap[233]).toString() == '1') 12, // Task Count Summary
       ];
 
       if (allowedTabs.isNotEmpty && settingsProvider.menuIsViewMap.isNotEmpty) {
@@ -161,6 +163,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
       if (userType == "1") 9,
       if (settingsProvider.hasTravelAllowancePermission) 10,
       11, // Lead Flow
+      if ((settingsProvider.menuIsViewMap[233]).toString() == '1') 12, // Task Count Summary
     ];
 
     if (allowedTabs.isNotEmpty && !_hasLoadedInitialTab && settingsProvider.menuIsViewMap.isNotEmpty) {
@@ -632,8 +635,11 @@ class _DashBoardPageState extends State<DashBoardPage> {
                   case 10:
                     return const TravelAllowancePage(
                         isEmbeddedInDashboard: true);
-                  case 11:
+                                    case 11:
                     return const LeadFlowTab();
+                  case 12:
+                    return TaskCountSummaryTab(
+                        dashBoardProvider: dashBoardProvider);
                   default:
                     return const SizedBox.shrink();
                 }

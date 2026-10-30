@@ -12,6 +12,7 @@ import 'package:vidyanexis/controller/models/work_report_summary_model.dart';
 import 'package:vidyanexis/controller/models/lead_enquiry_report_model.dart';
 import 'package:vidyanexis/controller/models/customer_outstanding_summary_model.dart';
 import 'package:vidyanexis/controller/models/day_wise_count_model.dart';
+import 'package:vidyanexis/controller/models/task_count_summary_model.dart';
 import 'package:vidyanexis/model/dashboard/user_activity_report_model.dart';
 import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/http_urls.dart';
@@ -38,6 +39,30 @@ DashBoardTaskModel _parseDashBoardTask(Map<String, dynamic> data) {
 
 List<DashBoardCountModel> _parseDashBoardCount(List<dynamic> data) {
   return data.map((item) => DashBoardCountModel.fromJson(item)).toList();
+}
+
+List<TaskTypeSummaryModel> _parseTaskCountSummary(List<dynamic> data) {
+  final List<TaskTypeSummaryModel> result = [];
+  final Map<String, TaskTypeSummaryModel> grouped = {};
+
+  for (var item in data.whereType<Map<String, dynamic>>()) {
+    if (item.containsKey('Status_Counts') || item.containsKey('status_counts')) {
+      result.add(TaskTypeSummaryModel.fromJson(item));
+    } else {
+      final taskName = (item['Task_Type_Name'] ?? '').toString();
+      if (!grouped.containsKey(taskName)) {
+        grouped[taskName] = TaskTypeSummaryModel.fromJson(item);
+      } else {
+        final existing = grouped[taskName]!;
+        existing.statusCounts.add(StatusCountModel.fromJson(item));
+      }
+    }
+  }
+
+  if (result.isNotEmpty) {
+    return result;
+  }
+  return grouped.values.toList();
 }
 
 List<LeadCoversionChartModel> _parseLeadConversion(List<dynamic> data) {
@@ -95,6 +120,9 @@ class DashboardProvider extends ChangeNotifier {
   bool isUserActivityLoaded = false;
   bool isAttendanceDashboardLoaded = false;
   bool isLeadFlowLoaded = false;
+  bool isTaskCountSummaryLoaded = false;
+  bool isTaskCountSummaryLoading = false;
+  List<TaskCountSummaryModel> taskCountSummaryList = [];
   UserActivityReportModel? userActivityReport;
   String userActivityDateType = 'TaskType'; // Default or as per requirement
 
@@ -695,6 +723,72 @@ class DashboardProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> getTaskCountSummaryData({bool shouldNotify = true}) async {
+    final currentRequestId = ++_requestId;
+    final startTime = DateTime.now().millisecondsSinceEpoch;
+    print('[PERF-RELOAD] Reload started for getTaskCountSummaryData (Req #$currentRequestId)');
+    print('[PERF-RELOAD] Loading state enabled');
+    try {
+      isTaskCountSummaryLoading = true;
+      if (shouldNotify) notifyListeners();
+
+      final body = {
+        "Fromdate": _formattedFromDate,
+        "Todate": _formattedToDate,
+        "Is_Date": _formattedFromDate.isNotEmpty ? "1" : "0",
+        "User": _selectedUser
+      };
+
+      print('[PERF-RELOAD] API getTaskCountSummaryData started');
+      final response = await HttpRequest.httpGetRequest(
+        endPoint: HttpUrls.getTaskCountSummary,
+        bodyData: body,
+        menuId: 233,
+      );
+
+      final apiTime = DateTime.now().millisecondsSinceEpoch - startTime;
+      print('[PERF-RELOAD] API getTaskCountSummaryData completed: $apiTime ms');
+
+      if (currentRequestId != _requestId) {
+        print('[PERF-RELOAD] Stale request ignored (Req #$currentRequestId vs Current #$_requestId)');
+        return;
+      }
+
+      if (response.statusCode == 200 && response.data != null) {
+        var data = response.data;
+        List<dynamic> rawList = [];
+
+        if (data is Map) {
+          if (data['data'] is List) {
+            rawList = data['data'];
+          } else if (data['Data'] is List) {
+            rawList = data['Data'];
+          }
+        } else if (data is List) {
+          if (data.isNotEmpty && data.first is List) {
+            rawList = data.first as List;
+          } else {
+            rawList = data;
+          }
+        }
+
+        taskCountSummaryList = await compute(_parseTaskCountSummary, rawList);
+        isTaskCountSummaryLoaded = true;
+      } else {
+        taskCountSummaryList = [];
+      }
+    } catch (e) {
+      print('[PERF-RELOAD] Error in getTaskCountSummaryData: $e');
+      taskCountSummaryList = [];
+    } finally {
+      if (currentRequestId == _requestId) {
+        isTaskCountSummaryLoading = false;
+        print('[PERF-RELOAD] Loading state disabled for task count summary');
+        if (shouldNotify) notifyListeners();
+      }
+    }
+  }
+
   void changeTab(int index) {
     _tabIndex = index;
     notifyListeners();
@@ -771,9 +865,14 @@ class DashboardProvider extends ChangeNotifier {
           }
         } catch (_) {}
         break;
-      case 11: // Lead Flow
+            case 11: // Lead Flow
         if (!isLeadFlowLoaded) {
           await getLeadFlowData();
+        }
+        break;
+      case 12: // Task Count Summary
+        if (!isTaskCountSummaryLoaded) {
+          await getTaskCountSummaryData();
         }
         break;
     }
@@ -1124,6 +1223,7 @@ class DashboardProvider extends ChangeNotifier {
     isUserActivityLoaded = false;
     isAttendanceDashboardLoaded = false;
     isLeadFlowLoaded = false;
+    isTaskCountSummaryLoaded = false;
   }
 
   Future<void> refreshDashboardData(BuildContext context,

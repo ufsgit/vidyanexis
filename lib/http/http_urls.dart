@@ -305,6 +305,8 @@ class HttpUrls {
   static String saveDepartment = "department/Save_department";
   static String deleteDepartment = "department/Delete_department";
   static String fetchDashBoardTaskData = "dashboard/Fetch_dashboard";
+  static String getTaskCountSummary = "dashboard/Get_Task_Count_Summary";
+  static String getTaskDetailsByStatus = "dashboard/Get_Task_Details_By_Status";
 
   static String getLeadReportByEnquirySource =
       "lead/Get_Lead_Report_By_Enquiry_Source";

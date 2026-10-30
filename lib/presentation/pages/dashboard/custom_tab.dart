@@ -230,6 +230,7 @@ class _CustomTabState extends State<CustomTab> {
       if (widget.userType == '1') 'Attendance Dashboard',
       if (settingsProvider.hasTravelAllowancePermission) 'Travel Allowance',
       'Lead Flow',
+      if (settingsProvider.menuIsViewMap[233].toString() == '1') 'Task Count Summary',
     ];
 
     if (_tabKeys.length != tabOptions.length) {
@@ -290,6 +291,7 @@ class _CustomTabState extends State<CustomTab> {
                       if (widget.userType == '1') 9,
                       if (settingsProvider.hasTravelAllowancePermission) 10,
                       11, // Lead Flow
+                      if (settingsProvider.menuIsViewMap[233].toString() == '1') 12, // Task Count Summary
                     ];
 
                     if (index >= 0 && index < allowedTabIds.length) {
@@ -395,8 +397,10 @@ class _CustomTabState extends State<CustomTab> {
         return 'Activity';
       case 'Attendance Dashboard':
         return 'Attendance';
-      case 'Travel Allowance':
+            case 'Travel Allowance':
         return 'Travel Allowance';
+      case 'Task Count Summary':
+        return 'Task Count';
       default:
         return fullName;
     }
