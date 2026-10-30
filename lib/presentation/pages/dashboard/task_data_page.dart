@@ -2285,40 +2285,42 @@ class _TotalTaskDataPageState extends State<TotalTaskDataPage> {
                                                           flex: 2,
                                                           child: Row(
                                                             children: [
-                                                              // Container(
-                                                              //   width: 18,
-                                                              //   height: 18,
-                                                              //   decoration:
-                                                              //       BoxDecoration(
-                                                              //     color: selected
-                                                              //         ? AppColors
-                                                              //             .darkGreen
-                                                              //         : Colors
-                                                              //             .white,
-                                                              //     borderRadius:
-                                                              //         BorderRadius
-                                                              //             .circular(
-                                                              //                 4),
-                                                              //     border: Border.all(
-                                                              //         color: selected
-                                                              //             ? AppColors
-                                                              //                 .darkGreen
-                                                              //             : Colors
-                                                              //                 .grey
-                                                              //                 .shade400),
-                                                              //   ),
-                                                              //   child: selected
-                                                              //       ? const Icon(
-                                                              //           Icons
-                                                              //               .check,
-                                                              //           size:
-                                                              //               14,
-                                                              //           color: Colors
-                                                              //               .white)
-                                                              //       : null,
-                                                              // ),
-                                                              // const SizedBox(
-                                                              //     width: 10),
+                                                              if (settingsProvider.taskStatusChangeHideButton == 1) ...[
+                                                                Container(
+                                                                  width: 18,
+                                                                  height: 18,
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    color: selected
+                                                                        ? AppColors
+                                                                            .darkGreen
+                                                                        : Colors
+                                                                            .white,
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(
+                                                                                4),
+                                                                    border: Border.all(
+                                                                        color: selected
+                                                                            ? AppColors
+                                                                                .darkGreen
+                                                                            : Colors
+                                                                                .grey
+                                                                                .shade400),
+                                                                  ),
+                                                                  child: selected
+                                                                      ? const Icon(
+                                                                          Icons
+                                                                              .check,
+                                                                          size:
+                                                                              14,
+                                                                          color: Colors
+                                                                              .white)
+                                                                      : null,
+                                                                ),
+                                                                const SizedBox(
+                                                                    width: 10),
+                                                              ],
                                                               Text(
                                                                   taskItem.taskTypeName ??
                                                                       '',

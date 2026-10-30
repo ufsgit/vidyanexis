@@ -42,6 +42,8 @@ class CompanyPermission {
         return "Status add at new lead";
       case 56:
         return "Customer code";
+      case 57:
+        return "Task status change hide button";
       default:
         return "Permission $companyPermissionId";
     }
@@ -106,6 +108,9 @@ class CompanyPermission {
           break;
         case 56:
           cap = "Customer code";
+          break;
+        case 57:
+          cap = "Task status change hide button";
           break;
       }
     }

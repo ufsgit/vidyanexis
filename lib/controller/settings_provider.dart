@@ -464,7 +464,9 @@ class SettingsProvider extends ChangeNotifier {
       for (var p in _companyDetails[0].permissions) {
         if ((p.companyPermissionId == 19 ||
                 p.companyPermissionId == 42 ||
-                p.caption.toLowerCase().contains('task permission me and all')) &&
+                p.caption
+                    .toLowerCase()
+                    .contains('task permission me and all')) &&
             (p.value == 1 || p.value.toString() == '1')) {
           companyPerm = 1;
           break;
@@ -514,7 +516,9 @@ class SettingsProvider extends ChangeNotifier {
       for (var p in _companyDetails[0].permissions) {
         if ((p.companyPermissionId == 17 ||
                 p.companyPermissionId == 40 ||
-                p.caption.toLowerCase().contains('lead permission me and all')) &&
+                p.caption
+                    .toLowerCase()
+                    .contains('lead permission me and all')) &&
             (p.value == 1 || p.value.toString() == '1')) {
           companyPerm = 1;
           break;
@@ -548,7 +552,9 @@ class SettingsProvider extends ChangeNotifier {
       for (var p in _companyDetails[0].permissions) {
         if ((p.companyPermissionId == 18 ||
                 p.companyPermissionId == 41 ||
-                p.caption.toLowerCase().contains('customer permission me and all')) &&
+                p.caption
+                    .toLowerCase()
+                    .contains('customer permission me and all')) &&
             (p.value == 1 || p.value.toString() == '1')) {
           companyPerm = 1;
           break;
@@ -720,6 +726,7 @@ class SettingsProvider extends ChangeNotifier {
   int _sunexpertHideLead = 0;
   int _customerStatusBlock = 0;
   int _showCustomerCode = 0;
+  int _taskStatusChangeHideButton = 0;
   int? _selectedStatusId;
 
   int get toggleValue => _toggleValue;
@@ -754,7 +761,8 @@ class SettingsProvider extends ChangeNotifier {
         }
       }
       for (var p in _companyDetails[0].permissions) {
-        final cap = (p.caption.isNotEmpty ? p.caption : p.displayCaption).toLowerCase();
+        final cap =
+            (p.caption.isNotEmpty ? p.caption : p.displayCaption).toLowerCase();
         if (cap.contains('task page add') ||
             cap.contains('task_page_add') ||
             cap.contains('task duplicate') ||
@@ -767,6 +775,7 @@ class SettingsProvider extends ChangeNotifier {
     }
     return _taskDuplicateButton;
   }
+
   int get taskPageAddButton => taskDuplicateButton;
   int get solarPvSystemSpecification => _solarPvSystemSpecification;
   int get newDashboardCount => _newDashboardCount;
@@ -781,24 +790,59 @@ class SettingsProvider extends ChangeNotifier {
     if (_companyDetails.isNotEmpty &&
         _companyDetails[0].permissions.isNotEmpty) {
       for (var p in _companyDetails[0].permissions) {
-        if (p.companyPermissionId == 56 || p.companyPermissionId.toString() == '56') {
+        if (p.companyPermissionId == 56 ||
+            p.companyPermissionId.toString() == '56') {
           return (p.value == 1 || p.value.toString() == '1') ? 1 : 0;
         }
       }
       for (var p in _companyDetails[0].permissions) {
-        final cap =
-            (p.caption.isNotEmpty ? p.caption : p.displayCaption).trim().toLowerCase();
+        final cap = (p.caption.isNotEmpty ? p.caption : p.displayCaption)
+            .trim()
+            .toLowerCase();
         if (cap == 'customer code' || cap == 'customer_code') {
           return (p.value == 1 || p.value.toString() == '1') ? 1 : 0;
         }
       }
     }
-    return (_showCustomerCode == 1 || _showCustomerCode.toString() == '1') ? 1 : 0;
+    return (_showCustomerCode == 1 || _showCustomerCode.toString() == '1')
+        ? 1
+        : 0;
   }
 
   void setShowCustomerCode(int value) {
     _showCustomerCode = value;
     _syncStateToPermissionsList(56, value);
+    notifyListeners();
+  }
+
+  int get taskStatusChangeHideButton {
+    if (_companyDetails.isNotEmpty &&
+        _companyDetails[0].permissions.isNotEmpty) {
+      for (var p in _companyDetails[0].permissions) {
+        if (p.companyPermissionId == 57 ||
+            p.companyPermissionId.toString() == '57') {
+          return (p.value == 1 || p.value.toString() == '1') ? 1 : 0;
+        }
+      }
+      for (var p in _companyDetails[0].permissions) {
+        final cap = (p.caption.isNotEmpty ? p.caption : p.displayCaption)
+            .trim()
+            .toLowerCase();
+        if (cap.contains('task status change hide button') ||
+            cap.contains('task_status_change_hide_button')) {
+          return (p.value == 1 || p.value.toString() == '1') ? 1 : 0;
+        }
+      }
+    }
+    return (_taskStatusChangeHideButton == 1 ||
+            _taskStatusChangeHideButton.toString() == '1')
+        ? 1
+        : 0;
+  }
+
+  void setTaskStatusChangeHideButton(int value) {
+    _taskStatusChangeHideButton = value;
+    _syncStateToPermissionsList(57, value);
     notifyListeners();
   }
 
@@ -878,13 +922,16 @@ class SettingsProvider extends ChangeNotifier {
             (p.caption.isNotEmpty ? p.caption : p.displayCaption).toLowerCase();
         if (cap.contains('status add at new lead') ||
             cap.contains('status_add_at_new_lead') ||
-            (cap.contains('status') && cap.contains('add') && cap.contains('lead'))) {
+            (cap.contains('status') &&
+                cap.contains('add') &&
+                cap.contains('lead'))) {
           return p.value;
         }
       }
     }
     return _statusAddAtNewLead;
   }
+
   String get leadNameLabel =>
       _leadNameChangeToCustomerName == 1 ? 'Customer Name' : 'Lead Name';
 
@@ -1053,7 +1100,9 @@ class SettingsProvider extends ChangeNotifier {
     } else if (permissionId == 45 ||
         (caption != null &&
             (caption.toLowerCase().contains('enquiry source add at new lead') ||
-                caption.toLowerCase().contains('enquiry_source_add_at_new_lead')))) {
+                caption
+                    .toLowerCase()
+                    .contains('enquiry_source_add_at_new_lead')))) {
       if (caption != null &&
           (caption.toLowerCase().contains('consumer no in lead page') ||
               caption.toLowerCase().contains('consumer_no_in_lead_page'))) {
@@ -1089,12 +1138,15 @@ class SettingsProvider extends ChangeNotifier {
             (caption.toLowerCase().contains('customer_code') ||
                 caption.toLowerCase().contains('customer code')))) {
       _showCustomerCode = value;
-
+    } else if (permissionId == 57 ||
+        (caption != null &&
+            (caption.toLowerCase().contains('task_status_change_hide_button') ||
+                caption.toLowerCase().contains('task status change hide button')))) {
+      _taskStatusChangeHideButton = value;
     } else if (caption != null &&
         (caption.toLowerCase().contains('future_solar_dashboard') ||
             caption.toLowerCase().contains('future solar dashboard'))) {
       _futureSolarDashboard = value;
-
     }
   }
 
@@ -1247,7 +1299,8 @@ class SettingsProvider extends ChangeNotifier {
           if (p.companyPermissionId == 44 || p.companyPermissionId == 23) {
             return true;
           }
-          final cap = (p.caption.isNotEmpty ? p.caption : p.displayCaption).toLowerCase();
+          final cap = (p.caption.isNotEmpty ? p.caption : p.displayCaption)
+              .toLowerCase();
           return cap.contains('task page add') ||
               cap.contains('task_page_add') ||
               cap.contains('task duplicate') ||
@@ -1259,8 +1312,8 @@ class SettingsProvider extends ChangeNotifier {
       if (index == -1 && permissionId == 45) {
         index = _companyDetails[0].permissions.indexWhere((p) {
           if (p.companyPermissionId == 45) return true;
-          final cap =
-              (p.caption.isNotEmpty ? p.caption : p.displayCaption).toLowerCase();
+          final cap = (p.caption.isNotEmpty ? p.caption : p.displayCaption)
+              .toLowerCase();
           return cap.contains('enquiry source add at new lead') ||
               cap.contains('enquiry_source_add_at_new_lead') ||
               cap.contains('consumer no in lead page') ||
@@ -1270,18 +1323,31 @@ class SettingsProvider extends ChangeNotifier {
       if (index == -1 && permissionId == 46) {
         index = _companyDetails[0].permissions.indexWhere((p) {
           if (p.companyPermissionId == 46) return true;
-          final cap =
-              (p.caption.isNotEmpty ? p.caption : p.displayCaption).toLowerCase();
+          final cap = (p.caption.isNotEmpty ? p.caption : p.displayCaption)
+              .toLowerCase();
           return cap.contains('status add at new lead') ||
               cap.contains('status_add_at_new_lead');
         });
       }
       if (index == -1 && permissionId == 56) {
         index = _companyDetails[0].permissions.indexWhere((p) {
-          if (p.companyPermissionId == 56 || p.companyPermissionId.toString() == '56') return true;
-          final cap =
-              (p.caption.isNotEmpty ? p.caption : p.displayCaption).trim().toLowerCase();
+          if (p.companyPermissionId == 56 ||
+              p.companyPermissionId.toString() == '56') return true;
+          final cap = (p.caption.isNotEmpty ? p.caption : p.displayCaption)
+              .trim()
+              .toLowerCase();
           return cap == 'customer code' || cap == 'customer_code';
+        });
+      }
+      if (index == -1 && permissionId == 57) {
+        index = _companyDetails[0].permissions.indexWhere((p) {
+          if (p.companyPermissionId == 57 ||
+              p.companyPermissionId.toString() == '57') return true;
+          final cap = (p.caption.isNotEmpty ? p.caption : p.displayCaption)
+              .trim()
+              .toLowerCase();
+          return cap.contains('task status change hide button') ||
+              cap.contains('task_status_change_hide_button');
         });
       }
       if (index != -1) {
@@ -1342,7 +1408,8 @@ class SettingsProvider extends ChangeNotifier {
           if (p.companyPermissionId == 44 || p.companyPermissionId == 23) {
             return true;
           }
-          final cap = (p.caption.isNotEmpty ? p.caption : p.displayCaption).toLowerCase();
+          final cap = (p.caption.isNotEmpty ? p.caption : p.displayCaption)
+              .toLowerCase();
           return cap.contains('task page add') ||
               cap.contains('task_page_add') ||
               cap.contains('task duplicate') ||
@@ -1354,8 +1421,8 @@ class SettingsProvider extends ChangeNotifier {
       if (index == -1 && permissionId == 45) {
         index = _companyDetails[0].permissions.indexWhere((p) {
           if (p.companyPermissionId == 45) return true;
-          final cap =
-              (p.caption.isNotEmpty ? p.caption : p.displayCaption).toLowerCase();
+          final cap = (p.caption.isNotEmpty ? p.caption : p.displayCaption)
+              .toLowerCase();
           return cap.contains('enquiry source add at new lead') ||
               cap.contains('enquiry_source_add_at_new_lead') ||
               cap.contains('consumer no in lead page') ||
@@ -1365,18 +1432,31 @@ class SettingsProvider extends ChangeNotifier {
       if (index == -1 && permissionId == 46) {
         index = _companyDetails[0].permissions.indexWhere((p) {
           if (p.companyPermissionId == 46) return true;
-          final cap =
-              (p.caption.isNotEmpty ? p.caption : p.displayCaption).toLowerCase();
+          final cap = (p.caption.isNotEmpty ? p.caption : p.displayCaption)
+              .toLowerCase();
           return cap.contains('status add at new lead') ||
               cap.contains('status_add_at_new_lead');
         });
       }
       if (index == -1 && permissionId == 56) {
         index = _companyDetails[0].permissions.indexWhere((p) {
-          if (p.companyPermissionId == 56 || p.companyPermissionId.toString() == '56') return true;
-          final cap =
-              (p.caption.isNotEmpty ? p.caption : p.displayCaption).trim().toLowerCase();
+          if (p.companyPermissionId == 56 ||
+              p.companyPermissionId.toString() == '56') return true;
+          final cap = (p.caption.isNotEmpty ? p.caption : p.displayCaption)
+              .trim()
+              .toLowerCase();
           return cap == 'customer code' || cap == 'customer_code';
+        });
+      }
+      if (index == -1 && permissionId == 57) {
+        index = _companyDetails[0].permissions.indexWhere((p) {
+          if (p.companyPermissionId == 57 ||
+              p.companyPermissionId.toString() == '57') return true;
+          final cap = (p.caption.isNotEmpty ? p.caption : p.displayCaption)
+              .trim()
+              .toLowerCase();
+          return cap.contains('task status change hide button') ||
+              cap.contains('task_status_change_hide_button');
         });
       }
       if (index != -1) {
@@ -5285,13 +5365,15 @@ class SettingsProvider extends ChangeNotifier {
             // Case 1: 2D array [ [company], [permissions] ]
             if (data[0] is List) {
               final firstList = data[0] as List;
-              if (firstList.isNotEmpty && firstList[0] is Map<String, dynamic>) {
+              if (firstList.isNotEmpty &&
+                  firstList[0] is Map<String, dynamic>) {
                 companyMap = firstList[0] as Map<String, dynamic>;
               }
               for (int i = 1; i < data.length; i++) {
                 if (data[i] is List) {
                   final subList = data[i] as List;
-                  if (subList.isNotEmpty && subList[0] is Map<String, dynamic>) {
+                  if (subList.isNotEmpty &&
+                      subList[0] is Map<String, dynamic>) {
                     final item = subList[0] as Map<String, dynamic>;
                     if (item.containsKey('Company_Permission_Id') ||
                         item.containsKey('company_permission_id') ||
@@ -5303,7 +5385,9 @@ class SettingsProvider extends ChangeNotifier {
                   }
                 }
               }
-              if (rawPermissions.isEmpty && data.length > 1 && data[1] is List) {
+              if (rawPermissions.isEmpty &&
+                  data.length > 1 &&
+                  data[1] is List) {
                 rawPermissions = data[1] as List;
               }
             }
@@ -5353,9 +5437,10 @@ class SettingsProvider extends ChangeNotifier {
               rawPermissions = nested;
             } else if (companyMap['Company_Details'] is List &&
                 (companyMap['Company_Details'] as List).isNotEmpty &&
-                (companyMap['Company_Details'] as List)[0] is Map<String, dynamic>) {
-              companyMap =
-                  (companyMap['Company_Details'] as List)[0] as Map<String, dynamic>;
+                (companyMap['Company_Details'] as List)[0]
+                    is Map<String, dynamic>) {
+              companyMap = (companyMap['Company_Details'] as List)[0]
+                  as Map<String, dynamic>;
             }
           }
 
@@ -5369,7 +5454,8 @@ class SettingsProvider extends ChangeNotifier {
 
           if (companyMap != null) {
             _enquiryForMandatory = companyMap['Enquiry_For_Mandatory'] ?? 0;
-            _enquirySourceMandatory = companyMap['Enquiry_Source_Mandatory'] ?? 0;
+            _enquirySourceMandatory =
+                companyMap['Enquiry_Source_Mandatory'] ?? 0;
             _consumerNameMandatory = companyMap['Consumer_Name_Mandatory'] ?? 0;
             _consumerContactNoMandatory =
                 companyMap['Contact_Number_Mandatory'] ?? 0;
@@ -5412,8 +5498,7 @@ class SettingsProvider extends ChangeNotifier {
                   enquiryForMandatory: parsed.enquiryForMandatory,
                   enquirySourceMandatory: parsed.enquirySourceMandatory,
                   consumerNameMandatory: parsed.consumerNameMandatory,
-                  consumerContactNoMandatory:
-                      parsed.consumerContactNoMandatory,
+                  consumerContactNoMandatory: parsed.consumerContactNoMandatory,
                   leadInSales: parsed.leadInSales,
                   quotationItemValue: parsed.quotationItemValue,
                   additionalExpense: parsed.additionalExpense,
@@ -5494,8 +5579,7 @@ class SettingsProvider extends ChangeNotifier {
                 enquiryForMandatory: existing.enquiryForMandatory,
                 enquirySourceMandatory: existing.enquirySourceMandatory,
                 consumerNameMandatory: existing.consumerNameMandatory,
-                consumerContactNoMandatory:
-                    existing.consumerContactNoMandatory,
+                consumerContactNoMandatory: existing.consumerContactNoMandatory,
                 leadInSales: existing.leadInSales,
                 quotationItemValue: existing.quotationItemValue,
                 additionalExpense: existing.additionalExpense,
@@ -5739,6 +5823,7 @@ class SettingsProvider extends ChangeNotifier {
     _leadCreationChanges = 0;
     _showLeadCode = 0;
     _showCustomerCode = 0;
+    _taskStatusChangeHideButton = 0;
     _ramcoSort = 0;
     _ramcoHistory = 0;
     _ramcoAdminTaskPhoto = 0;
@@ -7583,12 +7668,10 @@ class SettingsProvider extends ChangeNotifier {
                 .where((field) =>
                     mapping.customFieldIds.contains(field.customFieldId))
                 .map((field) {
-                  final copy = field.copyWith();
-                  copy.isCreateNew =
-                      mapping.createNewMap[field.customFieldId] ?? 0;
-                  return copy;
-                })
-                .toList();
+              final copy = field.copyWith();
+              copy.isCreateNew = mapping.createNewMap[field.customFieldId] ?? 0;
+              return copy;
+            }).toList();
 
             return mapping;
           }).toList();

@@ -174,10 +174,11 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               GestureDetector(
-                onTap: () async{
+                onTap: () async {
                   bool fromLead = widget.task.isLead == '1' ? true : false;
-                  final sideprovider = Provider.of<SidebarProvider>(context,listen: false);
-                  if (widget.task.isLead == '1'){
+                  final sideprovider =
+                      Provider.of<SidebarProvider>(context, listen: false);
+                  if (widget.task.isLead == '1') {
                     sideprovider.name = 'Lead /';
                   } else {
                     sideprovider.name = 'Customer /';
@@ -185,7 +186,8 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                   await Navigator.push(context, MaterialPageRoute(
                     builder: (context) {
                       return CustomerDetailPageMobile(
-                          fromLead: fromLead, customerId: widget.task.customerId);
+                          fromLead: fromLead,
+                          customerId: widget.task.customerId);
                     },
                   ));
 
@@ -241,7 +243,8 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(6),
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   minimumSize: Size.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
@@ -251,7 +254,9 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                   style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
                 ),
                 onPressed: () {
-                  final cdProvider = Provider.of<CustomerDetailsProvider>(context, listen: false);
+                  final cdProvider = Provider.of<CustomerDetailsProvider>(
+                      context,
+                      listen: false);
                   cdProvider.customerId = widget.task.customerId.toString();
                   cdProvider.clearRecieptDetails();
                   Navigator.push(
@@ -513,8 +518,9 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                           Consumer<TaskPageProvider>(
                             builder: (context, reportsProvider, child) {
                               if (reportsProvider.processFlowMessage == null ||
-                                  reportsProvider
-                                      .processFlowMessage!.trim().isEmpty) {
+                                  reportsProvider.processFlowMessage!
+                                      .trim()
+                                      .isEmpty) {
                                 return const SizedBox.shrink();
                               }
                               return Container(
@@ -526,8 +532,8 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                 decoration: BoxDecoration(
                                   color: const Color(0xFFFEF2F2),
                                   borderRadius: BorderRadius.circular(4),
-                                  border:
-                                      Border.all(color: const Color(0xFFFCA5A5)),
+                                  border: Border.all(
+                                      color: const Color(0xFFFCA5A5)),
                                 ),
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1104,8 +1110,8 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                                 ImageUploadAlert(
                                               customerId: widget.task.customerId
                                                   .toString(),
-                                              taskId: widget.task.taskId
-                                                  .toString(),
+                                              taskId:
+                                                  widget.task.taskId.toString(),
                                             ),
                                           );
                                           if (!context.mounted) return;
@@ -1146,14 +1152,13 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                                 const NeverScrollableScrollPhysics(),
                                             itemCount: reportsProvider
                                                 .documentTypeModel.length,
-                                            separatorBuilder:
-                                                (context, index) =>
-                                                    const Divider(
-                                                        height: 1,
-                                                        indent: 16,
-                                                        endIndent: 16,
-                                                        color:
-                                                            Color(0xFFF1F5F9)),
+                                            separatorBuilder: (context,
+                                                    index) =>
+                                                const Divider(
+                                                    height: 1,
+                                                    indent: 16,
+                                                    endIndent: 16,
+                                                    color: Color(0xFFF1F5F9)),
                                             itemBuilder: (context, index) {
                                               final doc = reportsProvider
                                                   .documentTypeModel[index];
@@ -1195,7 +1200,8 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
-                                        _buildSectionHeader('PENDING DOCUMENTS'),
+                                        _buildSectionHeader(
+                                            'PENDING DOCUMENTS'),
                                         InkWell(
                                           onTap: () async {
                                             final result = await showDialog(
@@ -1424,8 +1430,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                     // Validation logic
                                     if (reportsProvider.processFlowMessage !=
                                             null &&
-                                        reportsProvider
-                                            .processFlowMessage!
+                                        reportsProvider.processFlowMessage!
                                             .trim()
                                             .isNotEmpty) {
                                       showDialog(
@@ -1439,8 +1444,8 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                               Text("Cannot Proceed"),
                                             ],
                                           ),
-                                          content: Text(
-                                              reportsProvider.processFlowMessage!),
+                                          content: Text(reportsProvider
+                                              .processFlowMessage!),
                                           actions: [
                                             TextButton(
                                               onPressed: () =>
@@ -1480,11 +1485,11 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                     // Follow-up Date Mandatory Check
                                     final bool isFollowupDateRequired =
                                         selectedStatus.followup == 1 ||
-                                        selectedStatus.viewDateFollowup == 1;
+                                            selectedStatus.viewDateFollowup ==
+                                                1;
                                     if (isFollowupDateRequired &&
                                         reportsProvider
-                                            .followUpDateController
-                                            .text
+                                            .followUpDateController.text
                                             .trim()
                                             .isEmpty) {
                                       showDialog(
@@ -1516,8 +1521,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                                     fontFamily:
                                                         'PlusJakartaSans',
                                                     color: Colors.black,
-                                                    fontWeight:
-                                                        FontWeight.bold,
+                                                    fontWeight: FontWeight.bold,
                                                     fontSize: 20,
                                                   ),
                                                 ),
@@ -1526,8 +1530,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                             content: const Text(
                                               "Follow-up Date Missing",
                                               style: TextStyle(
-                                                fontFamily:
-                                                    'PlusJakartaSans',
+                                                fontFamily: 'PlusJakartaSans',
                                                 color: Colors.black,
                                                 fontSize: 16,
                                               ),
@@ -1563,8 +1566,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                         selectedStatus.isTime == 1;
                                     if (isFollowupTimeRequired &&
                                         reportsProvider
-                                            .followUpTimeController
-                                            .text
+                                            .followUpTimeController.text
                                             .trim()
                                             .isEmpty) {
                                       showDialog(
@@ -1596,8 +1598,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                                     fontFamily:
                                                         'PlusJakartaSans',
                                                     color: Colors.black,
-                                                    fontWeight:
-                                                        FontWeight.bold,
+                                                    fontWeight: FontWeight.bold,
                                                     fontSize: 20,
                                                   ),
                                                 ),
@@ -1606,8 +1607,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                             content: const Text(
                                               "Follow-up Time Missing",
                                               style: TextStyle(
-                                                fontFamily:
-                                                    'PlusJakartaSans',
+                                                fontFamily: 'PlusJakartaSans',
                                                 color: Colors.black,
                                                 fontSize: 16,
                                               ),
@@ -2198,27 +2198,28 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                 trailingAction,
                 const SizedBox(width: 8),
               ],
-              // //black tick box
-              // AnimatedContainer(
-              //   duration: const Duration(milliseconds: 200),
-              //   width: 22,
-              //   height: 22,
-              //   decoration: BoxDecoration(
-              //     shape: BoxShape.circle,
-              //     color: isSelected
-              //         ? const Color(0xFF1E293B)
-              //         : Colors.transparent,
-              //     border: Border.all(
-              //       color: isSelected
-              //           ? const Color(0xFF1E293B)
-              //           : const Color(0xFFCBD5E1),
-              //       width: 1.2,
-              //     ),
-              //   ),
-              //   child: isSelected
-              //       ? const Icon(Icons.check, size: 14, color: Colors.white)
-              //       : null,
-              // ),
+              if (Provider.of<SettingsProvider>(context).taskStatusChangeHideButton == 1) ...[
+                //black tick box
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  width: 22,
+                  height: 22,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color:
+                        isSelected ? const Color(0xFF1E293B) : Colors.transparent,
+                    border: Border.all(
+                      color: isSelected
+                          ? const Color(0xFF1E293B)
+                          : const Color(0xFFCBD5E1),
+                      width: 1.2,
+                    ),
+                  ),
+                  child: isSelected
+                      ? const Icon(Icons.check, size: 14, color: Colors.white)
+                      : null,
+                ),
+              ],
             ],
           ),
         ),
@@ -2381,7 +2382,8 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.photo_library, color: Color(0xFF1A7AE8)),
+              leading:
+                  const Icon(Icons.photo_library, color: Color(0xFF1A7AE8)),
               title: const Text('Choose from Gallery'),
               onTap: () async {
                 await provider.addPhotoMobile(allowCamera: false);
@@ -2413,8 +2415,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
     if (docId == 0) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text(
-              'Cannot upload: this document type has no valid ID. '
+          content: Text('Cannot upload: this document type has no valid ID. '
               'Please contact your administrator.'),
         ),
       );
@@ -2568,8 +2569,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     InkWell(
-                      onTap: () =>
-                          _openViewer(context, uploadedUrl, title),
+                      onTap: () => _openViewer(context, uploadedUrl, title),
                       child: const Text(
                         'View',
                         style: TextStyle(
@@ -2728,6 +2728,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
       ),
     );
   }
+
   void _handleUploadedDocumentsResult({
     required dynamic result,
     required BuildContext context,
