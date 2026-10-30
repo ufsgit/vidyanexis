@@ -366,10 +366,16 @@ class _tasksPageReportState extends State<TaskPage> {
       provider.getDistricts(context);
       provider.getStatesDropdown(context);
       settingsProvider.getPriorities(context);
-      SharedPreferences.getInstance().then((prefs) {
+      SharedPreferences.getInstance().then((prefs) async {
         String uid = prefs.getString('userId') ?? "0";
-        settingsProvider.getCompanyDetails();
-        settingsProvider.getMenuPermissionData(uid, context);
+        await settingsProvider.getCompanyDetails();
+        await settingsProvider.getMenuPermissionData(uid, context);
+        if (mounted) {
+          if (!settingsProvider.canViewTaskMeAndAll) {
+            reportsProvider.setEntryType(
+                settingsProvider.hasTaskPermissionAll ? 'all' : 'myown');
+          }
+        }
       });
       reportsProvider.clearDashboardStatusFlag();
     });
