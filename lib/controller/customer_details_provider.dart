@@ -3779,15 +3779,28 @@ class CustomerDetailsProvider extends ChangeNotifier {
             double.tryParse(shippingChargesController.text) ?? 0.0,
         "ScopeOfWorkItems": scopeOfWorkItems.map((e) => e.toJson()).toList(),
         "customFields": () {
-          final additionalFieldsJson = customFieldAdditionalQuotationKey.currentState?.getFieldValuesAsJson() ?? [];
           final allFields = [
             ...?customFieldQuotationKey.currentState?.getFieldValuesAsJson(),
-            ..._additionalCustomFieldsQuotation.map((field) {
-              return {
-                "custom_field_id": field.customFieldId,
-                "value": field.datavalue ?? ''
-              };
-            }),
+            // Only include additional fields (361, 362) if they were actually
+            // loaded and displayed — avoids saving fields the user never saw.
+            if (_additionalCustomFieldsQuotation.isNotEmpty)
+              ..._additionalCustomFieldsQuotation.map((field) {
+                // Prefer the value from the widget state (user-entered) over
+                // whatever is stored in the model list.
+                final fromWidget = customFieldAdditionalQuotationKey
+                    .currentState
+                    ?.getFieldValuesAsJson()
+                    .firstWhere(
+                      (f) => f['custom_field_id'] == field.customFieldId,
+                      orElse: () => <String, dynamic>{},
+                    );
+                return {
+                  "custom_field_id": field.customFieldId,
+                  "value": (fromWidget != null && fromWidget.isNotEmpty)
+                      ? fromWidget['value']
+                      : field.datavalue ?? '',
+                };
+              }),
             ..._selectedCommercialFields.map((field) {
               int vId = field.customFieldId!;
               return {
@@ -3796,21 +3809,6 @@ class CustomerDetailsProvider extends ChangeNotifier {
               };
             }),
           ];
-          
-          // Ensure 361 and 362 are ALWAYS present, even if API load failed
-          for (int id in [361, 362]) {
-             if (!allFields.any((f) => f['custom_field_id'] == id)) {
-                // Try to get from widget state first, else empty string
-                final fromWidget = additionalFieldsJson.firstWhere(
-                   (f) => f['custom_field_id'] == id, 
-                   orElse: () => <String, dynamic>{}
-                );
-                allFields.add({
-                   "custom_field_id": id,
-                   "value": fromWidget.isNotEmpty ? fromWidget['value'] : ''
-                });
-             }
-          }
           return allFields;
         }(),
         "Description_2": quotationDescription2Controller.text.toString(),
