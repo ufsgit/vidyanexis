@@ -461,7 +461,23 @@ class SettingsProvider extends ChangeNotifier {
   /// If Company permission is 1 → check User Menu Permission (IsView = 1 to show, 0 to hide).
   bool get canViewTaskMeAndAll {
     // 1. First check company permission: if 0, do not check anything, hide button
-    if (_taskPermissionMeAndAll != 1) return false;
+    int companyPerm = _taskPermissionMeAndAll;
+    if (companyPerm != 1 &&
+        _companyDetails.isNotEmpty &&
+        _companyDetails[0].permissions.isNotEmpty) {
+      for (var p in _companyDetails[0].permissions) {
+        if ((p.companyPermissionId == 19 ||
+                p.companyPermissionId == 42 ||
+                p.caption
+                    .toLowerCase()
+                    .contains('task permission me and all')) &&
+            (p.value == 1 || p.value.toString() == '1')) {
+          companyPerm = 1;
+          break;
+        }
+      }
+    }
+    if (companyPerm != 1) return false;
 
     // 2. If company permission is 1, check user menu permission (menuIsViewMap)
     if ((_menuIsViewMap[209] ?? 0) == 1 ||
@@ -497,7 +513,23 @@ class SettingsProvider extends ChangeNotifier {
   /// If Company permission is 1 → check User Menu Permission (IsView = 1 to show, 0 to hide).
   bool get canViewLeadMeAndAll {
     // 1. First check company permission: if 0, do not check anything, hide button
-    if (_leadPermissionMeAndAll != 1) return false;
+    int companyPerm = _leadPermissionMeAndAll;
+    if (companyPerm != 1 &&
+        _companyDetails.isNotEmpty &&
+        _companyDetails[0].permissions.isNotEmpty) {
+      for (var p in _companyDetails[0].permissions) {
+        if ((p.companyPermissionId == 17 ||
+                p.companyPermissionId == 40 ||
+                p.caption
+                    .toLowerCase()
+                    .contains('lead permission me and all')) &&
+            (p.value == 1 || p.value.toString() == '1')) {
+          companyPerm = 1;
+          break;
+        }
+      }
+    }
+    if (companyPerm != 1) return false;
 
     // 2. If company permission is 1, check user menu permission (menuIsViewMap)
     if ((_menuIsViewMap[219] ?? 0) == 1 ||
@@ -517,7 +549,23 @@ class SettingsProvider extends ChangeNotifier {
   /// If Company permission is 1 → check User Menu Permission (IsView = 1 to show, 0 to hide).
   bool get canViewCustomerMeAndAll {
     // 1. First check company permission: if 0, do not check anything, hide button
-    if (_customerPermissionMeAndAll != 1) return false;
+    int companyPerm = _customerPermissionMeAndAll;
+    if (companyPerm != 1 &&
+        _companyDetails.isNotEmpty &&
+        _companyDetails[0].permissions.isNotEmpty) {
+      for (var p in _companyDetails[0].permissions) {
+        if ((p.companyPermissionId == 18 ||
+                p.companyPermissionId == 41 ||
+                p.caption
+                    .toLowerCase()
+                    .contains('customer permission me and all')) &&
+            (p.value == 1 || p.value.toString() == '1')) {
+          companyPerm = 1;
+          break;
+        }
+      }
+    }
+    if (companyPerm != 1) return false;
 
     // 2. If company permission is 1, check user menu permission (menuIsViewMap)
     if ((_menuIsViewMap[220] ?? 0) == 1 ||
@@ -682,6 +730,7 @@ class SettingsProvider extends ChangeNotifier {
   int _sunexpertHideLead = 0;
   int _customerStatusBlock = 0;
   int _showCustomerCode = 0;
+  int _taskStatusChangeHideButton = 0;
   int? _selectedStatusId;
 
   int get toggleValue => _toggleValue;
@@ -716,7 +765,8 @@ class SettingsProvider extends ChangeNotifier {
         }
       }
       for (var p in _companyDetails[0].permissions) {
-        final cap = (p.caption.isNotEmpty ? p.caption : p.displayCaption).toLowerCase();
+        final cap =
+            (p.caption.isNotEmpty ? p.caption : p.displayCaption).toLowerCase();
         if (cap.contains('task page add') ||
             cap.contains('task_page_add') ||
             cap.contains('task duplicate') ||
@@ -729,6 +779,7 @@ class SettingsProvider extends ChangeNotifier {
     }
     return _taskDuplicateButton;
   }
+
   int get taskPageAddButton => taskDuplicateButton;
   int get solarPvSystemSpecification => _solarPvSystemSpecification;
   int get newDashboardCount => _newDashboardCount;
@@ -743,24 +794,59 @@ class SettingsProvider extends ChangeNotifier {
     if (_companyDetails.isNotEmpty &&
         _companyDetails[0].permissions.isNotEmpty) {
       for (var p in _companyDetails[0].permissions) {
-        if (p.companyPermissionId == 56 || p.companyPermissionId.toString() == '56') {
+        if (p.companyPermissionId == 56 ||
+            p.companyPermissionId.toString() == '56') {
           return (p.value == 1 || p.value.toString() == '1') ? 1 : 0;
         }
       }
       for (var p in _companyDetails[0].permissions) {
-        final cap =
-            (p.caption.isNotEmpty ? p.caption : p.displayCaption).trim().toLowerCase();
+        final cap = (p.caption.isNotEmpty ? p.caption : p.displayCaption)
+            .trim()
+            .toLowerCase();
         if (cap == 'customer code' || cap == 'customer_code') {
           return (p.value == 1 || p.value.toString() == '1') ? 1 : 0;
         }
       }
     }
-    return (_showCustomerCode == 1 || _showCustomerCode.toString() == '1') ? 1 : 0;
+    return (_showCustomerCode == 1 || _showCustomerCode.toString() == '1')
+        ? 1
+        : 0;
   }
 
   void setShowCustomerCode(int value) {
     _showCustomerCode = value;
     _syncStateToPermissionsList(56, value);
+    notifyListeners();
+  }
+
+  int get taskStatusChangeHideButton {
+    if (_companyDetails.isNotEmpty &&
+        _companyDetails[0].permissions.isNotEmpty) {
+      for (var p in _companyDetails[0].permissions) {
+        if (p.companyPermissionId == 57 ||
+            p.companyPermissionId.toString() == '57') {
+          return (p.value == 1 || p.value.toString() == '1') ? 1 : 0;
+        }
+      }
+      for (var p in _companyDetails[0].permissions) {
+        final cap = (p.caption.isNotEmpty ? p.caption : p.displayCaption)
+            .trim()
+            .toLowerCase();
+        if (cap.contains('task status change hide button') ||
+            cap.contains('task_status_change_hide_button')) {
+          return (p.value == 1 || p.value.toString() == '1') ? 1 : 0;
+        }
+      }
+    }
+    return (_taskStatusChangeHideButton == 1 ||
+            _taskStatusChangeHideButton.toString() == '1')
+        ? 1
+        : 0;
+  }
+
+  void setTaskStatusChangeHideButton(int value) {
+    _taskStatusChangeHideButton = value;
+    _syncStateToPermissionsList(57, value);
     notifyListeners();
   }
 
@@ -840,13 +926,16 @@ class SettingsProvider extends ChangeNotifier {
             (p.caption.isNotEmpty ? p.caption : p.displayCaption).toLowerCase();
         if (cap.contains('status add at new lead') ||
             cap.contains('status_add_at_new_lead') ||
-            (cap.contains('status') && cap.contains('add') && cap.contains('lead'))) {
+            (cap.contains('status') &&
+                cap.contains('add') &&
+                cap.contains('lead'))) {
           return p.value;
         }
       }
     }
     return _statusAddAtNewLead;
   }
+
   String get leadNameLabel =>
       _leadNameChangeToCustomerName == 1 ? 'Customer Name' : 'Lead Name';
 
@@ -1015,7 +1104,9 @@ class SettingsProvider extends ChangeNotifier {
     } else if (permissionId == 45 ||
         (caption != null &&
             (caption.toLowerCase().contains('enquiry source add at new lead') ||
-                caption.toLowerCase().contains('enquiry_source_add_at_new_lead')))) {
+                caption
+                    .toLowerCase()
+                    .contains('enquiry_source_add_at_new_lead')))) {
       if (caption != null &&
           (caption.toLowerCase().contains('consumer no in lead page') ||
               caption.toLowerCase().contains('consumer_no_in_lead_page'))) {
@@ -1051,12 +1142,15 @@ class SettingsProvider extends ChangeNotifier {
             (caption.toLowerCase().contains('customer_code') ||
                 caption.toLowerCase().contains('customer code')))) {
       _showCustomerCode = value;
-
+    } else if (permissionId == 57 ||
+        (caption != null &&
+            (caption.toLowerCase().contains('task_status_change_hide_button') ||
+                caption.toLowerCase().contains('task status change hide button')))) {
+      _taskStatusChangeHideButton = value;
     } else if (caption != null &&
         (caption.toLowerCase().contains('future_solar_dashboard') ||
             caption.toLowerCase().contains('future solar dashboard'))) {
       _futureSolarDashboard = value;
-
     }
   }
 
@@ -1209,7 +1303,8 @@ class SettingsProvider extends ChangeNotifier {
           if (p.companyPermissionId == 44 || p.companyPermissionId == 23) {
             return true;
           }
-          final cap = (p.caption.isNotEmpty ? p.caption : p.displayCaption).toLowerCase();
+          final cap = (p.caption.isNotEmpty ? p.caption : p.displayCaption)
+              .toLowerCase();
           return cap.contains('task page add') ||
               cap.contains('task_page_add') ||
               cap.contains('task duplicate') ||
@@ -1221,8 +1316,8 @@ class SettingsProvider extends ChangeNotifier {
       if (index == -1 && permissionId == 45) {
         index = _companyDetails[0].permissions.indexWhere((p) {
           if (p.companyPermissionId == 45) return true;
-          final cap =
-              (p.caption.isNotEmpty ? p.caption : p.displayCaption).toLowerCase();
+          final cap = (p.caption.isNotEmpty ? p.caption : p.displayCaption)
+              .toLowerCase();
           return cap.contains('enquiry source add at new lead') ||
               cap.contains('enquiry_source_add_at_new_lead') ||
               cap.contains('consumer no in lead page') ||
@@ -1232,18 +1327,31 @@ class SettingsProvider extends ChangeNotifier {
       if (index == -1 && permissionId == 46) {
         index = _companyDetails[0].permissions.indexWhere((p) {
           if (p.companyPermissionId == 46) return true;
-          final cap =
-              (p.caption.isNotEmpty ? p.caption : p.displayCaption).toLowerCase();
+          final cap = (p.caption.isNotEmpty ? p.caption : p.displayCaption)
+              .toLowerCase();
           return cap.contains('status add at new lead') ||
               cap.contains('status_add_at_new_lead');
         });
       }
       if (index == -1 && permissionId == 56) {
         index = _companyDetails[0].permissions.indexWhere((p) {
-          if (p.companyPermissionId == 56 || p.companyPermissionId.toString() == '56') return true;
-          final cap =
-              (p.caption.isNotEmpty ? p.caption : p.displayCaption).trim().toLowerCase();
+          if (p.companyPermissionId == 56 ||
+              p.companyPermissionId.toString() == '56') return true;
+          final cap = (p.caption.isNotEmpty ? p.caption : p.displayCaption)
+              .trim()
+              .toLowerCase();
           return cap == 'customer code' || cap == 'customer_code';
+        });
+      }
+      if (index == -1 && permissionId == 57) {
+        index = _companyDetails[0].permissions.indexWhere((p) {
+          if (p.companyPermissionId == 57 ||
+              p.companyPermissionId.toString() == '57') return true;
+          final cap = (p.caption.isNotEmpty ? p.caption : p.displayCaption)
+              .trim()
+              .toLowerCase();
+          return cap.contains('task status change hide button') ||
+              cap.contains('task_status_change_hide_button');
         });
       }
       if (index != -1) {
@@ -1304,7 +1412,8 @@ class SettingsProvider extends ChangeNotifier {
           if (p.companyPermissionId == 44 || p.companyPermissionId == 23) {
             return true;
           }
-          final cap = (p.caption.isNotEmpty ? p.caption : p.displayCaption).toLowerCase();
+          final cap = (p.caption.isNotEmpty ? p.caption : p.displayCaption)
+              .toLowerCase();
           return cap.contains('task page add') ||
               cap.contains('task_page_add') ||
               cap.contains('task duplicate') ||
@@ -1316,8 +1425,8 @@ class SettingsProvider extends ChangeNotifier {
       if (index == -1 && permissionId == 45) {
         index = _companyDetails[0].permissions.indexWhere((p) {
           if (p.companyPermissionId == 45) return true;
-          final cap =
-              (p.caption.isNotEmpty ? p.caption : p.displayCaption).toLowerCase();
+          final cap = (p.caption.isNotEmpty ? p.caption : p.displayCaption)
+              .toLowerCase();
           return cap.contains('enquiry source add at new lead') ||
               cap.contains('enquiry_source_add_at_new_lead') ||
               cap.contains('consumer no in lead page') ||
@@ -1327,18 +1436,31 @@ class SettingsProvider extends ChangeNotifier {
       if (index == -1 && permissionId == 46) {
         index = _companyDetails[0].permissions.indexWhere((p) {
           if (p.companyPermissionId == 46) return true;
-          final cap =
-              (p.caption.isNotEmpty ? p.caption : p.displayCaption).toLowerCase();
+          final cap = (p.caption.isNotEmpty ? p.caption : p.displayCaption)
+              .toLowerCase();
           return cap.contains('status add at new lead') ||
               cap.contains('status_add_at_new_lead');
         });
       }
       if (index == -1 && permissionId == 56) {
         index = _companyDetails[0].permissions.indexWhere((p) {
-          if (p.companyPermissionId == 56 || p.companyPermissionId.toString() == '56') return true;
-          final cap =
-              (p.caption.isNotEmpty ? p.caption : p.displayCaption).trim().toLowerCase();
+          if (p.companyPermissionId == 56 ||
+              p.companyPermissionId.toString() == '56') return true;
+          final cap = (p.caption.isNotEmpty ? p.caption : p.displayCaption)
+              .trim()
+              .toLowerCase();
           return cap == 'customer code' || cap == 'customer_code';
+        });
+      }
+      if (index == -1 && permissionId == 57) {
+        index = _companyDetails[0].permissions.indexWhere((p) {
+          if (p.companyPermissionId == 57 ||
+              p.companyPermissionId.toString() == '57') return true;
+          final cap = (p.caption.isNotEmpty ? p.caption : p.displayCaption)
+              .trim()
+              .toLowerCase();
+          return cap.contains('task status change hide button') ||
+              cap.contains('task_status_change_hide_button');
         });
       }
       if (index != -1) {
@@ -2903,11 +3025,13 @@ class SettingsProvider extends ChangeNotifier {
           }
 
           SharedPreferences preferences = await SharedPreferences.getInstance();
-          String loginuserId = preferences.getString('userId') ?? "";
+          String loginuserId = (preferences.getString('userId') ?? "").trim();
+          String targetUserId = userId.trim();
           if (loginuserId.isEmpty ||
-              loginuserId == userId ||
-              userId == "0" ||
-              userId.isEmpty) {
+              loginuserId == targetUserId ||
+              targetUserId == "0" ||
+              targetUserId.isEmpty ||
+              loginuserId == "0") {
             final newViewMap = <int, int>{};
             final newEditMap = <int, int>{};
             final newDeleteMap = <int, int>{};
@@ -5238,16 +5362,165 @@ class SettingsProvider extends ChangeNotifier {
         final data = response.data;
         print('SettingsProvider.getCompanyDetails1 $data');
 
-        if (data != null && data is List && data.isNotEmpty) {
-          if (data[0] is Map<String, dynamic> &&
-              (data[0]['Company_Permission_Id'] != null ||
-                  data[0]['company_permission_id'] != null ||
-                  data[0]['Caption'] != null ||
-                  data[0]['caption'] != null)) {
-            List<CompanyPermission> perms = (data as List)
+        if (data != null) {
+          List<dynamic> rawPermissions = [];
+          Map<String, dynamic>? companyMap;
+
+          if (data is List && data.isNotEmpty) {
+            // Case 1: 2D array [ [company], [permissions] ]
+            if (data[0] is List) {
+              final firstList = data[0] as List;
+              if (firstList.isNotEmpty &&
+                  firstList[0] is Map<String, dynamic>) {
+                companyMap = firstList[0] as Map<String, dynamic>;
+              }
+              for (int i = 1; i < data.length; i++) {
+                if (data[i] is List) {
+                  final subList = data[i] as List;
+                  if (subList.isNotEmpty &&
+                      subList[0] is Map<String, dynamic>) {
+                    final item = subList[0] as Map<String, dynamic>;
+                    if (item.containsKey('Company_Permission_Id') ||
+                        item.containsKey('company_permission_id') ||
+                        item.containsKey('Caption') ||
+                        item.containsKey('caption')) {
+                      rawPermissions = subList;
+                      break;
+                    }
+                  }
+                }
+              }
+              if (rawPermissions.isEmpty &&
+                  data.length > 1 &&
+                  data[1] is List) {
+                rawPermissions = data[1] as List;
+              }
+            }
+            // Case 2: List of Maps
+            else if (data[0] is Map<String, dynamic>) {
+              final firstItem = data[0] as Map<String, dynamic>;
+              if (firstItem.containsKey('Company_Permission_Id') ||
+                  firstItem.containsKey('company_permission_id') ||
+                  (firstItem.containsKey('Caption') &&
+                      !firstItem.containsKey('Company_Name') &&
+                      !firstItem.containsKey('Company_Id'))) {
+                rawPermissions = data;
+              } else {
+                companyMap = firstItem;
+                final nested = companyMap['permissions'] ??
+                    companyMap['Permissions'] ??
+                    companyMap['Company_Permissions'] ??
+                    companyMap['company_permissions'] ??
+                    companyMap['Company_Permission'] ??
+                    companyMap['company_permission'];
+                if (nested is List && nested.isNotEmpty) {
+                  rawPermissions = nested;
+                } else if (data.length > 1) {
+                  for (int i = 1; i < data.length; i++) {
+                    if (data[i] is Map<String, dynamic>) {
+                      final item = data[i] as Map<String, dynamic>;
+                      if (item.containsKey('Company_Permission_Id') ||
+                          item.containsKey('company_permission_id') ||
+                          item.containsKey('Caption') ||
+                          item.containsKey('caption')) {
+                        rawPermissions.add(item);
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          } else if (data is Map<String, dynamic>) {
+            companyMap = data;
+            final nested = companyMap['permissions'] ??
+                companyMap['Permissions'] ??
+                companyMap['Company_Permissions'] ??
+                companyMap['company_permissions'] ??
+                companyMap['Company_Permission'] ??
+                companyMap['company_permission'];
+            if (nested is List && nested.isNotEmpty) {
+              rawPermissions = nested;
+            } else if (companyMap['Company_Details'] is List &&
+                (companyMap['Company_Details'] as List).isNotEmpty &&
+                (companyMap['Company_Details'] as List)[0]
+                    is Map<String, dynamic>) {
+              companyMap = (companyMap['Company_Details'] as List)[0]
+                  as Map<String, dynamic>;
+            }
+          }
+
+          List<CompanyPermission> perms = [];
+          if (rawPermissions.isNotEmpty) {
+            perms = rawPermissions
+                .whereType<Map<String, dynamic>>()
                 .map((item) => CompanyPermission.fromJson(item))
                 .toList();
+          }
 
+          if (companyMap != null) {
+            _enquiryForMandatory = companyMap['Enquiry_For_Mandatory'] ?? 0;
+            _enquirySourceMandatory =
+                companyMap['Enquiry_Source_Mandatory'] ?? 0;
+            _consumerNameMandatory = companyMap['Consumer_Name_Mandatory'] ?? 0;
+            _consumerContactNoMandatory =
+                companyMap['Contact_Number_Mandatory'] ?? 0;
+            _leadInSales = companyMap['Lead_In_Sales'] ?? 0;
+            _quotationItem = companyMap['Quotation_Item_Value'] ?? 0;
+            _additionalExpense = companyMap['Additional_Expense'] ?? 0;
+            _commercialProposal = companyMap['Commercial_Proposal'] ?? 0;
+            _districtCityMandatory = companyMap['District_City_Mandatory'] ?? 0;
+            _residentialScopeOfWork =
+                companyMap['Residential_Scope_Of_Work'] ?? 0;
+            _commercialScopeOfWork =
+                companyMap['Commercial_Scope_Of_Work'] ?? 0;
+            _leadMobileExistedCheck =
+                companyMap['Lead_Mobile_Existed_Check'] ?? 0;
+            _taskRemarkMandatory = companyMap['Task_Remark_Mandatory'] ?? 0;
+
+            try {
+              Company parsed = Company.fromJson(companyMap);
+              _companyDetails = [
+                Company(
+                  companyId: parsed.companyId,
+                  companyName: parsed.companyName,
+                  address1: parsed.address1,
+                  address2: parsed.address2,
+                  address3: parsed.address3,
+                  address4: parsed.address4,
+                  mobileNumber: parsed.mobileNumber,
+                  phoneNumber: parsed.phoneNumber,
+                  email: parsed.email,
+                  website: parsed.website,
+                  logo: parsed.logo,
+                  gstNo: parsed.gstNo,
+                  panNo: parsed.panNo,
+                  cinNo: parsed.cinNo,
+                  companyCode: parsed.companyCode,
+                  userCount: parsed.userCount,
+                  deleteStatus: parsed.deleteStatus,
+                  isLocation: parsed.isLocation,
+                  notificationTopic: parsed.notificationTopic,
+                  enquiryForMandatory: parsed.enquiryForMandatory,
+                  enquirySourceMandatory: parsed.enquirySourceMandatory,
+                  consumerNameMandatory: parsed.consumerNameMandatory,
+                  consumerContactNoMandatory: parsed.consumerContactNoMandatory,
+                  leadInSales: parsed.leadInSales,
+                  quotationItemValue: parsed.quotationItemValue,
+                  additionalExpense: parsed.additionalExpense,
+                  commercialProposal: parsed.commercialProposal,
+                  districtCityMandatory: parsed.districtCityMandatory,
+                  residentialScopeOfWork: parsed.residentialScopeOfWork,
+                  commercialScopeOfWork: parsed.commercialScopeOfWork,
+                  leadMobileExistedCheck: parsed.leadMobileExistedCheck,
+                  taskRemarkMandatory: parsed.taskRemarkMandatory,
+                  permissions: perms.isNotEmpty ? perms : parsed.permissions,
+                )
+              ];
+            } catch (e) {
+              print(
+                  'SettingsProvider.getCompanyDetails: Failed to parse company map - $e');
+            }
+          } else if (perms.isNotEmpty) {
             if (_companyDetails.isEmpty) {
               _companyDetails = [
                 Company(
@@ -5324,87 +5597,23 @@ class SettingsProvider extends ChangeNotifier {
                 permissions: perms,
               );
             }
-            _syncAllCompanyPermissions();
-          } else {
-            // If the API returns the classic Company format, still initialize it for other pages
-            try {
-              _companyDetails =
-                  data.map((item) => Company.fromJson(item)).toList();
-              if (_companyDetails.isNotEmpty) {
-                _syncAllCompanyPermissions();
-              }
-            } catch (e) {
-              print(
-                  'SettingsProvider.getCompanyDetails: Failed to parse Company format - $e');
+          }
+
+          _syncAllCompanyPermissions();
+
+          if (companyMap != null) {
+            String newLogo =
+                companyMap['company_logo'] ?? companyMap['Logo'] ?? '';
+            String newTitle =
+                companyMap['company_name'] ?? companyMap['Company_Name'] ?? '';
+            String newNotificationTopic =
+                companyMap['notification_topic'] ?? '';
+
+            if (newLogo.isNotEmpty) logo = newLogo;
+            if (newTitle.isNotEmpty) title = newTitle;
+            if (newNotificationTopic.isNotEmpty) {
+              notificationTopic = newNotificationTopic;
             }
-          }
-
-          final item = data[0];
-          String newLogo = item['company_logo'] ?? item['Logo'] ?? '';
-          String newTitle = item['company_name'] ?? item['Company_Name'] ?? '';
-          String newNotificationTopic = item['notification_topic'] ?? '';
-
-          SharedPreferences preferences = await SharedPreferences.getInstance();
-          await preferences.setString('cached_company_logo', logo);
-          await preferences.setString('cached_company_title', title);
-          await preferences.setString(
-              'cached_company_notification_topic', notificationTopic);
-
-          if (newLogo != logo ||
-              newTitle != title ||
-              newNotificationTopic != notificationTopic) {
-            logo = newLogo;
-            title = newTitle;
-            notificationTopic = newNotificationTopic;
-            print(
-                'DEBUG: notification_topic updated from API (list): $notificationTopic');
-
-            SharedPreferences preferences =
-                await SharedPreferences.getInstance();
-            await preferences.setString('cached_company_logo', logo);
-            await preferences.setString('cached_company_title', title);
-            await preferences.setString(
-                'cached_company_notification_topic', notificationTopic);
-            print(
-                'DEBUG: notification_topic saved to cache: $notificationTopic');
-            AppStyles.updateCachedBranding(title, logo);
-            _updateAppSwitcher();
-            print('Branding updated from API and cached: $title');
-            notifyListeners();
-          }
-        } else if (data != null && data is Map<String, dynamic>) {
-          // In case the endpoint actually returns a direct map { "company_name": "...", "company_logo": "..." }
-          String newLogo = data['company_logo'] ?? data['Logo'] ?? '';
-          String newTitle = data['company_name'] ?? data['Company_Name'] ?? '';
-          String newNotificationTopic = data['notification_topic'] ?? '';
-          _enquiryForMandatory = data['Enquiry_For_Mandatory'] ?? 0;
-          _enquirySourceMandatory = data['Enquiry_Source_Mandatory'] ?? 0;
-          _consumerNameMandatory = data['Consumer_Name_Mandatory'] ?? 0;
-          _consumerContactNoMandatory = data['Contact_Number_Mandatory'] ?? 0;
-          _leadInSales = data['Lead_In_Sales'] ?? 0;
-          _quotationItem = data['Quotation_Item_Value'] ?? 0;
-          _additionalExpense = data['Additional_Expense'] ?? 0;
-          _commercialProposal = data['Commercial_Proposal'] ?? 0;
-          _districtCityMandatory = data['District_City_Mandatory'] ?? 0;
-          _residentialScopeOfWork = data['Residential_Scope_Of_Work'] ?? 0;
-          _commercialScopeOfWork = data['Commercial_Scope_Of_Work'] ?? 0;
-          _leadMobileExistedCheck = data['Lead_Mobile_Existed_Check'] ?? 0;
-          try {
-            _companyDetails = [Company.fromJson(data)];
-            _syncAllCompanyPermissions();
-          } catch (e) {
-            print(
-                'SettingsProvider.getCompanyDetails (map): Failed to parse Company format - $e');
-          }
-
-          if (newLogo != logo ||
-              newTitle != title ||
-              newNotificationTopic != notificationTopic) {
-            logo = newLogo;
-            title = newTitle;
-            notificationTopic = newNotificationTopic;
-            print(
-                'DEBUG: notification_topic updated from API (map): $notificationTopic');
 
             SharedPreferences preferences =
                 await SharedPreferences.getInstance();
@@ -5414,9 +5623,9 @@ class SettingsProvider extends ChangeNotifier {
                 'cached_company_notification_topic', notificationTopic);
             AppStyles.updateCachedBranding(title, logo);
             _updateAppSwitcher();
-            print('Branding updated from API MAP and cached: $title');
-            notifyListeners();
           }
+
+          notifyListeners();
         } else {
           print('getCompanyDetails: No company data found in response');
         }
@@ -5619,6 +5828,7 @@ class SettingsProvider extends ChangeNotifier {
     _leadCreationChanges = 0;
     _showLeadCode = 0;
     _showCustomerCode = 0;
+    _taskStatusChangeHideButton = 0;
     _ramcoSort = 0;
     _ramcoHistory = 0;
     _ramcoAdminTaskPhoto = 0;
@@ -7464,12 +7674,10 @@ class SettingsProvider extends ChangeNotifier {
                 .where((field) =>
                     mapping.customFieldIds.contains(field.customFieldId))
                 .map((field) {
-                  final copy = field.copyWith();
-                  copy.isCreateNew =
-                      mapping.createNewMap[field.customFieldId] ?? 0;
-                  return copy;
-                })
-                .toList();
+              final copy = field.copyWith();
+              copy.isCreateNew = mapping.createNewMap[field.customFieldId] ?? 0;
+              return copy;
+            }).toList();
 
             return mapping;
           }).toList();

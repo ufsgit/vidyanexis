@@ -366,10 +366,16 @@ class _tasksPageReportState extends State<TaskPage> {
       provider.getDistricts(context);
       provider.getStatesDropdown(context);
       settingsProvider.getPriorities(context);
-      SharedPreferences.getInstance().then((prefs) {
+      SharedPreferences.getInstance().then((prefs) async {
         String uid = prefs.getString('userId') ?? "0";
-        settingsProvider.getCompanyDetails();
-        settingsProvider.getMenuPermissionData(uid, context);
+        await settingsProvider.getCompanyDetails();
+        await settingsProvider.getMenuPermissionData(uid, context);
+        if (mounted) {
+          if (!settingsProvider.canViewTaskMeAndAll) {
+            reportsProvider.setEntryType(
+                settingsProvider.hasTaskPermissionAll ? 'all' : 'myown');
+          }
+        }
       });
       reportsProvider.clearDashboardStatusFlag();
     });
@@ -5488,40 +5494,42 @@ class _tasksPageReportState extends State<TaskPage> {
                                                           flex: 2,
                                                           child: Row(
                                                             children: [
-                                                              // Container(
-                                                              //   width: 18,
-                                                              //   height: 18,
-                                                              //   decoration:
-                                                              //       BoxDecoration(
-                                                              //     color: selected
-                                                              //         ? AppColors
-                                                              //             .darkGreen
-                                                              //         : Colors
-                                                              //             .white,
-                                                              //     borderRadius:
-                                                              //         BorderRadius
-                                                              //             .circular(
-                                                              //                 4),
-                                                              //     border: Border.all(
-                                                              //         color: selected
-                                                              //             ? AppColors
-                                                              //                 .darkGreen
-                                                              //             : Colors
-                                                              //                 .grey
-                                                              //                 .shade400),
-                                                              //   ),
-                                                              //   child: selected
-                                                              //       ? const Icon(
-                                                              //           Icons
-                                                              //               .check,
-                                                              //           size:
-                                                              //               14,
-                                                              //           color: Colors
-                                                              //               .white)
-                                                              //       : null,
-                                                              // ),
-                                                              // const SizedBox(
-                                                              //     width: 10),
+                                                              if (settingsProvider.taskStatusChangeHideButton == 1) ...[
+                                                                Container(
+                                                                  width: 18,
+                                                                  height: 18,
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    color: selected
+                                                                        ? AppColors
+                                                                            .darkGreen
+                                                                        : Colors
+                                                                            .white,
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(
+                                                                                4),
+                                                                    border: Border.all(
+                                                                        color: selected
+                                                                            ? AppColors
+                                                                                .darkGreen
+                                                                            : Colors
+                                                                                .grey
+                                                                                .shade400),
+                                                                  ),
+                                                                  child: selected
+                                                                      ? const Icon(
+                                                                          Icons
+                                                                              .check,
+                                                                          size:
+                                                                              14,
+                                                                          color: Colors
+                                                                              .white)
+                                                                      : null,
+                                                                ),
+                                                                const SizedBox(
+                                                                    width: 10),
+                                                              ],
                                                               Text(
                                                                   taskItem.taskTypeName ??
                                                                       '',

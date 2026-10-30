@@ -42,6 +42,8 @@ class CompanyPermission {
         return "Status add at new lead";
       case 56:
         return "Customer code";
+      case 57:
+        return "Task status change hide button";
       default:
         return "Permission $companyPermissionId";
     }
@@ -106,6 +108,9 @@ class CompanyPermission {
           break;
         case 56:
           cap = "Customer code";
+          break;
+        case 57:
+          cap = "Task status change hide button";
           break;
       }
     }
@@ -239,8 +244,14 @@ class Company {
       taskRemarkMandatory: json['Task_Remark_Mandatory'] ?? 0,
       residentialScopeOfWork: json['Residential_Scope_Of_Work'] ?? 0,
       commercialScopeOfWork: json['Commercial_Scope_Of_Work'] ?? 0,
-      permissions: (json['permissions'] as List<dynamic>?)
-              ?.map((e) => CompanyPermission.fromJson(e))
+      permissions: ((json['permissions'] ??
+                  json['Permissions'] ??
+                  json['Company_Permissions'] ??
+                  json['company_permissions'] ??
+                  json['Company_Permission'] ??
+                  json['company_permission']) as List<dynamic>?)
+              ?.whereType<Map<String, dynamic>>()
+              .map((e) => CompanyPermission.fromJson(e))
               .toList() ??
           const [],
     );
