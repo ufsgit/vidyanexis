@@ -6150,9 +6150,6 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
       if (response?.statusCode == 200 || response?.statusCode == 201) {
         await getRecieptListApi(customerId, context);
-        if (context.mounted) {
-          await getInvoiceRecieptTotal(customerId, context);
-        }
         return true;
       } else {
         final errorMsg = response?.data is Map && response?.data['message'] != null
@@ -6203,9 +6200,6 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
       if (response?.statusCode == 200 || response?.statusCode == 201) {
         await getRecieptListApi(customerId, context);
-        if (context.mounted) {
-          await getInvoiceRecieptTotal(customerId, context);
-        }
         return true;
       } else {
         final errorMsg = response?.data is Map && response?.data['message'] != null
