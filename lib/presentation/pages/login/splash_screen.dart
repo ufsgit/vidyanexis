@@ -24,12 +24,24 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // Load branding cache explicitly (moved out of SettingsProvider constructor
+      // to avoid async I/O during provider tree construction).
+      if (mounted) {
+        final settingsProvider =
+            Provider.of<SettingsProvider>(context, listen: false);
+        await settingsProvider.initCacheIfNeeded();
+      }
+
       if (isCompanyCode) {
+        if (!mounted) return;
         final companyProvider =
             Provider.of<CompanyProvider>(context, listen: false);
 
-        // Load settings first (this is already done in constructor, but double check)
-        await companyProvider.loadSettings();
+        // CompanyProvider already calls loadSettings() in its constructor.
+        // Wait for it to finish only if baseUrl is still empty.
+        if (companyProvider.baseUrl.isEmpty) {
+          await companyProvider.loadSettings();
+        }
 
         if (companyProvider.baseUrl.isEmpty) {
           if (mounted) {
@@ -39,9 +51,6 @@ class _SplashScreenState extends State<SplashScreen> {
         }
       }
 
-      // final settingsProvider =
-      //     Provider.of<SettingsProvider>(context, listen: false);
-      // await settingsProvider.getCompanyDetails();
       _checkLoginStatus();
     });
   }

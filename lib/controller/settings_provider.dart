@@ -73,8 +73,12 @@ class SettingsProvider extends ChangeNotifier {
 
   factory SettingsProvider() => _instance;
 
-  SettingsProvider._internal() {
-    _initCache();
+  SettingsProvider._internal();
+
+  /// Call this explicitly from SplashScreen instead of relying on the constructor.
+  /// This avoids running async I/O during provider tree construction.
+  Future<void> initCacheIfNeeded() async {
+    await _initCache();
   }
 
   VoidCallback? onAddPressed;

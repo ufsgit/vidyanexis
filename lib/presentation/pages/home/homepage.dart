@@ -79,7 +79,6 @@ import 'package:vidyanexis/presentation/pages/reports/customer_task_month_report
 import 'package:vidyanexis/presentation/pages/reports/accounts_summary_page_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/duplicate_entry_attempts_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/project_duration_report_screen.dart';
-import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vidyanexis/presentation/pages/login/login_page.dart';
 
@@ -92,10 +91,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  Future<String> getUserName() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('userName') ?? "Admin";
-  }
+  // Cached username – loaded once in initState to avoid async I/O on every rebuild.
+  String _cachedUserName = '';
 
   PackageInfo? packageInfo;
   String logo = '';
@@ -113,6 +110,13 @@ class _HomePageState extends State<HomePage> {
 
       final preferences = await SharedPreferences.getInstance();
       if (!mounted) return;
+
+      // Cache username once so build() never needs to read SharedPreferences again.
+      final loadedName = preferences.getString('userName') ?? 'Admin';
+      if (mounted && _cachedUserName != loadedName) {
+        setState(() => _cachedUserName = loadedName);
+      }
+
       String userId = preferences.getString('userId') ?? "0";
       final settingsProvider =
           Provider.of<SettingsProvider>(context, listen: false);
@@ -713,10 +717,10 @@ class _HomePageState extends State<HomePage> {
                     )
                   : null,
               actions: [
-                FutureBuilder<String>(
-                  future: getUserName(),
-                  builder: (context, snapshot) {
-                    final userName = snapshot.data ?? '';
+                // Cached username – no async I/O per rebuild.
+                Builder(
+                  builder: (context) {
+                    final userName = _cachedUserName;
                     if (userName.isEmpty) return const SizedBox.shrink();
                     return Padding(
                       padding: const EdgeInsets.symmetric(
@@ -869,25 +873,15 @@ class _HomePageState extends State<HomePage> {
       // drawer: screenWidth < _breakpoint
       //     ?
       drawer: Drawer(
-        child: FutureBuilder<String>(
-          future: getUserName(),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return const CommonEmptyState(message: 'Error loading username');
-            } else {
-              final userName = snapshot.data ?? '';
-              return CustomSidebar(
-                userName: userName,
-                options: sidebarOptions,
-                isDrawer: true,
-                logo: logo,
-                width: screenWidth * 0.85,
-                appVersion: (null != packageInfo
-                    ? "${packageInfo!.version}.${packageInfo!.buildNumber}"
-                    : "0.0"),
-              );
-            }
-          },
+        child: CustomSidebar(
+          userName: _cachedUserName,
+          options: sidebarOptions,
+          isDrawer: true,
+          logo: logo,
+          width: screenWidth * 0.85,
+          appVersion: (null != packageInfo
+              ? "${packageInfo!.version}.${packageInfo!.buildNumber}"
+              : "0.0"),
         ),
       ),
       body: Row(
