@@ -1,4 +1,4 @@
- import 'dart:async';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -37,8 +37,8 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
   final TextEditingController _searchController = TextEditingController();
   Timer? _debounce;
 
-  final ValueNotifier<List<MapEntry<int, StockUseItems>>> _filteredNotifier =
-      ValueNotifier([]);
+  final ValueNotifier<Map<String, List<MapEntry<int, StockUseItems>>>>
+      _groupedNotifier = ValueNotifier({});
 
   final ValueNotifier<bool> _isLoadingItems = ValueNotifier(true);
 
@@ -116,23 +116,33 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
   void _updateFilteredList(StockUseProvider provider) {
     final query = _searchQuery.toLowerCase();
     final items = provider.stockUseItems;
-    final List<MapEntry<int, StockUseItems>> result = [];
 
-    if (query.isEmpty) {
-      for (int i = 0; i < items.length; i++) {
-        result.add(MapEntry(i, items[i]));
-      }
-    } else {
-      for (int i = 0; i < items.length; i++) {
-        final item = items[i];
-        if (item.itemName.toLowerCase().contains(query) ||
+    final Map<String, List<MapEntry<int, StockUseItems>>> grouped = {};
+
+    for (int i = 0; i < items.length; i++) {
+      final item = items[i];
+
+      // Apply search filter
+      if (query.isNotEmpty) {
+        final matches = item.itemName.toLowerCase().contains(query) ||
             item.categoryName.toLowerCase().contains(query) ||
-            item.unitName.toLowerCase().contains(query)) {
-          result.add(MapEntry(i, item));
-        }
+            item.unitName.toLowerCase().contains(query);
+        if (!matches) continue;
       }
+
+      final category =
+          item.categoryName.isEmpty ? 'Uncategorized' : item.categoryName;
+
+      grouped.putIfAbsent(category, () => []);
+      grouped[category]!.add(MapEntry(i, item));
     }
-    _filteredNotifier.value = result;
+
+    // Optional: sort categories alphabetically
+    final sorted = Map.fromEntries(
+      grouped.entries.toList()..sort((a, b) => a.key.compareTo(b.key)),
+    );
+
+    _groupedNotifier.value = sorted;
   }
 
   void _onSearchChanged(String value, StockUseProvider provider) {
@@ -216,7 +226,7 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
   void dispose() {
     _debounce?.cancel();
     _searchController.dispose();
-    _filteredNotifier.dispose();
+    _groupedNotifier.dispose();
     _isLoadingItems.dispose();
     super.dispose();
   }
@@ -385,7 +395,7 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
                             size: 22,
                           ),
                           suffixIcon: ValueListenableBuilder(
-                            valueListenable: _filteredNotifier,
+                            valueListenable: _groupedNotifier,
                             builder: (context, _, __) {
                               if (_searchQuery.isEmpty) {
                                 return const SizedBox.shrink();
@@ -426,88 +436,147 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
                       const SizedBox(height: 16),
 
                       // Items list / loading indicator
-                      ValueListenableBuilder<bool>(
-                        valueListenable: _isLoadingItems,
-                        builder: (context, isLoading, _) {
-                          if (isLoading) {
-                            return const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 48),
+                      ValueListenableBuilder<
+                          Map<String, List<MapEntry<int, StockUseItems>>>>(
+                        valueListenable: _groupedNotifier,
+                        builder: (context, groupedItems, _) {
+                          if (groupedItems.isEmpty) {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 40),
                               child: Center(
-                                child: Column(
-                                  children: [
-                                    SizedBox(
-                                      width: 28,
-                                      height: 28,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2.5,
-                                        color: Color(0xFF3B82F6),
-                                      ),
-                                    ),
-                                    SizedBox(height: 12),
-                                    Text(
-                                      'Loading items...',
-                                      style: TextStyle(
-                                        fontSize: 13,
-                                        color: Color(0xFF64748B),
-                                      ),
-                                    ),
-                                  ],
+                                child: Text(
+                                  _searchQuery.isEmpty
+                                      ? 'No items available'
+                                      : 'No items match your search',
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 14,
+                                    color: const Color(0xFF64748B),
+                                  ),
                                 ),
                               ),
                             );
                           }
 
-                          return ValueListenableBuilder<
-                              List<MapEntry<int, StockUseItems>>>(
-                            valueListenable: _filteredNotifier,
-                            builder: (context, filteredEntries, _) {
-                              if (filteredEntries.isEmpty) {
-                                return Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 40),
-                                  child: Center(
-                                    child: Text(
-                                      _searchQuery.isEmpty
-                                          ? 'No items available'
-                                          : 'No items match your search',
-                                      style: GoogleFonts.plusJakartaSans(
-                                        fontSize: 14,
-                                        color: const Color(0xFF64748B),
+                          return ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: groupedItems.length,
+                            itemBuilder: (context, categoryIndex) {
+                              final category =
+                                  groupedItems.keys.elementAt(categoryIndex);
+                              final entries = groupedItems[category]!;
+
+                              return Container(
+                                margin: EdgeInsets.only(
+                                  bottom:
+                                      categoryIndex == groupedItems.length - 1
+                                          ? 0
+                                          : 16,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(
+                                      color: const Color(0xFFE2E8F0)),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.03),
+                                      blurRadius: 6,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // Category Header
+                                    Container(
+                                      width: double.infinity,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 14, vertical: 10),
+                                      decoration: const BoxDecoration(
+                                        color: Color(0xFFF8FAFC),
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(8),
+                                          topRight: Radius.circular(8),
+                                        ),
+                                        border: Border(
+                                          bottom: BorderSide(
+                                              color: Color(0xFFE2E8F0)),
+                                        ),
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 10, vertical: 4),
+                                            decoration: BoxDecoration(
+                                              color: const Color(0xFFEEF2FF),
+                                              borderRadius:
+                                                  BorderRadius.circular(6),
+                                            ),
+                                            child: Text(
+                                              category,
+                                              style:
+                                                  GoogleFonts.plusJakartaSans(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.w700,
+                                                color: const Color(0xFF3B82F6),
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Text(
+                                            '${entries.length} item${entries.length > 1 ? 's' : ''}',
+                                            style: GoogleFonts.plusJakartaSans(
+                                              fontSize: 12,
+                                              color: const Color(0xFF64748B),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                  ),
-                                );
-                              }
 
-                              return ListView.separated(
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemCount: filteredEntries.length,
-                                separatorBuilder: (_, __) =>
-                                    const SizedBox(height: 12),
-                                itemBuilder: (context, index) {
-                                  final entry = filteredEntries[index];
-                                  final originalIndex = entry.key;
-                                  final item = entry.value;
+                                    // Items inside the box
+                                    Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                          12, 12, 12, 8),
+                                      child: Column(
+                                        children: entries.map((entry) {
+                                          final originalIndex = entry.key;
+                                          final item = entry.value;
 
-                                  return _ItemTile(
-                                    item: item,
-                                    onCheckChanged: (value) {
-                                      expenseProvider.toggleItemCheck(
-                                          originalIndex, value ?? false);
-                                      _updateFilteredList(expenseProvider);
-                                    },
-                                    onQuantityChanged: (value) {
-                                      expenseProvider.updateItemQuantity(
-                                          originalIndex, value);
-                                    },
-                                    onDelete: () {
-                                      expenseProvider
-                                          .deleteStockUseItem(originalIndex);
-                                      _updateFilteredList(expenseProvider);
-                                    },
-                                  );
-                                },
+                                          return Padding(
+                                            padding: const EdgeInsets.only(
+                                                bottom: 10),
+                                            child: _ItemTile(
+                                              item: item,
+                                              onCheckChanged: (value) {
+                                                expenseProvider.toggleItemCheck(
+                                                    originalIndex,
+                                                    value ?? false);
+                                                _updateFilteredList(
+                                                    expenseProvider);
+                                              },
+                                              onQuantityChanged: (value) {
+                                                expenseProvider
+                                                    .updateItemQuantity(
+                                                        originalIndex, value);
+                                              },
+                                              onDelete: () {
+                                                expenseProvider
+                                                    .deleteStockUseItem(
+                                                        originalIndex);
+                                                _updateFilteredList(
+                                                    expenseProvider);
+                                              },
+                                            ),
+                                          );
+                                        }).toList(),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               );
                             },
                           );
