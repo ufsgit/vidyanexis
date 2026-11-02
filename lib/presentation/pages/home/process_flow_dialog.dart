@@ -847,6 +847,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                                   optionsViewOpenDirection:
                                                       OptionsViewOpenDirection
                                                           .down,
+                                                  disableSearch: true,
                                                   items: departmentStaff,
                                                   displayStringFunction:
                                                       (staff) =>
