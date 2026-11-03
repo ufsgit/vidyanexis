@@ -251,6 +251,8 @@ class BillOfMaterial {
   String uom;
   String price;
   String amount;
+  int? itemId;
+  String? itemName;
 
   BillOfMaterial({
     required this.make,
@@ -262,6 +264,8 @@ class BillOfMaterial {
     this.uom = '',
     this.price = '',
     this.amount = '',
+    this.itemId,
+    this.itemName,
   });
 
   factory BillOfMaterial.fromMap(Map<String, dynamic> json) => BillOfMaterial(
@@ -274,6 +278,8 @@ class BillOfMaterial {
         uom: json["UOM"] ?? '',
         price: json["Price"]?.toString() ?? "",
         amount: json["Amount"]?.toString() ?? "",
+        itemId: int.tryParse(json["Item_Id"]?.toString() ?? json["itemId"]?.toString() ?? "0") ?? 0,
+        itemName: json["Item_Name"]?.toString() ?? json["itemName"]?.toString() ?? "",
       );
 
   Map<String, dynamic> toMap() => {
@@ -286,6 +292,8 @@ class BillOfMaterial {
         "UOM": uom,
         "Price": price,
         "Amount": amount,
+        "Item_Id": itemId ?? 0,
+        "Item_Name": itemName ?? "",
       };
 }
 

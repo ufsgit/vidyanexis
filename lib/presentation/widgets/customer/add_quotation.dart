@@ -55,98 +55,147 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       Loader.showLoader(context);
-      final customerDetailsProvider =
-          Provider.of<CustomerDetailsProvider>(context, listen: false);
-      final settingsProvider =
-          Provider.of<SettingsProvider>(context, listen: false);
-      final expenseProvider =
-          Provider.of<ExpenseProvider>(context, listen: false);
-      await expenseProvider.searchItemList(context: context, isFilter: false);
-      companyQuotationItems =
-          settingsProvider.companyDetails.first.quotationItemValue == 1;
+      try {
+        final customerDetailsProvider =
+            Provider.of<CustomerDetailsProvider>(context, listen: false);
+        final settingsProvider =
+            Provider.of<SettingsProvider>(context, listen: false);
+        final expenseProvider =
+            Provider.of<ExpenseProvider>(context, listen: false);
 
-      // Always clear first to ensure a clean state
-      customerDetailsProvider.clearQuotationDetails();
-
-      await settingsProvider.searchBranch(context);
-      await customerDetailsProvider.getQuotationTypes(context);
-
-      if (!widget.isEdit) {
-        if (settingsProvider.branchModel.isNotEmpty) {
-          customerDetailsProvider.selectedBranchId =
-              settingsProvider.branchModel.first.branchId;
-        }
-
-        if (customerDetailsProvider.quotationTypeData.isNotEmpty) {
-          final residentialType = customerDetailsProvider.quotationTypeData
-              .where((element) => element.quotationTypeName
-                  .toLowerCase()
-                  .contains('residential'))
-              .firstOrNull;
-          if (residentialType != null) {
-            customerDetailsProvider.selectedQuotationType =
-                residentialType.quotationTypeId;
-            customerDetailsProvider.quotationTypeController.text =
-                residentialType.quotationTypeName;
+        if (settingsProvider.companyDetails.isEmpty) {
+          try {
+            await settingsProvider.getCompanyDetails();
+          } catch (e) {
+            debugPrint('Failed to load company details: $e');
           }
         }
-      }
 
-      await customerDetailsProvider.getProfitList(context);
+        try {
+          await expenseProvider.searchItemList(context: context, isFilter: false);
+        } catch (e) {
+          debugPrint('Failed to load item list: $e');
+        }
 
-      // Fetch custom field definitions for quotations
-      // await customerDetailsProvider.getCustomFieldsByQuotationId(context);
-      await customerDetailsProvider.getCommercialCustomFieldsApi(context);
+        companyQuotationItems = settingsProvider.companyDetails.isNotEmpty &&
+            settingsProvider.companyDetails.first.quotationItemValue == 1;
 
-      settingsProvider.clearTermsFields();
-      await settingsProvider.getTermsAndWarranty(context);
-      customerDetailsProvider.qtermsConditionsController.text =
-          settingsProvider.termsText;
-      customerDetailsProvider.qwarrentyController.text =
-          settingsProvider.warrantyText;
-      customerDetailsProvider.quotationDescriptionController.text =
-          settingsProvider.description1Text;
-      customerDetailsProvider.quotationDescription2Controller.text =
-          settingsProvider.description2Text;
-      customerDetailsProvider.quotationDescription3Controller.text =
-          settingsProvider.description3Text;
-      customerDetailsProvider.advanceController.text =
-          settingsProvider.advancePercentageText;
-      customerDetailsProvider.deliveryController.text =
-          settingsProvider.onMaterialDeliveryPercentageText;
-      customerDetailsProvider.workCompletionController.text =
-          settingsProvider.onWorkCompletionPercentageText;
+        // Always clear first to ensure a clean state
+        customerDetailsProvider.clearQuotationDetails();
 
-      if (widget.isEdit) {
-        // Fetch existing quotation details if editing
-        await customerDetailsProvider.getQuatationListByMasterId(
-            widget.quotationId, context);
+        try {
+          await settingsProvider.searchBranch(context);
+        } catch (e) {
+          debugPrint('Failed to load branches: $e');
+        }
 
-        if (customerDetailsProvider.quotationListByMaster.isNotEmpty) {
-          final quotation = customerDetailsProvider.quotationListByMaster.first;
-          customerDetailsProvider.populateAllQuotationFields(
-              quotation, widget.customerId);
+        try {
+          await customerDetailsProvider.getQuotationTypes(context);
+        } catch (e) {
+          debugPrint('Failed to load quotation types: $e');
+        }
 
-          // Pre-populate newItemId if companyQuotationItems is active
-          if (companyQuotationItems) {
-            final nameOfItem = customerDetailsProvider.selectedItemName;
-            if (nameOfItem.isNotEmpty) {
-              try {
-                final matchItem = expenseProvider.itemList.firstWhere(
-                  (item) =>
-                      item.itemName.toLowerCase() == nameOfItem.toLowerCase(),
-                );
-                customerDetailsProvider.newItemId = matchItem.itemId;
-              } catch (_) {}
+        if (!widget.isEdit) {
+          if (settingsProvider.branchModel.isNotEmpty) {
+            customerDetailsProvider.selectedBranchId =
+                settingsProvider.branchModel.first.branchId;
+          }
+
+          if (customerDetailsProvider.quotationTypeData.isNotEmpty) {
+            final residentialType = customerDetailsProvider.quotationTypeData
+                .where((element) => element.quotationTypeName
+                    .toLowerCase()
+                    .contains('residential'))
+                .firstOrNull;
+            if (residentialType != null) {
+              customerDetailsProvider.selectedQuotationType =
+                  residentialType.quotationTypeId;
+              customerDetailsProvider.quotationTypeController.text =
+                  residentialType.quotationTypeName;
             }
           }
         }
-      }
-      customerDetailsProvider.getCustomFieldsByQuotationId(context);
-      await customerDetailsProvider.getQuotationFieldsApi();
-      await customerDetailsProvider.getAdditionalCustomFields(context);
-      if (mounted) {
-        Loader.stopLoader(context);
+
+        try {
+          await customerDetailsProvider.getProfitList(context);
+        } catch (e) {
+          debugPrint('Failed to load profit list: $e');
+        }
+
+        try {
+          await customerDetailsProvider.getCommercialCustomFieldsApi(context);
+        } catch (e) {
+          debugPrint('Failed to load commercial custom fields: $e');
+        }
+
+        settingsProvider.clearTermsFields();
+        try {
+          await settingsProvider.getTermsAndWarranty(context);
+        } catch (e) {
+          debugPrint('Failed to load terms and warranty: $e');
+        }
+
+        customerDetailsProvider.qtermsConditionsController.text =
+            settingsProvider.termsText;
+        customerDetailsProvider.qwarrentyController.text =
+            settingsProvider.warrantyText;
+        customerDetailsProvider.quotationDescriptionController.text =
+            settingsProvider.description1Text;
+        customerDetailsProvider.quotationDescription2Controller.text =
+            settingsProvider.description2Text;
+        customerDetailsProvider.quotationDescription3Controller.text =
+            settingsProvider.description3Text;
+        customerDetailsProvider.advanceController.text =
+            settingsProvider.advancePercentageText;
+        customerDetailsProvider.deliveryController.text =
+            settingsProvider.onMaterialDeliveryPercentageText;
+        customerDetailsProvider.workCompletionController.text =
+            settingsProvider.onWorkCompletionPercentageText;
+
+        if (widget.isEdit) {
+          try {
+            await customerDetailsProvider.getQuatationListByMasterId(
+                widget.quotationId, context);
+
+            if (customerDetailsProvider.quotationListByMaster.isNotEmpty) {
+              final quotation =
+                  customerDetailsProvider.quotationListByMaster.first;
+              customerDetailsProvider.populateAllQuotationFields(
+                  quotation, widget.customerId);
+
+              // Pre-populate newItemId if companyQuotationItems is active
+              if (companyQuotationItems) {
+                final nameOfItem = customerDetailsProvider.selectedItemName;
+                if (nameOfItem.isNotEmpty) {
+                  try {
+                    final matchItem = expenseProvider.itemList.firstWhere(
+                      (item) =>
+                          item.itemName.toLowerCase() ==
+                          nameOfItem.toLowerCase(),
+                    );
+                    customerDetailsProvider.newItemId = matchItem.itemId;
+                  } catch (_) {}
+                }
+              }
+            }
+          } catch (e) {
+            debugPrint('Failed to load quotation for edit: $e');
+          }
+        }
+
+        try {
+          customerDetailsProvider.getCustomFieldsByQuotationId(context);
+          await customerDetailsProvider.getQuotationFieldsApi();
+          await customerDetailsProvider.getAdditionalCustomFields(context);
+        } catch (e) {
+          debugPrint('Failed to load quotation custom fields: $e');
+        }
+      } catch (e, stack) {
+        debugPrint('Error in quotation initState: $e\n$stack');
+      } finally {
+        if (mounted) {
+          Loader.stopLoader(context);
+        }
       }
     });
   }

@@ -10,6 +10,8 @@ class BillOfMaterialItem {
   String? amount;
   String? priceFrom;
   String? priceTo;
+  int? itemId;
+  String? itemName;
 
   BillOfMaterialItem({
     this.id,
@@ -23,10 +25,16 @@ class BillOfMaterialItem {
     this.amount,
     this.priceFrom,
     this.priceTo,
+    this.itemId,
+    this.itemName,
   });
 
   // Convert to JSON
   Map<String, dynamic> toJson() {
+    final int safeItemId = itemId ?? 0;
+    final String safeItemName = (itemName != null && itemName!.isNotEmpty)
+        ? itemName!
+        : (distributor ?? '');
     return {
       'id': id ?? 0,
       'Items_And_Description': description,
@@ -39,6 +47,8 @@ class BillOfMaterialItem {
       'Amount': amount ?? '',
       'Price_Range_From': priceFrom ?? '',
       'Price_Range_To': priceTo ?? '',
+      'Item_Id': safeItemId,
+      'Item_Name': safeItemName,
     };
   }
 
@@ -58,6 +68,17 @@ class BillOfMaterialItem {
       amount: json['Amount']?.toString() ?? '',
       priceFrom: json['Price_Range_From']?.toString() ?? '',
       priceTo: json['Price_Range_To']?.toString() ?? '',
+      itemId: int.tryParse((json['Item_Id'] ??
+              json['ItemId'] ??
+              json['item_id'] ??
+              0)
+          .toString()) ??
+          0,
+      itemName: (json['Item_Name'] ??
+              json['ItemName'] ??
+              json['item_name'] ??
+              '')
+          .toString(),
     );
   }
 }

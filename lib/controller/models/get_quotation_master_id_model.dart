@@ -438,6 +438,8 @@ class BillOfMaterial {
   String amount;
   String priceFrom;
   String priceTo;
+  int? itemId;
+  String? itemName;
 
   BillOfMaterial({
     required this.make,
@@ -451,6 +453,8 @@ class BillOfMaterial {
     this.amount = '',
     this.priceFrom = '',
     this.priceTo = '',
+    this.itemId,
+    this.itemName,
   });
 
   factory BillOfMaterial.fromJson(Map<String, dynamic> json) {
@@ -466,6 +470,8 @@ class BillOfMaterial {
       amount: toStr(json['Amount']),
       priceFrom: toStr(json['Price_Range_From']),
       priceTo: toStr(json['Price_Range_To']),
+      itemId: toInt(json['Item_Id'] ?? json['itemId']),
+      itemName: toStr(json['Item_Name'] ?? json['itemName']),
     );
   }
 }
