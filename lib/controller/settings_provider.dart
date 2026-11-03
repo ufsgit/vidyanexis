@@ -879,6 +879,8 @@ class SettingsProvider extends ChangeNotifier {
   int get referenceNameAfterEnquiryFor => _referenceNameAfterEnquiryFor;
   int _futureSolarDashboard = 0;
   int get futureSolarDashboard => _futureSolarDashboard;
+  int _c9xchecklist = 0;
+  int get c9xchecklist => _c9xchecklist;
 
   int _consumerNoInLeadPage = 0;
   int get consumerNoInLeadPage {
@@ -1160,6 +1162,10 @@ class SettingsProvider extends ChangeNotifier {
         (caption.toLowerCase().contains('future_solar_dashboard') ||
             caption.toLowerCase().contains('future solar dashboard'))) {
       _futureSolarDashboard = value;
+    } else if (caption != null &&
+        (caption.toLowerCase().contains('checklist c9x') ||
+            caption.toLowerCase().contains('checklist_c9x'))) {
+      _c9xchecklist = value;
     }
   }
 
@@ -1243,6 +1249,12 @@ class SettingsProvider extends ChangeNotifier {
   void setFutureSolarDashboard(int value) {
     _futureSolarDashboard = value;
     _syncStateToPermissionsList(55, value);
+    notifyListeners();
+  }
+
+  void setC9xChecklist(int value) {
+    _c9xchecklist = value;
+    _syncStateToPermissionsList(59, value);
     notifyListeners();
   }
 
@@ -5848,6 +5860,7 @@ class SettingsProvider extends ChangeNotifier {
     _sunexpertHideLead = 0;
     _customerStatusBlock = 0;
     _futureSolarDashboard = 0;
+    _c9xchecklist = 0;
     notifyListeners();
   }
 

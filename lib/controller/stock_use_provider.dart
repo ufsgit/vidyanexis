@@ -893,6 +893,11 @@ class StockUseProvider extends ChangeNotifier {
       quantity: quantity,
       unitPrice: unitPrice,
       amount: amount,
+      serialNo: '',
+      remarks: '',
+      quantityIn: 0.0,
+      quantityOut: 0.0,
+      quantityBalance: 0.0,
     );
 
     if (_editStockIndex != null &&
@@ -1021,6 +1026,39 @@ class StockUseProvider extends ChangeNotifier {
     }
   }
 
+  void updateItemSerialNo(int index, String value) {
+    if (index >= 0 && index < stockUseItems.length) {
+      stockUseItems[index].serialNo = value;
+      // NO notifyListeners() – prevents focus jump
+    }
+  }
+
+  void updateItemRemarks(int index, String value) {
+    if (index >= 0 && index < stockUseItems.length) {
+      stockUseItems[index].remarks = value;
+      // NO notifyListeners()
+    }
+  }
+
+  void updateItemQtyIn(int index, String value) {
+    if (index < 0 || index >= stockUseItems.length) return;
+    stockUseItems[index].quantityIn = double.tryParse(value) ?? 0.0;
+    // NO auto balance, NO notifyListeners()
+  }
+
+  void updateItemQtyOut(int index, String value) {
+    if (index < 0 || index >= stockUseItems.length) return;
+    stockUseItems[index].quantityOut = double.tryParse(value) ?? 0.0;
+    // NO auto balance, NO notifyListeners()
+  }
+
+// Add this new method for Balance
+  void updateItemQtyBalance(int index, String value) {
+    if (index < 0 || index >= stockUseItems.length) return;
+    stockUseItems[index].quantityBalance = double.tryParse(value) ?? 0.0;
+    // NO notifyListeners()
+  }
+
   void updateItemQuantity(int index, String quantityStr) {
     if (index >= 0 && index < stockUseItems.length) {
       final quantity = double.tryParse(quantityStr) ?? 0.0;
@@ -1136,6 +1174,11 @@ class StockUseProvider extends ChangeNotifier {
               amount: 0.0,
               isChecked: false,
               total: double.tryParse(stockItem.total) ?? 0.0,
+              serialNo: '',
+              remarks: '',
+              quantityIn: 0.0,
+              quantityOut: 0.0,
+              quantityBalance: 0.0,
             );
           }).toList();
 
@@ -1940,6 +1983,11 @@ class StockUseProvider extends ChangeNotifier {
               _stockUseItems[i].stockId = matchingSavedItem.stockId;
               _stockUseItems[i].total = matchingSavedItem.total;
               _stockUseItems[i].unitName = matchingSavedItem.unitName;
+              _stockUseItems[i].serialNo = matchingSavedItem.serialNo;
+              _stockUseItems[i].remarks = matchingSavedItem.remarks;
+              _stockUseItems[i].quantityIn = matchingSavedItem.quantityIn;
+              _stockUseItems[i].quantityOut = matchingSavedItem.quantityOut;
+              _stockUseItems[i].quantityBalance = matchingSavedItem.quantityBalance;
             } else {
               _stockUseItems[i].isChecked = false;
             }
