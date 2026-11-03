@@ -522,6 +522,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
             amount: mat.amount.toStringAsFixed(2),
             priceFrom: mat.priceFrom,
             priceTo: mat.priceTo,
+            itemId: item.itemId,
+            itemName: item.itemName,
           ));
         }
       }
@@ -936,6 +938,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
       TextEditingController();
   final TextEditingController billinvoiceController = TextEditingController();
   final TextEditingController billuomController = TextEditingController();
+  int selectedBomItemId = 0;
+  String selectedBomItemName = '';
   TextEditingController quotationStatusController = TextEditingController();
   TextEditingController systemPriceController = TextEditingController();
   TextEditingController additionalStructureController =
@@ -997,6 +1001,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
             amount: (item.price * item.quantity).toStringAsFixed(2),
             priceFrom: item.priceFrom,
             priceTo: item.priceTo,
+            itemId: _newItemId != 0 ? _newItemId : null,
+            itemName: _selectedItemName.isNotEmpty ? _selectedItemName : null,
           ),
         )
         .toList();
@@ -1038,6 +1044,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
               amount: amount.toStringAsFixed(2),
               priceFrom: mat.priceFrom,
               priceTo: mat.priceTo,
+              itemId: itemId,
+              itemName: (item['itemName'] ?? item['ItemName'] ?? '').toString(),
             ));
           }
         } else {
@@ -1055,6 +1063,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
               amount: amount.toStringAsFixed(2),
               priceFrom: mat.priceFrom,
               priceTo: mat.priceTo,
+              itemId: itemId,
+              itemName: (item['itemName'] ?? item['ItemName'] ?? '').toString(),
             ));
           }
         }
@@ -2504,6 +2514,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
       uom: billuomController.text,
       price: billpriceController.text,
       amount: billamountController.text,
+      itemId: selectedBomItemId,
+      itemName: selectedBomItemName.isNotEmpty ? selectedBomItemName : billdistributorController.text,
     );
 
     // Check if we're editing an existing item or adding a new one
@@ -2579,6 +2591,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
     _editBillOfMaterialsIndex = null;
     billpriceController.clear();
     billamountController.clear();
+    selectedBomItemId = 0;
+    selectedBomItemName = '';
     notifyListeners();
   }
 
@@ -2610,6 +2624,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
       billuomController.text = itemToEdit.uom;
       billpriceController.text = itemToEdit.price ?? '0';
       billamountController.text = itemToEdit.amount ?? '0';
+      selectedBomItemId = itemToEdit.itemId ?? 0;
+      selectedBomItemName = itemToEdit.itemName ?? '';
       seteditBillOfMaterialsIndex(index);
       notifyListeners();
     }
@@ -3868,10 +3884,16 @@ class CustomerDetailsProvider extends ChangeNotifier {
       }
     } catch (e) {
       print('Exception occurred: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred')),
-      );
-      Loader.stopLoader(context);
+      if (context.mounted) {
+        try {
+          Loader.stopLoader(context);
+        } catch (_) {}
+        try {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('An error occurred')),
+          );
+        } catch (_) {}
+      }
       rethrow;
     }
   }
@@ -4171,6 +4193,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
         amount: billOfMaterials[index].amount,
         priceFrom: billOfMaterials[index].priceFrom,
         priceTo: billOfMaterials[index].priceTo,
+        itemId: billOfMaterials[index].itemId,
+        itemName: billOfMaterials[index].itemName,
       ),
     );
 

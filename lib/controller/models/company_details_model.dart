@@ -44,6 +44,8 @@ class CompanyPermission {
         return "Customer code";
       case 57:
         return "Task status change hide button";
+      case 60:
+        return "Item dropdown in Quotation";
       default:
         return "Permission $companyPermissionId";
     }
@@ -111,6 +113,9 @@ class CompanyPermission {
           break;
         case 57:
           cap = "Task status change hide button";
+          break;
+        case 60:
+          cap = "Item dropdown in Quotation";
           break;
       }
     }

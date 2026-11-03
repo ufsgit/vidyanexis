@@ -854,6 +854,40 @@ class SettingsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  int _itemDropdownInQuotation = 0;
+  int get itemDropdownInQuotation {
+    if (_companyDetails.isNotEmpty &&
+        _companyDetails[0].permissions.isNotEmpty) {
+      for (var p in _companyDetails[0].permissions) {
+        if (p.companyPermissionId == 60 ||
+            p.companyPermissionId.toString() == '60') {
+          return (p.value == 1 || p.value.toString() == '1') ? 1 : 0;
+        }
+      }
+      for (var p in _companyDetails[0].permissions) {
+        final cap = (p.caption.isNotEmpty ? p.caption : p.displayCaption)
+            .trim()
+            .toLowerCase();
+        if (cap.contains('item dropdown in quotation') ||
+            cap.contains('item_dropdown_in_quotation') ||
+            cap.contains('item dropdown') ||
+            cap.contains('quotation item dropdown')) {
+          return (p.value == 1 || p.value.toString() == '1') ? 1 : 0;
+        }
+      }
+    }
+    return (_itemDropdownInQuotation == 1 ||
+            _itemDropdownInQuotation.toString() == '1')
+        ? 1
+        : 0;
+  }
+
+  void setItemDropdownInQuotation(int value) {
+    _itemDropdownInQuotation = value;
+    _syncStateToPermissionsList(60, value);
+    notifyListeners();
+  }
+
   int _recordVoiceNote = 0;
   int get recordVoiceNote => _recordVoiceNote;
 
@@ -1151,6 +1185,11 @@ class SettingsProvider extends ChangeNotifier {
             (caption.toLowerCase().contains('task_status_change_hide_button') ||
                 caption.toLowerCase().contains('task status change hide button')))) {
       _taskStatusChangeHideButton = value;
+    } else if (permissionId == 60 ||
+        (caption != null &&
+            (caption.toLowerCase().contains('item dropdown in quotation') ||
+                caption.toLowerCase().contains('item_dropdown_in_quotation')))) {
+      _itemDropdownInQuotation = value;
     } else if (caption != null &&
         (caption.toLowerCase().contains('future_solar_dashboard') ||
             caption.toLowerCase().contains('future solar dashboard'))) {
@@ -1358,6 +1397,17 @@ class SettingsProvider extends ChangeNotifier {
               cap.contains('task_status_change_hide_button');
         });
       }
+      if (index == -1 && permissionId == 60) {
+        index = _companyDetails[0].permissions.indexWhere((p) {
+          if (p.companyPermissionId == 60 ||
+              p.companyPermissionId.toString() == '60') return true;
+          final cap = (p.caption.isNotEmpty ? p.caption : p.displayCaption)
+              .trim()
+              .toLowerCase();
+          return cap.contains('item dropdown in quotation') ||
+              cap.contains('item_dropdown_in_quotation');
+        });
+      }
       if (index != -1) {
         final old = _companyDetails[0].permissions[index];
         _companyDetails[0].permissions[index] = CompanyPermission(
@@ -1465,6 +1515,17 @@ class SettingsProvider extends ChangeNotifier {
               .toLowerCase();
           return cap.contains('task status change hide button') ||
               cap.contains('task_status_change_hide_button');
+        });
+      }
+      if (index == -1 && permissionId == 60) {
+        index = _companyDetails[0].permissions.indexWhere((p) {
+          if (p.companyPermissionId == 60 ||
+              p.companyPermissionId.toString() == '60') return true;
+          final cap = (p.caption.isNotEmpty ? p.caption : p.displayCaption)
+              .trim()
+              .toLowerCase();
+          return cap.contains('item dropdown in quotation') ||
+              cap.contains('item_dropdown_in_quotation');
         });
       }
       if (index != -1) {
