@@ -50,6 +50,11 @@ class StockUseItems {
   double amount;
   bool isChecked;
   double total;
+  String serialNo;          
+  String remarks;
+  double quantityIn;
+  double quantityOut;
+  double quantityBalance;   
 
   StockUseItems({
     this.stockId,
@@ -63,6 +68,11 @@ class StockUseItems {
     required this.amount,
     this.isChecked = false,
     this.total = 0.0,
+    this.serialNo = '',
+    this.remarks = '',
+    this.quantityIn = 0.0,
+    this.quantityOut = 0.0,
+    this.quantityBalance = 0.0,
   });
 
   // Optional: for JSON serialization if needed
@@ -88,6 +98,11 @@ class StockUseItems {
           json['Is_Check_List']?.toString() == '1' ||
           json['Is_Check_List']?.toString() == 'true',
       total: double.tryParse(json['Total']?.toString() ?? '0') ?? 0.0,
+      serialNo: json['Serial_No']?.toString() ?? '',
+      remarks: json['Remarks']?.toString() ?? '',
+      quantityIn: double.tryParse(json['Quantity_In']?.toString() ?? "0") ?? 0.0,
+      quantityOut: double.tryParse(json['Quantity_Out']?.toString() ?? "0") ?? 0.0,
+      quantityBalance: double.tryParse(json['Quantity_Balance']?.toString() ?? "0") ?? 0.0
     );
   }
 
@@ -104,6 +119,11 @@ class StockUseItems {
       'Is_Checked': isChecked ? 1 : 0,
       'ischecked': isChecked ? 1 : 0,
       'Total': total,
+      'Serial_No': serialNo,
+      'Remarks': remarks,
+      'Quantity_In': quantityIn,
+      'Quantity_Out': quantityOut,
+      'Quantity_Balance': quantityBalance,
     };
   }
 }

@@ -43,6 +43,7 @@ class CompanyPermission {
       case 56:
         return "Customer code";
       case 57:
+      case 58:
         return "Task status change hide button";
       case 60:
         return "Item dropdown in Quotation";
@@ -53,12 +54,12 @@ class CompanyPermission {
 
   factory CompanyPermission.fromJson(Map<String, dynamic> json) {
     int id = int.tryParse((json['Company_Permission_Id'] ??
-            json['company_permission_id'] ??
-            json['Company_Permission_ID'] ??
-            json['Permission_Id'] ??
-            json['permission_id'] ??
-            0)
-        .toString()) ??
+                json['company_permission_id'] ??
+                json['Company_Permission_ID'] ??
+                json['Permission_Id'] ??
+                json['permission_id'] ??
+                0)
+            .toString()) ??
         0;
     String cap = json['Caption'] ??
         json['caption'] ??
@@ -112,6 +113,7 @@ class CompanyPermission {
           cap = "Customer code";
           break;
         case 57:
+        case 58:
           cap = "Task status change hide button";
           break;
         case 60:
@@ -120,12 +122,12 @@ class CompanyPermission {
       }
     }
     int val = int.tryParse((json['Value'] ??
-            json['value'] ??
-            json['VALUE'] ??
-            json['Status'] ??
-            json['status'] ??
-            0)
-        .toString()) ??
+                json['value'] ??
+                json['VALUE'] ??
+                json['Status'] ??
+                json['status'] ??
+                0)
+            .toString()) ??
         0;
     return CompanyPermission(
       companyPermissionId: id,

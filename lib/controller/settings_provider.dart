@@ -827,7 +827,9 @@ class SettingsProvider extends ChangeNotifier {
     if (_companyDetails.isNotEmpty &&
         _companyDetails[0].permissions.isNotEmpty) {
       for (var p in _companyDetails[0].permissions) {
-        if (p.companyPermissionId == 57 ||
+        if (p.companyPermissionId == 58 ||
+            p.companyPermissionId.toString() == '58' ||
+            p.companyPermissionId == 57 ||
             p.companyPermissionId.toString() == '57') {
           return (p.value == 1 || p.value.toString() == '1') ? 1 : 0;
         }
@@ -850,7 +852,7 @@ class SettingsProvider extends ChangeNotifier {
 
   void setTaskStatusChangeHideButton(int value) {
     _taskStatusChangeHideButton = value;
-    _syncStateToPermissionsList(57, value);
+    _syncStateToPermissionsList(58, value);
     notifyListeners();
   }
 
@@ -911,6 +913,8 @@ class SettingsProvider extends ChangeNotifier {
   int get referenceNameAfterEnquiryFor => _referenceNameAfterEnquiryFor;
   int _futureSolarDashboard = 0;
   int get futureSolarDashboard => _futureSolarDashboard;
+  int _c9xchecklist = 0;
+  int get c9xchecklist => _c9xchecklist;
 
   int _consumerNoInLeadPage = 0;
   int get consumerNoInLeadPage {
@@ -1180,10 +1184,13 @@ class SettingsProvider extends ChangeNotifier {
             (caption.toLowerCase().contains('customer_code') ||
                 caption.toLowerCase().contains('customer code')))) {
       _showCustomerCode = value;
-    } else if (permissionId == 57 ||
+    } else if (permissionId == 58 ||
+        permissionId == 57 ||
         (caption != null &&
             (caption.toLowerCase().contains('task_status_change_hide_button') ||
-                caption.toLowerCase().contains('task status change hide button')))) {
+                caption
+                    .toLowerCase()
+                    .contains('task status change hide button')))) {
       _taskStatusChangeHideButton = value;
     } else if (permissionId == 60 ||
         (caption != null &&
@@ -1194,6 +1201,10 @@ class SettingsProvider extends ChangeNotifier {
         (caption.toLowerCase().contains('future_solar_dashboard') ||
             caption.toLowerCase().contains('future solar dashboard'))) {
       _futureSolarDashboard = value;
+    } else if (caption != null &&
+        (caption.toLowerCase().contains('checklist c9x') ||
+            caption.toLowerCase().contains('checklist_c9x'))) {
+      _c9xchecklist = value;
     }
   }
 
@@ -1277,6 +1288,12 @@ class SettingsProvider extends ChangeNotifier {
   void setFutureSolarDashboard(int value) {
     _futureSolarDashboard = value;
     _syncStateToPermissionsList(55, value);
+    notifyListeners();
+  }
+
+  void setC9xChecklist(int value) {
+    _c9xchecklist = value;
+    _syncStateToPermissionsList(59, value);
     notifyListeners();
   }
 
@@ -1386,9 +1403,11 @@ class SettingsProvider extends ChangeNotifier {
           return cap == 'customer code' || cap == 'customer_code';
         });
       }
-      if (index == -1 && permissionId == 57) {
+      if (index == -1 && (permissionId == 58 || permissionId == 57)) {
         index = _companyDetails[0].permissions.indexWhere((p) {
-          if (p.companyPermissionId == 57 ||
+          if (p.companyPermissionId == 58 ||
+              p.companyPermissionId.toString() == '58' ||
+              p.companyPermissionId == 57 ||
               p.companyPermissionId.toString() == '57') return true;
           final cap = (p.caption.isNotEmpty ? p.caption : p.displayCaption)
               .trim()
@@ -1506,9 +1525,11 @@ class SettingsProvider extends ChangeNotifier {
           return cap == 'customer code' || cap == 'customer_code';
         });
       }
-      if (index == -1 && permissionId == 57) {
+      if (index == -1 && (permissionId == 58 || permissionId == 57)) {
         index = _companyDetails[0].permissions.indexWhere((p) {
-          if (p.companyPermissionId == 57 ||
+          if (p.companyPermissionId == 58 ||
+              p.companyPermissionId.toString() == '58' ||
+              p.companyPermissionId == 57 ||
               p.companyPermissionId.toString() == '57') return true;
           final cap = (p.caption.isNotEmpty ? p.caption : p.displayCaption)
               .trim()
@@ -5900,6 +5921,7 @@ class SettingsProvider extends ChangeNotifier {
     _sunexpertHideLead = 0;
     _customerStatusBlock = 0;
     _futureSolarDashboard = 0;
+    _c9xchecklist = 0;
     notifyListeners();
   }
 
