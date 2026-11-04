@@ -4,6 +4,7 @@ import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/invoice_tab_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/http/loader.dart';
 import 'package:vidyanexis/presentation/pages/settings/add_invoice_tab.dart';
 import 'package:vidyanexis/presentation/widgets/customer/pdf/print_invoice_pdf.dart';
@@ -61,20 +62,23 @@ class _StockReturnPageState extends State<InvoiceTabPage> {
                       CustomOutlinedSvgButton(
                         onPressed: () async {
                           await Loader.showLoader(context);
-
-                          // Fetch customer details
-                          await customerDetailsProvider.fetchLeadDetails(
+                          
+                          await invoiceProvider.getInvoicePdf(
                               widget.customerId, context);
 
-                          await invoicePDFPrint(
-                            context: context,
-                            customerDetails:
-                                customerDetailsProvider.leadDetails?[0],
-                            quotationList: customerDetailsProvider
-                                .quotationList, // Pass the invoice list
-                            receiptList: customerDetailsProvider
-                                .receiptList, // Pass the receipt list
-                          );
+                          // // Fetch customer details
+                          // await customerDetailsProvider.fetchLeadDetails(
+                          //     widget.customerId, context);
+
+                          // await invoicePDFPrint(
+                          //   context: context,
+                          //   customerDetails:
+                          //       customerDetailsProvider.leadDetails?[0],
+                          //   quotationList: customerDetailsProvider
+                          //       .quotationList, // Pass the invoice list
+                          //   receiptList: customerDetailsProvider
+                          //       .receiptList, // Pass the receipt list
+                          // );
 
                           Loader.stopLoader(context);
                         },
@@ -120,20 +124,21 @@ class _StockReturnPageState extends State<InvoiceTabPage> {
                       CustomOutlinedSvgButton(
                         onPressed: () async {
                           await Loader.showLoader(context);
-
-                          // Fetch customer details
-                          await customerDetailsProvider.fetchLeadDetails(
+                          await invoiceProvider.getInvoicePdf(
                               widget.customerId, context);
+                          // // Fetch customer details
+                          // await customerDetailsProvider.fetchLeadDetails(
+                          //     widget.customerId, context);
 
-                          await invoicePDFPrint(
-                            context: context,
-                            customerDetails:
-                                customerDetailsProvider.leadDetails?[0],
-                            quotationList: customerDetailsProvider
-                                .quotationList, // Pass the invoice list
-                            receiptList: customerDetailsProvider
-                                .receiptList, // Pass the receipt list
-                          );
+                          // await invoicePDFPrint(
+                          //   context: context,
+                          //   customerDetails:
+                          //       customerDetailsProvider.leadDetails?[0],
+                          //   quotationList: customerDetailsProvider
+                          //       .quotationList, // Pass the invoice list
+                          //   receiptList: customerDetailsProvider
+                          //       .receiptList, // Pass the receipt list
+                          // );
 
                           Loader.stopLoader(context);
                         },

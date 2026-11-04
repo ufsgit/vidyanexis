@@ -543,4 +543,5 @@ class HttpUrls {
       "amc_status/Get_Periodic_Service_Fields";
   static String deleteAllTasks = "task/Delete_Task_By_Customer";
   static String searchCustomerDashboard = "lead/Search_customer_Dashboard";
+  static String printInvoice = "lead/invoice_print";
 }

@@ -1,4 +1,9 @@
+import 'dart:typed_data';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:printing/printing.dart';
+import 'package:universal_html/html.dart' as html;
 import 'package:vidyanexis/controller/models/get_quotation_master_id_model.dart';
 import 'package:vidyanexis/controller/models/hsn_model.dart';
 import 'package:vidyanexis/controller/models/invoice_print_item_model.dart';
@@ -306,8 +311,6 @@ class InvoiceTabProvider extends ChangeNotifier {
       required BuildContext context,
       required var data}) async {
     try {
-      Loader.showLoader(context);
-
       final response = await HttpRequest.httpPostRequest(
           endPoint: HttpUrls.saveInvoiceTab, bodyData: data);
 
@@ -322,24 +325,22 @@ class InvoiceTabProvider extends ChangeNotifier {
             );
           } else {
             getInvoiceByCustomer(customerId, context);
-            Navigator.pop(context);
           }
         }
-        Loader.stopLoader(context);
 
         print(data);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Server Error')),
         );
-        Loader.stopLoader(context);
       }
     } catch (e) {
       print('Exception occurred: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('An error occurred')),
       );
-      Loader.stopLoader(context);
+    } finally {
+      Navigator.pop(context);
     }
   }
 
@@ -587,6 +588,63 @@ class InvoiceTabProvider extends ChangeNotifier {
       }
     } catch (e) {
       print('Exception occurred: $e');
+    }
+  }
+
+  Future<Uint8List?> getInvoicePdfBytes(String customerId) async {
+    try {
+      final response = await HttpRequest.httpGetRequest(
+          endPoint: '${HttpUrls.printInvoice}/$customerId', returnBytes: true);
+
+      if (response.statusCode == 200 && response.data is List<int>) {
+        return Uint8List.fromList(response.data);
+      }
+      return null;
+    } catch (e) {
+      print('Exception occurred: $e');
+      return null;
+    }
+  }
+
+  Future<void> getInvoicePdf(String customerId, BuildContext context) async {
+    try {
+      final data = await getInvoicePdfBytes(customerId);
+
+      if (data != null) {
+        if (kIsWeb) {
+          final blob = html.Blob([data], 'application/pdf');
+          final url = html.Url.createObjectUrlFromBlob(blob);
+          final anchor = html.AnchorElement(href: url)
+            ..setAttribute("download", "Invoice_$customerId.pdf")
+            ..click();
+
+          // Delay cleanup to ensure download starts
+          await Future.delayed(const Duration(seconds: 2));
+          html.Url.revokeObjectUrl(url);
+
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Downloading PDF...')));
+          }
+        } else {
+          if (context.mounted) {
+            await Printing.layoutPdf(onLayout: (format) async => data);
+          }
+        }
+      } else {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Server Error')),
+          );
+        }
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('An error occurred')),
+        );
+      }
     }
   }
 }
