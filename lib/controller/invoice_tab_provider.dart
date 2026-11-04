@@ -615,7 +615,67 @@ class InvoiceTabProvider extends ChangeNotifier {
           final blob = html.Blob([data], 'application/pdf');
           final url = html.Url.createObjectUrlFromBlob(blob);
           final anchor = html.AnchorElement(href: url)
-            ..setAttribute("download", "Invoice_$customerId.pdf")
+            ..setAttribute("download", "Invoice_Summary_$customerId.pdf")
+            ..click();
+
+          // Delay cleanup to ensure download starts
+          await Future.delayed(const Duration(seconds: 2));
+          html.Url.revokeObjectUrl(url);
+
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Downloading PDF...')));
+          }
+        } else {
+          if (context.mounted) {
+            await Printing.layoutPdf(onLayout: (format) async => data);
+          }
+        }
+      } else {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Server Error')),
+          );
+        }
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('An error occurred')),
+        );
+      }
+    }
+  }
+
+  Future<Uint8List?> getInvoiceItemPdfBytes(
+      String customerId, String invoiceId) async {
+    try {
+      final response = await HttpRequest.httpGetRequest(
+          endPoint: '${HttpUrls.printInvoiceItem}/$customerId/$invoiceId',
+          returnBytes: true);
+
+      if (response.statusCode == 200 && response.data is List<int>) {
+        return Uint8List.fromList(response.data);
+      }
+      return null;
+    } catch (e) {
+      print('Exception occurred: $e');
+      return null;
+    }
+  }
+
+  Future<void> getInvoiceItemPdf(
+      String customerId, String invoiceId, BuildContext context) async {
+    try {
+      final data = await getInvoiceItemPdfBytes(customerId, invoiceId);
+
+      if (data != null) {
+        if (kIsWeb) {
+          final blob = html.Blob([data], 'application/pdf');
+          final url = html.Url.createObjectUrlFromBlob(blob);
+          final anchor = html.AnchorElement(href: url)
+            ..setAttribute("download", "Invoice_$invoiceId.pdf")
             ..click();
 
           // Delay cleanup to ensure download starts

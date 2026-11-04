@@ -548,4 +548,5 @@ class HttpUrls {
   static const String getCalendar = 'service/Get_Calendar';
   static const String deleteCalendar = 'service/Delete_Calendar';
   static String printCalendarItem = "lead/calendar_print";
+  static String printInvoiceItem = "lead/invoice_print_item";
 }

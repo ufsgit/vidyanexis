@@ -62,7 +62,7 @@ class _StockReturnPageState extends State<InvoiceTabPage> {
                       CustomOutlinedSvgButton(
                         onPressed: () async {
                           await Loader.showLoader(context);
-                          
+
                           await invoiceProvider.getInvoicePdf(
                               widget.customerId, context);
 
@@ -203,45 +203,49 @@ class _StockReturnPageState extends State<InvoiceTabPage> {
                               CustomOutlinedSvgButton(
                                 onPressed: () async {
                                   await Loader.showLoader(context);
+                                  await invoiceProvider.getInvoiceItemPdf(
+                                      widget.customerId,
+                                      invoice.invoiceMasterId,
+                                      context);
 
-                                  // Fetch customer details
-                                  await customerDetailsProvider
-                                      .fetchLeadDetails(
-                                          widget.customerId, context);
+                                  // // Fetch customer details
+                                  // await customerDetailsProvider
+                                  //     .fetchLeadDetails(
+                                  //         widget.customerId, context);
 
-                                  // Get the current invoice from the list
-                                  final currentInvoice =
-                                      invoiceProvider.invoiceList[index];
+                                  // // Get the current invoice from the list
+                                  // final currentInvoice =
+                                  //     invoiceProvider.invoiceList[index];
 
-                                  print(
-                                      'Current invoice items count: ${currentInvoice.invoiceItems.length}');
+                                  // print(
+                                  //     'Current invoice items count: ${currentInvoice.invoiceItems.length}');
 
-                                  // If the current invoice doesn't have items, fetch them
-                                  if (currentInvoice.invoiceItems.isEmpty) {
-                                    await invoiceProvider.getInvoiceDetails(
-                                        currentInvoice.invoiceMasterId,
-                                        context);
-                                    // Update the current invoice with the fetched details
-                                    if (invoiceProvider
-                                        .invoiceDetails.isNotEmpty) {
-                                      final updatedInvoice =
-                                          invoiceProvider.invoiceDetails.first;
-                                      await invoiceSinglePDFPrint(
-                                        context: context,
-                                        customerDetails: customerDetailsProvider
-                                            .leadDetails?[0],
-                                        invoiceDetails: updatedInvoice,
-                                      );
-                                    }
-                                  } else {
-                                    // Use the existing invoice data
-                                    await invoiceSinglePDFPrint(
-                                      context: context,
-                                      customerDetails: customerDetailsProvider
-                                          .leadDetails?[0],
-                                      invoiceDetails: currentInvoice,
-                                    );
-                                  }
+                                  // // If the current invoice doesn't have items, fetch them
+                                  // if (currentInvoice.invoiceItems.isEmpty) {
+                                  //   await invoiceProvider.getInvoiceDetails(
+                                  //       currentInvoice.invoiceMasterId,
+                                  //       context);
+                                  //   // Update the current invoice with the fetched details
+                                  //   if (invoiceProvider
+                                  //       .invoiceDetails.isNotEmpty) {
+                                  //     final updatedInvoice =
+                                  //         invoiceProvider.invoiceDetails.first;
+                                  //     await invoiceSinglePDFPrint(
+                                  //       context: context,
+                                  //       customerDetails: customerDetailsProvider
+                                  //           .leadDetails?[0],
+                                  //       invoiceDetails: updatedInvoice,
+                                  //     );
+                                  //   }
+                                  // } else {
+                                  //   // Use the existing invoice data
+                                  //   await invoiceSinglePDFPrint(
+                                  //     context: context,
+                                  //     customerDetails: customerDetailsProvider
+                                  //         .leadDetails?[0],
+                                  //     invoiceDetails: currentInvoice,
+                                  //   );
+                                  // }
 
                                   Loader.stopLoader(context);
                                 },
