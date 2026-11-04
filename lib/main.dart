@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/controller/audio_file_provider.dart';
+import 'package:vidyanexis/controller/calendar_tab_provider.dart';
 import 'package:vidyanexis/controller/check_in_out_provider.dart';
 import 'package:vidyanexis/controller/followup_reports_provider.dart';
 import 'package:vidyanexis/controller/followup_amount_report_provider.dart';
@@ -236,6 +237,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ProjectDurationReportProvider()),
         ChangeNotifierProvider(create: (_) => LeadCreationReportProvider()),
         ChangeNotifierProvider(create: (_) => LeadCreationDetailsProvider()),
+        ChangeNotifierProvider(create: (context) => CalendarTabProvider())
       ],
       child: Consumer<SettingsProvider>(
         builder: (context, settingsProvider, child) {

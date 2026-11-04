@@ -544,4 +544,8 @@ class HttpUrls {
   static String deleteAllTasks = "task/Delete_Task_By_Customer";
   static String searchCustomerDashboard = "lead/Search_customer_Dashboard";
   static String printInvoice = "lead/invoice_print";
+  static const String saveCalendar = 'service/Save_Calendar';
+  static const String getCalendar = 'service/Get_Calendar';
+  static const String deleteCalendar = 'service/Delete_Calendar';
+  static String printCalendarItem = "lead/calendar_print";
 }

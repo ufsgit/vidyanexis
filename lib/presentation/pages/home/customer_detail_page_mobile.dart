@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:vidyanexis/presentation/pages/calender/calendar_tab.dart';
 import 'package:vidyanexis/presentation/pages/home/checklist_management_page.dart';
 import 'package:vidyanexis/presentation/pages/home/inovice_tab.dart';
 import 'package:vidyanexis/presentation/pages/home/reciept_phone.dart';
@@ -171,6 +172,11 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile> {
     if (settingsprovider.menuIsViewMap[21] == 1) {
       tabLabels.add("Invoice");
       tabPages.add(InvoiceTabPage(customerId: widget.customerId.toString()));
+    }
+
+    if (settingsprovider.menuIsViewMap[234] == 1) {
+      tabLabels.add("Calendar");
+      tabPages.add(CalendarTabPage(customerId: widget.customerId.toString()));
     }
 
     if (settingsprovider.menuIsViewMap[78] == 1) {

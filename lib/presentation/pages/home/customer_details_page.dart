@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:vidyanexis/controller/calendar_tab_provider.dart';
 import 'package:vidyanexis/controller/models/add_task_model.dart';
 import 'package:vidyanexis/controller/models/amc_report_model.dart';
 import 'package:vidyanexis/controller/models/document_checklist_model.dart';
 import 'package:vidyanexis/controller/models/custom_field_by_status.dart';
+import 'package:vidyanexis/presentation/pages/calender/calendar_tab.dart';
 
 import 'package:vidyanexis/presentation/pages/home/checklist_management_page.dart';
 import 'package:vidyanexis/presentation/pages/home/inovice_tab.dart';
@@ -402,6 +404,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
           sideprovider.name != 'Lead /')
         const Tab(text: "Refund Form"),
       if (settingsprovider.menuIsViewMap[21] == 1) const Tab(text: "Invoice"),
+      if (settingsprovider.menuIsViewMap[234] == 1) const Tab(text: "Calendar"),
       if (settingsprovider.menuIsViewMap[78] == 1)
         const Tab(text: "Check list "),
       if (settingsprovider.menuIsViewMap[79] == 1 &&
@@ -537,6 +540,12 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
               .getInvoiceByCustomer(widget.customerId, context);
           provider.getQuatationList(widget.customerId, context);
           provider.getRecieptListApi(widget.customerId, context);
+        } catch (_) {}
+        break;
+      case "Calendar":
+        try {
+          Provider.of<CalendarTabProvider>(context, listen: false)
+              .getCalendarByCustomer(widget.customerId, context);
         } catch (_) {}
         break;
       case "Check list ":
@@ -6091,6 +6100,13 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                     .menuIsViewMap[21] ==
                                                 1)
                                               InvoiceTabPage(
+                                                  customerId:
+                                                      widget.customerId),
+
+                                            if (settingsprovider
+                                                    .menuIsViewMap[234] ==
+                                                1)
+                                              CalendarTabPage(
                                                   customerId:
                                                       widget.customerId),
 
