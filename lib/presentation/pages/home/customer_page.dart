@@ -1458,7 +1458,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                       TableWidget(
                                         width: 230,
                                         padding: const EdgeInsets.symmetric(
-                                            vertical: 10.0, horizontal: 8.0),
+                                            vertical: 2.0, horizontal: 8.0),
                                         data: Row(
                                           children: [
                                             Expanded(

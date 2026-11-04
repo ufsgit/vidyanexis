@@ -1376,7 +1376,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                                   message: lead
                                                                       .customerName,
                                                                   child: Padding(
-                                                                    padding: const EdgeInsets.symmetric(vertical: 6.0),
+                                                                    padding: const EdgeInsets.symmetric(vertical: 2.0),
                                                                     child: Text(
                                                                       (lead.customerName.isNotEmpty ??
                                                                               false)
