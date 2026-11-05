@@ -528,11 +528,12 @@ class _LeadsPageState extends State<LeadPage> {
     final settingsProvider = Provider.of<SettingsProvider>(context);
     final sideProvider = Provider.of<SidebarProvider>(context);
 
-    double scrollableTableWidth = 2055.0;
+    double scrollableTableWidth = 1905;
     if (settingsProvider.menuIsViewMap[142] == 1) scrollableTableWidth += 150.0;
     if (settingsProvider.consumerNameMandatory == 1) scrollableTableWidth += 150.0;
     if (settingsProvider.consumerContactNoMandatory == 1) scrollableTableWidth += 150.0;
     if (settingsProvider.ramcoLocationPermission == 1) scrollableTableWidth += 150.0;
+    if (settingsProvider.consumerNoInLeadPage == 1) scrollableTableWidth += 150.0;
     if (settingsProvider.sunexpertHideLead == 1) {
       scrollableTableWidth -= 920.0; // sum of all hidden columns
     }
@@ -1800,6 +1801,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                 ),
                                               ),
                                             ),
+                                            if (settingsProvider.consumerNoInLeadPage == 1)
                                             TableWidget(
                                               width: 150,
                                               padding: EdgeInsets.symmetric(
@@ -2362,6 +2364,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                           ),
                                                         ),
                                                       ),
+                                                      if (settingsProvider.consumerNoInLeadPage == 1)
                                                       TableWidget(
                                                         padding: EdgeInsets
                                                             .symmetric(

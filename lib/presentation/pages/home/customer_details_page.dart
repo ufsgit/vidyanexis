@@ -2673,6 +2673,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                         value: customerDetailsProvider.leadDetails![0].address2 ??
                                                                             ''),
                                                                     // Consumer Number
+                                                                    if (settingsprovider.consumerNoInLeadPage == 1)...[
                                                                     const SizedBox(
                                                                         height:
                                                                             2),
@@ -2686,6 +2687,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                     const SizedBox(
                                                                         height:
                                                                             2),
+                                                                    ],
                                                                     const Text(
                                                                       'Location',
                                                                       style: TextStyle(
@@ -4084,6 +4086,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           .address2 ??
                                                                       ''),
                                                               // Consumer Number
+                                                              if (settingsprovider.consumerNoInLeadPage == 1)...[
                                                               const SizedBox(
                                                                   height: 2),
                                                               DetailRow(
@@ -4096,6 +4099,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                       .toString()),
                                                               const SizedBox(
                                                                   height: 2),
+                                                              ],
                                                               const Text(
                                                                 'Location',
                                                                 style: TextStyle(

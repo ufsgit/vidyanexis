@@ -2339,12 +2339,15 @@ class _tasksPageReportState extends State<TaskPage> {
                                       180 +
                                       180 +
                                       150 +
-                                      140 +
                                       120 +
                                       120 +
                                       160; // 1280
                                   if (settingsProvider.jobSheet == 1) {
                                     scrollableMinWidth += 130;
+                                  }
+                                  if (settingsProvider.consumerNoInLeadPage ==
+                                      1) {
+                                    scrollableMinWidth += 140.0;
                                   }
 
                                   return Scrollbar(
@@ -3058,6 +3061,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                 color: Colors
                                                                     .white,
                                                               ),
+                                                              if (settingsProvider.consumerNoInLeadPage == 1)
                                                               TableWidget(
                                                                 width: 140,
                                                                 title:
@@ -3362,6 +3366,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                           ),
                                                                         ),
                                                                         // Consumer No
+                                                                        if (settingsProvider.consumerNoInLeadPage == 1)
                                                                         TableWidget(
                                                                           width:
                                                                               140,
