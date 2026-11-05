@@ -61,8 +61,14 @@ import 'package:vidyanexis/presentation/widgets/home/task_audio_recording_widget
 
 class TaskPage extends StatefulWidget {
   final int? initialStatusFilter;
+  final int? initialDepartmentFilter;
   final bool fromDashBoard;
-  const TaskPage({super.key, this.initialStatusFilter,this.fromDashBoard=false});
+  const TaskPage({
+    super.key,
+    this.initialStatusFilter,
+    this.initialDepartmentFilter,
+    this.fromDashBoard = false,
+  });
 
   @override
   State<TaskPage> createState() => _tasksPageReportState();
@@ -330,6 +336,14 @@ class _tasksPageReportState extends State<TaskPage> {
       _setupScrollListener();
       if (!reportsProvider.isDashboardStatus) {
         reportsProvider.removeStatus();
+      }
+      // Apply department filter when opened from Home sidebar
+      if (widget.initialDepartmentFilter != null) {
+        reportsProvider.setDepartmentFilter(
+          widget.initialDepartmentFilter!,
+        );
+
+        reportsProvider.goToPage(1);
       }
       searchProvider.stopSearch();
 

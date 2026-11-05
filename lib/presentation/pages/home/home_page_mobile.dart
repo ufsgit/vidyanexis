@@ -60,6 +60,9 @@ class _HomePageMobileState extends State<HomePageMobile> {
           Provider.of<SettingsProvider>(context, listen: false);
       settingsProvider.getMenuPermissionData(userId, context);
       await settingsProvider.getCompanyDetails();
+      if (settingsProvider.departmentMenu == 1) {
+        settingsProvider.searchDepartment('', context);
+      }
     });
   }
 

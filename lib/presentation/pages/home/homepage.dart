@@ -121,7 +121,10 @@ class _HomePageState extends State<HomePage> {
       final settingsProvider =
           Provider.of<SettingsProvider>(context, listen: false);
       settingsProvider.getMenuPermissionData(userId, context);
-      settingsProvider.getCompanyDetails();
+      await settingsProvider.getCompanyDetails();
+      if (settingsProvider.departmentMenu == 1) {
+        settingsProvider.searchDepartment('', context);
+      }
       print(
           '[PERF-BOOT] HomePage postFrameCallback complete: ${DateTime.now().millisecondsSinceEpoch - homeInitStart} ms');
     });
@@ -277,6 +280,20 @@ class _HomePageState extends State<HomePage> {
           iconPath: 'assets/images/task.svg',
           baseContent: const TaskPage(),
         ),
+
+        // Show departments below Task when departmentMenu is enabled
+      if (settingsProvider.departmentMenu == 1) ...[
+        ...settingsProvider.departmentModel.map(
+          (department) => SidebarOption(
+            title: department.departmentName ?? '',
+            iconPath: 'assets/images/task.svg',
+            baseContent: TaskPage(
+              key: ValueKey('department_task_${department.departmentId}'),
+              initialDepartmentFilter: department.departmentId,
+            ),
+          ),
+        ),
+      ],
 
       if (settingsProvider.menuIsViewMap[29].toString() == '1')
         SidebarOption(
