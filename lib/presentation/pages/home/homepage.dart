@@ -99,6 +99,17 @@ class _HomePageState extends State<HomePage> {
 
   bool _isFirstBuild = true;
 
+  final Map<int, int> departmentMenuPermissionMap = {
+    6: 236, // Accounts
+    7: 237, // Accounts Manager
+    3: 238, // Admin
+    8: 239, // Creative Head
+    5: 240, // Documentation
+    1: 241, // HR
+    2: 242, // Marketing
+    4: 243, // Operation
+  };
+
   @override
   void initState() {
     super.initState();
@@ -283,12 +294,19 @@ class _HomePageState extends State<HomePage> {
 
         // Show departments below Task when departmentMenu is enabled
       if (settingsProvider.departmentMenu == 1) ...[
-        ...settingsProvider.departmentModel.map(
+        ...settingsProvider.departmentModel.where((department) {
+          final menuId = departmentMenuPermissionMap[department.departmentId];
+
+          return menuId != null &&
+              settingsProvider.menuIsViewMap[menuId].toString() == '1';
+        }).map(
           (department) => SidebarOption(
             title: department.departmentName ?? '',
             iconPath: 'assets/images/task.svg',
             baseContent: TaskPage(
-              key: ValueKey('department_task_${department.departmentId}'),
+              key: ValueKey(
+                'department_task_${department.departmentId}',
+              ),
               initialDepartmentFilter: department.departmentId,
             ),
           ),

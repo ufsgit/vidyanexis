@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vidyanexis/controller/login_controller.dart';
 import 'package:vidyanexis/presentation/pages/home/dashboard_page.dart';
+import 'package:vidyanexis/presentation/pages/home/task_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/attendance_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/ta_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/travel_allowance/travel_allowance_page.dart';
@@ -80,6 +81,17 @@ class SidebarDrawer extends StatefulWidget {
 class _SidebarDrawerState extends State<SidebarDrawer> {
   PackageInfo? packageInfo;
   bool _isLoggingOut = false;
+
+  final Map<int, int> departmentMenuPermissionMap = {
+    6: 236, // Accounts
+    7: 237, // Accounts Manager
+    3: 238, // Admin
+    8: 239, // Creative Head
+    5: 240, // Documentation
+    1: 241, // HR
+    2: 242, // Marketing
+    4: 243, // Operation
+  };
 
   @override
   void initState() {
@@ -317,6 +329,31 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
                     lightColor: const Color(0xFFE6F5FF),
                     sideProvider: sideProvider,
                   ),
+                if (settingsProvider.departmentMenu == 1) ...[
+                  ...settingsProvider.departmentModel.where((department) {
+                    final menuId =
+                        departmentMenuPermissionMap[department.departmentId];
+
+                    return menuId != null &&
+                        settingsProvider.menuIsViewMap[menuId].toString() ==
+                            '1';
+                  }).map(
+                    (department) => _buildModernMenuItem(
+                      context: context,
+                      title: department.departmentName ?? '',
+                      iconPath: 'assets/images/task.svg',
+                      page: TaskPage(
+                        key: ValueKey(
+                          'department_task_${department.departmentId}',
+                        ),
+                        initialDepartmentFilter: department.departmentId,
+                      ),
+                      sideProvider: sideProvider,
+                      activeColor: const Color(0xFF63B3ED),
+                      lightColor: const Color(0xFFE6F5FF),
+                    ),
+                  ),
+                ],
                 if (settingsProvider.menuIsViewMap[29].toString() == '1')
                   _buildModernMenuItem(
                     context: context,
