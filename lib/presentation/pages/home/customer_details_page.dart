@@ -2747,6 +2747,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                   ],
                                                                 ),
                                                                   // Additional Details
+                                                                  if (settingsprovider.menuIsViewMap[206] == 1)
                                                                   CustomerCard(
                                                                     title:
                                                                         "Additional Details",
@@ -3733,6 +3734,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                 const SizedBox(
                                                                     height: 20),
                                                                 // ACTION BUTTONS (Moved here)
+                                                                if (settingsprovider.menuIsViewMap[235] == 1)
                                                                 CustomerCard(
                                                                   title:
                                                                       "Additional Details",
@@ -4176,6 +4178,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                               ),
                                                             ],
                                                           ),
+                                                          if (settingsprovider.menuIsViewMap[206] == 1)
                                                             // Additional Details
                                                             CustomerCard(
                                                               title:
@@ -5167,6 +5170,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                           const SizedBox(
                                                               height: 20),
                                                           // ACTION BUTTONS (Moved here mobile)
+                                                          if (settingsprovider.menuIsViewMap[235] == 1)
                                                           CustomerCard(
                                                             title:
                                                                 "Additional Details",
