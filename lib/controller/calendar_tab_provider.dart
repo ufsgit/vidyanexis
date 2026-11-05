@@ -171,13 +171,9 @@ class CalendarTabProvider extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
     try {
-      Loader.showLoader(context);
-
       final response = await HttpRequest.httpGetRequest(
         endPoint: '${HttpUrls.deleteCalendar}/$calendarId',
       );
-
-      Loader.stopLoader(context);
 
       if (response.statusCode == 200) {
         log('deleteCalendar success');
@@ -196,9 +192,6 @@ class CalendarTabProvider extends ChangeNotifier {
       }
     } catch (e) {
       log('deleteCalendar error: $e');
-      try {
-        Loader.stopLoader(context);
-      } catch (_) {}
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('An error occurred')),

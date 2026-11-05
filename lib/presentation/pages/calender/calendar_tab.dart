@@ -145,6 +145,7 @@ class _CalendarTabPageState extends State<CalendarTabPage> {
                                                 widget.customerId,
                                                 context,
                                               );
+                                              Navigator.of(context).pop();
                                             },
                                             confirmButtonText: 'Delete',
                                           );
