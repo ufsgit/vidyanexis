@@ -1729,6 +1729,46 @@ class _tasksPageReportState extends State<TaskPage> {
                       ),
                     ),
 
+                    // Task Date Filter
+                    GestureDetector(
+                      onTap: () {
+                        onClickTaskDateButton(context);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(4),
+                          border: Border.all(
+                            color: reportsProvider.taskFromDate != null ||
+                                    reportsProvider.taskToDate != null
+                                ? AppColors.primaryBlue
+                                : Colors.grey[300]!,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              reportsProvider.taskFromDate == null &&
+                                      reportsProvider.taskToDate == null
+                                  ? 'Task Date: All'
+                                  : 'Task Date: ${reportsProvider.formattedTaskFromDate} - ${reportsProvider.formattedTaskToDate}',
+                              style: const TextStyle(
+                                fontFamily: 'PlusJakartaSans',
+                                color: Colors.black,
+                                fontSize: 14,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            const Icon(Icons.arrow_drop_down,
+                                color: Colors.black45, size: 20),
+                          ],
+                        ),
+                      ),
+                    ),
+
                     // Assigned To Filter
                     _buildAssignedToFilter(reportsProvider, provider),
 
@@ -1881,6 +1921,8 @@ class _tasksPageReportState extends State<TaskPage> {
                     // Reset Button
                     if (reportsProvider.fromDate != null ||
                         reportsProvider.toDate != null ||
+                        reportsProvider.taskFromDate != null ||
+                        reportsProvider.taskToDate != null ||
                         (reportsProvider.selectedStatus != null &&
                             reportsProvider.selectedStatus != 0) ||
                         (reportsProvider.selectedUser != null &&
@@ -1896,6 +1938,7 @@ class _tasksPageReportState extends State<TaskPage> {
                       ElevatedButton(
                         onPressed: () {
                           reportsProvider.selectDateFilterOption(null);
+                          reportsProvider.selectTaskDateFilterOption(null);
                           reportsProvider.removeStatus();
                           reportsProvider.setEntryType(
                               (!settingsProvider.canViewTaskMeAndAll &&
@@ -2045,6 +2088,52 @@ class _tasksPageReportState extends State<TaskPage> {
                         ],
                       ),
                       const SizedBox(height: 16),
+                      // Task Date Filter
+                      Wrap(
+                        spacing: 8.0,
+                        runSpacing: 8.0,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              onClickTaskDateButton(context);
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(
+                                  color: reportsProvider.taskFromDate != null ||
+                                          reportsProvider.taskToDate != null
+                                      ? AppColors.primaryBlue
+                                      : Colors.grey[300]!,
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    reportsProvider.taskFromDate == null &&
+                                            reportsProvider.taskToDate == null
+                                        ? 'Task Date: All'
+                                        : 'Task Date: ${reportsProvider.formattedTaskFromDate} - ${reportsProvider.formattedTaskToDate}',
+                                    style: const TextStyle(
+                                      fontFamily: 'PlusJakartaSans',
+                                      color: Colors.black,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  const Icon(Icons.arrow_drop_down,
+                                      color: Colors.black45, size: 20),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
                       const CustomText('Assigned To',
                           fontSize: 16, fontWeight: FontWeight.bold),
                       const SizedBox(height: 10),
@@ -2150,6 +2239,8 @@ class _tasksPageReportState extends State<TaskPage> {
                       const SizedBox(height: 24),
                       if (reportsProvider.fromDate != null ||
                           reportsProvider.toDate != null ||
+                          reportsProvider.taskFromDate != null ||
+                          reportsProvider.taskToDate != null ||
                           !reportsProvider.selectedStatusIds
                               .every((id) => id == 0) ||
                           !reportsProvider.selectedUserIds
@@ -2164,6 +2255,7 @@ class _tasksPageReportState extends State<TaskPage> {
                           child: OutlinedButton(
                             onPressed: () {
                               reportsProvider.selectDateFilterOption(null);
+                              reportsProvider.selectTaskDateFilterOption(null);
                               reportsProvider.removeStatus();
                               reportsProvider.setEntryType(
                                   (!settingsProvider.canViewTaskMeAndAll &&
@@ -8242,6 +8334,168 @@ class _tasksPageReportState extends State<TaskPage> {
                         child: const Text(
                           'Clear',
                         ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  void onClickTaskDateButton(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (contextx) => Consumer<TaskPageProvider>(
+        builder: (contextx, reportsProvider, child) {
+          return AlertDialog(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+            contentPadding: const EdgeInsets.all(10),
+            content: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Center(
+                      child: Text(
+                        'Choose Task Date',
+                        style: TextStyle(
+                          fontFamily: 'PlusJakartaSans',
+                          color: Colors.black,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 15),
+                    Wrap(
+                      spacing: 12,
+                      runSpacing: 12,
+                      children: List<Widget>.generate(dateButtonTitles.length,
+                          (index) {
+                        final title = dateButtonTitles[index];
+                        return ActionChip(
+                          onPressed: () {
+                            reportsProvider.setTaskDateFilter(title);
+                            reportsProvider.selectTaskDateFilterOption(index);
+                          },
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          label: Text(title),
+                          backgroundColor:
+                              reportsProvider.selectedTaskDateFilterIndex ==
+                                      index
+                                  ? AppColors.primaryBlue
+                                  : Colors.white,
+                          labelStyle: TextStyle(
+                            fontFamily: 'PlusJakartaSans',
+                            color:
+                                reportsProvider.selectedTaskDateFilterIndex ==
+                                        index
+                                    ? Colors.white
+                                    : Colors.black,
+                          ),
+                        );
+                      }),
+                    ),
+                    const SizedBox(height: 15),
+                    const Text(
+                      'Pick a date',
+                      style: TextStyle(
+                        fontFamily: 'PlusJakartaSans',
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 15),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            readOnly: true,
+                            onTap: () =>
+                                reportsProvider.selectTaskDate(context, true),
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              hintText: reportsProvider.taskFromDate != null
+                                  ? '${reportsProvider.taskFromDate!.toLocal()}'
+                                      .split(' ')[0]
+                                  : 'From',
+                              suffixIcon: const Icon(Icons.calendar_month),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: TextField(
+                            readOnly: true,
+                            onTap: () =>
+                                reportsProvider.selectTaskDate(context, false),
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              hintText: reportsProvider.taskToDate != null
+                                  ? '${reportsProvider.taskToDate!.toLocal()}'
+                                      .split(' ')[0]
+                                  : 'To',
+                              suffixIcon: const Icon(Icons.calendar_month),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 15),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 40,
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          reportsProvider.applyTaskDateFilter();
+                          reportsProvider.goToPage(1);
+                          reportsProvider.searchTaskByCustomer(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          backgroundColor: AppColors.primaryBlue,
+                          foregroundColor: Colors.white,
+                        ),
+                        child: const Text('Apply'),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 40,
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          reportsProvider.selectTaskDateFilterOption(null);
+                          reportsProvider.goToPage(1);
+                          reportsProvider.searchTaskByCustomer(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          backgroundColor: AppColors.textRed.withOpacity(0.1),
+                          foregroundColor: AppColors.textRed,
+                        ),
+                        child: const Text('Clear'),
                       ),
                     ),
                   ],

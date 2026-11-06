@@ -777,6 +777,13 @@ class TaskPageProvider extends ChangeNotifier {
     _isFilter = false;
     _pageIndex = 1;
     _selectedPriority = 0;
+    _taskFromDate = null;
+    _taskToDate = null;
+    _formattedTaskFromDate = '';
+    _formattedTaskToDate = '';
+    _taskFromDateS = '';
+    _taskToDateS = '';
+    _selectedTaskDateFilterIndex = null;
     notifyListeners();
   }
 
@@ -819,6 +826,15 @@ class TaskPageProvider extends ChangeNotifier {
       } else {
         isDate = "1";
       }
+
+      String isTaskDate = "0";
+      if (_taskFromDateS.isEmpty && _taskToDateS.isEmpty) {
+        isTaskDate = "0";
+        _taskFromDateS = "";
+        _taskToDateS = "";
+      } else {
+        isTaskDate = "1";
+      }
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
 
@@ -849,7 +865,7 @@ class TaskPageProvider extends ChangeNotifier {
 
       var response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchTaskByCustomer}?Customer_Name=$_Search&Phone_Number=$_Search&Consumer_Number=$_Search&Task_Status_Id=$_Status&To_User=$toUserId&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&Task_Type_Id=$_TaskType&Enquiry_For_Id=$_enquiryForS&Department_Id=$_Department_Id&Page_Index=$apiPageIndex&PageSize=$_pageSize&Order_By_=$apiSortOption&Order_Type_=$_sortOrder&Entry_Type_=$_entryType&Priority_Id_=$_selectedPriority&Customer_Type_Id_=$_customerTypeId');
+              '${HttpUrls.searchTaskByCustomer}?Customer_Name=$_Search&Phone_Number=$_Search&Consumer_Number=$_Search&Task_Status_Id=$_Status&To_User=$toUserId&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&Task_Type_Id=$_TaskType&Enquiry_For_Id=$_enquiryForS&Department_Id=$_Department_Id&Page_Index=$apiPageIndex&PageSize=$_pageSize&Order_By_=$apiSortOption&Order_Type_=$_sortOrder&Entry_Type_=$_entryType&Priority_Id_=$_selectedPriority&Customer_Type_Id_=$_customerTypeId&Is_Task_Date=$isTaskDate&Task_Fromdate=$_taskFromDateS&Task_Todate=$_taskToDateS');
 
       if (response.statusCode == 200) {
         var data = response.data;
@@ -1703,6 +1719,119 @@ class TaskPageProvider extends ChangeNotifier {
 
     debugPrint('Dashboard Task Status: $_selectedStatusIds');
 
+    notifyListeners();
+  }
+
+  // Task Date filter (separate from Follow-up Date)
+  DateTime? _taskFromDate;
+  DateTime? _taskToDate;
+  String _formattedTaskFromDate = '';
+  String _formattedTaskToDate = '';
+  String get formattedTaskFromDate => _formattedTaskFromDate;
+  String get formattedTaskToDate => _formattedTaskToDate;
+  DateTime? get taskFromDate => _taskFromDate;
+  DateTime? get taskToDate => _taskToDate;
+  String _taskFromDateS = '';
+  String _taskToDateS = '';
+  String get taskFromDateS => _taskFromDateS;
+  String get taskToDateS => _taskToDateS;
+  int? _selectedTaskDateFilterIndex;
+  int? get selectedTaskDateFilterIndex => _selectedTaskDateFilterIndex;
+
+// ---------- Task Date filter methods ----------
+  void selectTaskDateFilterOption(int? index) {
+    if (index == null) {
+      _selectedTaskDateFilterIndex = null;
+      _taskFromDate = null;
+      _taskToDate = null;
+      _formattedTaskFromDate = '';
+      _formattedTaskToDate = '';
+      _taskFromDateS = '';
+      _taskToDateS = '';
+    } else {
+      _selectedTaskDateFilterIndex = index;
+      formatTaskDate();
+    }
+    notifyListeners();
+  }
+
+  void setTaskDateFilter(String title) {
+    final now = DateTime.now();
+    switch (title) {
+      case 'Yesterday':
+        _taskFromDate = now.subtract(const Duration(days: 1));
+        _taskToDate = now.subtract(const Duration(days: 1));
+        break;
+      case 'Today':
+        _taskFromDate = now;
+        _taskToDate = now;
+        break;
+      case 'Tomorrow':
+        _taskFromDate = now.add(const Duration(days: 1));
+        _taskToDate = now.add(const Duration(days: 1));
+        break;
+      case 'This Week':
+        _taskFromDate = now.subtract(Duration(days: now.weekday - 1));
+        _taskToDate = now.add(Duration(days: 7 - now.weekday));
+        break;
+      case 'This Month':
+        _taskFromDate = DateTime(now.year, now.month, 1);
+        _taskToDate = DateTime(now.year, now.month + 1, 0);
+        break;
+      default:
+        _taskFromDate = null;
+        _taskToDate = null;
+        break;
+    }
+    notifyListeners();
+  }
+
+  void setTaskFromDate(DateTime date) {
+    _taskFromDate = date;
+    _selectedTaskDateFilterIndex = -1;
+    formatTaskDate();
+    notifyListeners();
+  }
+
+  void setTaskToDate(DateTime date) {
+    _taskToDate = date;
+    _selectedTaskDateFilterIndex = -1;
+    formatTaskDate();
+    notifyListeners();
+  }
+
+  void formatTaskDate() {
+    _formattedTaskFromDate = _taskFromDate != null
+        ? DateFormat('yyyy-MM-dd').format(_taskFromDate!)
+        : '';
+    _formattedTaskToDate = _taskToDate != null
+        ? DateFormat('yyyy-MM-dd').format(_taskToDate!)
+        : '';
+  }
+
+  Future<void> selectTaskDate(BuildContext context, bool isFromDate) async {
+    final pickedDate = await showDatePicker(
+      context: context,
+      initialDate: isFromDate
+          ? (_taskFromDate ?? DateTime.now())
+          : (_taskToDate ?? DateTime.now()),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (pickedDate != null) {
+      if (isFromDate) {
+        setTaskFromDate(pickedDate);
+      } else {
+        setTaskToDate(pickedDate);
+      }
+    }
+    notifyListeners();
+  }
+
+  void applyTaskDateFilter() {
+    formatTaskDate();
+    _taskFromDateS = _formattedTaskFromDate;
+    _taskToDateS = _formattedTaskToDate;
     notifyListeners();
   }
 }
