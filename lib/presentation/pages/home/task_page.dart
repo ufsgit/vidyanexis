@@ -2749,7 +2749,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                             children: [
                                                                               Expanded(
                                                                                 child: Padding(
-                                                                                  padding: const EdgeInsets.symmetric(vertical: 6),
+                                                                                  padding: const EdgeInsets.symmetric(vertical: 0),
                                                                                   child: InkWell(
                                                                                     onTap: () {
                                                                                       final sideprovider = Provider.of<SidebarProvider>(context,listen: false);
