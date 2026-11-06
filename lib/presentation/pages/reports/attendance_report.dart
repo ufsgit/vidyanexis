@@ -236,6 +236,8 @@ class _AttendanceReportState extends State<AttendanceReport> {
                             'Check-In',
                             'Check-Out',
                             'Location',
+                            'Present Days',
+                            'Absent Days',
                           ],
                           data: reportsProvider.taskReport.map((task) {
                             return {
@@ -248,6 +250,8 @@ class _AttendanceReportState extends State<AttendanceReport> {
                               'Location': task.location.isEmpty
                                   ? 'No Location'
                                   : task.location,
+                              'Present Days': task.presentDays,
+                              'Absent Days': task.absentDays,
                             };
                           }).toList(),
                           fileName: 'Attendance_Report',
@@ -547,6 +551,8 @@ class _AttendanceReportState extends State<AttendanceReport> {
                   children: [
                     Expanded(flex: 1, child: _tableHeader('No.')),
                     Expanded(flex: 3, child: _tableHeader('Staff Name')),
+                    Expanded(flex: 2, child: _tableHeader('Present Days')),
+                    Expanded(flex: 2, child: _tableHeader('Absent Days')),
                     Expanded(flex: 2, child: _tableHeader('Date')),
                     Expanded(flex: 2, child: _tableHeader('Check-In')),
                     Expanded(flex: 2, child: _tableHeader('Check-Out')),
@@ -577,6 +583,14 @@ class _AttendanceReportState extends State<AttendanceReport> {
                                 Expanded(
                                     flex: 3,
                                     child: Text(task.userDetailsName,
+                                        style: _tableRowStyle())),
+                                Expanded(
+                                    flex: 2,
+                                    child: Text(task.presentDays,
+                                        style: _tableRowStyle())),
+                                Expanded(
+                                    flex: 2,
+                                    child: Text(task.absentDays,
                                         style: _tableRowStyle())),
                                 Expanded(
                                     flex: 2,

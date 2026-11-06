@@ -17,6 +17,8 @@ class AttendanceDetails {
   final String checkInTimeOnly;
   final String checkOutDate;
   final String checkOutTimeOnly;
+  final String presentDays;
+  final String absentDays;
 
   TextEditingController checkInDateControllers;
   TextEditingController checkOutDateControllers;
@@ -49,6 +51,8 @@ class AttendanceDetails {
     required this.checkOutTimeControllers,
     this.isEdited = false,
     this.isSelected = false,
+    this.presentDays = '',
+    this.absentDays = '',
   });
 
   factory AttendanceDetails.fromJson(Map<String, dynamic> json) {
@@ -97,6 +101,8 @@ class AttendanceDetails {
       checkOutDateControllers: TextEditingController(text: checkOutDate),
       checkInTimeControllers: TextEditingController(text: checkInTimeOnly),
       checkOutTimeControllers: TextEditingController(text: checkOutTimeOnly),
+      presentDays: json['Present_Days']?.toString() ?? '',
+      absentDays: json['Absent_Days']?.toString() ?? '',
     );
   }
 
