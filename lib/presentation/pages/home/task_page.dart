@@ -6367,6 +6367,13 @@ class _tasksPageReportState extends State<TaskPage> {
                               const SizedBox(height: 16),
                               Consumer<FormProvider>(
                                 builder: (context, formProvider, child) {
+                                  final settingsProvider =
+                                      Provider.of<SettingsProvider>(context);
+                                  if (settingsProvider
+                                          .hideFormFromStatusChange ==
+                                      1) {
+                                    return const SizedBox.shrink();
+                                  }
                                   if (formProvider.isFetchingCustomerForms) {
                                     return const Padding(
                                       padding:

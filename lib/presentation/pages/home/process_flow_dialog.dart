@@ -999,6 +999,12 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
 
                           Consumer<FormProvider>(
                             builder: (context, formProvider, child) {
+                              final settingsProvider =
+                                  Provider.of<SettingsProvider>(context);
+                              if (settingsProvider.hideFormFromStatusChange ==
+                                  1) {
+                                return const SizedBox.shrink();
+                              }
                               if (formProvider.isFetchingCustomerForms) {
                                 return const Padding(
                                   padding: EdgeInsets.symmetric(vertical: 20),

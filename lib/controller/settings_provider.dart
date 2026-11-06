@@ -890,6 +890,38 @@ class SettingsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  int _hideFormFromStatusChange = 0;
+  int get hideFormFromStatusChange {
+    if (_companyDetails.isNotEmpty &&
+        _companyDetails[0].permissions.isNotEmpty) {
+      for (var p in _companyDetails[0].permissions) {
+        if (p.companyPermissionId == 63 ||
+            p.companyPermissionId.toString() == '63') {
+          return (p.value == 1 || p.value.toString() == '1') ? 1 : 0;
+        }
+      }
+      for (var p in _companyDetails[0].permissions) {
+        final cap = (p.caption.isNotEmpty ? p.caption : p.displayCaption)
+            .trim()
+            .toLowerCase();
+        if (cap.contains('hide form from status change') ||
+            cap.contains('hide_form_from_status_change')) {
+          return (p.value == 1 || p.value.toString() == '1') ? 1 : 0;
+        }
+      }
+    }
+    return (_hideFormFromStatusChange == 1 ||
+            _hideFormFromStatusChange.toString() == '1')
+        ? 1
+        : 0;
+  }
+
+  void setHideFormFromStatusChange(int value) {
+    _hideFormFromStatusChange = value;
+    _syncStateToPermissionsList(63, value);
+    notifyListeners();
+  }
+
   int _recordVoiceNote = 0;
   int get recordVoiceNote => _recordVoiceNote;
 
@@ -1199,6 +1231,11 @@ class SettingsProvider extends ChangeNotifier {
             (caption.toLowerCase().contains('item dropdown in quotation') ||
                 caption.toLowerCase().contains('item_dropdown_in_quotation')))) {
       _itemDropdownInQuotation = value;
+    } else if (permissionId == 63 ||
+        (caption != null &&
+            (caption.toLowerCase().contains('hide form from status change') ||
+                caption.toLowerCase().contains('hide_form_from_status_change')))) {
+      _hideFormFromStatusChange = value;
     } else if (caption != null &&
         (caption.toLowerCase().contains('future_solar_dashboard') ||
             caption.toLowerCase().contains('future solar dashboard'))) {
@@ -1440,6 +1477,17 @@ class SettingsProvider extends ChangeNotifier {
               cap.contains('item_dropdown_in_quotation');
         });
       }
+      if (index == -1 && permissionId == 63) {
+        index = _companyDetails[0].permissions.indexWhere((p) {
+          if (p.companyPermissionId == 63 ||
+              p.companyPermissionId.toString() == '63') return true;
+          final cap = (p.caption.isNotEmpty ? p.caption : p.displayCaption)
+              .trim()
+              .toLowerCase();
+          return cap.contains('hide form from status change') ||
+              cap.contains('hide_form_from_status_change');
+        });
+      }
       if (index != -1) {
         final old = _companyDetails[0].permissions[index];
         _companyDetails[0].permissions[index] = CompanyPermission(
@@ -1560,6 +1608,17 @@ class SettingsProvider extends ChangeNotifier {
               .toLowerCase();
           return cap.contains('item dropdown in quotation') ||
               cap.contains('item_dropdown_in_quotation');
+        });
+      }
+      if (index == -1 && permissionId == 63) {
+        index = _companyDetails[0].permissions.indexWhere((p) {
+          if (p.companyPermissionId == 63 ||
+              p.companyPermissionId.toString() == '63') return true;
+          final cap = (p.caption.isNotEmpty ? p.caption : p.displayCaption)
+              .trim()
+              .toLowerCase();
+          return cap.contains('hide form from status change') ||
+              cap.contains('hide_form_from_status_change');
         });
       }
       if (index != -1) {
