@@ -1736,9 +1736,21 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
           suffixIcon: IconButton(
             icon: const Icon(Icons.calendar_today),
             onPressed: () async {
+              DateTime initialDate = DateTime.now();
+              if (leadProvider.workCompletionDateController.text.isNotEmpty) {
+                try {
+                  initialDate = DateFormat('dd MMM yyyy')
+                      .parse(leadProvider.workCompletionDateController.text);
+                } catch (_) {
+                  try {
+                    initialDate = DateTime.parse(
+                        leadProvider.workCompletionDateController.text);
+                  } catch (_) {}
+                }
+              }
               final DateTime? picked = await showDatePicker(
                 context: context,
-                initialDate: DateTime.now(),
+                initialDate: initialDate,
                 firstDate: DateTime(2000),
                 lastDate: DateTime(2101),
               );
@@ -1751,9 +1763,21 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
             },
           ),
           onTap: () async {
+            DateTime initialDate = DateTime.now();
+            if (leadProvider.workCompletionDateController.text.isNotEmpty) {
+              try {
+                initialDate = DateFormat('dd MMM yyyy')
+                    .parse(leadProvider.workCompletionDateController.text);
+            } catch (_) {
+              try {
+                initialDate = DateTime.parse(
+                    leadProvider.workCompletionDateController.text);
+              } catch (_) {}
+            }
+          }
             final DateTime? picked = await showDatePicker(
               context: context,
-              initialDate: DateTime.now(),
+              initialDate: initialDate,
               firstDate: DateTime(2000),
               lastDate: DateTime(2101),
             );

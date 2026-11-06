@@ -203,6 +203,9 @@ class LeadDetailsProvider with ChangeNotifier {
                   leadData.workCompletionDateDisplay;
               leadProvider.installationDateController.text =
                   leadData.workCompletionDateDisplay;
+            } else {
+              leadProvider.workCompletionDateController.clear();
+              leadProvider.installationDateController.clear();
             }
             log(leadProvider.enquirySourceController.text);
             notifyListeners();

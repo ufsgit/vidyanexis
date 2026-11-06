@@ -1499,30 +1499,42 @@ class LeadsProvider extends ChangeNotifier {
       }
 
       String rawWcDate = (workCompletionDate != null &&
-              workCompletionDate.isNotEmpty &&
+              workCompletionDate.trim().isNotEmpty &&
               workCompletionDate != 'null')
-          ? workCompletionDate
-          : workCompletionDateController.text.isNotEmpty
-              ? workCompletionDateController.text
-              : installationDateController.text;
+          ? workCompletionDate.trim()
+          : workCompletionDateController.text.trim().isNotEmpty
+              ? workCompletionDateController.text.trim()
+              : installationDateController.text.trim();
       String? formattedWorkCompletionDate;
       if (rawWcDate.isNotEmpty && rawWcDate != 'null') {
         try {
           DateTime parsedDate;
           try {
             parsedDate = DateFormat('dd MMM yyyy').parse(rawWcDate);
-          } catch (e) {
+          } catch (_) {
             try {
               parsedDate = DateTime.parse(rawWcDate);
-            } catch (e) {
-              parsedDate = DateFormat('yyyy-MM-dd').parse(rawWcDate);
+            } catch (_) {
+              try {
+                parsedDate = DateFormat('yyyy-MM-dd').parse(rawWcDate);
+              } catch (_) {
+                try {
+                  parsedDate = DateFormat('dd-MM-yyyy').parse(rawWcDate);
+                } catch (_) {
+                  try {
+                    parsedDate = DateFormat('dd/MM/yyyy').parse(rawWcDate);
+                  } catch (_) {
+                    parsedDate = DateFormat('yyyy/MM/dd').parse(rawWcDate);
+                  }
+                }
+              }
             }
           }
           formattedWorkCompletionDate =
               DateFormat('yyyy-MM-dd').format(parsedDate);
         } catch (e) {
           debugPrint('Error parsing work completion date: $e');
-          formattedWorkCompletionDate = null;
+          formattedWorkCompletionDate = rawWcDate;
         }
       }
       print('date$nextFollowUpDate');
@@ -1561,6 +1573,8 @@ class LeadsProvider extends ChangeNotifier {
       final Map<String, dynamic> bodyData = {
         "Lead_Mobile_Existed_Check": leadMobileExistedCheck,
         "Lead_Mobile_Check": leadMobileExistedCheck,
+        "Work_Completion_Date": formattedWorkCompletionDate,
+        "work_completion_date": formattedWorkCompletionDate,
         "lead": {
           "Customer_Id": custId,
           "Lead_Mobile_Existed_Check": leadMobileExistedCheck,
@@ -1645,6 +1659,9 @@ class LeadsProvider extends ChangeNotifier {
           "Priority_Id": priorityId,
           "Subsidy_Amount": double.tryParse(leadSubsidyController.text) ?? 0,
           "work_completion_date": formattedWorkCompletionDate,
+          "Work_Completion_Date": formattedWorkCompletionDate,
+          "Work_Completion_date": formattedWorkCompletionDate,
+          "Completion_Date": formattedWorkCompletionDate,
         },
         "followup": {
           "Next_FollowUp_date": nextFollowUpDate,
