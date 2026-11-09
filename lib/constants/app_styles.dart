@@ -11,6 +11,11 @@ class AppStyles {
     _cachedLogo = logo;
   }
 
+  static String versionNumber(){
+    const versionNumber = '1.0.3.24';
+    return versionNumber;
+  }
+
   static String logo() {
     if (_cachedLogo != null && _cachedLogo!.isNotEmpty) {
       if (_cachedLogo!.startsWith('http')) {
