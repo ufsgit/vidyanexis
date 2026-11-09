@@ -237,8 +237,17 @@ class TaskReportModel {
                   json['Entry_date'])
               ?.toString() ??
           '',
-      taskStatusId: json['Task_Status_Id'] ?? 0,
-      taskStatusName: json['Task_Status_Name'] ?? 'Unknown',
+      taskStatusId: json['Task_Status_Id'] ??
+    json['taskStatusId'] ??
+    json['Status_Id'] ??
+    json['status_id'] ??
+    0,
+taskStatusName: json['Task_Status_Name'] ??
+    json['taskStatusName'] ??
+    json['Status_Name'] ??
+    json['status_name'] ??
+    json['TaskStatusName'] ??
+    'Unknown',
       toUserId: json['To_User_Id'] ?? 0,
       customerId: json['Customer_Id'] ?? 0,
       enquiryForId: json['Enquiry_For_Id'] ?? 0,
