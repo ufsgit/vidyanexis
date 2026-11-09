@@ -702,9 +702,7 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
       ),
       child: Center(
         child: Text(
-          packageInfo != null
-              ? "v${packageInfo.version} (${packageInfo.buildNumber})"
-              : "v1.0.0",
+          AppStyles.versionNumber(),
           style: GoogleFonts.plusJakartaSans(
             fontSize: 11,
             fontWeight: FontWeight.w600,

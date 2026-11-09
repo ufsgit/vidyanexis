@@ -197,7 +197,7 @@ class _CustomSidebarState extends State<CustomSidebar> {
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                "Version ${widget.appVersion ?? ""}",
+                "Version ${AppStyles.versionNumber()}",
                 textAlign: TextAlign.center,
               ),
             ),
