@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -17,7 +16,6 @@ import 'package:vidyanexis/presentation/pages/reports/task_page_report_mobile.da
 import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
-import 'package:vidyanexis/controller/settings_provider.dart';
 
 class TaskPageReport extends StatefulWidget {
   final bool fromDashBoard;
@@ -67,16 +65,13 @@ class _tasksPageReportState extends State<TaskPageReport> {
 
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: Colors.white,
       bottomNavigationBar: _buildPaginationControls(context),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header Row
           _buildHeader(context, reportsProvider),
-
-          // KPI Summary Cards
-          _buildKpiSection(reportsProvider),
 
           // Filter Panel (collapsible)
           if (reportsProvider.isFilter)
@@ -85,33 +80,25 @@ class _tasksPageReportState extends State<TaskPageReport> {
           // Main Table Content
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(6),
                   border: Border.all(
                     color: const Color(0xFFE2E8F0),
                     width: 1.0,
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.03),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
                 ),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(6),
                   child: SingleChildScrollView(
                     scrollDirection: Axis.vertical,
                     child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: SizedBox(
-                        width: MediaQuery.of(context).size.width < 1650
-                            ? 1650
-                            : MediaQuery.of(context).size.width - 32,
+                        width:
+                            max(1462.0, MediaQuery.of(context).size.width - 32),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -168,31 +155,33 @@ class _tasksPageReportState extends State<TaskPageReport> {
   Widget _buildHeader(
       BuildContext context, TaskReportProvider reportsProvider) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
       child: Row(
         children: [
           if (widget.fromDashBoard) ...[
             InkWell(
               onTap: () => Navigator.pop(context),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(6),
               child: Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(6),
                   border: Border.all(color: const Color(0xFFE2E8F0)),
                 ),
                 child: const Icon(
                   Icons.arrow_back,
                   size: 20,
-                  color: Color(0xFF152D70),
+                  color: Color(0xFF1E293B),
                 ),
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 10),
           ] else ...[
             Builder(
               builder: (context) => IconButton(
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
                 onPressed: () {
                   ScaffoldState? parent;
                   context.visitAncestorElements((element) {
@@ -208,61 +197,33 @@ class _tasksPageReportState extends State<TaskPageReport> {
                   });
                   parent?.openDrawer();
                 },
-                icon: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: AppColors.secondaryBlue.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Icon(
-                    Icons.sort,
-                    size: 20,
-                    color: AppColors.secondaryBlue,
-                  ),
+                icon: const Icon(
+                  Icons.menu_rounded,
+                  size: 22,
+                  color: Color(0xFF1E293B),
                 ),
               ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 10),
           ],
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Task Report',
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w700,
-                  color: const Color(0xFF152D70),
-                ),
-              ),
-              Text(
-                'Track assignments, progress, and team performance',
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 12.5,
-                  fontWeight: FontWeight.w400,
-                  color: const Color(0xFF64748B),
-                ),
-              ),
-            ],
+          Text(
+            'Task Report',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: const Color(0xFF1E293B),
+            ),
           ),
           const Spacer(),
 
-          // Modern Search Box
+          // Search Box
           Container(
-            width: 300,
-            height: 40,
+            width: 260,
+            height: 36,
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.02),
-                  blurRadius: 4,
-                  offset: const Offset(0, 1),
-                ),
-              ],
+              borderRadius: BorderRadius.circular(6),
+              border: Border.all(color: const Color(0xFFE2E8F0), width: 1.0),
             ),
             child: TextField(
               controller: searchController,
@@ -295,17 +256,15 @@ class _tasksPageReportState extends State<TaskPageReport> {
                 color: const Color(0xFF0F172A),
               ),
               decoration: InputDecoration(
-                hintText: 'Search customer, phone, staff...',
+                hintText: 'Search here....',
                 hintStyle: GoogleFonts.plusJakartaSans(
                   color: const Color(0xFF94A3B8),
                   fontSize: 13,
                 ),
                 border: InputBorder.none,
                 isDense: true,
-                contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 14, vertical: 10),
-                prefixIcon: const Icon(Icons.search,
-                    color: Color(0xFF64748B), size: 18),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 suffixIcon: searchController.text.isNotEmpty
                     ? GestureDetector(
                         onTap: () {
@@ -324,31 +283,53 @@ class _tasksPageReportState extends State<TaskPageReport> {
                         child: const Icon(Icons.close,
                             color: Color(0xFF94A3B8), size: 16),
                       )
-                    : null,
+                    : const Icon(Icons.search,
+                        color: Color(0xFF94A3B8), size: 18),
               ),
             ),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 8),
 
           // Filter Toggle Button
-          CustomFilterButton(
-            onPressed: () {
-              reportsProvider.toggleFilter();
-            },
-            isFilter: reportsProvider.isFilter,
+          InkWell(
+            onTap: () => reportsProvider.toggleFilter(),
+            borderRadius: BorderRadius.circular(6),
+            child: Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: reportsProvider.isFilter
+                    ? const Color(0xFFEFF6FF)
+                    : Colors.white,
+                borderRadius: BorderRadius.circular(6),
+                border: Border.all(
+                  color: reportsProvider.isFilter
+                      ? const Color(0xFF3B82F6)
+                      : const Color(0xFFE2E8F0),
+                ),
+              ),
+              child: Icon(
+                Icons.tune_rounded,
+                size: 18,
+                color: reportsProvider.isFilter
+                    ? const Color(0xFF2563EB)
+                    : const Color(0xFF475569),
+              ),
+            ),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 8),
 
           // Export Button
           Container(
-            height: 40,
+            height: 36,
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: const Color(0xFFCBD5E1)),
+              borderRadius: BorderRadius.circular(6),
+              border: Border.all(color: const Color(0xFFE2E8F0)),
             ),
-            child: TextButton.icon(
-              onPressed: () async {
+            child: InkWell(
+              borderRadius: BorderRadius.circular(6),
+              onTap: () async {
                 final allTasks =
                     await reportsProvider.fetchAllTasksForExport(context);
                 if (allTasks.isNotEmpty) {
@@ -391,168 +372,28 @@ class _tasksPageReportState extends State<TaskPageReport> {
                   );
                 }
               },
-              icon: const Icon(
-                Icons.file_download_outlined,
-                size: 18,
-                color: Color(0xFF152D70),
-              ),
-              label: Text(
-                'Export',
-                style: GoogleFonts.plusJakartaSans(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 13,
-                  color: const Color(0xFF152D70),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ---------------------------------------------------------------------------
-  // KPI Summary Metric Strip
-  // ---------------------------------------------------------------------------
-  Widget _buildKpiSection(TaskReportProvider reportsProvider) {
-    final tasks = reportsProvider.taskReport;
-    final totalCount = reportsProvider.totalSize > 0
-        ? reportsProvider.totalSize
-        : tasks.length;
-    final completedCount = tasks
-        .where((t) => t.taskStatusName.toLowerCase().contains('complete'))
-        .length;
-    final confirmedCount = tasks
-        .where((t) =>
-            t.taskStatusName.toLowerCase().contains('confirm') &&
-            !t.taskStatusName.toLowerCase().contains('complete'))
-        .length;
-    final otherCount = (tasks.length - completedCount - confirmedCount)
-        .clamp(0, tasks.length);
-
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
-      child: Row(
-        children: [
-          Expanded(
-            child: _buildKpiCard(
-              title: 'Total Tasks',
-              value: totalCount.toString(),
-              subtitle: 'Logged records',
-              icon: Icons.assignment_outlined,
-              iconColor: const Color(0xFF2563EB),
-              iconBg: const Color(0xFFEFF6FF),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: _buildKpiCard(
-              title: 'Completed',
-              value: completedCount.toString(),
-              subtitle: 'On this page',
-              icon: Icons.check_circle_outline_rounded,
-              iconColor: const Color(0xFF059669),
-              iconBg: const Color(0xFFECFDF5),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: _buildKpiCard(
-              title: 'Confirmed',
-              value: confirmedCount.toString(),
-              subtitle: 'In pipeline',
-              icon: Icons.verified_outlined,
-              iconColor: const Color(0xFF4F46E5),
-              iconBg: const Color(0xFFEEF2FF),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: _buildKpiCard(
-              title: 'Action / In Progress',
-              value: otherCount.toString(),
-              subtitle: 'Requires review',
-              icon: Icons.pending_actions_rounded,
-              iconColor: const Color(0xFFD97706),
-              iconBg: const Color(0xFFFFFBEB),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildKpiCard({
-    required String title,
-    required String value,
-    required String subtitle,
-    required IconData icon,
-    required Color iconColor,
-    required Color iconBg,
-  }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.02),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 38,
-            height: 38,
-            decoration: BoxDecoration(
-              color: iconBg,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(icon, color: iconColor, size: 20),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  value,
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: const Color(0xFF0F172A),
-                  ),
-                ),
-                Row(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
-                      title,
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFF475569),
-                      ),
+                    const Icon(
+                      Icons.file_download_outlined,
+                      size: 17,
+                      color: Color(0xFF0EA5E9),
                     ),
                     const SizedBox(width: 4),
-                    Flexible(
-                      child: Text(
-                        '($subtitle)',
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 11,
-                          color: const Color(0xFF94A3B8),
-                        ),
+                    Text(
+                      'Export',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 12.5,
+                        color: const Color(0xFF475569),
                       ),
                     ),
                   ],
                 ),
-              ],
+              ),
             ),
           ),
         ],
@@ -667,8 +508,7 @@ class _tasksPageReportState extends State<TaskPageReport> {
           ),
           DropdownButton<int>(
             value: reportsProvider.selectedUser,
-            hint: Text('All',
-                style: GoogleFonts.plusJakartaSans(fontSize: 13)),
+            hint: Text('All', style: GoogleFonts.plusJakartaSans(fontSize: 13)),
             items: [
                   DropdownMenuItem<int>(
                     value: 0,
@@ -682,7 +522,7 @@ class _tasksPageReportState extends State<TaskPageReport> {
                           child: ConstrainedBox(
                             constraints: const BoxConstraints(maxWidth: 150),
                             child: Text(
-                              status.userDetailsName ?? '',
+                              status.userDetailsName,
                               overflow: TextOverflow.ellipsis,
                               style: GoogleFonts.plusJakartaSans(fontSize: 13),
                             ),
@@ -745,8 +585,7 @@ class _tasksPageReportState extends State<TaskPageReport> {
           ),
           DropdownButton<int>(
             value: reportsProvider.selectedTaskType,
-            hint: Text('All',
-                style: GoogleFonts.plusJakartaSans(fontSize: 13)),
+            hint: Text('All', style: GoogleFonts.plusJakartaSans(fontSize: 13)),
             items: [
                   DropdownMenuItem<int>(
                     value: 0,
@@ -797,28 +636,27 @@ class _tasksPageReportState extends State<TaskPageReport> {
   // ---------------------------------------------------------------------------
   Widget _buildTableHeader() {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       decoration: const BoxDecoration(
-        color: Color(0xFFF8FAFC),
-        borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+        color: Color(0xFFF1F5F9),
         border: Border(
-          bottom: BorderSide(color: Color(0xFFE2E8F0), width: 1.5),
+          bottom: BorderSide(color: Color(0xFFE2E8F0), width: 1.0),
         ),
       ),
       child: Row(
         children: [
-          _buildHeaderCell('No.', 55),
-          _buildHeaderCell('Customer Name', 190),
-          _buildHeaderCell('Phone Number', 130),
-          _buildHeaderCell('Address', 160),
-          _buildHeaderCell('Task', 170),
-          _buildHeaderCell('Enquiry for', 120),
-          _buildHeaderCell('Staff', 150),
-          _buildHeaderCell('Description', 180),
-          _buildHeaderCell('Date', 120),
-          _buildHeaderCell('Location', 160),
-          _buildHeaderCell('Status', 140, alignment: Alignment.center),
-          _buildHeaderCell('Details', 100, alignment: Alignment.center),
+          _buildHeaderCell('No.', 50),
+          _buildHeaderCell('Customer Name', 170),
+          _buildHeaderCell('Phone Number', 125),
+          _buildHeaderCell('Address', 165),
+          _buildHeaderCell('Task', 150),
+          _buildHeaderCell('Enquiry for', 135),
+          _buildHeaderCell('Staff', 105),
+          _buildHeaderCell('Description', 110),
+          _buildHeaderCell('Date', 115),
+          _buildHeaderCell('Location', 120),
+          _buildHeaderCell('Status', 100, alignment: Alignment.center),
+          _buildHeaderCell('Details', 85, alignment: Alignment.center),
         ],
       ),
     );
@@ -833,10 +671,9 @@ class _tasksPageReportState extends State<TaskPageReport> {
         child: Text(
           title,
           style: GoogleFonts.plusJakartaSans(
-            fontWeight: FontWeight.w700,
-            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            fontSize: 12.5,
             color: const Color(0xFF475569),
-            letterSpacing: 0.2,
           ),
         ),
       ),
@@ -867,99 +704,68 @@ class _tasksPageReportState extends State<TaskPageReport> {
       children: [
         // No.
         SizedBox(
-          width: 55,
+          width: 50,
           child: Text(
             rowNumber.toString(),
             style: GoogleFonts.plusJakartaSans(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: const Color(0xFF64748B),
+              fontSize: 12.5,
+              fontWeight: FontWeight.w400,
+              color: const Color(0xFF475569),
             ),
           ),
         ),
 
         // Customer Name
         SizedBox(
-          width: 190,
-          child: Row(
-            children: [
-              CircleAvatar(
-                radius: 13,
-                backgroundColor: const Color(0xFFEFF6FF),
-                child: Text(
-                  task.customerName.trim().isNotEmpty
-                      ? task.customerName.trim()[0].toUpperCase()
-                      : 'C',
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    color: const Color(0xFF2563EB),
-                  ),
+          width: 170,
+          child: Tooltip(
+            message: task.customerName,
+            child: InkWell(
+              onTap: () {
+                context.push(
+                    '${CustomerDetailsScreen.route}${task.customerId.toString()}/true');
+              },
+              child: Text(
+                task.customerName.toUpperCase(),
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w700,
+                  color: const Color(0xFF2563EB),
                 ),
+                overflow: TextOverflow.ellipsis,
               ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Tooltip(
-                  message: task.customerName,
-                  child: InkWell(
-                    onTap: () {
-                      context.push(
-                          '${CustomerDetailsScreen.route}${task.customerId.toString()}/true');
-                    },
-                    child: Text(
-                      task.customerName,
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 13.5,
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFF1D4ED8),
-                        decoration: TextDecoration.underline,
-                        decorationColor: const Color(0xFF93C5FD),
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
         ),
 
         // Phone Number
         SizedBox(
-          width: 130,
-          child: Row(
-            children: [
-              const Icon(Icons.phone_outlined,
-                  size: 13, color: Color(0xFF94A3B8)),
-              const SizedBox(width: 5),
-              Expanded(
-                child: Text(
-                  task.mobile.isEmpty ? '—' : task.mobile,
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                    color: const Color(0xFF334155),
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
+          width: 125,
+          child: Text(
+            task.mobile.isEmpty ? '—' : task.mobile,
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 12.5,
+              fontWeight: FontWeight.w400,
+              color: const Color(0xFF475569),
+            ),
+            overflow: TextOverflow.ellipsis,
           ),
         ),
 
         // Address
         SizedBox(
-          width: 160,
+          width: 165,
           child: fullAddress.isEmpty
               ? Text('—',
                   style: GoogleFonts.plusJakartaSans(
-                      color: const Color(0xFFCBD5E1)))
+                      fontSize: 12.5, color: const Color(0xFF94A3B8)))
               : Tooltip(
                   message: fullAddress,
                   child: Text(
                     fullAddress,
                     style: GoogleFonts.plusJakartaSans(
-                      fontSize: 13,
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w400,
                       color: const Color(0xFF475569),
                     ),
                     overflow: TextOverflow.ellipsis,
@@ -967,134 +773,75 @@ class _tasksPageReportState extends State<TaskPageReport> {
                 ),
         ),
 
-        // Task Type
+        // Task
         SizedBox(
-          width: 170,
-          child: Row(
-            children: [
-              Container(
-                width: 4,
-                height: 18,
-                decoration: BoxDecoration(
-                  color: task.parsedTaskTypeColor ?? const Color(0xFF3B82F6),
-                  borderRadius: BorderRadius.circular(2),
-                ),
+          width: 150,
+          child: Tooltip(
+            message: task.taskTypeName,
+            child: Text(
+              task.taskTypeName.isEmpty ? '—' : task.taskTypeName,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 12.5,
+                fontWeight: FontWeight.w400,
+                color: const Color(0xFF475569),
               ),
-              const SizedBox(width: 6),
-              Expanded(
-                child: Tooltip(
-                  message: task.taskTypeName,
-                  child: Text(
-                    task.taskTypeName.isEmpty ? '—' : task.taskTypeName,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                      color: const Color(0xFF1E293B),
-                    ),
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
         ),
 
         // Enquiry For
         SizedBox(
-          width: 120,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-            decoration: BoxDecoration(
-              color: task.enquiryForName.toUpperCase().contains('SOLAR')
-                  ? const Color(0xFFFFFBEB)
-                  : const Color(0xFFF1F5F9),
-              borderRadius: BorderRadius.circular(6),
-              border: Border.all(
-                color: task.enquiryForName.toUpperCase().contains('SOLAR')
-                    ? const Color(0xFFFDE68A)
-                    : const Color(0xFFE2E8F0),
+          width: 135,
+          child: Tooltip(
+            message: task.enquiryForName,
+            child: Text(
+              task.enquiryForName.isEmpty ? '—' : task.enquiryForName,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 12.5,
+                fontWeight: FontWeight.w400,
+                color: const Color(0xFF475569),
               ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (task.enquiryForName.toUpperCase().contains('SOLAR')) ...[
-                  const Icon(Icons.wb_sunny_rounded,
-                      size: 12, color: Color(0xFFD97706)),
-                  const SizedBox(width: 4),
-                ],
-                Flexible(
-                  child: Text(
-                    task.enquiryForName.isEmpty ? 'General' : task.enquiryForName,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 11.5,
-                      fontWeight: FontWeight.w600,
-                      color: task.enquiryForName.toUpperCase().contains('SOLAR')
-                          ? const Color(0xFFB45309)
-                          : const Color(0xFF475569),
-                    ),
-                  ),
-                ),
-              ],
             ),
           ),
         ),
 
         // Staff
         SizedBox(
-          width: 150,
-          child: Row(
-            children: [
-              CircleAvatar(
-                radius: 12,
-                backgroundColor: const Color(0xFFF3E8FF),
-                child: Text(
-                  task.toUserName.trim().isNotEmpty
-                      ? task.toUserName.trim()[0].toUpperCase()
-                      : 'S',
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w700,
-                    color: const Color(0xFF7E22CE),
-                  ),
-                ),
+          width: 105,
+          child: Tooltip(
+            message: task.toUserName,
+            child: Text(
+              task.toUserName.isEmpty ? '—' : task.toUserName,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 12.5,
+                fontWeight: FontWeight.w400,
+                color: const Color(0xFF475569),
               ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  task.toUserName.isEmpty ? 'Unassigned' : task.toUserName,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                    color: task.toUserName.isEmpty
-                        ? const Color(0xFF94A3B8)
-                        : const Color(0xFF334155),
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
         ),
 
         // Description
         SizedBox(
-          width: 180,
+          width: 110,
           child: task.description.isEmpty
               ? Text('—',
                   style: GoogleFonts.plusJakartaSans(
-                      color: const Color(0xFFCBD5E1)))
+                      fontSize: 12.5, color: const Color(0xFF94A3B8)))
               : Tooltip(
                   message: task.description,
                   child: Text(
                     task.description,
                     maxLines: 1,
                     style: GoogleFonts.plusJakartaSans(
-                      fontSize: 13,
-                      color: const Color(0xFF64748B),
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w400,
+                      color: const Color(0xFF475569),
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -1103,62 +850,37 @@ class _tasksPageReportState extends State<TaskPageReport> {
 
         // Date
         SizedBox(
-          width: 120,
-          child: Row(
-            children: [
-              const Icon(Icons.calendar_today_outlined,
-                  size: 13, color: Color(0xFF94A3B8)),
-              const SizedBox(width: 6),
-              Text(
-                task.entryDate.isNotEmpty
-                    ? DateFormat('dd MMM yyyy')
-                        .format(DateTime.parse(task.entryDate))
-                    : '—',
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 12.5,
-                  fontWeight: FontWeight.w500,
-                  color: const Color(0xFF475569),
-                ),
-              ),
-            ],
+          width: 115,
+          child: Text(
+            task.entryDate.isNotEmpty
+                ? DateFormat('dd MMM yyyy')
+                    .format(DateTime.parse(task.entryDate))
+                : '—',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 12.5,
+              fontWeight: FontWeight.w400,
+              color: const Color(0xFF475569),
+            ),
           ),
         ),
 
         // Location
         SizedBox(
-          width: 160,
+          width: 120,
           child: Builder(builder: (context) {
             final loc = task.locationName.isNotEmpty
                 ? task.locationName
                 : (task.location.isEmpty ? 'No Location' : task.location);
-            final hasLoc = loc.isNotEmpty && loc != 'No Location';
             return Tooltip(
               message: loc,
-              child: Row(
-                children: [
-                  Icon(
-                    hasLoc ? Icons.place_outlined : Icons.location_off_outlined,
-                    size: 14,
-                    color: hasLoc
-                        ? const Color(0xFFEF4444)
-                        : const Color(0xFFCBD5E1),
-                  ),
-                  const SizedBox(width: 4),
-                  Expanded(
-                    child: Text(
-                      loc,
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 12.5,
-                        fontStyle:
-                            hasLoc ? FontStyle.normal : FontStyle.italic,
-                        color: hasLoc
-                            ? const Color(0xFF334155)
-                            : const Color(0xFF94A3B8),
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
+              child: Text(
+                loc,
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w400,
+                  color: const Color(0xFF475569),
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             );
           }),
@@ -1166,15 +888,16 @@ class _tasksPageReportState extends State<TaskPageReport> {
 
         // Status Badge
         SizedBox(
-          width: 140,
+          width: 100,
           child: Center(
-            child: _buildStatusBadge(task.taskStatusName, task.taskStatusId),
+            child: _buildStatusBadge(
+                task.taskStatusName, task.taskStatusId, task.colorCode),
           ),
         ),
 
         // Details Button
         SizedBox(
-          width: 100,
+          width: 85,
           child: Center(
             child: InkWell(
               onTap: () async {
@@ -1192,31 +915,22 @@ class _tasksPageReportState extends State<TaskPageReport> {
                   },
                 );
               },
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(4),
               child: Container(
-                height: 32,
-                padding: const EdgeInsets.symmetric(horizontal: 10),
+                width: 70,
+                height: 26,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFEFF6FF),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: const Color(0xFFBFDBFE)),
+                  color: const Color(0xFF3B82F6),
+                  borderRadius: BorderRadius.circular(4),
                 ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.visibility_outlined,
-                        size: 14, color: Color(0xFF2563EB)),
-                    const SizedBox(width: 4),
-                    Text(
-                      'Details',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFF2563EB),
-                      ),
-                    ),
-                  ],
+                alignment: Alignment.center,
+                child: Text(
+                  'Details',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 11.5,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
@@ -1227,85 +941,31 @@ class _tasksPageReportState extends State<TaskPageReport> {
   }
 
   // ---------------------------------------------------------------------------
-  // Status Badge Pill with Indicator Dot & Pastel Colors
+  // Status Badge Pill
   // ---------------------------------------------------------------------------
-  Widget _buildStatusBadge(String statusName, int statusId) {
-    final nameLower = statusName.trim().toLowerCase();
-
-    Color bg;
-    Color text;
-    Color dot;
-
-    if (nameLower.contains('complete') ||
-        nameLower.contains('done') ||
-        nameLower.contains('finish')) {
-      bg = const Color(0xFFECFDF5);
-      text = const Color(0xFF065F46);
-      dot = const Color(0xFF10B981);
-    } else if (nameLower.contains('work confirm')) {
-      bg = const Color(0xFFF0FDFA);
-      text = const Color(0xFF115E59);
-      dot = const Color(0xFF14B8A6);
-    } else if (nameLower.contains('confirm')) {
-      bg = const Color(0xFFEEF2FF);
-      text = const Color(0xFF3730A3);
-      dot = const Color(0xFF6366F1);
-    } else if (nameLower.contains('progress') ||
-        nameLower.contains('visit') ||
-        nameLower.contains('pending')) {
-      bg = const Color(0xFFFFFBEB);
-      text = const Color(0xFF92400E);
-      dot = const Color(0xFFF59E0B);
-    } else if (nameLower.contains('cancel') ||
-        nameLower.contains('reject') ||
-        nameLower.contains('failed')) {
-      bg = const Color(0xFFFEF2F2);
-      text = const Color(0xFF991B1B);
-      dot = const Color(0xFFEF4444);
-    } else if (nameLower.contains('feasibility') ||
-        nameLower.contains('verify') ||
-        nameLower.contains('file')) {
-      bg = const Color(0xFFF5F3FF);
-      text = const Color(0xFF5B21B6);
-      dot = const Color(0xFF8B5CF6);
-    } else {
-      bg = const Color(0xFFF1F5F9);
-      text = const Color(0xFF334155);
-      dot = const Color(0xFF94A3B8);
-    }
+  Widget _buildStatusBadge(String statusName, int statusId, Color? colorCode) {
+    final displayName = statusName.isEmpty ? 'Unknown' : statusName;
+    final Color badgeColor = (colorCode != null && colorCode != Colors.black)
+        ? colorCode
+        : const Color(0xFF8C95A6);
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      width: 82,
+      height: 26,
       decoration: BoxDecoration(
-        color: bg,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: dot.withOpacity(0.25), width: 1),
+        color: badgeColor,
+        borderRadius: BorderRadius.circular(4),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 6,
-            height: 6,
-            decoration: BoxDecoration(
-              color: dot,
-              shape: BoxShape.circle,
-            ),
-          ),
-          const SizedBox(width: 6),
-          Flexible(
-            child: Text(
-              statusName.isEmpty ? 'Pending' : statusName,
-              overflow: TextOverflow.ellipsis,
-              maxLines: 1,
-              style: GoogleFonts.plusJakartaSans(
-                color: text,
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ],
+      alignment: Alignment.center,
+      child: Text(
+        displayName,
+        overflow: TextOverflow.ellipsis,
+        maxLines: 1,
+        style: GoogleFonts.plusJakartaSans(
+          color: Colors.white,
+          fontSize: 11.5,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     );
   }
@@ -1352,8 +1012,8 @@ class _tasksPageReportState extends State<TaskPageReport> {
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
-                    children: List<Widget>.generate(dateButtonTitles.length,
-                        (index) {
+                    children:
+                        List<Widget>.generate(dateButtonTitles.length, (index) {
                       String title = dateButtonTitles[index];
                       final isSelected =
                           reportsProvider.selectedDateFilterIndex == index;
@@ -1370,9 +1030,8 @@ class _tasksPageReportState extends State<TaskPageReport> {
                           color: isSelected
                               ? Colors.white
                               : const Color(0xFF334155),
-                          fontWeight: isSelected
-                              ? FontWeight.w600
-                              : FontWeight.w500,
+                          fontWeight:
+                              isSelected ? FontWeight.w600 : FontWeight.w500,
                           fontSize: 13,
                         ),
                         shape: RoundedRectangleBorder(
@@ -1407,8 +1066,8 @@ class _tasksPageReportState extends State<TaskPageReport> {
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(
-                                  color: Color(0xFFCBD5E1)),
+                              borderSide:
+                                  const BorderSide(color: Color(0xFFCBD5E1)),
                             ),
                             hintText: reportsProvider.fromDate != null
                                 ? '${reportsProvider.fromDate!.toLocal()}'
@@ -1433,8 +1092,8 @@ class _tasksPageReportState extends State<TaskPageReport> {
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(
-                                  color: Color(0xFFCBD5E1)),
+                              borderSide:
+                                  const BorderSide(color: Color(0xFFCBD5E1)),
                             ),
                             hintText: reportsProvider.toDate != null
                                 ? '${reportsProvider.toDate!.toLocal()}'
@@ -1672,117 +1331,119 @@ class _tasksPageReportState extends State<TaskPageReport> {
           return const SizedBox.shrink();
         }
 
-        final startItem = (provider.pageIndex - 1) * provider.pageSize + 1;
         final totalItems = provider.totalSize > 0
             ? provider.totalSize
             : provider.taskReport.length;
-        final endItem = min(provider.pageIndex * provider.pageSize, totalItems);
 
         return Container(
-          height: 64,
+          height: 52,
           decoration: const BoxDecoration(
             color: Colors.white,
-            border: Border(top: BorderSide(color: Color(0xFFE2E8F0), width: 1)),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 24),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              // Left: Total Tasks: X
               Text(
-                'Showing $startItem to $endItem of $totalItems tasks',
+                'Total Tasks: $totalItems',
                 style: GoogleFonts.plusJakartaSans(
                   color: const Color(0xFF64748B),
-                  fontSize: 13.5,
+                  fontSize: 12.5,
                   fontWeight: FontWeight.w500,
                 ),
               ),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _buildPageNavButton(
-                    icon: Icons.chevron_left_rounded,
-                    isEnabled: provider.pageIndex > 1,
-                    onTap: () {
-                      provider.previousPage();
-                      provider.getSearchTaskReport(context);
-                    },
-                  ),
-                  const SizedBox(width: 4),
-                  ...List.generate(provider.totalPages, (index) {
-                    int page = index + 1;
-                    if (provider.totalPages > 7) {
-                      if (index > 1 &&
-                          index < provider.totalPages - 2 &&
-                          (page < provider.pageIndex - 1 ||
-                              page > provider.pageIndex + 1)) {
-                        if (page == provider.pageIndex - 2 ||
-                            page == provider.pageIndex + 2) {
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 4),
+
+              // Centered page controls
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _buildPageNavArrow(
+                      icon: Icons.chevron_left_rounded,
+                      isEnabled: provider.pageIndex > 1,
+                      onTap: () {
+                        provider.previousPage();
+                        provider.getSearchTaskReport(context);
+                      },
+                    ),
+                    const SizedBox(width: 6),
+                    ...List.generate(provider.totalPages, (index) {
+                      int page = index + 1;
+                      if (provider.totalPages > 7) {
+                        if (index > 1 &&
+                            index < provider.totalPages - 2 &&
+                            (page < provider.pageIndex - 1 ||
+                                page > provider.pageIndex + 1)) {
+                          if (page == provider.pageIndex - 2 ||
+                              page == provider.pageIndex + 2) {
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 4),
+                              child: Text(
+                                '...',
+                                style: GoogleFonts.plusJakartaSans(
+                                  color: const Color(0xFF94A3B8),
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            );
+                          }
+                          return const SizedBox.shrink();
+                        }
+                      }
+
+                      bool isSelected = page == provider.pageIndex;
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 3),
+                        child: InkWell(
+                          onTap: () {
+                            if (!isSelected) {
+                              provider.goToPage(page);
+                              provider.getSearchTaskReport(context);
+                            }
+                          },
+                          borderRadius: BorderRadius.circular(13),
+                          child: Container(
+                            width: 26,
+                            height: 26,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: isSelected
+                                  ? const Color(0xFF3B82F6)
+                                  : const Color(0xFFF1F5F9),
+                            ),
+                            alignment: Alignment.center,
                             child: Text(
-                              '...',
+                              '$page',
                               style: GoogleFonts.plusJakartaSans(
-                                color: const Color(0xFF94A3B8),
-                                fontWeight: FontWeight.w600,
+                                color: isSelected
+                                    ? Colors.white
+                                    : const Color(0xFF64748B),
+                                fontWeight: isSelected
+                                    ? FontWeight.w700
+                                    : FontWeight.w500,
+                                fontSize: 12,
                               ),
                             ),
-                          );
-                        }
-                        return const SizedBox.shrink();
-                      }
-                    }
-
-                    bool isSelected = page == provider.pageIndex;
-                    return InkWell(
+                          ),
+                        ),
+                      );
+                    }),
+                    const SizedBox(width: 6),
+                    _buildPageNavArrow(
+                      icon: Icons.chevron_right_rounded,
+                      isEnabled: provider.pageIndex < provider.totalPages,
                       onTap: () {
-                        if (!isSelected) {
-                          provider.goToPage(page);
-                          provider.getSearchTaskReport(context);
-                        }
+                        provider.nextPage();
+                        provider.getSearchTaskReport(context);
                       },
-                      borderRadius: BorderRadius.circular(8),
-                      child: Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 3),
-                        width: 34,
-                        height: 34,
-                        decoration: BoxDecoration(
-                          color: isSelected
-                              ? AppColors.primaryBlue
-                              : Colors.transparent,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                            color: isSelected
-                                ? AppColors.primaryBlue
-                                : const Color(0xFFE2E8F0),
-                          ),
-                        ),
-                        alignment: Alignment.center,
-                        child: Text(
-                          '$page',
-                          style: GoogleFonts.plusJakartaSans(
-                            color: isSelected
-                                ? Colors.white
-                                : const Color(0xFF334155),
-                            fontWeight: isSelected
-                                ? FontWeight.w700
-                                : FontWeight.w500,
-                            fontSize: 13,
-                          ),
-                        ),
-                      ),
-                    );
-                  }),
-                  const SizedBox(width: 4),
-                  _buildPageNavButton(
-                    icon: Icons.chevron_right_rounded,
-                    isEnabled: provider.pageIndex < provider.totalPages,
-                    onTap: () {
-                      provider.nextPage();
-                      provider.getSearchTaskReport(context);
-                    },
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
+
+              // Spacer to balance left text
+              const SizedBox(width: 100),
             ],
           ),
         );
@@ -1790,30 +1451,22 @@ class _tasksPageReportState extends State<TaskPageReport> {
     );
   }
 
-  Widget _buildPageNavButton({
+  Widget _buildPageNavArrow({
     required IconData icon,
     required bool isEnabled,
     required VoidCallback onTap,
   }) {
     return InkWell(
       onTap: isEnabled ? onTap : null,
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(13),
       child: Container(
-        width: 34,
-        height: 34,
-        decoration: BoxDecoration(
-          color: isEnabled ? Colors.white : const Color(0xFFF8FAFC),
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color:
-                isEnabled ? const Color(0xFFE2E8F0) : const Color(0xFFF1F5F9),
-          ),
-        ),
+        width: 26,
+        height: 26,
         alignment: Alignment.center,
         child: Icon(
           icon,
           size: 18,
-          color: isEnabled ? const Color(0xFF334155) : const Color(0xFFCBD5E1),
+          color: isEnabled ? const Color(0xFF64748B) : const Color(0xFFCBD5E1),
         ),
       ),
     );
@@ -1844,20 +1497,13 @@ class _TaskTableRowItemState extends State<_TaskTableRowItem> {
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         decoration: BoxDecoration(
-          color: _isHovered
-              ? const Color(0xFFF1F5F9)
-              : (widget.index % 2 == 0
-                  ? Colors.white
-                  : const Color(0xFFF8FAFC)),
-          border: Border(
+          color: _isHovered ? const Color(0xFFF8FAFC) : Colors.white,
+          border: const Border(
             bottom: BorderSide(
-              color: _isHovered
-                  ? const Color(0xFFCBD5E1)
-                  : const Color(0xFFE2E8F0),
+              color: Color(0xFFF1F5F9),
               width: 1,
             ),
           ),
