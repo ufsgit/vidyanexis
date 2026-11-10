@@ -478,7 +478,6 @@ class CustomerDetailsProvider extends ChangeNotifier {
     final settingsProvider = SettingsProvider();
     if (settingsProvider.quotationItem == 1) {
       subtotalController.text = value.toStringAsFixed(2);
-      totalController.text = value.toStringAsFixed(2);
       gstTaxableAmountController.text = value.toStringAsFixed(2);
       cgstTaxableAmountController.text = (value / 2).toStringAsFixed(2);
       sgstTaxableAmountController.text = (value / 2).toStringAsFixed(2);
@@ -486,8 +485,10 @@ class CustomerDetailsProvider extends ChangeNotifier {
       totalCgstAmountController.text = "0.00";
       totalSgstAmountController.text = "0.00";
       totalGstPerController.text = "0.00";
+      updateTotal();
+    } else {
+      notifyListeners();
     }
-    notifyListeners();
   }
 
   void clearMultiItems() {
@@ -974,7 +975,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
   bool get isPercentage => _isPercentage;
   set isPercentage(bool value) {
     _isPercentage = value;
-    notifyListeners();
+    updateTotal();
   }
 
   final TextEditingController billpriceController = TextEditingController();
@@ -1208,7 +1209,6 @@ class CustomerDetailsProvider extends ChangeNotifier {
       );
       _items = [autoItem];
       subtotalController.text = finalTotal.toStringAsFixed(2);
-      totalController.text = finalTotal.toStringAsFixed(2);
       gstTaxableAmountController.text = finalTotal.toStringAsFixed(2);
       cgstTaxableAmountController.text = (finalTotal / 2).toStringAsFixed(2);
       sgstTaxableAmountController.text = (finalTotal / 2).toStringAsFixed(2);
@@ -1219,6 +1219,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
       totalCgstPerController.text = "0.00";
       totalSgstPerController.text = "0.00";
       totalAdCESSController.text = "0.00";
+      updateTotal();
     } else if (_selectedQuotationType == 2) {
       // Commercial
       final autoItem = CommercialItemModel(
@@ -1227,7 +1228,10 @@ class CustomerDetailsProvider extends ChangeNotifier {
         total: finalTotal.toStringAsFixed(2),
       );
       _commercialItems = [autoItem];
-      totalController.text = finalTotal.toStringAsFixed(2);
+      subtotalController.text = finalTotal.toStringAsFixed(2);
+      updateTotal();
+    } else {
+      updateTotal();
     }
     notifyListeners();
   }
