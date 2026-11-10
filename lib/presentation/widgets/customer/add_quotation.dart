@@ -3457,7 +3457,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
     );
   }
 
-  void _showPrintQuotationDialog(BuildContext context, String masterId) {
+  void _showPrintQuotationDialog(BuildContext context, String masterId, String quotationNo) {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -3506,7 +3506,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                       message: 'Generating Print...');
                   try {
                     await customerDetailsProvider.getQuotationMasterPdf(
-                        masterId, context);
+                        masterId, quotationNo, context);
                   } catch (e) {
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(

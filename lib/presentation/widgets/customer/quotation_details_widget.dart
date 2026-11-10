@@ -121,7 +121,7 @@ class QuotationDetailsWidget extends StatelessWidget {
               onPressed: () async {
                 await Loader.showLoader(context);
                 await customerDetailsProvider.getQuotationMasterPdf(
-                    serviceId, context);
+                    serviceId, '0', context);
                 Loader.stopLoader(context);
               },
               icon: Icon(Icons.print, color: AppColors.primaryBlue),

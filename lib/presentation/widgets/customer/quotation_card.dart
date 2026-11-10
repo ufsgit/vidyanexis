@@ -220,6 +220,7 @@ class QuotationCard extends StatelessWidget {
                               await customerDetailsProvider
                                   .getQuotationMasterPdf(
                                       quotation!.quotationMasterId.toString(),
+                                      quotation!.quotationNo,
                                       context);
                               Loader.stopLoader(context);
                             },

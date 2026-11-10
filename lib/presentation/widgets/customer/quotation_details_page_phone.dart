@@ -286,7 +286,7 @@ class _QuotationDetailsPagePhoneState extends State<QuotationDetailsPagePhone> {
             onPressed: () async {
               await Loader.showLoader(context);
               await customerDetailsProvider.getQuotationMasterPdf(
-                  widget.quotationId, context);
+                  widget.quotationId, widget.quotation.quotationNo, context);
               Loader.stopLoader(context);
             },
             svgPath: 'assets/images/Print.svg',

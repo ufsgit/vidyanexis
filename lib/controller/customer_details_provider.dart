@@ -5713,7 +5713,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
   }
 
   Future<void> getQuotationMasterPdf(
-      String masterId, BuildContext context) async {
+      String masterId, String quotationNo, BuildContext context) async {
     try {
       final data = await getQuotationMasterPdfBytes(masterId);
 
@@ -5722,7 +5722,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
           final blob = html.Blob([data], 'application/pdf');
           final url = html.Url.createObjectUrlFromBlob(blob);
           final anchor = html.AnchorElement(href: url)
-            ..setAttribute("download", "Quotation_$masterId.pdf")
+            ..setAttribute("download", "Quotation_$quotationNo.pdf")
             ..click();
 
           // Delay cleanup to ensure download starts
