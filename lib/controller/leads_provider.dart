@@ -1570,6 +1570,13 @@ class LeadsProvider extends ChangeNotifier {
           ? settingsProvider.companyDetails[0].leadMobileExistedCheck
           : 0;
 
+      final int finalToUserId =
+          (toUserId != 0) ? toUserId : byUserIdInt;
+      final String finalToUserName =
+          (toUserId != 0 && toUserName.trim().isNotEmpty)
+              ? toUserName
+              : userName;
+
       final Map<String, dynamic> bodyData = {
         "Lead_Mobile_Existed_Check": leadMobileExistedCheck,
         "Lead_Mobile_Check": leadMobileExistedCheck,
@@ -1662,6 +1669,8 @@ class LeadsProvider extends ChangeNotifier {
           "Work_Completion_Date": formattedWorkCompletionDate,
           "Work_Completion_date": formattedWorkCompletionDate,
           "Completion_Date": formattedWorkCompletionDate,
+          "To_User_Id": finalToUserId,
+          "To_User_Name": finalToUserName,
         },
         "followup": {
           "Next_FollowUp_date": nextFollowUpDate,
@@ -1673,8 +1682,8 @@ class LeadsProvider extends ChangeNotifier {
           "Department_Name": departmentName,
           "By_User_Id": byUserIdInt,
           "By_User_Name": userName,
-          "To_User_Id": toUserId,
-          "To_User_Name": toUserName,
+          "To_User_Id": finalToUserId,
+          "To_User_Name": finalToUserName,
 
           // "FollowUp": followUp,
           "Remark": remark,

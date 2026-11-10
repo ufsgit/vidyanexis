@@ -110,6 +110,13 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
         orElse: () => SearchUserDetails(userDetailsId: 0, userDetailsName: ''),
       );
 
+      final int assignedToUserId = showTransfer
+          ? (dropDownProvider.selectedUserId ?? 0)
+          : leadProvider.loginUserId;
+      final String assignedToUserName = showTransfer
+          ? (selectedUser.userDetailsName ?? '')
+          : leadProvider.loginUserName;
+
       await leadProvider.saveLead(
         custId: widget.isEdit ? leadProvider.customerId : 0,
         context: context,
@@ -143,8 +150,8 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
         enquirySourceName: selectedEnquirySource.enquirySourceName,
         statusId: dropDownProvider.selectedFollowUpId ?? 0,
         statusName: selectedStatus.statusName!,
-        toUserId: dropDownProvider.selectedUserId ?? 0,
-        toUserName: selectedUser.userDetailsName ?? '',
+        toUserId: assignedToUserId,
+        toUserName: assignedToUserName,
         subDistrict: '',
         subDivision: leadProvider.subDivisionController.text,
         village: '',
