@@ -124,12 +124,11 @@ class DashboardCountTab extends StatelessWidget {
           ),
         ],
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       child: LayoutBuilder(
         builder: (context, constraints) {
           int crossAxisCount = 2; // Mobile gets 2 cards per row
-          double aspectRatio =
-              1.2; // Default for mobile to avoid 5.7px overflow
+          double aspectRatio = 1.05; // Generous height to avoid title wrap overflow on mobile
 
           if (constraints.maxWidth > 1200) {
             crossAxisCount = 4; // 4 cards per row for large screens (4, 4, 1)
@@ -142,7 +141,7 @@ class DashboardCountTab extends StatelessWidget {
             aspectRatio = 1.6;
           } else if (constraints.maxWidth > 400) {
             crossAxisCount = 2;
-            aspectRatio = 1.4;
+            aspectRatio = 1.15;
           }
 
           final double spacing = 24.0;
@@ -725,35 +724,36 @@ class _DashboardCardState extends State<_DashboardCard> {
                 )
               ],
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             child: Stack(
               children: [
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     // Primary Metric
                     Text(
                       widget.count.toString(),
                       style: const TextStyle(
-                        fontSize: 28,
+                        fontSize: 26,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
                     ),
                     const SizedBox(height: 4),
                     // Title
-                    Text(
-                      displayTitle,
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white.withOpacity(0.9),
-                        letterSpacing: 0.5,
+                    Expanded(
+                      child: Text(
+                        displayTitle,
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white.withOpacity(0.9),
+                          letterSpacing: 0.3,
+                        ),
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
