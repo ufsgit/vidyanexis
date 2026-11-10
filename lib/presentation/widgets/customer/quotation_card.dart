@@ -170,7 +170,7 @@ class QuotationCard extends StatelessWidget {
                                         .toString());
                                 if (bytes != null && bytes.isNotEmpty) {
                                   final fileName =
-                                      'Quotation_${quotation!.quotationMasterId}.pdf';
+                                      'Quotation_${quotation!.quotationNo}.pdf';
                                   if (kIsWeb) {
                                     await FileDownloader.saveFile(
                                         bytes, fileName);

@@ -366,7 +366,7 @@ class _QuotationMobileViewState extends State<QuotationMobileView>
                                             if (bytes != null &&
                                                 bytes.isNotEmpty) {
                                               final fileName =
-                                                  'Quotation_${item.quotationMasterId}.pdf';
+                                                  'Quotation_${item.quotationNo}.pdf';
                                               if (kIsWeb) {
                                                 await FileDownloader.saveFile(
                                                     bytes, fileName);
