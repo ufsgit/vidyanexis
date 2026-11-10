@@ -435,7 +435,9 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
                       showOptionsOnTap: true,
                       maxHeight: 300,
                       optionsViewOpenDirection: OptionsViewOpenDirection.down,
-                      items: expenseProvider.itemList,
+                      items: expenseProvider.itemList
+                          .where((item) => item.primaryCheckBox == 1)
+                          .toList(),
                       displayStringFunction: (staff) =>
                           "${staff.itemName}\n${staff.itemDescription}",
                       defaultText: _selectedItemName,
