@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -79,12 +79,30 @@ class _leadReportMobile extends State<LeadReportMobile> {
           Provider.of<TaskReportProvider>(context, listen: false);
       reportsProvider.setTaskSearchCriteria('', '', '', '', '', '');
 
+      if (!widget.fromDashBoard) {
+        leadReportProvider.setStatus(0);
+        leadReportProvider.setEnquiryForFilter(0);
+
+        leadReportProvider.setDateFilter('Today');
+        leadReportProvider.selectDateFilterOption(1);
+        leadReportProvider.formatDate();
+
+        leadReportProvider.setUserFilterStatus(0);
+        leadReportProvider.setEnquirySourceFilter(0);
+        leadReportProvider.setFilter(false);
+      }
+
       provider.getEnquirySource(context);
       provider.getEnquiryFor(context);
       provider.getUserDetails(context);
       provider.getFollowUpStatus(context, '1');
       provider.getAllFollowUpStatus(context, '1');
-      leadReportProvider.getSearchLeadReports('', '', '', '', context);
+      leadReportProvider.getSearchLeadReports(
+          '',
+          leadReportProvider.fromDateS,
+          leadReportProvider.toDateS,
+          (leadReportProvider.selectedStatus ?? 0).toString(),
+          context);
     });
   }
 
@@ -133,6 +151,12 @@ class _leadReportMobile extends State<LeadReportMobile> {
       key: _scaffoldKey,
       drawer: const SidebarDrawer(),
       appBar: CustomAppBar(
+        leadingWidget: widget.fromDashBoard
+            ? IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () => Navigator.pop(context),
+              )
+            : null,
         title: 'Leads Report',
         onSearchTap: () {
           searchProvider.startSearch();

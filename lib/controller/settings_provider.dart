@@ -922,6 +922,39 @@ class SettingsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  int _statusWiseCount = 0;
+  int get statusWiseCount {
+    if (_companyDetails.isNotEmpty &&
+        _companyDetails[0].permissions.isNotEmpty) {
+      for (var p in _companyDetails[0].permissions) {
+        if (p.companyPermissionId == 67 ||
+            p.companyPermissionId.toString() == '67') {
+          return (p.value == 1 || p.value.toString() == '1') ? 1 : 0;
+        }
+      }
+      for (var p in _companyDetails[0].permissions) {
+        final cap = (p.caption.isNotEmpty ? p.caption : p.displayCaption)
+            .trim()
+            .toLowerCase();
+        if (cap.contains('status wise count') ||
+            cap.contains('status_wise_count') ||
+            cap.contains('status wise lead count') ||
+            cap.contains('status_wise_lead_count')) {
+          return (p.value == 1 || p.value.toString() == '1') ? 1 : 0;
+        }
+      }
+    }
+    return (_statusWiseCount == 1 || _statusWiseCount.toString() == '1')
+        ? 1
+        : 0;
+  }
+
+  void setStatusWiseCount(int value) {
+    _statusWiseCount = value;
+    _syncStateToPermissionsList(67, value);
+    notifyListeners();
+  }
+
   int _recordVoiceNote = 0;
   int get recordVoiceNote => _recordVoiceNote;
 
@@ -1249,6 +1282,13 @@ class SettingsProvider extends ChangeNotifier {
             (caption.toLowerCase().contains('department menu') ||
                 caption.toLowerCase().contains('department_menu'))) {
       _departmentMenu = value;
+    } else if (permissionId == 67 ||
+        (caption != null &&
+            (caption.toLowerCase().contains('status wise count') ||
+                caption.toLowerCase().contains('status_wise_count') ||
+                caption.toLowerCase().contains('status wise lead count') ||
+                caption.toLowerCase().contains('status_wise_lead_count')))) {
+      _statusWiseCount = value;
     }
   }
 
@@ -1488,6 +1528,19 @@ class SettingsProvider extends ChangeNotifier {
               cap.contains('hide_form_from_status_change');
         });
       }
+      if (index == -1 && permissionId == 67) {
+        index = _companyDetails[0].permissions.indexWhere((p) {
+          if (p.companyPermissionId == 67 ||
+              p.companyPermissionId.toString() == '67') return true;
+          final cap = (p.caption.isNotEmpty ? p.caption : p.displayCaption)
+              .trim()
+              .toLowerCase();
+          return cap.contains('status wise count') ||
+              cap.contains('status_wise_count') ||
+              cap.contains('status wise lead count') ||
+              cap.contains('status_wise_lead_count');
+        });
+      }
       if (index != -1) {
         final old = _companyDetails[0].permissions[index];
         _companyDetails[0].permissions[index] = CompanyPermission(
@@ -1619,6 +1672,19 @@ class SettingsProvider extends ChangeNotifier {
               .toLowerCase();
           return cap.contains('hide form from status change') ||
               cap.contains('hide_form_from_status_change');
+        });
+      }
+      if (index == -1 && permissionId == 67) {
+        index = _companyDetails[0].permissions.indexWhere((p) {
+          if (p.companyPermissionId == 67 ||
+              p.companyPermissionId.toString() == '67') return true;
+          final cap = (p.caption.isNotEmpty ? p.caption : p.displayCaption)
+              .trim()
+              .toLowerCase();
+          return cap.contains('status wise count') ||
+              cap.contains('status_wise_count') ||
+              cap.contains('status wise lead count') ||
+              cap.contains('status_wise_lead_count');
         });
       }
       if (index != -1) {

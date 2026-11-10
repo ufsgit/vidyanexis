@@ -15,6 +15,13 @@ import 'package:vidyanexis/presentation/pages/home/customer_page_phone.dart';
 import 'package:vidyanexis/presentation/pages/home/lead_page.dart';
 import 'package:vidyanexis/presentation/pages/home/lead_page_phone.dart';
 import 'package:vidyanexis/presentation/pages/home/task_page.dart';
+import 'package:vidyanexis/controller/drop_down_provider.dart';
+import 'package:vidyanexis/controller/leads_report_provider.dart';
+import 'package:vidyanexis/presentation/pages/reports/lead_page_report.dart';
+import 'package:vidyanexis/http/http_requests.dart';
+import 'package:vidyanexis/http/http_urls.dart';
+import 'package:vidyanexis/controller/models/search_lead_status_model.dart';
+import 'package:vidyanexis/controller/models/follow_up_status_model.dart';
 
 class DashboardCountTab extends StatelessWidget {
   final DashboardProvider dashBoardProvider;
@@ -41,49 +48,68 @@ class DashboardCountTab extends StatelessWidget {
     }
 
     final settingsProvider = Provider.of<SettingsProvider>(context);
+    final bool isStatusWise = settingsProvider.statusWiseCount == 1;
 
-    // Only render the required keys if they exist in the map
-    final allowedKeys = [
-      if (settingsProvider.menuIsViewMap[130] == 1 ||
-          settingsProvider.menuIsViewMap[139] == 1)
-        'Total_Leads',
-      if (settingsProvider.menuIsViewMap[131] == 1 ||
-          settingsProvider.menuIsViewMap[140] == 1)
-        'Fresh_Leads',
-      if (settingsProvider.menuIsViewMap[132] == 1 ||
-          settingsProvider.menuIsViewMap[141] == 1)
-        settingsProvider.newDashboardCount == 1
-            ? 'Confirmed_Leads' // only for comorin
-            : 'Upcoming_Followup',
-      if (settingsProvider.menuIsViewMap[124] == 1 ||
-          settingsProvider.menuIsViewMap[133] == 1)
-        'New_Leads',
-      if (settingsProvider.menuIsViewMap[125] == 1 ||
-          settingsProvider.menuIsViewMap[134] == 1)
-        'Missed_Leads',
-      if (settingsProvider.menuIsViewMap[126] == 1 ||
-          settingsProvider.menuIsViewMap[135] == 1)
-        'Followup_Leads',
-      if (settingsProvider.menuIsViewMap[127] == 1 ||
-          settingsProvider.menuIsViewMap[136] == 1)
-        'Not_Interested',
-      if (settingsProvider.menuIsViewMap[128] == 1 ||
-          settingsProvider.menuIsViewMap[137] == 1)
-        'Transferred_Leads',
-      if (settingsProvider.menuIsViewMap[129] == 1 ||
-          settingsProvider.menuIsViewMap[138] == 1)
-        'Completed_Leads',
-      if (settingsProvider.menuIsViewMap[187] == 1) 'Total_Task',
-      if (settingsProvider.menuIsViewMap[228] == 1) 'Converted_Customers',
-      if (settingsProvider.menuIsViewMap[229] == 1)
-        'Converted_Documents_Pending',
-      if (settingsProvider.menuIsViewMap[230] == 1) 'On_Hold_Leads',
-      if (settingsProvider.menuIsViewMap[231] == 1) 'Follow_Up_Tasks',
-      if (settingsProvider.menuIsViewMap[232] == 1) 'No_Feasibility_Tasks',
-    ];
-    final items = dashBoardProvider.leadCountMap.entries
-        .where((e) => allowedKeys.contains(e.key))
-        .toList();
+    final List<MapEntry<String, int>> items;
+    if (isStatusWise) {
+      items = dashBoardProvider.leadCountMap.entries
+          .where((e) =>
+              !e.key.endsWith('_Status_Id') &&
+              e.key != 'Status_Wise_Lead_Count')
+          .toList();
+    } else {
+      // Only render the required keys if they exist in the map
+      final allowedKeys = [
+        if (settingsProvider.menuIsViewMap[130] == 1 ||
+            settingsProvider.menuIsViewMap[139] == 1)
+          'Total_Leads',
+        if (settingsProvider.menuIsViewMap[131] == 1 ||
+            settingsProvider.menuIsViewMap[140] == 1)
+          'Fresh_Leads',
+        if (settingsProvider.menuIsViewMap[132] == 1 ||
+            settingsProvider.menuIsViewMap[141] == 1)
+          settingsProvider.newDashboardCount == 1
+              ? 'Confirmed_Leads' // only for comorin
+              : 'Upcoming_Followup',
+        if (settingsProvider.menuIsViewMap[124] == 1 ||
+            settingsProvider.menuIsViewMap[133] == 1)
+          'New_Leads',
+        if (settingsProvider.menuIsViewMap[125] == 1 ||
+            settingsProvider.menuIsViewMap[134] == 1)
+          'Missed_Leads',
+        if (settingsProvider.menuIsViewMap[126] == 1 ||
+            settingsProvider.menuIsViewMap[135] == 1)
+          'Followup_Leads',
+        if (settingsProvider.menuIsViewMap[127] == 1 ||
+            settingsProvider.menuIsViewMap[136] == 1)
+          'Not_Interested',
+        if (settingsProvider.menuIsViewMap[128] == 1 ||
+            settingsProvider.menuIsViewMap[137] == 1)
+          'Transferred_Leads',
+        if (settingsProvider.menuIsViewMap[129] == 1 ||
+            settingsProvider.menuIsViewMap[138] == 1)
+          'Completed_Leads',
+        if (settingsProvider.menuIsViewMap[187] == 1) 'Total_Task',
+        if (settingsProvider.menuIsViewMap[228] == 1) 'Converted_Customers',
+        if (settingsProvider.menuIsViewMap[229] == 1)
+          'Converted_Documents_Pending',
+        if (settingsProvider.menuIsViewMap[230] == 1) 'On_Hold_Leads',
+        if (settingsProvider.menuIsViewMap[231] == 1) 'Follow_Up_Tasks',
+        if (settingsProvider.menuIsViewMap[232] == 1) 'No_Feasibility_Tasks',
+      ];
+      items = dashBoardProvider.leadCountMap.entries
+          .where((e) => allowedKeys.contains(e.key))
+          .toList();
+    }
+
+    if (items.isEmpty) {
+      return const SizedBox(
+        height: 300,
+        child: Center(
+          child: Text('No data available'),
+        ),
+      );
+    }
 
     return Container(
       decoration: BoxDecoration(
@@ -145,6 +171,51 @@ class DashboardCountTab extends StatelessWidget {
                 count: count,
                 theme: theme,  
                 onTap: () async {
+                  if (isStatusWise) {
+                    final targetStatusId =
+                        await _resolveStatusId(context, keyword);
+                    debugPrint(
+                        'Status Wise Tap: keyword="$keyword" -> Status_Id=$targetStatusId');
+
+                    final dropDownProvider =
+                        Provider.of<DropDownProvider>(context, listen: false);
+                    final leadReportProvider =
+                        Provider.of<LeadReportProvider>(context, listen: false);
+
+                    if (targetStatusId != null && targetStatusId > 0) {
+                      if (!dropDownProvider.leadStatuses
+                          .any((s) => s.statusId == targetStatusId)) {
+                        dropDownProvider.leadStatuses.add(
+                          SearchLeadStatusModel(
+                            statusId: targetStatusId,
+                            statusName: keyword,
+                          ),
+                        );
+                      }
+                      leadReportProvider.setStatus(targetStatusId);
+                    } else {
+                      leadReportProvider.setStatus(0);
+                    }
+
+                    leadReportProvider.clearDateFilter();
+                    leadReportProvider.resetPagination();
+
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) =>
+                            const LeadPageReport(fromDashBoard: true),
+                      ),
+                    );
+
+                    // Refresh counts when user returns
+                    if (context.mounted) {
+                      await dashBoardProvider.getLeadDashboardCount(
+                          context: context);
+                    }
+                    return;
+                  }
+
                   //Only for future solar
                   if (settingsProvider.futureSolarDashboard == 1) {
                   final side =
@@ -290,6 +361,143 @@ class DashboardCountTab extends StatelessWidget {
     );
   }
 
+  Future<int?> _resolveStatusId(BuildContext context, String keyword) async {
+    final dropDownProvider =
+        Provider.of<DropDownProvider>(context, listen: false);
+
+    String norm(String s) =>
+        s.trim().toLowerCase().replaceAll(RegExp(r'[^a-z0-9]'), '');
+
+    final normKey = norm(keyword);
+    if (normKey.isEmpty) return null;
+
+    int? searchInList(Iterable<dynamic> list) {
+      // 1. Exact normalized match
+      for (var item in list) {
+        String name = '';
+        int id = 0;
+        if (item is SearchLeadStatusModel) {
+          name = item.statusName ?? '';
+          id = item.statusId ?? 0;
+        } else if (item is FollowUpStatusModel) {
+          name = item.statusName ?? '';
+          id = item.statusId ?? 0;
+        } else if (item is Map) {
+          name = (item['Status_Name'] ??
+                  item['status_name'] ??
+                  item['StatusName'] ??
+                  item['name'] ??
+                  '')
+              .toString();
+          id = int.tryParse((item['Status_Id'] ??
+                      item['status_id'] ??
+                      item['StatusId'] ??
+                      item['id'] ??
+                      0)
+                  .toString()) ??
+              0;
+        }
+        if (id > 0 && norm(name) == normKey) {
+          return id;
+        }
+      }
+      // 2. Contains match
+      for (var item in list) {
+        String name = '';
+        int id = 0;
+        if (item is SearchLeadStatusModel) {
+          name = item.statusName ?? '';
+          id = item.statusId ?? 0;
+        } else if (item is FollowUpStatusModel) {
+          name = item.statusName ?? '';
+          id = item.statusId ?? 0;
+        } else if (item is Map) {
+          name = (item['Status_Name'] ??
+                  item['status_name'] ??
+                  item['StatusName'] ??
+                  item['name'] ??
+                  '')
+              .toString();
+          id = int.tryParse((item['Status_Id'] ??
+                      item['status_id'] ??
+                      item['StatusId'] ??
+                      item['id'] ??
+                      0)
+                  .toString()) ??
+              0;
+        }
+        if (id > 0 &&
+            (norm(name).contains(normKey) || normKey.contains(norm(name)))) {
+          return id;
+        }
+      }
+      return null;
+    }
+
+    // 1. Search in cached lists in DropDownProvider
+    int? foundId = searchInList(dropDownProvider.leadStatuses) ??
+        searchInList(dropDownProvider.followUpData) ??
+        searchInList(dropDownProvider.followUpStatusList);
+    if (foundId != null && foundId > 0) return foundId;
+
+    // 2. Fetch directly from status/Search_status API
+    try {
+      final endpoints = [
+        '${HttpUrls.searchStatus}?Status_Name=${Uri.encodeComponent(keyword)}&status_Name=${Uri.encodeComponent(keyword)}',
+        '${HttpUrls.searchStatus}?Status_Name=&status_Name=&Page_Index=1&PageSize=1000',
+        '${HttpUrls.searchStatus}?Status_Name=&status_Name=&ViewIn_Id=1&Page_Index=1&PageSize=1000',
+      ];
+
+      for (var ep in endpoints) {
+        final response = await HttpRequest.httpGetRequest(endPoint: ep);
+        if (response.statusCode == 200 && response.data != null) {
+          List<dynamic> rawList = [];
+          final data = response.data;
+          if (data is List) {
+            if (data.isNotEmpty && data.first is List) {
+              rawList = data.first as List;
+            } else {
+              rawList = data;
+            }
+          } else if (data is Map) {
+            if (data['data'] is List) {
+              if ((data['data'] as List).isNotEmpty &&
+                  (data['data'] as List).first is List) {
+                rawList = (data['data'] as List).first as List;
+              } else {
+                rawList = data['data'] as List;
+              }
+            } else if (data['Data'] is List) {
+              rawList = data['Data'] as List;
+            }
+          }
+
+          if (rawList.isNotEmpty) {
+            // Update dropDownProvider.leadStatuses if empty
+            final newModels = rawList
+                .whereType<Map>()
+                .map((m) => SearchLeadStatusModel.fromJson(
+                    Map<String, dynamic>.from(m)))
+                .toList();
+            if (newModels.isNotEmpty && dropDownProvider.leadStatuses.isEmpty) {
+              dropDownProvider.setLeadStatuses(newModels);
+            }
+
+            final matchId = searchInList(rawList);
+            if (matchId != null && matchId > 0) {
+              return matchId;
+            }
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('Error searching status id: $e');
+    }
+
+    // 3. Fallback: numeric parse if keyword itself is numeric
+    return int.tryParse(keyword.trim());
+  }
+
   _CardTheme _getCardThemeForKeyword(String keyword) {
     final purple = [const Color(0xFF7A5CFA), const Color(0xFF9070FF)];
     final emerald = [const Color(0xFF14A46B), const Color(0xFF26B87D)];
@@ -299,6 +507,10 @@ class DashboardCountTab extends StatelessWidget {
       const Color(0xFFE11D48),
       const Color(0xFFF43F5E)
     ]; // Vibrant red for SLA critical
+    final blue = [const Color(0xFF2563EB), const Color(0xFF3B82F6)];
+    final amber = [const Color(0xFFD97706), const Color(0xFFF59E0B)];
+    final teal = [const Color(0xFF0D9488), const Color(0xFF14B8A6)];
+    final indigo = [const Color(0xFF4F46E5), const Color(0xFF6366F1)];
 
     switch (keyword) {
       case 'Total_Leads':
@@ -329,9 +541,52 @@ class DashboardCountTab extends StatelessWidget {
         return _CardTheme(purple, Icons.calendar_today_outlined);
       case 'No_Feasibility_Tasks':
         return _CardTheme(red, Icons.error_outline);
-      default:
-        return _CardTheme(purple, Icons.insert_chart_outlined);
     }
+
+    final lower = keyword.toLowerCase();
+    if (lower.contains('fresh') || lower.contains('new')) {
+      return _CardTheme(orange, Icons.bolt_outlined);
+    } else if (lower.contains('inspection')) {
+      return _CardTheme(cyan, Icons.visibility_outlined);
+    } else if (lower.contains('installation')) {
+      return _CardTheme(indigo, Icons.build_circle_outlined);
+    } else if (lower.contains('agreement') || lower.contains('upload')) {
+      return _CardTheme(blue, Icons.upload_file_outlined);
+    } else if (lower.contains('redeemed') && !lower.contains('not')) {
+      return _CardTheme(emerald, Icons.check_circle_outline);
+    } else if (lower.contains('disbursed') && !lower.contains('pending')) {
+      return _CardTheme(teal, Icons.check_circle_outline);
+    } else if (lower.contains('not redeemed') ||
+        lower.contains('rejected') ||
+        lower.contains('cancel')) {
+      return _CardTheme(red, Icons.highlight_off_outlined);
+    } else if (lower.contains('disbursal') || lower.contains('subsidy')) {
+      return _CardTheme(purple, Icons.currency_rupee_outlined);
+    } else if (lower.contains('pending') ||
+        lower.contains('hold') ||
+        lower.contains('open')) {
+      return _CardTheme(amber, Icons.pending_actions_outlined);
+    } else if (lower.contains('hot')) {
+      return _CardTheme(red, Icons.whatshot_outlined);
+    } else if (lower.contains('cold')) {
+      return _CardTheme(cyan, Icons.ac_unit_outlined);
+    } else if (lower.contains('warm')) {
+      return _CardTheme(orange, Icons.wb_sunny_outlined);
+    } else if (lower.contains('done') || lower.contains('complete')) {
+      return _CardTheme(emerald, Icons.task_alt_outlined);
+    }
+
+    final palettes = [
+      _CardTheme(purple, Icons.insert_chart_outlined),
+      _CardTheme(emerald, Icons.analytics_outlined),
+      _CardTheme(cyan, Icons.pie_chart_outline),
+      _CardTheme(orange, Icons.trending_up_outlined),
+      _CardTheme(blue, Icons.assignment_outlined),
+      _CardTheme(amber, Icons.list_alt_outlined),
+      _CardTheme(teal, Icons.bar_chart_outlined),
+      _CardTheme(indigo, Icons.folder_open_outlined),
+    ];
+    return palettes[keyword.hashCode.abs() % palettes.length];
   }
 
   Widget _buildSkeleton(BuildContext context) {

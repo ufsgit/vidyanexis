@@ -790,10 +790,30 @@ class LeadReportProvider extends ChangeNotifier {
       _toDate = null;
       _formattedFromDate = '';
       _formattedToDate = '';
+      _fromDateS = '';
+      _toDateS = '';
     } else {
       _selectedDateFilterIndex = index; // Set the new selected filter index
       formatDate();
     }
+    notifyListeners();
+  }
+
+  void clearDateFilter() {
+    _fromDate = null;
+    _toDate = null;
+    _formattedFromDate = '';
+    _formattedToDate = '';
+    _fromDateS = '';
+    _toDateS = '';
+    _selectedDateFilterIndex = null;
+    notifyListeners();
+  }
+
+  void resetPagination() {
+    _pageIndex = 1;
+    _startLimit = 1;
+    _endLimit = _pageSize;
     notifyListeners();
   }
 

@@ -963,6 +963,22 @@ class DashboardProvider extends ChangeNotifier {
         }
 
         if (counts.isNotEmpty) {
+          // If counts contains a nested map under 'Status_Wise_Lead_Count' or similar
+          dynamic statusWiseMap;
+          for (var entry in counts.entries) {
+            final k = entry.key.toString().trim().toLowerCase();
+            if ((k == 'status_wise_lead_count' ||
+                    k == 'status_wise_count' ||
+                    k.contains('status_wise')) &&
+                entry.value is Map) {
+              statusWiseMap = entry.value;
+              break;
+            }
+          }
+          if (statusWiseMap is Map) {
+            counts = Map<String, dynamic>.from(statusWiseMap);
+          }
+
           final newMap = <String, int>{};
           final newList = <DashBoardCountModel>[];
           counts.forEach((key, value) {

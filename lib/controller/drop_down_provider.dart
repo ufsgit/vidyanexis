@@ -60,6 +60,11 @@ class DropDownProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setLeadStatuses(List<SearchLeadStatusModel> statuses) {
+    _leadStatuses = statuses;
+    notifyListeners();
+  }
+
   String getEnquiryForNameById(int id, String fallback) {
     if (id <= 0) return fallback;
     try {
@@ -951,17 +956,31 @@ class DropDownProvider extends ChangeNotifier {
         print('DEBUG getAllFollowUpStatus: Data type=${data.runtimeType}');
 
         if (data != null) {
-          // Handle both list and map responses
-          if (data is List<dynamic>) {
-            _followUpStatusList =
-                data.map((item) => FollowUpStatusModel.fromJson(item)).toList();
-          } else if (data is Map<String, dynamic> && data.containsKey('data')) {
-            _followUpStatusList = (data['data'] as List<dynamic>)
-                .map((item) => FollowUpStatusModel.fromJson(item))
-                .toList();
-          } else {
-            _followUpStatusList = [];
+          List<dynamic> rawList = [];
+          if (data is List) {
+            if (data.isNotEmpty && data.first is List) {
+              rawList = data.first as List;
+            } else {
+              rawList = data;
+            }
+          } else if (data is Map) {
+            if (data['data'] is List) {
+              if ((data['data'] as List).isNotEmpty &&
+                  (data['data'] as List).first is List) {
+                rawList = (data['data'] as List).first as List;
+              } else {
+                rawList = data['data'] as List;
+              }
+            } else if (data['Data'] is List) {
+              rawList = data['Data'] as List;
+            }
           }
+
+          _followUpStatusList = rawList
+              .whereType<Map>()
+              .map((item) =>
+                  FollowUpStatusModel.fromJson(Map<String, dynamic>.from(item)))
+              .toList();
           print(
               'DEBUG getAllFollowUpStatus: Loaded ${_followUpStatusList.length} statuses');
           notifyListeners();
@@ -1084,18 +1103,32 @@ class DropDownProvider extends ChangeNotifier {
             'DEBUG getFollowUpStatus: Data type=${data.runtimeType}, Value=$data');
 
         if (data != null) {
-          List<SearchLeadStatusModel> parsedData = [];
-          // Handle both list and map responses
-          if (data is List<dynamic>) {
-            parsedData = data
-                .map((item) => SearchLeadStatusModel.fromJson(item))
-                .toList();
-          } else if (data is Map<String, dynamic> && data.containsKey('data')) {
-            parsedData = (data['data'] as List<dynamic>)
-                .map((item) => SearchLeadStatusModel.fromJson(item))
-                .toList();
+          List<dynamic> rawList = [];
+          if (data is List) {
+            if (data.isNotEmpty && data.first is List) {
+              rawList = data.first as List;
+            } else {
+              rawList = data;
+            }
+          } else if (data is Map) {
+            if (data['data'] is List) {
+              if ((data['data'] as List).isNotEmpty &&
+                  (data['data'] as List).first is List) {
+                rawList = (data['data'] as List).first as List;
+              } else {
+                rawList = data['data'] as List;
+              }
+            } else if (data['Data'] is List) {
+              rawList = data['Data'] as List;
+            }
           }
-          
+
+          List<SearchLeadStatusModel> parsedData = rawList
+              .whereType<Map>()
+              .map((item) => SearchLeadStatusModel.fromJson(
+                  Map<String, dynamic>.from(item)))
+              .toList();
+
           if (viewId == "1") {
             _leadStatuses = parsedData;
           } else if (viewId == "3") {
@@ -1103,7 +1136,7 @@ class DropDownProvider extends ChangeNotifier {
           } else {
             _followUpstatus = parsedData;
           }
-          
+
           print(
               'DEBUG getFollowUpStatus: Loaded ${parsedData.length} statuses for viewId $viewId');
           notifyListeners();
