@@ -21,6 +21,7 @@ class ImageUploadProvider extends ChangeNotifier {
 
   final List<Uint8List> _images = []; // List to store images
   final List<Uint8List> _pdfs = []; // List to store PDFs
+  final List<Uint8List> _videos = []; // List to store video
   List<Map<String, String>> uploadedFilePaths = [];
 
   List<Uint8List> get images => _images;
@@ -146,10 +147,17 @@ class ImageUploadProvider extends ChangeNotifier {
       await Permission.storage.request();
       await Permission.photos.request();
     }
+
     final result = await FilePicker.platform.pickFiles(
       allowMultiple: true,
       type: FileType.custom,
-      allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'csv'],
+      allowedExtensions: [
+        'jpg', 'jpeg', 'png',
+        'pdf',
+        'doc', 'docx',
+        'xls', 'xlsx', 'csv',
+        'mp4', 'mkv', 'webm', // videos
+      ],
     );
 
     if (result != null) {
@@ -174,12 +182,12 @@ class ImageUploadProvider extends ChangeNotifier {
             fileType =
                 lookupMimeType(platformFile.path!, headerBytes: fileData) ?? '';
           }
+
           print('Detected fileType: $fileType');
           String ext = platformFile.extension?.toLowerCase() ?? '';
 
           if (fileType == 'application/pdf' || ext == 'pdf') {
             _pdfs.add(fileData);
-            // Add file info to the list
             _fileInfoList.add({
               'name': platformFile.name,
               'type': 'pdf',
@@ -189,9 +197,12 @@ class ImageUploadProvider extends ChangeNotifier {
               'docTypeName': _selectedDocumentTypeName,
             });
             print('PDF file added: ${platformFile.name}');
-          } else if (fileType.startsWith('image/') || ['jpg', 'jpeg', 'png'].contains(ext)) {
+          }
+
+          // ===== IMAGE =====
+          else if (fileType.startsWith('image/') ||
+              ['jpg', 'jpeg', 'png'].contains(ext)) {
             _images.add(fileData);
-            // Add file info to the list
             _fileInfoList.add({
               'name': platformFile.name,
               'type': 'image',
@@ -201,9 +212,12 @@ class ImageUploadProvider extends ChangeNotifier {
               'docTypeName': _selectedDocumentTypeName,
             });
             print('Image file added: ${platformFile.name}');
-          } else if (['doc', 'docx', 'xls', 'xlsx', 'csv'].contains(ext)) {
-            _pdfs.add(fileData);
-            // Add file info to the list
+          }
+
+          // ===== DOCUMENT =====
+          else if (['doc', 'docx', 'xls', 'xlsx', 'csv'].contains(ext)) {
+            _pdfs.add(
+                fileData); // or create a separate _documents list if preferred
             _fileInfoList.add({
               'name': platformFile.name,
               'type': 'document',
@@ -213,11 +227,29 @@ class ImageUploadProvider extends ChangeNotifier {
               'docTypeName': _selectedDocumentTypeName,
             });
             print('Document file added: ${platformFile.name}');
+          }
+
+          // ===== VIDEO (NEW) =====
+          else if (fileType.startsWith('video/') ||
+              ['mp4', 'mkv', 'webm'].contains(ext)) {
+            // Make sure you have a list like: List<Uint8List> _videos = [];
+            _videos.add(fileData);
+
+            _fileInfoList.add({
+              'name': platformFile.name,
+              'type': 'video',
+              'mimeType': fileType.isNotEmpty
+                  ? fileType
+                  : 'video/${ext.isEmpty ? 'mp4' : ext}',
+              'data': fileData,
+              'docTypeId': _selectedDocumentType,
+              'docTypeName': _selectedDocumentTypeName,
+            });
+            print('Video file added: ${platformFile.name}');
           } else {
             print('Unsupported file type: ${platformFile.name}');
           }
 
-          // Notify listeners if applicable
           notifyListeners();
         } else {
           print('Unable to read file data for ${platformFile.name}');
@@ -296,26 +328,80 @@ class ImageUploadProvider extends ChangeNotifier {
 
   // Helper function to determine file type
   String determineFileType(Uint8List data) {
-    if (data.length >= 4) {
-      if (data[0] == 0x25 &&
-          data[1] == 0x50 &&
-          data[2] == 0x44 &&
-          data[3] == 0x46) {
-        return 'application/pdf'; // PDF
-      } else if (data[0] == 0xFF &&
-          data[1] == 0xD8 &&
-          data[data.length - 2] == 0xFF &&
-          data[data.length - 1] == 0xD9) {
-        return 'image/jpeg'; // JPEG
-      } else if (data[0] == 0x89 &&
-          data[1] == 0x50 &&
-          data[2] == 0x4E &&
-          data[3] == 0x47) {
-        return 'image/png'; // PNG
-      }
+    if (data.isEmpty) return 'unknown';
+
+    // PDF: %PDF
+    if (data.length >= 4 &&
+        data[0] == 0x25 &&
+        data[1] == 0x50 &&
+        data[2] == 0x44 &&
+        data[3] == 0x46) {
+      return 'application/pdf';
     }
+
+    // JPEG: FF D8
+    if (data.length >= 2 && data[0] == 0xFF && data[1] == 0xD8) {
+      return 'image/jpeg';
+    }
+
+    // PNG: 89 50 4E 47
+    if (data.length >= 4 &&
+        data[0] == 0x89 &&
+        data[1] == 0x50 &&
+        data[2] == 0x4E &&
+        data[3] == 0x47) {
+      return 'image/png';
+    }
+
+    // MP4 / MOV / M4V (ftyp box)
+    if (data.length >= 12 &&
+        data[4] == 0x66 && // f
+        data[5] == 0x74 && // t
+        data[6] == 0x79 && // y
+        data[7] == 0x70) {
+      // p
+      return 'video/mp4';
+    }
+
+    // EBML header (used by both WebM and MKV)
+    // 1A 45 DF A3
+    if (data.length >= 4 &&
+        data[0] == 0x1A &&
+        data[1] == 0x45 &&
+        data[2] == 0xDF &&
+        data[3] == 0xA3) {
+      // Look further for the DocType string to distinguish WebM vs Matroska
+      // Common positions: around offset 0x20 - 0x40
+      final header = String.fromCharCodes(
+        data.sublist(0, data.length > 64 ? 64 : data.length),
+      );
+
+      if (header.contains('webm')) {
+        return 'video/webm';
+      }
+      if (header.contains('matroska')) {
+        return 'video/mkv'; // or 'video/mkv'
+      }
+
+      // Fallback if we can't find the string
+      return 'video/mkv';
+    }
+
+    // Old Microsoft Office (doc / xls)
+    if (data.length >= 8 &&
+        data[0] == 0xD0 &&
+        data[1] == 0xCF &&
+        data[2] == 0x11 &&
+        data[3] == 0xE0 &&
+        data[4] == 0xA1 &&
+        data[5] == 0xB1 &&
+        data[6] == 0x1A &&
+        data[7] == 0xE1) {
+      return 'application/msword';
+    }
+
     return 'unknown';
-  }
+}
 
   void clearFiles() {
     _images.clear();

@@ -358,7 +358,7 @@ class _DocumentsListPagePhoneState extends State<DocumentsListPagePhone> {
                                                                         child:
                                                                             const Icon(
                                                                           Icons
-                                                                              .picture_as_pdf,
+                                                                              .file_open,
                                                                           color:
                                                                               Colors.red,
                                                                           size:

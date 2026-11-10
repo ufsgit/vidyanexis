@@ -251,7 +251,8 @@ class _ImageUploadAlertState extends State<ImageUploadAlert> {
                                         provider.updateDocumentType(
                                             docType.documentTypeId,
                                             docType.documentTypeName);
-                                        _showPickOptions(context, provider);
+                                        // _showPickOptions(context, provider);
+                                        await provider.addFileMobile();
                                       },
                                       child: Container(
                                         padding: const EdgeInsets.all(6),

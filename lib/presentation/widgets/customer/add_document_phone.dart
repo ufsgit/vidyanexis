@@ -367,6 +367,14 @@ class _AddDocumentPhoneState extends State<AddDocumentPhone> {
           children: [
 
             ListTile(
+              leading: Icon(Icons.camera_alt, color: AppColors.appViolet),
+              title: const Text('Take Photo'),
+              onTap: () {
+                Navigator.pop(context);
+                provider.addPhotoMobile(allowCamera: true);
+              },
+            ),
+            ListTile(
               leading: Icon(Icons.description, color: AppColors.appViolet),
               title: const Text('Upload Document'),
               onTap: () {
