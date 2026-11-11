@@ -500,6 +500,10 @@ class TaskPageProvider extends ChangeNotifier {
         _fromDate = DateTime(now.year, now.month, 1);
         _toDate = DateTime(now.year, now.month + 1, 0);
         break;
+      case 'Last Month':
+        _fromDate = DateTime(now.year, now.month - 1, 1);
+        _toDate = DateTime(now.year, now.month, 0);
+        break;
       default:
         _fromDate = null;
         _toDate = null;
@@ -1777,6 +1781,10 @@ class TaskPageProvider extends ChangeNotifier {
       case 'This Month':
         _taskFromDate = DateTime(now.year, now.month, 1);
         _taskToDate = DateTime(now.year, now.month + 1, 0);
+        break;
+      case 'Last Month':
+        _taskFromDate = DateTime(now.year, now.month - 1, 1);
+        _taskToDate = DateTime(now.year, now.month, 0);
         break;
       default:
         _taskFromDate = null;

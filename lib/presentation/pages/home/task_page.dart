@@ -8521,6 +8521,7 @@ class _tasksPageReportState extends State<TaskPage> {
     'Tomorrow',
     'This Week',
     'This Month',
+    'Last Month'
   ];
 
   Widget dateFollowUpWidget() {
