@@ -431,6 +431,18 @@ class ImageUploadProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void removeFileAt(int index) {
+    if (index >= 0 && index < _fileInfoList.length) {
+      final f = _fileInfoList.removeAt(index);
+      final data = f['data'];
+      if (data is Uint8List) {
+        _images.remove(data);
+        _pdfs.remove(data);
+      }
+      notifyListeners();
+    }
+  }
+
   void removeImage(Uint8List image) {
     _images.remove(image);
     notifyListeners();

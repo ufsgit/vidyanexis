@@ -1,5 +1,7 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:pdf/pdf.dart';
+import 'package:printing/printing.dart';
 
 Future<bool?> showDocumentPreviewDialog({
   required BuildContext context,
@@ -55,27 +57,76 @@ Future<bool?> showDocumentPreviewDialog({
                               ),
                             ),
                           )
-                        : isPdf
-                            ? Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.picture_as_pdf,
-                                      size: 80, color: Colors.red.shade400),
-                                  const SizedBox(height: 12),
-                                  Padding(
-                                    padding:
-                                        const EdgeInsets.symmetric(horizontal: 24),
-                                    child: Text(
-                                      fileName,
-                                      textAlign: TextAlign.center,
-                                      style: const TextStyle(
+                        : isPdf && bytes != null && bytes.isNotEmpty
+                            ? Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 90, bottom: 100, left: 16, right: 16),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: PdfPreview(
+                                    build: (format) => bytes,
+                                    useActions: false,
+                                    canChangeOrientation: false,
+                                    canChangePageFormat: false,
+                                    canDebug: false,
+                                    dynamicLayout: false,
+                                    allowPrinting: false,
+                                    allowSharing: false,
+                                    initialPageFormat: PdfPageFormat.a4,
+                                    pdfFileName: fileName,
+                                    loadingWidget: const Center(
+                                      child: CircularProgressIndicator(
                                         color: Colors.white,
-                                        fontSize: 14,
+                                      ),
+                                    ),
+                                    onError: (context, error) => Center(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(Icons.picture_as_pdf,
+                                              size: 80,
+                                              color: Colors.red.shade400),
+                                          const SizedBox(height: 12),
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 24),
+                                            child: Text(
+                                              fileName,
+                                              textAlign: TextAlign.center,
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ),
-                                ],
+                                ),
                               )
+                            : isPdf
+                                ? Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(Icons.picture_as_pdf,
+                                          size: 80, color: Colors.red.shade400),
+                                      const SizedBox(height: 12),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 24),
+                                        child: Text(
+                                          fileName,
+                                          textAlign: TextAlign.center,
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  )
                             : Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
