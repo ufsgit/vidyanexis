@@ -231,6 +231,7 @@ class SettingsProvider extends ChangeNotifier {
   final TextEditingController dateOfJoinController = TextEditingController();
   //status controllers
   final TextEditingController statusController = TextEditingController();
+  final TextEditingController statusOrderController = TextEditingController();
   final TextEditingController whatsappTemplateIdController =
       TextEditingController();
   final TextEditingController templateIdController = TextEditingController();

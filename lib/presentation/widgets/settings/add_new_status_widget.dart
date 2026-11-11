@@ -647,6 +647,8 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
             widget.data!.whatsappTemplateId ?? "";
         settingsProvider.statusDurationController.text =
             widget.data!.statusDuration.toString();
+        settingsProvider.statusOrderController.text =
+            widget.data!.statusOrder?.toString() ?? "0";
         settingsProvider.isCreateNew =
             widget.data!.isCreateNew == 1 ? true : false;
         settingsProvider.isShowFollowupDate =
@@ -697,6 +699,7 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
         settingsProvider.progressValueController.text = '';
         settingsProvider.whatsappTemplateIdController.clear();
         settingsProvider.statusDurationController.clear();
+        settingsProvider.statusOrderController.clear();
         settingsProvider.isCreateNew = false;
         settingsProvider.isShowFollowupDate = false;
         dropDownProvider.setSelectedUserId(0);
@@ -939,6 +942,18 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
                     ),
                   ),
                 ],
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              CustomTextField(
+                readOnly: false,
+                height: 54,
+                controller: settingsProvider.statusOrderController,
+                hintText: 'Status Order',
+                labelText: '',
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                keyboardType: TextInputType.number,
               ),
               const SizedBox(
                 height: 10,
@@ -1443,7 +1458,7 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
                 customFields: selectedFields,
                 taskTypes: selectedTaskTypes,
                 statusName: settingsProvider.statusController.text,
-                statusOrder: '0',
+                statusOrder: settingsProvider.statusOrderController.text,
                 followUp: settingsProvider.selectedFollowUp.toString(),
                 isRegistered: settingsProvider.isRegister.toString(),
                 colorCode: settingsProvider.selectedColor.toString(),
