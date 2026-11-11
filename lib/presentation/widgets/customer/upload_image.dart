@@ -32,13 +32,35 @@ class ImageUploadAlert extends StatefulWidget {
 
 class _ImageUploadAlertState extends State<ImageUploadAlert> {
   final TextEditingController _searchController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+  final GlobalKey _selectedDocsKey = GlobalKey();
   String _searchQuery = '';
   bool _isUploading = false;
 
   @override
   void dispose() {
     _searchController.dispose();
+    _scrollController.dispose();
     super.dispose();
+  }
+
+  void _scrollToFiles() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_selectedDocsKey.currentContext != null) {
+        Scrollable.ensureVisible(
+          _selectedDocsKey.currentContext!,
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeInOut,
+          alignment: 0.0,
+        );
+      } else if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
   }
 
   @override
@@ -110,6 +132,7 @@ class _ImageUploadAlertState extends State<ImageUploadAlert> {
                   maxHeight: MediaQuery.of(context).size.height * 0.6,
                 ),
                 child: SingleChildScrollView(
+                  controller: _scrollController,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -219,16 +242,7 @@ class _ImageUploadAlertState extends State<ImageUploadAlert> {
                                                       ),
                                                       const SizedBox(width: 8),
                                                       InkWell(
-                                                        onTap: () {
-                                                          final file = provider
-                                                              .fileInfoList
-                                                              .firstWhere((e) =>
-                                                                  e['docTypeId'] ==
-                                                                  docType
-                                                                      .documentTypeId);
-                                                          _showPreview(
-                                                              context, file);
-                                                        },
+                                                        onTap: _scrollToFiles,
                                                         child: const Text(
                                                           'View',
                                                           style: TextStyle(
@@ -363,14 +377,19 @@ class _ImageUploadAlertState extends State<ImageUploadAlert> {
                       ],
                       const SizedBox(height: 24),
                       if (provider.fileInfoList.isNotEmpty) ...[
-                        CustomText(
-                          "Selected Documents",
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textGrey3,
-                        ),
-                        const SizedBox(height: 12),
-                        ListView.builder(
+                        KeyedSubtree(
+                          key: _selectedDocsKey,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CustomText(
+                                "Selected Documents",
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textGrey3,
+                              ),
+                              const SizedBox(height: 12),
+                              ListView.builder(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
                           itemCount: provider.fileInfoList.length,
@@ -449,6 +468,9 @@ class _ImageUploadAlertState extends State<ImageUploadAlert> {
                               ),
                             );
                           },
+                        ),
+                            ],
+                          ),
                         ),
                       ] else
                         Center(
