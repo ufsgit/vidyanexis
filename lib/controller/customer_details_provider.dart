@@ -163,7 +163,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
   List<CustomFieldByStatusId> get customFieldQuotation => _customFieldQuotation;
 
   List<CustomFieldByStatusId> _additionalCustomFieldsQuotation = [];
-  List<CustomFieldByStatusId> get additionalCustomFieldsQuotation => _additionalCustomFieldsQuotation;
+  List<CustomFieldByStatusId> get additionalCustomFieldsQuotation =>
+      _additionalCustomFieldsQuotation;
 
   List<Map<String, dynamic>> _savedMasterCustomFields = [];
 
@@ -444,7 +445,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
   final TabState<List<PaymentModel>> paymentListState = TabState();
 
   List<QuotationField> get quotationFields => _quotationFields;
-  List<PeriodicServiceField> get periodicServiceFields => _periodicServiceFields;
+  List<PeriodicServiceField> get periodicServiceFields =>
+      _periodicServiceFields;
 
   List<FollowUpHistoryModel> _followUpHistory = [];
   List<FollowUpHistoryModel> get followUpHistory => _followUpHistory;
@@ -686,7 +688,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
       String customerId, BuildContext context) async {
     try {
       _isFollowUpHistoryLoading = true;
-      final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
+      final settingsProvider =
+          Provider.of<SettingsProvider>(context, listen: false);
       String url = HttpUrls.followUpHistory;
       if (settingsProvider.ramcoHistory == 1) {
         url = HttpUrls.getAllHistory; // only for ramco
@@ -866,7 +869,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
   final TextEditingController amcPeriodIntervalController =
       TextEditingController();
   final TextEditingController amcCategoryController = TextEditingController();
-  final TextEditingController nextServiceDateController = TextEditingController();
+  final TextEditingController nextServiceDateController =
+      TextEditingController();
 
   int? _selectedAMCStatus;
   int? get selectedAMCStatus => _selectedAMCStatus;
@@ -1495,7 +1499,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
   // Task Overview Tab Data
   List<Department> _customerTaskDepartments = [];
   List<Department> get customerTaskDepartments => _customerTaskDepartments;
-  
+
   List<TaskCustomerModel> _customerTaskOverviewTasks = [];
   List<TaskCustomerModel> get customerTaskOverviewTasks =>
       _customerTaskOverviewTasks;
@@ -1642,11 +1646,14 @@ class CustomerDetailsProvider extends ChangeNotifier {
           }
 
           if (fieldsData.isNotEmpty) {
-            final allFields = fieldsData.map((e) => CustomFieldByStatusId.fromJson(e)).toList();
+            final allFields = fieldsData
+                .map((e) => CustomFieldByStatusId.fromJson(e))
+                .toList();
             _additionalCustomFieldsQuotation = allFields
                 .where((f) => f.customFieldId == 361 || f.customFieldId == 362)
                 .toList();
-            print("Successfully loaded additional custom fields: ${_additionalCustomFieldsQuotation.length}");
+            print(
+                "Successfully loaded additional custom fields: ${_additionalCustomFieldsQuotation.length}");
           } else {
             _additionalCustomFieldsQuotation = [];
           }
@@ -1655,8 +1662,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
         }
 
         if (quotationListByMaster.isNotEmpty) {
-           final quotation = quotationListByMaster.first;
-           populateCustomFieldsFromMaster(quotation.quotationCustomFields);
+          final quotation = quotationListByMaster.first;
+          populateCustomFieldsFromMaster(quotation.quotationCustomFields);
         }
 
         notifyListeners();
@@ -2229,9 +2236,11 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
     if (isQuotationFieldVisible(5)) {
       final qtyText = itemQuantityController.text.trim();
-      final qty = int.tryParse(qtyText);
-      if (qtyText.isEmpty || qty == null || qty <= 0) {
-        missingFields.add(getQuotationFieldName(5, 'Quantity'));
+      if (qtyText.isNotEmpty) {
+        final qty = int.tryParse(qtyText);
+        if (qty == null || qty <= 0) {
+          missingFields.add(getQuotationFieldName(5, 'Quantity'));
+        }
       }
     }
     if (isQuotationFieldVisible(6)) {
@@ -2324,7 +2333,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
     // Create the new item
     final unitPrice = double.tryParse(itemPriceController.text.trim()) ?? 0.0;
     final mrp = itemMrpController.text.trim();
-    final gstPercent = double.tryParse(itemGstPercentController.text.trim()) ?? 0.0;
+    final gstPercent =
+        double.tryParse(itemGstPercentController.text.trim()) ?? 0.0;
     final adCess = double.tryParse(itemAdCessController.text.trim()) ?? 0.0;
     final gst = double.tryParse(itemGstController.text.trim()) ?? 0.0;
     final quantity = int.tryParse(itemQuantityController.text.trim()) ?? 1;
@@ -2414,7 +2424,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
       profit = profit;
     }
 
-    double finalTotal = subtotal + profit + shipping - subsidy - discount + roundoff;
+    double finalTotal =
+        subtotal + profit + shipping - subsidy - discount + roundoff;
 
     // Access SettingsProvider using Singleton (No context, No global file)
     final settingsProvider = SettingsProvider();
@@ -2519,7 +2530,9 @@ class CustomerDetailsProvider extends ChangeNotifier {
       price: billpriceController.text,
       amount: billamountController.text,
       itemId: selectedBomItemId,
-      itemName: selectedBomItemName.isNotEmpty ? selectedBomItemName : billdistributorController.text,
+      itemName: selectedBomItemName.isNotEmpty
+          ? selectedBomItemName
+          : billdistributorController.text,
     );
 
     // Check if we're editing an existing item or adding a new one
@@ -2802,7 +2815,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     amcTotalDurationController.clear();
     amcPeriodIntervalController.clear();
     amcCategoryController.clear();
-    updateAMCCategory(0,'');
+    updateAMCCategory(0, '');
   }
 
   void updateTaskType(int value, String taskTypeName) {
@@ -3606,7 +3619,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Approval pending quotations are there , please clear that'),
+            content: Text(
+                'Approval pending quotations are there , please clear that'),
             backgroundColor: Colors.red,
           ),
         );
@@ -5949,11 +5963,10 @@ class CustomerDetailsProvider extends ChangeNotifier {
     int virtualIdCounter = -1000;
 
     for (var masterField in masterCustomFields) {
-      final fieldId = int.tryParse(
-          masterField['custom_field_id']?.toString() ??
-              masterField['Custom_Field_Id']?.toString() ??
-              masterField['field_id']?.toString() ??
-              '');
+      final fieldId = int.tryParse(masterField['custom_field_id']?.toString() ??
+          masterField['Custom_Field_Id']?.toString() ??
+          masterField['field_id']?.toString() ??
+          '');
       final value = masterField['value']?.toString() ??
           masterField['datavalue']?.toString() ??
           masterField['DataValue']?.toString() ??
@@ -5966,7 +5979,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
             _customFieldQuotation[i].datavalue = value;
           }
         }
-        
+
         for (var i = 0; i < _additionalCustomFieldsQuotation.length; i++) {
           if (_additionalCustomFieldsQuotation[i].customFieldId == fieldId) {
             _additionalCustomFieldsQuotation[i].datavalue = value;
@@ -6105,8 +6118,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
-  Future<bool> updateQuotationApprovalStatus(
-      String masterId, int approvedValue, BuildContext context, String customerId) async {
+  Future<bool> updateQuotationApprovalStatus(String masterId, int approvedValue,
+      BuildContext context, String customerId) async {
     try {
       Loader.showLoader(context);
       final bodyData = {
@@ -6133,8 +6146,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
-  Future<bool> updateQuotationRejectionStatus(
-      String masterId, String rejectionReason, BuildContext context, String customerId) async {
+  Future<bool> updateQuotationRejectionStatus(String masterId,
+      String rejectionReason, BuildContext context, String customerId) async {
     try {
       Loader.showLoader(context);
       final bodyData = {
@@ -6190,11 +6203,14 @@ class CustomerDetailsProvider extends ChangeNotifier {
         await getRecieptListApi(customerId, context);
         return true;
       } else {
-        final errorMsg = response?.data is Map && response?.data['message'] != null
+        final errorMsg = response?.data is Map &&
+                response?.data['message'] != null
             ? response?.data['message'].toString()
             : 'Failed to update approval status (Status: ${response?.statusCode})';
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(errorMsg ?? 'Failed to update approval status'), backgroundColor: Colors.red),
+          SnackBar(
+              content: Text(errorMsg ?? 'Failed to update approval status'),
+              backgroundColor: Colors.red),
         );
       }
       return false;
@@ -6203,15 +6219,17 @@ class CustomerDetailsProvider extends ChangeNotifier {
       if (context.mounted) {
         Loader.stopLoader(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error updating approval status: $e'), backgroundColor: Colors.red),
+          SnackBar(
+              content: Text('Error updating approval status: $e'),
+              backgroundColor: Colors.red),
         );
       }
       return false;
     }
   }
 
-  Future<bool> updateReceiptRejectionStatus(
-      String receiptId, String rejectionReason, BuildContext context, String customerId) async {
+  Future<bool> updateReceiptRejectionStatus(String receiptId,
+      String rejectionReason, BuildContext context, String customerId) async {
     try {
       Loader.showLoader(context);
       final preferences = await SharedPreferences.getInstance();
@@ -6240,11 +6258,14 @@ class CustomerDetailsProvider extends ChangeNotifier {
         await getRecieptListApi(customerId, context);
         return true;
       } else {
-        final errorMsg = response?.data is Map && response?.data['message'] != null
+        final errorMsg = response?.data is Map &&
+                response?.data['message'] != null
             ? response?.data['message'].toString()
             : 'Failed to update rejection status (Status: ${response?.statusCode})';
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(errorMsg ?? 'Failed to update rejection status'), backgroundColor: Colors.red),
+          SnackBar(
+              content: Text(errorMsg ?? 'Failed to update rejection status'),
+              backgroundColor: Colors.red),
         );
       }
       return false;
@@ -6253,7 +6274,9 @@ class CustomerDetailsProvider extends ChangeNotifier {
       if (context.mounted) {
         Loader.stopLoader(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error updating rejection status: $e'), backgroundColor: Colors.red),
+          SnackBar(
+              content: Text('Error updating rejection status: $e'),
+              backgroundColor: Colors.red),
         );
       }
       return false;
@@ -6294,11 +6317,23 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
       bool isSuccess = false;
       if (data is Map) {
-        final rawSuccess = data['success'] ?? data['Success'] ?? data['status'] ?? data['Status'];
-        isSuccess = rawSuccess == 1 || rawSuccess == '1' || rawSuccess == true || rawSuccess == 'true';
+        final rawSuccess = data['success'] ??
+            data['Success'] ??
+            data['status'] ??
+            data['Status'];
+        isSuccess = rawSuccess == 1 ||
+            rawSuccess == '1' ||
+            rawSuccess == true ||
+            rawSuccess == 'true';
       } else if (data is List && data.isNotEmpty && data[0] is Map) {
-        final rawSuccess = data[0]['success'] ?? data[0]['Success'] ?? data[0]['status'] ?? data[0]['Status'];
-        isSuccess = rawSuccess == 1 || rawSuccess == '1' || rawSuccess == true || rawSuccess == 'true';
+        final rawSuccess = data[0]['success'] ??
+            data[0]['Success'] ??
+            data[0]['status'] ??
+            data[0]['Status'];
+        isSuccess = rawSuccess == 1 ||
+            rawSuccess == '1' ||
+            rawSuccess == true ||
+            rawSuccess == 'true';
       } else if (response?.statusCode == 200 || response?.statusCode == 201) {
         isSuccess = true;
       }

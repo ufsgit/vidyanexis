@@ -123,8 +123,10 @@ class CustomTextField extends StatelessWidget {
                 borderRadius: BorderRadius.circular(
                     borderRadius ?? 10), // Rounded corners
                 borderSide: BorderSide(
-                  color: borderColor ?? AppColors.textGrey2, // Border color
-                  width: 1, // Border width
+                  color: showError
+                      ? Colors.red
+                      : (borderColor ?? AppColors.textGrey2), // Border color
+                  width: showError ? 1.5 : 1, // Border width
                 ),
               ),
               focusedBorder: OutlineInputBorder(
@@ -141,11 +143,13 @@ class CustomTextField extends StatelessWidget {
                 borderRadius: BorderRadius.circular(
                     borderRadius ?? 10), // Rounded corners
                 borderSide: BorderSide(
-                  color: borderColor ??
-                      (AppStyles.isWebScreen(context)
-                          ? AppColors.textGrey2
-                          : AppColors.grey), // Border color
-                  width: 1, // Border width
+                  color: showError
+                      ? Colors.red
+                      : (borderColor ??
+                          (AppStyles.isWebScreen(context)
+                              ? AppColors.textGrey2
+                              : AppColors.grey)), // Border color
+                  width: showError ? 1.5 : 1, // Border width
                 ),
               ),
 

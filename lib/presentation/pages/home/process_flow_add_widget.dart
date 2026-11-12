@@ -49,6 +49,7 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
   final TextEditingController templateIdController = TextEditingController();
   bool isEditingMandatoryTask = false;
   bool isSavingData = false;
+  bool isLoadingInitialData = true;
   int? selectedMandatoryTaskIndex;
   late final Future<
       (
@@ -88,28 +89,77 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
     if (widget.processFlowModel.flowId.isGreaterThanZero()) {
       processFlowProvider.processFlowModel = widget.processFlowModel;
     }
+
+    // Immediately pre-populate all controllers with existing values to prevent blank fields
+    if (widget.isEdit || widget.processFlowModel.flowId.isGreaterThanZero()) {
+      taskTypeController.text = widget.processFlowModel.taskTypeName ?? '';
+      taskStatusController.text = widget.processFlowModel.statusName ?? '';
+      taskSubStatusController.text =
+          widget.processFlowModel.taskSubStatusName ?? '';
+      enquiryForController.text = widget.processFlowModel.enquiryForName ?? '';
+      leadStatusController.text = widget.processFlowModel.leadStatusName ?? '';
+      leadSubStatusController.text =
+          widget.processFlowModel.leadSubStatusName ?? '';
+      templateIdController.text = widget.processFlowModel.templateId ?? '';
+    }
+
     _taskDataFuture = processFlowProvider.getAllTskTypeStatus(context);
 
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final settingsProv =
-          Provider.of<SettingsProvider>(context, listen: false);
-      await settingsProv.getCustomField(context);
-      processFlowProvider.showLeadStatus = false;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadAllInitialData();
+    });
+  }
 
-      if (null != widget.processFlowModel.flowId &&
-          widget.processFlowModel.flowId! > 0) {
-        await processFlowProvider.getProcessFlowById(
-            context, widget.processFlowModel.flowId!);
+  Future<void> _loadAllInitialData() async {
+    final settingsProv =
+        Provider.of<SettingsProvider>(context, listen: false);
+    final int? flowId = widget.processFlowModel.flowId;
+    final int? taskTypeId = widget.processFlowModel.taskTypeId;
+
+    processFlowProvider.showLeadStatus = false;
+
+    try {
+      final customFieldFuture = settingsProv.getCustomField(context);
+
+      final List<Future> futures = [
+        _taskDataFuture,
+      ];
+
+      if (customFieldFuture != null) {
+        futures.add(customFieldFuture);
+      }
+
+      if (flowId != null && flowId > 0) {
+        futures.add(processFlowProvider.getProcessFlowById(context, flowId));
+      }
+
+      if (taskTypeId != null && taskTypeId > 0) {
+        futures.add(processFlowProvider.getStatusAndSubStatusByTaskType(
+            context, taskTypeId));
+      }
+
+      // Maximum speed: Load all required resources in parallel
+      await Future.wait(futures);
+
+      if (!mounted) return;
+
+      if (flowId != null && flowId > 0) {
         _initializeSavedCustomFields(settingsProv.customFieldModelList);
         templateIdController.text =
-            processFlowProvider.processFlowModel.templateId ?? '';
+            processFlowProvider.processFlowModel.templateId ??
+                widget.processFlowModel.templateId ??
+                '';
         _showCustomFields.clear();
         _showCustomFields.addAll(processFlowProvider.showCustomFields);
       }
 
-      if (processFlowProvider.processFlowModel.taskTypeId.isGreaterThanZero()) {
-        await processFlowProvider.getStatusAndSubStatusByTaskType(
-            context, processFlowProvider.processFlowModel.taskTypeId!);
+      final activeTaskTypeId =
+          processFlowProvider.processFlowModel.taskTypeId ?? taskTypeId;
+      if (activeTaskTypeId != null && activeTaskTypeId > 0) {
+        if (processFlowProvider.dynamicTaskTypeStatusList.isEmpty) {
+          await processFlowProvider.getStatusAndSubStatusByTaskType(
+              context, activeTaskTypeId);
+        }
 
         final selectedStatus = processFlowProvider.dynamicTaskTypeStatusList
             .where((element) =>
@@ -117,7 +167,9 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                 processFlowProvider.processFlowModel.statusId)
             .firstOrNull;
         if (selectedStatus != null) {
-          taskStatusController.text = selectedStatus.statusName ?? '';
+          taskStatusController.text = selectedStatus.statusName ??
+              widget.processFlowModel.statusName ??
+              '';
 
           final selectedSubStatus = selectedStatus.subStatuses
               ?.where((element) =>
@@ -126,12 +178,21 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
               .firstOrNull;
           if (selectedSubStatus != null) {
             taskSubStatusController.text =
-                selectedSubStatus.subStatusName ?? '';
+                selectedSubStatus.subStatusName ??
+                    widget.processFlowModel.taskSubStatusName ??
+                    '';
           }
         }
-        setState(() {});
       }
-    });
+    } catch (e) {
+      debugPrint('Error loading process flow initial data: $e');
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoadingInitialData = false;
+        });
+      }
+    }
   }
 
   @override
@@ -208,9 +269,15 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                   : CustomElevatedButton(
                       radius: 4,
                       buttonText: 'Save',
-                      onPressed: saveData,
-                      backgroundColor: AppColors.secondaryBlue,
-                      borderColor: AppColors.secondaryBlue,
+                      onPressed: (isLoadingInitialData || isSavingData)
+                          ? null
+                          : saveData,
+                      backgroundColor: (isLoadingInitialData || isSavingData)
+                          ? const Color(0xFFCBD5E1)
+                          : AppColors.secondaryBlue,
+                      borderColor: (isLoadingInitialData || isSavingData)
+                          ? const Color(0xFFCBD5E1)
+                          : AppColors.secondaryBlue,
                       textColor: Colors.white,
                     ),
             ],
@@ -240,9 +307,10 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                     )>(
                 future: _taskDataFuture,
                 builder: (contextBuilder, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    // Loading state
-                    return const Center(child: CircularProgressIndicator());
+                  if (snapshot.connectionState == ConnectionState.waiting ||
+                      isLoadingInitialData) {
+                    // Perfect Loader state
+                    return _buildPerfectLoader();
                   }
                   List<TaskTypeModel> taskTypeList = snapshot.data?.$1 ?? [];
                   List<TaskTypeStatusModel> taskTypeStatusList =
@@ -1992,6 +2060,7 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
   }
 
   void saveData() async {
+    if (isLoadingInitialData || isSavingData) return;
     // Validate necessary conditions
     if (processFlowProvider.processFlowModel.enquiryForId.isNullOrZero()) {
       showToastInDialog('Please select a enuiry for', context);
@@ -2382,6 +2451,70 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
           },
         ),
       ],
+    );
+  }
+
+  Widget _buildPerfectLoader() {
+    return Center(
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 40, horizontal: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 32),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: const Color(0xFFE2E8F0), width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 18,
+              spreadRadius: 2,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              width: 54,
+              height: 54,
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: AppColors.secondaryBlue.withOpacity(0.08),
+                shape: BoxShape.circle,
+              ),
+              child: const CircularProgressIndicator(
+                strokeWidth: 3.0,
+                valueColor:
+                    AlwaysStoppedAnimation<Color>(AppColors.secondaryBlue),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              widget.isEdit
+                  ? 'Loading Process Flow Details...'
+                  : 'Loading Configuration...',
+              style: GoogleFonts.plusJakartaSans(
+                color: AppColors.textBlue800,
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 6),
+            Text(
+              'Fetching task settings, fields, and permissions',
+              style: GoogleFonts.plusJakartaSans(
+                color: const Color(0xFF64748B),
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
