@@ -44,6 +44,31 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
   ScrollController scrollController = ScrollController();
   bool validatePhone = false;
   DateTime? originalFollowUpDate;
+  final Map<String, String> _fieldErrors = {};
+
+  void _clearFieldError(String key) {
+    if (_fieldErrors.containsKey(key)) {
+      setState(() {
+        _fieldErrors.remove(key);
+      });
+    }
+  }
+
+  Widget _buildFieldError(String key) {
+    final error = _fieldErrors[key];
+    if (error == null || error.isEmpty) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(top: 4, left: 4),
+      child: Text(
+        error,
+        style: const TextStyle(
+          color: Colors.red,
+          fontSize: 9.5,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+    );
+  }
 
   List<SearchLeadStatusModel> _filteredFollowUpStatuses = [];
   List<SearchLeadStatusModel> _filteredTransferStatuses = [];
@@ -185,113 +210,80 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
       LeadsProvider leadProvider, DropDownProvider dropDownProvider) {
     final settingsProvider =
         Provider.of<SettingsProvider>(context, listen: false);
-    String? errorMessage;
+    final Map<String, String> errors = {};
     final validation = customFieldLeadStatusKey.currentState?.validateForm();
     final validation2 =
         customFieldEnquirySourceKey.currentState?.validateForm();
 
     if (leadProvider.contactNoController.text.isEmpty) {
-      errorMessage = 'Mobile number is required';
+      errors['mobile'] = 'Please fill this field';
     } else if (validatePhone &&
         leadProvider.contactNoController.text.length != 10) {
-      errorMessage = 'Mobile number must be 10 digits';
+      errors['mobile'] = 'Mobile number must be 10 digits';
     }
-    // else if (leadProvider.emailIdController.text.isEmpty) {
-    //   errorMessage = 'Email address is required';
-    // }
-    else if (leadProvider.emailIdController.text.isNotEmpty &&
-        !(leadProvider.emailIdController.text.contains('@') &&
-            leadProvider.emailIdController.text.contains('.'))) {
-      errorMessage = 'Enter Valid Email';
+
+    if (leadProvider.followUpStatusController.text.isEmpty &&
+        widget.isEdit == false) {
+      errors['followUpStatus'] = 'Please fill this field';
     }
-    // else if (leadProvider.mapLinkController.text.isEmpty) {
-    //   errorMessage = 'Location is required';
-    // }
-    // else if (leadProvider.addressController.text.isEmpty) {
-    //   errorMessage = 'Address is required';
-    // }
-    else if (leadProvider.followUpStatusController.text.isEmpty &&
+    if (leadProvider.branchController.text.isEmpty && widget.isEdit == false) {
+      errors['branch'] = 'Please fill this field';
+    }
+    if (leadProvider.departmentController.text.isEmpty &&
         widget.isEdit == false) {
-      errorMessage = 'Please select Follow-up Status';
-    } else if (leadProvider.branchController.text.isEmpty &&
+      errors['department'] = 'Please fill this field';
+    }
+    if (leadProvider.searchUserController.text.isEmpty &&
         widget.isEdit == false) {
-      errorMessage = 'Please select Branch';
-    } else if (leadProvider.departmentController.text.isEmpty &&
-        widget.isEdit == false) {
-      errorMessage = 'Please select Department';
-    } else if (leadProvider.searchUserController.text.isEmpty &&
-        widget.isEdit == false) {
-      errorMessage = 'Please Assign Staff';
-    } else if (settingsProvider.companyDetails.isNotEmpty &&
+      errors['staff'] = 'Please fill this field';
+    }
+    if (settingsProvider.companyDetails.isNotEmpty &&
         settingsProvider.companyDetails[0].districtCityMandatory == 1 &&
         (dropDownProvider.selectedDistrictId == null ||
             dropDownProvider.selectedDistrictId == 0)) {
-      errorMessage = 'Please select District';
-    } else if (settingsProvider.companyDetails.isNotEmpty &&
+      errors['district'] = 'Please fill this field';
+    }
+    if (settingsProvider.companyDetails.isNotEmpty &&
         settingsProvider.companyDetails[0].districtCityMandatory == 1 &&
         (settingsProvider.menuIsViewMap[146] ?? 0) == 1 &&
         leadProvider.cityController.text.isEmpty) {
-      errorMessage = 'Place is required';
-    } else if (settingsProvider.enquiryForMandatory == 1 &&
+      errors['place'] = 'Please fill this field';
+    }
+    if (settingsProvider.enquiryForMandatory == 1 &&
         (dropDownProvider.selectedEnquiryForId == null ||
             dropDownProvider.selectedEnquiryForId == 0) &&
         widget.isEdit == false) {
-      errorMessage = 'Please select Enquiry For';
-    } else if (settingsProvider.enquirySourceMandatory == 1 &&
+      errors['enquiryFor'] = 'Please fill this field';
+    }
+    if (settingsProvider.enquirySourceMandatory == 1 &&
         (dropDownProvider.selectedEnquirySourceId == null ||
             dropDownProvider.selectedEnquirySourceId == 0) &&
         widget.isEdit == false) {
-      errorMessage = 'Please select Enquiry Source';
-    } else if (dropDownProvider.isFollowupRequired() &&
+      errors['enquirySource'] = 'Please fill this field';
+    }
+    if (dropDownProvider.isFollowupRequired() &&
         leadProvider.followUpDateController.text.isEmpty &&
         widget.isEdit == false) {
-      errorMessage = settingsProvider.leadCreationChanges == 1
-          ? 'Please select Assigned Date'
-          : 'Please select Follow-up Date';
-    } else if (validation?.isValid == false) {
-      errorMessage = 'Please Enter mandatory fields';
-    } else if (validation2?.isValid == false) {
-      errorMessage = 'Please Enter mandatory fields';
+      errors['followUpDate'] = 'Please fill this field';
     }
-    if (errorMessage != null) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text(
-              'Cannot save',
-              style: TextStyle(
-                color: AppColors.appViolet,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            content: Text(
-              errorMessage!,
-              style: const TextStyle(
-                color: Colors.black87,
-                fontSize: 16,
-              ),
-            ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(4),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Text(
-                  'OK',
-                  style: TextStyle(
-                    color: AppColors.appViolet,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-              ),
-            ],
-          );
-        },
+
+    setState(() {
+      _fieldErrors
+        ..clear()
+        ..addAll(errors);
+    });
+
+    if (errors.isNotEmpty ||
+        validation?.isValid == false ||
+        validation2?.isValid == false) {
+      return false;
+    }
+
+    if (leadProvider.emailIdController.text.isNotEmpty &&
+        !(leadProvider.emailIdController.text.contains('@') &&
+            leadProvider.emailIdController.text.contains('.'))) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Enter Valid Email')),
       );
       return false;
     }
@@ -621,977 +613,138 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
           },
           child: Dialog(
             insetPadding: EdgeInsets.zero,
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-            color: Colors.white,
-            child: Column(
-              children: [
-                // Scrollable content
-                Container(
-                  padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
-                  color: Colors.white,
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Row(
-                              children: [
-                                IconButton(
-                                  icon: Icon(Icons.close,
-                                      color: AppColors.textGrey3),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                    _onDrawerClosed(context);
-                                  },
-                                ),
-                                const SizedBox(width: 4),
-                                Container(
-                                  padding: const EdgeInsets.all(2),
-                                  decoration: const BoxDecoration(
-                                    color: Colors.transparent,
-                                    shape: BoxShape.circle,
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              color: Colors.white,
+              child: Column(
+                children: [
+                  // Scrollable content
+                  Container(
+                    padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
+                    color: Colors.white,
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Row(
+                                children: [
+                                  IconButton(
+                                    icon: Icon(Icons.close,
+                                        color: AppColors.textGrey3),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                      _onDrawerClosed(context);
+                                    },
                                   ),
-                                  child: CircleAvatar(
-                                    radius: 4,
-                                    backgroundColor: Colors.transparent,
-                                    child: ClipOval(
-                                      child: displayLogo.startsWith('http')
-                                          ? Image.network(
-                                              displayLogo,
-                                              width: 24,
-                                              height: 24,
-                                              fit: BoxFit.cover,
-                                              errorBuilder: (context, error,
-                                                      stackTrace) =>
-                                                  const Icon(Icons.business,
-                                                      color: Colors.red,
-                                                      size: 24),
-                                            )
-                                          : Image.asset(
-                                              AppStyles.logo(),
-                                              width: 24,
-                                              height: 24,
-                                              fit: BoxFit.cover,
-                                              errorBuilder: (context, error,
-                                                      stackTrace) =>
-                                                  const Icon(Icons.business,
-                                                      color: Colors.red,
-                                                      size: 24),
-                                            ),
+                                  const SizedBox(width: 4),
+                                  Container(
+                                    padding: const EdgeInsets.all(2),
+                                    decoration: const BoxDecoration(
+                                      color: Colors.transparent,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: CircleAvatar(
+                                      radius: 4,
+                                      backgroundColor: Colors.transparent,
+                                      child: ClipOval(
+                                        child: displayLogo.startsWith('http')
+                                            ? Image.network(
+                                                displayLogo,
+                                                width: 24,
+                                                height: 24,
+                                                fit: BoxFit.cover,
+                                                errorBuilder: (context, error,
+                                                        stackTrace) =>
+                                                    const Icon(Icons.business,
+                                                        color: Colors.red,
+                                                        size: 24),
+                                              )
+                                            : Image.asset(
+                                                AppStyles.logo(),
+                                                width: 24,
+                                                height: 24,
+                                                fit: BoxFit.cover,
+                                                errorBuilder: (context, error,
+                                                        stackTrace) =>
+                                                    const Icon(Icons.business,
+                                                        color: Colors.red,
+                                                        size: 24),
+                                              ),
+                                      ),
                                     ),
                                   ),
-                                ),
-                                const SizedBox(width: 8),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      widget.isEdit
-                                          ? 'Edit Lead details'
-                                          : 'Add New Lead',
-                                      style: GoogleFonts.plusJakartaSans(
-                                        color: AppColors.textBlack,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            if (!widget.isEdit ||
-                                (settingsProvider.menuIsEditMap[3] == 1))
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.primaryBlue,
-                                  elevation: 0,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 24, vertical: 12),
-                                ),
-                                onPressed: _isProcessingClick
-                                    ? null
-                                    : () {
-                                        print('Lead save');
-                                        _saveLead();
-                                      },
-                                child: Text(
-                                  'Save',
-                                  style: GoogleFonts.plusJakartaSans(
-                                    color: Colors.white,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
-                      // Segment controls and spacing removed
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: ListView(
-                    controller: _scrollController,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0, vertical: 8.0),
-                    children: [
-                      //basic
-                      ExpansionTile(
-                        key: _basicDetailsKey,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.zero,
-                        ),
-                        title: Text(
-                          'Basic details',
-                          style: GoogleFonts.plusJakartaSans(
-                            color: AppColors.textGrey3,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        tilePadding: EdgeInsets.zero,
-                        initiallyExpanded: true,
-                        children: [
-                          const SizedBox(
-                            height: 5,
-                          ),
-                          const SizedBox(height: 10),
-                          ...(() {
-                            List<Widget> fields = [
-                              // 1. Lead Name
-                              Expanded(
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: Padding(
-                                        padding:
-                                            const EdgeInsets.only(right: 4.0),
-                                        child: CustomTextField(
-                                          height: 54,
-                                          controller:
-                                              leadProvider.leadNameController,
-                                          hintText:
-                                              settingsProvider.leadNameLabel,
-                                          labelText: '',
-                                          focusNode: _leadNameFocusNode,
-                                          showError:
-                                              dropDownProvider.showValidation &&
-                                                  !_isFieldValid(leadProvider
-                                                      .leadNameController.text),
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                        width: 48), // Spacer for alignment
-                                  ],
-                                ),
-                              ),
-                              // 2. Mobile No
-                              Expanded(
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 4.0),
-                                        child: ValueListenableBuilder<
-                                            TextEditingValue>(
-                                          valueListenable:
-                                              leadProvider.contactNoController,
-                                          builder: (context, value, child) {
-                                            final isValid =
-                                                value.text.length == 10;
-                                            return CustomTextField(
-                                              controller: leadProvider
-                                                  .contactNoController,
-                                              keyboardType: TextInputType.phone,
-                                              inputFormatters: [
-                                                FilteringTextInputFormatter
-                                                    .digitsOnly,
-                                                if (validatePhone)
-                                                  LengthLimitingTextInputFormatter(
-                                                      10),
-                                              ],
-                                              hintText: 'Mobile No*',
-                                              labelText: '',
-                                              height: 54,
-                                              suffixIcon: validatePhone
-                                                  ? Icon(
-                                                      isValid
-                                                          ? Icons.check_circle
-                                                          : Icons.cancel,
-                                                      color: isValid
-                                                          ? Colors.green
-                                                          : Colors.red,
-                                                    )
-                                                  : null,
-                                            );
-                                          },
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 48,
-                                      child: Center(
-                                        child: Tooltip(
-                                          message:
-                                              "Enable to validate phone number",
-                                          child: Checkbox(
-                                            value: validatePhone,
-                                            onChanged: (checked) {
-                                              setState(() {
-                                                validatePhone =
-                                                    checked ?? false;
-                                              });
-                                            },
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              // 11. Enquiry Source
-                              Expanded(
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: Padding(
-                                        padding:
-                                            const EdgeInsets.only(right: 4.0),
-                                        child: CommonDropdown<int>(
-                                          hintText:
-                                              'Enquiry Source${settingsProvider.enquirySourceMandatory == 1 ? '*' : ''}',
-                                          items: dropDownProvider.enquiryData
-                                              .map((source) =>
-                                                  DropdownItem<int>(
-                                                    id: source.enquirySourceId,
-                                                    name: source
-                                                            .enquirySourceName ??
-                                                        '',
-                                                  ))
-                                              .toList(),
-                                          controller: leadProvider
-                                              .enquirySourceController,
-                                          onItemSelected: (selectedId) {
-                                            dropDownProvider
-                                                .setSelectedEnquirySourceId(
-                                                    selectedId);
-                                            final selectedItem =
-                                                dropDownProvider.enquiryData
-                                                    .firstWhere((source) =>
-                                                        source
-                                                            .enquirySourceId ==
-                                                        selectedId);
-                                            leadProvider.enquirySourceController
-                                                .text = selectedItem
-                                                    .enquirySourceName ??
-                                                '';
-                                          },
-                                          selectedValue: dropDownProvider
-                                              .selectedEnquirySourceId,
-                                        ),
-                                      ),
-                                    ),
-                                    if (settingsProvider
-                                            .enquirySourceAddAtNewLead ==
-                                        1)
-                                      SizedBox(
-                                        width: 48,
-                                        child: IconButton(
-                                          tooltip: "Add Enquiry Source",
-                                          icon: Icon(Icons.add_circle,
-                                              color: AppColors.primaryViolet),
-                                          onPressed: () {
-                                            showDialog(
-                                              barrierDismissible: false,
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return const AddEnquirySource(
-                                                  editId: '0',
-                                                  isEdit: false,
-                                                  status: '',
-                                                );
-                                              },
-                                            ).then((value) {
-                                              if (context.mounted) {
-                                                dropDownProvider
-                                                    .getEnquirySource(context);
-                                              }
-                                            });
-                                          },
-                                        ),
-                                      ),
-                                  ],
-                                ),
-                              ),
-                              // 7. Reference Name
-                              if (settingsProvider.leadCreationChanges != 1 &&
-                                  settingsProvider.menuIsViewMap[201] == 1 &&
-                                  settingsProvider
-                                          .referenceNameAfterEnquiryFor !=
-                                      1)
-                                Expanded(
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 4.0),
-                                          child: CustomTextField(
-                                            height: 54,
-                                            controller: leadProvider
-                                                .referenceNameController,
-                                            hintText: 'Reference Name',
-                                            labelText: '',
-                                            showError: dropDownProvider
-                                                    .showValidation &&
-                                                !_isFieldValid(leadProvider
-                                                    .referenceNameController
-                                                    .text),
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                          width: 48), // Spacer for alignment
-                                    ],
-                                  ),
-                                ),
-                              // 3. Consumer Name
-                              if (settingsProvider.consumerNameMandatory == 1 &&
-                                  settingsProvider.menuIsViewMap[149] == 1)
-                                Expanded(
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Padding(
-                                          padding:
-                                              const EdgeInsets.only(right: 8.0),
-                                          child: CustomTextField(
-                                            height: 54,
-                                            controller: leadProvider
-                                                .consumerNameController,
-                                            hintText: leadProvider
-                                                .getConsumerNameCaption(),
-                                            labelText: '',
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 48), // Spacer
-                                    ],
-                                  ),
-                                ),
-                              // Consumer No
-                              if (settingsProvider.consumerNoInLeadPage == 1)
-                                Expanded(
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 4.0),
-                                          child: CustomTextField(
-                                            readOnly: false,
-                                            height: 54,
-                                            controller: leadProvider
-                                                .consumerNoController,
-                                            hintText: 'Consumer no',
-                                            labelText: '',
-                                            inputFormatters: [
-                                              FilteringTextInputFormatter
-                                                  .digitsOnly
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 48), // Spacer
-                                    ],
-                                  ),
-                                ),
-                              // 4. Consumer Contact No
-                              if (settingsProvider.consumerContactNoMandatory ==
-                                      1 &&
-                                  settingsProvider.menuIsViewMap[204] == 1)
-                                Expanded(
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 4.0),
-                                          child: CustomTextField(
-                                            height: 54,
-                                            controller: leadProvider
-                                                .consumerContactNoController,
-                                            hintText: leadProvider
-                                                .getConsumerNoCaption(),
-                                            labelText: '',
-                                            keyboardType: TextInputType.phone,
-                                            inputFormatters: [
-                                              FilteringTextInputFormatter
-                                                  .digitsOnly,
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 48), // Spacer
-                                    ],
-                                  ),
-                                ),
-                              // 5. District
-                              if (settingsProvider.companyDetails.isNotEmpty &&
-                                  settingsProvider.companyDetails[0]
-                                          .districtCityMandatory ==
-                                      1)
-                                Expanded(
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 4.0),
-                                          child: CommonDropdown<int>(
-                                            hintText: 'District*',
-                                            items: dropDownProvider.districtList
-                                                .map((status) =>
-                                                    DropdownItem<int>(
-                                                      id: status.districtId ??
-                                                          0,
-                                                      name:
-                                                          status.districtName ??
-                                                              '',
-                                                    ))
-                                                .toList(),
-                                            controller:
-                                                leadProvider.districtController,
-                                            onItemSelected: (int? newValue) {
-                                              if (newValue != null) {
-                                                final selectedEnquiryFor =
-                                                    dropDownProvider
-                                                        .districtList
-                                                        .firstWhere((task) =>
-                                                            task.districtId ==
-                                                            newValue);
-                                                dropDownProvider.updateDistrict(
-                                                    newValue,
-                                                    selectedEnquiryFor
-                                                            .districtName ??
-                                                        '');
-                                              }
-                                            },
-                                            selectedValue: dropDownProvider
-                                                            .selectedDistrictId !=
-                                                        null &&
-                                                    dropDownProvider
-                                                        .districtList
-                                                        .any((item) =>
-                                                            item.districtId ==
-                                                            dropDownProvider
-                                                                .selectedDistrictId)
-                                                ? dropDownProvider
-                                                    .selectedDistrictId
-                                                : null,
-                                            showError: dropDownProvider
-                                                    .showValidation &&
-                                                dropDownProvider
-                                                        .selectedDistrictId ==
-                                                    null,
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                          width: 48), // Spacer for alignment
-                                    ],
-                                  ),
-                                ),
-                              // 6. City
-                              if (settingsProvider.companyDetails.isNotEmpty &&
-                                  settingsProvider.companyDetails[0]
-                                          .districtCityMandatory ==
-                                      1 &&
-                                  settingsProvider.menuIsViewMap[146] == 1)
-                                Expanded(
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 4.0),
-                                          child: CustomTextField(
-                                            height: 54,
-                                            controller:
-                                                leadProvider.cityController,
-                                            hintText: 'Place*',
-                                            labelText: '',
-                                            showError: dropDownProvider
-                                                    .showValidation &&
-                                                !_isFieldValid(leadProvider
-                                                    .cityController.text),
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                          width: 48), // Spacer for alignment
-                                    ],
-                                  ),
-                                ),
-                              // 8. Priority
-                              if (settingsProvider.leadCreationChanges != 1 &&
-                                  settingsProvider.menuIsViewMap[197] == 1)
-                                Expanded(
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 4.0),
-                                          child: CommonDropdown<int>(
-                                            hintText: 'Priority',
-                                            items: settingsProvider.priorities
-                                                .map((source) =>
-                                                    DropdownItem<int>(
-                                                      id: source.priorityId,
-                                                      name: source.priorityName,
-                                                    ))
-                                                .toList(),
-                                            controller: leadProvider
-                                                .priorityNameController,
-                                            onItemSelected: (selectedId) {
-                                              leadProvider.priorityId =
-                                                  selectedId;
-                                              final selectedItem =
-                                                  settingsProvider.priorities
-                                                      .firstWhere((source) =>
-                                                          source.priorityId ==
-                                                          selectedId);
-                                              leadProvider
-                                                      .priorityNameController
-                                                      .text =
-                                                  selectedItem.priorityName;
-                                            },
-                                            selectedValue:
-                                                leadProvider.priorityId,
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                          width: 48), // Spacer for alignment
-                                    ],
-                                  ),
-                                ),
-                              // 9. Location
-                              if (settingsProvider.menuIsViewMap[207] == 1)
-                                Expanded(
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 4.0),
-                                          child: CommonDropdown<int>(
-                                            hintText: 'Location',
-                                            items: dropDownProvider.locationList
-                                                .map((loc) => DropdownItem<int>(
-                                                      id: loc.locationId,
-                                                      name: loc.locationName,
-                                                    ))
-                                                .toList(),
-                                            onItemSelected: (selectedId) {
-                                              dropDownProvider
-                                                      .selectedLocationId =
-                                                  selectedId;
-                                            },
-                                            selectedValue: dropDownProvider
-                                                .selectedLocationId,
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                          width: 48), // Spacer for alignment
-                                    ],
-                                  ),
-                                ),
-                              // 10. Source
-                              if (settingsProvider.menuIsViewMap[202] == 1 &&
-                                  settingsProvider.leadCreationChanges != 1)
-                                Expanded(
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 4.0),
-                                          child: CommonDropdown<int>(
-                                            hintText: 'Source',
-                                            items: settingsProvider
-                                                .searchSourceCategory
-                                                .map((source) =>
-                                                    DropdownItem<int>(
-                                                      id: source.sourceId,
-                                                      name: source.sourceName ??
-                                                          '',
-                                                    ))
-                                                .toList(),
-                                            controller: leadProvider
-                                                .sourceCategoryController,
-                                            onItemSelected: (selectedId) {
-                                              dropDownProvider
-                                                  .setSourceCategoryId(
-                                                      selectedId);
-                                              final selectedItem =
-                                                  settingsProvider
-                                                      .searchSourceCategory
-                                                      .firstWhere((source) =>
-                                                          source.sourceId ==
-                                                          selectedId);
-                                              leadProvider
-                                                      .sourceCategoryController
-                                                      .text =
-                                                  selectedItem.sourceName ?? '';
-                                              dropDownProvider
-                                                  .updateEnquiryForName(0, '');
-                                              leadProvider.enquiryForController
-                                                  .clear();
-                                              dropDownProvider
-                                                  .filterEnquiryForByCategory(
-                                                      selectedId);
-                                            },
-                                            selectedValue: dropDownProvider
-                                                .selectedSourceId,
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                          width: 48), // Spacer for alignment
-                                    ],
-                                  ),
-                                ),
-                              // 12. Enquiry For
-                              if (settingsProvider.menuIsViewMap[203] == 1)
-                                Expanded(
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 4.0),
-                                          child: CommonDropdown<int>(
-                                            isMultiLine: true,
-                                            hintText:
-                                                'Enquiry For${settingsProvider.enquiryForMandatory == 1 ? '*' : ''}',
-                                            enabled: dropDownProvider
-                                                    .selectedSourceId !=
-                                                null,
-                                            items: (() {
-                                              return dropDownProvider
-                                                  .filteredEnquiryForData
-                                                  .map((status) =>
-                                                      DropdownItem<int>(
-                                                        id: status.enquiryForId,
-                                                        name: status
-                                                            .enquiryForName,
-                                                      ))
-                                                  .toList();
-                                            })(),
-                                            controller: leadProvider
-                                                .enquiryForController,
-                                            onItemSelected: (int? newValue) {
-                                              if (newValue != null) {
-                                                final selectedEnquiryFor =
-                                                    dropDownProvider
-                                                        .filteredEnquiryForData
-                                                        .firstWhere((task) =>
-                                                            task.enquiryForId ==
-                                                            newValue);
-                                                dropDownProvider
-                                                    .updateEnquiryForName(
-                                                        newValue,
-                                                        selectedEnquiryFor
-                                                            .enquiryForName);
-                                                leadProvider
-                                                    .clearCustomFieldEnquiryFor();
-                                                leadProvider
-                                                    .getCustomFieldsByEnquiryForId(
-                                                  context,
-                                                  leadId: widget.isEdit
-                                                      ? (leadProvider
-                                                              .customerId ??
-                                                          0)
-                                                      : 0,
-                                                  enquiryForId: newValue,
-                                                  departmentId: settingsProvider
-                                                      .selectedDepartmentId,
-                                                );
-                                              }
-                                            },
-                                            selectedValue: dropDownProvider
-                                                .selectedEnquiryForId,
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 48,
-                                        child: IconButton(
-                                          tooltip: "Add Enquiry For",
-                                          icon: Icon(Icons.add_circle,
-                                              color: AppColors.primaryViolet),
-                                          onPressed: () {
-                                            showDialog(
-                                              barrierDismissible: false,
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return const AddEnquiryFor(
-                                                  editId: '0',
-                                                  isEdit: false,
-                                                  sourceId: '0',
-                                                  sourceName: '',
-                                                  status: '',
-                                                  data: null,
-                                                );
-                                              },
-                                            ).then((value) async {
-                                              if (context.mounted) {
-                                                await dropDownProvider
-                                                    .getEnquiryFor(context);
-                                                dropDownProvider
-                                                    .filterEnquiryForByCategory(
-                                                        dropDownProvider
-                                                                .selectedSourceId ??
-                                                            0);
-                                              }
-                                            });
-                                          },
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              // 13. Reference Name 2
-                              if ((settingsProvider.leadCreationChanges == 1 ||
-                                      settingsProvider
-                                              .referenceNameAfterEnquiryFor ==
-                                          1) &&
-                                  settingsProvider.menuIsViewMap[201] == 1)
-                                Expanded(
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 4.0),
-                                          child: CustomTextField(
-                                            height: 54,
-                                            controller: leadProvider
-                                                .referenceNameController,
-                                            hintText: 'Reference Name',
-                                            labelText: '',
-                                            showError: dropDownProvider
-                                                    .showValidation &&
-                                                !_isFieldValid(leadProvider
-                                                    .referenceNameController
-                                                    .text),
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                          width: 48), // Spacer for alignment
-                                    ],
-                                  ),
-                                ),
-                              // 14. Subsidy Amount
-                              if (settingsProvider.menuIsViewMap[200] == 1)
-                                Expanded(
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 4.0),
-                                          child: CustomTextField(
-                                            height: 54,
-                                            controller: leadProvider
-                                                .leadSubsidyController,
-                                            hintText: 'Subsidy Amount',
-                                            labelText: '',
-                                            showError: dropDownProvider
-                                                    .showValidation &&
-                                                !_isFieldValid(leadProvider
-                                                    .leadSubsidyController
-                                                    .text),
-                                            inputFormatters: [
-                                              FilteringTextInputFormatter.allow(
-                                                  RegExp(r'^\d+\.?\d{0,2}')),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 48),
-                                    ],
-                                  ),
-                                ),
-                              // 15. Total Project Cost
-                              if (settingsProvider.menuIsViewMap[198] == 1)
-                                Expanded(
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Padding(
-                                          padding:
-                                              const EdgeInsets.only(right: 8.0),
-                                          child: CustomTextField(
-                                            height: 54,
-                                            controller: leadProvider
-                                                .projectCostController,
-                                            hintText: 'Total Project Cost',
-                                            labelText: '',
-                                            keyboardType: TextInputType.number,
-                                            inputFormatters: [
-                                              FilteringTextInputFormatter
-                                                  .digitsOnly,
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 48), // Spacer
-                                    ],
-                                  ),
-                                ),
-                              // 16. Commission
-                              if (settingsProvider.menuIsViewMap[199] == 1)
-                                Expanded(
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 4.0),
-                                          child: CustomTextField(
-                                            height: 54,
-                                            controller: leadProvider
-                                                .commissionController,
-                                            hintText: 'Commission',
-                                            labelText: '',
-                                            keyboardType: TextInputType.number,
-                                            inputFormatters: [
-                                              FilteringTextInputFormatter
-                                                  .digitsOnly,
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 48), // Spacer
-                                    ],
-                                  ),
-                                ),
-                            ];
-
-                            List<Widget> rows = [];
-                            for (int i = 0; i < fields.length; i += 2) {
-                              rows.add(
-                                ResponsiveRow(
-                                  children: [
-                                    fields[i],
-                                    if (i + 1 < fields.length)
-                                      fields[i + 1]
-                                    else
-                                      const Expanded(child: SizedBox.shrink()),
-                                  ],
-                                ),
-                              );
-                              rows.add(const SizedBox(height: 8));
-                            }
-                            return rows;
-                          })(),
-                          if (dropDownProvider.selectedEnquiryForId != null &&
-                              dropDownProvider.selectedEnquiryForId != 0)
-                            if (leadProvider.isLoadingEnquiryCustomFields)
-                              const Center(child: CircularProgressIndicator())
-                            else
-                              Builder(
-                                builder: (context) {
-                                  final displayedEnquiryCustomFields =
-                                      widget.isEdit
-                                          ? leadProvider.customFieldEnquiryFor
-                                          : leadProvider.customFieldEnquiryFor
-                                              .where((f) => f.isCreateNew == 1)
-                                              .toList();
-
-                                  if (displayedEnquiryCustomFields.isEmpty) {
-                                    return const SizedBox();
-                                  }
-
-                                  return Column(
+                                  const SizedBox(width: 8),
+                                  Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Consumer<LeadsProvider>(
-                                        builder: (context, provider, child) {
-                                          return CustomFieldSectionWidget(
-                                            showEditButton: true,
-                                            controllerKey:
-                                                CustomFieldControllerkey
-                                                    .enquirySource.value,
-                                            key: customFieldEnquirySourceKey,
-                                            showMore: false,
-                                            initialFieldValues: widget.isEdit
-                                                ? displayedEnquiryCustomFields
-                                                    .map((e) => FieldValueModel(
-                                                        customFieldId:
-                                                            e.customFieldId,
-                                                        value: e.datavalue))
-                                                    .toList()
-                                                : displayedEnquiryCustomFields
-                                                    .map((e) => FieldValueModel(
-                                                        customFieldId:
-                                                            e.customFieldId,
-                                                        value: provider
-                                                            .getCustomFieldValue(
-                                                                e.customFieldId ??
-                                                                    0)))
-                                                    .toList(),
-                                            onFieldValuesChanged:
-                                                (fieldValues) {
-                                              if (!widget.isEdit) {
-                                                for (var fieldValue
-                                                    in fieldValues) {
-                                                  provider.updateCustomFieldValue(
-                                                      fieldValue
-                                                              .customFieldId ??
-                                                          0,
-                                                      fieldValue.value ?? '');
-                                                }
-                                              }
-                                            },
-                                            customFields:
-                                                displayedEnquiryCustomFields,
-                                            initialValues: const {},
-                                          );
-                                        },
+                                      Text(
+                                        widget.isEdit
+                                            ? 'Edit Lead details'
+                                            : 'Add New Lead',
+                                        style: GoogleFonts.plusJakartaSans(
+                                          color: AppColors.textBlack,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w600,
+                                        ),
                                       ),
                                     ],
-                                  );
-                                },
+                                  ),
+                                ],
                               ),
-                        ],
-                      ),
-                      //address
-                      if (settingsProvider.menuIsViewMap[205] == 1)
+                              if (!widget.isEdit ||
+                                  (settingsProvider.menuIsEditMap[3] == 1))
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.primaryBlue,
+                                    elevation: 0,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 24, vertical: 12),
+                                  ),
+                                  onPressed: _isProcessingClick
+                                      ? null
+                                      : () {
+                                          print('Lead save');
+                                          _saveLead();
+                                        },
+                                  child: Text(
+                                    'Save',
+                                    style: GoogleFonts.plusJakartaSans(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                        // Segment controls and spacing removed
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: ListView(
+                      controller: _scrollController,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0, vertical: 8.0),
+                      children: [
+                        //basic
                         ExpansionTile(
-                          key: _addressKey,
+                          key: _basicDetailsKey,
                           shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.zero,
                           ),
                           title: Text(
-                            'Address',
+                            'Basic details',
                             style: GoogleFonts.plusJakartaSans(
                               color: AppColors.textGrey3,
                               fontSize: 14,
@@ -1599,126 +752,953 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                             ),
                           ),
                           tilePadding: EdgeInsets.zero,
-                          initiallyExpanded: false,
+                          initiallyExpanded: true,
                           children: [
                             const SizedBox(
-                              height: 10,
+                              height: 5,
                             ),
-                            ResponsiveRow(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
+                            const SizedBox(height: 10),
+                            ...(() {
+                              List<Widget> fields = [
+                                // 1. Lead Name
                                 Expanded(
-                                  child: CustomTextField(
-                                    height: 90,
-                                    controller: leadProvider.addressController,
-                                    hintText: 'Address',
-                                    labelText: '',
-                                    showError:
-                                        dropDownProvider.showValidation &&
-                                            !_isFieldValid(leadProvider
-                                                .addressController.text),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Padding(
+                                          padding:
+                                              const EdgeInsets.only(right: 4.0),
+                                          child: CustomTextField(
+                                            height: 54,
+                                            controller:
+                                                leadProvider.leadNameController,
+                                            hintText:
+                                                settingsProvider.leadNameLabel,
+                                            labelText: '',
+                                            focusNode: _leadNameFocusNode,
+                                            showError: dropDownProvider
+                                                    .showValidation &&
+                                                !_isFieldValid(leadProvider
+                                                    .leadNameController.text),
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                          width: 48), // Spacer for alignment
+                                    ],
                                   ),
                                 ),
-                                if (settingsProvider.menuIsViewMap[160] ==
-                                    1) ...[
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                    child: Stack(
-                                      alignment: Alignment.centerRight,
-                                      children: [
-                                        CustomTextField(
-                                          height: 90,
-                                          controller:
-                                              leadProvider.mapLinkController,
-                                          hintText: 'Map link',
-                                          labelText: '',
-                                          onChanged: (value) {
-                                            leadProvider.extractCoordinates();
-                                          },
-                                          showError:
-                                              dropDownProvider.showValidation &&
-                                                  !_isFieldValid(leadProvider
-                                                      .mapLinkController.text),
+                                // 2. Mobile No
+                                Expanded(
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 4.0),
+                                          child: ValueListenableBuilder<
+                                              TextEditingValue>(
+                                            valueListenable: leadProvider
+                                                .contactNoController,
+                                            builder: (context, value, child) {
+                                              final isValid =
+                                                  value.text.length == 10;
+                                              return Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  CustomTextField(
+                                                    controller: leadProvider
+                                                        .contactNoController,
+                                                    keyboardType:
+                                                        TextInputType.phone,
+                                                    inputFormatters: [
+                                                      FilteringTextInputFormatter
+                                                          .digitsOnly,
+                                                      if (validatePhone)
+                                                        LengthLimitingTextInputFormatter(
+                                                            10),
+                                                    ],
+                                                    hintText: 'Mobile No*',
+                                                    labelText: '',
+                                                    height: 54,
+                                                    showError: _fieldErrors
+                                                        .containsKey('mobile'),
+                                                    onChanged: (_) =>
+                                                        _clearFieldError(
+                                                            'mobile'),
+                                                    suffixIcon: validatePhone
+                                                        ? Icon(
+                                                            isValid
+                                                                ? Icons
+                                                                    .check_circle
+                                                                : Icons.cancel,
+                                                            color: isValid
+                                                                ? Colors.green
+                                                                : Colors.red,
+                                                          )
+                                                        : null,
+                                                  ),
+                                                  _buildFieldError('mobile'),
+                                                ],
+                                              );
+                                            },
+                                          ),
                                         ),
-                                        Positioned(
-                                          right: 8,
-                                          child: Row(
+                                      ),
+                                      SizedBox(
+                                        width: 48,
+                                        child: Center(
+                                          child: Tooltip(
+                                            message:
+                                                "Enable to validate phone number",
+                                            child: Checkbox(
+                                              value: validatePhone,
+                                              onChanged: (checked) {
+                                                setState(() {
+                                                  validatePhone =
+                                                      checked ?? false;
+                                                });
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                // 11. Enquiry Source
+                                Expanded(
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Padding(
+                                          padding:
+                                              const EdgeInsets.only(right: 4.0),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
-                                              PopupMenuButton<String>(
-                                                icon: Icon(
-                                                    Icons
-                                                        .keyboard_arrow_down_rounded,
-                                                    color: AppColors.textBlack),
-                                                onSelected: (String value) {
-                                                  if (value == 'current') {
-                                                    leadProvider
-                                                        .useCurrentLocation();
-                                                  } else if (value ==
-                                                      'custom') {
-                                                    leadProvider
-                                                        .mapLinkController
-                                                        .text = '';
-                                                    leadProvider
-                                                        .latitudeController
-                                                        .text = '';
-                                                    leadProvider
-                                                        .longitudeController
-                                                        .text = '';
-                                                    leadProvider
-                                                        .extractCoordinates();
-                                                  }
+                                              CommonDropdown<int>(
+                                                hintText:
+                                                    'Enquiry Source${settingsProvider.enquirySourceMandatory == 1 ? '*' : ''}',
+                                                items: dropDownProvider
+                                                    .enquiryData
+                                                    .map((source) =>
+                                                        DropdownItem<int>(
+                                                          id: source
+                                                              .enquirySourceId,
+                                                          name: source
+                                                                  .enquirySourceName ??
+                                                              '',
+                                                        ))
+                                                    .toList(),
+                                                controller: leadProvider
+                                                    .enquirySourceController,
+                                                showError:
+                                                    _fieldErrors.containsKey(
+                                                        'enquirySource'),
+                                                onItemSelected: (selectedId) {
+                                                  _clearFieldError(
+                                                      'enquirySource');
+                                                  dropDownProvider
+                                                      .setSelectedEnquirySourceId(
+                                                          selectedId);
+                                                  final selectedItem =
+                                                      dropDownProvider
+                                                          .enquiryData
+                                                          .firstWhere((source) =>
+                                                              source
+                                                                  .enquirySourceId ==
+                                                              selectedId);
+                                                  leadProvider
+                                                      .enquirySourceController
+                                                      .text = selectedItem
+                                                          .enquirySourceName ??
+                                                      '';
                                                 },
-                                                itemBuilder: (BuildContext
-                                                        context) =>
-                                                    <PopupMenuEntry<String>>[
-                                                  const PopupMenuItem<String>(
-                                                    value: 'current',
-                                                    child: Text(
-                                                        'Use current location'),
-                                                  ),
-                                                  const PopupMenuItem<String>(
-                                                    value: 'custom',
-                                                    child: Text('Custom entry'),
-                                                  ),
-                                                ],
+                                                selectedValue: dropDownProvider
+                                                    .selectedEnquirySourceId,
                                               ),
-                                              // // Button to get current location directly
-                                              // IconButton(
-                                              //   icon: Icon(
-                                              //     Icons.my_location,
-                                              //     color: AppColors.textGrey4,
-                                              //     size: 16,
-                                              //   ),
-                                              //   onPressed: () {
-                                              //     leadProvider.useCurrentLocation();
-                                              //   },
-                                              //   tooltip: 'Get current location',
-                                              // ),
+                                              _buildFieldError('enquirySource'),
                                             ],
+                                          ),
+                                        ),
+                                      ),
+                                      if (settingsProvider
+                                              .enquirySourceAddAtNewLead ==
+                                          1)
+                                        SizedBox(
+                                          width: 48,
+                                          child: IconButton(
+                                            tooltip: "Add Enquiry Source",
+                                            icon: Icon(Icons.add_circle,
+                                                color: AppColors.primaryViolet),
+                                            onPressed: () {
+                                              showDialog(
+                                                barrierDismissible: false,
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return const AddEnquirySource(
+                                                    editId: '0',
+                                                    isEdit: false,
+                                                    status: '',
+                                                  );
+                                                },
+                                              ).then((value) {
+                                                if (context.mounted) {
+                                                  dropDownProvider
+                                                      .getEnquirySource(
+                                                          context);
+                                                }
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                                // 7. Reference Name
+                                if (settingsProvider.leadCreationChanges != 1 &&
+                                    settingsProvider.menuIsViewMap[201] == 1 &&
+                                    settingsProvider
+                                            .referenceNameAfterEnquiryFor !=
+                                        1)
+                                  Expanded(
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 4.0),
+                                            child: CustomTextField(
+                                              height: 54,
+                                              controller: leadProvider
+                                                  .referenceNameController,
+                                              hintText: 'Reference Name',
+                                              labelText: '',
+                                              showError: dropDownProvider
+                                                      .showValidation &&
+                                                  !_isFieldValid(leadProvider
+                                                      .referenceNameController
+                                                      .text),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                            width: 48), // Spacer for alignment
+                                      ],
+                                    ),
+                                  ),
+                                // 3. Consumer Name
+                                if (settingsProvider.consumerNameMandatory ==
+                                        1 &&
+                                    settingsProvider.menuIsViewMap[149] == 1)
+                                  Expanded(
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                                right: 8.0),
+                                            child: CustomTextField(
+                                              height: 54,
+                                              controller: leadProvider
+                                                  .consumerNameController,
+                                              hintText: leadProvider
+                                                  .getConsumerNameCaption(),
+                                              labelText: '',
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 48), // Spacer
+                                      ],
+                                    ),
+                                  ),
+                                // Consumer No
+                                if (settingsProvider.consumerNoInLeadPage == 1)
+                                  Expanded(
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 4.0),
+                                            child: CustomTextField(
+                                              readOnly: false,
+                                              height: 54,
+                                              controller: leadProvider
+                                                  .consumerNoController,
+                                              hintText: 'Consumer no',
+                                              labelText: '',
+                                              inputFormatters: [
+                                                FilteringTextInputFormatter
+                                                    .digitsOnly
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 48), // Spacer
+                                      ],
+                                    ),
+                                  ),
+                                // 4. Consumer Contact No
+                                if (settingsProvider
+                                            .consumerContactNoMandatory ==
+                                        1 &&
+                                    settingsProvider.menuIsViewMap[204] == 1)
+                                  Expanded(
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 4.0),
+                                            child: CustomTextField(
+                                              height: 54,
+                                              controller: leadProvider
+                                                  .consumerContactNoController,
+                                              hintText: leadProvider
+                                                  .getConsumerNoCaption(),
+                                              labelText: '',
+                                              keyboardType: TextInputType.phone,
+                                              inputFormatters: [
+                                                FilteringTextInputFormatter
+                                                    .digitsOnly,
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 48), // Spacer
+                                      ],
+                                    ),
+                                  ),
+                                // 5. District
+                                if (settingsProvider
+                                        .companyDetails.isNotEmpty &&
+                                    settingsProvider.companyDetails[0]
+                                            .districtCityMandatory ==
+                                        1)
+                                  Expanded(
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 4.0),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                CommonDropdown<int>(
+                                                  hintText: 'District*',
+                                                  items: dropDownProvider
+                                                      .districtList
+                                                      .map((status) =>
+                                                          DropdownItem<int>(
+                                                            id: status
+                                                                    .districtId ??
+                                                                0,
+                                                            name: status
+                                                                    .districtName ??
+                                                                '',
+                                                          ))
+                                                      .toList(),
+                                                  controller: leadProvider
+                                                      .districtController,
+                                                  onItemSelected:
+                                                      (int? newValue) {
+                                                    _clearFieldError(
+                                                        'district');
+                                                    if (newValue != null) {
+                                                      final selectedEnquiryFor =
+                                                          dropDownProvider
+                                                              .districtList
+                                                              .firstWhere((task) =>
+                                                                  task.districtId ==
+                                                                  newValue);
+                                                      dropDownProvider
+                                                          .updateDistrict(
+                                                              newValue,
+                                                              selectedEnquiryFor
+                                                                      .districtName ??
+                                                                  '');
+                                                    }
+                                                  },
+                                                  selectedValue: dropDownProvider
+                                                                  .selectedDistrictId !=
+                                                              null &&
+                                                          dropDownProvider
+                                                              .districtList
+                                                              .any((item) =>
+                                                                  item.districtId ==
+                                                                  dropDownProvider
+                                                                      .selectedDistrictId)
+                                                      ? dropDownProvider
+                                                          .selectedDistrictId
+                                                      : null,
+                                                  showError: _fieldErrors
+                                                          .containsKey(
+                                                              'district') ||
+                                                      (dropDownProvider
+                                                              .showValidation &&
+                                                          dropDownProvider
+                                                                  .selectedDistrictId ==
+                                                              null),
+                                                ),
+                                                _buildFieldError('district'),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                            width: 48), // Spacer for alignment
+                                      ],
+                                    ),
+                                  ),
+                                // 6. City
+                                if (settingsProvider
+                                        .companyDetails.isNotEmpty &&
+                                    settingsProvider.companyDetails[0]
+                                            .districtCityMandatory ==
+                                        1 &&
+                                    settingsProvider.menuIsViewMap[146] == 1)
+                                  Expanded(
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 4.0),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                CustomTextField(
+                                                  height: 54,
+                                                  controller: leadProvider
+                                                      .cityController,
+                                                  hintText: 'Place*',
+                                                  labelText: '',
+                                                  onChanged: (_) =>
+                                                      _clearFieldError('place'),
+                                                  showError: _fieldErrors
+                                                          .containsKey(
+                                                              'place') ||
+                                                      (dropDownProvider
+                                                              .showValidation &&
+                                                          !_isFieldValid(
+                                                              leadProvider
+                                                                  .cityController
+                                                                  .text)),
+                                                ),
+                                                _buildFieldError('place'),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                            width: 48), // Spacer for alignment
+                                      ],
+                                    ),
+                                  ),
+                                // 8. Priority
+                                if (settingsProvider.leadCreationChanges != 1 &&
+                                    settingsProvider.menuIsViewMap[197] == 1)
+                                  Expanded(
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 4.0),
+                                            child: CommonDropdown<int>(
+                                              hintText: 'Priority',
+                                              items: settingsProvider.priorities
+                                                  .map((source) =>
+                                                      DropdownItem<int>(
+                                                        id: source.priorityId,
+                                                        name:
+                                                            source.priorityName,
+                                                      ))
+                                                  .toList(),
+                                              controller: leadProvider
+                                                  .priorityNameController,
+                                              onItemSelected: (selectedId) {
+                                                leadProvider.priorityId =
+                                                    selectedId;
+                                                final selectedItem =
+                                                    settingsProvider.priorities
+                                                        .firstWhere((source) =>
+                                                            source.priorityId ==
+                                                            selectedId);
+                                                leadProvider
+                                                        .priorityNameController
+                                                        .text =
+                                                    selectedItem.priorityName;
+                                              },
+                                              selectedValue:
+                                                  leadProvider.priorityId,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                            width: 48), // Spacer for alignment
+                                      ],
+                                    ),
+                                  ),
+                                // 9. Location
+                                if (settingsProvider.menuIsViewMap[207] == 1)
+                                  Expanded(
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 4.0),
+                                            child: CommonDropdown<int>(
+                                              hintText: 'Location',
+                                              items: dropDownProvider
+                                                  .locationList
+                                                  .map((loc) =>
+                                                      DropdownItem<int>(
+                                                        id: loc.locationId,
+                                                        name: loc.locationName,
+                                                      ))
+                                                  .toList(),
+                                              onItemSelected: (selectedId) {
+                                                dropDownProvider
+                                                        .selectedLocationId =
+                                                    selectedId;
+                                              },
+                                              selectedValue: dropDownProvider
+                                                  .selectedLocationId,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                            width: 48), // Spacer for alignment
+                                      ],
+                                    ),
+                                  ),
+                                // 10. Source
+                                if (settingsProvider.menuIsViewMap[202] == 1 &&
+                                    settingsProvider.leadCreationChanges != 1)
+                                  Expanded(
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 4.0),
+                                            child: CommonDropdown<int>(
+                                              hintText: 'Source',
+                                              items: settingsProvider
+                                                  .searchSourceCategory
+                                                  .map((source) =>
+                                                      DropdownItem<int>(
+                                                        id: source.sourceId,
+                                                        name:
+                                                            source.sourceName ??
+                                                                '',
+                                                      ))
+                                                  .toList(),
+                                              controller: leadProvider
+                                                  .sourceCategoryController,
+                                              onItemSelected: (selectedId) {
+                                                dropDownProvider
+                                                    .setSourceCategoryId(
+                                                        selectedId);
+                                                final selectedItem =
+                                                    settingsProvider
+                                                        .searchSourceCategory
+                                                        .firstWhere((source) =>
+                                                            source.sourceId ==
+                                                            selectedId);
+                                                leadProvider
+                                                    .sourceCategoryController
+                                                    .text = selectedItem
+                                                        .sourceName ??
+                                                    '';
+                                                dropDownProvider
+                                                    .updateEnquiryForName(
+                                                        0, '');
+                                                leadProvider
+                                                    .enquiryForController
+                                                    .clear();
+                                                dropDownProvider
+                                                    .filterEnquiryForByCategory(
+                                                        selectedId);
+                                              },
+                                              selectedValue: dropDownProvider
+                                                  .selectedSourceId,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                            width: 48), // Spacer for alignment
+                                      ],
+                                    ),
+                                  ),
+                                // 12. Enquiry For
+                                if (settingsProvider.menuIsViewMap[203] == 1)
+                                  Expanded(
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 4.0),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                CommonDropdown<int>(
+                                                  isMultiLine: true,
+                                                  hintText:
+                                                      'Enquiry For${settingsProvider.enquiryForMandatory == 1 ? '*' : ''}',
+                                                  enabled: dropDownProvider
+                                                          .selectedSourceId !=
+                                                      null,
+                                                  items: (() {
+                                                    return dropDownProvider
+                                                        .filteredEnquiryForData
+                                                        .map((status) =>
+                                                            DropdownItem<int>(
+                                                              id: status
+                                                                  .enquiryForId,
+                                                              name: status
+                                                                  .enquiryForName,
+                                                            ))
+                                                        .toList();
+                                                  })(),
+                                                  controller: leadProvider
+                                                      .enquiryForController,
+                                                  showError:
+                                                      _fieldErrors.containsKey(
+                                                          'enquiryFor'),
+                                                  onItemSelected:
+                                                      (int? newValue) {
+                                                    _clearFieldError(
+                                                        'enquiryFor');
+                                                    if (newValue != null) {
+                                                      final selectedEnquiryFor =
+                                                          dropDownProvider
+                                                              .filteredEnquiryForData
+                                                              .firstWhere((task) =>
+                                                                  task.enquiryForId ==
+                                                                  newValue);
+                                                      dropDownProvider
+                                                          .updateEnquiryForName(
+                                                              newValue,
+                                                              selectedEnquiryFor
+                                                                  .enquiryForName);
+                                                      leadProvider
+                                                          .clearCustomFieldEnquiryFor();
+                                                      leadProvider
+                                                          .getCustomFieldsByEnquiryForId(
+                                                        context,
+                                                        leadId: widget.isEdit
+                                                            ? (leadProvider
+                                                                    .customerId ??
+                                                                0)
+                                                            : 0,
+                                                        enquiryForId: newValue,
+                                                        departmentId:
+                                                            settingsProvider
+                                                                .selectedDepartmentId,
+                                                      );
+                                                    }
+                                                  },
+                                                  selectedValue:
+                                                      dropDownProvider
+                                                          .selectedEnquiryForId,
+                                                ),
+                                                _buildFieldError('enquiryFor'),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 48,
+                                          child: IconButton(
+                                            tooltip: "Add Enquiry For",
+                                            icon: Icon(Icons.add_circle,
+                                                color: AppColors.primaryViolet),
+                                            onPressed: () {
+                                              showDialog(
+                                                barrierDismissible: false,
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return const AddEnquiryFor(
+                                                    editId: '0',
+                                                    isEdit: false,
+                                                    sourceId: '0',
+                                                    sourceName: '',
+                                                    status: '',
+                                                    data: null,
+                                                  );
+                                                },
+                                              ).then((value) async {
+                                                if (context.mounted) {
+                                                  await dropDownProvider
+                                                      .getEnquiryFor(context);
+                                                  dropDownProvider
+                                                      .filterEnquiryForByCategory(
+                                                          dropDownProvider
+                                                                  .selectedSourceId ??
+                                                              0);
+                                                }
+                                              });
+                                            },
                                           ),
                                         ),
                                       ],
                                     ),
                                   ),
-                                ],
-                                if (settingsProvider.menuIsViewMap[158] ==
-                                    1) ...[
-                                  const SizedBox(width: 8),
+                                // 13. Reference Name 2
+                                if ((settingsProvider.leadCreationChanges ==
+                                            1 ||
+                                        settingsProvider
+                                                .referenceNameAfterEnquiryFor ==
+                                            1) &&
+                                    settingsProvider.menuIsViewMap[201] == 1)
                                   Expanded(
-                                    child: CustomTextField(
-                                      height: 90,
-                                      controller:
-                                          leadProvider.latitudeController,
-                                      hintText: 'Latitude',
-                                      labelText: '',
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 4.0),
+                                            child: CustomTextField(
+                                              height: 54,
+                                              controller: leadProvider
+                                                  .referenceNameController,
+                                              hintText: 'Reference Name',
+                                              labelText: '',
+                                              showError: dropDownProvider
+                                                      .showValidation &&
+                                                  !_isFieldValid(leadProvider
+                                                      .referenceNameController
+                                                      .text),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                            width: 48), // Spacer for alignment
+                                      ],
                                     ),
                                   ),
-                                ],
-                              ],
+                                // 14. Subsidy Amount
+                                if (settingsProvider.menuIsViewMap[200] == 1)
+                                  Expanded(
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 4.0),
+                                            child: CustomTextField(
+                                              height: 54,
+                                              controller: leadProvider
+                                                  .leadSubsidyController,
+                                              hintText: 'Subsidy Amount',
+                                              labelText: '',
+                                              showError: dropDownProvider
+                                                      .showValidation &&
+                                                  !_isFieldValid(leadProvider
+                                                      .leadSubsidyController
+                                                      .text),
+                                              inputFormatters: [
+                                                FilteringTextInputFormatter
+                                                    .allow(RegExp(
+                                                        r'^\d+\.?\d{0,2}')),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 48),
+                                      ],
+                                    ),
+                                  ),
+                                // 15. Total Project Cost
+                                if (settingsProvider.menuIsViewMap[198] == 1)
+                                  Expanded(
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                                right: 8.0),
+                                            child: CustomTextField(
+                                              height: 54,
+                                              controller: leadProvider
+                                                  .projectCostController,
+                                              hintText: 'Total Project Cost',
+                                              labelText: '',
+                                              keyboardType:
+                                                  TextInputType.number,
+                                              inputFormatters: [
+                                                FilteringTextInputFormatter
+                                                    .digitsOnly,
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 48), // Spacer
+                                      ],
+                                    ),
+                                  ),
+                                // 16. Commission
+                                if (settingsProvider.menuIsViewMap[199] == 1)
+                                  Expanded(
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 4.0),
+                                            child: CustomTextField(
+                                              height: 54,
+                                              controller: leadProvider
+                                                  .commissionController,
+                                              hintText: 'Commission',
+                                              labelText: '',
+                                              keyboardType:
+                                                  TextInputType.number,
+                                              inputFormatters: [
+                                                FilteringTextInputFormatter
+                                                    .digitsOnly,
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 48), // Spacer
+                                      ],
+                                    ),
+                                  ),
+                              ];
+
+                              List<Widget> rows = [];
+                              for (int i = 0; i < fields.length; i += 2) {
+                                rows.add(
+                                  ResponsiveRow(
+                                    children: [
+                                      fields[i],
+                                      if (i + 1 < fields.length)
+                                        fields[i + 1]
+                                      else
+                                        const Expanded(
+                                            child: SizedBox.shrink()),
+                                    ],
+                                  ),
+                                );
+                                rows.add(const SizedBox(height: 8));
+                              }
+                              return rows;
+                            })(),
+                            if (dropDownProvider.selectedEnquiryForId != null &&
+                                dropDownProvider.selectedEnquiryForId != 0)
+                              if (leadProvider.isLoadingEnquiryCustomFields)
+                                const Center(child: CircularProgressIndicator())
+                              else
+                                Builder(
+                                  builder: (context) {
+                                    final displayedEnquiryCustomFields = widget
+                                            .isEdit
+                                        ? leadProvider.customFieldEnquiryFor
+                                        : leadProvider.customFieldEnquiryFor
+                                            .where((f) => f.isCreateNew == 1)
+                                            .toList();
+
+                                    if (displayedEnquiryCustomFields.isEmpty) {
+                                      return const SizedBox();
+                                    }
+
+                                    return Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Consumer<LeadsProvider>(
+                                          builder: (context, provider, child) {
+                                            return CustomFieldSectionWidget(
+                                              showEditButton: true,
+                                              controllerKey:
+                                                  CustomFieldControllerkey
+                                                      .enquirySource.value,
+                                              key: customFieldEnquirySourceKey,
+                                              showMore: false,
+                                              initialFieldValues: widget.isEdit
+                                                  ? displayedEnquiryCustomFields
+                                                      .map((e) =>
+                                                          FieldValueModel(
+                                                              customFieldId: e
+                                                                  .customFieldId,
+                                                              value:
+                                                                  e.datavalue))
+                                                      .toList()
+                                                  : displayedEnquiryCustomFields
+                                                      .map((e) => FieldValueModel(
+                                                          customFieldId:
+                                                              e.customFieldId,
+                                                          value: provider
+                                                              .getCustomFieldValue(
+                                                                  e.customFieldId ??
+                                                                      0)))
+                                                      .toList(),
+                                              onFieldValuesChanged:
+                                                  (fieldValues) {
+                                                if (!widget.isEdit) {
+                                                  for (var fieldValue
+                                                      in fieldValues) {
+                                                    provider.updateCustomFieldValue(
+                                                        fieldValue
+                                                                .customFieldId ??
+                                                            0,
+                                                        fieldValue.value ?? '');
+                                                  }
+                                                }
+                                              },
+                                              customFields:
+                                                  displayedEnquiryCustomFields,
+                                              initialValues: const {},
+                                            );
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                ),
+                          ],
+                        ),
+                        //address
+                        if (settingsProvider.menuIsViewMap[205] == 1)
+                          ExpansionTile(
+                            key: _addressKey,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.zero,
                             ),
-                            if (settingsProvider.menuIsViewMap[159] == 1) ...[
-                              const SizedBox(height: 8),
+                            title: Text(
+                              'Address',
+                              style: GoogleFonts.plusJakartaSans(
+                                color: AppColors.textGrey3,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            tilePadding: EdgeInsets.zero,
+                            initiallyExpanded: false,
+                            children: [
+                              const SizedBox(
+                                height: 10,
+                              ),
                               ResponsiveRow(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
@@ -1727,472 +1707,652 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                     child: CustomTextField(
                                       height: 90,
                                       controller:
-                                          leadProvider.longitudeController,
-                                      hintText: 'Longitude',
+                                          leadProvider.addressController,
+                                      hintText: 'Address',
+                                      labelText: '',
+                                      showError:
+                                          dropDownProvider.showValidation &&
+                                              !_isFieldValid(leadProvider
+                                                  .addressController.text),
+                                    ),
+                                  ),
+                                  if (settingsProvider.menuIsViewMap[160] ==
+                                      1) ...[
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: Stack(
+                                        alignment: Alignment.centerRight,
+                                        children: [
+                                          CustomTextField(
+                                            height: 90,
+                                            controller:
+                                                leadProvider.mapLinkController,
+                                            hintText: 'Map link',
+                                            labelText: '',
+                                            onChanged: (value) {
+                                              leadProvider.extractCoordinates();
+                                            },
+                                            showError: dropDownProvider
+                                                    .showValidation &&
+                                                !_isFieldValid(leadProvider
+                                                    .mapLinkController.text),
+                                          ),
+                                          Positioned(
+                                            right: 8,
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                PopupMenuButton<String>(
+                                                  icon: Icon(
+                                                      Icons
+                                                          .keyboard_arrow_down_rounded,
+                                                      color:
+                                                          AppColors.textBlack),
+                                                  onSelected: (String value) {
+                                                    if (value == 'current') {
+                                                      leadProvider
+                                                          .useCurrentLocation();
+                                                    } else if (value ==
+                                                        'custom') {
+                                                      leadProvider
+                                                          .mapLinkController
+                                                          .text = '';
+                                                      leadProvider
+                                                          .latitudeController
+                                                          .text = '';
+                                                      leadProvider
+                                                          .longitudeController
+                                                          .text = '';
+                                                      leadProvider
+                                                          .extractCoordinates();
+                                                    }
+                                                  },
+                                                  itemBuilder: (BuildContext
+                                                          context) =>
+                                                      <PopupMenuEntry<String>>[
+                                                    const PopupMenuItem<String>(
+                                                      value: 'current',
+                                                      child: Text(
+                                                          'Use current location'),
+                                                    ),
+                                                    const PopupMenuItem<String>(
+                                                      value: 'custom',
+                                                      child:
+                                                          Text('Custom entry'),
+                                                    ),
+                                                  ],
+                                                ),
+                                                // // Button to get current location directly
+                                                // IconButton(
+                                                //   icon: Icon(
+                                                //     Icons.my_location,
+                                                //     color: AppColors.textGrey4,
+                                                //     size: 16,
+                                                //   ),
+                                                //   onPressed: () {
+                                                //     leadProvider.useCurrentLocation();
+                                                //   },
+                                                //   tooltip: 'Get current location',
+                                                // ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                  if (settingsProvider.menuIsViewMap[158] ==
+                                      1) ...[
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: CustomTextField(
+                                        height: 90,
+                                        controller:
+                                            leadProvider.latitudeController,
+                                        hintText: 'Latitude',
+                                        labelText: '',
+                                      ),
+                                    ),
+                                  ],
+                                ],
+                              ),
+                              if (settingsProvider.menuIsViewMap[159] == 1) ...[
+                                const SizedBox(height: 8),
+                                ResponsiveRow(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: CustomTextField(
+                                        height: 90,
+                                        controller:
+                                            leadProvider.longitudeController,
+                                        hintText: 'Longitude',
+                                        labelText: '',
+                                      ),
+                                    ),
+                                    const Spacer(),
+                                    const Spacer(),
+                                  ],
+                                ),
+                              ],
+                              const SizedBox(height: 8),
+                              if (settingsProvider.companyDetails.isEmpty ||
+                                  settingsProvider.companyDetails[0]
+                                          .districtCityMandatory ==
+                                      0) ...[
+                                ResponsiveRow(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: CommonDropdown<int>(
+                                        hintText: 'District',
+                                        items: dropDownProvider.districtList
+                                            .map((status) => DropdownItem<int>(
+                                                  id: status.districtId ?? 0,
+                                                  name:
+                                                      status.districtName ?? '',
+                                                ))
+                                            .toList(),
+                                        controller:
+                                            leadProvider.districtController,
+                                        onItemSelected: (int? newValue) {
+                                          if (newValue != null) {
+                                            final selectedEnquiryFor =
+                                                dropDownProvider.districtList
+                                                    .firstWhere((task) =>
+                                                        task.districtId ==
+                                                        newValue);
+                                            dropDownProvider.updateDistrict(
+                                                newValue,
+                                                selectedEnquiryFor
+                                                        .districtName ??
+                                                    '');
+                                          }
+                                        },
+                                        selectedValue: dropDownProvider
+                                                        .selectedDistrictId !=
+                                                    null &&
+                                                dropDownProvider.districtList
+                                                    .any((item) =>
+                                                        item.districtId ==
+                                                        dropDownProvider
+                                                            .selectedDistrictId)
+                                            ? dropDownProvider
+                                                .selectedDistrictId
+                                            : null,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: CustomTextField(
+                                        height: 54,
+                                        controller: leadProvider.cityController,
+                                        hintText: 'Place',
+                                        labelText: '',
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+                              ],
+                              ResponsiveRow(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: CustomTextField(
+                                      height: 54,
+                                      controller:
+                                          leadProvider.pincodeController,
+                                      hintText: 'Pincode',
+                                      labelText: '',
+                                      showError:
+                                          dropDownProvider.showValidation &&
+                                              !_isFieldValid(leadProvider
+                                                  .pincodeController.text),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: CommonDropdown<int>(
+                                      hintText: 'State',
+                                      items: dropDownProvider.stateList
+                                          .map((status) => DropdownItem<int>(
+                                                id: status.stateId ?? 0,
+                                                name: status.stateName ?? '',
+                                              ))
+                                          .toList(),
+                                      controller: leadProvider.stateController,
+                                      onItemSelected: (int? newValue) {
+                                        if (newValue != null) {
+                                          final selectedState = dropDownProvider
+                                              .stateList
+                                              .firstWhere((task) =>
+                                                  task.stateId == newValue);
+                                          dropDownProvider.updateState(newValue,
+                                              selectedState.stateName ?? '');
+                                          leadProvider.stateController.text =
+                                              selectedState.stateName ?? '';
+                                        }
+                                      },
+                                      selectedValue:
+                                          dropDownProvider.selectedStateId !=
+                                                      null &&
+                                                  dropDownProvider.stateList
+                                                      .any((item) =>
+                                                          item.stateId ==
+                                                          dropDownProvider
+                                                              .selectedStateId)
+                                              ? dropDownProvider.selectedStateId
+                                              : null,
+                                      showError:
+                                          dropDownProvider.showValidation &&
+                                              !_isFieldValid(leadProvider
+                                                  .stateController.text),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: CustomTextField(
+                                      height: 54,
+                                      controller:
+                                          leadProvider.landmarkController,
+                                      hintText: 'Landmark',
                                       labelText: '',
                                     ),
                                   ),
-                                  const Spacer(),
-                                  const Spacer(),
                                 ],
                               ),
                             ],
-                            const SizedBox(height: 8),
-                            if (settingsProvider.companyDetails.isEmpty ||
-                                settingsProvider.companyDetails[0]
-                                        .districtCityMandatory ==
-                                    0) ...[
+                          ),
+
+                        //invertor and panel
+                        if (false) // settingsProvider.menuIsViewMap[33] == 1
+                          // ignore: dead_code
+                          ExpansionTile(
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.zero,
+                            ),
+                            title: Text(
+                              'Inverter and Panel Details',
+                              style: GoogleFonts.plusJakartaSans(
+                                color: AppColors.textGrey3,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            tilePadding: EdgeInsets.zero,
+                            initiallyExpanded: false,
+                            children: [
+                              // const Text('Invertor Details'),
+                              // const SizedBox(
+                              //   height: 10,
+                              // ),
                               ResponsiveRow(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Expanded(
                                     child: CommonDropdown<int>(
-                                      hintText: 'District',
-                                      items: dropDownProvider.districtList
+                                      hintText: 'Inverter Type',
+                                      items: leadProvider
+                                          .leadDropdownData!.inverterType
                                           .map((status) => DropdownItem<int>(
-                                                id: status.districtId ?? 0,
-                                                name: status.districtName ?? '',
+                                                id: status.inverterTypeId,
+                                                name: status.inverterTypeName,
                                               ))
                                           .toList(),
                                       controller:
-                                          leadProvider.districtController,
-                                      onItemSelected: (int? newValue) {
-                                        if (newValue != null) {
-                                          final selectedEnquiryFor =
-                                              dropDownProvider.districtList
-                                                  .firstWhere((task) =>
-                                                      task.districtId ==
-                                                      newValue);
-                                          dropDownProvider.updateDistrict(
-                                              newValue,
-                                              selectedEnquiryFor.districtName ??
-                                                  '');
-                                        }
+                                          leadProvider.inverterTypeController,
+                                      onItemSelected: (selectedId) {
+                                        leadProvider.setInverterId(selectedId);
+                                        final selectedItem = leadProvider
+                                            .leadDropdownData!.inverterType
+                                            .firstWhere(
+                                          (status) =>
+                                              status.inverterTypeId ==
+                                              selectedId,
+                                        );
+                                        leadProvider
+                                                .inverterTypeController.text =
+                                            selectedItem.inverterTypeName;
                                       },
-                                      selectedValue: dropDownProvider
-                                                      .selectedDistrictId !=
-                                                  null &&
-                                              dropDownProvider.districtList.any(
-                                                  (item) =>
-                                                      item.districtId ==
-                                                      dropDownProvider
-                                                          .selectedDistrictId)
-                                          ? dropDownProvider.selectedDistrictId
-                                          : null,
+                                      selectedValue:
+                                          leadProvider.selectedInverterId,
                                     ),
                                   ),
                                   const SizedBox(width: 8),
                                   Expanded(
                                     child: CustomTextField(
-                                      height: 54,
-                                      controller: leadProvider.cityController,
-                                      hintText: 'Place',
-                                      labelText: '',
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 8),
-                            ],
-                            ResponsiveRow(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  child: CustomTextField(
-                                    height: 54,
-                                    controller: leadProvider.pincodeController,
-                                    hintText: 'Pincode',
-                                    labelText: '',
-                                    showError:
-                                        dropDownProvider.showValidation &&
-                                            !_isFieldValid(leadProvider
-                                                .pincodeController.text),
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: CommonDropdown<int>(
-                                    hintText: 'State',
-                                    items: dropDownProvider.stateList
-                                        .map((status) => DropdownItem<int>(
-                                              id: status.stateId ?? 0,
-                                              name: status.stateName ?? '',
-                                            ))
-                                        .toList(),
-                                    controller: leadProvider.stateController,
-                                    onItemSelected: (int? newValue) {
-                                      if (newValue != null) {
-                                        final selectedState = dropDownProvider
-                                            .stateList
-                                            .firstWhere((task) =>
-                                                task.stateId == newValue);
-                                        dropDownProvider.updateState(newValue,
-                                            selectedState.stateName ?? '');
-                                        leadProvider.stateController.text =
-                                            selectedState.stateName ?? '';
-                                      }
-                                    },
-                                    selectedValue:
-                                        dropDownProvider.selectedStateId !=
-                                                    null &&
-                                                dropDownProvider.stateList.any(
-                                                    (item) =>
-                                                        item.stateId ==
-                                                        dropDownProvider
-                                                            .selectedStateId)
-                                            ? dropDownProvider.selectedStateId
-                                            : null,
-                                    showError: dropDownProvider
-                                            .showValidation &&
-                                        !_isFieldValid(
-                                            leadProvider.stateController.text),
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: CustomTextField(
-                                    height: 54,
-                                    controller: leadProvider.landmarkController,
-                                    hintText: 'Landmark',
-                                    labelText: '',
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-
-                      //invertor and panel
-                      if (false) // settingsProvider.menuIsViewMap[33] == 1
-                        // ignore: dead_code
-                        ExpansionTile(
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.zero,
-                          ),
-                          title: Text(
-                            'Inverter and Panel Details',
-                            style: GoogleFonts.plusJakartaSans(
-                              color: AppColors.textGrey3,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          tilePadding: EdgeInsets.zero,
-                          initiallyExpanded: false,
-                          children: [
-                            // const Text('Invertor Details'),
-                            // const SizedBox(
-                            //   height: 10,
-                            // ),
-                            ResponsiveRow(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  child: CommonDropdown<int>(
-                                    hintText: 'Inverter Type',
-                                    items: leadProvider
-                                        .leadDropdownData!.inverterType
-                                        .map((status) => DropdownItem<int>(
-                                              id: status.inverterTypeId,
-                                              name: status.inverterTypeName,
-                                            ))
-                                        .toList(),
-                                    controller:
-                                        leadProvider.inverterTypeController,
-                                    onItemSelected: (selectedId) {
-                                      leadProvider.setInverterId(selectedId);
-                                      final selectedItem = leadProvider
-                                          .leadDropdownData!.inverterType
-                                          .firstWhere(
-                                        (status) =>
-                                            status.inverterTypeId == selectedId,
-                                      );
-                                      leadProvider.inverterTypeController.text =
-                                          selectedItem.inverterTypeName;
-                                    },
-                                    selectedValue:
-                                        leadProvider.selectedInverterId,
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: CustomTextField(
-                                    height: 90,
-                                    controller:
-                                        leadProvider.invertorCapacityController,
-                                    hintText: 'Inverter Capacity',
-                                    labelText: '',
-                                    inputFormatters: [
-                                      FilteringTextInputFormatter.digitsOnly
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: CommonDropdown<int>(
-                                    hintText: 'Panel Brand',
-                                    items: (leadProvider
-                                                .leadDropdownData?.panelType ??
-                                            [])
-                                        .map((status) => DropdownItem<int>(
-                                              id: status.panelTypeId,
-                                              name: status.panelTypeName,
-                                            ))
-                                        .toList(),
-                                    controller:
-                                        leadProvider.panelBrandController,
-                                    onItemSelected: (selectedId) {
-                                      leadProvider.setPanelId(selectedId);
-                                      final selectedItem = leadProvider
-                                          .leadDropdownData!.panelType
-                                          .firstWhere(
-                                        (status) =>
-                                            status.panelTypeId == selectedId,
-                                      );
-                                      leadProvider.panelBrandController.text =
-                                          selectedItem.panelTypeName ?? '';
-                                    },
-                                    selectedValue: leadProvider.selectedPanelId,
-                                  ),
-                                ),
-                              ],
-                            ),
-
-                            const SizedBox(height: 8),
-                            ResponsiveRow(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  child: CustomTextField(
-                                    height: 90,
-                                    controller:
-                                        leadProvider.panelCapacityController,
-                                    hintText: 'Panel Capacity (in kW)',
-                                    labelText: '',
-                                    inputFormatters: [
-                                      FilteringTextInputFormatter.digitsOnly
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: CommonDropdown<int>(
-                                    hintText: 'Panel Phase',
-                                    items:
-                                        (leadProvider.leadDropdownData?.phase ??
-                                                [])
-                                            .map((status) => DropdownItem<int>(
-                                                  id: status.phaseId,
-                                                  name: status.phaseName,
-                                                ))
-                                            .toList(),
-                                    controller:
-                                        leadProvider.panelPhaseController,
-                                    onItemSelected: (selectedId) {
-                                      leadProvider.setPhaseId(selectedId);
-                                      final selectedItem = leadProvider
-                                          .leadDropdownData!.phase
-                                          .firstWhere(
-                                        (status) =>
-                                            status.phaseId == selectedId,
-                                      );
-                                      leadProvider.panelPhaseController.text =
-                                          selectedItem.phaseName;
-                                    },
-                                    selectedValue: leadProvider.selectedPhaseId,
-                                  ),
-                                ),
-                                const Spacer()
-                              ],
-                            ),
-                          ],
-                        ),
-
-                      // consumer details
-                      if (settingsProvider.menuIsViewMap[206] == 1)
-                        ExpansionTile(
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.zero,
-                          ),
-
-                          title: Text(
-                            'Additional details',
-                            style: GoogleFonts.plusJakartaSans(
-                              color: AppColors.textGrey3,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          tilePadding: EdgeInsets.zero,
-                          initiallyExpanded: false,
-                          // leadProvider.consumerNoController.text.isEmpty
-                          //     ? false
-                          //     : true,
-                          children: [
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(right: 8.0),
-                                    child: CustomTextField(
-                                      readOnly: false,
-                                      height: 54,
+                                      height: 90,
                                       controller: leadProvider
-                                          .electricalSectionController,
-                                      hintText: 'Electrical Section',
-                                      labelText: '',
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 4.0),
-                                    child: CustomTextField(
-                                      readOnly: false,
-                                      height: 54,
-                                      controller:
-                                          leadProvider.connectedLoadController,
-                                      hintText: 'Connected load',
+                                          .invertorCapacityController,
+                                      hintText: 'Inverter Capacity',
                                       labelText: '',
                                       inputFormatters: [
                                         FilteringTextInputFormatter.digitsOnly
                                       ],
                                     ),
                                   ),
-                                ),
-                                const Expanded(
-                                  child: SizedBox.shrink(),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 8),
-                            // Row 2: REP, Lead By, Work Type
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(right: 8.0),
-                                    child: CustomTextField(
-                                      readOnly: false,
-                                      height: 54,
-                                      controller: leadProvider.repController,
-                                      hintText: 'REP',
-                                      labelText: '',
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 4.0),
-                                    child: CustomTextField(
-                                      readOnly: false,
-                                      height: 54,
-                                      controller: leadProvider.leadByController,
-                                      hintText: 'Lead By',
-                                      labelText: '',
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(left: 8.0),
+                                  const SizedBox(width: 8),
+                                  Expanded(
                                     child: CommonDropdown<int>(
-                                      hintText: 'Work Type',
-                                      items: (leadProvider
-                                                  .leadDropdownData?.workType ??
+                                      hintText: 'Panel Brand',
+                                      items: (leadProvider.leadDropdownData
+                                                  ?.panelType ??
                                               [])
                                           .map((status) => DropdownItem<int>(
-                                                id: status.workTypeId,
-                                                name: status.workTypeName,
+                                                id: status.panelTypeId,
+                                                name: status.panelTypeName,
                                               ))
                                           .toList(),
                                       controller:
-                                          leadProvider.workTypeController,
+                                          leadProvider.panelBrandController,
                                       onItemSelected: (selectedId) {
-                                        leadProvider.setWorkTypeId(selectedId);
+                                        leadProvider.setPanelId(selectedId);
                                         final selectedItem = leadProvider
-                                            .leadDropdownData!.workType
-                                            .firstWhere((status) =>
-                                                status.workTypeId ==
-                                                selectedId);
-                                        leadProvider.workTypeController.text =
-                                            selectedItem.workTypeName ?? '';
+                                            .leadDropdownData!.panelType
+                                            .firstWhere(
+                                          (status) =>
+                                              status.panelTypeId == selectedId,
+                                        );
+                                        leadProvider.panelBrandController.text =
+                                            selectedItem.panelTypeName ?? '';
                                       },
                                       selectedValue:
-                                          leadProvider.selectedWorkTypeId,
+                                          leadProvider.selectedPanelId,
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 8),
-                            // Row 3: Additional Comments, Roof Type, Empty space
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(right: 8.0),
+                                ],
+                              ),
+
+                              const SizedBox(height: 8),
+                              ResponsiveRow(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
                                     child: CustomTextField(
-                                      readOnly: false,
-                                      height: 54,
-                                      controller: leadProvider
-                                          .additionalCommentscONTROLLER,
-                                      hintText: 'Any Additional Comments',
+                                      height: 90,
+                                      controller:
+                                          leadProvider.panelCapacityController,
+                                      hintText: 'Panel Capacity (in kW)',
                                       labelText: '',
+                                      inputFormatters: [
+                                        FilteringTextInputFormatter.digitsOnly
+                                      ],
                                     ),
                                   ),
-                                ),
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 4.0),
+                                  const SizedBox(width: 8),
+                                  Expanded(
                                     child: CommonDropdown<int>(
-                                      hintText: 'Roof Type',
+                                      hintText: 'Panel Phase',
                                       items: (leadProvider
-                                                  .leadDropdownData?.roofType ??
+                                                  .leadDropdownData?.phase ??
                                               [])
                                           .map((status) => DropdownItem<int>(
-                                                id: status.roofTypeId,
-                                                name: status.roofTypeName,
+                                                id: status.phaseId,
+                                                name: status.phaseName,
                                               ))
                                           .toList(),
                                       controller:
-                                          leadProvider.roofTypeController,
+                                          leadProvider.panelPhaseController,
                                       onItemSelected: (selectedId) {
-                                        leadProvider.setRoofTypeId(selectedId);
+                                        leadProvider.setPhaseId(selectedId);
                                         final selectedItem = leadProvider
-                                            .leadDropdownData!.roofType
-                                            .firstWhere((status) =>
-                                                status.roofTypeId ==
-                                                selectedId);
-                                        leadProvider.roofTypeController.text =
-                                            selectedItem.roofTypeName ?? '';
+                                            .leadDropdownData!.phase
+                                            .firstWhere(
+                                          (status) =>
+                                              status.phaseId == selectedId,
+                                        );
+                                        leadProvider.panelPhaseController.text =
+                                            selectedItem.phaseName;
                                       },
                                       selectedValue:
-                                          leadProvider.selectedRoofId,
+                                          leadProvider.selectedPhaseId,
                                     ),
                                   ),
-                                ),
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(left: 8.0),
-                                    child: CustomTextField(
-                                      readOnly: true,
-                                      height: 54,
-                                      controller: leadProvider
-                                          .workCompletionDateController,
-                                      hintText: 'Work Completion Date',
-                                      labelText: '',
-                                      suffixIcon: IconButton(
-                                        icon: const Icon(Icons.calendar_today,
-                                            size: 18),
-                                        onPressed: () async {
+                                  const Spacer()
+                                ],
+                              ),
+                            ],
+                          ),
+
+                        // consumer details
+                        if (settingsProvider.menuIsViewMap[206] == 1)
+                          ExpansionTile(
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.zero,
+                            ),
+
+                            title: Text(
+                              'Additional details',
+                              style: GoogleFonts.plusJakartaSans(
+                                color: AppColors.textGrey3,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            tilePadding: EdgeInsets.zero,
+                            initiallyExpanded: false,
+                            // leadProvider.consumerNoController.text.isEmpty
+                            //     ? false
+                            //     : true,
+                            children: [
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Padding(
+                                      padding:
+                                          const EdgeInsets.only(right: 8.0),
+                                      child: CustomTextField(
+                                        readOnly: false,
+                                        height: 54,
+                                        controller: leadProvider
+                                            .electricalSectionController,
+                                        hintText: 'Electrical Section',
+                                        labelText: '',
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 4.0),
+                                      child: CustomTextField(
+                                        readOnly: false,
+                                        height: 54,
+                                        controller: leadProvider
+                                            .connectedLoadController,
+                                        hintText: 'Connected load',
+                                        labelText: '',
+                                        inputFormatters: [
+                                          FilteringTextInputFormatter.digitsOnly
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  const Expanded(
+                                    child: SizedBox.shrink(),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              // Row 2: REP, Lead By, Work Type
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Padding(
+                                      padding:
+                                          const EdgeInsets.only(right: 8.0),
+                                      child: CustomTextField(
+                                        readOnly: false,
+                                        height: 54,
+                                        controller: leadProvider.repController,
+                                        hintText: 'REP',
+                                        labelText: '',
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 4.0),
+                                      child: CustomTextField(
+                                        readOnly: false,
+                                        height: 54,
+                                        controller:
+                                            leadProvider.leadByController,
+                                        hintText: 'Lead By',
+                                        labelText: '',
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 8.0),
+                                      child: CommonDropdown<int>(
+                                        hintText: 'Work Type',
+                                        items: (leadProvider.leadDropdownData
+                                                    ?.workType ??
+                                                [])
+                                            .map((status) => DropdownItem<int>(
+                                                  id: status.workTypeId,
+                                                  name: status.workTypeName,
+                                                ))
+                                            .toList(),
+                                        controller:
+                                            leadProvider.workTypeController,
+                                        onItemSelected: (selectedId) {
+                                          leadProvider
+                                              .setWorkTypeId(selectedId);
+                                          final selectedItem = leadProvider
+                                              .leadDropdownData!.workType
+                                              .firstWhere((status) =>
+                                                  status.workTypeId ==
+                                                  selectedId);
+                                          leadProvider.workTypeController.text =
+                                              selectedItem.workTypeName ?? '';
+                                        },
+                                        selectedValue:
+                                            leadProvider.selectedWorkTypeId,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              // Row 3: Additional Comments, Roof Type, Empty space
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Padding(
+                                      padding:
+                                          const EdgeInsets.only(right: 8.0),
+                                      child: CustomTextField(
+                                        readOnly: false,
+                                        height: 54,
+                                        controller: leadProvider
+                                            .additionalCommentscONTROLLER,
+                                        hintText: 'Any Additional Comments',
+                                        labelText: '',
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 4.0),
+                                      child: CommonDropdown<int>(
+                                        hintText: 'Roof Type',
+                                        items: (leadProvider.leadDropdownData
+                                                    ?.roofType ??
+                                                [])
+                                            .map((status) => DropdownItem<int>(
+                                                  id: status.roofTypeId,
+                                                  name: status.roofTypeName,
+                                                ))
+                                            .toList(),
+                                        controller:
+                                            leadProvider.roofTypeController,
+                                        onItemSelected: (selectedId) {
+                                          leadProvider
+                                              .setRoofTypeId(selectedId);
+                                          final selectedItem = leadProvider
+                                              .leadDropdownData!.roofType
+                                              .firstWhere((status) =>
+                                                  status.roofTypeId ==
+                                                  selectedId);
+                                          leadProvider.roofTypeController.text =
+                                              selectedItem.roofTypeName ?? '';
+                                        },
+                                        selectedValue:
+                                            leadProvider.selectedRoofId,
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 8.0),
+                                      child: CustomTextField(
+                                        readOnly: true,
+                                        height: 54,
+                                        controller: leadProvider
+                                            .workCompletionDateController,
+                                        hintText: 'Work Completion Date',
+                                        labelText: '',
+                                        suffixIcon: IconButton(
+                                          icon: const Icon(Icons.calendar_today,
+                                              size: 18),
+                                          onPressed: () async {
+                                            DateTime initialDate =
+                                                DateTime.now();
+                                            if (leadProvider
+                                                .workCompletionDateController
+                                                .text
+                                                .isNotEmpty) {
+                                              try {
+                                                initialDate = DateFormat(
+                                                        'dd MMM yyyy')
+                                                    .parse(leadProvider
+                                                        .workCompletionDateController
+                                                        .text);
+                                              } catch (_) {
+                                                try {
+                                                  initialDate = DateTime.parse(
+                                                      leadProvider
+                                                          .workCompletionDateController
+                                                          .text);
+                                                } catch (_) {}
+                                              }
+                                            }
+                                            final DateTime? picked =
+                                                await showDatePicker(
+                                              context: context,
+                                              initialDate: initialDate,
+                                              firstDate: DateTime(2000),
+                                              lastDate: DateTime(2101),
+                                            );
+                                            if (picked != null) {
+                                              leadProvider
+                                                  .workCompletionDateController
+                                                  .text = DateFormat(
+                                                      'dd MMM yyyy')
+                                                  .format(picked);
+                                              leadProvider
+                                                  .installationDateController
+                                                  .text = DateFormat(
+                                                      'dd MMM yyyy')
+                                                  .format(picked);
+                                            }
+                                          },
+                                        ),
+                                        onTap: () async {
                                           DateTime initialDate = DateTime.now();
                                           if (leadProvider
                                               .workCompletionDateController
@@ -2234,195 +2394,431 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                           }
                                         },
                                       ),
-                                      onTap: () async {
-                                        DateTime initialDate = DateTime.now();
-                                        if (leadProvider
-                                            .workCompletionDateController
-                                            .text
-                                            .isNotEmpty) {
-                                          try {
-                                            initialDate = DateFormat(
-                                                    'dd MMM yyyy')
-                                                .parse(leadProvider
-                                                    .workCompletionDateController
-                                                    .text);
-                                          } catch (_) {
-                                            try {
-                                              initialDate = DateTime.parse(
-                                                  leadProvider
-                                                      .workCompletionDateController
-                                                      .text);
-                                            } catch (_) {}
-                                          }
-                                        }
-                                        final DateTime? picked =
-                                            await showDatePicker(
-                                          context: context,
-                                          initialDate: initialDate,
-                                          firstDate: DateTime(2000),
-                                          lastDate: DateTime(2101),
-                                        );
-                                        if (picked != null) {
-                                          leadProvider
-                                                  .workCompletionDateController
-                                                  .text =
-                                              DateFormat('dd MMM yyyy')
-                                                  .format(picked);
-                                          leadProvider
-                                                  .installationDateController
-                                                  .text =
-                                              DateFormat('dd MMM yyyy')
-                                                  .format(picked);
-                                        }
-                                      },
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                                ],
+                              ),
+                            ],
+                          ),
 
-                      //follow up
-                      if (widget.isEdit == false)
-                        ExpansionTile(
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.zero,
-                          ),
-                          title: Text(
-                            'Follow-up Details',
-                            style: GoogleFonts.plusJakartaSans(
-                              color: AppColors.textGrey3,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
+                        //follow up
+                        if (widget.isEdit == false)
+                          ExpansionTile(
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.zero,
                             ),
-                          ),
-                          tilePadding: EdgeInsets.zero,
-                          initiallyExpanded: true,
-                          children: [
-                            const SizedBox(
-                              height: 10,
+                            title: Text(
+                              'Follow-up Details',
+                              style: GoogleFonts.plusJakartaSans(
+                                color: AppColors.textGrey3,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const SizedBox(height: 10),
-                                // Row 1: Follow-up Status, Secondary Status, Amount
-                                ResponsiveRow(
-                                  children: [
-                                    Expanded(
-                                      child: Row(
-                                        children: [
-                                          Expanded(
-                                            child: CommonDropdown<int>(
-                                              hintText: 'Follow-up Status*',
-                                              items: dropDownProvider
-                                                  .leadStatuses
-                                                  .where((status) => widget
-                                                          .isEdit
-                                                      ? true
-                                                      : status.isCreateNew == 1)
-                                                  .map((status) =>
-                                                      DropdownItem<int>(
-                                                        id: status.statusId ??
-                                                            0,
-                                                        name:
-                                                            status.statusName ??
-                                                                '',
-                                                      ))
-                                                  .toList(),
-                                              controller: leadProvider
-                                                  .followUpStatusController,
-                                              onItemSelected:
-                                                  (selectedId) async {
-                                                dropDownProvider
-                                                    .setSelectedFollowUPId(
-                                                        selectedId);
-                                                leadProvider.customFieldList
-                                                    .clear();
-                                                leadProvider
-                                                    .getCustomFieldsByStatusId(
-                                                  context,
-                                                  leadId: widget.isEdit
-                                                      ? leadProvider.customerId
-                                                      : 0,
-                                                  statusId: selectedId,
+                            tilePadding: EdgeInsets.zero,
+                            initiallyExpanded: true,
+                            children: [
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(height: 10),
+                                  // Row 1: Follow-up Status, Secondary Status, Amount
+                                  ResponsiveRow(
+                                    children: [
+                                      Expanded(
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  CommonDropdown<int>(
+                                                    hintText:
+                                                        'Follow-up Status*',
+                                                    showError: _fieldErrors
+                                                        .containsKey(
+                                                            'followUpStatus'),
+                                                    items: dropDownProvider
+                                                        .leadStatuses
+                                                        .where((status) => widget
+                                                                .isEdit
+                                                            ? true
+                                                            : status.isCreateNew ==
+                                                                1)
+                                                        .map((status) =>
+                                                            DropdownItem<int>(
+                                                              id: status
+                                                                      .statusId ??
+                                                                  0,
+                                                              name: status
+                                                                      .statusName ??
+                                                                  '',
+                                                            ))
+                                                        .toList(),
+                                                    controller: leadProvider
+                                                        .followUpStatusController,
+                                                    onItemSelected:
+                                                        (selectedId) async {
+                                                      _clearFieldError(
+                                                          'followUpStatus');
+                                                      dropDownProvider
+                                                          .setSelectedFollowUPId(
+                                                              selectedId);
+                                                      leadProvider
+                                                          .customFieldList
+                                                          .clear();
+                                                      leadProvider
+                                                          .getCustomFieldsByStatusId(
+                                                        context,
+                                                        leadId: widget.isEdit
+                                                            ? leadProvider
+                                                                .customerId
+                                                            : 0,
+                                                        statusId: selectedId,
+                                                      );
+
+                                                      final selectedStatus = dropDownProvider
+                                                          .leadStatuses
+                                                          .firstWhere(
+                                                              (status) =>
+                                                                  status
+                                                                      .statusId ==
+                                                                  selectedId,
+                                                              orElse: () =>
+                                                                  SearchLeadStatusModel(
+                                                                      statusId:
+                                                                          selectedId,
+                                                                      statusName:
+                                                                          ''));
+                                                      leadProvider
+                                                          .followUpStatusController
+                                                          .text = selectedStatus
+                                                              .statusName ??
+                                                          '';
+                                                      if (selectedStatus
+                                                                  .departmentId !=
+                                                              null &&
+                                                          selectedStatus
+                                                                  .departmentId !=
+                                                              0) {
+                                                        settingsProvider
+                                                            .setSelectedDepartmentId(
+                                                                selectedStatus
+                                                                        .departmentId ??
+                                                                    0);
+                                                        leadProvider
+                                                            .departmentController
+                                                            .text = selectedStatus
+                                                                .departmentName ??
+                                                            '';
+                                                      }
+                                                      if (selectedStatus
+                                                                  .userId !=
+                                                              null &&
+                                                          selectedStatus
+                                                                  .userId !=
+                                                              0) {
+                                                        dropDownProvider
+                                                            .setSelectedUserId(
+                                                                selectedStatus
+                                                                        .userId ??
+                                                                    0);
+                                                        leadProvider
+                                                            .searchUserController
+                                                            .text = selectedStatus
+                                                                .userName ??
+                                                            '';
+                                                      }
+                                                      if (selectedStatus
+                                                              .isShowFollowupDate ==
+                                                          1) {
+                                                        int durationVal =
+                                                            int.tryParse(
+                                                                    selectedStatus
+                                                                            .statusDuration ??
+                                                                        '') ??
+                                                                0;
+                                                        DateTime baseDate =
+                                                            originalFollowUpDate ??
+                                                                DateTime.now();
+                                                        DateTime targetDate =
+                                                            baseDate.add(Duration(
+                                                                days:
+                                                                    durationVal));
+                                                        leadProvider
+                                                            .followUpDateController
+                                                            .text = DateFormat(
+                                                                'dd MMM yyyy')
+                                                            .format(targetDate);
+                                                      } else {
+                                                        leadProvider
+                                                            .followUpDateController
+                                                            .clear();
+                                                      }
+
+                                                      final statusData =
+                                                          await settingsProvider
+                                                              .getStatusById(
+                                                                  context,
+                                                                  selectedId
+                                                                      .toString());
+                                                      final transferStatusesData =
+                                                          await settingsProvider
+                                                              .getTransferStatusById(
+                                                                  context,
+                                                                  selectedId
+                                                                      .toString());
+
+                                                      bool mainHasAmount = (statusData
+                                                                  .isNotEmpty &&
+                                                              statusData.first
+                                                                      .isAmount ==
+                                                                  1) ||
+                                                          (transferStatusesData
+                                                                  .isNotEmpty &&
+                                                              transferStatusesData
+                                                                      .first
+                                                                      .isAmount ==
+                                                                  1);
+
+                                                      int? statusDeptId;
+                                                      String? statusDeptName;
+                                                      if (transferStatusesData
+                                                              .isNotEmpty &&
+                                                          transferStatusesData
+                                                                  .first
+                                                                  .departmentId !=
+                                                              null &&
+                                                          transferStatusesData
+                                                                  .first
+                                                                  .departmentId !=
+                                                              0) {
+                                                        statusDeptId =
+                                                            transferStatusesData
+                                                                .first
+                                                                .departmentId;
+                                                        statusDeptName =
+                                                            transferStatusesData
+                                                                .first
+                                                                .departmentName;
+                                                      } else if (selectedStatus
+                                                                  .departmentId !=
+                                                              null &&
+                                                          selectedStatus
+                                                                  .departmentId !=
+                                                              0) {
+                                                        statusDeptId =
+                                                            selectedStatus
+                                                                .departmentId;
+                                                        statusDeptName =
+                                                            selectedStatus
+                                                                .departmentName;
+                                                      }
+
+                                                      if (statusDeptId !=
+                                                              null &&
+                                                          statusDeptId != 0) {
+                                                        settingsProvider
+                                                                .selectedDepartmentId =
+                                                            statusDeptId;
+                                                        leadProvider
+                                                                .departmentController
+                                                                .text =
+                                                            statusDeptName ??
+                                                                '';
+
+                                                        await dropDownProvider
+                                                            .fetchStaffByDepartment(
+                                                          context: context,
+                                                          branchId: settingsProvider
+                                                              .selectedBranchId,
+                                                          departmentId:
+                                                              statusDeptId,
+                                                        );
+
+                                                        if (dropDownProvider
+                                                            .filteredStaffData
+                                                            .any((s) =>
+                                                                s.userDetailsId ==
+                                                                leadProvider
+                                                                    .loginUserId)) {
+                                                          dropDownProvider
+                                                              .setSelectedUserId(
+                                                                  leadProvider
+                                                                      .loginUserId);
+                                                          leadProvider
+                                                                  .searchUserController
+                                                                  .text =
+                                                              leadProvider
+                                                                  .loginUserName;
+                                                        } else if (dropDownProvider
+                                                            .filteredStaffData
+                                                            .isNotEmpty) {
+                                                          final firstStaff =
+                                                              dropDownProvider
+                                                                  .filteredStaffData
+                                                                  .first;
+                                                          dropDownProvider
+                                                              .setSelectedUserId(
+                                                                  firstStaff
+                                                                      .userDetailsId);
+                                                          leadProvider
+                                                                  .searchUserController
+                                                                  .text =
+                                                              firstStaff
+                                                                  .userDetailsName;
+                                                        } else {
+                                                          dropDownProvider
+                                                              .setSelectedUserId(
+                                                                  0);
+                                                          leadProvider
+                                                              .searchUserController
+                                                              .clear();
+                                                        }
+                                                      }
+
+                                                      if (mounted) {
+                                                        setState(() {
+                                                          showAmountForMain =
+                                                              mainHasAmount;
+                                                          showAmountForSecondary =
+                                                              false;
+                                                          showTransferStatus =
+                                                              transferStatusesData
+                                                                      .isNotEmpty &&
+                                                                  transferStatusesData
+                                                                          .first
+                                                                          .isTransferStatus ==
+                                                                      1;
+                                                          showTime = transferStatusesData
+                                                                  .isNotEmpty &&
+                                                              transferStatusesData
+                                                                      .first
+                                                                      .isTime ==
+                                                                  1;
+                                                          showDate = transferStatusesData
+                                                                  .isNotEmpty &&
+                                                              transferStatusesData
+                                                                      .first
+                                                                      .isShowFollowupDate ==
+                                                                  1;
+                                                          showTransfer = transferStatusesData
+                                                                  .isNotEmpty &&
+                                                              transferStatusesData
+                                                                      .first
+                                                                      .isTransfer ==
+                                                                  1;
+                                                          _filteredTransferStatuses = transferStatusesData
+                                                                  .isNotEmpty
+                                                              ? transferStatusesData
+                                                                      .first
+                                                                      .transferStatuses
+                                                                      ?.map((s) =>
+                                                                          SearchLeadStatusModel(
+                                                                            statusId:
+                                                                                s.subStatusId,
+                                                                            statusName:
+                                                                                s.subStatusName,
+                                                                          ))
+                                                                      .toList() ??
+                                                                  []
+                                                              : [];
+                                                        });
+                                                      }
+                                                    },
+                                                    selectedValue:
+                                                        dropDownProvider
+                                                            .selectedFollowUpId,
+                                                  ),
+                                                  _buildFieldError(
+                                                      'followUpStatus'),
+                                                ],
+                                              ),
+                                            ),
+                                            if (settingsProvider
+                                                    .statusAddAtNewLead ==
+                                                1)
+                                              SizedBox(
+                                                width: 10,
+                                              ),
+                                            if (settingsProvider
+                                                    .statusAddAtNewLead ==
+                                                1)
+                                              IconButton(
+                                                alignment: Alignment.center,
+                                                tooltip: "Add Followup Status",
+                                                icon: Icon(Icons.add_circle,
+                                                    color: AppColors
+                                                        .primaryViolet),
+                                                onPressed: () {
+                                                  showDialog(
+                                                    barrierDismissible: false,
+                                                    context: context,
+                                                    builder:
+                                                        (BuildContext context) {
+                                                      return AddNewStatusWidget(
+                                                        editId: '0',
+                                                        followUp: '',
+                                                        isEdit: false,
+                                                        status: '',
+                                                        isRegister: '',
+                                                        colorCode: '',
+                                                      );
+                                                    },
+                                                  ).then((value) {
+                                                    if (context.mounted) {
+                                                      dropDownProvider
+                                                          .getFollowUpStatus(
+                                                              context, "1");
+                                                    }
+                                                  });
+                                                },
+                                              ),
+                                          ],
+                                        ),
+                                      ),
+                                      if (showTransferStatus)
+                                        Expanded(
+                                          child: CommonDropdown<int>(
+                                            hintText: 'Secondary Status',
+                                            items: _filteredTransferStatuses
+                                                .where((status) =>
+                                                    status.statusId != null)
+                                                .map((status) =>
+                                                    DropdownItem<int>(
+                                                      id: status.statusId!,
+                                                      name: status.statusName ??
+                                                          '',
+                                                    ))
+                                                .toList(),
+                                            controller: leadProvider
+                                                .transferStatusController,
+                                            onItemSelected: (selectedId) async {
+                                              dropDownProvider
+                                                  .setSelectedTransferStatusId(
+                                                      selectedId);
+                                              if (selectedId != null) {
+                                                final selectedItem =
+                                                    _filteredTransferStatuses
+                                                        .firstWhere(
+                                                  (status) =>
+                                                      status.statusId ==
+                                                      selectedId,
+                                                  orElse: () =>
+                                                      SearchLeadStatusModel(
+                                                          statusId: selectedId,
+                                                          statusName: ''),
                                                 );
-
-                                                final selectedStatus = dropDownProvider
-                                                    .leadStatuses
-                                                    .firstWhere(
-                                                        (status) =>
-                                                            status.statusId ==
-                                                            selectedId,
-                                                        orElse: () =>
-                                                            SearchLeadStatusModel(
-                                                                statusId:
-                                                                    selectedId,
-                                                                statusName:
-                                                                    ''));
                                                 leadProvider
-                                                    .followUpStatusController
-                                                    .text = selectedStatus
+                                                    .transferStatusController
+                                                    .text = selectedItem
                                                         .statusName ??
                                                     '';
-                                                if (selectedStatus
-                                                            .departmentId !=
-                                                        null &&
-                                                    selectedStatus
-                                                            .departmentId !=
-                                                        0) {
-                                                  settingsProvider
-                                                      .setSelectedDepartmentId(
-                                                          selectedStatus
-                                                                  .departmentId ??
-                                                              0);
-                                                  leadProvider
-                                                      .departmentController
-                                                      .text = selectedStatus
-                                                          .departmentName ??
-                                                      '';
-                                                }
-                                                if (selectedStatus.userId !=
-                                                        null &&
-                                                    selectedStatus.userId !=
-                                                        0) {
-                                                  dropDownProvider
-                                                      .setSelectedUserId(
-                                                          selectedStatus
-                                                                  .userId ??
-                                                              0);
-                                                  leadProvider
-                                                          .searchUserController
-                                                          .text =
-                                                      selectedStatus.userName ??
-                                                          '';
-                                                }
-                                                if (selectedStatus
-                                                        .isShowFollowupDate ==
-                                                    1) {
-                                                  int durationVal = int.tryParse(
-                                                          selectedStatus
-                                                                  .statusDuration ??
-                                                              '') ??
-                                                      0;
-                                                  DateTime baseDate =
-                                                      originalFollowUpDate ??
-                                                          DateTime.now();
-                                                  DateTime targetDate =
-                                                      baseDate.add(Duration(
-                                                          days: durationVal));
-                                                  leadProvider
-                                                      .followUpDateController
-                                                      .text = DateFormat(
-                                                          'dd MMM yyyy')
-                                                      .format(targetDate);
-                                                } else {
-                                                  leadProvider
-                                                      .followUpDateController
-                                                      .clear();
-                                                }
-
                                                 final statusData =
                                                     await settingsProvider
                                                         .getStatusById(
@@ -2436,7 +2832,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                                             selectedId
                                                                 .toString());
 
-                                                bool mainHasAmount =
+                                                bool secondaryHasAmount =
                                                     (statusData.isNotEmpty &&
                                                             statusData.first
                                                                     .isAmount ==
@@ -2448,51 +2844,170 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                                                     .isAmount ==
                                                                 1);
 
-                                                int? statusDeptId;
-                                                String? statusDeptName;
-                                                if (transferStatusesData
-                                                        .isNotEmpty &&
-                                                    transferStatusesData.first
-                                                            .departmentId !=
-                                                        null &&
-                                                    transferStatusesData.first
-                                                            .departmentId !=
-                                                        0) {
-                                                  statusDeptId =
-                                                      transferStatusesData
-                                                          .first.departmentId;
-                                                  statusDeptName =
-                                                      transferStatusesData
-                                                          .first.departmentName;
-                                                } else if (selectedStatus
-                                                            .departmentId !=
-                                                        null &&
-                                                    selectedStatus
-                                                            .departmentId !=
-                                                        0) {
-                                                  statusDeptId = selectedStatus
-                                                      .departmentId;
-                                                  statusDeptName =
-                                                      selectedStatus
-                                                          .departmentName;
+                                                if (mounted) {
+                                                  setState(() {
+                                                    showAmountForSecondary =
+                                                        secondaryHasAmount;
+                                                  });
                                                 }
-
-                                                if (statusDeptId != null &&
-                                                    statusDeptId != 0) {
+                                              }
+                                            },
+                                            selectedValue: dropDownProvider
+                                                    .selectedTransferStatusId ??
+                                                0,
+                                          ),
+                                        )
+                                      else
+                                        const Expanded(child: SizedBox()),
+                                      if (showAmount)
+                                        Expanded(
+                                          child: CustomTextField(
+                                            readOnly: false,
+                                            height: 54,
+                                            controller: leadProvider
+                                                .followupAmountController,
+                                            hintText: 'Amount',
+                                            labelText: '',
+                                            keyboardType: TextInputType.number,
+                                            inputFormatters: [
+                                              FilteringTextInputFormatter.allow(
+                                                  RegExp(r'^\d+\.?\d*')),
+                                            ],
+                                          ),
+                                        )
+                                      else
+                                        const Expanded(child: SizedBox()),
+                                    ],
+                                  ),
+                                  // Row 2 Branch, Department, Staff
+                                  if (showTransfer) ...[
+                                    const SizedBox(height: 8),
+                                    ResponsiveRow(
+                                      children: [
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              CommonDropdown<int>(
+                                                hintText: 'Branch*',
+                                                showError: _fieldErrors
+                                                    .containsKey('branch'),
+                                                selectedValue: settingsProvider
+                                                    .selectedBranchId,
+                                                items: settingsProvider
+                                                    .branchModel
+                                                    .map((source) =>
+                                                        DropdownItem<int>(
+                                                          id: source.branchId ??
+                                                              0,
+                                                          name: source
+                                                                  .branchName ??
+                                                              '',
+                                                        ))
+                                                    .toList(),
+                                                controller: leadProvider
+                                                    .branchController,
+                                                onItemSelected: (selectedId) {
+                                                  _clearFieldError('branch');
+                                                  setState(() {
+                                                    settingsProvider
+                                                            .selectedBranchId =
+                                                        selectedId;
+                                                    final selectedBranch =
+                                                        settingsProvider
+                                                            .branchModel
+                                                            .firstWhere((branch) =>
+                                                                branch
+                                                                    .branchId ==
+                                                                selectedId);
+                                                    leadProvider
+                                                        .branchController
+                                                        .text = selectedBranch
+                                                            .branchName ??
+                                                        '';
+                                                    settingsProvider
+                                                        .setSelectedDepartmentId(
+                                                            0);
+                                                    leadProvider
+                                                        .departmentController
+                                                        .clear();
+                                                    dropDownProvider
+                                                        .setSelectedUserId(0);
+                                                    leadProvider
+                                                        .searchUserController
+                                                        .clear();
+                                                    dropDownProvider
+                                                        .fetchStaffByDepartment(
+                                                      context: context,
+                                                      branchId: selectedId,
+                                                      departmentId: null,
+                                                    );
+                                                  });
+                                                },
+                                              ),
+                                              _buildFieldError('branch'),
+                                            ],
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              CommonDropdown<int>(
+                                                key: ValueKey(settingsProvider
+                                                    .selectedBranchId),
+                                                hintText: 'Department*',
+                                                showError: _fieldErrors
+                                                    .containsKey('department'),
+                                                selectedValue: settingsProvider
+                                                    .selectedDepartmentId,
+                                                items: settingsProvider
+                                                    .departmentModel
+                                                    .map((source) =>
+                                                        DropdownItem<int>(
+                                                          id: source
+                                                              .departmentId,
+                                                          name: source
+                                                                  .departmentName ??
+                                                              '',
+                                                        ))
+                                                    .toList(),
+                                                controller: leadProvider
+                                                    .departmentController,
+                                                onItemSelected:
+                                                    (selectedId) async {
+                                                  _clearFieldError(
+                                                      'department');
                                                   settingsProvider
                                                           .selectedDepartmentId =
-                                                      statusDeptId;
+                                                      selectedId;
+                                                  final selectedDepartment = settingsProvider
+                                                      .departmentModel
+                                                      .firstWhere(
+                                                          (dept) =>
+                                                              dept.departmentId ==
+                                                              selectedId,
+                                                          orElse: () =>
+                                                              DepartmentModel(
+                                                                  departmentId:
+                                                                      selectedId,
+                                                                  departmentName:
+                                                                      ''));
                                                   leadProvider
-                                                          .departmentController
-                                                          .text =
-                                                      statusDeptName ?? '';
-
+                                                      .departmentController
+                                                      .text = selectedDepartment
+                                                          .departmentName ??
+                                                      '';
                                                   await dropDownProvider
                                                       .fetchStaffByDepartment(
                                                     context: context,
                                                     branchId: settingsProvider
                                                         .selectedBranchId,
-                                                    departmentId: statusDeptId,
+                                                    departmentId: selectedId,
                                                   );
 
                                                   if (dropDownProvider
@@ -2533,505 +3048,222 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                                         .searchUserController
                                                         .clear();
                                                   }
-                                                }
-
-                                                if (mounted) {
-                                                  setState(() {
-                                                    showAmountForMain =
-                                                        mainHasAmount;
-                                                    showAmountForSecondary =
-                                                        false;
-                                                    showTransferStatus =
-                                                        transferStatusesData
-                                                                .isNotEmpty &&
-                                                            transferStatusesData
-                                                                    .first
-                                                                    .isTransferStatus ==
-                                                                1;
-                                                    showTime =
-                                                        transferStatusesData
-                                                                .isNotEmpty &&
-                                                            transferStatusesData
-                                                                    .first
-                                                                    .isTime ==
-                                                                1;
-                                                    showDate = transferStatusesData
-                                                            .isNotEmpty &&
-                                                        transferStatusesData
-                                                                .first
-                                                                .isShowFollowupDate ==
-                                                            1;
-                                                    showTransfer =
-                                                        transferStatusesData
-                                                                .isNotEmpty &&
-                                                            transferStatusesData
-                                                                    .first
-                                                                    .isTransfer ==
-                                                                1;
-                                                    _filteredTransferStatuses =
-                                                        transferStatusesData
-                                                                .isNotEmpty
-                                                            ? transferStatusesData
-                                                                    .first
-                                                                    .transferStatuses
-                                                                    ?.map((s) =>
-                                                                        SearchLeadStatusModel(
-                                                                          statusId:
-                                                                              s.subStatusId,
-                                                                          statusName:
-                                                                              s.subStatusName,
-                                                                        ))
-                                                                    .toList() ??
-                                                                []
-                                                            : [];
-                                                  });
-                                                }
-                                              },
-                                              selectedValue: dropDownProvider
-                                                  .selectedFollowUpId,
-                                            ),
-                                          ),
-                                          if (settingsProvider
-                                                  .statusAddAtNewLead ==
-                                              1)
-                                            SizedBox(
-                                              width: 10,
-                                            ),
-                                          if (settingsProvider
-                                                  .statusAddAtNewLead ==
-                                              1)
-                                            IconButton(
-                                              alignment: Alignment.center,
-                                              tooltip: "Add Followup Status",
-                                              icon: Icon(Icons.add_circle,
-                                                  color:
-                                                      AppColors.primaryViolet),
-                                              onPressed: () {
-                                                showDialog(
-                                                  barrierDismissible: false,
-                                                  context: context,
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return AddNewStatusWidget(
-                                                      editId: '0',
-                                                      followUp: '',
-                                                      isEdit: false,
-                                                      status: '',
-                                                      isRegister: '',
-                                                      colorCode: '',
+                                                  if (dropDownProvider
+                                                              .selectedEnquiryForId !=
+                                                          null &&
+                                                      dropDownProvider
+                                                              .selectedEnquiryForId !=
+                                                          0) {
+                                                    leadProvider
+                                                        .getCustomFieldsByEnquiryForId(
+                                                      context,
+                                                      leadId: widget.isEdit
+                                                          ? (leadProvider
+                                                                  .customerId ??
+                                                              0)
+                                                          : 0,
+                                                      enquiryForId: dropDownProvider
+                                                          .selectedEnquiryForId!,
+                                                      departmentId: selectedId,
                                                     );
-                                                  },
-                                                ).then((value) {
-                                                  if (context.mounted) {
-                                                    dropDownProvider
-                                                        .getFollowUpStatus(
-                                                            context, "1");
                                                   }
-                                                });
-                                              },
-                                            ),
-                                        ],
-                                      ),
+                                                  if (leadProvider
+                                                      .searchUserController
+                                                      .text
+                                                      .isNotEmpty) {
+                                                    _fieldErrors
+                                                        .remove('staff');
+                                                  }
+                                                  if (mounted) setState(() {});
+                                                },
+                                              ),
+                                              _buildFieldError('department'),
+                                            ],
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              CommonDropdown<int>(
+                                                hintText: 'Assigned Staff*',
+                                                showError: _fieldErrors
+                                                    .containsKey('staff'),
+                                                items: dropDownProvider
+                                                    .filteredStaffData
+                                                    .map((staff) =>
+                                                        DropdownItem<int>(
+                                                          id: staff
+                                                              .userDetailsId,
+                                                          name: staff
+                                                              .userDetailsName,
+                                                        ))
+                                                    .toList(),
+                                                controller: leadProvider
+                                                    .searchUserController,
+                                                onItemSelected: (selectedId) {
+                                                  _clearFieldError('staff');
+                                                  setState(() {
+                                                    dropDownProvider
+                                                        .setSelectedUserId(
+                                                            selectedId);
+                                                    final selectedStaff =
+                                                        dropDownProvider
+                                                            .filteredStaffData
+                                                            .firstWhere((staff) =>
+                                                                staff
+                                                                    .userDetailsId ==
+                                                                selectedId);
+                                                    leadProvider
+                                                            .searchUserController
+                                                            .text =
+                                                        selectedStaff
+                                                            .userDetailsName;
+                                                  });
+                                                },
+                                                selectedValue: dropDownProvider
+                                                    .selectedUserId,
+                                                enabled: settingsProvider
+                                                        .selectedBranchId !=
+                                                    null,
+                                              ),
+                                              _buildFieldError('staff'),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    if (showTransferStatus)
-                                      Expanded(
-                                        child: CommonDropdown<int>(
-                                          hintText: 'Secondary Status',
-                                          items: _filteredTransferStatuses
-                                              .where((status) =>
-                                                  status.statusId != null)
-                                              .map((status) =>
-                                                  DropdownItem<int>(
-                                                    id: status.statusId!,
-                                                    name:
-                                                        status.statusName ?? '',
-                                                  ))
-                                              .toList(),
-                                          controller: leadProvider
-                                              .transferStatusController,
-                                          onItemSelected: (selectedId) async {
-                                            dropDownProvider
-                                                .setSelectedTransferStatusId(
-                                                    selectedId);
-                                            if (selectedId != null) {
-                                              final selectedItem =
-                                                  _filteredTransferStatuses
-                                                      .firstWhere(
-                                                (status) =>
-                                                    status.statusId ==
-                                                    selectedId,
-                                                orElse: () =>
-                                                    SearchLeadStatusModel(
-                                                        statusId: selectedId,
-                                                        statusName: ''),
-                                              );
-                                              leadProvider
-                                                      .transferStatusController
-                                                      .text =
-                                                  selectedItem.statusName ?? '';
-                                              final statusData =
-                                                  await settingsProvider
-                                                      .getStatusById(
-                                                          context,
-                                                          selectedId
-                                                              .toString());
-                                              final transferStatusesData =
-                                                  await settingsProvider
-                                                      .getTransferStatusById(
-                                                          context,
-                                                          selectedId
-                                                              .toString());
-
-                                              bool secondaryHasAmount =
-                                                  (statusData.isNotEmpty &&
-                                                          statusData.first
-                                                                  .isAmount ==
-                                                              1) ||
-                                                      (transferStatusesData
-                                                              .isNotEmpty &&
-                                                          transferStatusesData
-                                                                  .first
-                                                                  .isAmount ==
-                                                              1);
-
-                                              if (mounted) {
-                                                setState(() {
-                                                  showAmountForSecondary =
-                                                      secondaryHasAmount;
-                                                });
-                                              }
-                                            }
-                                          },
-                                          selectedValue: dropDownProvider
-                                                  .selectedTransferStatusId ??
-                                              0,
-                                        ),
-                                      )
-                                    else
-                                      const Expanded(child: SizedBox()),
-                                    if (showAmount)
-                                      Expanded(
-                                        child: CustomTextField(
-                                          readOnly: false,
-                                          height: 54,
-                                          controller: leadProvider
-                                              .followupAmountController,
-                                          hintText: 'Amount',
-                                          labelText: '',
-                                          keyboardType: TextInputType.number,
-                                          inputFormatters: [
-                                            FilteringTextInputFormatter.allow(
-                                                RegExp(r'^\d+\.?\d*')),
-                                          ],
-                                        ),
-                                      )
-                                    else
-                                      const Expanded(child: SizedBox()),
                                   ],
-                                ),
-                                // Row 2 Branch, Department, Staff
-                                if (showTransfer) ...[
+                                  // Row 3 Remarks,Next Follow-up Time
                                   const SizedBox(height: 8),
                                   ResponsiveRow(
                                     children: [
                                       Expanded(
-                                        child: CommonDropdown<int>(
-                                          hintText: 'Branch*',
-                                          selectedValue:
-                                              settingsProvider.selectedBranchId,
-                                          items: settingsProvider.branchModel
-                                              .map((source) =>
-                                                  DropdownItem<int>(
-                                                    id: source.branchId ?? 0,
-                                                    name:
-                                                        source.branchName ?? '',
-                                                  ))
-                                              .toList(),
+                                        child: CustomTextField(
+                                          height: 54,
                                           controller:
-                                              leadProvider.branchController,
-                                          onItemSelected: (selectedId) {
-                                            setState(() {
-                                              settingsProvider
-                                                      .selectedBranchId =
-                                                  selectedId;
-                                              final selectedBranch =
-                                                  settingsProvider.branchModel
-                                                      .firstWhere((branch) =>
-                                                          branch.branchId ==
-                                                          selectedId);
-                                              leadProvider
-                                                      .branchController.text =
-                                                  selectedBranch.branchName ??
-                                                      '';
-                                              settingsProvider
-                                                  .setSelectedDepartmentId(0);
-                                              leadProvider.departmentController
-                                                  .clear();
-                                              dropDownProvider
-                                                  .setSelectedUserId(0);
-                                              leadProvider.searchUserController
-                                                  .clear();
-                                              dropDownProvider
-                                                  .fetchStaffByDepartment(
+                                              leadProvider.remarksController,
+                                          hintText: 'Remarks',
+                                          labelText: '',
+                                          keyboardType: TextInputType.text,
+                                          showError:
+                                              dropDownProvider.showValidation &&
+                                                  !_isFieldValid(leadProvider
+                                                      .remarksController.text),
+                                        ),
+                                      ),
+                                      if (showDate)
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              CustomTextField(
+                                                onTap: () async {
+                                                  final DateTime? picked =
+                                                      await showDatePicker(
+                                                    context: context,
+                                                    initialDate: DateTime.now(),
+                                                    firstDate: DateTime.now(),
+                                                    lastDate: DateTime.now()
+                                                        .add(const Duration(
+                                                            days: 365)),
+                                                  );
+                                                  if (picked != null) {
+                                                    leadProvider
+                                                        .followUpDateController
+                                                        .text = DateFormat(
+                                                            'dd MMM yyyy')
+                                                        .format(picked);
+                                                    _clearFieldError(
+                                                        'followUpDate');
+                                                  }
+                                                },
+                                                readOnly: true,
+                                                height: 54,
+                                                showError:
+                                                    _fieldErrors.containsKey(
+                                                        'followUpDate'),
+                                                controller: leadProvider
+                                                    .followUpDateController,
+                                                hintText: settingsProvider
+                                                            .leadCreationChanges ==
+                                                        1
+                                                    ? 'Assigned Date*'
+                                                    : 'Next Follow-up Date*',
+                                                labelText: '',
+                                              ),
+                                              _buildFieldError('followUpDate'),
+                                            ],
+                                          ),
+                                        )
+                                      else
+                                        const Expanded(child: SizedBox()),
+                                      if (showTime)
+                                        Expanded(
+                                          child: CustomTextField(
+                                            onTap: () async {
+                                              final TimeOfDay? picked =
+                                                  await showTimePicker(
                                                 context: context,
-                                                branchId: selectedId,
-                                                departmentId: null,
+                                                initialTime: TimeOfDay.now(),
                                               );
-                                            });
-                                          },
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: CommonDropdown<int>(
-                                          key: ValueKey(settingsProvider
-                                              .selectedBranchId),
-                                          hintText: 'Department*',
-                                          selectedValue: settingsProvider
-                                              .selectedDepartmentId,
-                                          items: settingsProvider
-                                              .departmentModel
-                                              .map(
-                                                  (source) => DropdownItem<int>(
-                                                        id: source.departmentId,
-                                                        name: source
-                                                                .departmentName ??
-                                                            '',
-                                                      ))
-                                              .toList(),
-                                          controller:
-                                              leadProvider.departmentController,
-                                          onItemSelected: (selectedId) async {
-                                            settingsProvider
-                                                    .selectedDepartmentId =
-                                                selectedId;
-                                            final selectedDepartment =
-                                                settingsProvider
-                                                    .departmentModel
-                                                    .firstWhere(
-                                                        (dept) =>
-                                                            dept.departmentId ==
-                                                            selectedId,
-                                                        orElse: () =>
-                                                            DepartmentModel(
-                                                                departmentId:
-                                                                    selectedId,
-                                                                departmentName:
-                                                                    ''));
-                                            leadProvider.departmentController
-                                                .text = selectedDepartment
-                                                    .departmentName ??
-                                                '';
-                                            await dropDownProvider
-                                                .fetchStaffByDepartment(
-                                              context: context,
-                                              branchId: settingsProvider
-                                                  .selectedBranchId,
-                                              departmentId: selectedId,
-                                            );
-
-                                            if (dropDownProvider
-                                                .filteredStaffData
-                                                .any((s) =>
-                                                    s.userDetailsId ==
-                                                    leadProvider.loginUserId)) {
-                                              dropDownProvider
-                                                  .setSelectedUserId(
-                                                      leadProvider.loginUserId);
-                                              leadProvider.searchUserController
-                                                      .text =
-                                                  leadProvider.loginUserName;
-                                            } else if (dropDownProvider
-                                                .filteredStaffData.isNotEmpty) {
-                                              final firstStaff =
-                                                  dropDownProvider
-                                                      .filteredStaffData.first;
-                                              dropDownProvider
-                                                  .setSelectedUserId(
-                                                      firstStaff.userDetailsId);
-                                              leadProvider.searchUserController
-                                                      .text =
-                                                  firstStaff.userDetailsName;
-                                            } else {
-                                              dropDownProvider
-                                                  .setSelectedUserId(0);
-                                              leadProvider.searchUserController
-                                                  .clear();
-                                            }
-                                            if (dropDownProvider
-                                                        .selectedEnquiryForId !=
-                                                    null &&
-                                                dropDownProvider
-                                                        .selectedEnquiryForId !=
-                                                    0) {
-                                              leadProvider
-                                                  .getCustomFieldsByEnquiryForId(
-                                                context,
-                                                leadId: widget.isEdit
-                                                    ? (leadProvider
-                                                            .customerId ??
-                                                        0)
-                                                    : 0,
-                                                enquiryForId: dropDownProvider
-                                                    .selectedEnquiryForId!,
-                                                departmentId: selectedId,
-                                              );
-                                            }
-                                            if (mounted) setState(() {});
-                                          },
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: CommonDropdown<int>(
-                                          hintText: 'Assigned Staff*',
-                                          items: dropDownProvider
-                                              .filteredStaffData
-                                              .map((staff) => DropdownItem<int>(
-                                                    id: staff.userDetailsId,
-                                                    name: staff.userDetailsName,
-                                                  ))
-                                              .toList(),
-                                          controller:
-                                              leadProvider.searchUserController,
-                                          onItemSelected: (selectedId) {
-                                            setState(() {
-                                              dropDownProvider
-                                                  .setSelectedUserId(
-                                                      selectedId);
-                                              final selectedStaff =
-                                                  dropDownProvider
-                                                      .filteredStaffData
-                                                      .firstWhere((staff) =>
-                                                          staff.userDetailsId ==
-                                                          selectedId);
-                                              leadProvider.searchUserController
-                                                      .text =
-                                                  selectedStaff.userDetailsName;
-                                            });
-                                          },
-                                          selectedValue:
-                                              dropDownProvider.selectedUserId,
-                                          enabled: settingsProvider
-                                                  .selectedBranchId !=
-                                              null,
-                                        ),
-                                      ),
+                                              if (picked != null) {
+                                                leadProvider
+                                                        .followUpTimeController
+                                                        .text =
+                                                    picked.format(context);
+                                              }
+                                            },
+                                            readOnly: true,
+                                            height: 54,
+                                            controller: leadProvider
+                                                .followUpTimeController,
+                                            hintText: 'Time',
+                                            labelText: '',
+                                          ),
+                                        )
+                                      else
+                                        const Expanded(child: SizedBox()),
                                     ],
                                   ),
-                                ],
-                                // Row 3 Remarks,Next Follow-up Time
-                                const SizedBox(height: 8),
-                                ResponsiveRow(
-                                  children: [
-                                    Expanded(
-                                      child: CustomTextField(
-                                        height: 54,
-                                        controller:
-                                            leadProvider.remarksController,
-                                        hintText: 'Remarks',
-                                        labelText: '',
-                                        keyboardType: TextInputType.text,
-                                        showError:
-                                            dropDownProvider.showValidation &&
-                                                !_isFieldValid(leadProvider
-                                                    .remarksController.text),
+                                  // Custom Fields
+                                  const SizedBox(height: 8),
+                                  if (dropDownProvider.selectedFollowUpId !=
+                                          null &&
+                                      dropDownProvider.selectedFollowUpId != 0)
+                                    if (leadProvider.isLoadingCustomFields)
+                                      const Center(
+                                          child: CircularProgressIndicator())
+                                    else if (leadProvider
+                                        .customFieldList.isNotEmpty)
+                                      CustomFieldSectionWidget(
+                                        showEditButton: true,
+                                        controllerKey: CustomFieldControllerkey
+                                            .leadStatus.value,
+                                        key: customFieldLeadStatusKey,
+                                        showMore: false,
+                                        onFieldValuesChanged: (p0) {},
+                                        customFields:
+                                            leadProvider.customFieldList,
+                                        initialValues: const {},
                                       ),
-                                    ),
-                                    if (showDate)
-                                      Expanded(
-                                        child: CustomTextField(
-                                          onTap: () async {
-                                            final DateTime? picked =
-                                                await showDatePicker(
-                                              context: context,
-                                              initialDate: DateTime.now(),
-                                              firstDate: DateTime.now(),
-                                              lastDate: DateTime.now().add(
-                                                  const Duration(days: 365)),
-                                            );
-                                            if (picked != null) {
-                                              leadProvider
-                                                      .followUpDateController
-                                                      .text =
-                                                  DateFormat('dd MMM yyyy')
-                                                      .format(picked);
-                                            }
-                                          },
-                                          readOnly: true,
-                                          height: 54,
-                                          controller: leadProvider
-                                              .followUpDateController,
-                                          hintText: settingsProvider
-                                                      .leadCreationChanges ==
-                                                  1
-                                              ? 'Assigned Date*'
-                                              : 'Next Follow-up Date*',
-                                          labelText: '',
-                                        ),
-                                      )
-                                    else
-                                      const Expanded(child: SizedBox()),
-                                    if (showTime)
-                                      Expanded(
-                                        child: CustomTextField(
-                                          onTap: () async {
-                                            final TimeOfDay? picked =
-                                                await showTimePicker(
-                                              context: context,
-                                              initialTime: TimeOfDay.now(),
-                                            );
-                                            if (picked != null) {
-                                              leadProvider
-                                                      .followUpTimeController
-                                                      .text =
-                                                  picked.format(context);
-                                            }
-                                          },
-                                          readOnly: true,
-                                          height: 54,
-                                          controller: leadProvider
-                                              .followUpTimeController,
-                                          hintText: 'Time',
-                                          labelText: '',
-                                        ),
-                                      )
-                                    else
-                                      const Expanded(child: SizedBox()),
-                                  ],
-                                ),
-                                // Custom Fields
-                                const SizedBox(height: 8),
-                                if (dropDownProvider.selectedFollowUpId !=
-                                        null &&
-                                    dropDownProvider.selectedFollowUpId != 0)
-                                  if (leadProvider.isLoadingCustomFields)
-                                    const Center(
-                                        child: CircularProgressIndicator())
-                                  else if (leadProvider
-                                      .customFieldList.isNotEmpty)
-                                    CustomFieldSectionWidget(
-                                      showEditButton: true,
-                                      controllerKey: CustomFieldControllerkey
-                                          .leadStatus.value,
-                                      key: customFieldLeadStatusKey,
-                                      showMore: false,
-                                      onFieldValuesChanged: (p0) {},
-                                      customFields:
-                                          leadProvider.customFieldList,
-                                      initialValues: const {},
-                                    ),
-                                const SizedBox(height: 8),
-                              ],
-                            ),
-                          ],
-                        ),
-                      const SizedBox(height: 250),
-                    ],
+                                  const SizedBox(height: 8),
+                                ],
+                              ),
+                            ],
+                          ),
+                        const SizedBox(height: 250),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        ),
         );
       },
     );
