@@ -2614,6 +2614,7 @@ class _CustomerPageState extends State<CustomerPage> {
 
       showDialog(
         context: context,
+        barrierDismissible: false,
         builder: (BuildContext context) {
           return const NewLeadDrawerWidget(
             isEdit: true,

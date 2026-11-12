@@ -763,6 +763,7 @@ class _LeadsPageState extends State<LeadPage> {
                                 onPressed: () {
                                   showDialog(
                                     context: context,
+                                    barrierDismissible: false,
                                     builder: (BuildContext context) {
                                       return const NewLeadDrawerWidget(
                                         isEdit: false,
@@ -942,6 +943,7 @@ class _LeadsPageState extends State<LeadPage> {
                             onPressed: ()  {                       
                               showDialog(
                                 context: context,
+                                barrierDismissible: false,
                                 builder: (BuildContext context) {
                                   return const NewLeadDrawerWidget(
                                     isEdit: false,
@@ -3910,6 +3912,7 @@ class _LeadsPageState extends State<LeadPage> {
 
       showDialog(
         context: context,
+        barrierDismissible: false,
         builder: (BuildContext context) {
           return const NewLeadDrawerWidget(
             isEdit: true,

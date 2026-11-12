@@ -615,8 +615,12 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
 
     return Consumer<DropDownProvider>(
       builder: (context, dropDownProvider, child) {
-        return Dialog(
-          insetPadding: EdgeInsets.zero,
+        return Actions(
+          actions: <Type, Action<Intent>>{
+            DismissIntent: DoNothingAction(),
+          },
+          child: Dialog(
+            insetPadding: EdgeInsets.zero,
           child: Container(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
@@ -3027,6 +3031,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
               ],
             ),
           ),
+        ),
         );
       },
     );

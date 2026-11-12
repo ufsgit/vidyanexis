@@ -1183,6 +1183,7 @@ class _LeadCardState extends State<LeadCard> {
                                 Navigator.pop(context);
                                 showDialog(
                                     context: context,
+                                    barrierDismissible: false,
                                     builder: (_) => const NewLeadDrawerWidget(
                                         isEdit: true));
                               },

@@ -104,6 +104,7 @@ class LeadDetailsWidgetState extends State<LeadDetailsWidget> {
                           // await leadsProvider.getLeadDropdowns(context);
                           showDialog(
                             context: context,
+                            barrierDismissible: false,
                             builder: (BuildContext context) {
                               return const NewLeadDrawerWidget(
                                 isEdit: true,

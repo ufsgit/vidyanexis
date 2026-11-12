@@ -455,6 +455,7 @@ class _tasksPageReportState extends State<TaskPage> {
 
       showDialog(
         context: context,
+        barrierDismissible: false,
         builder: (BuildContext context) {
           return const NewLeadDrawerWidget(
             isEdit: true,
@@ -1578,7 +1579,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                 onPressed: () {
                                   showDialog(
                                     context: context,
-                                    barrierDismissible: true,
+                                    barrierDismissible: false,
                                     builder: (BuildContext context) {
                                       return const NewLeadDrawerWidget(
                                         isEdit: false,
