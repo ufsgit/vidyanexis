@@ -3943,7 +3943,10 @@ class CustomerDetailsProvider extends ChangeNotifier {
     _selectedAMCStatusName = taskStatusName;
   }
 
-  void clearQuotationDetails() {
+  void clearQuotationDetails({
+    bool notify = true,
+    bool resetFormKeys = true,
+  }) {
     qproductnameController.clear();
     rejectionReasonController.clear();
     workCompletionController.clear();
@@ -4029,6 +4032,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     _scopeOfWorkItems.clear();
     _savedMasterCustomFields.clear();
     _customFieldQuotation.clear();
+    _additionalCustomFieldsQuotation.clear();
     _commercialCustomFields.clear();
     _selectedCommercialFields.clear();
     virtualToRealCommercialFieldId.clear();
@@ -4036,7 +4040,10 @@ class CustomerDetailsProvider extends ChangeNotifier {
     commercialTableRowControllers.clear();
     commercialTableRowDropdowns.clear();
     commercialTableRowTexts.clear();
-    customFieldQuotationKey.currentState?.resetForm();
+    if (resetFormKeys) {
+      customFieldQuotationKey.currentState?.resetForm();
+      customFieldAdditionalQuotationKey.currentState?.resetForm();
+    }
     quotationDescriptionController.clear();
     quotationDescription2Controller.clear();
     quotationDescription3Controller.clear();
@@ -4044,9 +4051,10 @@ class CustomerDetailsProvider extends ChangeNotifier {
     _selectedBranchId = null;
     billpriceController.clear();
     billamountController.clear();
-    setSelectedItemName('');
+    _selectedItemName = '';
+    newItemNameController.clear();
     _newItemId = 0;
-    billTotalAmount = 0.0;
+    _billTotalAmount = 0.0;
     _selectedProfitId = 0;
     _selectedProfitName = '';
     profitController.clear();
@@ -4056,7 +4064,9 @@ class CustomerDetailsProvider extends ChangeNotifier {
     registrationFeeThreeController.clear();
     aggregatedPriceFrom = 0.0;
     aggregatedPriceTo = 0.0;
-    notifyListeners();
+    if (notify) {
+      notifyListeners();
+    }
   }
 
   void setAmcDropDown(int amcStatusId, String amcStatusName) {

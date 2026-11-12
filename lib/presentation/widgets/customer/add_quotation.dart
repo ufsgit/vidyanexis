@@ -49,10 +49,18 @@ class QuotationCreationWidget extends StatefulWidget {
 class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool companyQuotationItems = false;
+  bool _isInitializing = true;
+  CustomerDetailsProvider? _customerDetailsProvider;
 
   @override
   void initState() {
     super.initState();
+    _customerDetailsProvider =
+        Provider.of<CustomerDetailsProvider>(context, listen: false);
+    _customerDetailsProvider?.clearQuotationDetails(
+      notify: false,
+      resetFormKeys: false,
+    );
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       Loader.showLoader(context);
       try {
@@ -200,10 +208,22 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
         debugPrint('Error in quotation initState: $e\n$stack');
       } finally {
         if (mounted) {
+          setState(() {
+            _isInitializing = false;
+          });
           Loader.stopLoader(context);
         }
       }
     });
+  }
+
+  @override
+  void dispose() {
+    _customerDetailsProvider?.clearQuotationDetails(
+      notify: false,
+      resetFormKeys: false,
+    );
+    super.dispose();
   }
 
   @override
@@ -253,7 +273,12 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
           ),
         ),
       ),
-      body: Form(
+      body: _isInitializing
+          ? const ColoredBox(
+              color: Colors.white,
+              child: SizedBox.expand(),
+            )
+          : Form(
         key: _formKey,
         child: SingleChildScrollView(
           child: Center(
@@ -1692,7 +1717,9 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
           ),
         ),
       ),
-      persistentFooterButtons: [
+      persistentFooterButtons: _isInitializing
+          ? null
+          : [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Row(
@@ -1828,6 +1855,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                           ),
                         );
                         //        _showPrintQuotationDialog(context, masterId);
+                        customerDetailsProvider.clearQuotationDetails();
                         Navigator.pop(context);
                       }
                     }
