@@ -153,6 +153,10 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
             settingsProvider.onWorkCompletionPercentageText;
         customerDetailsProvider.qvalidityController.text =
             settingsProvider.validityText;
+        // Auto generate product name on init
+        if (settingsProvider.quotationProductName == 1) {
+          customerDetailsProvider.updateAutoProductName();
+        }
 
         if (widget.isEdit) {
           try {
@@ -691,6 +695,15 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                                           match.datavalue = fv.value;
                                         }
                                       }
+                                      // Update Product Name when field 154 changes
+                                      if (settingsProvider
+                                                  .quotationProductName ==
+                                              1 &&
+                                          values.any((fv) =>
+                                              fv.customFieldId == 154)) {
+                                        customerDetailsProvider
+                                            .updateAutoProductName();
+                                      }
                                     },
                                   ),
                                   const SizedBox(height: 16),
@@ -737,6 +750,11 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                                 if (match.customFieldId != null) {
                                   match.datavalue = fv.value;
                                 }
+                              }
+                              // Update Product Name when field 154 changes
+                              if (settingsProvider.quotationProductName == 1 &&
+                                  values.any((fv) => fv.customFieldId == 154)) {
+                                customerDetailsProvider.updateAutoProductName();
                               }
                             },
                           ),

@@ -6492,6 +6492,46 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
     await file.writeAsBytes(bytes);
   }
+
+  /// Auto-set Product Name when quotationProductName == 1
+  /// Format: "{Plant Capacity} - {Customer Name} - Quotation for ongrid solar plant"
+  void updateAutoProductName() {
+    final settingsProvider = SettingsProvider();
+    if (settingsProvider.quotationProductName != 1) return;
+
+    String plantCapacity = '';
+
+    // Check main custom fields
+    for (var field in _customFieldQuotation) {
+      if (field.customFieldId == 154) {
+        plantCapacity = field.datavalue?.toString().trim() ?? '';
+        break;
+      }
+    }
+
+    // Check additional custom fields if not found
+    if (plantCapacity.isEmpty) {
+      for (var field in _additionalCustomFieldsQuotation) {
+        if (field.customFieldId == 154) {
+          plantCapacity = field.datavalue?.toString().trim() ?? '';
+          break;
+        }
+      }
+    }
+
+    String customerName = '';
+    if (_leadDetails.isNotEmpty) {
+      customerName = _leadDetails.first.customerName?.toString().trim() ?? '';
+    }
+
+    final parts = <String>[];
+    if (plantCapacity.isNotEmpty) parts.add(plantCapacity);
+    if (customerName.isNotEmpty) parts.add(customerName);
+    parts.add('Quotation for Ongrid solar plant');
+
+    qproductnameController.text = parts.join(' - ');
+    notifyListeners();
+  }
 }
 
 class ProfitModel {

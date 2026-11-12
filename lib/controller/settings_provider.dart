@@ -983,6 +983,8 @@ class SettingsProvider extends ChangeNotifier {
   int get c9xchecklist => _c9xchecklist;
   int _departmentMenu = 0;
   int get departmentMenu => _departmentMenu;
+  int _quotationProductName = 0;
+  int get quotationProductName => _quotationProductName;
 
   int _consumerNoInLeadPage = 0;
   int get consumerNoInLeadPage {
@@ -1290,6 +1292,10 @@ class SettingsProvider extends ChangeNotifier {
                 caption.toLowerCase().contains('status wise lead count') ||
                 caption.toLowerCase().contains('status_wise_lead_count')))) {
       _statusWiseCount = value;
+    } else if (caption != null &&
+        (caption.toLowerCase().contains('quotation product name') ||
+            caption.toLowerCase().contains('quotation_product_name'))) {
+      _quotationProductName = value;
     }
   }
 
@@ -1385,6 +1391,12 @@ class SettingsProvider extends ChangeNotifier {
   void setDepartmentMenu(int value) {
     _departmentMenu = value;
     _syncStateToPermissionsList(62, value);
+    notifyListeners();
+  }
+  
+  void setQuotationProductName(int value) {
+    _quotationProductName = value;
+    _syncStateToPermissionsList(68, value);
     notifyListeners();
   }
 
@@ -6062,6 +6074,7 @@ class SettingsProvider extends ChangeNotifier {
     _futureSolarDashboard = 0;
     _c9xchecklist = 0;
     _departmentMenu = 0;
+    _quotationProductName = 0;
     notifyListeners();
   }
 
