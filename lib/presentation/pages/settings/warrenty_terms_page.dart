@@ -213,6 +213,23 @@ class _TermsWarrantyContentState extends State<TermsWarrantyContent> {
                       contentPadding: const EdgeInsets.all(16),
                     ),
                   ),
+                  const SizedBox(height: 40),
+                  _buildSectionHeader('Validity'),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: provider.validityController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      hintText: 'Validity',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(color: Colors.grey.shade300),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                      contentPadding: const EdgeInsets.all(16),
+                    ),
+                  ),
                 ],
               ),
             ),

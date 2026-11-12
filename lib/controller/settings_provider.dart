@@ -8186,6 +8186,7 @@ class SettingsProvider extends ChangeNotifier {
       TextEditingController();
   final TextEditingController onWorkCompletionPercentageController =
       TextEditingController();
+  final TextEditingController validityController = TextEditingController();
 
   String _warrantyText = '';
   String _termsText = '';
@@ -8195,6 +8196,7 @@ class SettingsProvider extends ChangeNotifier {
   String _advancePercentageText = '';
   String _onMaterialDeliveryPercentageText = '';
   String _onWorkCompletionPercentageText = '';
+  String _validityText = '';
   int _termsWarrantyId = 0;
 
   String get warrantyText => _warrantyText;
@@ -8206,6 +8208,7 @@ class SettingsProvider extends ChangeNotifier {
   String get onMaterialDeliveryPercentageText =>
       _onMaterialDeliveryPercentageText;
   String get onWorkCompletionPercentageText => _onWorkCompletionPercentageText;
+  String get validityText => _validityText;
   int get termsWarrantyId => _termsWarrantyId;
 
   Future<void> getTermsAndWarranty(BuildContext context) async {
@@ -8238,6 +8241,7 @@ class SettingsProvider extends ChangeNotifier {
                           data['OnWorkCompletion_Percentage'])
                       ?.toString() ??
                   '';
+          _validityText = (data['Validity']?.toString() ?? '');
         }
 
         warrantyController.text = _warrantyText;
@@ -8250,6 +8254,7 @@ class SettingsProvider extends ChangeNotifier {
             _onMaterialDeliveryPercentageText;
         onWorkCompletionPercentageController.text =
             _onWorkCompletionPercentageText;
+        validityController.text = _validityText;
         notifyListeners();
       }
     } catch (e) {
@@ -8275,6 +8280,7 @@ class SettingsProvider extends ChangeNotifier {
               onMaterialDeliveryPercentageController.text.trim(),
           "OnWorkCompletion_Percentage":
               onWorkCompletionPercentageController.text.trim(),
+          "Validity": validityController.text.trim(),
         },
       );
 
@@ -8318,6 +8324,7 @@ class SettingsProvider extends ChangeNotifier {
     _onMaterialDeliveryPercentageText = '';
     _onWorkCompletionPercentageText = '';
     _termsWarrantyId = 0;
+    _validityText = '';
     notifyListeners();
   }
 

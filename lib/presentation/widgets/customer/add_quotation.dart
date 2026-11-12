@@ -151,6 +151,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
             settingsProvider.onMaterialDeliveryPercentageText;
         customerDetailsProvider.workCompletionController.text =
             settingsProvider.onWorkCompletionPercentageText;
+        customerDetailsProvider.qvalidityController.text =
+            settingsProvider.validityText;
 
         if (widget.isEdit) {
           try {
