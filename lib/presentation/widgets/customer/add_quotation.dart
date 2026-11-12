@@ -1700,7 +1700,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     double priceFrom =
                         customerDetailsProvider.aggregatedPriceFrom;
                     double priceTo = customerDetailsProvider.aggregatedPriceTo;
-                    if (priceFrom == 0 && priceTo == 0) {
+                    if (priceFrom == 0.0 && priceTo == 0.0) {
                       try {
                         final selectedData = expenseProvider.itemList
                             .firstWhere((item) =>

@@ -4054,6 +4054,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
     clearMultiItems();
     feasibilityFeeThreeController.clear();
     registrationFeeThreeController.clear();
+    aggregatedPriceFrom = 0.0;
+    aggregatedPriceTo = 0.0;
     notifyListeners();
   }
 
