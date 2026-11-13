@@ -29,6 +29,7 @@ class CustomAutocompleteSearch<T extends Object> extends StatefulWidget {
   final EdgeInsetsGeometry? contentPadding;
   final Color? borderColor;
   final Color? focusedBorderColor;
+  final double? borderWidth;
   final Iterable<T> Function(TextEditingValue textEditingValue)?
       customOptionsBuilder;
 
@@ -58,6 +59,7 @@ class CustomAutocompleteSearch<T extends Object> extends StatefulWidget {
     this.contentPadding,
     this.borderColor,
     this.focusedBorderColor,
+    this.borderWidth,
     this.customOptionsBuilder,
   });
 
@@ -264,14 +266,18 @@ class _CustomAutocompleteSearchState<T extends Object>
                       borderRadius: BorderRadius.circular(10),
                       borderSide: BorderSide(
                         color: widget.borderColor ?? AppColors.textGrey2,
-                        width: 1,
+                        width: widget.borderWidth ??
+                            (widget.borderColor == Colors.red ? 1.5 : 1),
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                       borderSide: BorderSide(
-                        color: widget.focusedBorderColor ?? AppColors.bluebutton,
-                        width: 1.5,
+                        color: widget.focusedBorderColor ??
+                            (widget.borderColor == Colors.red
+                                ? Colors.red
+                                : AppColors.bluebutton),
+                        width: widget.borderWidth ?? 1.5,
                       ),
                     ),
                     enabledBorder: OutlineInputBorder(
@@ -281,7 +287,8 @@ class _CustomAutocompleteSearchState<T extends Object>
                             (AppStyles.isWebScreen(context)
                                 ? AppColors.textGrey2
                                 : AppColors.grey),
-                        width: 1,
+                        width: widget.borderWidth ??
+                            (widget.borderColor == Colors.red ? 1.5 : 1),
                       ),
                     ),
                     contentPadding: widget.contentPadding ??
