@@ -26,6 +26,7 @@ import 'package:vidyanexis/presentation/pages/home/process_flow_page.dart';
 import 'package:vidyanexis/presentation/pages/inventory/expense_management.dart';
 import 'package:vidyanexis/presentation/pages/inventory/inventory_page.dart';
 import 'package:vidyanexis/presentation/pages/location/location_tracking_page.dart';
+import 'package:vidyanexis/presentation/pages/agency_payment/agency_payment_page.dart';
 import 'package:vidyanexis/presentation/pages/login/login_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/complaint_page_reports_mobile.dart';
 import 'package:vidyanexis/presentation/pages/reports/enquiry_source_summary_report_screen.dart';
@@ -213,8 +214,11 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
         {'title': 'Solar Lead Reports', 'page': const SolarLeadReportPage()},
       if (settingsProvider.menuIsViewMap[98].toString() == '1')
         {'title': 'Sales Pipeline', 'page': const LeadStatusReportScreen()},
-      if (settingsProvider.menuIsViewMap[56].toString() == '1') 
-        {'title': 'Lead Creation Report', 'page': const LeadCreationReportScreen()},
+      if (settingsProvider.menuIsViewMap[56].toString() == '1')
+        {
+          'title': 'Lead Creation Report',
+          'page': const LeadCreationReportScreen()
+        },
       if (settingsProvider.menuIsViewMap[181].toString() == '1')
         {'title': 'Stage Report', 'page': const LeadStageReportScreen()},
       if (settingsProvider.menuIsViewMap[99].toString() == '1')
@@ -244,10 +248,7 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
           'page': const CustomerTaskMonthReportScreen()
         },
       if (settingsProvider.menuIsViewMap[182].toString() == '1')
-        {
-          'title': 'Task Aging Report',
-          'page': const TaskAgingReportScreen()
-        },
+        {'title': 'Task Aging Report', 'page': const TaskAgingReportScreen()},
       if (settingsProvider.menuIsViewMap[208].toString() == '1')
         {
           'title': 'Task Deadline Report',
@@ -268,7 +269,6 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
         },
       if (settingsProvider.menuIsViewMap[88].toString() == '1')
         {'title': 'Receipt Reports', 'page': const ReceiptReportPage()},
-
       if (settingsProvider.menuIsViewMap[144].toString() == '1')
         {'title': 'Sales Reports', 'page': const SalesReportScreenPhone()},
       if (settingsProvider.menuIsViewMap[152].toString() == '1')
@@ -409,6 +409,15 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
                     activeColor: const Color(0xFF48BB78), // Green
                     lightColor: const Color(0xFFEDF7ED),
                   ),
+                _buildModernMenuItem(
+                  context: context,
+                  title: 'Agency payment',
+                  iconPath: 'assets/images/agency_payment.svg',
+                  page: const AgencyPaymentPage(),
+                  sideProvider: sideProvider,
+                  activeColor: const Color(0xFF1E88E5),
+                  lightColor: const Color(0xFFE3F2FD),
+                ),
                 const SizedBox(height: 8),
                 _buildLogoutButton(context),
                 const SizedBox(height: 24),

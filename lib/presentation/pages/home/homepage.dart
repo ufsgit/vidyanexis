@@ -64,6 +64,7 @@ import 'package:vidyanexis/presentation/pages/reports/solar_lead_report_page.dar
 import 'package:vidyanexis/presentation/pages/reports/total_outstanding_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/outstanding_report_page.dart';
 import 'package:vidyanexis/presentation/pages/settings/settings_page.dart';
+import 'package:vidyanexis/presentation/pages/agency_payment/agency_payment_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/task_summary_report_screen.dart';
 import 'package:vidyanexis/presentation/widgets/home/side_bar_widget.dart';
 import 'package:vidyanexis/presentation/pages/reports/lead_status_report_screen.dart';
@@ -292,7 +293,7 @@ class _HomePageState extends State<HomePage> {
           baseContent: const TaskPage(),
         ),
 
-        // Show departments below Task when departmentMenu is enabled
+      // Show departments below Task when departmentMenu is enabled
       if (settingsProvider.departmentMenu == 1) ...[
         ...settingsProvider.departmentModel.where((department) {
           final menuId = departmentMenuPermissionMap[department.departmentId];
@@ -350,6 +351,11 @@ class _HomePageState extends State<HomePage> {
             title: 'Settings',
             iconPath: 'assets/images/settings-02.svg',
             baseContent: const SettingsPage()),
+      SidebarOption(
+        title: 'Agency payment',
+        iconPath: 'assets/images/agency_payment.svg',
+        baseContent: const AgencyPaymentPage(),
+      ),
       if (settingsProvider.menuIsViewMap[36].toString() == '1')
         SidebarOption(
           title: 'Process Flow',
@@ -737,6 +743,7 @@ class _HomePageState extends State<HomePage> {
                   'Lead Search',
                 if (settingsProvider.menuIsViewMap[35].toString() == '1')
                   'Task',
+                'Agency payment',
               ].contains(sideProvider.selectedName)
                   ? Text(
                       sideProvider.selectedName == 'Task'
