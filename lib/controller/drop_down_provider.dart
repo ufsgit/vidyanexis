@@ -1439,11 +1439,14 @@ class DropDownProvider extends ChangeNotifier {
     }
 
     try {
+      final int effectiveBranchId =
+          (branchId != null && branchId > 0) ? branchId : (branchId ?? 0);
       final response = await HttpRequest.httpGetRequest(
         endPoint: HttpUrls.getFollowupAssignedUser,
         bodyData: {
           'Lead_Id': leadId,
           'Department_Id': departmentId,
+          'Branch_Id': effectiveBranchId,
         },
       );
 
