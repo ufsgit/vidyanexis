@@ -213,6 +213,10 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
                 departmentId: effectiveDeptId,
                 leadProvider: leadProvider,
               );
+              dropDownProvider.filterStaffByBranchAndDepartment(
+                branchId: settingsProvider.selectedBranchId,
+                departmentId: effectiveDeptId,
+              );
             }
           }
         }
@@ -632,6 +636,10 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
                       branchId: settingsProvider.selectedBranchId,
                       departmentId: effectiveDeptId,
                       leadProvider: leadProvider,
+                    );
+                    dropDownProvider.filterStaffByBranchAndDepartment(
+                      branchId: settingsProvider.selectedBranchId,
+                      departmentId: effectiveDeptId,
                     );
                   }
                 }
