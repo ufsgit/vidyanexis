@@ -2478,11 +2478,10 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
               },
             ),
             ListTile(
-              leading:
-                  const Icon(Icons.photo_library, color: Color(0xFF1A7AE8)),
-              title: const Text('Choose from Gallery'),
+              leading: Icon(Icons.videocam, color: AppColors.appViolet),
+              title: const Text('Record Video'),
               onTap: () async {
-                await provider.addPhotoMobile(allowCamera: false);
+                await provider.addVideoFromCamera();
                 if (context.mounted) Navigator.pop(context);
               },
             ),
