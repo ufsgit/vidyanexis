@@ -985,6 +985,8 @@ class SettingsProvider extends ChangeNotifier {
   int get departmentMenu => _departmentMenu;
   int _quotationProductName = 0;
   int get quotationProductName => _quotationProductName;
+  int _estaNewLeadPosition = 0;
+  int get estaNewLeadPosition => _estaNewLeadPosition;
 
   int _consumerNoInLeadPage = 0;
   int get consumerNoInLeadPage {
@@ -1296,6 +1298,11 @@ class SettingsProvider extends ChangeNotifier {
         (caption.toLowerCase().contains('quotation product name') ||
             caption.toLowerCase().contains('quotation_product_name'))) {
       _quotationProductName = value;
+    } else if (permissionId == 70 ||
+        caption != null &&
+            (caption.toLowerCase().contains('esta new lead position') ||
+                caption.toLowerCase().contains('esta_new_lead_position'))) {
+      _estaNewLeadPosition = value;
     }
   }
 
@@ -1397,6 +1404,12 @@ class SettingsProvider extends ChangeNotifier {
   void setQuotationProductName(int value) {
     _quotationProductName = value;
     _syncStateToPermissionsList(68, value);
+    notifyListeners();
+  }
+  
+  void setEstaNewLeadPosition(int value) {
+    _estaNewLeadPosition = value;
+    _syncStateToPermissionsList(70, value);
     notifyListeners();
   }
 
@@ -6075,6 +6088,7 @@ class SettingsProvider extends ChangeNotifier {
     _c9xchecklist = 0;
     _departmentMenu = 0;
     _quotationProductName = 0;
+    _estaNewLeadPosition = 0;
     notifyListeners();
   }
 

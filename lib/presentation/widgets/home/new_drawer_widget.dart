@@ -849,6 +849,15 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                     ],
                                   ),
                                 ),
+                                if (settingsProvider.estaNewLeadPosition == 1)
+                                  Expanded(
+                                    child: CustomTextField(
+                                      height: 54,
+                                      controller: leadProvider.cityController,
+                                      hintText: 'Place',
+                                      labelText: '',
+                                    ),
+                                  ),
                                 // 11. Enquiry Source
                                 Expanded(
                                   child: Row(
@@ -1866,14 +1875,17 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                       ),
                                     ),
                                     const SizedBox(width: 8),
-                                    Expanded(
-                                      child: CustomTextField(
-                                        height: 54,
-                                        controller: leadProvider.cityController,
-                                        hintText: 'Place',
-                                        labelText: '',
+                                    if (settingsProvider.estaNewLeadPosition !=
+                                        1)
+                                      Expanded(
+                                        child: CustomTextField(
+                                          height: 54,
+                                          controller:
+                                              leadProvider.cityController,
+                                          hintText: 'Place',
+                                          labelText: '',
+                                        ),
                                       ),
-                                    ),
                                   ],
                                 ),
                                 const SizedBox(height: 8),
