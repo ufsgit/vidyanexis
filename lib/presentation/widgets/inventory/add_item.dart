@@ -110,10 +110,11 @@ class _AddItemWidgetState extends State<AddItemWidget> {
       expenseProvider.clearItemAdd();
       expenseProvider.togglePrimaryCheckbox(false);
 
-      settingsProvider.searchCategoryApi('', context);
-      settingsProvider.searchUnitApi('', context);
-      // expenseProvider.searchItemDropdownList(context: context);
-      expenseProvider.searchItemTypeDropdownList(context: context);
+      Future.wait([
+        settingsProvider.searchCategoryApi('', context),
+        settingsProvider.searchUnitApi('', context),
+        expenseProvider.searchItemTypeDropdownList(context: context),
+      ]);
       expenseProvider.cgstController.text = "9";
       expenseProvider.sgstController.text = "9";
       expenseProvider.igstController.text = "18";

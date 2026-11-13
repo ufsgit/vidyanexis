@@ -13,7 +13,9 @@ class HttpRequest {
       Provider.of<SidebarProvider>(navigatorKey.currentState!.context,
           listen: false);
 
-  static Dio _getDio() {
+  static final Dio _dioInstance = _createDio();
+
+  static Dio _createDio() {
     final Dio dio = Dio(
       BaseOptions(
         connectTimeout: const Duration(seconds: 60),
@@ -36,6 +38,8 @@ class HttpRequest {
     }
     return dio;
   }
+
+  static Dio _getDio() => _dioInstance;
 
   static Future<Response> httpGetRequest(
       {Map<String, dynamic>? bodyData,

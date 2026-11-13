@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/calendar_tab_provider.dart';
+import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/models/calendar_tab_model.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -33,7 +36,17 @@ class _AddCalendarTabState extends State<AddCalendarTab> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final provider = Provider.of<CalendarTabProvider>(context, listen: false);
+      final settingsProvider =
+          Provider.of<SettingsProvider>(context, listen: false);
+      final dropDownProvider =
+          Provider.of<DropDownProvider>(context, listen: false);
       provider.clearForm();
+      if (settingsProvider.departmentModel.isEmpty) {
+        settingsProvider.searchDepartment('', context);
+      }
+      if (dropDownProvider.searchUserDetails.isEmpty) {
+        dropDownProvider.getUserDetails(context);
+      }
       if (widget.isEdit && widget.editId != '0') {
         await provider.loadForEdit(widget.editId, widget.customerId, context);
       }
@@ -110,6 +123,10 @@ class _AddCalendarTabState extends State<AddCalendarTab> {
           : 'item_local_${_itemIdCounter++}',
       date: date,
       description: desc,
+      departmentId: provider.selectedDepartmentId.toString(),
+      departmentName: provider.departmentController.text,
+      userId: provider.selectedUserId.toString(),
+      userName: provider.searchUserController.text,
     );
     provider.addOrUpdateCalendarItem(item);
     setState(() {});
@@ -161,7 +178,8 @@ class _AddCalendarTabState extends State<AddCalendarTab> {
   Widget build(BuildContext context) {
     final provider = Provider.of<CalendarTabProvider>(context);
     final isWeb = AppStyles.isWebScreen(context);
-    final maxW = isWeb ? 520.0 : MediaQuery.of(context).size.width * 0.95;
+    // Wider dialog on web so 4 fields fit in one row
+    final maxW = isWeb ? 920.0 : MediaQuery.of(context).size.width * 0.95;
     final isEditingItem = provider.editingItemIndex != null;
 
     return Dialog(
@@ -222,7 +240,7 @@ class _AddCalendarTabState extends State<AddCalendarTab> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      // Name — hint only
+                      // Name
                       CustomTextField(
                         height: 54,
                         controller: provider.nameController,
@@ -248,36 +266,297 @@ class _AddCalendarTabState extends State<AddCalendarTab> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            GestureDetector(
-                              onTap: () => _pickDate(provider),
-                              child: AbsorbPointer(
-                                child: CustomTextField(
-                                  height: 54,
-                                  controller: provider.itemDateController,
-                                  hintText: 'Date *',
-                                  labelText: '',
-                                  keyboardType: TextInputType.text,
-                                  focusNode: FocusNode(),
-                                  suffixIcon: IconButton(
-                                    onPressed: () => _pickDate(provider),
-                                    icon: Icon(
-                                      Icons.calendar_today_outlined,
-                                      size: 18,
-                                      color: Colors.grey.shade500,
+                            // ---- 4 fields: single row on web, stacked on mobile ----
+                            if (isWeb)
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // 1. Date
+                                  Expanded(
+                                    flex: 2,
+                                    child: GestureDetector(
+                                      onTap: () => _pickDate(provider),
+                                      child: AbsorbPointer(
+                                        child: CustomTextField(
+                                          height: 54,
+                                          controller:
+                                              provider.itemDateController,
+                                          hintText: 'Date *',
+                                          labelText: '',
+                                          keyboardType: TextInputType.text,
+                                          focusNode: FocusNode(),
+                                          suffixIcon: IconButton(
+                                            onPressed: () =>
+                                                _pickDate(provider),
+                                            icon: Icon(
+                                              Icons.calendar_today_outlined,
+                                              size: 18,
+                                              color: Colors.grey.shade500,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                ),
+                                  const SizedBox(width: 12),
+                                  // 2. Department
+                                  Expanded(
+                                    flex: 3,
+                                    child: Consumer2<SettingsProvider,
+                                        DropDownProvider>(
+                                      builder: (context, settingsProvider,
+                                          dropDownProvider, child) {
+                                        return CommonDropdown<int>(
+                                          key: ValueKey(settingsProvider
+                                              .selectedBranchId),
+                                          hintText: 'Department',
+                                          selectedValue:
+                                              provider.selectedDepartmentId,
+                                          items: settingsProvider
+                                              .departmentModel
+                                              .map((dept) => DropdownItem<int>(
+                                                    id: dept.departmentId,
+                                                    name: dept.departmentName ??
+                                                        '',
+                                                  ))
+                                              .toList(),
+                                          controller:
+                                              provider.departmentController,
+                                          onItemSelected: (selectedId) {
+                                            provider.selectedDepartmentId =
+                                                selectedId;
+
+                                            final selectedDept =
+                                                settingsProvider.departmentModel
+                                                    .firstWhere((d) =>
+                                                        d.departmentId ==
+                                                        selectedId);
+
+                                            provider.departmentController.text =
+                                                selectedDept.departmentName ??
+                                                    '';
+
+                                            // Reset staff selection
+                                            provider.selectedUserId = null;
+                                            provider.searchUserController
+                                                .clear();
+
+                                            final branchId = settingsProvider
+                                                .selectedBranchId;
+                                            dropDownProvider
+                                                .filterStaffByBranchAndDepartment(
+                                              branchId: (branchId != null &&
+                                                      branchId > 0)
+                                                  ? branchId
+                                                  : null,
+                                              departmentId: selectedId,
+                                            );
+
+                                            setState(() {});
+                                          },
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  // 3. Assigned Staff
+                                  Expanded(
+                                    flex: 3,
+                                    child: Consumer2<CalendarTabProvider,
+                                        DropDownProvider>(
+                                      builder: (context, calendarProvider,
+                                          dropDownProvider, child) {
+                                        return CommonDropdown<int>(
+                                          key: ValueKey(
+                                              '${calendarProvider.selectedDepartmentId}_${dropDownProvider.filteredStaffData.length}'),
+                                          hintText: 'Assigned Staff',
+                                          selectedValue:
+                                              calendarProvider.selectedUserId,
+                                          items: dropDownProvider
+                                              .filteredStaffData
+                                              .map((staff) => DropdownItem<int>(
+                                                    id: staff.userDetailsId,
+                                                    name:
+                                                        staff.userDetailsName ??
+                                                            '',
+                                                  ))
+                                              .toList(),
+                                          controller: calendarProvider
+                                              .searchUserController,
+                                          enabled: calendarProvider
+                                                  .selectedDepartmentId !=
+                                              null,
+                                          onItemSelected: (selectedId) {
+                                            calendarProvider.selectedUserId =
+                                                selectedId;
+
+                                            final selectedStaff =
+                                                dropDownProvider
+                                                    .filteredStaffData
+                                                    .firstWhere((s) =>
+                                                        s.userDetailsId ==
+                                                        selectedId);
+
+                                            calendarProvider
+                                                    .searchUserController.text =
+                                                selectedStaff.userDetailsName ??
+                                                    '';
+
+                                            setState(() {});
+                                          },
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  // 4. Description
+                                  Expanded(
+                                    flex: 3,
+                                    child: CustomTextField(
+                                      height: 54,
+                                      controller:
+                                          provider.itemDescriptionController,
+                                      hintText: 'Description',
+                                      labelText: '',
+                                      keyboardType: TextInputType.text,
+                                      focusNode: FocusNode(),
+                                    ),
+                                  ),
+                                ],
+                              )
+                            else
+                              // Mobile: stacked (original layout)
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () => _pickDate(provider),
+                                    child: AbsorbPointer(
+                                      child: CustomTextField(
+                                        height: 54,
+                                        controller: provider.itemDateController,
+                                        hintText: 'Date *',
+                                        labelText: '',
+                                        keyboardType: TextInputType.text,
+                                        focusNode: FocusNode(),
+                                        suffixIcon: IconButton(
+                                          onPressed: () => _pickDate(provider),
+                                          icon: Icon(
+                                            Icons.calendar_today_outlined,
+                                            size: 18,
+                                            color: Colors.grey.shade500,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Consumer2<SettingsProvider, DropDownProvider>(
+                                    builder: (context, settingsProvider,
+                                        dropDownProvider, child) {
+                                      return CommonDropdown<int>(
+                                        key: ValueKey(
+                                            settingsProvider.selectedBranchId),
+                                        hintText: 'Department',
+                                        selectedValue:
+                                            provider.selectedDepartmentId,
+                                        items: settingsProvider.departmentModel
+                                            .map((dept) => DropdownItem<int>(
+                                                  id: dept.departmentId,
+                                                  name:
+                                                      dept.departmentName ?? '',
+                                                ))
+                                            .toList(),
+                                        controller:
+                                            provider.departmentController,
+                                        onItemSelected: (selectedId) {
+                                          provider.selectedDepartmentId =
+                                              selectedId;
+
+                                          final selectedDept = settingsProvider
+                                              .departmentModel
+                                              .firstWhere((d) =>
+                                                  d.departmentId == selectedId);
+
+                                          provider.departmentController.text =
+                                              selectedDept.departmentName ?? '';
+
+                                          provider.selectedUserId = null;
+                                          provider.searchUserController.clear();
+
+                                          final branchId =
+                                              settingsProvider.selectedBranchId;
+                                          dropDownProvider
+                                              .filterStaffByBranchAndDepartment(
+                                            branchId: (branchId != null &&
+                                                    branchId > 0)
+                                                ? branchId
+                                                : null,
+                                            departmentId: selectedId,
+                                          );
+
+                                          setState(() {});
+                                        },
+                                      );
+                                    },
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Consumer2<CalendarTabProvider,
+                                      DropDownProvider>(
+                                    builder: (context, calendarProvider,
+                                        dropDownProvider, child) {
+                                      return CommonDropdown<int>(
+                                        key: ValueKey(
+                                            '${calendarProvider.selectedDepartmentId}_${dropDownProvider.filteredStaffData.length}'),
+                                        hintText: 'Assigned Staff',
+                                        selectedValue:
+                                            calendarProvider.selectedUserId,
+                                        items: dropDownProvider
+                                            .filteredStaffData
+                                            .map((staff) => DropdownItem<int>(
+                                                  id: staff.userDetailsId,
+                                                  name: staff.userDetailsName ??
+                                                      '',
+                                                ))
+                                            .toList(),
+                                        controller: calendarProvider
+                                            .searchUserController,
+                                        enabled: calendarProvider
+                                                .selectedDepartmentId !=
+                                            null,
+                                        onItemSelected: (selectedId) {
+                                          calendarProvider.selectedUserId =
+                                              selectedId;
+
+                                          final selectedStaff = dropDownProvider
+                                              .filteredStaffData
+                                              .firstWhere((s) =>
+                                                  s.userDetailsId ==
+                                                  selectedId);
+
+                                          calendarProvider
+                                                  .searchUserController.text =
+                                              selectedStaff.userDetailsName ??
+                                                  '';
+
+                                          setState(() {});
+                                        },
+                                      );
+                                    },
+                                  ),
+                                  const SizedBox(height: 12),
+                                  CustomTextField(
+                                    height: 54,
+                                    controller:
+                                        provider.itemDescriptionController,
+                                    hintText: 'Description',
+                                    labelText: '',
+                                    keyboardType: TextInputType.text,
+                                    focusNode: FocusNode(),
+                                  ),
+                                ],
                               ),
-                            ),
-                            const SizedBox(height: 10),
-                            CustomTextField(
-                              height: 54,
-                              controller: provider.itemDescriptionController,
-                              hintText: 'Description',
-                              labelText: '',
-                              keyboardType: TextInputType.text,
-                              focusNode: FocusNode(),
-                            ),
+
                             const SizedBox(height: 12),
                             Align(
                               alignment: Alignment.centerRight,
@@ -312,7 +591,7 @@ class _AddCalendarTabState extends State<AddCalendarTab> {
                         ),
                       ),
 
-                      // Added items — date chip style
+                      // Added items
                       if (provider.calendarItems.isNotEmpty) ...[
                         const SizedBox(height: 18),
                         Row(
@@ -349,6 +628,7 @@ class _AddCalendarTabState extends State<AddCalendarTab> {
                             (index) {
                           final item = provider.calendarItems[index];
                           final editing = provider.editingItemIndex == index;
+
                           return Container(
                             margin: const EdgeInsets.only(bottom: 8),
                             decoration: BoxDecoration(
@@ -366,38 +646,88 @@ class _AddCalendarTabState extends State<AddCalendarTab> {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 12, vertical: 10),
                               child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8, vertical: 4),
-                                    decoration: BoxDecoration(
-                                      color: AppColors.primaryBlue
-                                          .withOpacity(0.12),
-                                      borderRadius: BorderRadius.circular(6),
-                                    ),
-                                    child: Text(
-                                      _fmt(item.date),
-                                      style: GoogleFonts.inter(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w600,
-                                        color: AppColors.primaryBlue,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 10),
                                   Expanded(
-                                    child: Text(
-                                      item.description.isEmpty
-                                          ? 'No description'
-                                          : item.description,
-                                      style: GoogleFonts.inter(
-                                        fontSize: 13,
-                                        color: item.description.isEmpty
-                                            ? Colors.grey.shade400
-                                            : const Color(0xFF333333),
-                                      ),
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 8,
+                                                      vertical: 4),
+                                              decoration: BoxDecoration(
+                                                color: AppColors.primaryBlue
+                                                    .withOpacity(0.12),
+                                                borderRadius:
+                                                    BorderRadius.circular(6),
+                                              ),
+                                              child: Text(
+                                                _fmt(item.date),
+                                                style: GoogleFonts.inter(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: AppColors.primaryBlue,
+                                                ),
+                                              ),
+                                            ),
+                                            const SizedBox(width: 10),
+                                            if (item.departmentName.isNotEmpty)
+                                              Flexible(
+                                                child: Text(
+                                                  item.departmentName,
+                                                  style: GoogleFonts.inter(
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: AppColors.textBlack,
+                                                  ),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                            if (item.userName.isNotEmpty) ...[
+                                              const SizedBox(width: 8),
+                                              Flexible(
+                                                child: Text(
+                                                  item.userName,
+                                                  style: GoogleFonts.inter(
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.grey.shade700,
+                                                  ),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                            ],
+                                          ],
+                                        ),
+                                        if (item.description.isNotEmpty) ...[
+                                          const SizedBox(height: 6),
+                                          Text(
+                                            item.description,
+                                            style: GoogleFonts.inter(
+                                              fontSize: 13,
+                                              color: const Color(0xFF333333),
+                                            ),
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ] else ...[
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            'No description',
+                                            style: GoogleFonts.inter(
+                                              fontSize: 13,
+                                              color: Colors.grey.shade400,
+                                            ),
+                                          ),
+                                        ],
+                                      ],
                                     ),
                                   ),
                                   IconButton(

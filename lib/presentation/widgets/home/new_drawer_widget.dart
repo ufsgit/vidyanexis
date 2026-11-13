@@ -351,41 +351,29 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
         dropDownProvider.updateDistrict(null, '');
       }
 
-      // ---------- Static APIs: call only when not already loaded ----------
-      // Providers also guard internally (forceRefresh / isNotEmpty).
+      // ---------- Static APIs: load in parallel for maximum speed ----------
+      final initialFutures = <Future>[
+        leadProvider.loadLoginDetails(),
+        if (settingsProvider.companyDetails.isEmpty)
+          settingsProvider.getCompanyDetails(),
+        if (leadProvider.leadDropdownData == null)
+          leadProvider.getLeadDropdowns(context),
+        if (dropDownProvider.leadStatuses.isEmpty)
+          dropDownProvider.getFollowUpStatus(context, "1"),
+        if (dropDownProvider.enquiryData.isEmpty)
+          dropDownProvider.getEnquirySource(context),
+        if (dropDownProvider.enquiryForList.isEmpty)
+          dropDownProvider.getEnquiryFor(context),
+        if (settingsProvider.searchSourceCategory.isEmpty)
+          settingsProvider.searchsourceCategoryData('', context),
+        if (settingsProvider.branchModel.isEmpty)
+          settingsProvider.searchBranch(context),
+        if (settingsProvider.departmentModel.isEmpty)
+          settingsProvider.searchDepartment('', context),
+        if (dropDownProvider.searchUserDetails.isEmpty)
+          dropDownProvider.getUserDetails(context),
+      ];
 
-      // Company details – already deduped inside provider
-      if (settingsProvider.companyDetails.isEmpty) {
-        settingsProvider.getCompanyDetails();
-      }
-
-      await leadProvider.loadLoginDetails();
-
-      // Lead dropdowns (work type, roof type, etc.) – static, no id
-      if (leadProvider.leadDropdownData == null) {
-        await leadProvider.getLeadDropdowns(context);
-      }
-
-      // Follow-up statuses – has ViewIn_Id, so refresh for new lead when empty
-      // Provider skips network if _followUpstatus is already filled
-      if (dropDownProvider.leadStatuses.isEmpty) {
-        await dropDownProvider.getFollowUpStatus(context, "1");
-      }
-
-      // Enquiry source / enquiry for – static lists (no id filter changes data set)
-      if (dropDownProvider.enquiryData.isEmpty) {
-        await dropDownProvider.getEnquirySource(context);
-      }
-      if (dropDownProvider.enquiryForList.isEmpty) {
-        await dropDownProvider.getEnquiryFor(context);
-      }
-
-      // Source category – static
-      if (settingsProvider.searchSourceCategory.isEmpty) {
-        await settingsProvider.searchsourceCategoryData('', context);
-      }
-
-      // Districts & states – static (void methods; provider skips if already loaded)
       if (dropDownProvider.districtList.isEmpty) {
         dropDownProvider.getDistricts(context);
       }
@@ -393,17 +381,10 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
         dropDownProvider.getStatesDropdown(context);
       }
 
-      // Branch & department – static (provider skips if already loaded)
-      if (settingsProvider.branchModel.isEmpty) {
-        await settingsProvider.searchBranch(context);
-      }
-      if (settingsProvider.departmentModel.isEmpty) {
-        await settingsProvider.searchDepartment('', context);
-      }
-
-      // User/staff list – static master list (provider skips if already loaded)
-      if (dropDownProvider.searchUserDetails.isEmpty) {
-        await dropDownProvider.getUserDetails(context);
+      try {
+        await Future.wait(initialFutures);
+      } catch (e) {
+        debugPrint('Error loading initial lead data in parallel: $e');
       }
 
       if (widget.isEdit) {

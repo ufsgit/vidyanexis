@@ -15,6 +15,11 @@ class CalendarTabProvider extends ChangeNotifier {
   final TextEditingController itemDateController = TextEditingController();
   final TextEditingController itemDescriptionController =
       TextEditingController();
+  final TextEditingController departmentController = TextEditingController();
+  final TextEditingController searchUserController = TextEditingController();
+
+  int? selectedDepartmentId;
+  int? selectedUserId;
 
   List<CalendarTabModel> _calendarList = [];
   List<CalendarTabModel> get calendarList => _calendarList;
@@ -231,6 +236,10 @@ class CalendarTabProvider extends ChangeNotifier {
     final item = _calendarItems[index];
     itemDateController.text = item.date;
     itemDescriptionController.text = item.description;
+    departmentController.text = item.departmentName;
+    searchUserController.text = item.userName;
+    selectedDepartmentId = int.tryParse(item.departmentId);
+    selectedUserId = int.tryParse(item.userId);
     _editingItemIndex = index;
     notifyListeners();
   }
@@ -250,6 +259,10 @@ class CalendarTabProvider extends ChangeNotifier {
   void clearItemFields() {
     itemDateController.clear();
     itemDescriptionController.clear();
+    departmentController.clear();
+    searchUserController.clear();
+    selectedDepartmentId = null;
+    selectedUserId = null;
   }
 
   void clearForm() {
@@ -257,6 +270,7 @@ class CalendarTabProvider extends ChangeNotifier {
     clearItemFields();
     _calendarItems = [];
     _editingItemIndex = null;
+    notifyListeners();
   }
 
   @override
@@ -264,6 +278,8 @@ class CalendarTabProvider extends ChangeNotifier {
     nameController.dispose();
     itemDateController.dispose();
     itemDescriptionController.dispose();
+    departmentController.dispose();
+    searchUserController.dispose();
     super.dispose();
   }
 

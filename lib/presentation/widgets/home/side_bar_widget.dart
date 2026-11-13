@@ -221,11 +221,8 @@ class _CustomSidebarState extends State<CustomSidebar> {
         ),
         child: InkWell(
           onTap: () {
-            provider.updateSelectedName(option.title);
-            provider.replaceWidget(true, '');
-            provider.replaceWidgetCustomer(true, '');
+            provider.selectOption(name: option.title, index: index);
             context.go(HomePage.route);
-            provider.setSelectedIndex(index);
             if (widget.isDrawer) {
               Navigator.of(context).pop();
             }
@@ -268,11 +265,8 @@ class _CustomSidebarState extends State<CustomSidebar> {
       padding: const EdgeInsets.only(left: 54, right: 0, top: 0, bottom: 0),
       child: InkWell(
         onTap: () {
-          provider.updateSelectedName(option.title);
-          provider.replaceWidget(true, '');
-          provider.replaceWidgetCustomer(true, '');
+          provider.selectOption(name: option.title, index: index);
           context.go(HomePage.route);
-          provider.setSelectedIndex(index);
           if (widget.isDrawer) {
             Navigator.of(context).pop();
           }
