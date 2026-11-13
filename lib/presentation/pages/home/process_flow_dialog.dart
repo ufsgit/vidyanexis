@@ -62,6 +62,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
   final Map<int, String> _uploadedDocImageIds = {};
   final Map<int, double> _uploadProgress = {}; // docTypeId → 0.0–1.0
   final Set<int> _uploadingDocs = {}; // currently uploading
+  Set<String> userErrorTaskKeys = {};
 
   @override
   void initState() {
@@ -394,6 +395,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                     setState(() {
                                       selectedStatus = status;
                                       selectedSubStatus = null;
+                                      userErrorTaskKeys.clear();
                                       _uploadedDocUrls.clear();
                                       _uploadedDocImageIds.clear();
                                     });
@@ -488,6 +490,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                   onChanged: (newVal) {
                                     setState(() {
                                       selectedSubStatus = newVal;
+                                      userErrorTaskKeys.clear();
                                     });
                                   },
                                   items: selectedStatus.subStatuses!
@@ -838,41 +841,85 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                                   } catch (_) {}
                                                 }
 
-                                                return CustomAutocompleteSearch<
-                                                    SearchUserDetails>(
-                                                  key: ValueKey(
-                                                      'user_search_${taskKey}_${assignedUserId ?? 0}'),
-                                                  showOptionsOnTap: true,
-                                                  maxHeight: 300,
-                                                  optionsViewOpenDirection:
-                                                      OptionsViewOpenDirection
-                                                          .down,
-                                                  disableSearch: true,
-                                                  items: departmentStaff,
-                                                  displayStringFunction:
-                                                      (staff) =>
-                                                          staff
-                                                              .userDetailsName ??
-                                                          '',
-                                                  defaultText: defaultUserName,
-                                                  labelText: 'User',
-                                                  suffixIcon:
-                                                      const Icon(Icons.search),
-                                                  onTap: () {},
-                                                  onSelected: (SearchUserDetails
-                                                      selected) {
-                                                    dropDownProvider
-                                                        .setSelectedUserId(
-                                                            selected
-                                                                .userDetailsId);
+                                                final bool hasUserError =
+                                                    userErrorTaskKeys.contains(taskKey);
+                                                return Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    CustomAutocompleteSearch<
+                                                        SearchUserDetails>(
+                                                      key: ValueKey(
+                                                          'user_search_${taskKey}_${assignedUserId ?? 0}'),
+                                                      showOptionsOnTap: true,
+                                                      maxHeight: 300,
+                                                      optionsViewOpenDirection:
+                                                          OptionsViewOpenDirection
+                                                              .down,
+                                                      disableSearch: true,
+                                                      items: departmentStaff,
+                                                      displayStringFunction:
+                                                          (staff) =>
+                                                              staff
+                                                                  .userDetailsName ??
+                                                              '',
+                                                      defaultText: defaultUserName,
+                                                      labelText: 'User',
+                                                      borderColor: hasUserError
+                                                          ? Colors.red
+                                                          : null,
+                                                      focusedBorderColor: hasUserError
+                                                          ? Colors.red
+                                                          : null,
+                                                      borderWidth: hasUserError
+                                                          ? 1.5
+                                                          : null,
+                                                      suffixIcon:
+                                                          const Icon(Icons.search),
+                                                      onTap: () {},
+                                                      onSelected: (SearchUserDetails
+                                                          selected) {
+                                                        dropDownProvider
+                                                            .setSelectedUserId(
+                                                                selected
+                                                                    .userDetailsId);
 
-                                                    reportsProvider.setTaskUser(
-                                                      taskKey,
-                                                      selected.userDetailsId,
-                                                    );
-                                                  },
-                                                  onChanged: (_) {},
-                                                  onSearch: (_) async {},
+                                                        reportsProvider.setTaskUser(
+                                                          taskKey,
+                                                          selected.userDetailsId,
+                                                        );
+                                                        if (userErrorTaskKeys.contains(taskKey)) {
+                                                          setState(() {
+                                                            userErrorTaskKeys.remove(taskKey);
+                                                          });
+                                                        }
+                                                      },
+                                                      onChanged: (val) {
+                                                        if (userErrorTaskKeys.contains(taskKey) &&
+                                                            val.trim().isNotEmpty) {
+                                                          setState(() {
+                                                            userErrorTaskKeys.remove(taskKey);
+                                                          });
+                                                        }
+                                                      },
+                                                      onSearch: (_) async {},
+                                                    ),
+                                                    if (hasUserError)
+                                                      const Padding(
+                                                        padding: EdgeInsets.only(top: 4, left: 4),
+                                                        child: Text(
+                                                          "select user",
+                                                          style: TextStyle(
+                                                            fontFamily: 'PlusJakartaSans',
+                                                            color: Colors.red,
+                                                            fontSize: 11,
+                                                            fontWeight: FontWeight.w500,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                  ],
                                                 );
                                               },
                                             )
@@ -1992,6 +2039,42 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                         ),
                                       );
                                       return;
+                                    }
+
+                                    // User selection check for Next Tasks
+                                    final missingUserKeys = <String>{};
+                                    for (final taskItem
+                                        in reportsProvider.taskTypeModel) {
+                                      final taskKey = taskItem.uniqueId ??
+                                          taskItem.taskTypeId.toString();
+                                      final bool isTaskSelected =
+                                          settingsProvider.taskStatusChangeHideButton ==
+                                                  1
+                                              ? reportsProvider
+                                                  .selectedTaskTypeIds
+                                                  .contains(taskKey)
+                                              : true;
+                                      if (taskItem.showUser == 1 &&
+                                          isTaskSelected) {
+                                        final int? assignedUserId =
+                                            reportsProvider
+                                                .taskTypeToUserMap[taskKey];
+                                        if (assignedUserId == null ||
+                                            assignedUserId == 0) {
+                                          missingUserKeys.add(taskKey);
+                                        }
+                                      }
+                                    }
+
+                                    if (missingUserKeys.isNotEmpty) {
+                                      setState(() {
+                                        userErrorTaskKeys = missingUserKeys;
+                                      });
+                                      return;
+                                    } else {
+                                      setState(() {
+                                        userErrorTaskKeys = {};
+                                      });
                                     }
 
                                     setState(() {

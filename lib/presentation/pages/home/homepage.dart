@@ -264,7 +264,7 @@ class _HomePageState extends State<HomePage> {
         ),
       if (settingsProvider.menuIsViewMap[12].toString() == '1')
         SidebarOption(
-          title: 'DashBoard',
+          title: 'Dashboard',
           iconPath: 'assets/images/dashboard_icon.svg',
           baseContent: const DashBoardPage(),
         ),
@@ -409,7 +409,7 @@ class _HomePageState extends State<HomePage> {
 
       if (settingsProvider.menuIsViewMap[9].toString() == '1')
         SidebarOption(
-          title: 'Periodic service Reports',
+          title: 'Periodic Service Reports',
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: AmcReportScreen()),
         ),

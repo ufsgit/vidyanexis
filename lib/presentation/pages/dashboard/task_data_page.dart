@@ -799,9 +799,9 @@ class _TotalTaskDataPageState extends State<TotalTaskDataPage> {
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 8, vertical: 2),
                                             decoration: BoxDecoration(
-                                              color:
-                                                  (task.colorCode ?? Colors.blue)
-                                                      .withOpacity(0.15),
+                                              color: (task.colorCode ??
+                                                      Colors.blue)
+                                                  .withOpacity(0.15),
                                               borderRadius:
                                                   BorderRadius.circular(4),
                                             ),
@@ -809,8 +809,8 @@ class _TotalTaskDataPageState extends State<TotalTaskDataPage> {
                                               task.taskStatusName,
                                               overflow: TextOverflow.ellipsis,
                                               style: TextStyle(
-                                                color:
-                                                    task.colorCode ?? Colors.blue,
+                                                color: task.colorCode ??
+                                                    Colors.blue,
                                                 fontSize: 12,
                                                 fontWeight: FontWeight.w600,
                                                 fontFamily: 'PlusJakartaSans',
@@ -1880,6 +1880,8 @@ class _TotalTaskDataPageState extends State<TotalTaskDataPage> {
                             ValueNotifier(null);
                         final ValueNotifier<bool> isSaving =
                             ValueNotifier(false);
+                        final ValueNotifier<Set<String>> userErrorTaskKeys =
+                            ValueNotifier<Set<String>>({});
 
                         Widget formFields = Container(
                           padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
@@ -1916,6 +1918,7 @@ class _TotalTaskDataPageState extends State<TotalTaskDataPage> {
                                               onTap: () async {
                                                 selectedStatus.value = status;
                                                 selectedSubStatus.value = null;
+                                                userErrorTaskKeys.value = {};
                                                 _uploadedDocUrls.clear();
                                                 _uploadedDocImageIds.clear();
                                                 int sId = status.statusId ?? 0;
@@ -2085,8 +2088,9 @@ class _TotalTaskDataPageState extends State<TotalTaskDataPage> {
                                 builder: (context, reportsProvider, child) {
                                   if (reportsProvider.processFlowMessage ==
                                           null ||
-                                      reportsProvider
-                                          .processFlowMessage!.trim().isEmpty) {
+                                      reportsProvider.processFlowMessage!
+                                          .trim()
+                                          .isEmpty) {
                                     return const SizedBox.shrink();
                                   }
                                   return Container(
@@ -2097,8 +2101,7 @@ class _TotalTaskDataPageState extends State<TotalTaskDataPage> {
                                         horizontal: 14, vertical: 10),
                                     decoration: BoxDecoration(
                                       color: const Color(0xFFFEF2F2),
-                                      borderRadius:
-                                          BorderRadius.circular(4),
+                                      borderRadius: BorderRadius.circular(4),
                                       border: Border.all(
                                           color: const Color(0xFFFCA5A5)),
                                     ),
@@ -2115,8 +2118,7 @@ class _TotalTaskDataPageState extends State<TotalTaskDataPage> {
                                         Expanded(
                                           child: Text(
                                             reportsProvider.processFlowMessage!,
-                                            style:
-                                                GoogleFonts.plusJakartaSans(
+                                            style: GoogleFonts.plusJakartaSans(
                                               color: const Color(0xFF991B1B),
                                               fontSize: 13,
                                               fontWeight: FontWeight.w600,
@@ -2287,7 +2289,9 @@ class _TotalTaskDataPageState extends State<TotalTaskDataPage> {
                                                           flex: 2,
                                                           child: Row(
                                                             children: [
-                                                              if (settingsProvider.taskStatusChangeHideButton == 1) ...[
+                                                              if (settingsProvider
+                                                                      .taskStatusChangeHideButton ==
+                                                                  1) ...[
                                                                 Container(
                                                                   width: 18,
                                                                   height: 18,
@@ -2300,15 +2304,11 @@ class _TotalTaskDataPageState extends State<TotalTaskDataPage> {
                                                                             .white,
                                                                     borderRadius:
                                                                         BorderRadius
-                                                                            .circular(
-                                                                                4),
+                                                                            .circular(4),
                                                                     border: Border.all(
                                                                         color: selected
-                                                                            ? AppColors
-                                                                                .darkGreen
-                                                                            : Colors
-                                                                                .grey
-                                                                                .shade400),
+                                                                            ? AppColors.darkGreen
+                                                                            : Colors.grey.shade400),
                                                                   ),
                                                                   child: selected
                                                                       ? const Icon(
@@ -2316,8 +2316,8 @@ class _TotalTaskDataPageState extends State<TotalTaskDataPage> {
                                                                               .check,
                                                                           size:
                                                                               14,
-                                                                          color: Colors
-                                                                              .white)
+                                                                          color:
+                                                                              Colors.white)
                                                                       : null,
                                                                 ),
                                                                 const SizedBox(
@@ -2508,49 +2508,69 @@ class _TotalTaskDataPageState extends State<TotalTaskDataPage> {
                                                                       } catch (_) {}
                                                                     }
 
-                                                                    return CustomAutocompleteSearch<
-                                                                        SearchUserDetails>(
-                                                                      key: ValueKey(
-                                                                          'user_search_${taskKey}_${assignedUserId ?? 0}'),
-                                                                      showOptionsOnTap:
-                                                                          true,
-                                                                      maxHeight:
-                                                                          300,
-                                                                      optionsViewOpenDirection:
-                                                                          OptionsViewOpenDirection
-                                                                              .down,
-                                                                      items:
-                                                                          departmentStaff,
-                                                                      displayStringFunction:
-                                                                          (staff) =>
-                                                                              staff.userDetailsName ??
-                                                                              '',
-                                                                      defaultText:
-                                                                          defaultUserName,
-                                                                      labelText:
-                                                                          'User',
-                                                                      suffixIcon:
-                                                                          const Icon(
-                                                                              Icons.search),
-                                                                      onTap:
-                                                                          () {},
-                                                                      onSelected:
-                                                                          (SearchUserDetails
-                                                                              selected) {
-                                                                        dropDownProvider
-                                                                            .setSelectedUserId(selected.userDetailsId);
-
-                                                                        reportsProvider
-                                                                            .setTaskUser(
-                                                                          taskKey,
-                                                                          selected
-                                                                              .userDetailsId,
+                                                                    return ValueListenableBuilder<
+                                                                        Set<String>>(
+                                                                      valueListenable:
+                                                                          userErrorTaskKeys,
+                                                                      builder: (context,
+                                                                          errorKeys,
+                                                                          _) {
+                                                                        final bool
+                                                                            hasUserError =
+                                                                            errorKeys.contains(taskKey);
+                                                                        return Column(
+                                                                          crossAxisAlignment:
+                                                                              CrossAxisAlignment.start,
+                                                                          mainAxisSize:
+                                                                              MainAxisSize.min,
+                                                                          children: [
+                                                                            CustomAutocompleteSearch<SearchUserDetails>(
+                                                                              key: ValueKey('user_search_${taskKey}_${assignedUserId ?? 0}'),
+                                                                              showOptionsOnTap: true,
+                                                                              maxHeight: 300,
+                                                                              optionsViewOpenDirection: OptionsViewOpenDirection.down,
+                                                                              items: departmentStaff,
+                                                                              displayStringFunction: (staff) => staff.userDetailsName ?? '',
+                                                                              defaultText: defaultUserName,
+                                                                              labelText: 'User',
+                                                                              borderColor: hasUserError ? Colors.red : null,
+                                                                              focusedBorderColor: hasUserError ? Colors.red : null,
+                                                                              borderWidth: hasUserError ? 1.5 : null,
+                                                                              suffixIcon: const Icon(Icons.search),
+                                                                              onTap: () {},
+                                                                              onSelected: (SearchUserDetails selected) {
+                                                                                dropDownProvider.setSelectedUserId(selected.userDetailsId);
+                                                                                reportsProvider.setTaskUser(
+                                                                                  taskKey,
+                                                                                  selected.userDetailsId,
+                                                                                );
+                                                                                if (userErrorTaskKeys.value.contains(taskKey)) {
+                                                                                  userErrorTaskKeys.value = Set<String>.from(userErrorTaskKeys.value)..remove(taskKey);
+                                                                                }
+                                                                              },
+                                                                              onChanged: (val) {
+                                                                                if (userErrorTaskKeys.value.contains(taskKey) && val.trim().isNotEmpty) {
+                                                                                  userErrorTaskKeys.value = Set<String>.from(userErrorTaskKeys.value)..remove(taskKey);
+                                                                                }
+                                                                              },
+                                                                              onSearch: (_) async {},
+                                                                            ),
+                                                                            if (hasUserError)
+                                                                              const Padding(
+                                                                                padding: EdgeInsets.only(top: 4, left: 4),
+                                                                                child: Text(
+                                                                                  "select user",
+                                                                                  style: TextStyle(
+                                                                                    fontFamily: 'PlusJakartaSans',
+                                                                                    color: Colors.red,
+                                                                                    fontSize: 11,
+                                                                                    fontWeight: FontWeight.w500,
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                          ],
                                                                         );
                                                                       },
-                                                                      onChanged:
-                                                                          (_) {},
-                                                                      onSearch:
-                                                                          (_) async {},
                                                                     );
                                                                   },
                                                                 )
@@ -3643,12 +3663,11 @@ class _TotalTaskDataPageState extends State<TotalTaskDataPage> {
                                                         builder: (BuildContext
                                                             context) {
                                                           return AlertDialog(
-                                                            shape:
-                                                                RoundedRectangleBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(
-                                                                                4)),
+                                                            shape: RoundedRectangleBorder(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            4)),
                                                             titlePadding:
                                                                 const EdgeInsets
                                                                     .fromLTRB(
@@ -3739,8 +3758,9 @@ class _TotalTaskDataPageState extends State<TotalTaskDataPage> {
                                                                     Navigator.of(
                                                                             context)
                                                                         .pop(),
-                                                                child: const Text(
-                                                                    "OK"),
+                                                                child:
+                                                                    const Text(
+                                                                        "OK"),
                                                               ),
                                                             ],
                                                           );
@@ -4014,6 +4034,53 @@ class _TotalTaskDataPageState extends State<TotalTaskDataPage> {
                                                         settingsProvider
                                                                 .documentButtonTaskStatus ==
                                                             1;
+
+                                                    // User selection check for Next Tasks
+                                                    final missingUserKeys =
+                                                        <String>{};
+                                                    for (final taskItem
+                                                        in provider
+                                                            .taskTypeModel) {
+                                                      final taskKey = taskItem
+                                                              .uniqueId ??
+                                                          taskItem.taskTypeId
+                                                              .toString();
+                                                      final bool
+                                                          isTaskSelected =
+                                                          settingsProvider
+                                                                      .taskStatusChangeHideButton ==
+                                                                  1
+                                                              ? provider
+                                                                  .selectedTaskTypeIds
+                                                                  .contains(
+                                                                      taskKey)
+                                                              : true;
+                                                      if (taskItem.showUser ==
+                                                              1 &&
+                                                          isTaskSelected) {
+                                                        final int?
+                                                            assignedUserId =
+                                                            provider.taskTypeToUserMap[
+                                                                taskKey];
+                                                        if (assignedUserId ==
+                                                                null ||
+                                                            assignedUserId ==
+                                                                0) {
+                                                          missingUserKeys
+                                                              .add(taskKey);
+                                                        }
+                                                      }
+                                                    }
+
+                                                    if (missingUserKeys
+                                                        .isNotEmpty) {
+                                                      userErrorTaskKeys.value =
+                                                          missingUserKeys;
+                                                      return;
+                                                    } else {
+                                                      userErrorTaskKeys.value =
+                                                          {};
+                                                    }
 
                                                     //Remark Mandatory Check
                                                     // Follow-up Date Mandatory Check

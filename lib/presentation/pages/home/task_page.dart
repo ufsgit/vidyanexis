@@ -4162,6 +4162,8 @@ class _tasksPageReportState extends State<TaskPage> {
                             ValueNotifier(null);
                         final ValueNotifier<bool> isSaving =
                             ValueNotifier(false);
+                        final ValueNotifier<Set<String>> userErrorTaskKeys =
+                            ValueNotifier<Set<String>>({});
                         WidgetsBinding.instance.addPostFrameCallback((_) {
                           reportsProvider.clearProcessFlowData();
                           reportsProvider.clearDescription();
@@ -4202,6 +4204,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                               onTap: () async {
                                                 selectedStatus.value = status;
                                                 selectedSubStatus.value = null;
+                                                userErrorTaskKeys.value = {};
                                                 _uploadedDocUrls.clear();
                                                 _uploadedDocImageIds.clear();
                                                 int sId = status.statusId ?? 0;
@@ -5219,6 +5222,8 @@ class _tasksPageReportState extends State<TaskPage> {
                             ValueNotifier(null);
                         final ValueNotifier<bool> isSaving =
                             ValueNotifier(false);
+                        final ValueNotifier<Set<String>> userErrorTaskKeys =
+                            ValueNotifier<Set<String>>({});
 
                         Widget formFields = Container(
                           padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
@@ -5255,6 +5260,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                               onTap: () async {
                                                 selectedStatus.value = status;
                                                 selectedSubStatus.value = null;
+                                                userErrorTaskKeys.value = {};
                                                 _uploadedDocUrls.clear();
                                                 _uploadedDocImageIds.clear();
                                                 int sId = status.statusId ?? 0;
@@ -5847,49 +5853,70 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                       } catch (_) {}
                                                                     }
 
-                                                                    return CustomAutocompleteSearch<
-                                                                        SearchUserDetails>(
-                                                                      key: ValueKey(
-                                                                          'user_search_${taskKey}_${assignedUserId ?? 0}'),
-                                                                      showOptionsOnTap:
-                                                                          true,
-                                                                      maxHeight:
-                                                                          300,
-                                                                      optionsViewOpenDirection:
-                                                                          OptionsViewOpenDirection
-                                                                              .down,
-                                                                      items:
-                                                                          departmentStaff,
-                                                                      displayStringFunction:
-                                                                          (staff) =>
-                                                                              staff.userDetailsName ??
-                                                                              '',
-                                                                      defaultText:
-                                                                          defaultUserName,
-                                                                      labelText:
-                                                                          'User',
-                                                                      suffixIcon:
-                                                                          const Icon(
-                                                                              Icons.search),
-                                                                      onTap:
-                                                                          () {},
-                                                                      onSelected:
-                                                                          (SearchUserDetails
-                                                                              selected) {
-                                                                        dropDownProvider
-                                                                            .setSelectedUserId(selected.userDetailsId);
-
-                                                                        reportsProvider
-                                                                            .setTaskUser(
-                                                                          taskKey,
-                                                                          selected
-                                                                              .userDetailsId,
+                                                                    return ValueListenableBuilder<Set<String>>(
+                                                                      valueListenable: userErrorTaskKeys,
+                                                                      builder: (context, errorKeys, _) {
+                                                                        final bool hasUserError = errorKeys.contains(taskKey);
+                                                                        return Column(
+                                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                                          mainAxisSize: MainAxisSize.min,
+                                                                          children: [
+                                                                            CustomAutocompleteSearch<SearchUserDetails>(
+                                                                              key: ValueKey(
+                                                                                  'user_search_${taskKey}_${assignedUserId ?? 0}'),
+                                                                              showOptionsOnTap: true,
+                                                                              maxHeight: 300,
+                                                                              optionsViewOpenDirection:
+                                                                                  OptionsViewOpenDirection.down,
+                                                                              items: departmentStaff,
+                                                                              displayStringFunction: (staff) =>
+                                                                                  staff.userDetailsName ?? '',
+                                                                              defaultText: defaultUserName,
+                                                                              labelText: 'User',
+                                                                              borderColor: hasUserError ? Colors.red : null,
+                                                                              focusedBorderColor: hasUserError ? Colors.red : null,
+                                                                              borderWidth: hasUserError ? 1.5 : null,
+                                                                              suffixIcon: const Icon(Icons.search),
+                                                                              onTap: () {},
+                                                                              onSelected: (SearchUserDetails selected) {
+                                                                                dropDownProvider
+                                                                                    .setSelectedUserId(selected.userDetailsId);
+                                                                                reportsProvider.setTaskUser(
+                                                                                  taskKey,
+                                                                                  selected.userDetailsId,
+                                                                                );
+                                                                                if (userErrorTaskKeys.value.contains(taskKey)) {
+                                                                                  userErrorTaskKeys.value =
+                                                                                      Set<String>.from(userErrorTaskKeys.value)
+                                                                                        ..remove(taskKey);
+                                                                                }
+                                                                              },
+                                                                              onChanged: (val) {
+                                                                                if (userErrorTaskKeys.value.contains(taskKey) &&
+                                                                                    val.trim().isNotEmpty) {
+                                                                                  userErrorTaskKeys.value =
+                                                                                      Set<String>.from(userErrorTaskKeys.value)
+                                                                                        ..remove(taskKey);
+                                                                                }
+                                                                              },
+                                                                              onSearch: (_) async {},
+                                                                            ),
+                                                                            if (hasUserError)
+                                                                              const Padding(
+                                                                                padding: EdgeInsets.only(top: 4, left: 4),
+                                                                                child: Text(
+                                                                                  "select user",
+                                                                                  style: TextStyle(
+                                                                                    fontFamily: 'PlusJakartaSans',
+                                                                                    color: Colors.red,
+                                                                                    fontSize: 11,
+                                                                                    fontWeight: FontWeight.w500,
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                          ],
                                                                         );
                                                                       },
-                                                                      onChanged:
-                                                                          (_) {},
-                                                                      onSearch:
-                                                                          (_) async {},
                                                                     );
                                                                   },
                                                                 )
@@ -7348,6 +7375,28 @@ class _tasksPageReportState extends State<TaskPage> {
                                                         settingsProvider
                                                                 .documentButtonTaskStatus ==
                                                             1;
+
+                                                    // User selection check for Next Tasks
+                                                    final missingUserKeys = <String>{};
+                                                    for (final taskItem in provider.taskTypeModel) {
+                                                      final taskKey = taskItem.uniqueId ?? taskItem.taskTypeId.toString();
+                                                      final bool isTaskSelected = settingsProvider.taskStatusChangeHideButton == 1
+                                                          ? provider.selectedTaskTypeIds.contains(taskKey)
+                                                          : true;
+                                                      if (taskItem.showUser == 1 && isTaskSelected) {
+                                                        final int? assignedUserId = provider.taskTypeToUserMap[taskKey];
+                                                        if (assignedUserId == null || assignedUserId == 0) {
+                                                          missingUserKeys.add(taskKey);
+                                                        }
+                                                      }
+                                                    }
+
+                                                    if (missingUserKeys.isNotEmpty) {
+                                                      userErrorTaskKeys.value = missingUserKeys;
+                                                      return;
+                                                    } else {
+                                                      userErrorTaskKeys.value = {};
+                                                    }
 
                                                     //Remark Mandatory Check
                                                     // Follow-up Date Mandatory Check
