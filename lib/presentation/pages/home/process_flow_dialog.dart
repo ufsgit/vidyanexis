@@ -2024,7 +2024,13 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                                       .getCurrentLocation()
                                                   : null,
                                               subStatus: selectedSubStatus,
-                                              audioFiles: uploadedAudioFiles);
+                                              audioFiles: uploadedAudioFiles,
+                                              customerId:
+                                                  widget.task.customerId,
+                                              enquiryForId:
+                                                  widget.task.enquiryForId,
+                                              taskTypeId:
+                                                  widget.task.taskTypeId);
 
                                       if (isSuccess) {
                                         audioProvider.clearAudios();

@@ -4163,6 +4163,7 @@ class _tasksPageReportState extends State<TaskPage> {
                         final ValueNotifier<bool> isSaving =
                             ValueNotifier(false);
                         WidgetsBinding.instance.addPostFrameCallback((_) {
+                          reportsProvider.clearProcessFlowData();
                           reportsProvider.clearDescription();
                           Provider.of<AudioFileProvider>(context, listen: false)
                               .clearAudios();
@@ -4198,11 +4199,24 @@ class _tasksPageReportState extends State<TaskPage> {
                                             return _buildCustomStatusChip(
                                               status: status,
                                               isSelected: isSelected,
-                                              onTap: () {
+                                              onTap: () async {
                                                 selectedStatus.value = status;
                                                 selectedSubStatus.value = null;
                                                 _uploadedDocUrls.clear();
                                                 _uploadedDocImageIds.clear();
+                                                int sId = status.statusId ?? 0;
+                                                int tId = (status.taskTypeId != null &&
+                                                        status.taskTypeId != 0)
+                                                    ? status.taskTypeId!
+                                                    : task.taskTypeId;
+                                                await reportsProvider
+                                                    .fetchTaskTypes(
+                                                  tId,
+                                                  sId,
+                                                  task.customerId,
+                                                  task.enquiryForId,
+                                                  context,
+                                                );
                                               },
                                             );
                                           }).toList(),
@@ -4820,6 +4834,10 @@ class _tasksPageReportState extends State<TaskPage> {
                                                         selectedSubStatus.value,
                                                     audioFiles:
                                                         uploadedAudioFiles,
+                                                    customerId: task.customerId,
+                                                    enquiryForId:
+                                                        task.enquiryForId,
+                                                    taskTypeId: task.taskTypeId,
                                                   );
                                                   if (isSuccess) {
                                                     audioProvider.clearAudios();
@@ -5240,8 +5258,10 @@ class _tasksPageReportState extends State<TaskPage> {
                                                 _uploadedDocUrls.clear();
                                                 _uploadedDocImageIds.clear();
                                                 int sId = status.statusId ?? 0;
-                                                int tId =
-                                                    status.taskTypeId ?? 0;
+                                                int tId = (status.taskTypeId != null &&
+                                                        status.taskTypeId != 0)
+                                                    ? status.taskTypeId!
+                                                    : (task.taskTypeId ?? 0);
                                                 await reportsProvider
                                                     .fetchTaskTypes(
                                                         tId,
@@ -7811,23 +7831,6 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                   ),
                                                                 ],
                                                               ),
-                                                              content: Column(
-                                                                mainAxisSize:
-                                                                    MainAxisSize
-                                                                        .min,
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: [
-                                                                  const Text(
-                                                                    "Custom Fields Not Filled",
-                                                                    style: TextStyle(
-                                                                      fontFamily:
-                                                                          'PlusJakartaSans',
-                                                                      color: Colors
-                                                                          .black,
-                                                                      fontSize: 16,
-                                                                      fontWeight:
                                                                           FontWeight
                                                                               .w600,
                                                                     ),
@@ -7941,7 +7944,13 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                     selectedSubStatus
                                                                         .value,
                                                                 audioFiles:
-                                                                    uploadedAudioFiles);
+                                                                    uploadedAudioFiles,
+                                                                customerId:
+                                                                    task.customerId,
+                                                                enquiryForId:
+                                                                    task.enquiryForId,
+                                                                taskTypeId:
+                                                                    task.taskTypeId);
 
                                                         if (!context.mounted) {
                                                           return;
