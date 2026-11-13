@@ -375,6 +375,14 @@ class _AddDocumentPhoneState extends State<AddDocumentPhone> {
               },
             ),
             ListTile(
+              leading: Icon(Icons.videocam, color: AppColors.appViolet),
+              title: const Text('Record Video'),
+              onTap: () {
+                Navigator.pop(context);
+                provider.addVideoFromCamera();
+              },
+            ),
+            ListTile(
               leading: Icon(Icons.description, color: AppColors.appViolet),
               title: const Text('Upload Document'),
               onTap: () {

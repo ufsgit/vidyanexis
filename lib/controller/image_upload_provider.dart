@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -32,7 +33,8 @@ class ImageUploadProvider extends ChangeNotifier {
   final List<Map<String, dynamic>> _fileInfoList = [];
   List<Map<String, dynamic>> get fileInfoList => _fileInfoList;
   List<Map<String, dynamic>> _lastUploadedDocuments = [];
-  List<Map<String, dynamic>> get lastUploadedDocuments => _lastUploadedDocuments;
+  List<Map<String, dynamic>> get lastUploadedDocuments =>
+      _lastUploadedDocuments;
   String? _selectedDocumentTypeName;
   String? get selectedDocumentTypeName => _selectedDocumentTypeName;
 
@@ -49,7 +51,17 @@ class ImageUploadProvider extends ChangeNotifier {
     final result = await FilePicker.platform.pickFiles(
       allowMultiple: true,
       type: FileType.custom,
-      allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'csv'],
+      allowedExtensions: [
+        'jpg',
+        'jpeg',
+        'png',
+        'pdf',
+        'doc',
+        'docx',
+        'xls',
+        'xlsx',
+        'csv'
+      ],
     );
 
     if (result != null) {
@@ -105,7 +117,17 @@ class ImageUploadProvider extends ChangeNotifier {
     final result = await FilePicker.platform.pickFiles(
       allowMultiple: false,
       type: FileType.custom,
-      allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'csv'],
+      allowedExtensions: [
+        'jpg',
+        'jpeg',
+        'png',
+        'pdf',
+        'doc',
+        'docx',
+        'xls',
+        'xlsx',
+        'csv'
+      ],
     );
 
     if (result == null || result.files.isEmpty) {
@@ -261,7 +283,7 @@ class ImageUploadProvider extends ChangeNotifier {
   }
 
   Future<void> addPhotoMobile({bool allowCamera = false}) async {
-    if (kIsWeb) return;
+    // if (kIsWeb) return;
 
     if (!await _requestPhotoPermission()) {
       print('Photo permission denied');
@@ -306,6 +328,57 @@ class ImageUploadProvider extends ChangeNotifier {
         });
       }
       if (images.isNotEmpty) notifyListeners();
+    }
+  }
+
+  Future<void> addVideoFromCamera() async {
+    // if (kIsWeb) return;
+
+    try {
+      final ImagePicker picker = ImagePicker();
+
+      print('Opening Android video camera...');
+
+      final XFile? video = await picker.pickVideo(
+        source: ImageSource.camera,
+        preferredCameraDevice: CameraDevice.rear,
+        maxDuration: const Duration(minutes: 5),
+      );
+
+      if (video == null) {
+        print('Video recording cancelled');
+        return;
+      }
+
+      print('Video path: ${video.path}');
+      print('Video name: ${video.name}');
+
+      final Uint8List bytes = await video.readAsBytes();
+
+      final String ext = video.name.contains('.')
+          ? video.name.split('.').last.toLowerCase()
+          : 'mp4';
+
+      _videos.add(bytes);
+
+      _fileInfoList.add({
+        'name': video.name,
+        'type': 'video',
+        'mimeType': ext == 'mov' ? 'video/quicktime' : 'video/$ext',
+        'data': bytes,
+        'docTypeId': _selectedDocumentType,
+        'docTypeName': _selectedDocumentTypeName,
+      });
+
+      notifyListeners();
+
+      print('Video successfully added');
+    } on PlatformException catch (e) {
+      print('ImagePicker Platform Error: ${e.code}');
+      print('Error message: ${e.message}');
+    } catch (e, stackTrace) {
+      print('Video camera error: $e');
+      print(stackTrace);
     }
   }
 
@@ -401,11 +474,12 @@ class ImageUploadProvider extends ChangeNotifier {
     }
 
     return 'unknown';
-}
+  }
 
   void clearFiles() {
     _images.clear();
     _pdfs.clear();
+    _videos.clear();
     _selectedDocumentType = null;
     _fileInfoList.clear();
     uploadedFilePaths.clear();
@@ -716,9 +790,8 @@ class ImageUploadProvider extends ChangeNotifier {
       if (skippedInvalidType && !anySuccess) {
         scaffoldMessenger.showSnackBar(
           const SnackBar(
-            content: Text(
-              'Upload skipped: document type not selected. '
-              'Please select a document type before uploading.'),
+            content: Text('Upload skipped: document type not selected. '
+                'Please select a document type before uploading.'),
           ),
         );
         return [];
