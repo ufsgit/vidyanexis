@@ -71,37 +71,29 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
         final expenseProvider =
             Provider.of<ExpenseProvider>(context, listen: false);
 
-        if (settingsProvider.companyDetails.isEmpty) {
-          try {
-            await settingsProvider.getCompanyDetails();
-          } catch (e) {
-            debugPrint('Failed to load company details: $e');
-          }
-        }
+        settingsProvider.clearTermsFields();
+        customerDetailsProvider.clearQuotationDetails();
+
+        final initialFutures = <Future>[
+          if (settingsProvider.companyDetails.isEmpty)
+            settingsProvider.getCompanyDetails(),
+          expenseProvider.searchItemList(context: context, isFilter: false),
+          if (settingsProvider.branchModel.isEmpty)
+            settingsProvider.searchBranch(context),
+          customerDetailsProvider.getQuotationTypes(context),
+          customerDetailsProvider.getProfitList(context),
+          customerDetailsProvider.getCommercialCustomFieldsApi(context),
+          settingsProvider.getTermsAndWarranty(context),
+        ];
 
         try {
-          await expenseProvider.searchItemList(context: context, isFilter: false);
+          await Future.wait(initialFutures);
         } catch (e) {
-          debugPrint('Failed to load item list: $e');
+          debugPrint('Error loading initial quotation data in parallel: $e');
         }
 
         companyQuotationItems = settingsProvider.companyDetails.isNotEmpty &&
             settingsProvider.companyDetails.first.quotationItemValue == 1;
-
-        // Always clear first to ensure a clean state
-        customerDetailsProvider.clearQuotationDetails();
-
-        try {
-          await settingsProvider.searchBranch(context);
-        } catch (e) {
-          debugPrint('Failed to load branches: $e');
-        }
-
-        try {
-          await customerDetailsProvider.getQuotationTypes(context);
-        } catch (e) {
-          debugPrint('Failed to load quotation types: $e');
-        }
 
         if (!widget.isEdit) {
           if (settingsProvider.branchModel.isNotEmpty) {
@@ -122,25 +114,6 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                   residentialType.quotationTypeName;
             }
           }
-        }
-
-        try {
-          await customerDetailsProvider.getProfitList(context);
-        } catch (e) {
-          debugPrint('Failed to load profit list: $e');
-        }
-
-        try {
-          await customerDetailsProvider.getCommercialCustomFieldsApi(context);
-        } catch (e) {
-          debugPrint('Failed to load commercial custom fields: $e');
-        }
-
-        settingsProvider.clearTermsFields();
-        try {
-          await settingsProvider.getTermsAndWarranty(context);
-        } catch (e) {
-          debugPrint('Failed to load terms and warranty: $e');
         }
 
         customerDetailsProvider.qtermsConditionsController.text =

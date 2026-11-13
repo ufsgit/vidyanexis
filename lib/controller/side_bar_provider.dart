@@ -212,6 +212,15 @@ class SidebarProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void selectOption({required String name, required int index}) {
+    _selectedName = name;
+    _replaceLead = true;
+    _replaceCustomer = true;
+    _customerId = '';
+    _selectedIndex = index;
+    notifyListeners();
+  }
+
   void updateSelectedName(String name) {
     _selectedName = name;
     notifyListeners();

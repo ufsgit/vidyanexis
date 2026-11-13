@@ -26,7 +26,7 @@ class Loader {
 
       showDialog(
         barrierDismissible: false,
-        barrierColor: Colors.black.withOpacity(0.1),
+        barrierColor: Colors.black26,
         context: context,
         useRootNavigator: true,
         builder: (ctx) {
@@ -40,49 +40,46 @@ class Loader {
 
           return PopScope(
             canPop: false,
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
-              child: Center(
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 32, vertical: 20),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.9),
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 15,
-                        spreadRadius: 2,
+            child: Center(
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 32, vertical: 20),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.08),
+                      blurRadius: 15,
+                      spreadRadius: 2,
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.5,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                            AppColors.bluebutton),
                       ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2.5,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                              AppColors.bluebutton),
+                    ),
+                    if (message != null && message.isNotEmpty) ...[
+                      const SizedBox(width: 20),
+                      Text(
+                        message,
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          decoration: TextDecoration.none,
+                          color: Colors.black87,
                         ),
                       ),
-                      if (message != null && message.isNotEmpty) ...[
-                        const SizedBox(width: 20),
-                        Text(
-                          message,
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            decoration: TextDecoration.none,
-                            color: Colors.black87,
-                          ),
-                        ),
-                      ],
                     ],
-                  ),
+                  ],
                 ),
               ),
             ),
@@ -137,8 +134,6 @@ class Loader {
             } else {
               navigator.removeRoute(route);
             }
-          } else if (navigator.canPop()) {
-            navigator.pop();
           }
         }
       } catch (e) {
