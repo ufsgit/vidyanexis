@@ -1113,17 +1113,29 @@ class _ImageUploadAlertState extends State<ImageUploadAlert> {
                                   ),
                                 );
                               },
-                              errorBuilder: (_, __, ___) => const Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.broken_image,
-                                        size: 64, color: Colors.white70),
-                                    SizedBox(height: 8),
-                                    Text('Unable to load image',
-                                        style: TextStyle(
-                                            color: Colors.white70)),
-                                  ],
+                              errorBuilder: (_, __, ___) => Center(
+                                child: InkWell(
+                                  onTap: () async {
+                                  final uri = Uri.parse(filePath);
+                                  try {
+                                    await launchUrl(uri,
+                                        mode: LaunchMode.externalApplication);
+                                  } catch (e) {
+                                    Fluttertoast.showToast(
+                                        msg: "Could not open PDF: $e");
+                                  }
+                                },
+                                  child: const Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(Icons.file_copy_outlined,
+                                          size: 64, color: Colors.white70),
+                                      SizedBox(height: 8),
+                                      Text('Open file',
+                                          style: TextStyle(
+                                              color: Colors.white70)),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
