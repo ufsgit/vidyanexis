@@ -2,11 +2,19 @@ class CalendarItemModel {
   final String id;
   final String date;
   final String description;
+  final String departmentId;
+  final String departmentName;
+  final String userId;
+  final String userName;
 
   CalendarItemModel({
     required this.id,
     required this.date,
     required this.description,
+    this.departmentId = '',
+    this.departmentName = '',
+    this.userId = '',
+    this.userName = '',
   });
 
   factory CalendarItemModel.fromJson(Map<String, dynamic> json) {
@@ -18,6 +26,15 @@ class CalendarItemModel {
       description: json['Description']?.toString() ??
           json['description']?.toString() ??
           '',
+      departmentId: json['Department_Id']?.toString() ??
+          json['department_id']?.toString() ??
+          '',
+      departmentName: json['Department_Name']?.toString() ??
+          json['department_name']?.toString() ??
+          '',
+      userId: json['User_Id']?.toString() ?? json['user_id']?.toString() ?? '',
+      userName:
+          json['User_Name']?.toString() ?? json['user_name']?.toString() ?? '',
     );
   }
 
@@ -25,6 +42,10 @@ class CalendarItemModel {
     return {
       'Calendar_Date': date,
       'Description': description,
+      'Department_Id': departmentId,
+      'Department_Name': departmentName,
+      'User_Id': userId,
+      'User_Name': userName,
     };
   }
 
@@ -32,11 +53,19 @@ class CalendarItemModel {
     String? id,
     String? date,
     String? description,
+    String? departmentId,
+    String? departmentName,
+    String? userId,
+    String? userName,
   }) {
     return CalendarItemModel(
       id: id ?? this.id,
       date: date ?? this.date,
       description: description ?? this.description,
+      departmentId: departmentId ?? this.departmentId,
+      departmentName: departmentName ?? this.departmentName,
+      userId: userId ?? this.userId,
+      userName: userName ?? this.userName,
     );
   }
 }

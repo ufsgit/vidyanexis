@@ -112,7 +112,7 @@ class _CalendarTabPageState extends State<CalendarTabPage> {
                               itemsPreview: entry.items
                                   .take(3)
                                   .map((i) =>
-                                      '${_formatDate(i.date)} · ${i.description}')
+                                      '${_formatDate(i.date)} · ${i.departmentName} · ${i.userName} · ${i.description}')
                                   .toList(),
                               onEdit: settingsProvider.menuIsEditMap[234] == 1
                                   ? () {
