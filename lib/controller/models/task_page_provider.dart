@@ -159,8 +159,19 @@ class TaskPageProvider extends ChangeNotifier {
   int? _expandedIndex;
   int? get expandedIndex => _expandedIndex;
   int _flowId = 0;
+  int get flowId => _flowId;
   String? _processFlowMessage;
   String? get processFlowMessage => _processFlowMessage;
+
+  Future<void>? _activeFetchTaskTypesFuture;
+  Future<void>? get activeFetchTaskTypesFuture => _activeFetchTaskTypesFuture;
+  bool _isFetchingTaskTypes = false;
+  bool get isFetchingTaskTypes => _isFetchingTaskTypes;
+
+  int _lastTaskTypeId = 0;
+  int _lastStatusId = 0;
+  int _lastCustomerId = 0;
+  int _lastEnquiryForId = 0;
 
   Map<String, int> _taskTypeToUserMap = {};
   Map<String, int> get taskTypeToUserMap => _taskTypeToUserMap;
@@ -187,6 +198,7 @@ class TaskPageProvider extends ChangeNotifier {
   }
 
   void clearProcessFlowData() {
+    _flowId = 0;
     _taskTypeModel = [];
     _documentTypeModel = [];
     _statusData = [];
@@ -194,6 +206,8 @@ class TaskPageProvider extends ChangeNotifier {
     _selectedTaskTypeIds.clear();
     _taskTypeToUserMap.clear();
     _processFlowMessage = null;
+    _activeFetchTaskTypesFuture = null;
+    _isFetchingTaskTypes = false;
     notifyListeners();
   }
 
@@ -1029,8 +1043,60 @@ class TaskPageProvider extends ChangeNotifier {
       int taskId,
       Map<String, dynamic>? locationData,
       {SubStatus? subStatus,
-      List<Map<String, String>>? audioFiles}) async {
+      List<Map<String, String>>? audioFiles,
+      int? customerId,
+      int? enquiryForId,
+      int? taskTypeId}) async {
     try {
+      // 1. Wait for in-flight fetchTaskTypes to complete if one is running
+      if (_activeFetchTaskTypesFuture != null) {
+        try {
+          debugPrint("changeTaskStatus: Awaiting active fetchTaskTypes to prevent race condition...");
+          await _activeFetchTaskTypesFuture;
+        } catch (e) {
+          debugPrint("changeTaskStatus: Error awaiting active fetchTaskTypes: $e");
+        }
+      }
+
+      // 2. Resolve IDs
+      int sId = statusModel.statusId ?? _lastStatusId;
+      int tId = taskTypeId ?? statusModel.taskTypeId ?? _lastTaskTypeId;
+      int cId = customerId ?? _lastCustomerId;
+      int eId = enquiryForId ?? _lastEnquiryForId;
+
+      // 3. Fallback: If task types have never been fetched for this status, fetch them now
+      if (_taskTypeModel.isEmpty &&
+          _selectedTaskTypeIds.isEmpty &&
+          sId != 0 &&
+          (cId != 0 || eId != 0)) {
+        try {
+          debugPrint(
+              "changeTaskStatus: Task types not yet loaded for status $sId, fetching now...");
+          await fetchTaskTypes(tId, sId, cId, eId, context);
+        } catch (e) {
+          debugPrint("changeTaskStatus: Direct fetchTaskTypes failed: $e");
+        }
+      }
+
+      // 4. Ensure _selectedTaskTypeIds is populated if _taskTypeModel has items
+      if (_selectedTaskTypeIds.isEmpty && _taskTypeModel.isNotEmpty) {
+        initializeSelectedTaskTypes();
+      }
+
+      // 5. Construct Tasks payload string
+      String tasksPayload = _selectedTaskTypeIds
+          .map((id) => id.split('_').first)
+          .where((s) => s.isNotEmpty && s != '0')
+          .join(",");
+
+      // Secondary Fallback: If still empty but _taskTypeModel is not empty, extract directly
+      if (tasksPayload.isEmpty && _taskTypeModel.isNotEmpty) {
+        tasksPayload = _taskTypeModel
+            .map((t) => t.taskTypeId.toString())
+            .where((s) => s.isNotEmpty && s != '0')
+            .join(",");
+      }
+
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
 
@@ -1076,8 +1142,7 @@ class TaskPageProvider extends ChangeNotifier {
                     : "",
             "Followup_Time":
                 statusModel.isTime == 1 ? followUpTimeController.text : "",
-            "Tasks":
-                _selectedTaskTypeIds.map((id) => id.split('_').first).join(","),
+            "Tasks": tasksPayload,
             "CustomFields": customFieldsData,
             "flow_id": _flowId,
             "Sub_Status_Id": subStatus?.subStatusId,
@@ -1098,6 +1163,9 @@ class TaskPageProvider extends ChangeNotifier {
             descriptionController.clear();
             remarksController.clear();
             clearTaskUserAssignments();
+            _flowId = 0;
+            _taskTypeModel = [];
+            _selectedTaskTypeIds.clear();
             try {
               final dbProvider =
                   Provider.of<DashboardProvider>(context, listen: false);
@@ -1365,6 +1433,29 @@ class TaskPageProvider extends ChangeNotifier {
   //
   Future<void> fetchTaskTypes(int tasktypeId, int statusId, int customerId,
       int enquiryForId, BuildContext context) async {
+    _lastTaskTypeId = tasktypeId;
+    _lastStatusId = statusId;
+    _lastCustomerId = customerId;
+    _lastEnquiryForId = enquiryForId;
+    _isFetchingTaskTypes = true;
+    notifyListeners();
+
+    final future = _fetchTaskTypesInternal(
+        tasktypeId, statusId, customerId, enquiryForId, context);
+    _activeFetchTaskTypesFuture = future;
+    try {
+      await future;
+    } finally {
+      if (_activeFetchTaskTypesFuture == future) {
+        _activeFetchTaskTypesFuture = null;
+        _isFetchingTaskTypes = false;
+        notifyListeners();
+      }
+    }
+  }
+
+  Future<void> _fetchTaskTypesInternal(int tasktypeId, int statusId,
+      int customerId, int enquiryForId, BuildContext context) async {
     print(statusId);
     print(tasktypeId);
     _lastFetchPayload = "";
@@ -1497,6 +1588,35 @@ class TaskPageProvider extends ChangeNotifier {
 
   Future<void> fetchTaskTypesWithCustomFields(int tasktypeId, int statusId,
       int customerId, int enquiryForId, BuildContext context,
+      {bool forceRefresh = false}) async {
+    _lastTaskTypeId = tasktypeId;
+    _lastStatusId = statusId;
+    _lastCustomerId = customerId;
+    _lastEnquiryForId = enquiryForId;
+    _isFetchingTaskTypes = true;
+    notifyListeners();
+
+    final future = _fetchTaskTypesWithCustomFieldsInternal(
+        tasktypeId, statusId, customerId, enquiryForId, context,
+        forceRefresh: forceRefresh);
+    _activeFetchTaskTypesFuture = future;
+    try {
+      await future;
+    } finally {
+      if (_activeFetchTaskTypesFuture == future) {
+        _activeFetchTaskTypesFuture = null;
+        _isFetchingTaskTypes = false;
+        notifyListeners();
+      }
+    }
+  }
+
+  Future<void> _fetchTaskTypesWithCustomFieldsInternal(
+      int tasktypeId,
+      int statusId,
+      int customerId,
+      int enquiryForId,
+      BuildContext context,
       {bool forceRefresh = false}) async {
     print(statusId);
     print(tasktypeId);

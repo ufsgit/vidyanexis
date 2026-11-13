@@ -1922,8 +1922,10 @@ class _TotalTaskDataPageState extends State<TotalTaskDataPage> {
                                                 _uploadedDocUrls.clear();
                                                 _uploadedDocImageIds.clear();
                                                 int sId = status.statusId ?? 0;
-                                                int tId =
-                                                    status.taskTypeId ?? 0;
+                                                int tId = (status.taskTypeId != null &&
+                                                        status.taskTypeId != 0)
+                                                    ? status.taskTypeId!
+                                                    : (task.taskTypeId ?? 0);
                                                 await reportsProvider
                                                     .fetchTaskTypes(
                                                         tId,
@@ -4773,7 +4775,13 @@ class _TotalTaskDataPageState extends State<TotalTaskDataPage> {
                                                                     selectedSubStatus
                                                                         .value,
                                                                 audioFiles:
-                                                                    uploadedAudioFiles);
+                                                                    uploadedAudioFiles,
+                                                                customerId:
+                                                                    task.customerId,
+                                                                enquiryForId:
+                                                                    task.enquiryForId,
+                                                                taskTypeId:
+                                                                    task.taskTypeId);
 
                                                         if (!context.mounted) {
                                                           return;
