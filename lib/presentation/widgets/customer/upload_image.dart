@@ -1131,7 +1131,7 @@ class _ImageUploadAlertState extends State<ImageUploadAlert> {
                                       Icon(Icons.file_copy_outlined,
                                           size: 64, color: Colors.white70),
                                       SizedBox(height: 8),
-                                      Text('Open file',
+                                      Text('Open file/video',
                                           style: TextStyle(
                                               color: Colors.white70)),
                                     ],
