@@ -7880,6 +7880,23 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                   ),
                                                                 ],
                                                               ),
+                                                              content: Column(
+                                                                mainAxisSize:
+                                                                    MainAxisSize
+                                                                        .min,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  const Text(
+                                                                    "Custom Fields Not Filled",
+                                                                    style: TextStyle(
+                                                                      fontFamily:
+                                                                          'PlusJakartaSans',
+                                                                      color: Colors
+                                                                          .black,
+                                                                      fontSize: 16,
+                                                                      fontWeight:
                                                                           FontWeight
                                                                               .w600,
                                                                     ),
