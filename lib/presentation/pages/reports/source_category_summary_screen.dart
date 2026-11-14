@@ -28,7 +28,9 @@ class _SourceCategorySummaryReportScreenState
     extends State<SourceCategorySummaryReportScreen> {
   final TextEditingController searchController = TextEditingController();
   final FocusNode searchFocusNodeWeb = FocusNode();
-  final ScrollController horizontalScrollController = ScrollController();
+  final ScrollController leadsHorizontalScrollController = ScrollController();
+  final ScrollController paymentsHorizontalScrollController =
+      ScrollController();
   final ScrollController verticalScrollController = ScrollController();
 
   final List<String> dateFilterTitles = [
@@ -58,7 +60,8 @@ class _SourceCategorySummaryReportScreenState
   void dispose() {
     searchController.dispose();
     searchFocusNodeWeb.dispose();
-    horizontalScrollController.dispose();
+    leadsHorizontalScrollController.dispose();
+    paymentsHorizontalScrollController.dispose();
     verticalScrollController.dispose();
     super.dispose();
   }
@@ -119,31 +122,74 @@ class _SourceCategorySummaryReportScreenState
             // Collapsible Filter Panel
             if (provider.isFilter) _buildFilterPanel(provider, isWeb),
 
-            // Top Summary Cards
-            _buildMetricsCards(provider, isWeb),
-
-            // Tab Bar for Converted Leads & Agency Payments
-            if (provider.agencyPayments.isNotEmpty ||
-                provider.paymentSummary != null)
-              _buildTabBar(provider, isWeb),
-
-            // Content Table / List
+            // Main Content Area (Single stacked scrollable page)
             Expanded(
-              child: provider.selectedTabIndex == 1
-                  ? (provider.agencyPayments.isEmpty
-                      ? const CommonEmptyState(
-                          message: 'No agency payment records found',
+              child: RefreshIndicator(
+                onRefresh: () => provider.getSourceCategorySummary(context),
+                child: SingleChildScrollView(
+                  controller: verticalScrollController,
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.only(bottom: 32),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // Top Summary Cards
+                      _buildMetricsCards(provider, isWeb),
+
+                      const SizedBox(height: 8),
+
+                      // Section 1: Converted Leads Header
+                      _buildSectionHeader(
+                        title: 'Converted Deals / Leads',
+                        count: provider.sourceCategoryReport.length,
+                        icon: Icons.assignment_turned_in_outlined,
+                        iconColor: const Color(0xFF2563EB),
+                        bgColor: const Color(0xFFEFF6FF),
+                        onExport: () => _exportLeadsData(provider),
+                      ),
+
+                      // Converted Leads Content Table / List
+                      if (provider.sourceCategoryReport.isEmpty)
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 24),
+                          child: CommonEmptyState(
+                            message: 'No source category records found',
+                          ),
                         )
-                      : (isWeb
-                          ? _buildAgencyPaymentsTableView(provider)
-                          : _buildMobilePaymentsListView(provider)))
-                  : (provider.sourceCategoryReport.isEmpty
-                      ? const CommonEmptyState(
-                          message: 'No source category records found',
-                        )
-                      : (isWeb
-                          ? _buildWebTableView(provider)
-                          : _buildMobileListView(provider))),
+                      else if (isWeb)
+                        _buildWebTableView(provider)
+                      else
+                        _buildMobileListView(provider),
+
+                      // Section 2: Agency Payments Header & Content
+                      if (provider.agencyPayments.isNotEmpty ||
+                          provider.paymentSummary != null) ...[
+                        const SizedBox(height: 24),
+                        _buildSectionHeader(
+                          title: 'Agency Payments',
+                          count: provider.agencyPayments.length,
+                          icon: Icons.payments_outlined,
+                          iconColor: const Color(0xFF059669),
+                          bgColor: const Color(0xFFECFDF5),
+                          onExport: () => _exportPaymentsData(provider),
+                        ),
+
+                        if (provider.agencyPayments.isEmpty)
+                          const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 24),
+                            child: CommonEmptyState(
+                              message: 'No agency payment records found',
+                            ),
+                          )
+                        else if (isWeb)
+                          _buildAgencyPaymentsTableView(provider)
+                        else
+                          _buildMobilePaymentsListView(provider),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
             ),
           ],
         ),
@@ -799,10 +845,10 @@ class _SourceCategorySummaryReportScreenState
             ),
             clipBehavior: Clip.antiAlias,
             child: Scrollbar(
-              controller: horizontalScrollController,
+              controller: leadsHorizontalScrollController,
               thumbVisibility: tableWidth > availableWidth,
               child: SingleChildScrollView(
-                controller: horizontalScrollController,
+                controller: leadsHorizontalScrollController,
                 scrollDirection: Axis.horizontal,
                 child: SizedBox(
                   width: tableWidth,
@@ -847,14 +893,10 @@ class _SourceCategorySummaryReportScreenState
                       ),
 
                       // Table Body
-                      Expanded(
-                        child: Scrollbar(
-                          controller: verticalScrollController,
-                          thumbVisibility: true,
-                          child: ListView.separated(
-                            controller: verticalScrollController,
-                            physics: const AlwaysScrollableScrollPhysics(),
-                            itemCount: provider.sourceCategoryReport.length,
+                      ListView.separated(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: provider.sourceCategoryReport.length,
                             separatorBuilder: (context, index) => const Divider(
                               height: 1,
                               thickness: 1,
@@ -1039,8 +1081,6 @@ class _SourceCategorySummaryReportScreenState
                               );
                             },
                           ),
-                        ),
-                      ),
 
                       // Table Footer (Totals)
                       Container(
@@ -1146,13 +1186,13 @@ class _SourceCategorySummaryReportScreenState
   }
 
   Widget _buildMobileListView(SourceCategorySummaryProvider provider) {
-    return RefreshIndicator(
-      onRefresh: () => provider.getSourceCategorySummary(context),
-      child: ListView.separated(
-        padding: const EdgeInsets.all(12),
-        itemCount: provider.sourceCategoryReport.length,
-        separatorBuilder: (context, index) => const SizedBox(height: 10),
-        itemBuilder: (context, index) {
+    return ListView.separated(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      itemCount: provider.sourceCategoryReport.length,
+      separatorBuilder: (context, index) => const SizedBox(height: 10),
+      itemBuilder: (context, index) {
           final item = provider.sourceCategoryReport[index];
           return Container(
             padding: const EdgeInsets.all(14),
@@ -1310,98 +1350,86 @@ class _SourceCategorySummaryReportScreenState
             ),
           );
         },
-      ),
-    );
+      );
   }
 
-  Widget _buildTabBar(SourceCategorySummaryProvider provider, bool isWeb) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
-      padding: const EdgeInsets.all(4),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF1F5F9),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _buildTabButton(
-            title: 'Converted Leads',
-            count: provider.sourceCategoryReport.length,
-            isSelected: provider.selectedTabIndex == 0,
-            onTap: () => provider.setSelectedTabIndex(0),
-          ),
-          const SizedBox(width: 4),
-          _buildTabButton(
-            title: 'Agency Payments',
-            count: provider.agencyPayments.length,
-            isSelected: provider.selectedTabIndex == 1,
-            onTap: () => provider.setSelectedTabIndex(1),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTabButton({
+  Widget _buildSectionHeader({
     required String title,
     required int count,
-    required bool isSelected,
-    required VoidCallback onTap,
+    required IconData icon,
+    required Color iconColor,
+    required Color bgColor,
+    VoidCallback? onExport,
   }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(6),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: isSelected ? Colors.white : Colors.transparent,
-          borderRadius: BorderRadius.circular(6),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
-                    blurRadius: 4,
-                    offset: const Offset(0, 1),
-                  ),
-                ]
-              : null,
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              title,
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              color: bgColor,
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Icon(icon, size: 16, color: iconColor),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            title,
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+              color: const Color(0xFF0F172A),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+            decoration: BoxDecoration(
+              color: const Color(0xFFE2E8F0),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Text(
+              '$count',
               style: GoogleFonts.plusJakartaSans(
-                fontSize: 13,
-                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
-                color:
-                    isSelected ? AppColors.primaryBlue : const Color(0xFF64748B),
+                fontSize: 11,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFF475569),
               ),
             ),
-            const SizedBox(width: 6),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? AppColors.primaryBlue.withOpacity(0.12)
-                    : const Color(0xFFE2E8F0),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Text(
-                '$count',
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 11,
-                  fontWeight: FontWeight.bold,
-                  color: isSelected
-                      ? AppColors.primaryBlue
-                      : const Color(0xFF64748B),
+          ),
+          const Spacer(),
+          if (onExport != null && count > 0)
+            InkWell(
+              onTap: onExport,
+              borderRadius: BorderRadius.circular(6),
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(6),
+                  border: Border.all(color: const Color(0xFFCBD5E1)),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.download_rounded,
+                        size: 14, color: Color(0xFF475569)),
+                    const SizedBox(width: 4),
+                    Text(
+                      'Export',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFF475569),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
-          ],
-        ),
+        ],
       ),
     );
   }
@@ -1433,10 +1461,10 @@ class _SourceCategorySummaryReportScreenState
             ),
             clipBehavior: Clip.antiAlias,
             child: Scrollbar(
-              controller: horizontalScrollController,
+              controller: paymentsHorizontalScrollController,
               thumbVisibility: tableWidth > availableWidth,
               child: SingleChildScrollView(
-                controller: horizontalScrollController,
+                controller: paymentsHorizontalScrollController,
                 scrollDirection: Axis.horizontal,
                 child: SizedBox(
                   width: tableWidth,
@@ -1475,14 +1503,10 @@ class _SourceCategorySummaryReportScreenState
                       ),
 
                       // Table Body
-                      Expanded(
-                        child: Scrollbar(
-                          controller: verticalScrollController,
-                          thumbVisibility: true,
-                          child: ListView.separated(
-                            controller: verticalScrollController,
-                            physics: const AlwaysScrollableScrollPhysics(),
-                            itemCount: provider.agencyPayments.length,
+                      ListView.separated(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: provider.agencyPayments.length,
                             separatorBuilder: (context, index) => const Divider(
                               height: 1,
                               thickness: 1,
@@ -1587,8 +1611,6 @@ class _SourceCategorySummaryReportScreenState
                               );
                             },
                           ),
-                        ),
-                      ),
 
                       // Table Footer (Totals)
                       Container(
@@ -1648,13 +1670,13 @@ class _SourceCategorySummaryReportScreenState
 
   Widget _buildMobilePaymentsListView(
       SourceCategorySummaryProvider provider) {
-    return RefreshIndicator(
-      onRefresh: () => provider.getSourceCategorySummary(context),
-      child: ListView.separated(
-        padding: const EdgeInsets.all(12),
-        itemCount: provider.agencyPayments.length,
-        separatorBuilder: (context, index) => const SizedBox(height: 10),
-        itemBuilder: (context, index) {
+    return ListView.separated(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      itemCount: provider.agencyPayments.length,
+      separatorBuilder: (context, index) => const SizedBox(height: 10),
+      itemBuilder: (context, index) {
           final item = provider.agencyPayments[index];
           return Container(
             padding: const EdgeInsets.all(14),
@@ -1740,46 +1762,13 @@ class _SourceCategorySummaryReportScreenState
             ),
           );
         },
-      ),
-    );
+      );
   }
 
-  void _exportData(SourceCategorySummaryProvider provider) {
-    if (provider.selectedTabIndex == 1) {
-      if (provider.agencyPayments.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No payment data available to export')),
-        );
-        return;
-      }
-
-      exportToExcel(
-        headers: [
-          'No',
-          'Payment Date',
-          'Enquiry Source',
-          'Amount Paid',
-          'Remark',
-        ],
-        data: provider.agencyPayments.asMap().entries.map((entry) {
-          final i = entry.key;
-          final item = entry.value;
-          return {
-            'No': i + 1,
-            'Payment Date': item.paymentDate,
-            'Enquiry Source': item.enquirySourceName,
-            'Amount Paid': item.amount,
-            'Remark': item.remark,
-          };
-        }).toList(),
-        fileName: 'Agency_Payments_Report',
-      );
-      return;
-    }
-
+  void _exportLeadsData(SourceCategorySummaryProvider provider) {
     if (provider.sourceCategoryReport.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No data available to export')),
+        const SnackBar(content: Text('No lead data available to export')),
       );
       return;
     }
@@ -1811,5 +1800,48 @@ class _SourceCategorySummaryReportScreenState
       }).toList(),
       fileName: 'Source_Category_Summary_Report',
     );
+  }
+
+  void _exportPaymentsData(SourceCategorySummaryProvider provider) {
+    if (provider.agencyPayments.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No payment data available to export')),
+      );
+      return;
+    }
+
+    exportToExcel(
+      headers: [
+        'No',
+        'Payment Date',
+        'Enquiry Source',
+        'Amount Paid',
+        'Remark',
+      ],
+      data: provider.agencyPayments.asMap().entries.map((entry) {
+        final i = entry.key;
+        final item = entry.value;
+        return {
+          'No': i + 1,
+          'Payment Date': item.paymentDate,
+          'Enquiry Source': item.enquirySourceName,
+          'Amount Paid': item.amount,
+          'Remark': item.remark,
+        };
+      }).toList(),
+      fileName: 'Agency_Payments_Report',
+    );
+  }
+
+  void _exportData(SourceCategorySummaryProvider provider) {
+    if (provider.sourceCategoryReport.isNotEmpty) {
+      _exportLeadsData(provider);
+    } else if (provider.agencyPayments.isNotEmpty) {
+      _exportPaymentsData(provider);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No data available to export')),
+      );
+    }
   }
 }
