@@ -16,16 +16,24 @@ class AgencyPaymentModel {
   });
 
   factory AgencyPaymentModel.fromJson(Map<String, dynamic> json) {
+    int parseInt(dynamic val) {
+      if (val == null) return 0;
+      if (val is int) return val;
+      return int.tryParse(val.toString()) ?? 0;
+    }
+
     return AgencyPaymentModel(
-      agencyPaymentId: json['Agency_Payment_Id'] ?? json['Id'] ?? 0,
-      enquirySourceId:
-          json['Enquiry_Source_Id'] ?? json['Enquiry_Source'] ?? 0,
-      enquirySourceName: json['Enquiry_Source_Name'] ?? '',
+      agencyPaymentId: parseInt(json['Agency_Payment_Id'] ?? json['Id']),
+      enquirySourceId: parseInt(
+          json['Enquiry_Source_Id'] ?? json['Enquiry_Source_id'] ?? json['Enquiry_Source']),
+      enquirySourceName:
+          (json['Enquiry_Source_Name'] ?? json['Enquiry_Source'] ?? '')
+              .toString(),
       amount: double.tryParse(
               (json['Amount'] ?? json['Paying_Amount'] ?? 0).toString()) ??
           0.0,
-      paymentDate: json['Payment_Date'] ?? json['Date'] ?? '',
-      remark: json['Remark'] ?? json['Description'] ?? '',
+      paymentDate: (json['Payment_Date'] ?? json['Date'] ?? '').toString(),
+      remark: (json['Remark'] ?? json['Description'] ?? '').toString(),
     );
   }
 

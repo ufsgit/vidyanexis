@@ -122,15 +122,28 @@ class _SourceCategorySummaryReportScreenState
             // Top Summary Cards
             _buildMetricsCards(provider, isWeb),
 
+            // Tab Bar for Converted Leads & Agency Payments
+            if (provider.agencyPayments.isNotEmpty ||
+                provider.paymentSummary != null)
+              _buildTabBar(provider, isWeb),
+
             // Content Table / List
             Expanded(
-              child: provider.sourceCategoryReport.isEmpty
-                  ? const CommonEmptyState(
-                      message: 'No source category records found',
-                    )
-                  : (isWeb
-                      ? _buildWebTableView(provider)
-                      : _buildMobileListView(provider)),
+              child: provider.selectedTabIndex == 1
+                  ? (provider.agencyPayments.isEmpty
+                      ? const CommonEmptyState(
+                          message: 'No agency payment records found',
+                        )
+                      : (isWeb
+                          ? _buildAgencyPaymentsTableView(provider)
+                          : _buildMobilePaymentsListView(provider)))
+                  : (provider.sourceCategoryReport.isEmpty
+                      ? const CommonEmptyState(
+                          message: 'No source category records found',
+                        )
+                      : (isWeb
+                          ? _buildWebTableView(provider)
+                          : _buildMobileListView(provider))),
             ),
           ],
         ),
@@ -582,6 +595,13 @@ class _SourceCategorySummaryReportScreenState
           final width = constraints.maxWidth;
           final int crossAxisCount = width > 1100 ? 4 : (width > 600 ? 2 : 1);
 
+          final hasPaymentSummary = provider.paymentSummary != null;
+          final double commission = hasPaymentSummary
+              ? provider.paymentSummary!.totalCommissionAmount
+              : provider.totalCommissionAmount;
+          final double amountPaid = provider.totalAgencyPaymentsAmount;
+          final double balance = provider.balanceAmount;
+
           final cards = [
             _buildMetricTile(
               title: 'Total Converted Leads',
@@ -592,34 +612,61 @@ class _SourceCategorySummaryReportScreenState
               bgColor: const Color(0xFFEFF6FF),
               accentColor: const Color(0xFF3B82F6),
             ),
-            _buildMetricTile(
-              title: 'Total Project Cost',
-              value: _formatCurrency(provider.totalProjectCost),
-              subtitle: 'Combined deal value',
-              icon: Icons.account_balance_wallet_outlined,
-              iconColor: const Color(0xFF059669),
-              bgColor: const Color(0xFFECFDF5),
-              accentColor: const Color(0xFF10B981),
-            ),
+            if (!hasPaymentSummary)
+              _buildMetricTile(
+                title: 'Total Project Cost',
+                value: _formatCurrency(provider.totalProjectCost),
+                subtitle: 'Combined deal value',
+                icon: Icons.account_balance_wallet_outlined,
+                iconColor: const Color(0xFF059669),
+                bgColor: const Color(0xFFECFDF5),
+                accentColor: const Color(0xFF10B981),
+              ),
             _buildMetricTile(
               title: 'Total Commission',
-              value: _formatCurrency(provider.totalCommissionAmount),
-              subtitle: 'Calculated commission',
+              value: _formatCurrency(commission),
+              subtitle: 'Commission earned',
               icon: Icons.verified_outlined,
               iconColor: const Color(0xFF7C3AED),
               bgColor: const Color(0xFFF5F3FF),
               accentColor: const Color(0xFF8B5CF6),
             ),
-            _buildMetricTile(
-              title: 'Average Commission',
-              value:
-                  '${provider.avgCommissionPercentage.toStringAsFixed(1)}%',
-              subtitle: 'Mean percentage rate',
-              icon: Icons.pie_chart_outline_rounded,
-              iconColor: const Color(0xFFD97706),
-              bgColor: const Color(0xFFFFFBEB),
-              accentColor: const Color(0xFFF59E0B),
-            ),
+            if (hasPaymentSummary) ...[
+              _buildMetricTile(
+                title: 'Total Amount Paid',
+                value: _formatCurrency(amountPaid),
+                subtitle: 'Disbursed to agency',
+                icon: Icons.payments_outlined,
+                iconColor: const Color(0xFF059669),
+                bgColor: const Color(0xFFECFDF5),
+                accentColor: const Color(0xFF10B981),
+              ),
+              _buildMetricTile(
+                title: 'Balance Amount',
+                value: _formatCurrency(balance),
+                subtitle: balance > 0 ? 'Pending payout' : 'Settled',
+                icon: Icons.account_balance_outlined,
+                iconColor: balance > 0
+                    ? const Color(0xFFD97706)
+                    : const Color(0xFF059669),
+                bgColor: balance > 0
+                    ? const Color(0xFFFFFBEB)
+                    : const Color(0xFFECFDF5),
+                accentColor: balance > 0
+                    ? const Color(0xFFF59E0B)
+                    : const Color(0xFF10B981),
+              ),
+            ] else
+              _buildMetricTile(
+                title: 'Average Commission',
+                value:
+                    '${provider.avgCommissionPercentage.toStringAsFixed(1)}%',
+                subtitle: 'Mean percentage rate',
+                icon: Icons.pie_chart_outline_rounded,
+                iconColor: const Color(0xFFD97706),
+                bgColor: const Color(0xFFFFFBEB),
+                accentColor: const Color(0xFFF59E0B),
+              ),
           ];
 
           if (crossAxisCount == 1) {
@@ -726,343 +773,362 @@ class _SourceCategorySummaryReportScreenState
   }
 
   Widget _buildWebTableView(SourceCategorySummaryProvider provider) {
-    const double tableMinWidth = 1270;
-
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: const Color(0xFFE2E8F0)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.02),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final double availableWidth = constraints.maxWidth;
+          // Minimum width required to display columns legibly
+          const double minTableWidth = 900.0;
+          final double tableWidth = availableWidth > minTableWidth
+              ? availableWidth
+              : minTableWidth;
+
+          return Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: const Color(0xFFE2E8F0)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.02),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
-          ],
-        ),
-        clipBehavior: Clip.antiAlias,
-        child: Scrollbar(
-          controller: horizontalScrollController,
-          thumbVisibility: true,
-          child: SingleChildScrollView(
-            controller: horizontalScrollController,
-            scrollDirection: Axis.horizontal,
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(minWidth: tableMinWidth),
-              child: SizedBox(
-                width: tableMinWidth,
-                child: Column(
-                  children: [
-                    // Table Header
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 12, horizontal: 16),
-                      decoration: const BoxDecoration(
-                        color: Color(0xFFF8FAFC),
-                        border: Border(
-                          bottom: BorderSide(color: Color(0xFFE2E8F0)),
+            clipBehavior: Clip.antiAlias,
+            child: Scrollbar(
+              controller: horizontalScrollController,
+              thumbVisibility: tableWidth > availableWidth,
+              child: SingleChildScrollView(
+                controller: horizontalScrollController,
+                scrollDirection: Axis.horizontal,
+                child: SizedBox(
+                  width: tableWidth,
+                  child: Column(
+                    children: [
+                      // Table Header
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 12, horizontal: 16),
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFF8FAFC),
+                          border: Border(
+                            bottom: BorderSide(color: Color(0xFFE2E8F0)),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            SizedBox(
+                              width: 45,
+                              child: Text(
+                                '#',
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w700,
+                                  color: const Color(0xFF475569),
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                            ),
+                            _buildColumnHeader('PARENT SOURCE'),
+                            _buildColumnHeader('ENQUIRY SOURCE'),
+                            _buildColumnHeader('LEAD NAME'),
+                            _buildColumnHeader('CONVERSION DATE'),
+                            _buildColumnHeader('PROJECT COST',
+                                alignment: Alignment.centerRight),
+                            _buildColumnHeader('COMMISSION %',
+                                alignment: Alignment.center),
+                            _buildColumnHeader('COMMISSION AMOUNT',
+                                alignment: Alignment.centerRight),
+                          ],
                         ),
                       ),
-                      child: Row(
-                        children: [
-                          _buildColumnHeader('#', width: 50),
-                          _buildColumnHeader('PARENT SOURCE', width: 170),
-                          _buildColumnHeader('ENQUIRY SOURCE', width: 160),
-                          _buildColumnHeader('LEAD NAME', width: 220),
-                          _buildColumnHeader('CONVERSION DATE', width: 180),
-                          _buildColumnHeader('PROJECT COST',
-                              width: 150, alignment: Alignment.centerRight),
-                          _buildColumnHeader('COMMISSION %',
-                              width: 120, alignment: Alignment.center),
-                          _buildColumnHeader('COMMISSION AMOUNT',
-                              width: 170, alignment: Alignment.centerRight),
-                        ],
-                      ),
-                    ),
 
-                    // Table Body
-                    Expanded(
-                      child: Scrollbar(
-                        controller: verticalScrollController,
-                        thumbVisibility: true,
-                        child: ListView.separated(
+                      // Table Body
+                      Expanded(
+                        child: Scrollbar(
                           controller: verticalScrollController,
-                          itemCount: provider.sourceCategoryReport.length,
-                          separatorBuilder: (context, index) => const Divider(
-                            height: 1,
-                            thickness: 1,
-                            color: Color(0xFFF1F5F9),
-                          ),
-                          itemBuilder: (context, index) {
-                            final item = provider.sourceCategoryReport[index];
-                            final isEven = index % 2 == 0;
+                          thumbVisibility: true,
+                          child: ListView.separated(
+                            controller: verticalScrollController,
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            itemCount: provider.sourceCategoryReport.length,
+                            separatorBuilder: (context, index) => const Divider(
+                              height: 1,
+                              thickness: 1,
+                              color: Color(0xFFF1F5F9),
+                            ),
+                            itemBuilder: (context, index) {
+                              final item = provider.sourceCategoryReport[index];
+                              final isEven = index % 2 == 0;
 
-                            return Container(
-                              color: isEven
-                                  ? Colors.white
-                                  : const Color(0xFFFAFAFB),
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 12, horizontal: 16),
-                              child: Row(
-                                children: [
-                                  // Index
-                                  SizedBox(
-                                    width: 50,
-                                    child: Text(
-                                      '${index + 1}',
-                                      style: GoogleFonts.plusJakartaSans(
-                                        fontSize: 13,
-                                        color: const Color(0xFF64748B),
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ),
-
-                                  // Parent Enquiry Source
-                                  SizedBox(
-                                    width: 170,
-                                    child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 10, vertical: 4),
-                                        decoration: BoxDecoration(
-                                          color: const Color(0xFFEEF2FF),
-                                          borderRadius:
-                                              BorderRadius.circular(4),
-                                          border: Border.all(
-                                            color: const Color(0xFFC7D2FE),
-                                          ),
-                                        ),
-                                        child: Text(
-                                          item.parentEnquirySource.isEmpty
-                                              ? '-'
-                                              : item.parentEnquirySource,
-                                          style: GoogleFonts.plusJakartaSans(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w600,
-                                            color: const Color(0xFF4338CA),
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
+                              return Container(
+                                color: isEven
+                                    ? Colors.white
+                                    : const Color(0xFFFAFAFB),
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 12, horizontal: 16),
+                                child: Row(
+                                  children: [
+                                    // Index
+                                    SizedBox(
+                                      width: 45,
+                                      child: Text(
+                                        '${index + 1}',
+                                        style: GoogleFonts.plusJakartaSans(
+                                          fontSize: 13,
+                                          color: const Color(0xFF64748B),
+                                          fontWeight: FontWeight.w500,
                                         ),
                                       ),
                                     ),
-                                  ),
 
-                                  // Enquiry Source
-                                  SizedBox(
-                                    width: 160,
-                                    child: Text(
-                                      item.enquirySource.isEmpty
-                                          ? '-'
-                                          : item.enquirySource,
-                                      style: GoogleFonts.plusJakartaSans(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w600,
-                                        color: const Color(0xFF0F172A),
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-
-                                  // Lead Name
-                                  SizedBox(
-                                    width: 220,
-                                    child: Row(
-                                      children: [
-                                        CircleAvatar(
-                                          radius: 12,
-                                          backgroundColor: AppColors.primaryBlue
-                                              .withOpacity(0.12),
-                                          child: Text(
-                                            item.leadName.isNotEmpty
-                                                ? item.leadName[0].toUpperCase()
-                                                : 'L',
-                                            style: GoogleFonts.plusJakartaSans(
-                                              fontSize: 11,
-                                              fontWeight: FontWeight.bold,
-                                              color: AppColors.primaryBlue,
+                                    // Parent Enquiry Source
+                                    Expanded(
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 10, vertical: 4),
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFFEEF2FF),
+                                            borderRadius:
+                                                BorderRadius.circular(4),
+                                            border: Border.all(
+                                              color: const Color(0xFFC7D2FE),
                                             ),
                                           ),
-                                        ),
-                                        const SizedBox(width: 8),
-                                        Expanded(
                                           child: Text(
-                                            item.leadName.isEmpty
+                                            item.parentEnquirySource.isEmpty
                                                 ? '-'
-                                                : item.leadName,
+                                                : item.parentEnquirySource,
                                             style: GoogleFonts.plusJakartaSans(
-                                              fontSize: 13,
+                                              fontSize: 12,
                                               fontWeight: FontWeight.w600,
-                                              color: const Color(0xFF1E293B),
+                                              color: const Color(0xFF4338CA),
                                             ),
                                             overflow: TextOverflow.ellipsis,
                                           ),
                                         ),
-                                      ],
-                                    ),
-                                  ),
-
-                                  // Conversion Date
-                                  SizedBox(
-                                    width: 180,
-                                    child: Text(
-                                      _formatDateString(item.conversionDate),
-                                      style: GoogleFonts.plusJakartaSans(
-                                        fontSize: 12,
-                                        color: const Color(0xFF64748B),
                                       ),
                                     ),
-                                  ),
 
-                                  // Project Cost
-                                  SizedBox(
-                                    width: 150,
-                                    child: Align(
-                                      alignment: Alignment.centerRight,
+                                    // Enquiry Source
+                                    Expanded(
                                       child: Text(
-                                        _formatCurrency(item.projectCost),
+                                        item.enquirySource.isEmpty
+                                            ? '-'
+                                            : item.enquirySource,
                                         style: GoogleFonts.plusJakartaSans(
                                           fontSize: 13,
                                           fontWeight: FontWeight.w600,
                                           color: const Color(0xFF0F172A),
                                         ),
+                                        overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
-                                  ),
 
-                                  // Commission %
-                                  SizedBox(
-                                    width: 120,
-                                    child: Center(
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 8, vertical: 3),
-                                        decoration: BoxDecoration(
-                                          color: const Color(0xFFFEF3C7),
-                                          borderRadius:
-                                              BorderRadius.circular(4),
+                                    // Lead Name
+                                    Expanded(
+                                      child: Row(
+                                        children: [
+                                          CircleAvatar(
+                                            radius: 12,
+                                            backgroundColor: AppColors.primaryBlue
+                                                .withOpacity(0.12),
+                                            child: Text(
+                                              item.leadName.isNotEmpty
+                                                  ? item.leadName[0].toUpperCase()
+                                                  : 'L',
+                                              style: GoogleFonts.plusJakartaSans(
+                                                fontSize: 11,
+                                                fontWeight: FontWeight.bold,
+                                                color: AppColors.primaryBlue,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Expanded(
+                                            child: Text(
+                                              item.leadName.isEmpty
+                                                  ? '-'
+                                                  : item.leadName,
+                                              style: GoogleFonts.plusJakartaSans(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.w600,
+                                                color: const Color(0xFF1E293B),
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+
+                                    // Conversion Date
+                                    Expanded(
+                                      child: Text(
+                                        _formatDateString(item.conversionDate),
+                                        style: GoogleFonts.plusJakartaSans(
+                                          fontSize: 12,
+                                          color: const Color(0xFF64748B),
                                         ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+
+                                    // Project Cost
+                                    Expanded(
+                                      child: Align(
+                                        alignment: Alignment.centerRight,
                                         child: Text(
-                                          '${item.commissionPercentage.toStringAsFixed(2)}%',
+                                          _formatCurrency(item.projectCost),
                                           style: GoogleFonts.plusJakartaSans(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.bold,
-                                            color: const Color(0xFF92400E),
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w600,
+                                            color: const Color(0xFF0F172A),
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ),
+
+                                    // Commission %
+                                    Expanded(
+                                      child: Center(
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 8, vertical: 3),
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFFFEF3C7),
+                                            borderRadius:
+                                                BorderRadius.circular(4),
+                                          ),
+                                          child: Text(
+                                            '${item.commissionPercentage.toStringAsFixed(2)}%',
+                                            style: GoogleFonts.plusJakartaSans(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold,
+                                              color: const Color(0xFF92400E),
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ),
 
-                                  // Commission Amount
-                                  SizedBox(
-                                    width: 170,
-                                    child: Align(
-                                      alignment: Alignment.centerRight,
-                                      child: Text(
-                                        _formatCurrency(item.commissionAmount),
-                                        style: GoogleFonts.plusJakartaSans(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.bold,
-                                          color: const Color(0xFF059669),
+                                    // Commission Amount
+                                    Expanded(
+                                      child: Align(
+                                        alignment: Alignment.centerRight,
+                                        child: Text(
+                                          _formatCurrency(item.commissionAmount),
+                                          style: GoogleFonts.plusJakartaSans(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.bold,
+                                            color: const Color(0xFF059669),
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
                                         ),
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
                         ),
                       ),
-                    ),
 
-                    // Table Footer (Totals)
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 12, horizontal: 16),
-                      decoration: const BoxDecoration(
-                        color: Color(0xFFF1F5F9),
-                        border: Border(
-                          top: BorderSide(color: Color(0xFFCBD5E1), width: 1.5),
+                      // Table Footer (Totals)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 12, horizontal: 16),
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFF1F5F9),
+                          border: Border(
+                            top: BorderSide(color: Color(0xFFCBD5E1), width: 1.5),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            const SizedBox(width: 45),
+                            Expanded(
+                              flex: 4, // 4 equal text columns: Parent, Enquiry, Lead, Date
+                              child: Text(
+                                'TOTALS (${provider.sourceCategoryReport.length} Entries)',
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                  color: const Color(0xFF1E293B),
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            Expanded(
+                              flex: 1, // Project Cost
+                              child: Align(
+                                alignment: Alignment.centerRight,
+                                child: Text(
+                                  _formatCurrency(provider.totalProjectCost),
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: const Color(0xFF0F172A),
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 1, // Commission %
+                              child: Center(
+                                child: Text(
+                                  '${provider.avgCommissionPercentage.toStringAsFixed(1)}% avg',
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: const Color(0xFF64748B),
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 1, // Commission Amount
+                              child: Align(
+                                alignment: Alignment.centerRight,
+                                child: Text(
+                                  _formatCurrency(provider.totalCommissionAmount),
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: const Color(0xFF059669),
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      child: Row(
-                        children: [
-                          const SizedBox(width: 50),
-                          SizedBox(
-                            width: 170 + 160 + 220 + 180,
-                            child: Text(
-                              'TOTALS (${provider.sourceCategoryReport.length} Entries)',
-                              style: GoogleFonts.plusJakartaSans(
-                                fontSize: 13,
-                                fontWeight: FontWeight.bold,
-                                color: const Color(0xFF1E293B),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 150,
-                            child: Align(
-                              alignment: Alignment.centerRight,
-                              child: Text(
-                                _formatCurrency(provider.totalProjectCost),
-                                style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: const Color(0xFF0F172A),
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 120,
-                            child: Center(
-                              child: Text(
-                                '${provider.avgCommissionPercentage.toStringAsFixed(1)}% avg',
-                                style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                  color: const Color(0xFF64748B),
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 170,
-                            child: Align(
-                              alignment: Alignment.centerRight,
-                              child: Text(
-                                _formatCurrency(provider.totalCommissionAmount),
-                                style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: const Color(0xFF059669),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }
 
   Widget _buildColumnHeader(String title,
-      {required double width, Alignment alignment = Alignment.centerLeft}) {
-    return SizedBox(
-      width: width,
+      {Alignment alignment = Alignment.centerLeft, int flex = 1}) {
+    return Expanded(
+      flex: flex,
       child: Align(
         alignment: alignment,
         child: Text(
@@ -1073,6 +1139,7 @@ class _SourceCategorySummaryReportScreenState
             color: const Color(0xFF475569),
             letterSpacing: 0.5,
           ),
+          overflow: TextOverflow.ellipsis,
         ),
       ),
     );
@@ -1247,7 +1314,469 @@ class _SourceCategorySummaryReportScreenState
     );
   }
 
+  Widget _buildTabBar(SourceCategorySummaryProvider provider, bool isWeb) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF1F5F9),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: const Color(0xFFE2E8F0)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildTabButton(
+            title: 'Converted Leads',
+            count: provider.sourceCategoryReport.length,
+            isSelected: provider.selectedTabIndex == 0,
+            onTap: () => provider.setSelectedTabIndex(0),
+          ),
+          const SizedBox(width: 4),
+          _buildTabButton(
+            title: 'Agency Payments',
+            count: provider.agencyPayments.length,
+            isSelected: provider.selectedTabIndex == 1,
+            onTap: () => provider.setSelectedTabIndex(1),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTabButton({
+    required String title,
+    required int count,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(6),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? Colors.white : Colors.transparent,
+          borderRadius: BorderRadius.circular(6),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.04),
+                    blurRadius: 4,
+                    offset: const Offset(0, 1),
+                  ),
+                ]
+              : null,
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              title,
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 13,
+                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+                color:
+                    isSelected ? AppColors.primaryBlue : const Color(0xFF64748B),
+              ),
+            ),
+            const SizedBox(width: 6),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? AppColors.primaryBlue.withOpacity(0.12)
+                    : const Color(0xFFE2E8F0),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                '$count',
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                  color: isSelected
+                      ? AppColors.primaryBlue
+                      : const Color(0xFF64748B),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAgencyPaymentsTableView(
+      SourceCategorySummaryProvider provider) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final double availableWidth = constraints.maxWidth;
+          const double minTableWidth = 750.0;
+          final double tableWidth = availableWidth > minTableWidth
+              ? availableWidth
+              : minTableWidth;
+
+          return Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: const Color(0xFFE2E8F0)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.02),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: Scrollbar(
+              controller: horizontalScrollController,
+              thumbVisibility: tableWidth > availableWidth,
+              child: SingleChildScrollView(
+                controller: horizontalScrollController,
+                scrollDirection: Axis.horizontal,
+                child: SizedBox(
+                  width: tableWidth,
+                  child: Column(
+                    children: [
+                      // Table Header
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 12, horizontal: 16),
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFF8FAFC),
+                          border: Border(
+                            bottom: BorderSide(color: Color(0xFFE2E8F0)),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            SizedBox(
+                              width: 45,
+                              child: Text(
+                                '#',
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w700,
+                                  color: const Color(0xFF475569),
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                            ),
+                            _buildColumnHeader('PAYMENT DATE'),
+                            _buildColumnHeader('ENQUIRY SOURCE'),
+                            _buildColumnHeader('AMOUNT PAID'),
+                            _buildColumnHeader('REMARK'),
+                          ],
+                        ),
+                      ),
+
+                      // Table Body
+                      Expanded(
+                        child: Scrollbar(
+                          controller: verticalScrollController,
+                          thumbVisibility: true,
+                          child: ListView.separated(
+                            controller: verticalScrollController,
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            itemCount: provider.agencyPayments.length,
+                            separatorBuilder: (context, index) => const Divider(
+                              height: 1,
+                              thickness: 1,
+                              color: Color(0xFFF1F5F9),
+                            ),
+                            itemBuilder: (context, index) {
+                              final item = provider.agencyPayments[index];
+                              final isEven = index % 2 == 0;
+
+                              return Container(
+                                color: isEven
+                                    ? Colors.white
+                                    : const Color(0xFFFAFAFB),
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 12, horizontal: 16),
+                                child: Row(
+                                  children: [
+                                    // Index
+                                    SizedBox(
+                                      width: 45,
+                                      child: Text(
+                                        '${index + 1}',
+                                        style: GoogleFonts.plusJakartaSans(
+                                          fontSize: 13,
+                                          color: const Color(0xFF64748B),
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+
+                                    // Payment Date
+                                    Expanded(
+                                      child: Text(
+                                        _formatDateString(item.paymentDate),
+                                        style: GoogleFonts.plusJakartaSans(
+                                          fontSize: 12,
+                                          color: const Color(0xFF64748B),
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+
+                                    // Enquiry Source
+                                    Expanded(
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 8, vertical: 3),
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFFEEF2FF),
+                                            borderRadius:
+                                                BorderRadius.circular(4),
+                                            border: Border.all(
+                                              color: const Color(0xFFC7D2FE),
+                                            ),
+                                          ),
+                                          child: Text(
+                                            item.enquirySourceName.isEmpty
+                                                ? '-'
+                                                : item.enquirySourceName,
+                                            style: GoogleFonts.plusJakartaSans(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w600,
+                                              color: const Color(0xFF4338CA),
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+
+                                    // Amount Paid
+                                    Expanded(
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          _formatCurrency(item.amount),
+                                          style: GoogleFonts.plusJakartaSans(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.bold,
+                                            color: const Color(0xFF059669),
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ),
+
+                                    // Remark
+                                    Expanded(
+                                      child: Text(
+                                        item.remark.isEmpty ? '-' : item.remark,
+                                        style: GoogleFonts.plusJakartaSans(
+                                          fontSize: 13,
+                                          color: const Color(0xFF334155),
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+
+                      // Table Footer (Totals)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 12, horizontal: 16),
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFF1F5F9),
+                          border: Border(
+                            top: BorderSide(
+                                color: Color(0xFFCBD5E1), width: 1.5),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            const SizedBox(width: 45),
+                            Expanded(
+                              flex: 2, // spans Payment Date & Enquiry Source
+                              child: Text(
+                                'TOTALS (${provider.agencyPayments.length} Payments)',
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                  color: const Color(0xFF1E293B),
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            Expanded(
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  _formatCurrency(
+                                      provider.totalAgencyPaymentsAmount),
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: const Color(0xFF059669),
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ),
+                            const Expanded(child: SizedBox()),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildMobilePaymentsListView(
+      SourceCategorySummaryProvider provider) {
+    return RefreshIndicator(
+      onRefresh: () => provider.getSourceCategorySummary(context),
+      child: ListView.separated(
+        padding: const EdgeInsets.all(12),
+        itemCount: provider.agencyPayments.length,
+        separatorBuilder: (context, index) => const SizedBox(height: 10),
+        itemBuilder: (context, index) {
+          final item = provider.agencyPayments[index];
+          return Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: const Color(0xFFE2E8F0)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.02),
+                  blurRadius: 4,
+                  offset: const Offset(0, 1),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      padding:
+                          const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFEFF6FF),
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(color: const Color(0xFFBFDBFE)),
+                      ),
+                      child: Text(
+                        item.enquirySourceName.isEmpty
+                            ? '-'
+                            : item.enquirySourceName,
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xFF1E40AF),
+                        ),
+                      ),
+                    ),
+                    Text(
+                      _formatDateString(item.paymentDate),
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 12,
+                        color: const Color(0xFF64748B),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Amount Paid:',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 13,
+                        color: const Color(0xFF64748B),
+                      ),
+                    ),
+                    Text(
+                      _formatCurrency(item.amount),
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFF059669),
+                      ),
+                    ),
+                  ],
+                ),
+                if (item.remark.isNotEmpty) ...[
+                  const SizedBox(height: 10),
+                  Text(
+                    'Remark: ${item.remark}',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 12,
+                      color: const Color(0xFF475569),
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
   void _exportData(SourceCategorySummaryProvider provider) {
+    if (provider.selectedTabIndex == 1) {
+      if (provider.agencyPayments.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No payment data available to export')),
+        );
+        return;
+      }
+
+      exportToExcel(
+        headers: [
+          'No',
+          'Payment Date',
+          'Enquiry Source',
+          'Amount Paid',
+          'Remark',
+        ],
+        data: provider.agencyPayments.asMap().entries.map((entry) {
+          final i = entry.key;
+          final item = entry.value;
+          return {
+            'No': i + 1,
+            'Payment Date': item.paymentDate,
+            'Enquiry Source': item.enquirySourceName,
+            'Amount Paid': item.amount,
+            'Remark': item.remark,
+          };
+        }).toList(),
+        fileName: 'Agency_Payments_Report',
+      );
+      return;
+    }
+
     if (provider.sourceCategoryReport.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('No data available to export')),

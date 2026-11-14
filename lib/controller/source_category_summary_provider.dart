@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:vidyanexis/controller/models/agency_payment_model.dart';
 import 'package:vidyanexis/controller/models/enquiry_source_model.dart';
 import 'package:vidyanexis/controller/models/source_category_summary_model.dart';
 import 'package:vidyanexis/http/http_requests.dart';
@@ -30,6 +31,35 @@ class SourceCategorySummaryProvider extends ChangeNotifier {
 
   List<Enquirysourcemodel> _enquirySources = [];
   List<Enquirysourcemodel> get enquirySources => _enquirySources;
+
+  // Agency Payments & Summary from API
+  List<AgencyPaymentModel> _agencyPayments = [];
+  List<AgencyPaymentModel> get agencyPayments => _agencyPayments;
+
+  PaymentSummaryModel? _paymentSummary;
+  PaymentSummaryModel? get paymentSummary => _paymentSummary;
+
+  int _selectedTabIndex = 0; // 0: Converted Leads, 1: Agency Payments
+  int get selectedTabIndex => _selectedTabIndex;
+
+  void setSelectedTabIndex(int index) {
+    _selectedTabIndex = index;
+    notifyListeners();
+  }
+
+  double get totalAgencyPaymentsAmount {
+    if (_paymentSummary != null && _paymentSummary!.totalAmountPaid > 0) {
+      return _paymentSummary!.totalAmountPaid;
+    }
+    return _agencyPayments.fold(0.0, (sum, item) => sum + item.amount);
+  }
+
+  double get balanceAmount {
+    if (_paymentSummary != null) {
+      return _paymentSummary!.balanceAmount;
+    }
+    return totalCommissionAmount - totalAgencyPaymentsAmount;
+  }
 
   // Selected date range options
   int? _selectedDateFilterIndex;
@@ -257,6 +287,9 @@ class SourceCategorySummaryProvider extends ChangeNotifier {
     _selectedEnquirySource = null;
     _selectedEnquirySourceId = null;
     _selectedDateFilterIndex = null;
+    _selectedTabIndex = 0;
+    _agencyPayments = [];
+    _paymentSummary = null;
     _initDefaultDates();
     _applyFilters();
   }
@@ -363,6 +396,41 @@ class SourceCategorySummaryProvider extends ChangeNotifier {
         }
       }
 
+      var rawResponseData = response.data;
+      if (rawResponseData is String) {
+        try {
+          rawResponseData = jsonDecode(rawResponseData);
+        } catch (_) {}
+      }
+
+      // Parse Agency_Payments
+      if (rawResponseData is Map && rawResponseData['Agency_Payments'] is List) {
+        _agencyPayments = (rawResponseData['Agency_Payments'] as List)
+            .map((item) =>
+                AgencyPaymentModel.fromJson(item as Map<String, dynamic>))
+            .toList();
+      } else if (rawResponseData is Map &&
+          rawResponseData['agency_payments'] is List) {
+        _agencyPayments = (rawResponseData['agency_payments'] as List)
+            .map((item) =>
+                AgencyPaymentModel.fromJson(item as Map<String, dynamic>))
+            .toList();
+      } else {
+        _agencyPayments = [];
+      }
+
+      // Parse Payment_Summary
+      if (rawResponseData is Map && rawResponseData['Payment_Summary'] is Map) {
+        _paymentSummary = PaymentSummaryModel.fromJson(
+            Map<String, dynamic>.from(rawResponseData['Payment_Summary']));
+      } else if (rawResponseData is Map &&
+          rawResponseData['payment_summary'] is Map) {
+        _paymentSummary = PaymentSummaryModel.fromJson(
+            Map<String, dynamic>.from(rawResponseData['payment_summary']));
+      } else {
+        _paymentSummary = null;
+      }
+
       if (list.isNotEmpty) {
         _rawList = list
             .map((item) => SourceCategorySummaryModel.fromJson(
@@ -380,16 +448,18 @@ class SourceCategorySummaryProvider extends ChangeNotifier {
         }
       }
     } catch (e) {
-      print('Exception in getSourceCategorySummary: $e');
+      debugPrint('Exception in getSourceCategorySummary: $e');
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error loading report: $e')),
         );
       }
     } finally {
-      try {
-        Loader.stopLoader(context);
-      } catch (_) {}
+      if (context.mounted) {
+        try {
+          Loader.stopLoader(context);
+        } catch (_) {}
+      }
       _isLoading = false;
       _applyFilters();
     }

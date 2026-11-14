@@ -68,3 +68,43 @@ class SourceCategorySummaryModel {
     };
   }
 }
+
+class PaymentSummaryModel {
+  final double totalCommissionAmount;
+  final double totalAmountPaid;
+  final double balanceAmount;
+
+  PaymentSummaryModel({
+    this.totalCommissionAmount = 0.0,
+    this.totalAmountPaid = 0.0,
+    this.balanceAmount = 0.0,
+  });
+
+  factory PaymentSummaryModel.fromJson(Map<String, dynamic> json) {
+    double parseDouble(dynamic val) {
+      if (val == null) return 0.0;
+      if (val is num) return val.toDouble();
+      return double.tryParse(val.toString()) ?? 0.0;
+    }
+
+    return PaymentSummaryModel(
+      totalCommissionAmount: parseDouble(json['Total_Commission_Amount'] ??
+          json['total_commission_amount'] ??
+          json['TotalCommissionAmount']),
+      totalAmountPaid: parseDouble(json['Total_Amount_Paid'] ??
+          json['total_amount_paid'] ??
+          json['TotalAmountPaid']),
+      balanceAmount: parseDouble(json['Balance_Amount'] ??
+          json['balance_amount'] ??
+          json['BalanceAmount']),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'Total_Commission_Amount': totalCommissionAmount.toStringAsFixed(2),
+      'Total_Amount_Paid': totalAmountPaid.toStringAsFixed(2),
+      'Balance_Amount': balanceAmount.toStringAsFixed(2),
+    };
+  }
+}
