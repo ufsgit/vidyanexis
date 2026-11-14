@@ -270,7 +270,7 @@ class SourceCategorySummaryProvider extends ChangeNotifier {
 
       // 1. Try primary endpoint Source_Category_Summary with menuId: 218
       var response = await HttpRequest.httpGetRequest(
-        endPoint: '${HttpUrls.sourceCategorySummary}$queryParams',
+        endPoint: 'lead/${HttpUrls.sourceCategorySummary}$queryParams',
         menuId: 218,
       );
 
@@ -279,7 +279,7 @@ class SourceCategorySummaryProvider extends ChangeNotifier {
       // 2. If empty or failed, try Source_Category_Summary without query parameters
       if (list.isEmpty && queryParams.isNotEmpty) {
         final fallbackResponse = await HttpRequest.httpGetRequest(
-          endPoint: HttpUrls.sourceCategorySummary,
+          endPoint: 'lead/${HttpUrls.sourceCategorySummary}',
           menuId: 218,
         );
         final fallbackList = _extractList(fallbackResponse.data);
