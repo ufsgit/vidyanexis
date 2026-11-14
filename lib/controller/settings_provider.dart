@@ -461,6 +461,10 @@ class SettingsProvider extends ChangeNotifier {
   bool get hasTaskCountSummaryPermission =>
       (menuIsViewMap[233] ?? 0).toString() == '1';
 
+  /// Agency Payment Permission (Menu ID: 245)
+  bool get hasAgencyPaymentPermission =>
+      (menuIsViewMap[245] ?? 0).toString() == '1';
+
   /// Task Permission ME and ALL (Menu ID: 209)
   /// If Company permission is 0 → hidden for all users (no check needed).
   /// If Company permission is 1 → check User Menu Permission (IsView = 1 to show, 0 to hide).
@@ -3263,6 +3267,7 @@ class SettingsProvider extends ChangeNotifier {
             220: 'Customer Permission ME and ALL',
             221: 'Task Permission All',
             233: 'Task Count Summary',
+            245: 'Agency Payment',
           };
 
           for (var entry in customPermissions.entries) {
@@ -6179,6 +6184,7 @@ class SettingsProvider extends ChangeNotifier {
             220: 'Customer Permission ME and ALL',
             221: 'Task Permission All',
             233: 'Task Count Summary',
+            245: 'Agency Payment',
           };
 
           for (var entry in customPermissionsShow.entries) {

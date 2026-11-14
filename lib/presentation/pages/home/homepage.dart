@@ -351,7 +351,7 @@ class _HomePageState extends State<HomePage> {
             title: 'Settings',
             iconPath: 'assets/images/settings-02.svg',
             baseContent: const SettingsPage()),
-      if (settingsProvider.menuIsViewMap[2].toString() == '1')
+      if ((settingsProvider.menuIsViewMap[245] ?? 0).toString() == '1')
         SidebarOption(
           title: 'Agency payment',
           iconPath: 'assets/images/banknotes.svg',
@@ -744,7 +744,8 @@ class _HomePageState extends State<HomePage> {
                   'Lead Search',
                 if (settingsProvider.menuIsViewMap[35].toString() == '1')
                   'Task',
-                'Agency payment',
+                if ((settingsProvider.menuIsViewMap[245] ?? 0).toString() == '1')
+                  'Agency payment',
               ].contains(sideProvider.selectedName)
                   ? Text(
                       sideProvider.selectedName == 'Task'

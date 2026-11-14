@@ -409,7 +409,7 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
                     activeColor: const Color(0xFF48BB78), // Green
                     lightColor: const Color(0xFFEDF7ED),
                   ),
-                if (settingsProvider.menuIsViewMap[2].toString() == '1')
+                if ((settingsProvider.menuIsViewMap[245] ?? 0).toString() == '1')
                   _buildModernMenuItem(
                     context: context,
                     title: 'Agency payment',
