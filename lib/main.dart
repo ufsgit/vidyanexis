@@ -92,6 +92,7 @@ import 'package:vidyanexis/controller/location_tracking_provider.dart';
 import 'package:vidyanexis/controller/project_duration_report_provider.dart';
 import 'package:vidyanexis/controller/lead_creation_report_provider.dart';
 import 'package:vidyanexis/controller/report_upload_provider.dart';
+import 'package:vidyanexis/controller/agency_payment_provider.dart';
 
 final GlobalKey<ScaffoldMessengerState> navigatorKey =
     GlobalKey<ScaffoldMessengerState>();
@@ -236,7 +237,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ProjectDurationReportProvider()),
         ChangeNotifierProvider(create: (_) => LeadCreationReportProvider()),
         ChangeNotifierProvider(create: (_) => LeadCreationDetailsProvider()),
-        ChangeNotifierProvider(create: (context) => CalendarTabProvider())
+        ChangeNotifierProvider(create: (context) => CalendarTabProvider()),
+        ChangeNotifierProvider(create: (_) => AgencyPaymentProvider()),
       ],
       child: MaterialApp.router(
         scrollBehavior: const MaterialScrollBehavior().copyWith(

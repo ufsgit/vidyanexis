@@ -537,7 +537,8 @@ class HttpUrls {
   static String getItemDocumentsByItemId = "item/Get_Item_Documents_By_Item_Id";
   static String deleteItemDocument = "item/Delete_Item_Document";
   static String getItemDocumentCategories = "item/Get_Item_Document_Categories";
-  static String getItemDocumentsByCategory = "item/Get_Item_Documents_By_Category";
+  static String getItemDocumentsByCategory =
+      "item/Get_Item_Documents_By_Category";
   static String getCategoryPeriodicService = "item/Get_Category";
   static String getPeriodicServiceFields =
       "amc_status/Get_Periodic_Service_Fields";
@@ -549,4 +550,7 @@ class HttpUrls {
   static const String deleteCalendar = 'service/Delete_Calendar';
   static String printCalendarItem = "lead/calendar_print";
   static String printInvoiceItem = "lead/invoice_print_item";
+  static String saveagencypayment = "lead/Save_Agency_Payment";
+  static String listagencypayment = "lead/Get_Agency_Payment";
+  static String deleteagencypayment = "lead/Delete_Agency_Payment";
 }

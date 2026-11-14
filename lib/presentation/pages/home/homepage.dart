@@ -351,11 +351,12 @@ class _HomePageState extends State<HomePage> {
             title: 'Settings',
             iconPath: 'assets/images/settings-02.svg',
             baseContent: const SettingsPage()),
-      SidebarOption(
-        title: 'Agency payment',
-        iconPath: 'assets/images/agency_payment.svg',
-        baseContent: const AgencyPaymentPage(),
-      ),
+      if (settingsProvider.menuIsViewMap[2].toString() == '1')
+        SidebarOption(
+          title: 'Agency payment',
+          iconPath: 'assets/images/banknotes.svg',
+          baseContent: const AgencyPaymentPage(),
+        ),
       if (settingsProvider.menuIsViewMap[36].toString() == '1')
         SidebarOption(
           title: 'Process Flow',

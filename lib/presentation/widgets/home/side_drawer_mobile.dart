@@ -409,15 +409,16 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
                     activeColor: const Color(0xFF48BB78), // Green
                     lightColor: const Color(0xFFEDF7ED),
                   ),
-                _buildModernMenuItem(
-                  context: context,
-                  title: 'Agency payment',
-                  iconPath: 'assets/images/agency_payment.svg',
-                  page: const AgencyPaymentPage(),
-                  sideProvider: sideProvider,
-                  activeColor: const Color(0xFF1E88E5),
-                  lightColor: const Color(0xFFE3F2FD),
-                ),
+                if (settingsProvider.menuIsViewMap[2].toString() == '1')
+                  _buildModernMenuItem(
+                    context: context,
+                    title: 'Agency payment',
+                    iconPath: 'assets/images/banknotes.svg',
+                    page: const AgencyPaymentPage(),
+                    sideProvider: sideProvider,
+                    activeColor: const Color(0xFF1E88E5),
+                    lightColor: const Color(0xFFE3F2FD),
+                  ),
                 const SizedBox(height: 8),
                 _buildLogoutButton(context),
                 const SizedBox(height: 24),
