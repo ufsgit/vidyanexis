@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/source_category_summary_provider.dart';
 import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
@@ -44,6 +45,10 @@ class _SourceCategorySummaryReportScreenState
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider =
           Provider.of<SourceCategorySummaryProvider>(context, listen: false);
+      final dropDownProvider =
+          Provider.of<DropDownProvider>(context, listen: false);
+      dropDownProvider.getEnquirySource(context);
+      provider.fetchEnquirySources(context);
       provider.clearAllFilters();
       provider.getSourceCategorySummary(context);
     });
@@ -342,113 +347,129 @@ class _SourceCategorySummaryReportScreenState
                 onTap: () => _showDateRangeDialog(provider),
               ),
 
-              // Parent Category Dropdown
-              if (provider.uniqueParentCategories.isNotEmpty)
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(4),
-                    border: Border.all(
-                      color: provider.selectedParentCategory != null
-                          ? AppColors.primaryBlue
-                          : const Color(0xFFCBD5E1),
-                    ),
-                  ),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      value: provider.selectedParentCategory,
-                      hint: Text(
-                        'All Parent Categories',
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 13,
-                          color: const Color(0xFF64748B),
-                        ),
-                      ),
-                      icon: const Icon(Icons.arrow_drop_down, size: 20),
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 13,
-                        color: const Color(0xFF0F172A),
-                        fontWeight: FontWeight.w500,
-                      ),
-                      items: [
-                        DropdownMenuItem<String>(
-                          value: null,
-                          child: Text(
-                            'All Parent Categories',
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 13,
-                              color: const Color(0xFF64748B),
-                            ),
-                          ),
-                        ),
-                        ...provider.uniqueParentCategories.map(
-                          (cat) => DropdownMenuItem<String>(
-                            value: cat,
-                            child: Text(cat),
-                          ),
-                        ),
-                      ],
-                      onChanged: (val) =>
-                          provider.setParentCategoryFilter(val),
-                    ),
-                  ),
-                ),
+              // Parent Category Dropdown (commented out for now)
+              // if (provider.uniqueParentCategories.isNotEmpty)
+              //   Container(
+              //     padding:
+              //         const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+              //     decoration: BoxDecoration(
+              //       color: Colors.white,
+              //       borderRadius: BorderRadius.circular(4),
+              //       border: Border.all(
+              //         color: provider.selectedParentCategory != null
+              //             ? AppColors.primaryBlue
+              //             : const Color(0xFFCBD5E1),
+              //       ),
+              //     ),
+              //     child: DropdownButtonHideUnderline(
+              //       child: DropdownButton<String>(
+              //         value: provider.selectedParentCategory,
+              //         hint: Text(
+              //           'All Parent Categories',
+              //           style: GoogleFonts.plusJakartaSans(
+              //             fontSize: 13,
+              //             color: const Color(0xFF64748B),
+              //           ),
+              //         ),
+              //         icon: const Icon(Icons.arrow_drop_down, size: 20),
+              //         style: GoogleFonts.plusJakartaSans(
+              //           fontSize: 13,
+              //           color: const Color(0xFF0F172A),
+              //           fontWeight: FontWeight.w500,
+              //         ),
+              //         items: [
+              //           DropdownMenuItem<String>(
+              //             value: null,
+              //             child: Text(
+              //               'All Parent Categories',
+              //               style: GoogleFonts.plusJakartaSans(
+              //                 fontSize: 13,
+              //                 color: const Color(0xFF64748B),
+              //               ),
+              //             ),
+              //           ),
+              //           ...provider.uniqueParentCategories.map(
+              //             (cat) => DropdownMenuItem<String>(
+              //               value: cat,
+              //               child: Text(cat),
+              //             ),
+              //           ),
+              //         ],
+              //         onChanged: (val) =>
+              //             provider.setParentCategoryFilter(val),
+              //       ),
+              //     ),
+              //   ),
 
               // Enquiry Source Dropdown
-              if (provider.uniqueEnquirySources.isNotEmpty)
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(4),
-                    border: Border.all(
-                      color: provider.selectedEnquirySource != null
-                          ? AppColors.primaryBlue
-                          : const Color(0xFFCBD5E1),
+              Consumer<DropDownProvider>(
+                builder: (context, dropDownProvider, child) {
+                  final rawSources = provider.enquirySources.isNotEmpty
+                      ? provider.enquirySources
+                      : dropDownProvider.enquiryData;
+                  final seenIds = <int>{};
+                  final sources = rawSources
+                      .where((s) => seenIds.add(s.enquirySourceId))
+                      .toList();
+                  final hasSelected = provider.selectedEnquirySourceId != null &&
+                      sources.any((s) =>
+                          s.enquirySourceId == provider.selectedEnquirySourceId);
+                  final selectedValue =
+                      hasSelected ? provider.selectedEnquirySourceId : null;
+
+                  return Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(4),
+                      border: Border.all(
+                        color: provider.selectedEnquirySourceId != null
+                            ? AppColors.primaryBlue
+                            : const Color(0xFFCBD5E1),
+                      ),
                     ),
-                  ),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      value: provider.selectedEnquirySource,
-                      hint: Text(
-                        'All Enquiry Sources',
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<int?>(
+                        value: selectedValue,
+                        hint: Text(
+                          'All Enquiry Sources',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 13,
+                            color: const Color(0xFF64748B),
+                          ),
+                        ),
+                        icon: const Icon(Icons.arrow_drop_down, size: 20),
                         style: GoogleFonts.plusJakartaSans(
                           fontSize: 13,
-                          color: const Color(0xFF64748B),
+                          color: const Color(0xFF0F172A),
+                          fontWeight: FontWeight.w500,
                         ),
-                      ),
-                      icon: const Icon(Icons.arrow_drop_down, size: 20),
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 13,
-                        color: const Color(0xFF0F172A),
-                        fontWeight: FontWeight.w500,
-                      ),
-                      items: [
-                        DropdownMenuItem<String>(
-                          value: null,
-                          child: Text(
-                            'All Enquiry Sources',
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 13,
-                              color: const Color(0xFF64748B),
+                        items: [
+                          DropdownMenuItem<int?>(
+                            value: null,
+                            child: Text(
+                              'All Enquiry Sources',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 13,
+                                color: const Color(0xFF64748B),
+                              ),
                             ),
                           ),
-                        ),
-                        ...provider.uniqueEnquirySources.map(
-                          (src) => DropdownMenuItem<String>(
-                            value: src,
-                            child: Text(src),
+                          ...sources.map(
+                            (src) => DropdownMenuItem<int?>(
+                              value: src.enquirySourceId,
+                              child: Text(src.enquirySourceName),
+                            ),
                           ),
-                        ),
-                      ],
-                      onChanged: (val) =>
-                          provider.setEnquirySourceFilter(val),
+                        ],
+                        onChanged: (val) =>
+                            provider.setEnquirySourceFilter(val),
+                      ),
                     ),
-                  ),
-                ),
+                  );
+                },
+              ),
 
               // Apply Button
               ElevatedButton.icon(

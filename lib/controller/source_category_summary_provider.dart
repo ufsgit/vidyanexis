@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:vidyanexis/controller/models/enquiry_source_model.dart';
 import 'package:vidyanexis/controller/models/source_category_summary_model.dart';
 import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/http_urls.dart';
@@ -23,6 +24,12 @@ class SourceCategorySummaryProvider extends ChangeNotifier {
 
   String? _selectedEnquirySource;
   String? get selectedEnquirySource => _selectedEnquirySource;
+
+  int? _selectedEnquirySourceId;
+  int? get selectedEnquirySourceId => _selectedEnquirySourceId;
+
+  List<Enquirysourcemodel> _enquirySources = [];
+  List<Enquirysourcemodel> get enquirySources => _enquirySources;
 
   // Selected date range options
   int? _selectedDateFilterIndex;
@@ -113,9 +120,39 @@ class SourceCategorySummaryProvider extends ChangeNotifier {
     _applyFilters();
   }
 
-  void setEnquirySourceFilter(String? enquirySource) {
-    _selectedEnquirySource = enquirySource;
-    _applyFilters();
+  void setEnquirySourceFilter(dynamic enquirySource) {
+    if (enquirySource is int?) {
+      _selectedEnquirySourceId = enquirySource;
+    } else if (enquirySource is String?) {
+      _selectedEnquirySource = enquirySource;
+      _applyFilters();
+    }
+    notifyListeners();
+  }
+
+  void setEnquirySourceId(int? enquirySourceId) {
+    _selectedEnquirySourceId = enquirySourceId;
+    notifyListeners();
+  }
+
+  Future<void> fetchEnquirySources(BuildContext context) async {
+    try {
+      final response = await HttpRequest.httpGetRequest(
+        endPoint: '${HttpUrls.enquirySource}?Enquiry_Source_Name=',
+      );
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data != null && data is List) {
+          _enquirySources = data
+              .map((item) =>
+                  Enquirysourcemodel.fromJson(item as Map<String, dynamic>))
+              .toList();
+          notifyListeners();
+        }
+      }
+    } catch (e) {
+      debugPrint('fetchEnquirySources error: $e');
+    }
   }
 
   void selectDateFilterOption(int? index) {
@@ -218,6 +255,7 @@ class SourceCategorySummaryProvider extends ChangeNotifier {
     _searchQuery = '';
     _selectedParentCategory = null;
     _selectedEnquirySource = null;
+    _selectedEnquirySourceId = null;
     _selectedDateFilterIndex = null;
     _initDefaultDates();
     _applyFilters();
@@ -262,11 +300,19 @@ class SourceCategorySummaryProvider extends ChangeNotifier {
     final toDateParam = _formattedToDate;
 
     try {
-      String queryParams = '';
+      List<String> queryList = [];
       if (fromDateParam.isNotEmpty && toDateParam.isNotEmpty) {
-        queryParams =
-            '?From_Date=$fromDateParam&To_Date=$toDateParam&from_date=$fromDateParam&to_date=$toDateParam';
+        queryList.add('From_Date=$fromDateParam');
+        queryList.add('To_Date=$toDateParam');
+        queryList.add('from_date=$fromDateParam');
+        queryList.add('to_date=$toDateParam');
       }
+      if (_selectedEnquirySourceId != null && _selectedEnquirySourceId != 0) {
+        queryList.add('Enquiry_Source_Id=$_selectedEnquirySourceId');
+      }
+
+      String queryParams =
+          queryList.isNotEmpty ? '?${queryList.join('&')}' : '';
 
       // 1. Try primary endpoint Source_Category_Summary with menuId: 218
       var response = await HttpRequest.httpGetRequest(
@@ -276,8 +322,11 @@ class SourceCategorySummaryProvider extends ChangeNotifier {
 
       List<dynamic> list = _extractList(response.data);
 
-      // 2. If empty or failed, try Source_Category_Summary without query parameters
-      if (list.isEmpty && queryParams.isNotEmpty) {
+      // 2. If empty or failed, try Source_Category_Summary without query parameters (only if no specific enquiry source filter is selected and request failed)
+      if (list.isEmpty &&
+          queryParams.isNotEmpty &&
+          response.statusCode != 200 &&
+          (_selectedEnquirySourceId == null || _selectedEnquirySourceId == 0)) {
         final fallbackResponse = await HttpRequest.httpGetRequest(
           endPoint: 'lead/${HttpUrls.sourceCategorySummary}',
           menuId: 218,
@@ -289,8 +338,10 @@ class SourceCategorySummaryProvider extends ChangeNotifier {
         }
       }
 
-      // 3. If still empty, try lead/Source_Category_Summary fallback
-      if (list.isEmpty) {
+      // 3. If still empty, try lead/Source_Category_Summary fallback (only if no specific enquiry source filter is selected and request failed)
+      if (list.isEmpty &&
+          response.statusCode != 200 &&
+          (_selectedEnquirySourceId == null || _selectedEnquirySourceId == 0)) {
         final leadResponse = await HttpRequest.httpGetRequest(
           endPoint: 'lead/${HttpUrls.sourceCategorySummary}$queryParams',
           menuId: 218,
