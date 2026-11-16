@@ -100,6 +100,11 @@ class SettingsProvider extends ChangeNotifier {
 
       print('DEBUG1: notification_topic loaded from cache: $notificationTopic');
 
+      int? cachedJbDefault = preferences.getInt('cached_jb_default');
+      if (cachedJbDefault != null) {
+        _jbDefault = cachedJbDefault;
+      }
+
       if (cachedLogo != null ||
           cachedTitle != null ||
           cachedNotificationTopic != null) {
@@ -991,6 +996,8 @@ class SettingsProvider extends ChangeNotifier {
   int get quotationProductName => _quotationProductName;
   int _estaNewLeadPosition = 0;
   int get estaNewLeadPosition => _estaNewLeadPosition;
+  int _jbDefault = 0;
+  int get jbDefault => _jbDefault;
 
   int _consumerNoInLeadPage = 0;
   int get consumerNoInLeadPage {
@@ -1307,7 +1314,59 @@ class SettingsProvider extends ChangeNotifier {
             (caption.toLowerCase().contains('esta new lead position') ||
                 caption.toLowerCase().contains('esta_new_lead_position'))) {
       _estaNewLeadPosition = value;
+    } else if (caption != null &&
+        (caption.toLowerCase().contains('jb default') ||
+            caption.toLowerCase().contains('jb_default') ||
+            caption.toLowerCase().contains('jbdefault') ||
+            (caption.toLowerCase().contains('jb') &&
+                caption.toLowerCase().contains('default')))) {
+      _jbDefault = value;
+      SharedPreferences.getInstance().then((prefs) {
+        prefs.setInt('cached_jb_default', value);
+      });
+      if (sideBarProvider != null && !sideBarProvider!.hasUserNavigated) {
+        sideBarProvider!.initLandingPage(
+          jbDefault: value,
+          hasDashboard: (menuIsViewMap[12] ?? 1).toString() != '0',
+          hasLead: (menuIsViewMap[3] ?? 1).toString() != '0',
+        );
+      }
     }
+  }
+
+  void setJbDefault(int value) {
+    _jbDefault = value;
+    if (_companyDetails.isNotEmpty &&
+        _companyDetails[0].permissions.isNotEmpty) {
+      int index = _companyDetails[0].permissions.indexWhere((p) {
+        final cap = (p.caption.isNotEmpty ? p.caption : p.displayCaption)
+            .trim()
+            .toLowerCase();
+        return cap.contains('jb default') ||
+            cap.contains('jb_default') ||
+            cap.contains('jbdefault') ||
+            (cap.contains('jb') && cap.contains('default'));
+      });
+      if (index != -1) {
+        final old = _companyDetails[0].permissions[index];
+        _companyDetails[0].permissions[index] = CompanyPermission(
+          companyPermissionId: old.companyPermissionId,
+          caption: old.caption,
+          value: value,
+        );
+      }
+    }
+    SharedPreferences.getInstance().then((prefs) {
+      prefs.setInt('cached_jb_default', value);
+    });
+    if (sideBarProvider != null && !sideBarProvider!.hasUserNavigated) {
+      sideBarProvider!.initLandingPage(
+        jbDefault: value,
+        hasDashboard: (menuIsViewMap[12] ?? 1).toString() != '0',
+        hasLead: (menuIsViewMap[3] ?? 1).toString() != '0',
+      );
+    }
+    notifyListeners();
   }
 
   void setDocumentButtonTaskStatus(int value) {
@@ -5876,6 +5935,7 @@ class SettingsProvider extends ChangeNotifier {
             await preferences.setString('cached_company_title', title);
             await preferences.setString(
                 'cached_company_notification_topic', notificationTopic);
+            await preferences.setInt('cached_jb_default', _jbDefault);
             AppStyles.updateCachedBranding(title, logo);
             _updateAppSwitcher();
           }
@@ -6094,6 +6154,7 @@ class SettingsProvider extends ChangeNotifier {
     _departmentMenu = 0;
     _quotationProductName = 0;
     _estaNewLeadPosition = 0;
+    _jbDefault = 0;
     notifyListeners();
   }
 

@@ -134,6 +134,18 @@ class _HomePageState extends State<HomePage> {
           Provider.of<SettingsProvider>(context, listen: false);
       settingsProvider.getMenuPermissionData(userId, context);
       await settingsProvider.getCompanyDetails();
+      if (mounted) {
+        final sideProvider =
+            Provider.of<SidebarProvider>(context, listen: false);
+        if (!sideProvider.hasUserNavigated) {
+          sideProvider.initLandingPage(
+            jbDefault: settingsProvider.jbDefault,
+            hasDashboard:
+                settingsProvider.menuIsViewMap[12].toString() == '1',
+            hasLead: settingsProvider.menuIsViewMap[3].toString() == '1',
+          );
+        }
+      }
       if (settingsProvider.departmentMenu == 1) {
         settingsProvider.searchDepartment('', context);
       }
@@ -199,6 +211,7 @@ class _HomePageState extends State<HomePage> {
                 String? cachedLogo = prefs.getString('cached_company_logo');
                 String? cachedTitle = prefs.getString('cached_company_title');
                 String? baseUrl = prefs.getString('company_base_url');
+                int? cachedJbDefault = prefs.getInt('cached_jb_default');
 
                 await prefs.clear();
 
@@ -228,8 +241,17 @@ class _HomePageState extends State<HomePage> {
                 if (baseUrl != null) {
                   await prefs.setString('company_base_url', baseUrl);
                 }
+                if (cachedJbDefault != null) {
+                  await prefs.setInt('cached_jb_default', cachedJbDefault);
+                }
 
                 if (context.mounted) {
+                  final sideProvider =
+                      Provider.of<SidebarProvider>(context, listen: false);
+                  sideProvider.initLandingPage(
+                    jbDefault: cachedJbDefault ?? 0,
+                    force: true,
+                  );
                   router.go(LoginPage.route);
                 }
               },
@@ -256,19 +278,28 @@ class _HomePageState extends State<HomePage> {
     final settingsProvider = Provider.of<SettingsProvider>(context);
     String logo = settingsProvider.displayLogo;
 
+    final bool showDashboardFirst = settingsProvider.jbDefault == 1;
+
+    final dashboardOption = (settingsProvider.menuIsViewMap[12].toString() == '1')
+        ? SidebarOption(
+            title: 'Dashboard',
+            iconPath: 'assets/images/dashboard_icon.svg',
+            baseContent: const DashBoardPage(),
+          )
+        : null;
+
+    final leadsOption = (settingsProvider.menuIsViewMap[3].toString() == '1')
+        ? SidebarOption(
+            title: 'Leads',
+            iconPath: 'assets/images/Leads.svg',
+            baseContent: const LeadPage(),
+          )
+        : null;
+
     final List<SidebarOption> sidebarOptions = [
-      if (settingsProvider.menuIsViewMap[3].toString() == '1')
-        SidebarOption(
-          title: 'Leads',
-          iconPath: 'assets/images/Leads.svg',
-          baseContent: const LeadPage(),
-        ),
-      if (settingsProvider.menuIsViewMap[12].toString() == '1')
-        SidebarOption(
-          title: 'Dashboard',
-          iconPath: 'assets/images/dashboard_icon.svg',
-          baseContent: const DashBoardPage(),
-        ),
+      if (showDashboardFirst && dashboardOption != null) dashboardOption,
+      if (leadsOption != null) leadsOption,
+      if (!showDashboardFirst && dashboardOption != null) dashboardOption,
       if (settingsProvider.menuIsViewMap[4].toString() == '1')
         SidebarOption(
             title: 'Customers',
@@ -736,8 +767,10 @@ class _HomePageState extends State<HomePage> {
               title: [
                 if (settingsProvider.menuIsViewMap[3].toString() == '1')
                   'Leads',
-                if (settingsProvider.menuIsViewMap[12].toString() == '1')
+                if (settingsProvider.menuIsViewMap[12].toString() == '1') ...[
+                  'Dashboard',
                   'DashBoard',
+                ],
                 if (settingsProvider.menuIsViewMap[4].toString() == '1')
                   'Customers',
                 if (settingsProvider.menuIsViewMap[120].toString() == '1')
@@ -750,7 +783,8 @@ class _HomePageState extends State<HomePage> {
                   ? Text(
                       sideProvider.selectedName == 'Task'
                           ? 'Tasks'
-                          : sideProvider.selectedName == 'DashBoard'
+                          : (sideProvider.selectedName == 'DashBoard' ||
+                                  sideProvider.selectedName == 'Dashboard')
                               ? 'Dashboard'
                               : sideProvider.selectedName,
                       style: GoogleFonts.plusJakartaSans(

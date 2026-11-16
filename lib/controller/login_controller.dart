@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/http/loader.dart';
@@ -87,7 +88,11 @@ class LoginController extends ChangeNotifier {
           _loggedIn = true;
           preferences.setBool('IsLoggedIn', loggedIn);
           final provider = Provider.of<SidebarProvider>(safeContext, listen: false);
-          provider.setMenuId(0, 0);
+          final settingsProvider = Provider.of<SettingsProvider>(safeContext, listen: false);
+          provider.initLandingPage(
+            jbDefault: settingsProvider.jbDefault,
+            force: true,
+          );
 
           // Initiate location tracking for the newly authenticated employee session
           try {

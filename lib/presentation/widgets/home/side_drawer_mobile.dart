@@ -793,6 +793,7 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
                   String? cachedLogo = prefs.getString('cached_company_logo');
                   String? cachedTitle = prefs.getString('cached_company_title');
                   String? baseUrl = prefs.getString('company_base_url');
+                  int? cachedJbDefault = prefs.getInt('cached_jb_default');
 
                   await prefs.clear();
 
@@ -824,8 +825,17 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
                   if (baseUrl != null) {
                     await prefs.setString('company_base_url', baseUrl);
                   }
+                  if (cachedJbDefault != null) {
+                    await prefs.setInt('cached_jb_default', cachedJbDefault);
+                  }
 
                   if (context.mounted) {
+                    final sideProvider =
+                        Provider.of<SidebarProvider>(context, listen: false);
+                    sideProvider.initLandingPage(
+                      jbDefault: cachedJbDefault ?? 0,
+                      force: true,
+                    );
                     router.go(LoginPage.route);
                   }
                 },

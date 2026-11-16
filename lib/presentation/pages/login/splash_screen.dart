@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/company_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/main.dart';
 import 'package:vidyanexis/presentation/pages/home/homepage.dart';
 import 'package:vidyanexis/controller/location_tracking_provider.dart';
@@ -73,6 +74,15 @@ class _SplashScreenState extends State<SplashScreen> {
           locationProvider.startTracking(context);
         } catch (e) {
           print('Auto-login location tracking note: $e');
+        }
+        final sideProvider =
+            Provider.of<SidebarProvider>(context, listen: false);
+        final settingsProvider =
+            Provider.of<SettingsProvider>(context, listen: false);
+        if (!sideProvider.hasUserNavigated) {
+          sideProvider.initLandingPage(
+            jbDefault: settingsProvider.jbDefault,
+          );
         }
         context.go(HomePage.route);
         print('[PERF-BOOT] route resolution completed: ${DateTime.now().millisecondsSinceEpoch - startTime} ms');

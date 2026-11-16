@@ -209,12 +209,13 @@ class _CustomSidebarState extends State<CustomSidebar> {
 
   Widget _buildMenuItem(BuildContext context, SidebarProvider provider,
       SidebarOption option, int index) {
+    final bool isSelected = provider.selectedName == option.title;
     return Padding(
       padding: const EdgeInsets.all(0),
       child: Container(
         height: 35,
         decoration: BoxDecoration(
-          color: provider.selectedIndex == index
+          color: isSelected
               ? AppColors.lightBlueColor
               : AppColors.whiteColor,
           borderRadius: BorderRadius.circular(4),
@@ -235,7 +236,7 @@ class _CustomSidebarState extends State<CustomSidebar> {
                 width: 24,
                 height: 24,
                 colorFilter: ColorFilter.mode(
-                  provider.selectedIndex == index
+                  isSelected
                       ? AppColors.primaryBlue
                       : AppColors.textGrey4,
                   BlendMode.srcIn,
@@ -245,7 +246,7 @@ class _CustomSidebarState extends State<CustomSidebar> {
               Text(
                 option.title,
                 style: GoogleFonts.plusJakartaSans(
-                  color: provider.selectedIndex == index
+                  color: isSelected
                       ? AppColors.primaryBlue
                       : AppColors.textGrey4,
                   fontSize: 14,
@@ -368,6 +369,8 @@ class _CustomSidebarState extends State<CustomSidebar> {
                                   prefs.getString('cached_company_title');
                               String? baseUrl =
                                   prefs.getString('company_base_url');
+                              int? cachedJbDefault =
+                                  prefs.getInt('cached_jb_default');
 
                               await prefs.clear();
 
@@ -404,8 +407,18 @@ class _CustomSidebarState extends State<CustomSidebar> {
                                 await prefs.setString(
                                     'company_base_url', baseUrl);
                               }
+                              if (cachedJbDefault != null) {
+                                await prefs.setInt(
+                                    'cached_jb_default', cachedJbDefault);
+                              }
 
                               if (context.mounted) {
+                                final sideBarProvider =
+                                    Provider.of<SidebarProvider>(context, listen: false);
+                                sideBarProvider.initLandingPage(
+                                  jbDefault: cachedJbDefault ?? 0,
+                                  force: true,
+                                );
                                 router.go(LoginPage.route);
                               }
                             },

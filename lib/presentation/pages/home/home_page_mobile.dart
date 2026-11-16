@@ -60,6 +60,19 @@ class _HomePageMobileState extends State<HomePageMobile> {
           Provider.of<SettingsProvider>(context, listen: false);
       settingsProvider.getMenuPermissionData(userId, context);
       await settingsProvider.getCompanyDetails();
+      if (mounted) {
+        final sideProvider =
+            Provider.of<SidebarProvider>(context, listen: false);
+        if (!sideProvider.hasUserNavigated) {
+          sideProvider.initLandingPage(
+            jbDefault: settingsProvider.jbDefault,
+            hasDashboard:
+                (settingsProvider.menuIsViewMap[12] ?? 1).toString() != '0',
+            hasLead:
+                (settingsProvider.menuIsViewMap[3] ?? 1).toString() != '0',
+          );
+        }
+      }
       if (settingsProvider.departmentMenu == 1) {
         settingsProvider.searchDepartment('', context);
       }
@@ -99,8 +112,15 @@ class _HomePageMobileState extends State<HomePageMobile> {
       }
     }
 
-    addPage(3, 'assets/images/leader.png', 'Leads', const LeadPagePhone());
-    addPage(12, 'assets/images/home-page.png', 'Home', const DashBoardPage());
+    final bool showDashboardFirst = settingsProvider.jbDefault == 1;
+
+    if (showDashboardFirst) {
+      addPage(12, 'assets/images/home-page.png', 'Home', const DashBoardPage());
+      addPage(3, 'assets/images/leader.png', 'Leads', const LeadPagePhone());
+    } else {
+      addPage(3, 'assets/images/leader.png', 'Leads', const LeadPagePhone());
+      addPage(12, 'assets/images/home-page.png', 'Home', const DashBoardPage());
+    }
     addPage(4, 'assets/images/consumer.png', 'Customers',
         const CustomerPagePhone());
     addPage(35, 'assets/images/checklist.png', 'Tasks', const TaskPage());

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/controller/models/menu_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/main.dart';
@@ -20,9 +21,57 @@ import 'package:provider/provider.dart';
 
 class SidebarProvider extends ChangeNotifier {
   SettingsProvider? _settingsProvider;
+  bool _hasUserNavigated = false;
+  bool get hasUserNavigated => _hasUserNavigated;
+
+  void resetNavigation() {
+    _hasUserNavigated = false;
+  }
+
+  SidebarProvider() {
+    _loadInitialState();
+  }
+
+  Future<void> _loadInitialState() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final cachedJb = prefs.getInt('cached_jb_default') ?? 0;
+      if (!_hasUserNavigated) {
+        initLandingPage(jbDefault: cachedJb);
+      }
+    } catch (_) {}
+  }
+
+  void initLandingPage({
+    required int jbDefault,
+    bool hasDashboard = true,
+    bool hasLead = true,
+    bool force = false,
+  }) {
+    if (_hasUserNavigated && !force) return;
+    _hasUserNavigated = false;
+    if (jbDefault == 1 && hasDashboard) {
+      _selectedName = 'Dashboard';
+      _selectedIndex = 0;
+      _selectedIndexMobile = 0;
+      _menuId = 12;
+    } else {
+      _selectedName = 'Leads';
+      _selectedIndex = 0;
+      _selectedIndexMobile = 0;
+      _menuId = 3;
+    }
+    _reportPage = null;
+    _replaceLead = true;
+    _replaceCustomer = true;
+    _customerId = '';
+    notifyListeners();
+  }
+
   int _selectedIndexMobile = 0;
   int get selectedIndexMobile => _selectedIndexMobile;
   void setSelectedIndexMobile(int index) {
+    _hasUserNavigated = true;
     _selectedIndexMobile = index;
     _reportPage = null; // Clear report page when switching tabs
     notifyListeners();
@@ -31,6 +80,7 @@ class SidebarProvider extends ChangeNotifier {
   Widget? _reportPage;
   Widget? get reportPage => _reportPage;
   void setReportPage(Widget? page) {
+    _hasUserNavigated = true;
     _reportPage = page;
     notifyListeners();
   }
@@ -95,6 +145,7 @@ class SidebarProvider extends ChangeNotifier {
   }
 
   void setSelectedIndex(int index) {
+    _hasUserNavigated = true;
     _selectedIndex = index;
     notifyListeners();
   }
@@ -213,6 +264,7 @@ class SidebarProvider extends ChangeNotifier {
   }
 
   void selectOption({required String name, required int index}) {
+    _hasUserNavigated = true;
     _selectedName = name;
     _replaceLead = true;
     _replaceCustomer = true;
@@ -222,11 +274,13 @@ class SidebarProvider extends ChangeNotifier {
   }
 
   void updateSelectedName(String name) {
+    _hasUserNavigated = true;
     _selectedName = name;
     notifyListeners();
   }
 
   void replaceWidget(bool value, String string) {
+    _hasUserNavigated = true;
     _customerId = string;
     _replaceLead = value;
     _name = 'Lead /';
@@ -234,6 +288,7 @@ class SidebarProvider extends ChangeNotifier {
   }
 
   void replaceWidgetCustomer(bool value, String string) {
+    _hasUserNavigated = true;
     _customerId = string;
     _replaceCustomer = value;
     _name = 'Customer /';
