@@ -13,6 +13,7 @@ import 'package:vidyanexis/controller/models/document_type_model.dart';
 import 'package:vidyanexis/controller/models/mandatory_status_model.dart';
 import 'package:vidyanexis/controller/models/task_report_model.dart';
 import 'package:vidyanexis/controller/models/task_type_model.dart';
+import 'package:vidyanexis/controller/models/task_field_model.dart';
 import 'package:vidyanexis/controller/models/task_type_status_model.dart';
 import 'package:vidyanexis/controller/models/sub_status_model.dart';
 import 'package:vidyanexis/controller/models/task_history_model.dart';
@@ -34,6 +35,77 @@ class TaskPageProvider extends ChangeNotifier {
 
   List<TaskReportModel> _taskReport = [];
   List<TaskReportModel> get taskReport => _taskReport;
+
+  List<TaskField> _taskFields = [];
+  List<TaskField> get taskFields => _taskFields;
+
+  Future<void> getTaskFieldsApi() async {
+    try {
+      final response = await HttpRequest.httpGetRequest(
+          endPoint: HttpUrls.getTaskFields);
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data != null && data is List) {
+          _taskFields =
+              data.map((e) => TaskField.fromJson(e)).toList();
+        } else if (data != null &&
+            data['data'] != null &&
+            data['data'] is List) {
+          _taskFields = (data['data'] as List)
+              .map((e) => TaskField.fromJson(e))
+              .toList();
+        } else {
+          _taskFields = [];
+        }
+      } else {
+        _taskFields = [];
+      }
+    } catch (e) {
+      print('Exception occurred in getTaskFieldsApi: $e');
+      _taskFields = [];
+    }
+    notifyListeners();
+  }
+
+  String getTaskFieldName(int fieldId, String defaultName) {
+    if (_taskFields.isEmpty) return defaultName;
+    try {
+      final field = _taskFields.firstWhere(
+        (e) => e.taskFieldsId == fieldId,
+      );
+      return (field.taskFieldsName != null &&
+              field.taskFieldsName!.isNotEmpty)
+          ? field.taskFieldsName!
+          : defaultName;
+    } catch (_) {
+      return defaultName;
+    }
+  }
+
+  bool isTaskFieldVisible(int fieldId) {
+    if (_taskFields.isEmpty) return true;
+    try {
+      final field = _taskFields.firstWhere(
+        (e) => e.taskFieldsId == fieldId,
+      );
+      return field.isVisibility == 1;
+    } catch (_) {
+      return true;
+    }
+  }
+
+  double getTaskFieldSort(int fieldId, double defaultSort) {
+    if (_taskFields.isEmpty) return defaultSort;
+    try {
+      final field = _taskFields.firstWhere(
+        (e) => e.taskFieldsId == fieldId,
+      );
+      return (field.sort ?? defaultSort).toDouble();
+    } catch (_) {
+      return defaultSort;
+    }
+  }
   List<TaskTypeModel> _taskTypeModel = [];
   List<TaskTypeModel> get taskTypeModel => _taskTypeModel;
   List<DocumentTypeModel> _documentTypeModel = [];
