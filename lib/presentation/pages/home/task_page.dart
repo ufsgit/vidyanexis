@@ -683,6 +683,14 @@ class _tasksPageReportState extends State<TaskPage> {
   }
 
   void _onSearchChanged(String query) {
+    final settingsProvider =
+        Provider.of<SettingsProvider>(context, listen: false);
+    if (settingsProvider.isJbTaskSearchEnabled) {
+      if (_debounce?.isActive ?? false) _debounce!.cancel();
+      reportsProvider.setJbSearch(query);
+      return;
+    }
+
     if (_debounce?.isActive ?? false) _debounce!.cancel();
     _debounce = Timer(const Duration(milliseconds: 500), () {
       if (!mounted) return;
@@ -1170,6 +1178,7 @@ class _tasksPageReportState extends State<TaskPage> {
               },
               onClearTap: () {
                 searchController.clear();
+                reportsProvider.clearJbSearch();
                 reportsProvider.setFilterState(false);
                 searchProvider.stopSearch();
                 reportsProvider.selectDateFilterOption(null);
@@ -1185,6 +1194,10 @@ class _tasksPageReportState extends State<TaskPage> {
               title: 'Tasks',
               onSearch: (String query) {
                 print('Searching for: $query');
+                if (settingsProvider.isJbTaskSearchEnabled) {
+                  reportsProvider.setJbSearch(query);
+                  return;
+                }
                 if (AppStyles.isWebScreen(context)) {
                   reportsProvider.setTaskSearchCriteria(
                     query,
@@ -1213,16 +1226,30 @@ class _tasksPageReportState extends State<TaskPage> {
               searchController: searchController,
               showRefresh: true,
               onRefreshTap: () {
-                reportsProvider.setTaskSearchCriteria(
-                  searchController.text,
-                  reportsProvider.fromDateS,
-                  reportsProvider.toDateS,
-                  reportsProvider.Status,
-                  reportsProvider.AssignedTo,
-                  reportsProvider.TaskType,
-                  reportsProvider.enquiryForS,
-                );
-                reportsProvider.searchTaskByCustomer(context);
+                if (settingsProvider.isJbTaskSearchEnabled) {
+                  reportsProvider.setTaskSearchCriteria(
+                    '',
+                    reportsProvider.fromDateS,
+                    reportsProvider.toDateS,
+                    reportsProvider.Status,
+                    reportsProvider.AssignedTo,
+                    reportsProvider.TaskType,
+                    reportsProvider.enquiryForS,
+                  );
+                  reportsProvider.searchTaskByCustomer(context);
+                  reportsProvider.setJbSearch(searchController.text);
+                } else {
+                  reportsProvider.setTaskSearchCriteria(
+                    searchController.text,
+                    reportsProvider.fromDateS,
+                    reportsProvider.toDateS,
+                    reportsProvider.Status,
+                    reportsProvider.AssignedTo,
+                    reportsProvider.TaskType,
+                    reportsProvider.enquiryForS,
+                  );
+                  reportsProvider.searchTaskByCustomer(context);
+                }
               },
               customActionWidget: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -1453,6 +1480,10 @@ class _tasksPageReportState extends State<TaskPage> {
                                 controller: searchController,
                                 focusNode: searchFocusNodeWeb,
                                 textAlignVertical: TextAlignVertical.center,
+                                onChanged: (val) {
+                                  setState(() {});
+                                  _onSearchChanged(val);
+                                },
                                 onTap: () {
                                   Future.microtask(() {
                                     if (searchController.text.isNotEmpty &&
@@ -1469,6 +1500,10 @@ class _tasksPageReportState extends State<TaskPage> {
                                   });
                                 },
                                 onSubmitted: (query) {
+                                  if (settingsProvider.isJbTaskSearchEnabled) {
+                                    reportsProvider.setJbSearch(query);
+                                    return;
+                                  }
                                   if (_debounce?.isActive ?? false) {
                                     _debounce!.cancel();
                                   }
@@ -1494,26 +1529,65 @@ class _tasksPageReportState extends State<TaskPage> {
                                   isDense: true,
                                   contentPadding: const EdgeInsets.symmetric(
                                       horizontal: 16, vertical: 10),
-                                  suffixIcon: GestureDetector(
-                                    onTap: () {
-                                      if (_debounce?.isActive ?? false) {
-                                        _debounce!.cancel();
-                                      }
-                                      reportsProvider.setTaskSearchCriteria(
-                                        searchController.text,
-                                        reportsProvider.fromDateS,
-                                        reportsProvider.toDateS,
-                                        reportsProvider.Status,
-                                        reportsProvider.AssignedTo,
-                                        reportsProvider.TaskType,
-                                        reportsProvider.enquiryForS,
-                                      );
-                                      reportsProvider.goToPage(1);
-                                      reportsProvider
-                                          .searchTaskByCustomer(context);
-                                    },
-                                    child: const Icon(Icons.search,
-                                        color: Color(0xFF64748B), size: 18),
+                                  suffixIcon: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      if (searchController.text.isNotEmpty)
+                                        GestureDetector(
+                                          onTap: () {
+                                            searchController.clear();
+                                            reportsProvider.clearJbSearch();
+                                            if (settingsProvider.isJbTaskSearchEnabled) {
+                                              reportsProvider.clearJbSearch();
+                                            } else {
+                                              reportsProvider.setTaskSearchCriteria(
+                                                '',
+                                                reportsProvider.fromDateS,
+                                                reportsProvider.toDateS,
+                                                reportsProvider.Status,
+                                                reportsProvider.AssignedTo,
+                                                reportsProvider.TaskType,
+                                                reportsProvider.enquiryForS,
+                                              );
+                                              reportsProvider.goToPage(1);
+                                              reportsProvider.searchTaskByCustomer(context);
+                                            }
+                                            setState(() {});
+                                          },
+                                          child: const Padding(
+                                            padding: EdgeInsets.symmetric(horizontal: 4.0),
+                                            child: Icon(Icons.close, color: Color(0xFF64748B), size: 16),
+                                          ),
+                                        ),
+                                      GestureDetector(
+                                        onTap: () {
+                                          if (settingsProvider.isJbTaskSearchEnabled) {
+                                            reportsProvider.setJbSearch(searchController.text);
+                                            return;
+                                          }
+                                          if (_debounce?.isActive ?? false) {
+                                            _debounce!.cancel();
+                                          }
+                                          reportsProvider.setTaskSearchCriteria(
+                                            searchController.text,
+                                            reportsProvider.fromDateS,
+                                            reportsProvider.toDateS,
+                                            reportsProvider.Status,
+                                            reportsProvider.AssignedTo,
+                                            reportsProvider.TaskType,
+                                            reportsProvider.enquiryForS,
+                                          );
+                                          reportsProvider.goToPage(1);
+                                          reportsProvider
+                                              .searchTaskByCustomer(context);
+                                        },
+                                        child: const Padding(
+                                          padding: EdgeInsets.only(right: 8.0, left: 4.0),
+                                          child: Icon(Icons.search,
+                                              color: Color(0xFF64748B), size: 18),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),
@@ -1595,16 +1669,32 @@ class _tasksPageReportState extends State<TaskPage> {
                               icon: const Icon(Icons.refresh,
                                   color: Color(0xFF64748B), size: 20),
                               onPressed: () {
-                                reportsProvider.setTaskSearchCriteria(
-                                  searchController.text,
-                                  reportsProvider.fromDateS,
-                                  reportsProvider.toDateS,
-                                  reportsProvider.Status,
-                                  reportsProvider.AssignedTo,
-                                  reportsProvider.TaskType,
-                                  reportsProvider.enquiryForS,
-                                );
-                                reportsProvider.searchTaskByCustomer(context);
+                                if (settingsProvider.isJbTaskSearchEnabled) {
+                                  reportsProvider.setTaskSearchCriteria(
+                                    '',
+                                    reportsProvider.fromDateS,
+                                    reportsProvider.toDateS,
+                                    reportsProvider.Status,
+                                    reportsProvider.AssignedTo,
+                                    reportsProvider.TaskType,
+                                    reportsProvider.enquiryForS,
+                                  );
+                                  reportsProvider.searchTaskByCustomer(context);
+                                  reportsProvider.setJbSearch(
+                                    searchController.text,
+                                  );
+                                } else {
+                                  reportsProvider.setTaskSearchCriteria(
+                                    searchController.text,
+                                    reportsProvider.fromDateS,
+                                    reportsProvider.toDateS,
+                                    reportsProvider.Status,
+                                    reportsProvider.AssignedTo,
+                                    reportsProvider.TaskType,
+                                    reportsProvider.enquiryForS,
+                                  );
+                                  reportsProvider.searchTaskByCustomer(context);
+                                }
                               },
                               tooltip: 'Refresh',
                             ),
@@ -1981,6 +2071,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                   ? 'all'
                                   : 'myown');
                           searchController.clear();
+                          reportsProvider.clearJbSearch();
                           _taskTypeFilterController.text = 'All';
                           _statusFilterController.text = 'All';
                           _assignedToFilterController.text = 'All';
@@ -2298,6 +2389,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                       ? 'all'
                                       : 'myown');
                               searchController.clear();
+                          reportsProvider.clearJbSearch();
                               _taskTypeFilterController.text = 'All';
                               _statusFilterController.text = 'All';
                               _assignedToFilterController.text = 'All';
@@ -3803,7 +3895,9 @@ class _tasksPageReportState extends State<TaskPage> {
         children: [
           Expanded(
             child: Text(
-              "Showing $startItem-$endItem of $totalSize",
+              reportsProvider.isJbSearchActive
+                  ? "Showing ${reportsProvider.taskReport.length} of ${reportsProvider.rawTaskReport.length} tasks on this page"
+                  : "Showing $startItem-$endItem of $totalSize",
               style: const TextStyle(
                 fontFamily: 'PlusJakartaSans',
                 fontSize: 12,

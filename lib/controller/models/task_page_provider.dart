@@ -34,7 +34,160 @@ class TaskPageProvider extends ChangeNotifier {
   String get loginUserId => _loginUserId;
 
   List<TaskReportModel> _taskReport = [];
-  List<TaskReportModel> get taskReport => _taskReport;
+  List<TaskReportModel> get rawTaskReport => _taskReport;
+
+  String _jbSearchQuery = '';
+  String get jbSearchQuery => _jbSearchQuery;
+
+  bool _isJbSearchActive = false;
+  bool get isJbSearchActive => _isJbSearchActive;
+
+  List<TaskReportModel> get taskReport {
+    if (!_isJbSearchActive || _jbSearchQuery.trim().isEmpty) {
+      return _taskReport;
+    }
+    return applyJbSearchFilter(_taskReport, _jbSearchQuery);
+  }
+
+  void setJbSearch(String query) {
+    _jbSearchQuery = query;
+    _isJbSearchActive = query.trim().isNotEmpty;
+    notifyListeners();
+  }
+
+  void setJbSearchCriteria(String query, [String option = 'Everything']) {
+    _jbSearchQuery = query;
+    _isJbSearchActive = query.trim().isNotEmpty;
+    notifyListeners();
+  }
+
+  void clearJbSearch() {
+    _jbSearchQuery = '';
+    _isJbSearchActive = false;
+    notifyListeners();
+  }
+
+  List<TaskReportModel> applyJbSearchFilter(
+      List<TaskReportModel> tasks, String query, [String option = 'Everything']) {
+    final q = query.trim().toLowerCase();
+    if (q.isEmpty) return tasks;
+
+    return tasks.where((task) {
+      final nameMatch = task.customerName.toLowerCase().contains(q) ||
+          task.consumerName.toLowerCase().contains(q);
+      final mobileMatch = task.mobile.toLowerCase().contains(q);
+      final taskTypeMatch = task.taskTypeName.toLowerCase().contains(q) ||
+          task.taskName.toLowerCase().contains(q) ||
+          task.taskDetail.toLowerCase().contains(q);
+      final statusMatch = task.taskStatusName.toLowerCase().contains(q);
+      final staffMatch = task.toUserName.toLowerCase().contains(q) ||
+          task.userDetailsName.toLowerCase().contains(q);
+      final sourceMatch = task.enquiryForName.toLowerCase().contains(q);
+      final remarkMatch = task.remark.toLowerCase().contains(q) ||
+          task.description.toLowerCase().contains(q);
+      final consumerNoMatch = task.consumerNo.toLowerCase().contains(q);
+      final priorityMatch = task.priorityName.toLowerCase().contains(q);
+      final leadCodeMatch = (task.leadCode ?? '').toLowerCase().contains(q);
+      final capacityMatch = task.projectCapacity.toLowerCase().contains(q);
+      final quotationMatch = task.quotationAmount.toLowerCase().contains(q);
+      final engineerMatch = task.siteEngineer.toLowerCase().contains(q);
+      final bankMatch = task.bankNameBranch.toLowerCase().contains(q);
+      final locationMatch = task.locationName.toLowerCase().contains(q) ||
+          task.location.toLowerCase().contains(q);
+      final addressMatch = task.address1.toLowerCase().contains(q) ||
+          task.address2.toLowerCase().contains(q) ||
+          task.address3.toLowerCase().contains(q) ||
+          task.address4.toLowerCase().contains(q);
+      final idMatch = task.taskId.toString().contains(q) ||
+          task.customerId.toString().contains(q);
+
+      final dateMatch = task.taskDate.toLowerCase().contains(q) ||
+          task.taskDate.toDayMonthYearFormat().toLowerCase().contains(q) ||
+          task.entryDate.toLowerCase().contains(q) ||
+          task.entryDate.toDayMonthYearFormat().toLowerCase().contains(q) ||
+          (task.nextFollowupDate ?? '').toLowerCase().contains(q) ||
+          (task.nextFollowupDate ?? '')
+              .toDayMonthYearFormat()
+              .toLowerCase()
+              .contains(q) ||
+          (task.completionDate ?? '').toLowerCase().contains(q) ||
+          (task.completionDate ?? '')
+              .toDayMonthYearFormat()
+              .toLowerCase()
+              .contains(q) ||
+          (task.parsedCreationDate != null &&
+              ('${task.parsedCreationDate!.day.toString().padLeft(2, '0')}-${task.parsedCreationDate!.month.toString().padLeft(2, '0')}-${task.parsedCreationDate!.year}'
+                      .contains(q) ||
+                  '${task.parsedCreationDate!.day.toString().padLeft(2, '0')}/${task.parsedCreationDate!.month.toString().padLeft(2, '0')}/${task.parsedCreationDate!.year}'
+                      .contains(q))) ||
+          task.taskTime.toLowerCase().contains(q);
+
+      final cfMatch = _matchesCustomFields(task, q);
+
+      return nameMatch ||
+          mobileMatch ||
+          taskTypeMatch ||
+          statusMatch ||
+          staffMatch ||
+          sourceMatch ||
+          remarkMatch ||
+          consumerNoMatch ||
+          priorityMatch ||
+          leadCodeMatch ||
+          capacityMatch ||
+          quotationMatch ||
+          engineerMatch ||
+          bankMatch ||
+          locationMatch ||
+          addressMatch ||
+          idMatch ||
+          dateMatch ||
+          cfMatch;
+    }).toList();
+  }
+
+  bool _matchesCustomFields(TaskReportModel task, String q) {
+    for (final cf in task.customFields) {
+      if (cf.datavalue.toLowerCase().contains(q) ||
+          cf.customFieldName.toLowerCase().contains(q)) {
+        return true;
+      }
+    }
+    if (task.rawJson != null) {
+      for (final entry in task.rawJson!.entries) {
+        final keyLower = entry.key.toLowerCase();
+        // Specifically check custom field keys (avoid matching customer_name / customer_id)
+        if (keyLower.startsWith('custom_') ||
+            keyLower.startsWith('cf_') ||
+            keyLower == 'customfield' ||
+            keyLower == 'customfields') {
+          final val = entry.value;
+          if (val is List) {
+            for (var item in val) {
+              if (item is Map) {
+                final name = (item['custom_field_name'] ??
+                        item['Custom_Field_Name'] ??
+                        '')
+                    .toString()
+                    .toLowerCase();
+                final dataVal = (item['data_value'] ??
+                        item['datavalue'] ??
+                        item['DataValue'] ??
+                        '')
+                    .toString()
+                    .toLowerCase();
+                if (name.contains(q) || dataVal.contains(q)) return true;
+              }
+            }
+          } else {
+            final valStr = val?.toString().toLowerCase() ?? '';
+            if (valStr.contains(q)) return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
 
   List<TaskField> _taskFields = [];
   List<TaskField> get taskFields => _taskFields;
