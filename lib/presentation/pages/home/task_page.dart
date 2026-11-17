@@ -1551,6 +1551,38 @@ class _tasksPageReportState extends State<TaskPage> {
                                     value: 7, child: Text('Name (A-Z)')),
                                 const PopupMenuItem(
                                     value: 8, child: Text('Name (Z-A)')),
+                                const PopupMenuItem(
+                                    value: 12,
+                                    child: Text('Project Capacity (ASC)')),
+                                const PopupMenuItem(
+                                    value: 13,
+                                    child: Text('Project Capacity (DESC)')),
+                                const PopupMenuItem(
+                                    value: 14, child: Text('Task (A-Z)')),
+                                const PopupMenuItem(
+                                    value: 15, child: Text('Task (Z-A)')),
+                                const PopupMenuItem(
+                                    value: 16, child: Text('Staff (A-Z)')),
+                                const PopupMenuItem(
+                                    value: 17, child: Text('Staff (Z-A)')),
+                                const PopupMenuItem(
+                                    value: 18,
+                                    child: Text('Site Engineer (A-Z)')),
+                                const PopupMenuItem(
+                                    value: 19,
+                                    child: Text('Site Engineer (Z-A)')),
+                                const PopupMenuItem(
+                                    value: 20,
+                                    child: Text('Enquiry Source (A-Z)')),
+                                const PopupMenuItem(
+                                    value: 21,
+                                    child: Text('Enquiry Source (Z-A)')),
+                                const PopupMenuItem(
+                                    value: 22,
+                                    child: Text('Bank Name & Branch (A-Z)')),
+                                const PopupMenuItem(
+                                    value: 23,
+                                    child: Text('Bank Name & Branch (Z-A)')),
                               ],
                             ),
                             CustomFilterButton(
