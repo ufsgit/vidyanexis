@@ -2473,7 +2473,6 @@ class _tasksPageReportState extends State<TaskPage> {
                                   // Width mapping helper
                                   double getColumnWidth(int id) {
                                     switch (id) {
-                                      case 4: return 160.0;
                                       case 6: return 140.0;
                                       case 7: return 150.0;
                                       case 10: return 180.0;
@@ -2498,6 +2497,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                   if (visible(1)) fixedWidth += 60.0; // No.
                                   if (settingsProvider.showLeadCode == 1 && visible(2)) fixedWidth += 120.0; // Lead Code
                                   if (visible(3)) fixedWidth += 180.0; // Customer/Lead Name
+                                  if (visible(4)) fixedWidth += 160.0; // Consumer Name
                                   if (visible(5)) fixedWidth += 150.0; // Mobile Number
                                   if (visible(8)) fixedWidth += 180.0; // Task
                                   if (visible(9)) fixedWidth += 120.0; // Status
@@ -2540,7 +2540,6 @@ class _tasksPageReportState extends State<TaskPage> {
 
                                   Widget buildScrollableHeaderCell(int id) {
                                     switch (id) {
-                                      case 4: return headerCell(160, fieldName(4, 'Consumer Name'));
                                       case 6: return headerCell(140, fieldName(6, 'Project Capacity'));
                                       case 7: return headerCell(150, fieldName(7, 'Quotation Amount'));
                                       case 10: return headerCell(180, fieldName(10, 'Latest Remark'));
@@ -2583,7 +2582,6 @@ class _tasksPageReportState extends State<TaskPage> {
 
                                   Widget buildScrollableRowCell(int id, TaskReportModel task) {
                                     switch (id) {
-                                      case 4: return textCell(160, task.consumerName.isNotEmpty ? task.consumerName : task.customerName);
                                       case 6: return textCell(140, task.projectCapacity);
                                       case 7: return textCell(150, task.quotationAmount);
                                       case 10: return textCell(180, task.remark);
@@ -2856,6 +2854,20 @@ class _tasksPageReportState extends State<TaskPage> {
                                                           TableWidget(
                                                             width: 180,
                                                             title: fieldName(3, 'Customer'),
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    vertical: 4.0,
+                                                                    horizontal:
+                                                                        12.0),
+                                                            alignment: Alignment
+                                                                .centerLeft,
+                                                            color: Colors.white,
+                                                          ),
+                                                        if (visible(4))
+                                                          TableWidget(
+                                                            width: 150,
+                                                            title: fieldName(4, 'Consumer Name'),
                                                             padding:
                                                                 const EdgeInsets
                                                                     .symmetric(
@@ -3257,6 +3269,33 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                                   ],
                                                                                 ),
                                                                               ],
+                                                                            ),
+                                                                          ),
+                                                                        // Consumer Name.
+                                                                        if (visible(4))
+                                                                          TableWidget(
+                                                                            width:
+                                                                                150,
+                                                                            padding: const EdgeInsets
+                                                                                .symmetric(
+                                                                                vertical: 4.0,
+                                                                                horizontal: 12.0),
+                                                                            data:
+                                                                                Tooltip(
+                                                                              message:
+                                                                                  task.consumerName,
+                                                                              child:
+                                                                                  Text(
+                                                                                task.consumerName.isNotEmpty ? task.consumerName : '-',
+                                                                                overflow: TextOverflow.ellipsis,
+                                                                                maxLines: 1,
+                                                                                style: const TextStyle(
+                                                                                  fontFamily: 'PlusJakartaSans',
+                                                                                  fontSize: 13,
+                                                                                  color: Color(0xFF334155),
+                                                                                  fontWeight: FontWeight.w500,
+                                                                                ),
+                                                                              ),
                                                                             ),
                                                                           ),
                                                                         // Mobile No.
