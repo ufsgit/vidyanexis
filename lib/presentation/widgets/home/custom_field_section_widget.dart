@@ -48,6 +48,7 @@ class CustomFieldSectionWidget extends StatefulWidget {
   final String controllerKey;
   final bool showEditButton;
   final bool showMore;
+  final int crossAxisCount;
   const CustomFieldSectionWidget({
     super.key,
     required this.customFields,
@@ -61,6 +62,7 @@ class CustomFieldSectionWidget extends StatefulWidget {
     required this.controllerKey,
     this.showEditButton = false,
     this.showMore = true,
+    this.crossAxisCount = 2,
   });
 
   @override
@@ -83,6 +85,7 @@ class CustomFieldSectionWidgetState extends State<CustomFieldSectionWidget> {
       onFieldChanged: _onFieldChanged,
       enabled: widget.enabled,
       showEditButton: widget.showEditButton,
+      crossAxisCount: widget.crossAxisCount,
     );
     _initializeData();
   }
@@ -191,6 +194,7 @@ class CustomFieldSectionWidgetState extends State<CustomFieldSectionWidget> {
         onFieldChanged: _onFieldChanged,
         enabled: widget.enabled,
         showEditButton: widget.showEditButton,
+        crossAxisCount: widget.crossAxisCount,
       );
       _isInitialized = false;
       _initializeData();
@@ -203,6 +207,10 @@ class CustomFieldSectionWidgetState extends State<CustomFieldSectionWidget> {
 
     if (widget.showEditButton != oldWidget.showEditButton) {
       widgetBuilder.showEditButton = widget.showEditButton;
+    }
+
+    if (widget.crossAxisCount != oldWidget.crossAxisCount) {
+      widgetBuilder.crossAxisCount = widget.crossAxisCount;
     }
   }
 
@@ -264,15 +272,18 @@ class CustomFieldSectionWidgetState extends State<CustomFieldSectionWidget> {
             if (mandatoryFields.isNotEmpty) ...[
               LayoutBuilder(
                 builder: (context, constraints) {
-                  final spacing = widget.spacing ?? 16.0;
+                  final count = widget.crossAxisCount;
+                  final spacing = widget.spacing ?? (count == 3 ? 10.0 : 16.0);
                   if (AppStyles.isWebScreen(context)) {
                     return Wrap(
                       spacing: spacing,
-                      runSpacing: spacing / 2,
+                      runSpacing: count == 3 ? 8.0 : spacing / 2,
                       children: mandatoryFields
                           .map((field) => SizedBox(
-                                width:
-                                    (constraints.maxWidth - spacing) / 2 - 0.1,
+                                width: (constraints.maxWidth -
+                                        (count - 1) * spacing) /
+                                    count -
+                                0.1,
                                 child: widgetBuilder.buildWidget(field),
                               ))
                           .toList(),
@@ -316,17 +327,19 @@ class CustomFieldSectionWidgetState extends State<CustomFieldSectionWidget> {
                       const SizedBox(height: 10),
                       LayoutBuilder(
                         builder: (context, constraints) {
-                          final spacing = widget.spacing ?? 16.0;
+                          final count = widget.crossAxisCount;
+                          final spacing =
+                              widget.spacing ?? (count == 3 ? 10.0 : 16.0);
                           if (AppStyles.isWebScreen(context)) {
                             return Wrap(
                               spacing: spacing,
-                              runSpacing: spacing / 2,
+                              runSpacing: count == 3 ? 8.0 : spacing / 2,
                               children: nonMandatoryFields
                                   .map((field) => SizedBox(
-                                        width:
-                                            (constraints.maxWidth - spacing) /
-                                                    2 -
-                                                0.1,
+                                        width: (constraints.maxWidth -
+                                                (count - 1) * spacing) /
+                                            count -
+                                        0.1,
                                         child: widgetBuilder.buildWidget(field),
                                       ))
                                   .toList(),
@@ -349,15 +362,19 @@ class CustomFieldSectionWidgetState extends State<CustomFieldSectionWidget> {
               ] else ...[
                 LayoutBuilder(
                   builder: (context, constraints) {
-                    final spacing = widget.spacing ?? 16.0;
+                    final count = widget.crossAxisCount;
+                    final spacing =
+                        widget.spacing ?? (count == 3 ? 10.0 : 16.0);
                     if (AppStyles.isWebScreen(context)) {
                       return Wrap(
                         spacing: spacing,
-                        runSpacing: spacing / 2,
+                        runSpacing: count == 3 ? 8.0 : spacing / 2,
                         children: nonMandatoryFields
                             .map((field) => SizedBox(
-                                  width: (constraints.maxWidth - spacing) / 2 -
-                                      0.1,
+                                  width: (constraints.maxWidth -
+                                          (count - 1) * spacing) /
+                                      count -
+                                  0.1,
                                   child: widgetBuilder.buildWidget(field),
                                 ))
                             .toList(),
@@ -400,13 +417,17 @@ class CustomFieldSectionWidgetState extends State<CustomFieldSectionWidget> {
     Widget buildFieldList(List<CustomFieldByStatusId> fields) {
       return LayoutBuilder(
         builder: (context, constraints) {
+          final count = widget.crossAxisCount;
+          final spacing = widget.spacing ?? (count == 3 ? 10.0 : 16.0);
           if (AppStyles.isWebScreen(context)) {
             return Wrap(
               spacing: spacing,
-              runSpacing: spacing / 2,
+              runSpacing: count == 3 ? 8.0 : spacing / 2,
               children: fields
                   .map((field) => SizedBox(
-                        width: (constraints.maxWidth - spacing) / 2 - 0.1,
+                        width: (constraints.maxWidth - (count - 1) * spacing) /
+                                count -
+                            0.1,
                         child: widgetBuilder.buildWidget(field),
                       ))
                   .toList(),
@@ -539,6 +560,7 @@ class CustomFieldWidgetBuilder {
   final Map<int, String> _pendingFileContentType = {};
 
   bool showEditButton;
+  int crossAxisCount;
 
   CustomFieldWidgetBuilder(
     this.context,
@@ -546,6 +568,7 @@ class CustomFieldWidgetBuilder {
     this.onFieldChanged,
     this.enabled = true,
     this.showEditButton = false,
+    this.crossAxisCount = 2,
   });
 
   Widget buildWidget(CustomFieldByStatusId field) {
@@ -579,7 +602,9 @@ class CustomFieldWidgetBuilder {
 
     final contentWidget = Container(
       width: double.infinity,
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+      margin: crossAxisCount == 3
+          ? EdgeInsets.zero
+          : const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
       child: fieldWidget,
     );
 
@@ -589,11 +614,17 @@ class CustomFieldWidgetBuilder {
         children: [
           Expanded(child: contentWidget),
           Padding(
-            padding: const EdgeInsets.only(left: 8.0),
-            child: IconButton(
-              icon: Icon(Icons.edit_outlined, color: AppColors.primaryBlue),
-              tooltip: 'Edit Custom Field',
-              onPressed: () => _editCustomField(field),
+            padding: const EdgeInsets.only(left: 4.0),
+            child: SizedBox(
+              width: 32,
+              height: 32,
+              child: IconButton(
+                padding: EdgeInsets.zero,
+                iconSize: 20,
+                icon: Icon(Icons.edit_outlined, color: AppColors.primaryBlue),
+                tooltip: 'Edit Custom Field',
+                onPressed: () => _editCustomField(field),
+              ),
             ),
           ),
         ],
@@ -1438,6 +1469,7 @@ class CustomFieldWidgetBuilder {
         lowerName.contains('alternative number') ||
         lowerName.contains('alternate number');
 
+    final double fieldHeight = crossAxisCount == 3 ? 54 : 50;
     if (isRestrictedNumberField) {
       return CustomTextField(
         validator: validator,
@@ -1448,7 +1480,7 @@ class CustomFieldWidgetBuilder {
         ],
         controller: controller,
         hintText: labelText,
-        height: 50,
+        height: fieldHeight,
         labelText: labelText,
         onChanged: onChanged,
         enabled: enabled,
@@ -1466,7 +1498,7 @@ class CustomFieldWidgetBuilder {
           validator: validator,
           controller: controller,
           hintText: labelText,
-          height: 50,
+          height: fieldHeight,
           labelText: labelText,
           onChanged: onChanged,
           enabled: enabled,
@@ -1475,7 +1507,7 @@ class CustomFieldWidgetBuilder {
       case CustomFieldType.textOnly:
         return CustomTextField(
           validator: validator,
-          height: 50,
+          height: fieldHeight,
           hintText: labelText,
           controller: controller,
           labelText: labelText,
@@ -1498,7 +1530,7 @@ class CustomFieldWidgetBuilder {
             child: CustomTextField(
               validator: validator,
               controller: controller,
-              height: 50,
+              height: fieldHeight,
               hintText:
                   "Select ${field.customFieldName ?? 'date'} ${isRequired ? '*' : ""}",
               labelText: labelText,
@@ -1517,7 +1549,7 @@ class CustomFieldWidgetBuilder {
         return CustomTextField(
           validator: validator,
           controller: controller,
-          height: 50,
+          height: fieldHeight,
           labelText: labelText,
           hintText: labelText,
           onChanged: onChanged,
@@ -1553,7 +1585,7 @@ class CustomFieldWidgetBuilder {
 
     if (dropdownItems == null || dropdownItems.isEmpty) {
       return Container(
-        height: 50,
+        height: crossAxisCount == 3 ? 54 : 50,
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           border: Border.all(color: Colors.grey.shade300),

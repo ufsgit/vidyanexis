@@ -285,88 +285,135 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                         const SizedBox(
                           height: 5,
                         ),
-                        if (customerDetailsProvider
-                            .isQuotationFieldVisible(24)) ...[
-                          CommonDropdown(
-                            hintText: customerDetailsProvider
-                                .getQuotationFieldName(24, 'Branch'),
-                            items: settingsProvider.branchModel
-                                .map((branch) => DropdownItem<int>(
-                                      id: branch.branchId ?? 0,
-                                      name: branch.branchName ?? '',
-                                    ))
-                                .toList(),
-                            onItemSelected: (value) {
-                              customerDetailsProvider.selectedBranchId = value;
-                            },
-                            selectedValue:
-                                customerDetailsProvider.selectedBranchId,
-                          ),
-                        ],
-                        if (customerDetailsProvider
-                            .isQuotationFieldVisible(25)) ...[
-                          const SizedBox(
-                            height: 16,
-                          ),
-                          CustomTextField(
-                            readOnly: true,
-                            height: 54,
-                            controller:
-                                customerDetailsProvider.qEntryDateController,
-                            hintText: customerDetailsProvider
-                                .getQuotationFieldName(25, 'Entry Date'),
-                            labelText: '',
-                            onTap: () async {
-                              DateTime initialDate = DateTime.now();
+                        Builder(
+                          builder: (context) {
+                            final firstRowFields = <Widget>[
                               if (customerDetailsProvider
-                                  .qEntryDateController.text.isNotEmpty) {
-                                final parsed = DateTime.tryParse(
-                                        customerDetailsProvider
-                                            .qEntryDateController.text) ??
-                                    DateFormat('yyyy-MM-dd').tryParse(
-                                        customerDetailsProvider
-                                            .qEntryDateController.text) ??
-                                    DateFormat('dd-MM-yyyy').tryParse(
-                                        customerDetailsProvider
-                                            .qEntryDateController.text) ??
-                                    DateFormat('dd/MM/yyyy').tryParse(
-                                        customerDetailsProvider
-                                            .qEntryDateController.text);
-                                if (parsed != null) {
-                                  initialDate = parsed;
-                                }
-                              }
-                              final DateTime? pickedDate = await showDatePicker(
-                                context: context,
-                                initialDate: initialDate,
-                                firstDate: DateTime(2000),
-                                lastDate: DateTime(2101),
+                                  .isQuotationFieldVisible(24))
+                                CommonDropdown(
+                                  floatingLabelBehavior:
+                                      FloatingLabelBehavior.always,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 14,
+                                    horizontal: 14,
+                                  ),
+                                  hintText: customerDetailsProvider
+                                      .getQuotationFieldName(24, 'Branch'),
+                                  items: settingsProvider.branchModel
+                                      .map((branch) => DropdownItem<int>(
+                                            id: branch.branchId ?? 0,
+                                            name: branch.branchName ?? '',
+                                          ))
+                                      .toList(),
+                                  onItemSelected: (value) {
+                                    customerDetailsProvider.selectedBranchId =
+                                        value;
+                                  },
+                                  selectedValue:
+                                      customerDetailsProvider.selectedBranchId,
+                                ),
+                              if (customerDetailsProvider
+                                  .isQuotationFieldVisible(25))
+                                CustomTextField(
+                                  readOnly: true,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 14,
+                                    horizontal: 14,
+                                  ),
+                                  controller: customerDetailsProvider
+                                      .qEntryDateController,
+                                  hintText: customerDetailsProvider
+                                      .getQuotationFieldName(25, 'Entry Date'),
+                                  labelText: '',
+                                  onTap: () async {
+                                    DateTime initialDate = DateTime.now();
+                                    if (customerDetailsProvider
+                                        .qEntryDateController.text.isNotEmpty) {
+                                      final parsed = DateTime.tryParse(
+                                              customerDetailsProvider
+                                                  .qEntryDateController.text) ??
+                                          DateFormat('yyyy-MM-dd').tryParse(
+                                              customerDetailsProvider
+                                                  .qEntryDateController.text) ??
+                                          DateFormat('dd-MM-yyyy').tryParse(
+                                              customerDetailsProvider
+                                                  .qEntryDateController.text) ??
+                                          DateFormat('dd/MM/yyyy').tryParse(
+                                              customerDetailsProvider
+                                                  .qEntryDateController.text);
+                                      if (parsed != null) {
+                                        initialDate = parsed;
+                                      }
+                                    }
+                                    final DateTime? pickedDate =
+                                        await showDatePicker(
+                                      context: context,
+                                      initialDate: initialDate,
+                                      firstDate: DateTime(2000),
+                                      lastDate: DateTime(2101),
+                                    );
+                                    if (pickedDate != null) {
+                                      customerDetailsProvider
+                                              .qEntryDateController.text =
+                                          DateFormat('yyyy-MM-dd')
+                                              .format(pickedDate);
+                                    }
+                                  },
+                                  suffixIcon: const Icon(
+                                      Icons.calendar_today,
+                                      size: 20),
+                                ),
+                              if (customerDetailsProvider
+                                  .isQuotationFieldVisible(26))
+                                CustomTextField(
+                                  readOnly: false,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 14,
+                                    horizontal: 14,
+                                  ),
+                                  controller: customerDetailsProvider
+                                      .qproductnameController,
+                                  hintText: customerDetailsProvider
+                                      .getQuotationFieldName(
+                                          26, 'Product name*'),
+                                  labelText: '',
+                                ),
+                            ];
+
+                            if (firstRowFields.isEmpty) {
+                              return const SizedBox.shrink();
+                            }
+
+                            final isWeb = AppStyles.isWebScreen(context) ||
+                                MediaQuery.sizeOf(context).width >= 768;
+
+                            if (isWeb) {
+                              return Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  for (int i = 0;
+                                      i < firstRowFields.length;
+                                      i++) ...[
+                                    if (i > 0) const SizedBox(width: 16),
+                                    Expanded(child: firstRowFields[i]),
+                                  ],
+                                ],
                               );
-                              if (pickedDate != null) {
-                                customerDetailsProvider
-                                        .qEntryDateController.text =
-                                    DateFormat('yyyy-MM-dd').format(pickedDate);
-                              }
-                            },
-                            suffixIcon:
-                                const Icon(Icons.calendar_today, size: 20),
-                          ),
-                        ],
-                        if (customerDetailsProvider
-                            .isQuotationFieldVisible(26)) ...[
-                          const SizedBox(
-                            height: 16,
-                          ),
-                          CustomTextField(
-                            readOnly: false,
-                            height: 54,
-                            controller:
-                                customerDetailsProvider.qproductnameController,
-                            hintText: customerDetailsProvider
-                                .getQuotationFieldName(26, 'Product name*'),
-                            labelText: '',
-                          ),
-                        ],
+                            } else {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  for (int i = 0;
+                                      i < firstRowFields.length;
+                                      i++) ...[
+                                    if (i > 0) const SizedBox(height: 16),
+                                    firstRowFields[i],
+                                  ],
+                                ],
+                              );
+                            }
+                          },
+                        ),
                         const SizedBox(height: 16.0),
                         // if (customerDetailsProvider
                         //     .isQuotationFieldVisible(27)) ...[
@@ -472,13 +519,17 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                         //   ),
                         //   const SizedBox(height: 16),
                         // ],
-                        Row(
-                          children: [
-                            if (customerDetailsProvider
-                                .isQuotationFieldVisible(28)) ...[
-                              Expanded(
-                                child: CustomTextField(
+                        Builder(
+                          builder: (context) {
+                            final secondRowFields = <Widget>[
+                              if (customerDetailsProvider
+                                  .isQuotationFieldVisible(28))
+                                CustomTextField(
                                   readOnly: false,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 14,
+                                    horizontal: 14,
+                                  ),
                                   height: 54,
                                   controller: customerDetailsProvider
                                       .qvalidityController,
@@ -486,14 +537,14 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                                       .getQuotationFieldName(28, 'Validity'),
                                   labelText: '',
                                 ),
-                              ),
-                              const SizedBox(width: 16),
-                            ],
-                            if (customerDetailsProvider
-                                .isQuotationFieldVisible(29)) ...[
-                              Expanded(
-                                child: CustomTextField(
+                              if (customerDetailsProvider
+                                  .isQuotationFieldVisible(29))
+                                CustomTextField(
                                   readOnly: false,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 14,
+                                    horizontal: 14,
+                                  ),
                                   height: 54,
                                   controller: customerDetailsProvider
                                       .qtendorNumberController,
@@ -502,95 +553,301 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                                           29, 'Tendor Number'),
                                   labelText: '',
                                 ),
-                              ),
-                            ],
-                          ],
+                            ];
+
+                            if (secondRowFields.isEmpty) {
+                              return const SizedBox.shrink();
+                            }
+
+                            final isWeb = AppStyles.isWebScreen(context) ||
+                                MediaQuery.sizeOf(context).width >= 768;
+
+                            if (isWeb) {
+                              return Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  for (int i = 0;
+                                      i < secondRowFields.length;
+                                      i++) ...[
+                                    if (i > 0) const SizedBox(width: 16),
+                                    Expanded(child: secondRowFields[i]),
+                                  ],
+                                ],
+                              );
+                            } else {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  for (int i = 0;
+                                      i < secondRowFields.length;
+                                      i++) ...[
+                                    if (i > 0) const SizedBox(height: 16),
+                                    secondRowFields[i],
+                                  ],
+                                ],
+                              );
+                            }
+                          },
                         ),
                         const SizedBox(height: 16),
-                        if (customerDetailsProvider
-                            .isQuotationFieldVisible(30)) ...[
-                          CustomTextField(
-                            readOnly: false,
-                            height: 54,
-                            controller: customerDetailsProvider
-                                .quotationDescriptionController,
-                            hintText: customerDetailsProvider
-                                .getQuotationFieldName(30, 'Description'),
-                            labelText: '',
-                            minLines: 3,
-                            keyboardType: TextInputType.multiline,
-                          ),
-                          const SizedBox(height: 16),
-                        ],
-                        if (customerDetailsProvider
-                            .isQuotationFieldVisible(31)) ...[
-                          CustomTextField(
-                            readOnly: false,
-                            height: 54,
-                            controller: customerDetailsProvider
-                                .quotationDescription2Controller,
-                            hintText: customerDetailsProvider
-                                .getQuotationFieldName(31, 'Description 2'),
-                            labelText: '',
-                            minLines: 3,
-                            keyboardType: TextInputType.multiline,
-                          ),
-                          const SizedBox(height: 16),
-                        ],
-                        if (customerDetailsProvider
-                            .isQuotationFieldVisible(32)) ...[
-                          CustomTextField(
-                            readOnly: false,
-                            height: 54,
-                            controller: customerDetailsProvider
-                                .quotationDescription3Controller,
-                            hintText: customerDetailsProvider
-                                .getQuotationFieldName(32, 'Description 3'),
-                            labelText: '',
-                            minLines: 3,
-                            keyboardType: TextInputType.multiline,
-                          ),
-                          const SizedBox(height: 16),
-                        ],
-                        if (customerDetailsProvider
-                            .isQuotationFieldVisible(33)) ...[
-                          CommonDropdown(
-                            hintText: customerDetailsProvider
-                                .getQuotationFieldName(33, 'Quotation Type*'),
-                            items: [
-                              DropdownItem<int>(id: 0, name: 'All'),
-                              ...customerDetailsProvider.quotationTypeData.map(
-                                (status) => DropdownItem<int>(
-                                  id: status.quotationTypeId,
-                                  name: status.quotationTypeName,
+                        Builder(
+                          builder: (context) {
+                            final descriptionFields = <Widget>[
+                              if (customerDetailsProvider
+                                  .isQuotationFieldVisible(30))
+                                CustomTextField(
+                                  readOnly: false,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 14,
+                                    horizontal: 14,
+                                  ),
+                                  height: 54,
+                                  controller: customerDetailsProvider
+                                      .quotationDescriptionController,
+                                  hintText: customerDetailsProvider
+                                      .getQuotationFieldName(
+                                          30, 'Description'),
+                                  labelText: '',
+                                  minLines: 3,
+                                  keyboardType: TextInputType.multiline,
                                 ),
-                              ),
-                            ],
-                            onItemSelected: (value) {
-                              customerDetailsProvider.selectedQuotationType =
-                                  value;
+                              if (customerDetailsProvider
+                                  .isQuotationFieldVisible(31))
+                                CustomTextField(
+                                  readOnly: false,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 14,
+                                    horizontal: 14,
+                                  ),
+                                  height: 54,
+                                  controller: customerDetailsProvider
+                                      .quotationDescription2Controller,
+                                  hintText: customerDetailsProvider
+                                      .getQuotationFieldName(
+                                          31, 'Description 2'),
+                                  labelText: '',
+                                  minLines: 3,
+                                  keyboardType: TextInputType.multiline,
+                                ),
+                              if (customerDetailsProvider
+                                  .isQuotationFieldVisible(32))
+                                CustomTextField(
+                                  readOnly: false,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 14,
+                                    horizontal: 14,
+                                  ),
+                                  height: 54,
+                                  controller: customerDetailsProvider
+                                      .quotationDescription3Controller,
+                                  hintText: customerDetailsProvider
+                                      .getQuotationFieldName(
+                                          32, 'Description 3'),
+                                  labelText: '',
+                                  minLines: 3,
+                                  keyboardType: TextInputType.multiline,
+                                ),
+                            ];
 
-                              // Simple handling for All vs others
-                              if (value == 0) {
-                                customerDetailsProvider
-                                    .quotationTypeController.text = 'All';
-                              } else {
-                                final selectedItem = customerDetailsProvider
-                                    .quotationTypeData
-                                    .firstWhere((status) =>
-                                        status.quotationTypeId == value);
-                                customerDetailsProvider.quotationTypeController
-                                    .text = selectedItem.quotationTypeName;
+                            if (descriptionFields.isEmpty) {
+                              return const SizedBox.shrink();
+                            }
+
+                            final isWeb = AppStyles.isWebScreen(context) ||
+                                MediaQuery.sizeOf(context).width >= 768;
+
+                            if (isWeb) {
+                              final List<List<Widget>> rows = [];
+                              for (int i = 0;
+                                  i < descriptionFields.length;
+                                  i += 2) {
+                                rows.add(descriptionFields.sublist(
+                                  i,
+                                  (i + 2 > descriptionFields.length)
+                                      ? descriptionFields.length
+                                      : i + 2,
+                                ));
                               }
 
-                              customerDetailsProvider
-                                  .getCustomFieldsByQuotationId(context);
-                              customerDetailsProvider.getQuotationFieldsApi();
-                            },
-                            selectedValue:
-                                customerDetailsProvider.selectedQuotationType,
-                          ),
-                        ],
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  for (int r = 0; r < rows.length; r++) ...[
+                                    if (r > 0) const SizedBox(height: 16),
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Expanded(child: rows[r][0]),
+                                        const SizedBox(width: 16),
+                                        if (rows[r].length > 1)
+                                          Expanded(child: rows[r][1])
+                                        else
+                                          const Expanded(child: SizedBox()),
+                                      ],
+                                    ),
+                                  ],
+                                ],
+                              );
+                            } else {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  for (int i = 0;
+                                      i < descriptionFields.length;
+                                      i++) ...[
+                                    if (i > 0) const SizedBox(height: 16),
+                                    descriptionFields[i],
+                                  ],
+                                ],
+                              );
+                            }
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        Builder(
+                          builder: (context) {
+                            final quotationTypeWidget = customerDetailsProvider
+                                    .isQuotationFieldVisible(33)
+                                ? CommonDropdown(
+                                    floatingLabelBehavior:
+                                        FloatingLabelBehavior.always,
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      vertical: 14,
+                                      horizontal: 14,
+                                    ),
+                                    hintText: customerDetailsProvider
+                                        .getQuotationFieldName(
+                                            33, 'Quotation Type*'),
+                                    items: [
+                                      DropdownItem<int>(id: 0, name: 'All'),
+                                      ...customerDetailsProvider
+                                          .quotationTypeData
+                                          .map(
+                                        (status) => DropdownItem<int>(
+                                          id: status.quotationTypeId,
+                                          name: status.quotationTypeName,
+                                        ),
+                                      ),
+                                    ],
+                                    onItemSelected: (value) {
+                                      customerDetailsProvider
+                                              .selectedQuotationType =
+                                          value;
+
+                                      // Simple handling for All vs others
+                                      if (value == 0) {
+                                        customerDetailsProvider
+                                            .quotationTypeController
+                                            .text = 'All';
+                                      } else {
+                                        final selectedItem =
+                                            customerDetailsProvider
+                                                .quotationTypeData
+                                                .firstWhere((status) =>
+                                                    status.quotationTypeId ==
+                                                    value);
+                                        customerDetailsProvider
+                                            .quotationTypeController
+                                            .text =
+                                            selectedItem.quotationTypeName;
+                                      }
+
+                                      customerDetailsProvider
+                                          .getCustomFieldsByQuotationId(context);
+                                      customerDetailsProvider
+                                          .getQuotationFieldsApi();
+                                    },
+                                    selectedValue: customerDetailsProvider
+                                        .selectedQuotationType,
+                                  )
+                                : null;
+
+                            final nonCommercialFields = customerDetailsProvider
+                                .customFieldQuotation
+                                .where((e) => e.isCommercial != 1)
+                                .toList();
+
+                            final customFieldsWidget =
+                                nonCommercialFields.isNotEmpty
+                                    ? CustomFieldSectionWidget(
+                                        key: customFieldQuotationKey,
+                                        customFields: nonCommercialFields,
+                                        initialFieldValues: nonCommercialFields
+                                            .map((e) => FieldValueModel(
+                                                  customFieldId:
+                                                      e.customFieldId,
+                                                  value: e.datavalue,
+                                                ))
+                                            .toList(),
+                                        controllerKey: 'quotation',
+                                        showEditButton: true,
+                                        onFieldValuesChanged: (values) {
+                                          for (final fv in values) {
+                                            final match =
+                                                nonCommercialFields.firstWhere(
+                                              (e) =>
+                                                  e.customFieldId ==
+                                                  fv.customFieldId,
+                                              orElse: () =>
+                                                  CustomFieldByStatusId(),
+                                            );
+                                            if (match.customFieldId != null) {
+                                              match.datavalue = fv.value;
+                                            }
+                                          }
+                                          // Update Product Name when field 154 changes
+                                          if (settingsProvider
+                                                      .quotationProductName ==
+                                                  1 &&
+                                              values.any((fv) =>
+                                                  fv.customFieldId == 154)) {
+                                            customerDetailsProvider
+                                                .updateAutoProductName();
+                                          }
+                                        },
+                                      )
+                                    : null;
+
+                            if (quotationTypeWidget == null &&
+                                customFieldsWidget == null) {
+                              return const SizedBox.shrink();
+                            }
+
+                            final isWeb = AppStyles.isWebScreen(context) ||
+                                MediaQuery.sizeOf(context).width >= 768;
+
+                            if (isWeb) {
+                              return Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  if (quotationTypeWidget != null)
+                                    Expanded(child: quotationTypeWidget),
+                                  if (quotationTypeWidget != null &&
+                                      customFieldsWidget != null)
+                                    const SizedBox(width: 16),
+                                  if (customFieldsWidget != null)
+                                    Expanded(child: customFieldsWidget)
+                                  else if (quotationTypeWidget != null)
+                                    const Expanded(child: SizedBox()),
+                                ],
+                              );
+                            } else {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  if (quotationTypeWidget != null)
+                                    quotationTypeWidget,
+                                  if (quotationTypeWidget != null &&
+                                      customFieldsWidget != null)
+                                    const SizedBox(height: 16),
+                                  if (customFieldsWidget != null)
+                                    customFieldsWidget,
+                                ],
+                              );
+                            }
+                          },
+                        ),
                         if (companyQuotationItems) ...[
                           const SizedBox(height: 16),
                           Row(
@@ -657,59 +914,6 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                           ],
                         ],
                         const SizedBox(height: 16),
-                        if (customerDetailsProvider
-                            .customFieldQuotation.isNotEmpty) ...[
-                          Builder(
-                            builder: (context) {
-                              final nonCommercialFields =
-                                  customerDetailsProvider.customFieldQuotation
-                                      .where((e) => e.isCommercial != 1)
-                                      .toList();
-                              if (nonCommercialFields.isEmpty)
-                                return const SizedBox.shrink();
-                              return Column(
-                                children: [
-                                  CustomFieldSectionWidget(
-                                    key: customFieldQuotationKey,
-                                    customFields: nonCommercialFields,
-                                    initialFieldValues: nonCommercialFields
-                                        .map((e) => FieldValueModel(
-                                              customFieldId: e.customFieldId,
-                                              value: e.datavalue,
-                                            ))
-                                        .toList(),
-                                    controllerKey: 'quotation',
-                                    showEditButton: true,
-                                    onFieldValuesChanged: (values) {
-                                      for (final fv in values) {
-                                        final match =
-                                            nonCommercialFields.firstWhere(
-                                          (e) =>
-                                              e.customFieldId ==
-                                              fv.customFieldId,
-                                          orElse: () => CustomFieldByStatusId(),
-                                        );
-                                        if (match.customFieldId != null) {
-                                          match.datavalue = fv.value;
-                                        }
-                                      }
-                                      // Update Product Name when field 154 changes
-                                      if (settingsProvider
-                                                  .quotationProductName ==
-                                              1 &&
-                                          values.any((fv) =>
-                                              fv.customFieldId == 154)) {
-                                        customerDetailsProvider
-                                            .updateAutoProductName();
-                                      }
-                                    },
-                                  ),
-                                  const SizedBox(height: 16),
-                                ],
-                              );
-                            },
-                          ),
-                        ],
                         if (customerDetailsProvider
                             .isQuotationFieldVisible(36)) ...[
                           Align(
@@ -854,131 +1058,218 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                       initiallyExpanded: false,
                       children: [
                         const SizedBox(height: 16),
-                        if (customerDetailsProvider
-                            .isQuotationFieldVisible(37)) ...[
-                          CustomTextField(
-                            readOnly: false,
-                            keyboardType: TextInputType.number,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly
-                            ],
-                            height: 54,
-                            controller:
-                                customerDetailsProvider.systemPriceController,
-                            hintText:
-                                customerDetailsProvider.getQuotationFieldName(
-                                    37,
-                                    'System price excluding KSEB paper work'),
-                            labelText: '',
-                          ),
-                          const SizedBox(height: 16),
-                        ],
-                        if (customerDetailsProvider
-                            .isQuotationFieldVisible(38)) ...[
-                          CustomTextField(
-                            readOnly: false,
-                            height: 54,
-                            controller: customerDetailsProvider
-                                .additionalStructureController,
-                            hintText:
-                                customerDetailsProvider.getQuotationFieldName(
-                                    38, 'Additional Paper Work'),
-                            labelText: '',
-                            keyboardType: TextInputType.number,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                        ],
-                        if (customerDetailsProvider
-                            .isQuotationFieldVisible(39)) ...[
-                          CustomTextField(
-                            readOnly: false,
-                            height: 54,
-                            controller: customerDetailsProvider
-                                .feasibilityFeeController,
-                            hintText:
-                                customerDetailsProvider.getQuotationFieldName(
-                                    39, 'Fee in KSEB for Feasibility study'),
-                            labelText: '',
-                            keyboardType: TextInputType.number,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly
-                            ],
-                            onChanged: (p0) {
-                              if (settingsProvider.additionalExpense == 1) {
-                                customerDetailsProvider.updateTotal();
+                        Builder(
+                          builder: (context) {
+                            final additionalExpenseFields = <Widget>[
+                              if (customerDetailsProvider
+                                  .isQuotationFieldVisible(37))
+                                CustomTextField(
+                                  readOnly: false,
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly
+                                  ],
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 14,
+                                    horizontal: 14,
+                                  ),
+                                  height: 54,
+                                  controller: customerDetailsProvider
+                                      .systemPriceController,
+                                  hintText: customerDetailsProvider
+                                      .getQuotationFieldName(
+                                          37,
+                                          'System price excluding KSEB paper work'),
+                                  labelText: '',
+                                ),
+                              if (customerDetailsProvider
+                                  .isQuotationFieldVisible(38))
+                                CustomTextField(
+                                  readOnly: false,
+                                  height: 54,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 14,
+                                    horizontal: 14,
+                                  ),
+                                  controller: customerDetailsProvider
+                                      .additionalStructureController,
+                                  hintText: customerDetailsProvider
+                                      .getQuotationFieldName(
+                                          38, 'Additional Paper Work'),
+                                  labelText: '',
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly
+                                  ],
+                                ),
+                              if (customerDetailsProvider
+                                  .isQuotationFieldVisible(39))
+                                CustomTextField(
+                                  readOnly: false,
+                                  height: 54,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 14,
+                                    horizontal: 14,
+                                  ),
+                                  controller: customerDetailsProvider
+                                      .feasibilityFeeController,
+                                  hintText: customerDetailsProvider
+                                      .getQuotationFieldName(
+                                          39,
+                                          'Fee in KSEB for Feasibility study'),
+                                  labelText: '',
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly
+                                  ],
+                                  onChanged: (p0) {
+                                    if (settingsProvider.additionalExpense ==
+                                        1) {
+                                      customerDetailsProvider.updateTotal();
+                                    }
+                                  },
+                                ),
+                              if (customerDetailsProvider
+                                  .isQuotationFieldVisible(40))
+                                CustomTextField(
+                                  readOnly: false,
+                                  height: 54,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 14,
+                                    horizontal: 14,
+                                  ),
+                                  controller: customerDetailsProvider
+                                      .registrationFeeController,
+                                  keyboardType: TextInputType.number,
+                                  onChanged: (p0) {
+                                    if (settingsProvider.additionalExpense ==
+                                        1) {
+                                      customerDetailsProvider.updateTotal();
+                                    }
+                                  },
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly
+                                  ],
+                                  hintText: customerDetailsProvider
+                                      .getQuotationFieldName(
+                                          40,
+                                          'Registration Fee in KSEB - 1000/- per kW (80% refundable)'),
+                                  labelText: '',
+                                ),
+                              if (settingsProvider.menuIsViewMap[154] ==
+                                  1) ...[
+                                CustomTextField(
+                                  readOnly: false,
+                                  height: 54,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 14,
+                                    horizontal: 14,
+                                  ),
+                                  controller: customerDetailsProvider
+                                      .feasibilityFeeThreeController,
+                                  hintText: customerDetailsProvider
+                                      .getQuotationFieldName(
+                                          41,
+                                          'Fee in KSEB for Feasibility study Three phase'),
+                                  labelText: '',
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly
+                                  ],
+                                  onChanged: (p0) {
+                                    if (settingsProvider.additionalExpense ==
+                                        1) {
+                                      customerDetailsProvider.updateTotal();
+                                    }
+                                  },
+                                ),
+                                CustomTextField(
+                                  readOnly: false,
+                                  height: 54,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 14,
+                                    horizontal: 14,
+                                  ),
+                                  controller: customerDetailsProvider
+                                      .registrationFeeThreeController,
+                                  keyboardType: TextInputType.number,
+                                  onChanged: (p0) {
+                                    if (settingsProvider.additionalExpense ==
+                                        1) {
+                                      customerDetailsProvider.updateTotal();
+                                    }
+                                  },
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly
+                                  ],
+                                  hintText: customerDetailsProvider
+                                      .getQuotationFieldName(
+                                          42,
+                                          'Registration Fee in KSEB - 1000/- per kW (80% refundable) Three phase'),
+                                  labelText: '',
+                                ),
+                              ],
+                            ];
+
+                            if (additionalExpenseFields.isEmpty) {
+                              return const SizedBox.shrink();
+                            }
+
+                            final isWeb = AppStyles.isWebScreen(context) ||
+                                MediaQuery.sizeOf(context).width >= 768;
+
+                            if (isWeb) {
+                              final List<List<Widget>> rows = [];
+                              for (int i = 0;
+                                  i < additionalExpenseFields.length;
+                                  i += 3) {
+                                rows.add(additionalExpenseFields.sublist(
+                                  i,
+                                  (i + 3 > additionalExpenseFields.length)
+                                      ? additionalExpenseFields.length
+                                      : i + 3,
+                                ));
                               }
-                            },
-                          ),
-                          const SizedBox(height: 16),
-                        ],
-                        if (customerDetailsProvider
-                            .isQuotationFieldVisible(40)) ...[
-                          CustomTextField(
-                            readOnly: false,
-                            height: 54,
-                            controller: customerDetailsProvider
-                                .registrationFeeController,
-                            keyboardType: TextInputType.number,
-                            onChanged: (p0) {
-                              if (settingsProvider.additionalExpense == 1) {
-                                customerDetailsProvider.updateTotal();
-                              }
-                            },
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly
-                            ],
-                            hintText: customerDetailsProvider.getQuotationFieldName(
-                                40,
-                                'Registration Fee in KSEB - 1000/- per kW (80% refundable)'),
-                            labelText: '',
-                          ),
-                          const SizedBox(height: 16),
-                        ],
-                        if (settingsProvider.menuIsViewMap[154] == 1) ...[
-                          CustomTextField(
-                            readOnly: false,
-                            height: 54,
-                            controller: customerDetailsProvider
-                                .feasibilityFeeThreeController,
-                            hintText: customerDetailsProvider.getQuotationFieldName(
-                                41,
-                                'Fee in KSEB for Feasibility study Three phase'),
-                            labelText: '',
-                            keyboardType: TextInputType.number,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly
-                            ],
-                            onChanged: (p0) {
-                              if (settingsProvider.additionalExpense == 1) {
-                                customerDetailsProvider.updateTotal();
-                              }
-                            },
-                          ),
-                          const SizedBox(height: 16),
-                          CustomTextField(
-                            readOnly: false,
-                            height: 54,
-                            controller: customerDetailsProvider
-                                .registrationFeeThreeController,
-                            keyboardType: TextInputType.number,
-                            onChanged: (p0) {
-                              if (settingsProvider.additionalExpense == 1) {
-                                customerDetailsProvider.updateTotal();
-                              }
-                            },
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly
-                            ],
-                            hintText: customerDetailsProvider.getQuotationFieldName(
-                                42,
-                                'Registration Fee in KSEB - 1000/- per kW (80% refundable) Three phase'),
-                            labelText: '',
-                          ),
-                          const SizedBox(height: 16),
-                        ],
+
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  for (int r = 0; r < rows.length; r++) ...[
+                                    if (r > 0) const SizedBox(height: 16),
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        for (int c = 0; c < 3; c++) ...[
+                                          if (c > 0)
+                                            const SizedBox(width: 16),
+                                          if (c < rows[r].length)
+                                            Expanded(child: rows[r][c])
+                                          else
+                                            const Expanded(
+                                                child: SizedBox()),
+                                        ],
+                                      ],
+                                    ),
+                                  ],
+                                ],
+                              );
+                            } else {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  for (int i = 0;
+                                      i < additionalExpenseFields.length;
+                                      i++) ...[
+                                    if (i > 0) const SizedBox(height: 16),
+                                    additionalExpenseFields[i],
+                                  ],
+                                ],
+                              );
+                            }
+                          },
+                        ),
+                        const SizedBox(height: 16),
                       ],
                     ),
                   ],

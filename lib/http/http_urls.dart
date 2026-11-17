@@ -553,4 +553,5 @@ class HttpUrls {
   static String saveagencypayment = "lead/Save_Agency_Payment";
   static String listagencypayment = "lead/Get_Agency_Payment";
   static String deleteagencypayment = "lead/Delete_Agency_Payment";
+  static String searchCustomersForReference = "lead/Search_Customers_for_reference";
 }

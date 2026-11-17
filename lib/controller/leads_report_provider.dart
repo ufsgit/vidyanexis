@@ -29,6 +29,7 @@ import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/http/loader.dart';
 import 'package:vidyanexis/http/cloudflare_upload.dart';
+import 'package:vidyanexis/utils/util_functions.dart';
 import 'package:vidyanexis/presentation/pages/home/homepage.dart';
 // import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -1503,6 +1504,13 @@ class LeadReportProvider extends ChangeNotifier {
               ? toUserName
               : userName;
 
+      final formattedCustomerName = toTitleCase(leadNameController.text.isNotEmpty
+          ? leadNameController.text
+          : customerName);
+      if (formattedCustomerName.isNotEmpty) {
+        leadNameController.text = formattedCustomerName;
+      }
+
       final Map<String, dynamic> bodyData = {
             "Lead_Mobile_Existed_Check": leadMobileExistedCheck,
             "Lead_Mobile_Check": leadMobileExistedCheck,
@@ -1512,7 +1520,9 @@ class LeadReportProvider extends ChangeNotifier {
               "Customer_Id": custId,
               "Lead_Mobile_Existed_Check": leadMobileExistedCheck,
               "Lead_Mobile_Check": leadMobileExistedCheck,
-              "Customer_Name": leadNameController.text,
+              "Customer_Name": formattedCustomerName.isEmpty
+                  ? 'Null'
+                  : formattedCustomerName,
               "Address": addressController.text,
               "City": cityController.text,
               "State": stateController.text,
