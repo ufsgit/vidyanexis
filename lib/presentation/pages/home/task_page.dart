@@ -4797,7 +4797,10 @@ class _tasksPageReportState extends State<TaskPage> {
     );
   }
 
-  Future statusDialogMobile(TaskReportModel task) {
+  Future statusDialogMobile(TaskReportModel task) async {
+    if (!await _canOpenTaskStatusDialog(task)) {
+      return false;
+    }
     return Navigator.push(
       context,
       MaterialPageRoute(
@@ -4831,7 +4834,33 @@ class _tasksPageReportState extends State<TaskPage> {
     );
   }
 
-  Future statusDialog(TaskReportModel task) {
+  Future<bool> _canOpenTaskStatusDialog(TaskReportModel task) async {
+    final settingsProvider =
+        Provider.of<SettingsProvider>(context, listen: false);
+
+    // Permission 300: Any user can open the dialog.
+    if (settingsProvider.menuIsViewMap[249] == 1) {
+      return true;
+    }
+
+    // Get logged-in user ID saved during login.
+    final preferences = await SharedPreferences.getInstance();
+
+    final int loggedInUserId =
+        int.tryParse(preferences.getString('userId') ?? '') ?? 0;
+
+    // Get task assigned user ID.
+    final int assignedUserId = task.toUserId ?? 0;
+    print(loggedInUserId);
+    print(assignedUserId);
+
+    return loggedInUserId != 0 && loggedInUserId == assignedUserId;
+  }
+
+  Future statusDialog(TaskReportModel task) async {
+    if (!await _canOpenTaskStatusDialog(task)) {
+      return false;
+    }
     _uploadedDocUrls.clear();
     _uploadedDocImageIds.clear(); // ADD
     _uploadProgress.clear();
