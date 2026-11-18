@@ -131,71 +131,41 @@ class _tasksPageReportState extends State<TaskPage> {
 
   // Task multi-selection state
   final Set<String> _selectedTaskIds = {};
-  String? _selectedTaskType;
 
   void _clearSelection() {
     setState(() {
       _selectedTaskIds.clear();
-      _selectedTaskType = null;
     });
   }
 
   void _toggleTaskSelection(TaskReportModel task, bool? selected) {
-    if (selected == true) {
-      if (_selectedTaskIds.isNotEmpty &&
-          _selectedTaskType != task.taskTypeId.toString()) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text(
-                  "Cannot select different task types. Please select tasks of the same type.")),
-        );
-        return;
-      }
-      setState(() {
+    setState(() {
+      if (selected == true) {
         _selectedTaskIds.add(task.taskId.toString());
-        _selectedTaskType = task.taskTypeId.toString();
-      });
-    } else {
-      setState(() {
+      } else {
         _selectedTaskIds.remove(task.taskId.toString());
-        if (_selectedTaskIds.isEmpty) {
-          _selectedTaskType = null;
-        }
-      });
-    }
+      }
+    });
   }
 
   void _selectAllVisibleTasks(List<TaskReportModel> visibleTasks) {
     if (visibleTasks.isEmpty) return;
 
-    // Determine the type we are selecting (use the first valid one if not already set)
-    String? targetType = _selectedTaskType ??
-        visibleTasks.first.taskTypeId.toString(); // Edge case
-
-    // Find all visible tasks of that type
-    final selectableTasks = visibleTasks
-        .where((t) => t.taskTypeId.toString() == targetType)
-        .toList();
-
-    // Check if they are all selected
-    bool allSelected = selectableTasks
+    // Check if all visible tasks are already selected
+    final bool allSelected = visibleTasks
         .every((t) => _selectedTaskIds.contains(t.taskId.toString()));
 
     setState(() {
       if (allSelected) {
-        // Unselect them
-        for (var t in selectableTasks) {
+        // Unselect all visible tasks
+        for (var t in visibleTasks) {
           _selectedTaskIds.remove(t.taskId.toString());
         }
-        if (_selectedTaskIds.isEmpty) {
-          _selectedTaskType = null;
-        }
       } else {
-        // Select them
-        for (var t in selectableTasks) {
+        // Select all visible tasks
+        for (var t in visibleTasks) {
           _selectedTaskIds.add(t.taskId.toString());
         }
-        _selectedTaskType = targetType;
       }
     });
   }
@@ -221,7 +191,7 @@ class _tasksPageReportState extends State<TaskPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                      "Selected ${_selectedTaskIds.length} tasks of type: ${_selectedTaskType ?? 'Unknown'}"),
+                      "Selected ${_selectedTaskIds.length} ${_selectedTaskIds.length == 1 ? 'task' : 'tasks'}"),
                   const SizedBox(height: 16),
                   DropdownButtonFormField<String>(
                     decoration: const InputDecoration(
@@ -486,9 +456,9 @@ class _tasksPageReportState extends State<TaskPage> {
       customerDetailsProvider.setCustomerId(customerId);
       customerDetailsProvider.setInitialTabName("Quotations");
       final sideProvider = Provider.of<SidebarProvider>(context, listen: false);
-      sideProvider.name = 'Customers /';
+      sideProvider.name = 'Customer /';
 
-      context.push('/customerDetails//false');
+      context.push('/customerDetails/$customerId/false');
     } else if (action == 'document') {
       showDialog(
         barrierDismissible: false,
@@ -503,9 +473,9 @@ class _tasksPageReportState extends State<TaskPage> {
       customerDetailsProvider.setCustomerId(customerId);
       customerDetailsProvider.setInitialTabName("Documents");
       final sideProvider = Provider.of<SidebarProvider>(context, listen: false);
-      sideProvider.name = 'Customers /';
+      sideProvider.name = 'Customer /';
 
-      context.push('/customerDetails//false');
+      context.push('/customerDetails/$customerId/false');
     }
   }
 
@@ -801,6 +771,7 @@ class _tasksPageReportState extends State<TaskPage> {
               .toList(),
           onChanged: (v) {
             if (v != null) {
+              _clearSelection();
               reportsProvider.setCustomerTypeId(v);
               reportsProvider.goToPage(1);
               reportsProvider.searchTaskByCustomer(context);
@@ -1381,6 +1352,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                 children: [
                                   GestureDetector(
                                     onTap: () {
+                                      _clearSelection();
                                       reportsProvider.setEntryType('myown');
                                       reportsProvider.goToPage(1);
                                       reportsProvider
@@ -1419,6 +1391,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                   const SizedBox(width: 16),
                                   GestureDetector(
                                     onTap: () {
+                                      _clearSelection();
                                       reportsProvider.setEntryType('all');
                                       reportsProvider.goToPage(1);
                                       reportsProvider
@@ -1733,6 +1706,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                 ),
                               ),
                             //Create Task
+                            if (settingsProvider.menuIsSaveMap[35].toString() == '1')
                             Padding(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 8.0),
@@ -2566,7 +2540,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                     20, // Duration (extra)
                                     21, // Overdue (extra)
                                     11, // Next Follow-up Date
-                                    4,  // Consumer Name
+                                    // 4,  // Consumer Name
                                     6,  // Project Capacity
                                     7,  // Quotation Amount
                                     14, // Site Engineer
@@ -2581,7 +2555,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                     // Add visible API fields that belong to scrollable section (taskFieldsId not in fixed panel)
                                     for (final f in sortedFields) {
                                       if (f.isVisibility == 1 && f.taskFieldsId != null) {
-                                        if (![1, 2, 3, 5, 8, 9].contains(f.taskFieldsId)) {
+                                        if (![1, 2, 3, 4, 5, 8, 9].contains(f.taskFieldsId)) {
                                           scrollableFieldIds.add(f.taskFieldsId!);
                                         }
                                       }
@@ -2909,15 +2883,13 @@ class _tasksPageReportState extends State<TaskPage> {
                                                             value: reportsProvider
                                                                     .taskReport
                                                                     .isNotEmpty &&
-                                                                _selectedTaskIds
-                                                                        .length ==
-                                                                    reportsProvider
-                                                                        .taskReport
-                                                                        .where((t) =>
-                                                                            t.taskTypeId.toString() ==
-                                                                            (_selectedTaskType ??
-                                                                                reportsProvider.taskReport.first.taskTypeId.toString()))
-                                                                        .length,
+                                                                reportsProvider
+                                                                    .taskReport
+                                                                    .every((t) =>
+                                                                        _selectedTaskIds
+                                                                            .contains(t
+                                                                                .taskId
+                                                                                .toString())),
                                                             onChanged: (val) =>
                                                                 _selectAllVisibleTasks(
                                                                     reportsProvider
@@ -3284,12 +3256,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                                     padding: const EdgeInsets.symmetric(vertical: 0),
                                                                                     child: InkWell(
                                                                                       onTap: () {
-                                                                                        final sideprovider = Provider.of<SidebarProvider>(context,listen: false);
-                                                                                        if (task.isLead == '1'){
-                                                                                          sideprovider.name = 'Lead /';
-                                                                                        } else {
-                                                                                          sideprovider.name = 'Customer /';
-                                                                                        }
+                                                                                        final sideprovider = Provider.of<SidebarProvider>(context, listen: false);
+                                                                                        sideprovider.name = 'Customer /';
                                                                                         context.push('${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
                                                                                       },
                                                                                       child: Tooltip(
@@ -3507,7 +3475,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                                 ),
                                                                                 child: Center(
                                                                                   child: Padding(
-                                                                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                                                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
                                                                                     child: Text(
                                                                                       task.taskStatusName,
                                                                                       overflow: TextOverflow.ellipsis,
@@ -3776,6 +3744,7 @@ class _tasksPageReportState extends State<TaskPage> {
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
+                                  if (settingsProvider.menuIsSaveMap[35].toString() == '1')...[
                                   ListTile(
                                     leading: const Icon(Icons.task,
                                         color: AppColors.primaryBlue),
@@ -3800,6 +3769,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                       );
                                     },
                                   ),
+                                  ],
                                   if (settingsProvider.menuIsViewMap[156] ==
                                       1) ...[
                                     const Divider(),
@@ -7801,19 +7771,16 @@ class _tasksPageReportState extends State<TaskPage> {
                                                               ),
                                                               content: Column(
                                                                 mainAxisSize:
-                                                                    MainAxisSize
-                                                                        .min,
+                                                                    MainAxisSize.min,
                                                                 crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
+                                                                    CrossAxisAlignment.start,
                                                                 children: [
                                                                   const Text(
-                                                                    "Custom Fields Not Filled",
+                                                                    "Please fill mandatory custom fields:",
                                                                     style: TextStyle(
                                                                       fontFamily:
                                                                           'PlusJakartaSans',
-                                                                      color: Colors
-                                                                          .black,
+                                                                      color: Colors.black,
                                                                       fontSize: 16,
                                                                       fontWeight:
                                                                           FontWeight

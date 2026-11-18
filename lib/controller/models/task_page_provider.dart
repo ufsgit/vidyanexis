@@ -932,47 +932,111 @@ class TaskPageProvider extends ChangeNotifier {
 
   void setSortOption(int option, BuildContext context) {
     switch (option) {
-      case 0:
+      case 0: // Default
         _selectedSortOption = 0;
         _sortOrder = 'DESC';
         break;
-      case 1:
+
+      case 9: // Latest
+        _selectedSortOption = 2; // Creation Date
+        _sortOrder = 'DESC';
+        break;
+
+      case 1: // ID No (Descending)
         _selectedSortOption = 1;
         _sortOrder = 'DESC';
         break;
-      case 2:
+      case 2: // ID No (Ascending)
         _selectedSortOption = 1;
         _sortOrder = 'ASC';
         break;
-      case 3:
+
+      case 3: // Creation Date (Newest)
         _selectedSortOption = 2;
         _sortOrder = 'DESC';
         break;
-      case 4:
+      case 4: // Creation Date (Oldest)
         _selectedSortOption = 2;
         _sortOrder = 'ASC';
         break;
-      case 5:
+
+      case 5: // Followup Date (Newest)
         _selectedSortOption = 3;
         _sortOrder = 'DESC';
         break;
-      case 6:
+      case 6: // Followup Date (Oldest)
         _selectedSortOption = 3;
         _sortOrder = 'ASC';
         break;
-      case 7:
+
+      case 7: // Name (A-Z)
         _selectedSortOption = 4;
         _sortOrder = 'ASC';
         break;
-      case 8:
+      case 8: // Name (Z-A)
         _selectedSortOption = 4;
         _sortOrder = 'DESC';
         break;
-      case 9:
-        _selectedSortOption = 2;
+
+      case 12: // Project Capacity (ASC)
+        _selectedSortOption = 5;
+        _sortOrder = 'ASC';
+        break;
+      case 13: // Project Capacity (DESC)
+        _selectedSortOption = 5;
         _sortOrder = 'DESC';
         break;
+
+      case 14: // Task (A-Z)
+        _selectedSortOption = 6;
+        _sortOrder = 'ASC';
+        break;
+      case 15: // Task (Z-A)
+        _selectedSortOption = 6;
+        _sortOrder = 'DESC';
+        break;
+
+      case 16: // Staff (A-Z)
+        _selectedSortOption = 7;
+        _sortOrder = 'ASC';
+        break;
+      case 17: // Staff (Z-A)
+        _selectedSortOption = 7;
+        _sortOrder = 'DESC';
+        break;
+
+      case 18: // Site Engineer (A-Z)
+        _selectedSortOption = 8;
+        _sortOrder = 'ASC';
+        break;
+      case 19: // Site Engineer (Z-A)
+        _selectedSortOption = 8;
+        _sortOrder = 'DESC';
+        break;
+
+      case 20: // Enquiry Source (A-Z)
+        _selectedSortOption = 9;
+        _sortOrder = 'ASC';
+        break;
+      case 21: // Enquiry Source (Z-A)
+        _selectedSortOption = 9;
+        _sortOrder = 'DESC';
+        break;
+
+      case 22: // Bank Name & Branch (A-Z)
+        _selectedSortOption = 10;
+        _sortOrder = 'ASC';
+        break;
+      case 23: // Bank Name & Branch (Z-A)
+        _selectedSortOption = 10;
+        _sortOrder = 'DESC';
+        break;
+
+      default:
+        _selectedSortOption = 0;
+        _sortOrder = 'DESC';
     }
+
     _pageIndex = 1;
     notifyListeners();
     searchTaskByCustomer(context);
@@ -1103,7 +1167,7 @@ class TaskPageProvider extends ChangeNotifier {
         _Department_Id = '0';
       }
 
-      int apiSortOption = _selectedSortOption == 4 ? 0 : _selectedSortOption;
+      int apiSortOption = _selectedSortOption;
       int apiPageIndex = _pageIndex;
 
       var response = await HttpRequest.httpGetRequest(
@@ -1145,50 +1209,50 @@ class TaskPageProvider extends ChangeNotifier {
             _taskReport = newTasks;
           }
 
-          // Apply local sorting to guarantee proper ordering
-          if (_selectedSortOption == 1) {
-            if (_sortOrder == 'ASC') {
-              _taskReport.sort((a, b) => a.taskId.compareTo(b.taskId));
-            } else {
-              _taskReport.sort((a, b) => b.taskId.compareTo(a.taskId));
-            }
-          } else if (_selectedSortOption == 2) {
-            _taskReport.sort((a, b) {
-              final dateA = a.parsedCreationDate;
-              final dateB = b.parsedCreationDate;
-              if (dateA != null && dateB != null) {
-                final dateComp = _sortOrder == 'ASC'
-                    ? dateA.compareTo(dateB)
-                    : dateB.compareTo(dateA);
-                if (dateComp != 0) return dateComp;
-              } else if (dateA == null && dateB != null) {
-                return 1;
-              } else if (dateA != null && dateB == null) {
-                return -1;
-              }
-              return _sortOrder == 'ASC'
-                  ? a.taskId.compareTo(b.taskId)
-                  : b.taskId.compareTo(a.taskId);
-            });
-          } else if (_selectedSortOption == 3) {
-            if (_sortOrder == 'ASC') {
-              _taskReport.sort((a, b) => (a.nextFollowupDate ?? '')
-                  .compareTo(b.nextFollowupDate ?? ''));
-            } else {
-              _taskReport.sort((a, b) => (b.nextFollowupDate ?? '')
-                  .compareTo(a.nextFollowupDate ?? ''));
-            }
-          } else if (_selectedSortOption == 4) {
-            if (_sortOrder == 'ASC') {
-              _taskReport.sort((a, b) => a.customerName
-                  .toLowerCase()
-                  .compareTo(b.customerName.toLowerCase()));
-            } else {
-              _taskReport.sort((a, b) => b.customerName
-                  .toLowerCase()
-                  .compareTo(a.customerName.toLowerCase()));
-            }
-          }
+          // // Apply local sorting to guarantee proper ordering
+          // if (_selectedSortOption == 1) {
+          //   if (_sortOrder == 'ASC') {
+          //     _taskReport.sort((a, b) => a.taskId.compareTo(b.taskId));
+          //   } else {
+          //     _taskReport.sort((a, b) => b.taskId.compareTo(a.taskId));
+          //   }
+          // } else if (_selectedSortOption == 2) {
+          //   _taskReport.sort((a, b) {
+          //     final dateA = a.parsedCreationDate;
+          //     final dateB = b.parsedCreationDate;
+          //     if (dateA != null && dateB != null) {
+          //       final dateComp = _sortOrder == 'ASC'
+          //           ? dateA.compareTo(dateB)
+          //           : dateB.compareTo(dateA);
+          //       if (dateComp != 0) return dateComp;
+          //     } else if (dateA == null && dateB != null) {
+          //       return 1;
+          //     } else if (dateA != null && dateB == null) {
+          //       return -1;
+          //     }
+          //     return _sortOrder == 'ASC'
+          //         ? a.taskId.compareTo(b.taskId)
+          //         : b.taskId.compareTo(a.taskId);
+          //   });
+          // } else if (_selectedSortOption == 3) {
+          //   if (_sortOrder == 'ASC') {
+          //     _taskReport.sort((a, b) => (a.nextFollowupDate ?? '')
+          //         .compareTo(b.nextFollowupDate ?? ''));
+          //   } else {
+          //     _taskReport.sort((a, b) => (b.nextFollowupDate ?? '')
+          //         .compareTo(a.nextFollowupDate ?? ''));
+          //   }
+          // } else if (_selectedSortOption == 4) {
+          //   if (_sortOrder == 'ASC') {
+          //     _taskReport.sort((a, b) => a.customerName
+          //         .toLowerCase()
+          //         .compareTo(b.customerName.toLowerCase()));
+          //   } else {
+          //     _taskReport.sort((a, b) => b.customerName
+          //         .toLowerCase()
+          //         .compareTo(a.customerName.toLowerCase()));
+          //   }
+          // }
         }
         if (isShowLoader) Loader.stopLoader(context);
         notifyListeners();
