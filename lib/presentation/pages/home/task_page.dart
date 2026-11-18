@@ -486,9 +486,9 @@ class _tasksPageReportState extends State<TaskPage> {
       customerDetailsProvider.setCustomerId(customerId);
       customerDetailsProvider.setInitialTabName("Quotations");
       final sideProvider = Provider.of<SidebarProvider>(context, listen: false);
-      sideProvider.name = 'Customers /';
+      sideProvider.name = 'Customer /';
 
-      context.push('/customerDetails//false');
+      context.push('/customerDetails/$customerId/false');
     } else if (action == 'document') {
       showDialog(
         barrierDismissible: false,
@@ -503,9 +503,9 @@ class _tasksPageReportState extends State<TaskPage> {
       customerDetailsProvider.setCustomerId(customerId);
       customerDetailsProvider.setInitialTabName("Documents");
       final sideProvider = Provider.of<SidebarProvider>(context, listen: false);
-      sideProvider.name = 'Customers /';
+      sideProvider.name = 'Customer /';
 
-      context.push('/customerDetails//false');
+      context.push('/customerDetails/$customerId/false');
     }
   }
 
@@ -3284,12 +3284,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                                     padding: const EdgeInsets.symmetric(vertical: 0),
                                                                                     child: InkWell(
                                                                                       onTap: () {
-                                                                                        final sideprovider = Provider.of<SidebarProvider>(context,listen: false);
-                                                                                        if (task.isLead == '1'){
-                                                                                          sideprovider.name = 'Lead /';
-                                                                                        } else {
-                                                                                          sideprovider.name = 'Customer /';
-                                                                                        }
+                                                                                        final sideprovider = Provider.of<SidebarProvider>(context, listen: false);
+                                                                                        sideprovider.name = 'Customer /';
                                                                                         context.push('${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
                                                                                       },
                                                                                       child: Tooltip(
@@ -7801,19 +7797,16 @@ class _tasksPageReportState extends State<TaskPage> {
                                                               ),
                                                               content: Column(
                                                                 mainAxisSize:
-                                                                    MainAxisSize
-                                                                        .min,
+                                                                    MainAxisSize.min,
                                                                 crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
+                                                                    CrossAxisAlignment.start,
                                                                 children: [
                                                                   const Text(
-                                                                    "Custom Fields Not Filled",
+                                                                    "Please fill mandatory custom fields:",
                                                                     style: TextStyle(
                                                                       fontFamily:
                                                                           'PlusJakartaSans',
-                                                                      color: Colors
-                                                                          .black,
+                                                                      color: Colors.black,
                                                                       fontSize: 16,
                                                                       fontWeight:
                                                                           FontWeight

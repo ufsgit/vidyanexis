@@ -365,19 +365,14 @@ class _TaskCardState extends State<TaskCard> {
   Widget _buildViewButton(BuildContext context) {
     return CustomActionButton(
       onTap: () {
-        bool fromLead = widget.task.isLead == '1' ? true : false;
-        final sideprovider = Provider.of<SidebarProvider>(context,listen: false);
-        if (widget.task.isLead == '1'){
-          sideprovider.name = 'Lead /';
-        } else {
-          sideprovider.name = 'Customer /';
-        }
+        final sideprovider = Provider.of<SidebarProvider>(context, listen: false);
+        sideprovider.name = 'Customer /';
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => CustomerDetailPageMobile(
               customerId: widget.task.customerId,
-              fromLead: fromLead,
+              fromLead: false,
             ),
           ),
         );
