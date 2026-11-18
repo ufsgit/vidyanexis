@@ -1733,6 +1733,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                 ),
                               ),
                             //Create Task
+                            if (settingsProvider.menuIsSaveMap[35].toString() == '1')
                             Padding(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 8.0),
@@ -2566,7 +2567,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                     20, // Duration (extra)
                                     21, // Overdue (extra)
                                     11, // Next Follow-up Date
-                                    4,  // Consumer Name
+                                    // 4,  // Consumer Name
                                     6,  // Project Capacity
                                     7,  // Quotation Amount
                                     14, // Site Engineer
@@ -2581,7 +2582,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                     // Add visible API fields that belong to scrollable section (taskFieldsId not in fixed panel)
                                     for (final f in sortedFields) {
                                       if (f.isVisibility == 1 && f.taskFieldsId != null) {
-                                        if (![1, 2, 3, 5, 8, 9].contains(f.taskFieldsId)) {
+                                        if (![1, 2, 3, 4, 5, 8, 9].contains(f.taskFieldsId)) {
                                           scrollableFieldIds.add(f.taskFieldsId!);
                                         }
                                       }
@@ -3772,6 +3773,7 @@ class _tasksPageReportState extends State<TaskPage> {
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
+                                  if (settingsProvider.menuIsSaveMap[35].toString() == '1')...[
                                   ListTile(
                                     leading: const Icon(Icons.task,
                                         color: AppColors.primaryBlue),
@@ -3796,6 +3798,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                       );
                                     },
                                   ),
+                                  ],
                                   if (settingsProvider.menuIsViewMap[156] ==
                                       1) ...[
                                     const Divider(),
