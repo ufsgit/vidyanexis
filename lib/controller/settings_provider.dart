@@ -110,6 +110,11 @@ class SettingsProvider extends ChangeNotifier {
         _jbTaskSearch = cachedJbTaskSearch;
       }
 
+      int? cachedJbMoreInfo = preferences.getInt('cached_jb_more_info');
+      if (cachedJbMoreInfo != null) {
+        _jbMoreInfo = cachedJbMoreInfo;
+      }
+
       if (cachedLogo != null ||
           cachedTitle != null ||
           cachedNotificationTopic != null) {
@@ -1049,6 +1054,52 @@ class SettingsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  int _jbMoreInfo = 0;
+  int get jbMoreInfo {
+    if (_companyDetails.isNotEmpty &&
+        _companyDetails[0].permissions.isNotEmpty) {
+      for (var p in _companyDetails[0].permissions) {
+        final cap =
+            (p.caption.isNotEmpty ? p.caption : p.displayCaption).toLowerCase();
+        if (cap.contains('jb_more_info') ||
+            cap.contains('jb more info') ||
+            cap.contains('jbmoreinfo')) {
+          return p.value;
+        }
+      }
+    }
+    return _jbMoreInfo;
+  }
+
+  bool get isJbMoreInfoEnabled => jbMoreInfo == 1;
+
+  void setJbMoreInfo(int value) {
+    _jbMoreInfo = value;
+    if (_companyDetails.isNotEmpty &&
+        _companyDetails[0].permissions.isNotEmpty) {
+      int index = _companyDetails[0].permissions.indexWhere((p) {
+        final cap = (p.caption.isNotEmpty ? p.caption : p.displayCaption)
+            .trim()
+            .toLowerCase();
+        return cap.contains('jb_more_info') ||
+            cap.contains('jb more info') ||
+            cap.contains('jbmoreinfo');
+      });
+      if (index != -1) {
+        final old = _companyDetails[0].permissions[index];
+        _companyDetails[0].permissions[index] = CompanyPermission(
+          companyPermissionId: old.companyPermissionId,
+          caption: old.caption,
+          value: value,
+        );
+      }
+    }
+    SharedPreferences.getInstance().then((prefs) {
+      prefs.setInt('cached_jb_more_info', value);
+    });
+    notifyListeners();
+  }
+
   int _consumerNoInLeadPage = 0;
   int get consumerNoInLeadPage {
     if (_companyDetails.isNotEmpty &&
@@ -1388,6 +1439,14 @@ class SettingsProvider extends ChangeNotifier {
       _jbTaskSearch = value;
       SharedPreferences.getInstance().then((prefs) {
         prefs.setInt('cached_jb_task_search', value);
+      });
+    } else if (caption != null &&
+        (caption.toLowerCase().contains('jb_more_info') ||
+            caption.toLowerCase().contains('jb more info') ||
+            caption.toLowerCase().contains('jbmoreinfo'))) {
+      _jbMoreInfo = value;
+      SharedPreferences.getInstance().then((prefs) {
+        prefs.setInt('cached_jb_more_info', value);
       });
     }
   }
@@ -5995,6 +6054,7 @@ class SettingsProvider extends ChangeNotifier {
                 'cached_company_notification_topic', notificationTopic);
             await preferences.setInt('cached_jb_default', _jbDefault);
             await preferences.setInt('cached_jb_task_search', _jbTaskSearch);
+            await preferences.setInt('cached_jb_more_info', _jbMoreInfo);
             AppStyles.updateCachedBranding(title, logo);
             _updateAppSwitcher();
           }
@@ -6215,6 +6275,7 @@ class SettingsProvider extends ChangeNotifier {
     _estaNewLeadPosition = 0;
     _jbDefault = 0;
     _jbTaskSearch = 0;
+    _jbMoreInfo = 0;
     notifyListeners();
   }
 
