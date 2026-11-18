@@ -5715,7 +5715,26 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                         defaultUserName =
                                                                             matchedStaff.userDetailsName ??
                                                                                 '';
-                                                                      } catch (_) {}
+                                                                      } catch (_) {
+                                                                        if (taskItem.userDetailsName != null &&
+                                                                            taskItem.userDetailsName!.trim().isNotEmpty &&
+                                                                            taskItem.userDetailsName!.trim().toLowerCase() != 'null') {
+                                                                          defaultUserName = taskItem.userDetailsName!;
+                                                                        }
+                                                                      }
+                                                                    } else if (taskItem.userDetailsId != null &&
+                                                                        taskItem.userDetailsId != 0) {
+                                                                      assignedUserId = taskItem.userDetailsId;
+                                                                      defaultUserName = taskItem.userDetailsName ?? '';
+                                                                      WidgetsBinding
+                                                                          .instance
+                                                                          .addPostFrameCallback((_) {
+                                                                        if (reportsProvider.taskTypeToUserMap[taskKey] ==
+                                                                            null) {
+                                                                          reportsProvider.setTaskUser(taskKey,
+                                                                              taskItem.userDetailsId);
+                                                                        }
+                                                                      });
                                                                     } else if (loginUserId !=
                                                                         0) {
                                                                       try {
@@ -5809,7 +5828,18 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                     );
                                                                   },
                                                                 )
-                                                              : const SizedBox(),
+                                                              : (taskItem.userDetailsName != null &&
+                                                                      taskItem.userDetailsName!.trim().isNotEmpty &&
+                                                                      taskItem.userDetailsName!.trim().toLowerCase() != 'null')
+                                                                  ? Text(
+                                                                      taskItem.userDetailsName!,
+                                                                      style: TextStyle(
+                                                                          fontFamily: 'PlusJakartaSans',
+                                                                          fontSize: 13,
+                                                                          color: Colors.grey.shade700,
+                                                                          fontWeight: FontWeight.w500),
+                                                                    )
+                                                                  : const SizedBox(),
                                                         ),
                                                         Consumer<
                                                             SettingsProvider>(
