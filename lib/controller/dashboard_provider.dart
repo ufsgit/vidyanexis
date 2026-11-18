@@ -912,16 +912,32 @@ class DashboardProvider extends ChangeNotifier {
   }
 
   int _requestId = 0;
+  String? _lastDashboardCountCacheKey;
 
   /// like: [{"New_Leads": 1, "Missed_Leads": 117, ...}]
-  Future<void> getLeadDashboardCount(
-      {required BuildContext context, bool shouldNotify = true}) async {
+  Future<void> getLeadDashboardCount({
+    required BuildContext context,
+    bool shouldNotify = true,
+    bool forceRefresh = false,
+  }) async {
+    final settingsProvider =
+        Provider.of<SettingsProvider>(context, listen: false);
+
+    final cacheKey =
+        '$_formattedFromDate|$_formattedToDate|$_selectedUser|'
+        '${settingsProvider.newDashboardCount}';
+
+    if (!forceRefresh &&
+        isDashboardCountLoaded &&
+        _lastDashboardCountCacheKey == cacheKey) {
+      return;
+    }
+
     final currentRequestId = ++_requestId;
     final startTime = DateTime.now().millisecondsSinceEpoch;
     print('[PERF-RELOAD] Reload started for getLeadDashboardCount (Req #$currentRequestId)');
     print('[PERF-RELOAD] Loading state enabled');
     try {
-      final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
       isDashBoardLoading = true;
       if (shouldNotify) notifyListeners();
 
@@ -999,6 +1015,7 @@ class DashboardProvider extends ChangeNotifier {
           leadDashboardCountData.clear();
         }
         isDashboardCountLoaded = true;
+        _lastDashboardCountCacheKey = cacheKey;
         print('[PERF-RELOAD] Parsing completed: ${DateTime.now().millisecondsSinceEpoch - parseStart} ms');
       }
     } catch (e) {
@@ -1231,6 +1248,7 @@ class DashboardProvider extends ChangeNotifier {
     isCustomerLoaded = false;
     isTaskInfoLoaded = false;
     isDashboardCountLoaded = false;
+    _lastDashboardCountCacheKey = null;
     isWorkDashboardCountLoaded = false;
     isTaskOverviewLoaded = false;
     isAmcLoaded = false;

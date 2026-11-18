@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/login_controller.dart';
 import 'package:vidyanexis/controller/notification_provider.dart';
+import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/socket_io.dart';
 import 'package:vidyanexis/presentation/pages/home/notifications_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/followup_reports.dart';
@@ -132,8 +133,10 @@ class _HomePageState extends State<HomePage> {
       String userId = preferences.getString('userId') ?? "0";
       final settingsProvider =
           Provider.of<SettingsProvider>(context, listen: false);
-      settingsProvider.getMenuPermissionData(userId, context);
-      await settingsProvider.getCompanyDetails();
+      await Future.wait([
+        settingsProvider.getMenuPermissionData(userId, context),
+        settingsProvider.getCompanyDetails(),
+      ]);
       if (mounted) {
         final sideProvider =
             Provider.of<SidebarProvider>(context, listen: false);
@@ -214,6 +217,7 @@ class _HomePageState extends State<HomePage> {
                 int? cachedJbDefault = prefs.getInt('cached_jb_default');
 
                 await prefs.clear();
+                HttpRequest.clearCachedToken();
 
                 // Restore attendance state
                 if (userId != null) {

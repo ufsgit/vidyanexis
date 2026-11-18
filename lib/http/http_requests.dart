@@ -13,13 +13,37 @@ class HttpRequest {
       Provider.of<SidebarProvider>(navigatorKey.currentState!.context,
           listen: false);
 
+  static String _cachedToken = '';
+  static bool _tokenInitialized = false;
+
+  static Future<String> getToken() async {
+    if (_tokenInitialized) return _cachedToken;
+
+    final prefs = await SharedPreferences.getInstance();
+    _cachedToken = prefs.getString('token') ?? '';
+    _tokenInitialized = true;
+
+    return _cachedToken;
+  }
+
+  static void updateCachedToken(String token) {
+    _cachedToken = token;
+    _tokenInitialized = true;
+  }
+
+  static void clearCachedToken() {
+    _cachedToken = '';
+    _tokenInitialized = true;
+  }
+
   static final Dio _dioInstance = _createDio();
 
   static Dio _createDio() {
     final Dio dio = Dio(
       BaseOptions(
-        connectTimeout: const Duration(seconds: 60),
-        receiveTimeout: const Duration(seconds: 60),
+        connectTimeout: const Duration(seconds: 15),
+        receiveTimeout: const Duration(seconds: 25),
+        sendTimeout: const Duration(seconds: 25),
       ),
     );
     if (!kIsWeb) {
@@ -51,9 +75,7 @@ class HttpRequest {
     }
 
     final Dio dio = _getDio();
-    final prefs = await SharedPreferences.getInstance();
-    final String token = prefs.getString('token') ?? "";
-    print(token);
+    final String token = await getToken();
 
     try {
       final String url = endPoint.startsWith('http')
@@ -93,8 +115,7 @@ class HttpRequest {
       print('post request ====> $endPoint $bodyData');
     }
     final Dio dio = _getDio();
-    final prefs = await SharedPreferences.getInstance();
-    final String token = prefs.getString('token') ?? "";
+    final String token = await getToken();
 
     try {
       final Response response = await dio.post(
@@ -133,8 +154,7 @@ class HttpRequest {
       print('delete request ====> $endPoint $bodyData');
     }
     final Dio dio = _getDio();
-    final prefs = await SharedPreferences.getInstance();
-    final String token = prefs.getString('token') ?? "";
+    final String token = await getToken();
 
     try {
       final Response response = await dio.delete(
@@ -170,8 +190,7 @@ class HttpRequest {
       print('put request ====> $endPoint $bodyData');
     }
     final Dio dio = _getDio();
-    final prefs = await SharedPreferences.getInstance();
-    final String token = prefs.getString('token') ?? "";
+    final String token = await getToken();
 
     try {
       final Response response = await dio.put(
@@ -207,8 +226,7 @@ class HttpRequest {
       print('put request ====> $endPoint $bodyData');
     }
     final Dio dio = _getDio();
-    final prefs = await SharedPreferences.getInstance();
-    final String token = prefs.getString('token') ?? "";
+    final String token = await getToken();
 
     try {
       final Response response = await dio.put(

@@ -160,7 +160,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
           ? (selectedUser.userDetailsName ?? '')
           : leadProvider.loginUserName;
 
-      await leadProvider.saveLead(
+      final isSaved = await leadProvider.saveLead(
           custId: widget.isEdit ? int.tryParse(widget.customerId) ?? 0 : 0,
           context: context,
           address1: leadProvider.addressController.text,
@@ -217,6 +217,11 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
           leadtypeName: leadProvider.leadtypeController.text,
           locationId: dropDownProvider.selectedLocationId,
           workCompletionDate: leadProvider.workCompletionDateController.text);
+
+      if (isSaved == true && mounted) {
+        Navigator.of(context).pop();
+        _onDrawerClosed(context);
+      }
     } finally {
       if (mounted) setState(() => _isProcessingClick = false);
     }

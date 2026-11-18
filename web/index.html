@@ -14,11 +14,10 @@
   <link rel="icon" type="image/png" href="favicon.png" />
   <title></title>
   <link rel="manifest" href="manifest.json">
+  <link rel="preload" href="flutter.js" as="script">
 
   <!-- Cache control headers -->
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
-  <meta http-equiv="Pragma" content="no-cache">
-  <meta http-equiv="Expires" content="0">
+  <meta http-equiv="Cache-Control" content="public, max-age=3600">
 
   <style>
     body,
@@ -167,13 +166,12 @@
     checkVersionAndClearIfNeeded();
   </script>
 
-  <!-- Cache busting for flutter.js -->
+  <!-- Load flutter.js with versioning -->
   <script>
     console.log('[PERF-BOOT] index/bootstrap started');
     window._perfBootStart = new Date().getTime();
-    const timestamp = new Date().getTime();
     const flutterScript = document.createElement('script');
-    flutterScript.src = 'flutter.js?v=' + APP_VERSION + '&t=' + timestamp;
+    flutterScript.src = 'flutter.js?v=' + APP_VERSION;
     flutterScript.defer = true;
     document.head.appendChild(flutterScript);
   </script>
@@ -187,12 +185,11 @@
     function loadFlutterEngine() {
       if (window._flutter && window._flutter.loader) {
         console.log('[PERF-BOOT] loader.loadEntrypoint starting...');
-        const version = new Date().getTime();
         _flutter.loader.loadEntrypoint({
           serviceWorker: {
             serviceWorkerVersion: serviceWorkerVersion,
           },
-          entrypointUrl: 'main.dart.js?v=' + APP_VERSION + '&t=' + version,
+          entrypointUrl: 'main.dart.js?v=' + APP_VERSION,
           onEntrypointLoaded: function (engineInitializer) {
             console.log('[PERF-BOOT] Flutter engine loading entrypoint...');
             engineInitializer.initializeEngine().then(function (appRunner) {

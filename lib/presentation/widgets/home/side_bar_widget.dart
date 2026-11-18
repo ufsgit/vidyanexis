@@ -9,6 +9,7 @@ import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/login_controller.dart';
 import 'package:vidyanexis/controller/models/side_bar_model.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
+import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/presentation/pages/home/homepage.dart';
 import 'package:vidyanexis/presentation/pages/login/login_page.dart';
 
@@ -373,6 +374,7 @@ class _CustomSidebarState extends State<CustomSidebar> {
                                   prefs.getInt('cached_jb_default');
 
                               await prefs.clear();
+                              HttpRequest.clearCachedToken();
 
                               // Restore attendance state
                               if (userId != null) {
