@@ -3475,7 +3475,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                                 ),
                                                                                 child: Center(
                                                                                   child: Padding(
-                                                                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                                                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
                                                                                     child: Text(
                                                                                       task.taskStatusName,
                                                                                       overflow: TextOverflow.ellipsis,
