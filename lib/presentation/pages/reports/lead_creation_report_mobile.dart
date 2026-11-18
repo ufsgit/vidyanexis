@@ -9,6 +9,8 @@ import 'package:intl/intl.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/lead_creation_details_screen.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 
 class LeadCreationReportMobile extends StatelessWidget {
   const LeadCreationReportMobile({super.key});
@@ -172,12 +174,19 @@ class LeadCreationReportMobile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Lead Creation Report',
-            style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
-        elevation: 0,
+      backgroundColor: Colors.white,
+      drawer: const SidebarDrawer(),
+      appBar: CustomAppBar(
+        title: 'Lead Creation Report',
+        titleStyle: GoogleFonts.plusJakartaSans(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+          color: AppColors.textBlack,
+        ),
+        showFilterIcon: false,
+        showExcel: false,
+        showSearch: false,
+        onSearch: (query) {},
       ),
       body: Consumer<LeadCreationReportProvider>(
         builder: (context, reportProvider, child) {
