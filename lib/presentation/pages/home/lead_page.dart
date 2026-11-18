@@ -530,7 +530,6 @@ class _LeadsPageState extends State<LeadPage> {
 
     double scrollableTableWidth = 1905;
     if (settingsProvider.menuIsViewMap[142] == 1) scrollableTableWidth += 150.0;
-    if (settingsProvider.consumerNameMandatory == 1) scrollableTableWidth += 150.0;
     if (settingsProvider.consumerContactNoMandatory == 1) scrollableTableWidth += 150.0;
     if (settingsProvider.ramcoLocationPermission == 1) scrollableTableWidth += 150.0;
     if (settingsProvider.consumerNoInLeadPage == 1) scrollableTableWidth += 150.0;
@@ -1108,7 +1107,8 @@ class _LeadsPageState extends State<LeadPage> {
                           // Fixed columns section
                           SizedBox(
                             width:
-                                settingsProvider.showLeadCode == 1 ? 860 : 700,
+                                (settingsProvider.showLeadCode == 1 ? 860.0 : 700.0) +
+                                    (settingsProvider.consumerNameMandatory == 1 ? 150.0 : 0.0),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
@@ -1179,6 +1179,28 @@ class _LeadsPageState extends State<LeadPage> {
                                           ),
                                         ),
                                       ),
+                                      if (settingsProvider
+                                              .consumerNameMandatory ==
+                                          1)
+                                        TableWidget(
+                                          width: 150,
+                                          padding:
+                                              const EdgeInsets.symmetric(
+                                                  vertical: 4.0,
+                                                  horizontal: 12.0),
+                                          alignment: Alignment.centerLeft,
+                                          data: Text(
+                                            settingsProvider
+                                                .getPermissionCaption(
+                                                    "Consumer Name",
+                                                    "Consumer Name"),
+                                            style: const TextStyle(
+                                              fontFamily: 'PlusJakartaSans',
+                                              fontSize: 13,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
                                       TableWidget(
                                         width: 180,
                                         padding: EdgeInsets.symmetric(
@@ -1693,6 +1715,39 @@ class _LeadsPageState extends State<LeadPage> {
                                                           ],
                                                         ),
                                                       ),
+                                                      if (settingsProvider
+                                                              .consumerNameMandatory ==
+                                                          1)
+                                                        TableWidget(
+                                                          width: 150,
+                                                          alignment: Alignment
+                                                              .centerLeft,
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .symmetric(
+                                                                  vertical: 4.0,
+                                                                  horizontal:
+                                                                      12.0),
+                                                          data: Tooltip(
+                                                            message: lead
+                                                                .consumerName,
+                                                            child: Text(
+                                                              lead.consumerName,
+                                                              maxLines: 1,
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                              style:
+                                                                  const TextStyle(
+                                                                fontFamily:
+                                                                    'PlusJakartaSans',
+                                                                color: Colors
+                                                                    .black,
+                                                                fontSize: 12,
+                                                             ),
+                                                           ),
+                                                         ),
+                                                       ),
                                                       TableWidget(
                                                         width: 180,
                                                         alignment: Alignment
@@ -2028,27 +2083,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                   ),
                                                 ),
                                               ),
-                                            if (settingsProvider
-                                                    .consumerNameMandatory ==
-                                                1)
-                                              TableWidget(
-                                                width: 150,
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 4.0,
-                                                        horizontal: 12.0),
-                                                alignment: Alignment.centerLeft,
-                                                data: Text(
-                                                  settingsProvider
-                                                      .getPermissionCaption(
-                                                          "Consumer Name",
-                                                          "Consumer Name"),
-                                                  style: const TextStyle(fontFamily: 'PlusJakartaSans', 
-                                                    fontSize: 13,
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                              ),
+
                                             if (settingsProvider
                                                     .consumerContactNoMandatory ==
                                                 1)
@@ -2827,31 +2862,6 @@ class _LeadsPageState extends State<LeadPage> {
                                                           data: Text(
                                                             lead.locationName ??
                                                                 '',
-                                                            maxLines: 1,
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
-                                                            style:
-                                                                const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
-                                                                    fontSize:
-                                                                        12),
-                                                          ),
-                                                        ),
-                                                      if (settingsProvider
-                                                              .consumerNameMandatory ==
-                                                          1)
-                                                        TableWidget(
-                                                          width: 150,
-                                                          alignment: Alignment
-                                                              .centerLeft,
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .symmetric(
-                                                                  vertical: 4.0,
-                                                                  horizontal:
-                                                                      12.0),
-                                                          data: Text(
-                                                            lead.consumerName,
                                                             maxLines: 1,
                                                             overflow:
                                                                 TextOverflow

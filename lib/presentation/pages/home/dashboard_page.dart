@@ -89,6 +89,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
       // 1. Priority 1: Load data for the active dashboard tab FIRST
       final allowedTabs = <int>[
         if ((settingsProvider.menuIsViewMap[84]).toString() == '1') 6,
+        if ((settingsProvider.menuIsViewMap[233]).toString() == '1') 12, // Task Count Summary
         if ((settingsProvider.menuIsViewMap[49]).toString() == '1') 0,
         if ((settingsProvider.menuIsViewMap[50]).toString() == '1') 1,
         if ((settingsProvider.menuIsViewMap[76]).toString() == '1') 4,
@@ -100,7 +101,6 @@ class _DashBoardPageState extends State<DashBoardPage> {
         if (userType == "1") 9,
         if (settingsProvider.hasTravelAllowancePermission) 10,
         11, // Lead Flow
-        if ((settingsProvider.menuIsViewMap[233]).toString() == '1') 12, // Task Count Summary
       ];
 
       if (allowedTabs.isNotEmpty && settingsProvider.menuIsViewMap.isNotEmpty) {
@@ -152,6 +152,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
 
     final allowedTabs = <int>[
       if ((settingsProvider.menuIsViewMap[84]).toString() == '1') 6,
+      if ((settingsProvider.menuIsViewMap[233]).toString() == '1') 12, // Task Count Summary
       if ((settingsProvider.menuIsViewMap[49]).toString() == '1') 0,
       if ((settingsProvider.menuIsViewMap[50]).toString() == '1') 1,
       if ((settingsProvider.menuIsViewMap[76]).toString() == '1') 4,
@@ -163,7 +164,6 @@ class _DashBoardPageState extends State<DashBoardPage> {
       if (userType == "1") 9,
       if (settingsProvider.hasTravelAllowancePermission) 10,
       11, // Lead Flow
-      if ((settingsProvider.menuIsViewMap[233]).toString() == '1') 12, // Task Count Summary
     ];
 
     if (allowedTabs.isNotEmpty && !_hasLoadedInitialTab && settingsProvider.menuIsViewMap.isNotEmpty) {

@@ -55,7 +55,9 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
   final ScrollController _headerScrollController = ScrollController();
   final GlobalKey _basicDetailsKey = GlobalKey();
   final GlobalKey _addressDetailsKey = GlobalKey();
+  final GlobalKey _projectDetailsKey = GlobalKey();
   final GlobalKey _additionalDetailsKey = GlobalKey();
+  final GlobalKey _moreInfoKey = GlobalKey();
   final GlobalKey _followupDetailsKey = GlobalKey();
   bool _isScrollingProgrammatically = false;
   final Map<int, bool> _expandedSections = {0: true, 5: true};
@@ -800,10 +802,17 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
   void _onScroll() {
     if (_isScrollingProgrammatically) return;
 
+    final settingsProviderScroll =
+        Provider.of<SettingsProvider>(context, listen: false);
     final List<Map<String, dynamic>> sections = [
       {'key': _basicDetailsKey},
-      {'key': _addressDetailsKey},
-      {'key': _additionalDetailsKey},
+      if (settingsProviderScroll.menuIsViewMap[205] == 1)
+        {'key': _addressDetailsKey},
+      if (settingsProviderScroll.menuIsViewMap[248] == 1)
+        {'key': _projectDetailsKey},
+      if (settingsProviderScroll.menuIsViewMap[206] == 1)
+        {'key': _additionalDetailsKey},
+      if (settingsProviderScroll.isJbMoreInfoEnabled) {'key': _moreInfoKey},
       if (!widget.isEdit) {'key': _followupDetailsKey},
     ];
 
@@ -1013,11 +1022,23 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
           'key': _addressDetailsKey,
           'widget': buildAddressDetails(),
         },
+      if (settingsProvider.menuIsViewMap[248] == 1)
+        {
+          'title': 'Project Details',
+          'key': _projectDetailsKey,
+          'widget': buildProjectDetails(),
+        },
       if (settingsProvider.menuIsViewMap[206] == 1)
         {
           'title': 'Additional details',
           'key': _additionalDetailsKey,
           'widget': buildAdditionalDetails(),
+        },
+      if (settingsProvider.isJbMoreInfoEnabled)
+        {
+          'title': 'More Info',
+          'key': _moreInfoKey,
+          'widget': buildMoreInfo(),
         },
       if (!widget.isEdit)
         {
@@ -1103,12 +1124,26 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
                               key: _addressDetailsKey,
                               child: buildAddressDetails(),
                             ),
+                          if (settingsProvider.menuIsViewMap[248] == 1)
+                            _buildSection(
+                              title: 'Project Details',
+                              icon: Icons.business_center_outlined,
+                              key: _projectDetailsKey,
+                              child: buildProjectDetails(),
+                            ),
                           if (settingsProvider.menuIsViewMap[206] == 1)
                             _buildSection(
                               title: 'Additional details',
                               icon: Icons.add_circle_outline,
                               key: _additionalDetailsKey,
                               child: buildAdditionalDetails(),
+                            ),
+                          if (settingsProvider.isJbMoreInfoEnabled)
+                            _buildSection(
+                              title: 'More Info',
+                              icon: Icons.info_outline,
+                              key: _moreInfoKey,
+                              child: buildMoreInfo(),
                             ),
                           if (!widget.isEdit)
                             _buildSection(
@@ -1802,6 +1837,66 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
     );
   }
 
+  Widget buildMoreInfo() {
+    final dropDownProvider =
+        Provider.of<DropDownProvider>(context, listen: false);
+    if (dropDownProvider.selectedEnquiryForId != null &&
+        dropDownProvider.selectedEnquiryForId != 0) {
+      return Consumer<LeadsProvider>(
+        builder: (context, leadProvider, child) {
+          if (leadProvider.isLoadingEnquiryCustomFields) {
+            return const Center(child: CircularProgressIndicator());
+          } else {
+            final displayedEnquiryCustomFields = widget.isEdit
+                ? leadProvider.customFieldEnquiryFor
+                : leadProvider.customFieldEnquiryFor
+                    .where((f) => f.isCreateNew == 1)
+                    .toList();
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (displayedEnquiryCustomFields.isNotEmpty)
+                  CustomFieldSectionWidget(
+                    showCategories: false,
+                    showEditButton: true,
+                    controllerKey:
+                        CustomFieldControllerkey.enquirySource.value,
+                    key: customFieldEnquirySourceKey,
+                    showMore: false,
+                    initialFieldValues: widget.isEdit
+                        ? displayedEnquiryCustomFields
+                            .map((e) => FieldValueModel(
+                                customFieldId: e.customFieldId,
+                                value: e.datavalue))
+                            .toList()
+                        : displayedEnquiryCustomFields
+                            .map((e) => FieldValueModel(
+                                customFieldId: e.customFieldId,
+                                value: leadProvider.getCustomFieldValue(
+                                    e.customFieldId ?? 0)))
+                            .toList(),
+                    onFieldValuesChanged: (fieldValues) {
+                      if (!widget.isEdit) {
+                        for (var fieldValue in fieldValues) {
+                          leadProvider.updateCustomFieldValue(
+                              fieldValue.customFieldId ?? 0,
+                              fieldValue.value ?? '');
+                        }
+                      }
+                    },
+                    customFields: displayedEnquiryCustomFields,
+                    initialValues: const {},
+                  ),
+                const SizedBox(height: 16),
+              ],
+            );
+          }
+        },
+      );
+    }
+    return const SizedBox.shrink();
+  }
+
   Widget buildDocumentsDetails() {
     final imageUploadProvider = Provider.of<ImageUploadProvider>(context);
 
@@ -2370,6 +2465,52 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
           hintText: 'Landmark',
           labelText: '',
         ),
+      ],
+    );
+  }
+
+  Widget buildProjectDetails() {
+    final leadProvider = Provider.of<LeadsProvider>(context, listen: false);
+    final dropDownProvider = Provider.of<DropDownProvider>(context);
+    final settingsProvider = Provider.of<SettingsProvider>(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (settingsProvider.menuIsViewMap[199] == 1) ...[
+          CustomTextfieldWidgetMobile(
+            focusNode: FocusNode(),
+            controller: leadProvider.commissionController,
+            labelText: 'Commission',
+            keyBoardType: TextInputType.number,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          ),
+          const SizedBox(height: 10),
+        ],
+        if (settingsProvider.menuIsViewMap[198] == 1) ...[
+          CustomTextfieldWidgetMobile(
+            focusNode: FocusNode(),
+            controller: leadProvider.projectCostController,
+            labelText: 'Total Project Cost',
+            keyBoardType: TextInputType.number,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          ),
+          const SizedBox(height: 10),
+        ],
+        if (settingsProvider.menuIsViewMap[200] == 1) ...[
+          CustomTextField(
+            height: 54,
+            controller: leadProvider.leadSubsidyController,
+            hintText: 'Subsidy Amount',
+            labelText: '',
+            showError: dropDownProvider.showValidation &&
+                !_isFieldValid(leadProvider.leadSubsidyController.text),
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
+            ],
+          ),
+          const SizedBox(height: 10),
+        ],
       ],
     );
   }
@@ -3343,44 +3484,6 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
             height: 10,
           ),
         ],
-        if (settingsProvider.menuIsViewMap[200] == 1) ...[
-          CustomTextField(
-            height: 54,
-            controller: leadProvider.leadSubsidyController,
-            hintText: 'Subsidy Amount',
-            labelText: '',
-            showError: dropDownProvider.showValidation &&
-                !_isFieldValid(leadProvider.leadSubsidyController.text),
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
-            ],
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-        ],
-        if (settingsProvider.menuIsViewMap[198] == 1) ...[
-          CustomTextfieldWidgetMobile(
-            focusNode: FocusNode(),
-            controller: leadProvider.projectCostController,
-            labelText: 'Total Project Cost',
-            keyBoardType: TextInputType.number,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-        ],
-        if (settingsProvider.menuIsViewMap[199] == 1) ...[
-          CustomTextfieldWidgetMobile(
-            focusNode: FocusNode(),
-            controller: leadProvider.commissionController,
-            labelText: 'Commission',
-            keyBoardType: TextInputType.number,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-          ),
-          const SizedBox(height: 10),
-        ],
 
         // if (dropDownProvider.selectedEnquiryForId != null &&
         //     dropDownProvider.selectedEnquiryForId != 0)
@@ -3402,9 +3505,10 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
         //       customFields: leadProvider.customFieldEnquiryFor,
         //       initialValues: const {}, // Pre-fill if editing
         //     ),
-        if (dropDownProvider.selectedEnquiryForId != null &&
-            dropDownProvider.selectedEnquiryForId != 0)
-          Consumer<LeadsProvider>(
+        if (!settingsProvider.isJbMoreInfoEnabled)
+          if (dropDownProvider.selectedEnquiryForId != null &&
+              dropDownProvider.selectedEnquiryForId != 0)
+            Consumer<LeadsProvider>(
             builder: (context, leadProvider, child) {
               if (leadProvider.isLoadingEnquiryCustomFields) {
                 return const Center(child: CircularProgressIndicator());
@@ -3419,6 +3523,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
                   children: [
                     if (displayedEnquiryCustomFields.isNotEmpty)
                       CustomFieldSectionWidget(
+                        showCategories: false,
                         showEditButton: true,
                         controllerKey:
                             CustomFieldControllerkey.enquirySource.value,

@@ -73,6 +73,74 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
     );
   }
 
+  Widget _buildEnquiryCustomFields(
+      LeadsProvider leadProvider, DropDownProvider dropDownProvider) {
+    if (dropDownProvider.selectedEnquiryForId != null &&
+        dropDownProvider.selectedEnquiryForId != 0) {
+      if (leadProvider.isLoadingEnquiryCustomFields) {
+        return const Center(child: CircularProgressIndicator());
+      } else {
+        return Builder(
+          builder: (context) {
+            final displayedEnquiryCustomFields = widget.isEdit
+                ? leadProvider.customFieldEnquiryFor
+                : leadProvider.customFieldEnquiryFor
+                    .where((f) => f.isCreateNew == 1)
+                    .toList();
+
+            if (displayedEnquiryCustomFields.isEmpty) {
+              return const SizedBox();
+            }
+
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Consumer<LeadsProvider>(
+                  builder: (context, provider, child) {
+                    return CustomFieldSectionWidget(
+                      crossAxisCount: 3,
+                      spacing: 10,
+                      showCategories: false,
+                      showEditButton: true,
+                      controllerKey:
+                          CustomFieldControllerkey.enquirySource.value,
+                      key: customFieldEnquirySourceKey,
+                      showMore: false,
+                      initialFieldValues: widget.isEdit
+                          ? displayedEnquiryCustomFields
+                              .map((e) => FieldValueModel(
+                                  customFieldId: e.customFieldId,
+                                  value: e.datavalue))
+                              .toList()
+                          : displayedEnquiryCustomFields
+                              .map((e) => FieldValueModel(
+                                  customFieldId: e.customFieldId,
+                                  value: provider.getCustomFieldValue(
+                                      e.customFieldId ?? 0)))
+                              .toList(),
+                      onFieldValuesChanged: (fieldValues) {
+                        if (!widget.isEdit) {
+                          for (var fieldValue in fieldValues) {
+                            provider.updateCustomFieldValue(
+                                fieldValue.customFieldId ?? 0,
+                                fieldValue.value ?? '');
+                          }
+                        }
+                      },
+                      customFields: displayedEnquiryCustomFields,
+                      initialValues: const {},
+                    );
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      }
+    }
+    return const SizedBox();
+  }
+
   List<SearchLeadStatusModel> _filteredFollowUpStatuses = [];
   List<SearchLeadStatusModel> _filteredTransferStatuses = [];
   bool showTransferStatus = false;
@@ -324,6 +392,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
   final _formKey = GlobalKey<FormState>();
   final GlobalKey _basicDetailsKey = GlobalKey();
   final GlobalKey _addressKey = GlobalKey();
+  final GlobalKey _projectDetailsKey = GlobalKey();
   final ScrollController _scrollController = ScrollController();
 
   @override
@@ -1357,62 +1426,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                               .text),
                                     ),
                                   ),
-                                // 14. Subsidy Amount
-                                if (settingsProvider.menuIsViewMap[200] == 1)
-                                  Expanded(
-                                    child: CustomTextField(
-                                      height: 54,
-                                      controller: leadProvider
-                                          .leadSubsidyController,
-                                      hintText: 'Subsidy Amount',
-                                      labelText: '',
-                                      showError: dropDownProvider
-                                              .showValidation &&
-                                          !_isFieldValid(leadProvider
-                                              .leadSubsidyController
-                                              .text),
-                                      inputFormatters: [
-                                        FilteringTextInputFormatter
-                                            .allow(RegExp(
-                                                r'^\d+\.?\d{0,2}')),
-                                      ],
-                                    ),
-                                  ),
-                                // 15. Total Project Cost
-                                if (settingsProvider.menuIsViewMap[198] == 1)
-                                  Expanded(
-                                    child: CustomTextField(
-                                      height: 54,
-                                      controller: leadProvider
-                                          .projectCostController,
-                                      hintText: 'Total Project Cost',
-                                      labelText: '',
-                                      keyboardType:
-                                          TextInputType.number,
-                                      inputFormatters: [
-                                        FilteringTextInputFormatter
-                                            .digitsOnly,
-                                      ],
-                                    ),
-                                  ),
-                                // 16. Commission
-                                if (settingsProvider.menuIsViewMap[199] == 1)
-                                  Expanded(
-                                    child: CustomTextField(
-                                      height: 54,
-                                      controller: leadProvider
-                                          .commissionController,
-                                      hintText: 'Commission',
-                                      labelText: '',
-                                      keyboardType:
-                                          TextInputType.number,
-                                      inputFormatters: [
-                                        FilteringTextInputFormatter
-                                            .digitsOnly,
-                                      ],
-                                    ),
-                                  ),
-                                // 17. Customer Reference
+                                // 13. Customer Reference
                                 if (settingsProvider.menuIsViewMap[247] == 1)
                                   Expanded(
                                     child: _CustomerReferenceField(
@@ -1446,81 +1460,9 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                               }
                               return rows;
                             })(),
-                            if (dropDownProvider.selectedEnquiryForId != null &&
-                                dropDownProvider.selectedEnquiryForId != 0)
-                              if (leadProvider.isLoadingEnquiryCustomFields)
-                                const Center(child: CircularProgressIndicator())
-                              else
-                                Builder(
-                                  builder: (context) {
-                                    final displayedEnquiryCustomFields = widget
-                                            .isEdit
-                                        ? leadProvider.customFieldEnquiryFor
-                                        : leadProvider.customFieldEnquiryFor
-                                            .where((f) => f.isCreateNew == 1)
-                                            .toList();
-
-                                    if (displayedEnquiryCustomFields.isEmpty) {
-                                      return const SizedBox();
-                                    }
-
-                                    return Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Consumer<LeadsProvider>(
-                                          builder: (context, provider, child) {
-                                            return CustomFieldSectionWidget(
-                                              crossAxisCount: 3,
-                                              spacing: 10,
-                                              showEditButton: true,
-                                              controllerKey:
-                                                  CustomFieldControllerkey
-                                                      .enquirySource.value,
-                                              key: customFieldEnquirySourceKey,
-                                              showMore: false,
-                                              initialFieldValues: widget.isEdit
-                                                  ? displayedEnquiryCustomFields
-                                                      .map((e) =>
-                                                          FieldValueModel(
-                                                              customFieldId: e
-                                                                  .customFieldId,
-                                                              value:
-                                                                  e.datavalue))
-                                                      .toList()
-                                                  : displayedEnquiryCustomFields
-                                                      .map((e) => FieldValueModel(
-                                                          customFieldId:
-                                                              e.customFieldId,
-                                                          value: provider
-                                                              .getCustomFieldValue(
-                                                                  e.customFieldId ??
-                                                                      0)))
-                                                      .toList(),
-                                              onFieldValuesChanged:
-                                                  (fieldValues) {
-                                                if (!widget.isEdit) {
-                                                  for (var fieldValue
-                                                      in fieldValues) {
-                                                    provider.updateCustomFieldValue(
-                                                        fieldValue
-                                                                .customFieldId ??
-                                                            0,
-                                                        fieldValue.value ?? '');
-                                                  }
-                                                }
-                                              },
-                                              customFields:
-                                                  displayedEnquiryCustomFields,
-                                              initialValues: const {},
-                                            );
-                                          },
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                ),
-                          ],
+                            if (!settingsProvider.isJbMoreInfoEnabled)
+                              _buildEnquiryCustomFields(
+                                  leadProvider, dropDownProvider),                          ],
                         ),
                         //address
                         if (settingsProvider.menuIsViewMap[205] == 1)
@@ -1776,6 +1718,110 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                             leadProvider.longitudeController,
                                         hintText: 'Longitude',
                                         labelText: '',
+                                      ),
+                                    ),
+                                ];
+
+                                List<Widget> rows = [];
+                                for (int i = 0; i < fields.length; i += 3) {
+                                  rows.add(
+                                    ResponsiveRow(
+                                      children: [
+                                        fields[i],
+                                        if (i + 1 < fields.length)
+                                          fields[i + 1]
+                                        else
+                                          const Expanded(child: SizedBox()),
+                                        if (i + 2 < fields.length)
+                                          fields[i + 2]
+                                        else
+                                          const Expanded(child: SizedBox()),
+                                      ],
+                                    ),
+                                  );
+                                  rows.add(const SizedBox(height: 8));
+                                }
+                                return rows;
+                              })(),
+                            ],
+                          ),
+
+                        // Project Details
+                        if (settingsProvider.menuIsViewMap[248] == 1)
+                          ExpansionTile(
+                            key: _projectDetailsKey,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.zero,
+                            ),
+                            title: Text(
+                              'Project Details',
+                              style: GoogleFonts.plusJakartaSans(
+                                color: AppColors.textGrey3,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            tilePadding: EdgeInsets.zero,
+                            initiallyExpanded: false,
+                            children: [
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              ...(() {
+                                List<Widget> fields = [
+                                  // 1. Commission
+                                  if (settingsProvider.menuIsViewMap[199] == 1)
+                                    Expanded(
+                                      child: CustomTextField(
+                                        height: 54,
+                                        controller: leadProvider
+                                            .commissionController,
+                                        hintText: 'Commission',
+                                        labelText: '',
+                                        keyboardType:
+                                            TextInputType.number,
+                                        inputFormatters: [
+                                          FilteringTextInputFormatter
+                                              .digitsOnly,
+                                        ],
+                                      ),
+                                    ),
+                                  // 2. Total Project Cost
+                                  if (settingsProvider.menuIsViewMap[198] == 1)
+                                    Expanded(
+                                      child: CustomTextField(
+                                        height: 54,
+                                        controller: leadProvider
+                                            .projectCostController,
+                                        hintText: 'Total Project Cost',
+                                        labelText: '',
+                                        keyboardType:
+                                            TextInputType.number,
+                                        inputFormatters: [
+                                          FilteringTextInputFormatter
+                                              .digitsOnly,
+                                        ],
+                                      ),
+                                    ),
+                                  // 3. Subsidy Amount
+                                  if (settingsProvider.menuIsViewMap[200] == 1)
+                                    Expanded(
+                                      child: CustomTextField(
+                                        height: 54,
+                                        controller: leadProvider
+                                            .leadSubsidyController,
+                                        hintText: 'Subsidy Amount',
+                                        labelText: '',
+                                        showError: dropDownProvider
+                                                .showValidation &&
+                                            !_isFieldValid(leadProvider
+                                                .leadSubsidyController
+                                                .text),
+                                        inputFormatters: [
+                                          FilteringTextInputFormatter
+                                              .allow(RegExp(
+                                                  r'^\d+\.?\d{0,2}')),
+                                        ],
                                       ),
                                     ),
                                 ];
@@ -2234,6 +2280,30 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                   ),
                                 ],
                               ),
+                            ],
+                          ),
+
+                        // More Info
+                        if (settingsProvider.isJbMoreInfoEnabled)
+                          ExpansionTile(
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.zero,
+                            ),
+                            title: Text(
+                              'More Info',
+                              style: GoogleFonts.plusJakartaSans(
+                                color: AppColors.textGrey3,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            tilePadding: EdgeInsets.zero,
+                            initiallyExpanded: false,
+                            children: [
+                              const SizedBox(height: 5),
+                              _buildEnquiryCustomFields(
+                                  leadProvider, dropDownProvider),
+                              const SizedBox(height: 8),
                             ],
                           ),
 

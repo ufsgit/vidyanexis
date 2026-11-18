@@ -49,6 +49,7 @@ class CustomFieldSectionWidget extends StatefulWidget {
   final bool showEditButton;
   final bool showMore;
   final int crossAxisCount;
+  final bool showCategories;
   const CustomFieldSectionWidget({
     super.key,
     required this.customFields,
@@ -63,6 +64,7 @@ class CustomFieldSectionWidget extends StatefulWidget {
     this.showEditButton = false,
     this.showMore = true,
     this.crossAxisCount = 2,
+    this.showCategories = true,
   });
 
   @override
@@ -235,14 +237,76 @@ class CustomFieldSectionWidgetState extends State<CustomFieldSectionWidget> {
     super.dispose();
   }
 
+  Widget _buildFieldsGrid(
+      BuildContext context, List<CustomFieldByStatusId> fields) {
+    if (AppStyles.isWebScreen(context) && widget.crossAxisCount == 3) {
+      List<Widget> rows = [];
+      for (int i = 0; i < fields.length; i += 3) {
+        rows.add(
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(child: widgetBuilder.buildWidget(fields[i])),
+              const SizedBox(width: 10),
+              if (i + 1 < fields.length)
+                Expanded(child: widgetBuilder.buildWidget(fields[i + 1]))
+              else
+                const Expanded(child: SizedBox()),
+              const SizedBox(width: 10),
+              if (i + 2 < fields.length)
+                Expanded(child: widgetBuilder.buildWidget(fields[i + 2]))
+              else
+                const Expanded(child: SizedBox()),
+            ],
+          ),
+        );
+        rows.add(const SizedBox(height: 8));
+      }
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: rows,
+      );
+    }
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final count = widget.crossAxisCount;
+        final spacing = widget.spacing ?? (count == 3 ? 10.0 : 16.0);
+        if (AppStyles.isWebScreen(context)) {
+          return Wrap(
+            spacing: spacing,
+            runSpacing: count == 3 ? 8.0 : spacing / 2,
+            children: fields
+                .map((field) => SizedBox(
+                      width: (constraints.maxWidth - (count - 1) * spacing) /
+                              count -
+                          0.1,
+                      child: widgetBuilder.buildWidget(field),
+                    ))
+                .toList(),
+          );
+        }
+        return Column(
+          children: fields
+              .map((field) => Padding(
+                    padding: EdgeInsets.only(bottom: spacing / 2),
+                    child: widgetBuilder.buildWidget(field),
+                  ))
+              .toList(),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (widget.customFields.isEmpty) {
       return const SizedBox.shrink();
     }
 
-    final hasCategories = widget.customFields.any(
-        (f) => f.categoryName != null && f.categoryName!.trim().isNotEmpty);
+    final hasCategories = widget.showCategories &&
+        widget.customFields.any(
+            (f) => f.categoryName != null && f.categoryName!.trim().isNotEmpty);
 
     if (hasCategories) {
       return Padding(
@@ -252,6 +316,21 @@ class CustomFieldSectionWidgetState extends State<CustomFieldSectionWidget> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: _buildCategorizedFields(context),
+          ),
+        ),
+      );
+    }
+
+    if (!widget.showMore) {
+      return Padding(
+        padding: widget.padding ?? const EdgeInsets.all(0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildFieldsGrid(context, widget.customFields),
+            ],
           ),
         ),
       );
@@ -270,127 +349,35 @@ class CustomFieldSectionWidgetState extends State<CustomFieldSectionWidget> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (mandatoryFields.isNotEmpty) ...[
-              LayoutBuilder(
-                builder: (context, constraints) {
-                  final count = widget.crossAxisCount;
-                  final spacing = widget.spacing ?? (count == 3 ? 10.0 : 16.0);
-                  if (AppStyles.isWebScreen(context)) {
-                    return Wrap(
-                      spacing: spacing,
-                      runSpacing: count == 3 ? 8.0 : spacing / 2,
-                      children: mandatoryFields
-                          .map((field) => SizedBox(
-                                width: (constraints.maxWidth -
-                                        (count - 1) * spacing) /
-                                    count -
-                                0.1,
-                                child: widgetBuilder.buildWidget(field),
-                              ))
-                          .toList(),
-                    );
-                  }
-                  // Always single column for mobile
-                  return Column(
-                    children: mandatoryFields
-                        .map((field) => Padding(
-                              padding: EdgeInsets.only(bottom: spacing / 2),
-                              child: widgetBuilder.buildWidget(field),
-                            ))
-                        .toList(),
-                  );
-                },
-              ),
+              _buildFieldsGrid(context, mandatoryFields),
             ],
             if (nonMandatoryFields.isNotEmpty) ...[
-              if (widget.showMore) ...[
-                Theme(
-                  data: Theme.of(context)
-                      .copyWith(dividerColor: Colors.transparent),
-                  child: ExpansionTile(
-                    showTrailingIcon: false,
-                    onExpansionChanged: (expanded) {
-                      setState(() => _isExpanded = expanded);
-                    },
-                    title: Text(
-                      _isExpanded ? 'Less options' : 'More options',
-                      style: GoogleFonts.plusJakartaSans(
-                        color: AppColors.bluebutton,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.zero,
-                    ),
-                    tilePadding: EdgeInsets.symmetric(horizontal: 10),
-                    children: [
-                      const SizedBox(height: 10),
-                      LayoutBuilder(
-                        builder: (context, constraints) {
-                          final count = widget.crossAxisCount;
-                          final spacing =
-                              widget.spacing ?? (count == 3 ? 10.0 : 16.0);
-                          if (AppStyles.isWebScreen(context)) {
-                            return Wrap(
-                              spacing: spacing,
-                              runSpacing: count == 3 ? 8.0 : spacing / 2,
-                              children: nonMandatoryFields
-                                  .map((field) => SizedBox(
-                                        width: (constraints.maxWidth -
-                                                (count - 1) * spacing) /
-                                            count -
-                                        0.1,
-                                        child: widgetBuilder.buildWidget(field),
-                                      ))
-                                  .toList(),
-                            );
-                          }
-                          return Column(
-                            children: nonMandatoryFields
-                                .map((field) => Padding(
-                                      padding:
-                                          EdgeInsets.only(bottom: spacing / 2),
-                                      child: widgetBuilder.buildWidget(field),
-                                    ))
-                                .toList(),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ] else ...[
-                LayoutBuilder(
-                  builder: (context, constraints) {
-                    final count = widget.crossAxisCount;
-                    final spacing =
-                        widget.spacing ?? (count == 3 ? 10.0 : 16.0);
-                    if (AppStyles.isWebScreen(context)) {
-                      return Wrap(
-                        spacing: spacing,
-                        runSpacing: count == 3 ? 8.0 : spacing / 2,
-                        children: nonMandatoryFields
-                            .map((field) => SizedBox(
-                                  width: (constraints.maxWidth -
-                                          (count - 1) * spacing) /
-                                      count -
-                                  0.1,
-                                  child: widgetBuilder.buildWidget(field),
-                                ))
-                            .toList(),
-                      );
-                    }
-                    return Column(
-                      children: nonMandatoryFields
-                          .map((field) => Padding(
-                                padding: EdgeInsets.only(bottom: spacing / 2),
-                                child: widgetBuilder.buildWidget(field),
-                              ))
-                          .toList(),
-                    );
+              Theme(
+                data: Theme.of(context)
+                    .copyWith(dividerColor: Colors.transparent),
+                child: ExpansionTile(
+                  showTrailingIcon: false,
+                  onExpansionChanged: (expanded) {
+                    setState(() => _isExpanded = expanded);
                   },
+                  title: Text(
+                    _isExpanded ? 'Less options' : 'More options',
+                    style: GoogleFonts.plusJakartaSans(
+                      color: AppColors.bluebutton,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.zero,
+                  ),
+                  tilePadding: const EdgeInsets.symmetric(horizontal: 10),
+                  children: [
+                    const SizedBox(height: 10),
+                    _buildFieldsGrid(context, nonMandatoryFields),
+                  ],
                 ),
-              ]
+              ),
             ],
           ],
         ),
@@ -412,38 +399,6 @@ class CustomFieldSectionWidgetState extends State<CustomFieldSectionWidget> {
     }
 
     List<Widget> children = [];
-    final spacing = widget.spacing ?? 16.0;
-
-    Widget buildFieldList(List<CustomFieldByStatusId> fields) {
-      return LayoutBuilder(
-        builder: (context, constraints) {
-          final count = widget.crossAxisCount;
-          final spacing = widget.spacing ?? (count == 3 ? 10.0 : 16.0);
-          if (AppStyles.isWebScreen(context)) {
-            return Wrap(
-              spacing: spacing,
-              runSpacing: count == 3 ? 8.0 : spacing / 2,
-              children: fields
-                  .map((field) => SizedBox(
-                        width: (constraints.maxWidth - (count - 1) * spacing) /
-                                count -
-                            0.1,
-                        child: widgetBuilder.buildWidget(field),
-                      ))
-                  .toList(),
-            );
-          }
-          return Column(
-            children: fields
-                .map((field) => Padding(
-                      padding: EdgeInsets.only(bottom: spacing / 2),
-                      child: widgetBuilder.buildWidget(field),
-                    ))
-                .toList(),
-          );
-        },
-      );
-    }
 
     for (var entry in groupedFields.entries) {
       children.add(Padding(
@@ -457,7 +412,7 @@ class CustomFieldSectionWidgetState extends State<CustomFieldSectionWidget> {
           ),
         ),
       ));
-      children.add(buildFieldList(entry.value));
+      children.add(_buildFieldsGrid(context, entry.value));
       children.add(const SizedBox(height: 8.0));
     }
 
@@ -473,7 +428,7 @@ class CustomFieldSectionWidgetState extends State<CustomFieldSectionWidget> {
           ),
         ),
       ));
-      children.add(buildFieldList(uncategorized));
+      children.add(_buildFieldsGrid(context, uncategorized));
       children.add(const SizedBox(height: 8.0));
     }
 
@@ -711,8 +666,6 @@ class CustomFieldWidgetBuilder {
       builder: (context, setState) {
         final fieldValue = _getFieldValue(field.customFieldId!);
 
-        // Parse selected values - can be comma-separated string like "1,2"
-        // Convert to strings for consistent comparison
         List<String> selectedValues = [];
         if (fieldValue?.value != null && fieldValue!.value!.isNotEmpty) {
           selectedValues = fieldValue.value!
@@ -744,10 +697,132 @@ class CustomFieldWidgetBuilder {
                 }
               : null,
           builder: (FormFieldState<List<String>> state) {
+            Widget checkboxList = Wrap(
+              spacing: 12.0,
+              runSpacing: 4.0,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: checkboxOptions.map((option) {
+                final optionValue = option.checkBoxValues?.toString() ?? '';
+                final isSelected = selectedValues.contains(optionValue);
+                void toggle() {
+                  if (!enabled) return;
+                  setState(() {
+                    List<String> currentSelected = [];
+                    final currentFieldValue =
+                        _getFieldValue(field.customFieldId!);
+                    if (currentFieldValue?.value != null &&
+                        currentFieldValue!.value!.isNotEmpty) {
+                      currentSelected = currentFieldValue.value!
+                          .split(',')
+                          .map((e) => e.trim())
+                          .where((e) => e.isNotEmpty)
+                          .toList();
+                    }
+                    if (isSelected) {
+                      currentSelected.remove(optionValue);
+                    } else {
+                      if (!currentSelected.contains(optionValue)) {
+                        currentSelected.add(optionValue);
+                      }
+                    }
+                    _setFieldValue(
+                      field.customFieldId!,
+                      currentSelected.isEmpty ? "" : currentSelected.join(','),
+                    );
+                    selectedValues = currentSelected;
+                  });
+                  state.didChange(selectedValues);
+                  onFieldChanged?.call();
+                }
+
+                return InkWell(
+                  onTap: toggle,
+                  borderRadius: BorderRadius.circular(4),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Checkbox(
+                        value: isSelected,
+                        materialTapTargetSize:
+                            MaterialTapTargetSize.shrinkWrap,
+                        visualDensity: VisualDensity.compact,
+                        onChanged: enabled ? (_) => toggle() : null,
+                      ),
+                      Text(
+                        '${option.checkBoxValues}',
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: enabled ? Colors.black87 : Colors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }).toList(),
+            );
+
+            if (crossAxisCount == 3) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    height: 54,
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: state.hasError
+                            ? Colors.red
+                            : (enabled
+                                ? (AppStyles.isWebScreen(context)
+                                    ? AppColors.textGrey2
+                                    : AppColors.grey)
+                                : Colors.grey.shade300),
+                        width: state.hasError ? 1.5 : 1.0,
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Text(
+                          '$fieldName${isRequired ? ' *' : ''}',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.textGrey4,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: checkboxOptions.isEmpty
+                              ? const Text('No options available',
+                                  style: TextStyle(color: Colors.grey, fontSize: 12))
+                              : SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: checkboxList,
+                                ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (state.hasError)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4, left: 4),
+                      child: Text(
+                        state.errorText!,
+                        style: const TextStyle(
+                          color: Colors.red,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ),
+                ],
+              );
+            }
+
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Field title
                 Padding(
                   padding: const EdgeInsets.only(bottom: 8.0),
                   child: Text(
@@ -759,8 +834,6 @@ class CustomFieldWidgetBuilder {
                     ),
                   ),
                 ),
-
-                // If no checkbox options, show message
                 if (checkboxOptions.isEmpty)
                   Container(
                     padding: const EdgeInsets.all(12),
@@ -770,134 +843,14 @@ class CustomFieldWidgetBuilder {
                     ),
                   )
                 else
-                  Wrap(
-                    spacing: 16.0,
-                    runSpacing: 8.0,
-                    children: checkboxOptions.map((option) {
-                      // Convert option value to string for consistent comparison
-                      final optionValue =
-                          option.checkBoxValues?.toString() ?? '';
-                      final isSelected = selectedValues.contains(optionValue);
-
-                      return IntrinsicWidth(
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Checkbox(
-                              value: isSelected,
-                              materialTapTargetSize:
-                                  MaterialTapTargetSize.shrinkWrap,
-                              visualDensity: VisualDensity.compact,
-                              onChanged: enabled
-                                  ? (bool? value) {
-                                      setState(() {
-                                        // Get current selected values
-                                        List<String> currentSelected = [];
-                                        final currentFieldValue =
-                                            _getFieldValue(
-                                                field.customFieldId!);
-                                        if (currentFieldValue?.value != null &&
-                                            currentFieldValue!
-                                                .value!.isNotEmpty) {
-                                          currentSelected = currentFieldValue
-                                              .value!
-                                              .split(',')
-                                              .map((e) => e.trim())
-                                              .where((e) => e.isNotEmpty)
-                                              .toList();
-                                        }
-
-                                        if (value == true) {
-                                          if (!currentSelected
-                                              .contains(optionValue)) {
-                                            currentSelected.add(optionValue);
-                                          }
-                                        } else {
-                                          currentSelected.remove(optionValue);
-                                        }
-
-                                        // Update field value
-                                        _setFieldValue(
-                                          field.customFieldId!,
-                                          currentSelected.isEmpty
-                                              ? ""
-                                              : currentSelected.join(','),
-                                        );
-
-                                        // Update selectedValues for UI
-                                        selectedValues = currentSelected;
-                                      });
-                                      state.didChange(selectedValues);
-                                      onFieldChanged?.call();
-                                    }
-                                  : null,
-                            ),
-                            GestureDetector(
-                              onTap: enabled
-                                  ? () {
-                                      setState(() {
-                                        // Get current selected values
-                                        List<String> currentSelected = [];
-                                        final currentFieldValue =
-                                            _getFieldValue(
-                                                field.customFieldId!);
-                                        if (currentFieldValue?.value != null &&
-                                            currentFieldValue!
-                                                .value!.isNotEmpty) {
-                                          currentSelected = currentFieldValue
-                                              .value!
-                                              .split(',')
-                                              .map((e) => e.trim())
-                                              .where((e) => e.isNotEmpty)
-                                              .toList();
-                                        }
-
-                                        if (isSelected) {
-                                          currentSelected.remove(optionValue);
-                                        } else {
-                                          if (!currentSelected
-                                              .contains(optionValue)) {
-                                            currentSelected.add(optionValue);
-                                          }
-                                        }
-
-                                        // Update field value
-                                        _setFieldValue(
-                                          field.customFieldId!,
-                                          currentSelected.isEmpty
-                                              ? ""
-                                              : currentSelected.join(','),
-                                        );
-
-                                        // Update selectedValues for UI
-                                        selectedValues = currentSelected;
-                                      });
-                                      state.didChange(selectedValues);
-                                      onFieldChanged?.call();
-                                    }
-                                  : null,
-                              child: Text(
-                                '${option.checkBoxValues}',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: enabled ? Colors.black87 : Colors.grey,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }).toList(),
-                  ),
-
+                  checkboxList,
                 if (state.hasError)
                   Padding(
                     padding: const EdgeInsets.only(top: 8),
                     child: Text(
                       state.errorText!,
-                      style: TextStyle(
-                        color: Colors
-                            .red, // Changed from AppColors.grey to Colors.red for error
+                      style: const TextStyle(
+                        color: Colors.red,
                         fontSize: 12,
                       ),
                     ),

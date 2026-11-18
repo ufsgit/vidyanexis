@@ -1136,6 +1136,7 @@ class _CustomerPageState extends State<CustomerPage> {
     final bool showLeadCode = settingsProvider.showLeadCode == 1;
     final bool showLocation = settingsProvider.menuIsViewMap[142] == 1;
     final bool showRamcoLocation = settingsProvider.ramcoLocationPermission == 1;
+    final bool showConsumerName = settingsProvider.consumerNameMandatory == 1;
 
     final bool apiLoaded = customerProvider.customerFields.isNotEmpty;
 
@@ -1150,12 +1151,13 @@ class _CustomerPageState extends State<CustomerPage> {
         ? fallback
         : customerProvider.getCustomerFieldName(id, fallback);
 
-    // Fixed section: Sl No + Lead Code (if enabled) + Customer Code + Name + Mobile
+    // Fixed section: Sl No + Lead Code (if enabled) + Customer Code + Name + Consumer Name (if enabled) + Mobile
     // (fields 1,2,3 are always in the fixed/frozen left panel)
     final double fixedWidth = 80.0 +
         (showLeadCode ? 150.0 : 0.0) +
         (showCustomerCode ? 150.0 : 0.0) +
         (visible(1) ? 230.0 : 0.0) +
+        (showConsumerName ? 150.0 : 0.0) +
         (visible(3) ? 140.0 : 0.0);
 
     // Scrollable fields: 2 (Place), 4-11 in API sort order (11 = custom fields position)
@@ -1373,6 +1375,16 @@ class _CustomerPageState extends State<CustomerPage> {
                             vertical: 4.0, horizontal: 8.0),
                         color: Color(0xFFFFFFFF),
                       ),
+                      if (showConsumerName)
+                        TableWidget(
+                          width: 150,
+                          title: settingsProvider.getPermissionCaption(
+                              "Consumer Name", "Consumer Name"),
+                          fontWeight: FontWeight.normal,
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 4.0, horizontal: 8.0),
+                          color: const Color(0xFFFFFFFF),
+                        ),
                       if (visible(3))
                       TableWidget(
                         width: 140,
@@ -1764,6 +1776,26 @@ class _CustomerPageState extends State<CustomerPage> {
                                           ],
                                         ),
                                       ),
+                                      if (showConsumerName)
+                                        TableWidget(
+                                          width: 150,
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 6.0, horizontal: 8.0),
+                                          alignment: Alignment.centerLeft,
+                                          data: Tooltip(
+                                            message: lead.consumerName,
+                                            child: Text(
+                                              lead.consumerName,
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: const TextStyle(
+                                                fontFamily: 'PlusJakartaSans',
+                                                color: Colors.black,
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
                                       if (visible(3))
                                       TableWidget(
                                         width: 140,
@@ -1877,6 +1909,7 @@ class _CustomerPageState extends State<CustomerPage> {
   ) {
     final bool showCustomerCode = settingsProvider.menuIsViewMap[184] == 1;
     final bool showRamcoLocation = settingsProvider.ramcoLocationPermission == 1;
+    final bool showConsumerName = settingsProvider.consumerNameMandatory == 1;
 
     return customerProvider.customerData.isEmpty
         ? const CommonEmptyState(message: 'No data available')
@@ -1944,6 +1977,17 @@ class _CustomerPageState extends State<CustomerPage> {
                           settingsProvider.showCustomerCode == 1
                               ? 'Customer Code: ${lead.customerCode}'
                               : 'Reg No: ${lead.registrationNo}',
+                          style: TextStyle(
+                              fontFamily: 'PlusJakartaSans',
+                              fontSize: 12,
+                              color: Colors.grey.shade700),
+                        ),
+                      ),
+                    if (showConsumerName && lead.consumerName.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4.0),
+                        child: Text(
+                          '${settingsProvider.getPermissionCaption("Consumer Name", "Consumer Name")}: ${lead.consumerName}',
                           style: TextStyle(
                               fontFamily: 'PlusJakartaSans',
                               fontSize: 12,

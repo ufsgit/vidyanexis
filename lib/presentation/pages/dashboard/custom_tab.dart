@@ -215,6 +215,8 @@ class _CustomTabState extends State<CustomTab> {
     final tabOptions = [
       if (settingsProvider.menuIsViewMap[84].toString() == '1')
         'Dashboard count',
+      if (settingsProvider.menuIsViewMap[233].toString() == '1')
+        'Task Count Summary',
       if (settingsProvider.menuIsViewMap[49].toString() == '1')
         'Leads Overview',
       if (settingsProvider.menuIsViewMap[50].toString() == '1') 'Work Overview',
@@ -230,7 +232,6 @@ class _CustomTabState extends State<CustomTab> {
       if (widget.userType == '1') 'Attendance Dashboard',
       if (settingsProvider.hasTravelAllowancePermission) 'Travel Allowance',
       'Lead Flow',
-      if (settingsProvider.menuIsViewMap[233].toString() == '1') 'Task Count Summary',
     ];
 
     if (_tabKeys.length != tabOptions.length) {
@@ -273,6 +274,8 @@ class _CustomTabState extends State<CustomTab> {
                     final allowedTabIds = [
                       if (settingsProvider.menuIsViewMap[84].toString() == '1')
                         6,
+                      if (settingsProvider.menuIsViewMap[233].toString() == '1')
+                        12, // Task Count Summary
                       if (settingsProvider.menuIsViewMap[49].toString() == '1')
                         0,
                       if (settingsProvider.menuIsViewMap[50].toString() == '1')
@@ -291,7 +294,6 @@ class _CustomTabState extends State<CustomTab> {
                       if (widget.userType == '1') 9,
                       if (settingsProvider.hasTravelAllowancePermission) 10,
                       11, // Lead Flow
-                      if (settingsProvider.menuIsViewMap[233].toString() == '1') 12, // Task Count Summary
                     ];
 
                     if (index >= 0 && index < allowedTabIds.length) {
