@@ -1830,6 +1830,14 @@ class TaskPageProvider extends ChangeNotifier {
 
           initializeSelectedTaskTypes(); // deafult checkbox
 
+          for (var task in _taskTypeModel) {
+            final taskKey = task.uniqueId ?? task.taskTypeId.toString();
+            final uId = task.userDetailsId ?? task.userId;
+            if (uId != null && uId > 0) {
+              _taskTypeToUserMap[taskKey] = uId;
+            }
+          }
+
           if (_taskTypeModel.isNotEmpty) {
             followUpDateController.text = DateFormat('dd MMM yyyy').format(
                 DateTime.now()
@@ -2004,6 +2012,14 @@ class TaskPageProvider extends ChangeNotifier {
               .toList();
 
           initializeSelectedTaskTypes(); // deafult checkbox
+
+          for (var task in _taskTypeModel) {
+            final taskKey = task.uniqueId ?? task.taskTypeId.toString();
+            final uId = task.userDetailsId ?? task.userId;
+            if (uId != null && uId > 0) {
+              _taskTypeToUserMap[taskKey] = uId;
+            }
+          }
 
           if (_taskTypeModel.isNotEmpty) {
             followUpDateController.text = DateFormat('dd MMM yyyy').format(

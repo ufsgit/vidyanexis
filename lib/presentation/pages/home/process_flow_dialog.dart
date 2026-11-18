@@ -666,7 +666,12 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                                         null &&
                                                     task.departmentName!
                                                         .isNotEmpty
-                                                ? '${task.taskTypeName} (${task.departmentName})'
+                                                ? (task.showUser != 1 &&
+                                                        task.userDetailsName != null &&
+                                                        task.userDetailsName!.trim().isNotEmpty &&
+                                                        task.userDetailsName!.trim().toLowerCase() != 'null'
+                                                    ? '${task.taskTypeName} (${task.departmentName} - ${task.userDetailsName})'
+                                                    : '${task.taskTypeName} (${task.departmentName})')
                                                 : task.taskTypeName,
                                           ),
                                           //User DropDown
@@ -809,7 +814,22 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                                     defaultUserName = matchedStaff
                                                             .userDetailsName ??
                                                         '';
-                                                  } catch (_) {}
+                                                  } catch (_) {
+                                                    if (task.userDetailsName != null &&
+                                                        task.userDetailsName!.trim().isNotEmpty &&
+                                                        task.userDetailsName!.trim().toLowerCase() != 'null') {
+                                                      defaultUserName = task.userDetailsName!;
+                                                    }
+                                                  }
+                                                } else if (task.userDetailsId != null &&
+                                                    task.userDetailsId != 0) {
+                                                  assignedUserId = task.userDetailsId;
+                                                  defaultUserName = task.userDetailsName ?? '';
+                                                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                    if (reportsProvider.taskTypeToUserMap[taskKey] == null) {
+                                                      reportsProvider.setTaskUser(taskKey, task.userDetailsId);
+                                                    }
+                                                  });
                                                 } else if (loginUserId != 0) {
                                                   try {
                                                     final loggedInStaff =

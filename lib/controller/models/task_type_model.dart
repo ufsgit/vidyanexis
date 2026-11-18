@@ -36,6 +36,9 @@ class TaskTypeModel {
   int showUser;
   String dailyTarget;
   String monthlyTarget;
+  int? userId;
+  int? userDetailsId;
+  String? userDetailsName;
 
   TaskTypeModel(
       {required this.taskTypeId,
@@ -60,6 +63,9 @@ class TaskTypeModel {
       required this.showUser,
       required this.dailyTarget,
       required this.monthlyTarget,
+      this.userId,
+      this.userDetailsId,
+      this.userDetailsName,
       this.description});
 
   factory TaskTypeModel.fromJson(Map<String, dynamic> json) => TaskTypeModel(
@@ -120,6 +126,9 @@ class TaskTypeModel {
       enquiryForVisible: int.tryParse(json["Enquiry_For_Visible"]?.toString() ?? json["enquiry_for_visible"]?.toString() ?? '0') ?? 0,
       departmentName: json["Department_Name"],
       showUser: int.tryParse(json["Show_User"]?.toString() ?? json["show_user"]?.toString() ?? '0') ?? 0,
+      userId: int.tryParse(json["User_Id"]?.toString() ?? json["user_id"]?.toString() ?? ''),
+      userDetailsId: int.tryParse(json["User_Details_Id"]?.toString() ?? json["user_details_id"]?.toString() ?? ''),
+      userDetailsName: json["User_Details_Name"]?.toString() ?? json["user_details_name"]?.toString(),
       description: json["Description"]?.toString());
 
   bool get isEnabled => conversionTask == 1 && deleteStatus == 0;
@@ -145,6 +154,9 @@ class TaskTypeModel {
             : List<dynamic>.from(enquiryFor!.map((x) => x.toJson())),
         "Enquiry_For_Visible": enquiryForVisible,
         "Department_Name": departmentName,
+        "User_Id": userId,
+        "User_Details_Id": userDetailsId,
+        "User_Details_Name": userDetailsName,
         "Description": description,
       };
 
@@ -172,6 +184,9 @@ class TaskTypeModel {
       showUser: showUser,
       dailyTarget: dailyTarget,
       monthlyTarget: monthlyTarget,
+      userId: userId,
+      userDetailsId: userDetailsId,
+      userDetailsName: userDetailsName,
       description: description,
     );
   }
