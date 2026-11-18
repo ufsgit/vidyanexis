@@ -367,6 +367,7 @@ class HttpUrls {
   static String getFollowUpStatusCustomer =
       "status/get_followupstatus_customer";
   static String getCustomerFields = "lead/Get_Customer_Fields";
+  static String getTaskFields = "task/Get_Task_Fields";
   static String leadEnquiryReport = "lead/Lead_Enquiry_Report";
   static String leadReport = "lead/Lead_Report";
   static String getQuotationTypes = "quotation_master/get_quotation_types";
@@ -553,4 +554,5 @@ class HttpUrls {
   static String saveagencypayment = "lead/Save_Agency_Payment";
   static String listagencypayment = "lead/Get_Agency_Payment";
   static String deleteagencypayment = "lead/Delete_Agency_Payment";
+  static String searchCustomersForReference = "lead/Search_Customers_for_reference";
 }

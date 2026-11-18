@@ -238,6 +238,8 @@ Future<void> generateCustomerDetailsPdf({
           // Financial Details
           buildSectionCard('Financial Details', [
             MapEntry('Total Project Cost', customerData.displayProjectCost),
+            MapEntry('Total Expense', customerData.displayTotalExpense),
+            MapEntry('Balance Amount', customerData.displayBalanceAmount),
             MapEntry('Additional Cost', customerData.additionalCost.toString()),
             MapEntry('Advance Amount', customerData.advanceAmount.toString()),
             MapEntry('Amount Paid Through', customerData.amountPaidThroughName),

@@ -58,6 +58,7 @@ class SearchLeadModel {
   final String priorityColor;
   final String amcDate;
   final String workCompletionDate;
+  final String totalExpense;
   final String balanceAmount;
 
   String get amcDateDisplay {
@@ -350,6 +351,7 @@ class SearchLeadModel {
     this.longitude,
     this.mapLink,
     this.customFields = const [],
+    this.totalExpense = '',
     this.balanceAmount = '',
   });
 
@@ -511,6 +513,11 @@ class SearchLeadModel {
       priorityName: parseString(json['Priority_Name']),
       priorityId: parseString(json['Priority_Id']),
       priorityColor: parseString(json['Priority_Color']),
+      totalExpense: parseString(json['Total_Expense'] ??
+          json['total_expense'] ??
+          json['Total_expense'] ??
+          json['totalExpense'] ??
+          json['total_expense_amount']),
       balanceAmount: parseString(json['Balance_Amount']),
       amcDate: parseString(json['AMC_To_Date'] ??
           json['AMC_To_date'] ??
@@ -766,6 +773,7 @@ class SearchLeadModel {
     String? priorityColor,
     String? amcDate,
     String? workCompletionDate,
+    String? totalExpense,
     String? balanceAmount,
   }) {
     return SearchLeadModel(
@@ -868,6 +876,7 @@ class SearchLeadModel {
       priorityColor: priorityColor ?? this.priorityColor,
       amcDate: amcDate ?? this.amcDate,
       workCompletionDate: workCompletionDate ?? this.workCompletionDate,
+      totalExpense: totalExpense ?? this.totalExpense,
       balanceAmount: balanceAmount ?? this.balanceAmount,
     );
   }

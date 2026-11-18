@@ -35,6 +35,7 @@ import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/http/loader.dart';
 import 'package:vidyanexis/http/cloudflare_upload.dart';
+import 'package:vidyanexis/utils/util_functions.dart';
 // import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 // import 'dart:html' as html;
@@ -54,10 +55,13 @@ class LeadsProvider extends ChangeNotifier {
   final TextEditingController consumerContactNoController =
       TextEditingController();
   final TextEditingController referenceNameController = TextEditingController();
+  final TextEditingController customerReferenceController = TextEditingController();
+  int? selectedCustomerReferenceId;
   final TextEditingController leadSubsidyController = TextEditingController();
 
   final TextEditingController emailIdController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
+  final TextEditingController postOfficeController = TextEditingController();
   final TextEditingController mapLinkController = TextEditingController();
   final TextEditingController latitudeController = TextEditingController();
   final TextEditingController longitudeController = TextEditingController();
@@ -648,11 +652,14 @@ class LeadsProvider extends ChangeNotifier {
     enquirySourceController.clear();
     sourceCategoryController.clear();
     referenceNameController.clear();
+    customerReferenceController.clear();
+    selectedCustomerReferenceId = null;
     branchController.clear();
     departmentController.clear();
     contactNoController.clear();
     emailIdController.clear();
     addressController.clear();
+    postOfficeController.clear();
     mapLinkController.clear();
     latitudeController.clear();
     longitudeController.clear();
@@ -1577,6 +1584,13 @@ class LeadsProvider extends ChangeNotifier {
               ? toUserName
               : userName;
 
+      final formattedCustomerName = toTitleCase(leadNameController.text.isNotEmpty
+          ? leadNameController.text
+          : customerName);
+      if (formattedCustomerName.isNotEmpty) {
+        leadNameController.text = formattedCustomerName;
+      }
+
       final Map<String, dynamic> bodyData = {
         "Lead_Mobile_Existed_Check": leadMobileExistedCheck,
         "Lead_Mobile_Check": leadMobileExistedCheck,
@@ -1586,10 +1600,13 @@ class LeadsProvider extends ChangeNotifier {
           "Customer_Id": custId,
           "Lead_Mobile_Existed_Check": leadMobileExistedCheck,
           "Lead_Mobile_Check": leadMobileExistedCheck,
-          "Customer_Name": leadNameController.text.isEmpty
+          "Customer_Name": formattedCustomerName.isEmpty
               ? 'Null'
-              : leadNameController.text,
+              : formattedCustomerName,
           "Address": addressController.text,
+          "Post_Office": postOfficeController.text,
+          "PostOffice": postOfficeController.text,
+          "Address4": postOfficeController.text,
           "City": cityController.text,
           "State": stateController.text,
           "Landmark": landmarkController.text,
@@ -1599,6 +1616,8 @@ class LeadsProvider extends ChangeNotifier {
           "Email_Address": emailIdController.text,
           "Phone_Number": contactNoController.text,
           "Reference_Name": referenceNameController.text,
+          "Reference_Customer_Id": selectedCustomerReferenceId ?? 0,
+          "Reference_Customer_Name": customerReferenceController.text,
           "Location": mapLinkController.text,
           "Consumer_Name": consumerNameController.text,
           "Contact_No": consumerContactNoController.text,

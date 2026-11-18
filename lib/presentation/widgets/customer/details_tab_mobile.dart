@@ -652,6 +652,18 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                           if (leadDetailsProvider
                               .leadDetails![0].referenceName.isNotEmpty)
                             const SizedBox(height: 8),
+                          if (settingsProvider.menuIsViewMap[247] == 1 &&
+                              leadDetailsProvider
+                                  .leadDetails![0].referenceCustomerName.isNotEmpty)
+                            LabelValueWidget(
+                              label: 'Customer Reference',
+                              value: leadDetailsProvider
+                                  .leadDetails![0].referenceCustomerName,
+                            ),
+                          if (settingsProvider.menuIsViewMap[247] == 1 &&
+                              leadDetailsProvider
+                                  .leadDetails![0].referenceCustomerName.isNotEmpty)
+                            const SizedBox(height: 8),
                           LabelValueWidget(
                             label: 'Mobile no',
                             value: leadDetailsProvider

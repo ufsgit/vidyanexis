@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'dart:io' as io;
 import 'package:flutter/material.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/controller/models/search_leads_model.dart';
 
 class TaskReportModel {
   final int taskId;
@@ -55,6 +57,13 @@ class TaskReportModel {
   final String overdue;
   final String isLead;
   final String remark;
+  final String consumerName;
+  final String projectCapacity;
+  final String quotationAmount;
+  final String siteEngineer;
+  final String bankNameBranch;
+  final List<CustomerCustomField> customFields;
+  final Map<String, dynamic>? rawJson;
 
   DateTime? get parsedCreationDate {
     final dateStr = entryDate.trim();
@@ -154,6 +163,13 @@ class TaskReportModel {
     required this.overdue,
     this.isLead = '0',
     this.remark = '',
+    this.consumerName = '',
+    this.projectCapacity = '',
+    this.quotationAmount = '',
+    this.siteEngineer = '',
+    this.bankNameBranch = '',
+    this.customFields = const [],
+    this.rawJson,
   });
 
   factory TaskReportModel.fromJson(Map<String, dynamic> json) {
@@ -316,10 +332,52 @@ taskStatusName: json['Task_Status_Name'] ??
       priorityName: json['Priority_Name']?.toString() ?? '',
       priorityId: json['Priority_Id']?.toString() ?? '',
       priorityColor: json['Priority_Color']?.toString() ?? '',
-      consumerNo: (json['consumer_number'] ?? json['Consumer_Number'] ?? '').toString(),
+      consumerNo: (json['consumer_number'] ?? json['Consumer_Number'] ?? json['consumer_no'] ?? json['Consumer_No'] ?? '').toString(),
       leadDuration: json['Lead_Age_Days']?.toString() ?? '',
       overdue: json['Overdue']?.toString() ?? '',
       isLead: json['Is_Lead']?.toString() ?? '0',
+      consumerName: (json['Consumer_Name'] ?? json['consumer_name'] ?? '').toString(),
+      projectCapacity: (json['Project_Capacity'] ?? json['project_capacity'] ?? json['Capacity'] ?? json['capacity'] ?? '').toString(),
+      quotationAmount: (json['Quotation_Amount'] ?? json['quotation_amount'] ?? json['Total_Amount'] ?? json['total_amount'] ?? '').toString(),
+      siteEngineer: (json['Site_Engineer'] ?? json['site_engineer'] ?? json['Site_Engineer_Name'] ?? json['site_engineer_name'] ?? '').toString(),
+      bankNameBranch: (json['Bank_Name'] ?? json['bank_name'] ?? json['Bank_Name_Branch'] ?? json['bank_name_branch'] ?? json['Bank_Branch'] ?? json['bank_branch'] ?? '').toString(),
+      customFields: () {
+        final rawCf = json['custom_fields'] ??
+            json['Custom_Fields'] ??
+            json['Custom_fields'] ??
+            json['customFields'] ??
+            json['show_custom_fields'] ??
+            json['show_custom_field'] ??
+            json['Show_Custom_Fields'];
+        if (rawCf == null) return <CustomerCustomField>[];
+        if (rawCf is List) {
+          return rawCf
+              .map((item) => item is Map<String, dynamic>
+                  ? CustomerCustomField.fromJson(item)
+                  : (item is Map
+                      ? CustomerCustomField.fromJson(
+                          Map<String, dynamic>.from(item))
+                      : CustomerCustomField()))
+              .toList();
+        }
+        if (rawCf is String && rawCf.trim().startsWith('[')) {
+          try {
+            final decoded = jsonDecode(rawCf.trim());
+            if (decoded is List) {
+              return decoded
+                  .map((item) => item is Map<String, dynamic>
+                      ? CustomerCustomField.fromJson(item)
+                      : (item is Map
+                          ? CustomerCustomField.fromJson(
+                              Map<String, dynamic>.from(item))
+                          : CustomerCustomField()))
+                  .toList();
+            }
+          } catch (_) {}
+        }
+        return <CustomerCustomField>[];
+      }(),
+      rawJson: json,
     );
   }
 

@@ -111,6 +111,8 @@ class LeadDetails {
   final int departmentId;
   final String departmentName;
   final String referenceName;
+  final String referenceCustomerName;
+  final int? referenceCustomerId;
   final int sourceCategoryId;
   final String sourceCategoryName;
   final int? districtId;
@@ -126,6 +128,8 @@ class LeadDetails {
   final String KsebExpense;
   final String actualRTSCapacity;
   final String totalProjectCost;
+  final String totalExpense;
+  final String balanceAmount;
   final String PMSuryaShakthiPortalid;
   final String JanSamarthid;
   final String bankbranch;
@@ -141,6 +145,20 @@ class LeadDetails {
           ? ""
           : projectCost.toString().replaceAll(RegExp(r'\.0$'), ''))
       : totalProjectCost.replaceAll(RegExp(r'\.0$'), '');
+  String get displayTotalExpense => (totalExpense.isEmpty ||
+          totalExpense == '0' ||
+          totalExpense == '0.0' ||
+          totalExpense == '0.00' ||
+          totalExpense == 'null')
+      ? ""
+      : totalExpense.replaceAll(RegExp(r'\.0+$'), '');
+  String get displayBalanceAmount => (balanceAmount.isEmpty ||
+          balanceAmount == '0' ||
+          balanceAmount == '0.0' ||
+          balanceAmount == '0.00' ||
+          balanceAmount == 'null')
+      ? ""
+      : balanceAmount.replaceAll(RegExp(r'\.0+$'), '');
   String get displayCommission => commission == 0.0
       ? ""
       : commission.toString().replaceAll(RegExp(r'\.0$'), '');
@@ -263,6 +281,8 @@ class LeadDetails {
     required this.departmentId,
     required this.departmentName,
     required this.referenceName,
+    this.referenceCustomerName = '',
+    this.referenceCustomerId,
     this.districtId,
     this.districtName,
     this.invoiceNo,
@@ -304,6 +324,8 @@ class LeadDetails {
     required this.priorityId,
     required this.subsidyAmount,
     this.keyValues,
+    this.totalExpense = '',
+    this.balanceAmount = '',
     this.workCompletionDate = '',
   });
 
@@ -420,6 +442,14 @@ class LeadDetails {
       departmentId: parseInt(json['Department_Id']),
       departmentName: parseString(json['Department_Name']),
       referenceName: parseString(json['Reference_Name']),
+      referenceCustomerName: parseString(json['Reference_Customer_Name'] ??
+          json['reference_customer_name'] ??
+          json['Customer_Reference_Name'] ??
+          json['customer_reference_name']),
+      referenceCustomerId: parseInt(json['Reference_Customer_Id'] ??
+          json['reference_customer_id'] ??
+          json['Customer_Reference_Id'] ??
+          json['customer_reference_id']),
       districtId: parseInt(json['District_Id']),
       districtName: parseString(json['District']),
       invoiceNo: parseString(json['Invoice_No']),
@@ -432,6 +462,15 @@ class LeadDetails {
       KsebExpense: parseString(json['Kseb_Expense']),
       actualRTSCapacity: parseString(json['Actual_RTS_Capacity']),
       totalProjectCost: parseString(json['Total_Project_Cost']),
+      totalExpense: parseString(json['Total_Expense'] ??
+          json['total_expense'] ??
+          json['Total_expense'] ??
+          json['totalExpense'] ??
+          json['total_expense_amount']),
+      balanceAmount: parseString(json['Balance_Amount'] ??
+          json['balance_amount'] ??
+          json['Balance_amount'] ??
+          json['balanceAmount']),
       PMSuryaShakthiPortalid: parseString(json['PM_SuryaShakthi_Portal_Id']),
       JanSamarthid: parseString(json['Jan_Samarth_Id']),
       bankbranch: parseString(json['bankbranch']),
@@ -573,6 +612,8 @@ class LeadDetails {
       'Department_Id': departmentId,
       'Department_Name': departmentName,
       'Reference_Name': referenceName,
+      'Reference_Customer_Name': referenceCustomerName,
+      'Reference_Customer_Id': referenceCustomerId,
       'District_Id': districtId,
       'District': districtName,
       'Invoice_No': invoiceNo,
@@ -585,6 +626,8 @@ class LeadDetails {
       'Kseb_Expense': KsebExpense,
       'Actual_RTS_Capacity': actualRTSCapacity,
       'Total_Project_Cost': totalProjectCost,
+      'Total_Expense': totalExpense,
+      'Balance_Amount': balanceAmount,
       'PM_SuryaShakthi_Portal_Id': PMSuryaShakthiPortalid,
       'Jan_Samarth_Id': JanSamarthid,
       'bankbranch': bankbranch,
@@ -699,6 +742,8 @@ class LeadDetails {
     int? departmentId,
     String? departmentName,
     String? referenceName,
+    String? referenceCustomerName,
+    int? referenceCustomerId,
     int? districtId,
     String? districtName,
     String? invoiceNo,
@@ -731,6 +776,8 @@ class LeadDetails {
     int? priorityId,
     String? subsidyAmount,
     List<KeyValue>? keyValues,
+    String? totalExpense,
+    String? balanceAmount,
   }) {
     return LeadDetails(
       audioFiles: audioFiles ?? this.audioFiles,
@@ -820,6 +867,9 @@ class LeadDetails {
       departmentId: departmentId ?? this.departmentId,
       departmentName: departmentName ?? this.departmentName,
       referenceName: referenceName ?? this.referenceName,
+      referenceCustomerName:
+          referenceCustomerName ?? this.referenceCustomerName,
+      referenceCustomerId: referenceCustomerId ?? this.referenceCustomerId,
       districtId: districtId ?? this.districtId,
       districtName: districtName ?? this.districtName,
       invoiceNo: invoiceNo ?? this.invoiceNo,
@@ -833,6 +883,8 @@ class LeadDetails {
       KsebExpense: KsebExpense ?? KsebExpense,
       actualRTSCapacity: actualRTSCapacity ?? actualRTSCapacity,
       totalProjectCost: totalProjectCost ?? totalProjectCost,
+      totalExpense: totalExpense ?? this.totalExpense,
+      balanceAmount: balanceAmount ?? this.balanceAmount,
       PMSuryaShakthiPortalid: PMSuryaShakthiPortalid ?? PMSuryaShakthiPortalid,
       JanSamarthid: JanSamarthid ?? JanSamarthid,
       bankbranch: bankbranch ?? bankbranch,

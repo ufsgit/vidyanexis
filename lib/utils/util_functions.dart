@@ -132,3 +132,24 @@ String formatIndianPhoneNumber(String input) {
     return '';
   }
 }
+
+/// Formats text to Title Case (capitalizes the first letter of every word).
+String toTitleCase(String text) {
+  if (text.trim().isEmpty) return text.trim();
+  return text
+      .trim()
+      .split(RegExp(r'\s+'))
+      .map((word) {
+        if (word.isEmpty) return '';
+        if (word.contains('-')) {
+          return word.split('-').map((part) {
+            if (part.isEmpty) return '';
+            return part[0].toUpperCase() +
+                (part.length > 1 ? part.substring(1).toLowerCase() : '');
+          }).join('-');
+        }
+        return word[0].toUpperCase() +
+            (word.length > 1 ? word.substring(1).toLowerCase() : '');
+      })
+      .join(' ');
+}

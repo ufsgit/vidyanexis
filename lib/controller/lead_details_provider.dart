@@ -66,10 +66,15 @@ class LeadDetailsProvider with ChangeNotifier {
             leadProvider.mapLinkController.text = leadData.location ?? '';
             leadProvider.referenceNameController.text =
                 leadData.referenceName ?? '';
+            leadProvider.customerReferenceController.text =
+                leadData.referenceCustomerName;
+            leadProvider.selectedCustomerReferenceId =
+                leadData.referenceCustomerId;
             leadProvider.priorityId = leadData.priorityId;
             leadProvider.leadSubsidyController.text = leadData.subsidyAmount;
 
             leadProvider.cityController.text = leadData.address1 ?? '';
+            leadProvider.postOfficeController.text = leadData.address4 ?? '';
             leadProvider.districtController.text = leadData.address2 ?? '';
             leadProvider.stateController.text = leadData.address3 ?? '';
             leadProvider.latitudeController.text = leadData.latitude ?? '';
@@ -138,6 +143,10 @@ class LeadDetailsProvider with ChangeNotifier {
                 leadData.departmentName ?? '';
             leadProvider.referenceNameController.text =
                 leadData.referenceName ?? '';
+            leadProvider.customerReferenceController.text =
+                leadData.referenceCustomerName;
+            leadProvider.selectedCustomerReferenceId =
+                leadData.referenceCustomerId;
             leadProvider.districtController.text = leadData.districtName ?? '';
             leadProvider.connectedLoadController.text =
                 leadData.connectedLoad == 0

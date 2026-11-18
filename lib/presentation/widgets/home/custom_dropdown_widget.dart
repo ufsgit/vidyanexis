@@ -19,6 +19,7 @@ class CommonDropdown<T> extends StatefulWidget {
   final double? borderRadius;
   final Color? borderColor;
   final Color? focusedBorderColor;
+  final EdgeInsetsGeometry? contentPadding;
 
   const CommonDropdown({
     super.key,
@@ -36,6 +37,7 @@ class CommonDropdown<T> extends StatefulWidget {
     this.borderRadius,
     this.borderColor,
     this.focusedBorderColor,
+    this.contentPadding,
     this.showError = false,
   });
 
@@ -225,7 +227,7 @@ class _CommonDropdownState<T> extends State<CommonDropdown<T>> {
                     floatingLabelBehavior: widget.floatingLabelBehavior ??
                         FloatingLabelBehavior.auto,
                     floatingLabelStyle: GoogleFonts.plusJakartaSans(
-                      fontSize: 16,
+                      fontSize: 14,
                       fontWeight: FontWeight.w500,
                       color: widget.showError
                           ? Colors.red
@@ -270,10 +272,11 @@ class _CommonDropdownState<T> extends State<CommonDropdown<T>> {
                         width: 1,
                       ),
                     ),
-                    contentPadding: const EdgeInsets.symmetric(
-                      vertical: 14,
-                      horizontal: 16,
-                    ),
+                    contentPadding: widget.contentPadding ??
+                        const EdgeInsets.symmetric(
+                          vertical: 14,
+                          horizontal: 16,
+                        ),
                   ),
                 ),
               ),

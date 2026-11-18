@@ -26,6 +26,7 @@ class CustomTextField extends StatelessWidget {
   final double? borderRadius;
   final Color? borderColor;
   final Color? focusedBorderColor;
+  final EdgeInsetsGeometry? contentPadding;
 
   const CustomTextField({
     super.key,
@@ -50,6 +51,7 @@ class CustomTextField extends StatelessWidget {
     this.borderRadius,
     this.borderColor,
     this.focusedBorderColor,
+    this.contentPadding,
   });
 
   @override
@@ -153,7 +155,7 @@ class CustomTextField extends StatelessWidget {
                 ),
               ),
 
-              contentPadding:
+              contentPadding: contentPadding ??
                   const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
             ),
             readOnly: readOnly,

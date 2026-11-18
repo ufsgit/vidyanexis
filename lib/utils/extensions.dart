@@ -501,6 +501,26 @@ extension IntExtensions on int? {
 }
 
 extension StringExtensions on String? {
+  String toTitleCase() {
+    if (this == null || this!.trim().isEmpty) return this ?? '';
+    return this!
+        .trim()
+        .split(RegExp(r'\s+'))
+        .map((word) {
+          if (word.isEmpty) return '';
+          if (word.contains('-')) {
+            return word.split('-').map((part) {
+              if (part.isEmpty) return '';
+              return part[0].toUpperCase() +
+                  (part.length > 1 ? part.substring(1).toLowerCase() : '');
+            }).join('-');
+          }
+          return word[0].toUpperCase() +
+              (word.length > 1 ? word.substring(1).toLowerCase() : '');
+        })
+        .join(' ');
+  }
+
   // String capitalize() {
   //   if (this.isEmpty) return this;
   //   return this[0].toUpperCase() + this.substring(1);

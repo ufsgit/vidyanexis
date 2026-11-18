@@ -1882,6 +1882,53 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                     .leadDetails![0]
                                                     .displayProjectCost,
                                               ),
+                                              const SizedBox(height: 2),
+                                              DetailRow(
+                                                label: "Total Expense",
+                                                value: customerDetailsProvider
+                                                        .leadDetails![0]
+                                                        .displayTotalExpense
+                                                        .isNotEmpty
+                                                    ? customerDetailsProvider
+                                                        .leadDetails![0]
+                                                        .displayTotalExpense
+                                                    : (customerDetailsProvider
+                                                            .expenseList
+                                                            .isNotEmpty
+                                                        ? customerDetailsProvider
+                                                            .expenseList
+                                                            .fold<double>(
+                                                                0.0,
+                                                                (sum, item) =>
+                                                                    sum +
+                                                                    (item.amount ??
+                                                                        0.0))
+                                                            .toStringAsFixed(2)
+                                                            .replaceAll(RegExp(r'\.00$'), '')
+                                                        : ''),
+                                              ),
+                                              const SizedBox(height: 2),
+                                              DetailRow(
+                                                label: "Balance Amount",
+                                                value: customerDetailsProvider
+                                                        .leadDetails![0]
+                                                        .displayBalanceAmount
+                                                        .isNotEmpty
+                                                    ? customerDetailsProvider
+                                                        .leadDetails![0]
+                                                        .displayBalanceAmount
+                                                    : (customerDetailsProvider
+                                                                    .balanceTotal
+                                                                    .isNotEmpty &&
+                                                            customerDetailsProvider.balanceTotal !=
+                                                                '0' &&
+                                                            customerDetailsProvider.balanceTotal !=
+                                                                '0.0'
+                                                        ? customerDetailsProvider
+                                                            .balanceTotal
+                                                            .replaceAll(RegExp(r'\.0+$'), '')
+                                                        : ''),
+                                              ),
                                               // DetailRow(
                                               //   label: "Engineer",
                                               //   value: customerDetailsProvider
@@ -2462,12 +2509,78 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                             2),
                                                                     DetailRow(
                                                                       label:
+                                                                          "Total Expense",
+                                                                      value: customerDetailsProvider
+                                                                              .leadDetails![0]
+                                                                              .displayTotalExpense
+                                                                              .isNotEmpty
+                                                                          ? customerDetailsProvider
+                                                                              .leadDetails![0]
+                                                                              .displayTotalExpense
+                                                                          : (customerDetailsProvider
+                                                                                  .expenseList
+                                                                                  .isNotEmpty
+                                                                              ? customerDetailsProvider
+                                                                                  .expenseList
+                                                                                  .fold<double>(
+                                                                                      0.0,
+                                                                                      (sum, item) =>
+                                                                                          sum +
+                                                                                          (item.amount ??
+                                                                                              0.0))
+                                                                                  .toStringAsFixed(2)
+                                                                                  .replaceAll(RegExp(r'\.00$'), '')
+                                                                              : ''),
+                                                                    ),
+                                                                    const SizedBox(
+                                                                        height:
+                                                                            2),
+                                                                    DetailRow(
+                                                                      label:
+                                                                          "Balance Amount",
+                                                                      value: customerDetailsProvider
+                                                                              .leadDetails![0]
+                                                                              .displayBalanceAmount
+                                                                              .isNotEmpty
+                                                                          ? customerDetailsProvider
+                                                                              .leadDetails![0]
+                                                                              .displayBalanceAmount
+                                                                          : (customerDetailsProvider
+                                                                                          .balanceTotal
+                                                                                          .isNotEmpty &&
+                                                                                  customerDetailsProvider.balanceTotal !=
+                                                                                      '0' &&
+                                                                                  customerDetailsProvider.balanceTotal !=
+                                                                                      '0.0'
+                                                                              ? customerDetailsProvider
+                                                                                  .balanceTotal
+                                                                                  .replaceAll(RegExp(r'\.0+$'), '')
+                                                                              : ''),
+                                                                    ),
+                                                                    const SizedBox(
+                                                                        height:
+                                                                            2),
+                                                                    DetailRow(
+                                                                      label:
                                                                           "Sub Source",
                                                                       value: customerDetailsProvider
                                                                           .leadDetails![
                                                                               0]
                                                                           .referenceName,
                                                                     ),
+                                                                    if (settingsprovider.menuIsViewMap[247] == 1) ...[
+                                                                      const SizedBox(
+                                                                          height:
+                                                                              2),
+                                                                      DetailRow(
+                                                                        label:
+                                                                            "Customer Reference",
+                                                                        value: customerDetailsProvider
+                                                                            .leadDetails![
+                                                                                0]
+                                                                            .referenceCustomerName,
+                                                                      ),
+                                                                    ],
                                                                   ],
                                                                 ),
                                                                 // Contact
@@ -3979,17 +4092,78 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                         0]
                                                                     .referenceName,
                                                               ),
+                                                              if (settingsprovider.menuIsViewMap[247] == 1) ...[
+                                                                const SizedBox(
+                                                                    height: 2),
+                                                                DetailRow(
+                                                                  label:
+                                                                      "Customer Reference",
+                                                                  value: customerDetailsProvider
+                                                                      .leadDetails![
+                                                                          0]
+                                                                      .referenceCustomerName,
+                                                                ),
+                                                              ],
                                                               const SizedBox(
                                                                   height: 2),
                                                               DetailRow(
                                                                 label:
-                                                                    "Total project cost :",
+                                                                    "Total project cost",
                                                                 value: customerDetailsProvider
                                                                         .leadDetails![
                                                                             0]
-                                                                        .totalProjectCost
-                                                                        .toString() ??
-                                                                    '',
+                                                                        .displayProjectCost,
+                                                              ),
+                                                              const SizedBox(
+                                                                  height: 2),
+                                                              DetailRow(
+                                                                label:
+                                                                    "Total Expense",
+                                                                value: customerDetailsProvider
+                                                                        .leadDetails![0]
+                                                                        .displayTotalExpense
+                                                                        .isNotEmpty
+                                                                    ? customerDetailsProvider
+                                                                        .leadDetails![0]
+                                                                        .displayTotalExpense
+                                                                    : (customerDetailsProvider
+                                                                            .expenseList
+                                                                            .isNotEmpty
+                                                                        ? customerDetailsProvider
+                                                                            .expenseList
+                                                                            .fold<double>(
+                                                                                0.0,
+                                                                                (sum, item) =>
+                                                                                    sum +
+                                                                                    (item.amount ??
+                                                                                        0.0))
+                                                                            .toStringAsFixed(2)
+                                                                            .replaceAll(RegExp(r'\.00$'), '')
+                                                                        : ''),
+                                                              ),
+                                                              const SizedBox(
+                                                                  height: 2),
+                                                              DetailRow(
+                                                                label:
+                                                                    "Balance Amount",
+                                                                value: customerDetailsProvider
+                                                                        .leadDetails![0]
+                                                                        .displayBalanceAmount
+                                                                        .isNotEmpty
+                                                                    ? customerDetailsProvider
+                                                                        .leadDetails![0]
+                                                                        .displayBalanceAmount
+                                                                    : (customerDetailsProvider
+                                                                                    .balanceTotal
+                                                                                    .isNotEmpty &&
+                                                                            customerDetailsProvider.balanceTotal !=
+                                                                                '0' &&
+                                                                            customerDetailsProvider.balanceTotal !=
+                                                                                '0.0'
+                                                                        ? customerDetailsProvider
+                                                                            .balanceTotal
+                                                                            .replaceAll(RegExp(r'\.0+$'), '')
+                                                                        : ''),
                                                               ),
                                                             ],
                                                           ),
