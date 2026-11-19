@@ -180,8 +180,6 @@ class _tasksPageReportState extends State<TaskPageReport> {
           ] else ...[
             Builder(
               builder: (context) => IconButton(
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(),
                 onPressed: () {
                   ScaffoldState? parent;
                   context.visitAncestorElements((element) {
@@ -197,10 +195,17 @@ class _tasksPageReportState extends State<TaskPageReport> {
                   });
                   parent?.openDrawer();
                 },
-                icon: const Icon(
-                  Icons.menu_rounded,
-                  size: 22,
-                  color: Color(0xFF1E293B),
+                icon: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppColors.secondaryBlue.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: const Icon(
+                    Icons.sort,
+                    size: 20,
+                    color: AppColors.secondaryBlue,
+                  ),
                 ),
               ),
             ),
