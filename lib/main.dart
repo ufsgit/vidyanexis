@@ -118,7 +118,7 @@ Future<void> main() async {
   }
   final token = prefs.getString('token') ?? '';
   if (token.isNotEmpty) {
-    HttpRequest.setCachedToken(token);
+    HttpRequest.updateCachedToken(token);
   }
   print(
       '[PERF-BOOT] initialization completed: ${DateTime.now().millisecondsSinceEpoch - initStart} ms');
