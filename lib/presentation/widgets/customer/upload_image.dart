@@ -84,7 +84,8 @@ class _ImageUploadAlertState extends State<ImageUploadAlert> {
       imageProvider.clearFiles();
 
       if (widget.customerId.isNotEmpty) {
-        customerDetailsProvider.getDocument(widget.customerId, context);
+        customerDetailsProvider.getDocument(widget.customerId, context,
+            forceRefresh: true);
       }
 
       if (widget.initialDocumentTypeId != null) {
@@ -276,8 +277,10 @@ class _ImageUploadAlertState extends State<ImageUploadAlert> {
                                                         fontWeight:
                                                             FontWeight.w600,
                                                       ),
-                                                      if (pendingList.isNotEmpty) ...[
-                                                        const SizedBox(width: 8),
+                                                      if (pendingList
+                                                          .isNotEmpty) ...[
+                                                        const SizedBox(
+                                                            width: 8),
                                                         InkWell(
                                                           onTap: _scrollToFiles,
                                                           child: const Text(
@@ -289,7 +292,8 @@ class _ImageUploadAlertState extends State<ImageUploadAlert> {
                                                               color: Color(
                                                                   0xFF1A7AE8),
                                                               fontWeight:
-                                                                  FontWeight.w600,
+                                                                  FontWeight
+                                                                      .w600,
                                                               decoration:
                                                                   TextDecoration
                                                                       .underline,
@@ -389,7 +393,8 @@ class _ImageUploadAlertState extends State<ImageUploadAlert> {
                                                       widget.customerId,
                                                     );
                                                     if (context.mounted) {
-                                                      Navigator.of(context).pop();
+                                                      Navigator.of(context)
+                                                          .pop();
                                                     }
                                                   },
                                                   confirmButtonText: 'Delete',
@@ -409,8 +414,8 @@ class _ImageUploadAlertState extends State<ImageUploadAlert> {
                                                   _showPreview(context, file),
                                               onRemove: () {
                                                 if (globalIndex >= 0) {
-                                                  provider
-                                                      .removeFileAt(globalIndex);
+                                                  provider.removeFileAt(
+                                                      globalIndex);
                                                 }
                                               },
                                             );
@@ -510,7 +515,8 @@ class _ImageUploadAlertState extends State<ImageUploadAlert> {
                               spacing: 10,
                               runSpacing: 10,
                               children: [
-                                ...(savedByType[widget.initialDocumentTypeId!] ??
+                                ...(savedByType[
+                                            widget.initialDocumentTypeId!] ??
                                         [])
                                     .map((doc) {
                                   final isPdf = doc.filePath
@@ -558,15 +564,15 @@ class _ImageUploadAlertState extends State<ImageUploadAlert> {
                                     },
                                   );
                                 }),
-                                ...(pendingByType[widget.initialDocumentTypeId!] ??
+                                ...(pendingByType[
+                                            widget.initialDocumentTypeId!] ??
                                         [])
                                     .map((file) {
                                   final globalIndex =
                                       provider.fileInfoList.indexOf(file);
                                   return _buildPendingThumbnail(
                                     fileInfo: file,
-                                    onTap: () =>
-                                        _showPreview(context, file),
+                                    onTap: () => _showPreview(context, file),
                                     onRemove: () {
                                       if (globalIndex >= 0) {
                                         provider.removeFileAt(globalIndex);
@@ -594,85 +600,90 @@ class _ImageUploadAlertState extends State<ImageUploadAlert> {
                               ),
                               const SizedBox(height: 12),
                               ListView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: provider.fileInfoList.length,
-                          itemBuilder: (context, index) {
-                            final fileInfo = provider.fileInfoList[index];
-                            return Container(
-                              margin: const EdgeInsets.only(bottom: 8),
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(4),
-                                border: Border.all(
-                                    color:
-                                        AppColors.textGrey2.withOpacity(0.3)),
-                              ),
-                              child: Row(
-                                children: [
-                                  SvgPicture.asset(
-                                    fileInfo['type'] == 'pdf'
-                                        ? "assets/icons/pdf_icon.svg"
-                                        : "assets/icons/document_icon.svg",
-                                    height: 32,
-                                    width: 32,
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: provider.fileInfoList.length,
+                                itemBuilder: (context, index) {
+                                  final fileInfo = provider.fileInfoList[index];
+                                  return Container(
+                                    margin: const EdgeInsets.only(bottom: 8),
+                                    padding: const EdgeInsets.all(12),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(4),
+                                      border: Border.all(
+                                          color: AppColors.textGrey2
+                                              .withOpacity(0.3)),
+                                    ),
+                                    child: Row(
                                       children: [
-                                        CustomText(
-                                          fileInfo['name'] ?? 'Unknown file',
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w500,
-                                          overflow: TextOverflow.ellipsis,
+                                        SvgPicture.asset(
+                                          fileInfo['type'] == 'pdf'
+                                              ? "assets/icons/pdf_icon.svg"
+                                              : "assets/icons/document_icon.svg",
+                                          height: 32,
+                                          width: 32,
                                         ),
-                                        if (fileInfo['docTypeName'] != null)
-                                          CustomText(
-                                            'Type: ${fileInfo['docTypeName']}',
-                                            fontSize: 11,
-                                            color: AppColors.textGrey4,
+                                        const SizedBox(width: 12),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              CustomText(
+                                                fileInfo['name'] ??
+                                                    'Unknown file',
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.w500,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                              if (fileInfo['docTypeName'] !=
+                                                  null)
+                                                CustomText(
+                                                  'Type: ${fileInfo['docTypeName']}',
+                                                  fontSize: 11,
+                                                  color: AppColors.textGrey4,
+                                                ),
+                                            ],
                                           ),
+                                        ),
+                                        Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            InkWell(
+                                              onTap: () => _showPreview(
+                                                  context, fileInfo),
+                                              child: const Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 8.0),
+                                                child: Text(
+                                                  'View',
+                                                  style: TextStyle(
+                                                    fontFamily:
+                                                        'PlusJakartaSans',
+                                                    color: Color(0xFF1A7AE8),
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            IconButton(
+                                              onPressed: () {
+                                                provider.removeFileAt(index);
+                                              },
+                                              icon: const Icon(
+                                                  Icons.delete_outline,
+                                                  color: Colors.red,
+                                                  size: 20),
+                                            ),
+                                          ],
+                                        ),
                                       ],
                                     ),
-                                  ),
-                                  Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      InkWell(
-                                        onTap: () =>
-                                            _showPreview(context, fileInfo),
-                                        child: const Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 8.0),
-                                          child: Text(
-                                            'View',
-                                            style: TextStyle(
-                                              fontFamily: 'PlusJakartaSans',
-                                              color: Color(0xFF1A7AE8),
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      IconButton(
-                                        onPressed: () {
-                                          provider.removeFileAt(index);
-                                        },
-                                        icon: const Icon(Icons.delete_outline,
-                                            color: Colors.red, size: 20),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                                  );
+                                },
                               ),
-                            );
-                          },
-                        ),
                             ],
                           ),
                         ),
@@ -892,8 +903,8 @@ class _ImageUploadAlertState extends State<ImageUploadAlert> {
                   child: const CircleAvatar(
                     radius: 11,
                     backgroundColor: Colors.white,
-                    child: Icon(Icons.delete_outline,
-                        size: 14, color: Colors.red),
+                    child:
+                        Icon(Icons.delete_outline, size: 14, color: Colors.red),
                   ),
                 ),
               ),
@@ -1115,15 +1126,15 @@ class _ImageUploadAlertState extends State<ImageUploadAlert> {
                               errorBuilder: (_, __, ___) => Center(
                                 child: InkWell(
                                   onTap: () async {
-                                  final uri = Uri.parse(filePath);
-                                  try {
-                                    await launchUrl(uri,
-                                        mode: LaunchMode.externalApplication);
-                                  } catch (e) {
-                                    Fluttertoast.showToast(
-                                        msg: "Could not open PDF: $e");
-                                  }
-                                },
+                                    final uri = Uri.parse(filePath);
+                                    try {
+                                      await launchUrl(uri,
+                                          mode: LaunchMode.externalApplication);
+                                    } catch (e) {
+                                      Fluttertoast.showToast(
+                                          msg: "Could not open PDF: $e");
+                                    }
+                                  },
                                   child: const Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
@@ -1131,8 +1142,8 @@ class _ImageUploadAlertState extends State<ImageUploadAlert> {
                                           size: 64, color: Colors.white70),
                                       SizedBox(height: 8),
                                       Text('Open file/video',
-                                          style: TextStyle(
-                                              color: Colors.white70)),
+                                          style:
+                                              TextStyle(color: Colors.white70)),
                                     ],
                                   ),
                                 ),

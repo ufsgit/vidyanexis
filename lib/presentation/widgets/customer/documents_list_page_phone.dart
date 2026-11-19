@@ -80,18 +80,25 @@ class _DocumentsListPagePhoneState extends State<DocumentsListPagePhone> {
                         ),
                       ),
                       GestureDetector(
-                        onTap: () {
+                        onTap: () async {
                           final customerDetailsProvider =
                               Provider.of<CustomerDetailsProvider>(context,
                                   listen: false);
                           customerDetailsProvider.customerId =
                               widget.customerId.toString();
-                          Navigator.push(context, MaterialPageRoute(
+                          await Navigator.push(context, MaterialPageRoute(
                             builder: (context) {
                               return AddDocumentPhone(
                                   customerId: widget.customerId.toString());
                             },
                           ));
+                          if (context.mounted) {
+                            customerDetailsProvider.getDocument(
+                              widget.customerId.toString(),
+                              context,
+                              forceRefresh: true,
+                            );
+                          }
                         },
                         child: Container(
                           width: 44,

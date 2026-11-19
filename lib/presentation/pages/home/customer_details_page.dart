@@ -108,7 +108,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
   int? selectedQuotationStatusId;
 
   List<Widget> _getBasicCustomFields(
-      CustomerDetailsProvider customerDetailsProvider, LeadsProvider leadProvider) {
+      CustomerDetailsProvider customerDetailsProvider,
+      LeadsProvider leadProvider) {
     if (customerDetailsProvider.leadDetails == null ||
         customerDetailsProvider.leadDetails!.isEmpty) {
       return [];
@@ -153,27 +154,34 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
     }).toList();
   }
 
-  List<Widget> _buildCategorizedAdditionalDetails(List<CustomFieldByStatusId>? customFields) {
+  List<Widget> _buildCategorizedAdditionalDetails(
+      List<CustomFieldByStatusId>? customFields) {
     if (customFields == null || customFields.isEmpty) {
       return [const Text('No additional details available')];
     }
-    
-    final validFields = customFields.where((field) =>
-      field != null &&
-      (field.customFieldName != null && field.customFieldName!.trim().isNotEmpty) &&
-      (field.datavalue != null && field.datavalue!.trim().isNotEmpty)).toList();
+
+    final validFields = customFields
+        .where((field) =>
+            field != null &&
+            (field.customFieldName != null &&
+                field.customFieldName!.trim().isNotEmpty) &&
+            (field.datavalue != null && field.datavalue!.trim().isNotEmpty))
+        .toList();
 
     if (validFields.isEmpty) {
       return [const Text('No additional details available')];
     }
 
-    final hasCategories = validFields.any((f) => f.categoryName != null && f.categoryName!.trim().isNotEmpty);
+    final hasCategories = validFields.any(
+        (f) => f.categoryName != null && f.categoryName!.trim().isNotEmpty);
 
     if (!hasCategories) {
-      return validFields.map((field) => DetailRow(
-        label: field.customFieldName!.replaceAll('_', ' '),
-        value: field.datavalue!,
-      )).toList();
+      return validFields
+          .map((field) => DetailRow(
+                label: field.customFieldName!.replaceAll('_', ' '),
+                value: field.datavalue!,
+              ))
+          .toList();
     }
 
     final Map<String, List<CustomFieldByStatusId>> groupedFields = {};
@@ -202,10 +210,11 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
           ),
         ),
       ));
-      children.addAll(entry.value.map((CustomFieldByStatusId field) => DetailRow(
-        label: field.customFieldName!.replaceAll('_', ' '),
-        value: field.datavalue!,
-      )));
+      children
+          .addAll(entry.value.map((CustomFieldByStatusId field) => DetailRow(
+                label: field.customFieldName!.replaceAll('_', ' '),
+                value: field.datavalue!,
+              )));
     }
 
     if (uncategorized.isNotEmpty) {
@@ -220,10 +229,11 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
           ),
         ),
       ));
-      children.addAll(uncategorized.map((CustomFieldByStatusId field) => DetailRow(
-        label: field.customFieldName!.replaceAll('_', ' '),
-        value: field.datavalue!,
-      )));
+      children
+          .addAll(uncategorized.map((CustomFieldByStatusId field) => DetailRow(
+                label: field.customFieldName!.replaceAll('_', ' '),
+                value: field.datavalue!,
+              )));
     }
 
     return children;
@@ -250,10 +260,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
         }
 
         final copyText = validFields.map((field) {
-          final label = field.customFieldName
-              .toString()
-              .replaceAll('_', ' ')
-              .trim();
+          final label =
+              field.customFieldName.toString().replaceAll('_', ' ').trim();
           final value = field.datavalue?.toString().trim() ?? '';
           return '$label: $value';
         }).join('\n');
@@ -467,32 +475,35 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
             provider.leadDetails!.first.customerId.toString() !=
                 widget.customerId) {
           provider.fetchLeadDetails(widget.customerId, context).then((_) {
-          if (provider.leadDetails != null &&
-              provider.leadDetails!.isNotEmpty) {
-            final lead = provider.leadDetails!.first;
-            try {
-              final leadsProvider =
-                  Provider.of<LeadsProvider>(context, listen: false);
-              leadsProvider.getCustomFieldsByEnquiryForId(context,
-                  enquiryForId: lead.enquiryForId,
-                  leadId: lead.customerId,
-                  departmentId: lead.departmentId);
-            } catch (_) {}
-          }
-        });
+            if (provider.leadDetails != null &&
+                provider.leadDetails!.isNotEmpty) {
+              final lead = provider.leadDetails!.first;
+              try {
+                final leadsProvider =
+                    Provider.of<LeadsProvider>(context, listen: false);
+                leadsProvider.getCustomFieldsByEnquiryForId(context,
+                    enquiryForId: lead.enquiryForId,
+                    leadId: lead.customerId,
+                    departmentId: lead.departmentId);
+              } catch (_) {}
+            }
+          });
         }
         break;
       case "Summary":
-        provider.getCustomerTaskOverview(widget.customerId);
+        provider.getCustomerTaskOverview(widget.customerId,
+            forceRefresh: forceRefresh);
         break;
       case "Tasks":
         provider.getTaskList(widget.customerId, context);
         break;
       case "Quotations":
-        provider.getQuatationList(widget.customerId, context);
+        provider.getQuatationList(widget.customerId, context,
+            forceRefresh: forceRefresh);
         break;
       case "Documents":
-        provider.getDocument(widget.customerId, context);
+        provider.getDocument(widget.customerId, context,
+            forceRefresh: forceRefresh);
         break;
       case "Forms":
         try {
@@ -501,22 +512,27 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
         } catch (_) {}
         break;
       case "Complaints":
-        provider.getServiceList(widget.customerId, context);
+        provider.getServiceList(widget.customerId, context,
+            forceRefresh: forceRefresh);
         break;
       case "Periodic Service":
-        provider.getAmc(widget.customerId, '0', context);
+        provider.getAmc(widget.customerId, '0', context,
+            forceRefresh: forceRefresh);
         break;
       case "History":
-        provider.getFollowUpHistory(widget.customerId, context);
+        provider.getFollowUpHistory(widget.customerId, context,
+            forceRefresh: forceRefresh);
         break;
       case "Receipt":
-        provider.getRecieptListApi(widget.customerId, context);
+        provider.getRecieptListApi(widget.customerId, context,
+            forceRefresh: forceRefresh);
         if (provider.leadDetails == null || provider.leadDetails!.isEmpty) {
           provider.fetchLeadDetails(widget.customerId, context);
         }
         break;
       case "Expense":
-        provider.getExpenseListApi(widget.customerId, context);
+        provider.getExpenseListApi(widget.customerId, context,
+            forceRefresh: forceRefresh);
         break;
       case "CheckList Management":
         setState(() {
@@ -677,10 +693,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
     });
   }
 
-  void _onDeleteCustomer(
-      SidebarProvider sideprovider,
-      LeadsProvider leadProvider,
-      CustomerProvider customerProvider) {
+  void _onDeleteCustomer(SidebarProvider sideprovider,
+      LeadsProvider leadProvider, CustomerProvider customerProvider) {
     showConfirmationDialog(
       context: context,
       title: 'Delete Customer/Lead',
@@ -712,10 +726,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
     );
   }
 
-  void _onExportPdf(
-      CustomerDetailsProvider customerDetailsProvider,
-      SettingsProvider settingsprovider,
-      LeadsProvider leadProvider) async {
+  void _onExportPdf(CustomerDetailsProvider customerDetailsProvider,
+      SettingsProvider settingsprovider, LeadsProvider leadProvider) async {
     if (customerDetailsProvider.leadDetails != null &&
         customerDetailsProvider.leadDetails!.isNotEmpty) {
       final companyName = settingsprovider.companyDetails.isNotEmpty
@@ -773,8 +785,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
         customerName = leadProv.leadNameController.text;
       }
 
-      customerName =
-          customerName.replaceAll(RegExp(r'[^a-zA-Z0-9_\-]'), '_');
+      customerName = customerName.replaceAll(RegExp(r'[^a-zA-Z0-9_\-]'), '_');
       if (customerName.trim().isEmpty) {
         customerName = 'Customer_${widget.customerId}';
       }
@@ -883,8 +894,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
     if (customerDetailsProvider.hasPendingApprovalQuotation()) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text(
-              'Approval pending quotations are there , please clear that'),
+          content:
+              Text('Approval pending quotations are there , please clear that'),
           backgroundColor: Colors.red,
         ),
       );
@@ -896,9 +907,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
       context,
       MaterialPageRoute(
         builder: (context) => QuotationCreationWidget(
-            quotationId: '0',
-            isEdit: false,
-            customerId: widget.customerId),
+            quotationId: '0', isEdit: false, customerId: widget.customerId),
       ),
     );
   }
@@ -974,8 +983,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
     );
   }
 
-  Widget? _buildMobileFloatingActionButton(
-      SettingsProvider settingsprovider,
+  Widget? _buildMobileFloatingActionButton(SettingsProvider settingsprovider,
       CustomerDetailsProvider customerDetailsProvider) {
     if (!_isControllerInitialized ||
         _tabs.isEmpty ||
@@ -1077,8 +1085,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           InkWell(
-            onTap: () => _onBackPressed(
-                sideprovider, leadProvider, customerProvider, leadDetailsProvider),
+            onTap: () => _onBackPressed(sideprovider, leadProvider,
+                customerProvider, leadDetailsProvider),
             child: const Icon(
               Icons.arrow_back,
               size: 18,
@@ -1097,15 +1105,17 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                 fontWeight: FontWeight.w600),
           ),
           const SizedBox(width: 10),
-          if (settingsprovider.menuIsEditMap[
-                  sideprovider.name == 'Lead /' ? 3 : 4] == 1)
+          if (settingsprovider
+                  .menuIsEditMap[sideprovider.name == 'Lead /' ? 3 : 4] ==
+              1)
             IconButton(
-              onPressed: () => _onEditCustomer(leadDetailsProvider, leadProvider,
-                  dropDownProvider, customerDetailsProvider),
+              onPressed: () => _onEditCustomer(leadDetailsProvider,
+                  leadProvider, dropDownProvider, customerDetailsProvider),
               icon: const Icon(Icons.edit),
             ),
-          if (settingsprovider.menuIsDeleteMap[
-                  sideprovider.name == 'Lead /' ? 3 : 4] == 1)
+          if (settingsprovider
+                  .menuIsDeleteMap[sideprovider.name == 'Lead /' ? 3 : 4] ==
+              1)
             IconButton(
               onPressed: () => _onDeleteCustomer(
                   sideprovider, leadProvider, customerProvider),
@@ -1150,7 +1160,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
             tooltip: "Refresh",
             onPressed: () {
               _refreshAnimationController.forward(from: 0.0);
-              _fetchDataForCurrentTab(forceRefresh: false);
+              _fetchDataForCurrentTab(forceRefresh: true);
             },
             icon: RotationTransition(
               turns: _refreshAnimationController,
@@ -1173,8 +1183,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                       borderRadius: BorderRadius.circular(4)),
                   backgroundColor: AppColors.primaryBlue,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 ),
               ),
             ),
@@ -1193,8 +1203,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                       borderRadius: BorderRadius.circular(4)),
                   backgroundColor: AppColors.primaryBlue,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 ),
               ),
             ),
@@ -1214,8 +1224,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                       borderRadius: BorderRadius.circular(4)),
                   backgroundColor: AppColors.primaryBlue,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 ),
               ),
             ),
@@ -1226,8 +1236,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: ElevatedButton.icon(
-                onPressed: () =>
-                    _openAddReceiptDialog(customerDetailsProvider),
+                onPressed: () => _openAddReceiptDialog(customerDetailsProvider),
                 icon: const Icon(Icons.add),
                 label: const Text('Add Receipt'),
                 style: ElevatedButton.styleFrom(
@@ -1235,8 +1244,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                       borderRadius: BorderRadius.circular(4)),
                   backgroundColor: AppColors.primaryBlue,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 ),
               ),
             ),
@@ -1256,8 +1265,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                       borderRadius: BorderRadius.circular(4)),
                   backgroundColor: AppColors.primaryBlue,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 ),
               ),
             ),
@@ -1268,8 +1277,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: ElevatedButton.icon(
-                onPressed: () =>
-                    _openAddPaymentDialog(customerDetailsProvider),
+                onPressed: () => _openAddPaymentDialog(customerDetailsProvider),
                 icon: const Icon(Icons.add),
                 label: const Text('Add Payment'),
                 style: ElevatedButton.styleFrom(
@@ -1277,8 +1285,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                       borderRadius: BorderRadius.circular(4)),
                   backgroundColor: AppColors.primaryBlue,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 ),
               ),
             ),
@@ -1289,8 +1297,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: ElevatedButton.icon(
-                onPressed: () =>
-                    _openNewQuotationPage(customerDetailsProvider),
+                onPressed: () => _openNewQuotationPage(customerDetailsProvider),
                 icon: const Icon(Icons.add),
                 label: const Text('New Quotation '),
                 style: ElevatedButton.styleFrom(
@@ -1298,8 +1305,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                       borderRadius: BorderRadius.circular(4)),
                   backgroundColor: AppColors.primaryBlue,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 ),
               ),
             ),
@@ -1330,8 +1337,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               InkWell(
-                onTap: () => _onBackPressed(
-                    sideprovider, leadProvider, customerProvider, leadDetailsProvider),
+                onTap: () => _onBackPressed(sideprovider, leadProvider,
+                    customerProvider, leadDetailsProvider),
                 child: const Padding(
                   padding: EdgeInsets.all(4.0),
                   child: Icon(
@@ -1357,31 +1364,38 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                   ),
                 ),
               ),
-              if (settingsprovider.menuIsEditMap[
-                      sideprovider.name == 'Lead /' ? 3 : 4] == 1)
+              if (settingsprovider
+                      .menuIsEditMap[sideprovider.name == 'Lead /' ? 3 : 4] ==
+                  1)
                 IconButton(
                   constraints: const BoxConstraints(),
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-                  onPressed: () => _onEditCustomer(leadDetailsProvider, leadProvider,
-                      dropDownProvider, customerDetailsProvider),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                  onPressed: () => _onEditCustomer(leadDetailsProvider,
+                      leadProvider, dropDownProvider, customerDetailsProvider),
                   icon: const Icon(Icons.edit, size: 20),
                 ),
-              if (settingsprovider.menuIsDeleteMap[
-                      sideprovider.name == 'Lead /' ? 3 : 4] == 1)
+              if (settingsprovider
+                      .menuIsDeleteMap[sideprovider.name == 'Lead /' ? 3 : 4] ==
+                  1)
                 IconButton(
                   constraints: const BoxConstraints(),
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
                   onPressed: () => _onDeleteCustomer(
                       sideprovider, leadProvider, customerProvider),
-                  icon: const Icon(Icons.delete_outline, color: Colors.red, size: 20),
+                  icon: const Icon(Icons.delete_outline,
+                      color: Colors.red, size: 20),
                 ),
               if (settingsprovider.menuIsViewMap[169] == 1 ||
                   settingsprovider.menuIsViewMap[169].toString() == '1')
                 IconButton(
                   constraints: const BoxConstraints(),
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
                   tooltip: 'Export PDF',
-                  icon: const Icon(Icons.picture_as_pdf, color: Colors.blue, size: 20),
+                  icon: const Icon(Icons.picture_as_pdf,
+                      color: Colors.blue, size: 20),
                   onPressed: () => _onExportPdf(
                       customerDetailsProvider, settingsprovider, leadProvider),
                 ),
@@ -1389,9 +1403,11 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                   settingsprovider.menuIsViewMap[179].toString() == '1')
                 IconButton(
                   constraints: const BoxConstraints(),
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
                   tooltip: 'Download Image',
-                  icon: const Icon(Icons.download, color: Colors.blue, size: 20),
+                  icon:
+                      const Icon(Icons.download, color: Colors.blue, size: 20),
                   onPressed: () => _onDownloadImage(customerDetailsProvider),
                 ),
             ],
@@ -1431,7 +1447,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                 tooltip: "Refresh",
                 onPressed: () {
                   _refreshAnimationController.forward(from: 0.0);
-                  _fetchDataForCurrentTab(forceRefresh: false);
+                  _fetchDataForCurrentTab(forceRefresh: true);
                 },
                 icon: RotationTransition(
                   turns: _refreshAnimationController,
@@ -2478,7 +2494,9 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                               .address1 ??
                                                                           '',
                                                                     ),
-                                                                    ..._getBasicCustomFields(customerDetailsProvider, leadProvider),
+                                                                    ..._getBasicCustomFields(
+                                                                        customerDetailsProvider,
+                                                                        leadProvider),
                                                                     const SizedBox(
                                                                         height:
                                                                             2),
@@ -2519,25 +2537,16 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                       label:
                                                                           "Total Expense",
                                                                       value: customerDetailsProvider
-                                                                              .leadDetails![0]
+                                                                              .leadDetails![
+                                                                                  0]
                                                                               .displayTotalExpense
                                                                               .isNotEmpty
                                                                           ? customerDetailsProvider
-                                                                              .leadDetails![0]
+                                                                              .leadDetails![
+                                                                                  0]
                                                                               .displayTotalExpense
-                                                                          : (customerDetailsProvider
-                                                                                  .expenseList
-                                                                                  .isNotEmpty
-                                                                              ? customerDetailsProvider
-                                                                                  .expenseList
-                                                                                  .fold<double>(
-                                                                                      0.0,
-                                                                                      (sum, item) =>
-                                                                                          sum +
-                                                                                          (item.amount ??
-                                                                                              0.0))
-                                                                                  .toStringAsFixed(2)
-                                                                                  .replaceAll(RegExp(r'\.00$'), '')
+                                                                          : (customerDetailsProvider.expenseList.isNotEmpty
+                                                                              ? customerDetailsProvider.expenseList.fold<double>(0.0, (sum, item) => sum + (item.amount ?? 0.0)).toStringAsFixed(2).replaceAll(RegExp(r'\.00$'), '')
                                                                               : ''),
                                                                     ),
                                                                     const SizedBox(
@@ -2547,22 +2556,16 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                       label:
                                                                           "Balance Amount",
                                                                       value: customerDetailsProvider
-                                                                              .leadDetails![0]
+                                                                              .leadDetails![
+                                                                                  0]
                                                                               .displayBalanceAmount
                                                                               .isNotEmpty
                                                                           ? customerDetailsProvider
-                                                                              .leadDetails![0]
+                                                                              .leadDetails![
+                                                                                  0]
                                                                               .displayBalanceAmount
-                                                                          : (customerDetailsProvider
-                                                                                          .balanceTotal
-                                                                                          .isNotEmpty &&
-                                                                                  customerDetailsProvider.balanceTotal !=
-                                                                                      '0' &&
-                                                                                  customerDetailsProvider.balanceTotal !=
-                                                                                      '0.0'
-                                                                              ? customerDetailsProvider
-                                                                                  .balanceTotal
-                                                                                  .replaceAll(RegExp(r'\.0+$'), '')
+                                                                          : (customerDetailsProvider.balanceTotal.isNotEmpty && customerDetailsProvider.balanceTotal != '0' && customerDetailsProvider.balanceTotal != '0.0'
+                                                                              ? customerDetailsProvider.balanceTotal.replaceAll(RegExp(r'\.0+$'), '')
                                                                               : ''),
                                                                     ),
                                                                     const SizedBox(
@@ -2576,7 +2579,9 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                               0]
                                                                           .referenceName,
                                                                     ),
-                                                                    if (settingsprovider.menuIsViewMap[247] == 1) ...[
+                                                                    if (settingsprovider
+                                                                            .menuIsViewMap[247] ==
+                                                                        1) ...[
                                                                       const SizedBox(
                                                                           height:
                                                                               2),
@@ -2584,8 +2589,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                         label:
                                                                             "Customer Reference",
                                                                         value: customerDetailsProvider
-                                                                            .leadDetails![
-                                                                                0]
+                                                                            .leadDetails![0]
                                                                             .referenceCustomerName,
                                                                       ),
                                                                     ],
@@ -2797,20 +2801,22 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                         value: customerDetailsProvider.leadDetails![0].address2 ??
                                                                             ''),
                                                                     // Consumer Number
-                                                                    if (settingsprovider.consumerNoInLeadPage == 1)...[
-                                                                    const SizedBox(
-                                                                        height:
-                                                                            2),
-                                                                    DetailRow(
-                                                                        label:
-                                                                            "Consumer Number",
-                                                                        value: customerDetailsProvider
-                                                                            .leadDetails![0]
-                                                                            .consumerNumber
-                                                                            .toString()),
-                                                                    const SizedBox(
-                                                                        height:
-                                                                            2),
+                                                                    if (settingsprovider
+                                                                            .consumerNoInLeadPage ==
+                                                                        1) ...[
+                                                                      const SizedBox(
+                                                                          height:
+                                                                              2),
+                                                                      DetailRow(
+                                                                          label:
+                                                                              "Consumer Number",
+                                                                          value: customerDetailsProvider
+                                                                              .leadDetails![0]
+                                                                              .consumerNumber
+                                                                              .toString()),
+                                                                      const SizedBox(
+                                                                          height:
+                                                                              2),
                                                                     ],
                                                                     const Text(
                                                                       'Location',
@@ -2870,8 +2876,11 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                     ),
                                                                   ],
                                                                 ),
-                                                                  // Additional Details
-                                                                  if (settingsprovider.menuIsViewMap[206] == 1)
+                                                                // Additional Details
+                                                                if (settingsprovider
+                                                                            .menuIsViewMap[
+                                                                        206] ==
+                                                                    1)
                                                                   CustomerCard(
                                                                     title:
                                                                         "Additional Details",
@@ -2879,7 +2888,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                       DetailRow(
                                                                         label:
                                                                             "Electrical Section",
-                                                                        value: customerDetailsProvider.leadDetails![0].electricalSection == 'null'
+                                                                        value: customerDetailsProvider.leadDetails![0].electricalSection ==
+                                                                                'null'
                                                                             ? ''
                                                                             : customerDetailsProvider.leadDetails![0].electricalSection,
                                                                       ),
@@ -2889,11 +2899,11 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                       DetailRow(
                                                                         label:
                                                                             "Connected load",
-                                                                        value: customerDetailsProvider.leadDetails![0].connectedLoad == 0
+                                                                        value: customerDetailsProvider.leadDetails![0].connectedLoad ==
+                                                                                0
                                                                             ? ''
-                                                                            : customerDetailsProvider.leadDetails![0].connectedLoad
-                                                                                .toString()
-                                                                                .replaceAll(RegExp(r'\.0$'), ''),
+                                                                            : customerDetailsProvider.leadDetails![0].connectedLoad.toString().replaceAll(RegExp(r'\.0$'),
+                                                                                ''),
                                                                       ),
                                                                       const SizedBox(
                                                                           height:
@@ -2901,7 +2911,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                       DetailRow(
                                                                         label:
                                                                             "REP",
-                                                                        value: customerDetailsProvider.leadDetails![0].rep == 'null'
+                                                                        value: customerDetailsProvider.leadDetails![0].rep ==
+                                                                                'null'
                                                                             ? ''
                                                                             : customerDetailsProvider.leadDetails![0].rep,
                                                                       ),
@@ -2911,7 +2922,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                       DetailRow(
                                                                         label:
                                                                             "Lead By",
-                                                                        value: customerDetailsProvider.leadDetails![0].leadBy == 'null'
+                                                                        value: customerDetailsProvider.leadDetails![0].leadBy ==
+                                                                                'null'
                                                                             ? ''
                                                                             : customerDetailsProvider.leadDetails![0].leadBy,
                                                                       ),
@@ -2921,7 +2933,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                       DetailRow(
                                                                         label:
                                                                             "Work Type",
-                                                                        value: customerDetailsProvider.leadDetails![0].workTypeName == 'null'
+                                                                        value: customerDetailsProvider.leadDetails![0].workTypeName ==
+                                                                                'null'
                                                                             ? ''
                                                                             : customerDetailsProvider.leadDetails![0].workTypeName,
                                                                       ),
@@ -2931,7 +2944,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                       DetailRow(
                                                                         label:
                                                                             "Roof Type",
-                                                                        value: customerDetailsProvider.leadDetails![0].roofTypeName == 'null'
+                                                                        value: customerDetailsProvider.leadDetails![0].roofTypeName ==
+                                                                                'null'
                                                                             ? ''
                                                                             : customerDetailsProvider.leadDetails![0].roofTypeName,
                                                                       ),
@@ -2941,7 +2955,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                       DetailRow(
                                                                         label:
                                                                             "Work Completion Date",
-                                                                        value: customerDetailsProvider.leadDetails![0].workCompletionDateDisplay == 'null'
+                                                                        value: customerDetailsProvider.leadDetails![0].workCompletionDateDisplay ==
+                                                                                'null'
                                                                             ? ''
                                                                             : customerDetailsProvider.leadDetails![0].workCompletionDateDisplay,
                                                                       ),
@@ -2951,7 +2966,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                       DetailRow(
                                                                         label:
                                                                             "Any Additional Comments",
-                                                                        value: customerDetailsProvider.leadDetails![0].additionalComments == 'null'
+                                                                        value: customerDetailsProvider.leadDetails![0].additionalComments ==
+                                                                                'null'
                                                                             ? ''
                                                                             : customerDetailsProvider.leadDetails![0].additionalComments,
                                                                       ),
@@ -3495,44 +3511,43 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           );
                                                                         },
                                                                       ),
-                                                                    if ((settingsprovider.menuIsViewMap[184] == 1 ||
-                                                                            settingsprovider.menuIsViewMapPrint[184] == 1) &&
-                                                                        sideprovider.name != 'Lead /')
+                                                                    if ((settingsprovider.menuIsViewMap[184] ==
+                                                                                1 ||
+                                                                            settingsprovider.menuIsViewMapPrint[184] ==
+                                                                                1) &&
+                                                                        sideprovider.name !=
+                                                                            'Lead /')
                                                                       CustomElevatedButton(
-                                                                        radius: 4,
+                                                                        radius:
+                                                                            4,
                                                                         backgroundColor:
-                                                                            AppColors
-                                                                                .whiteColor,
+                                                                            AppColors.whiteColor,
                                                                         borderColor:
-                                                                            AppColors
-                                                                                .bluebutton,
+                                                                            AppColors.bluebutton,
                                                                         textColor:
-                                                                            AppColors
-                                                                                .bluebutton,
+                                                                            AppColors.bluebutton,
                                                                         buttonText:
                                                                             'Rts Vender feasibility',
                                                                         onPressed:
                                                                             () async {
-                                                                        PdfActionHelper
-                                                                            .showPdfOptions(
-                                                                          context:
-                                                                              context,
-                                                                          title:
-                                                                              'Rts Vender feasibility',
-                                                                          pdfUrl:
-                                                                              '${HttpUrls.getPdfVendorFeasibilityReport}${widget.customerId}',
-                                                                          onGenerate:
-                                                                              () async {
-                                                                            await Loader.showLoader(context);
-                                                                            final bytes =
-                                                                                await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfVendorFeasibilityReport}${widget.customerId}');
-                                                                            Loader.stopLoader(context);
-                                                                            return bytes ??
-                                                                                Uint8List(0);
-                                                                          },
-                                                                        );
-                                                                      },
-                                                                    ),
+                                                                          PdfActionHelper
+                                                                              .showPdfOptions(
+                                                                            context:
+                                                                                context,
+                                                                            title:
+                                                                                'Rts Vender feasibility',
+                                                                            pdfUrl:
+                                                                                '${HttpUrls.getPdfVendorFeasibilityReport}${widget.customerId}',
+                                                                            onGenerate:
+                                                                                () async {
+                                                                              await Loader.showLoader(context);
+                                                                              final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfVendorFeasibilityReport}${widget.customerId}');
+                                                                              Loader.stopLoader(context);
+                                                                              return bytes ?? Uint8List(0);
+                                                                            },
+                                                                          );
+                                                                        },
+                                                                      ),
                                                                     if ((settingsprovider.menuIsViewMap[112] ==
                                                                                 1 ||
                                                                             settingsprovider.menuIsViewMapPrint[112] ==
@@ -3681,193 +3696,236 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           );
                                                                         },
                                                                       ),
-                                                                      if ((settingsprovider.menuIsViewMap[185] == 1 ||
-                                                                              settingsprovider.menuIsViewMapPrint[185] == 1) &&
-                                                                          sideprovider.name != 'Lead /')
-                                                                        CustomElevatedButton(
-                                                                          radius: 4,
-                                                                          backgroundColor: AppColors.whiteColor,
-                                                                          borderColor: AppColors.bluebutton,
-                                                                          textColor: AppColors.bluebutton,
-                                                                          buttonText: 'Margin Voucher',
-                                                                          onPressed: () async {
-                                                                            PdfActionHelper.showPdfOptions(
-                                                                              context: context,
-                                                                              title: 'Margin Voucher',
-                                                                              pdfUrl: '${HttpUrls.getPdfMarginVoucher}${widget.customerId}',
-                                                                              onGenerate: () async {
-                                                                                await Loader.showLoader(context);
-                                                                                final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfMarginVoucher}${widget.customerId}');
-                                                                                Loader.stopLoader(context);
-                                                                                return bytes ?? Uint8List(0);
-                                                                              },
-                                                                            );
-                                                                          },
-                                                                        ),
-                                                                      if ((settingsprovider.menuIsViewMap[222] == 1 ||
-                                                                              settingsprovider.menuIsViewMapPrint[222] == 1) &&
-                                                                          sideprovider.name != 'Lead /')
-                                                                        CustomElevatedButton(
-                                                                          radius: 4,
-                                                                          backgroundColor: AppColors.whiteColor,
-                                                                          borderColor: AppColors.bluebutton,
-                                                                          textColor: AppColors.bluebutton,
-                                                                          buttonText: 'Vendor Feasibility Report',
-                                                                          onPressed: () async {
-                                                                            PdfActionHelper.showPdfOptions(
-                                                                              context: context,
-                                                                              title: 'Vendor Feasibility Report',
-                                                                              pdfUrl: '${HttpUrls.getPdfVendorFeasibilityReport}${widget.customerId}',
-                                                                              onGenerate: () async {
-                                                                                await Loader.showLoader(context);
-                                                                                final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfVendorFeasibilityReport}${widget.customerId}');
-                                                                                Loader.stopLoader(context);
-                                                                                return bytes ?? Uint8List(0);
-                                                                              },
-                                                                            );
-                                                                          },
-                                                                        ),
-                                                                  if (settingsprovider.menuIsViewMap[224] == 1)
-                                                                    CustomElevatedButton(
-                                                                      radius: 4,
-                                                                      backgroundColor:
-                                                                          AppColors
-                                                                              .whiteColor,
-                                                                      borderColor:
-                                                                          AppColors
-                                                                              .darkGreen,
-                                                                      textColor:
-                                                                          AppColors
-                                                                              .darkGreen,
-                                                                      buttonText:
-                                                                          'Download Document',
-                                                                      onPressed:
-                                                                          () {
-                                                                        showDialog(
-                                                                          context:
-                                                                              context,
-                                                                          builder: (context) =>
-                                                                              DocumentCategoryDownloadDialog(
-                                                                            customerId:
-                                                                                widget.customerId,
-                                                                          ),
-                                                                        );
-                                                                      },
-                                                                    ),
-                                                                      if ((settingsprovider.menuIsViewMap[210] == 1 ||
-                                                                              settingsprovider.menuIsViewMapPrint[210] == 1) &&
-                                                                          sideprovider.name != 'Lead /')
-                                                                        CustomElevatedButton(
-                                                                          radius: 4,
-                                                                          backgroundColor:
-                                                                              AppColors.whiteColor,
-                                                                          borderColor:
-                                                                              AppColors.bluebutton,
-                                                                          textColor:
-                                                                              AppColors.bluebutton,
-                                                                          buttonText:
-                                                                              'Vendor Feasibility',
-                                                                          onPressed:
-                                                                              () async {
-                                                                            PdfActionHelper
-                                                                                .showPdfOptions(
-                                                                              context:
-                                                                                  context,
-                                                                              title:
-                                                                                  'Vendor Feasibility',
-                                                                              pdfUrl:
-                                                                                  '${HttpUrls.getPdfVendorFeasibilityReport}${widget.customerId}',
-                                                                              onGenerate:
-                                                                                  () async {
-                                                                                await Loader.showLoader(context);
-                                                                                final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfVendorFeasibilityReport}${widget.customerId}');
-                                                                                Loader.stopLoader(context);
-                                                                                return bytes ?? Uint8List(0);
-                                                                              },
-                                                                            );
-                                                                          },
-                                                                        ),
-                                                                      if ((settingsprovider.menuIsViewMap[211] == 1 ||
-                                                                              settingsprovider.menuIsViewMapPrint[211] == 1) &&
-                                                                          sideprovider.name != 'Lead /')
-                                                                        CustomElevatedButton(
-                                                                          radius: 4,
-                                                                          backgroundColor:
-                                                                              AppColors.whiteColor,
-                                                                          borderColor:
-                                                                              AppColors.bluebutton,
-                                                                          textColor:
-                                                                              AppColors.bluebutton,
-                                                                          buttonText:
-                                                                              'Work Completion Report 1',
-                                                                          onPressed:
-                                                                              () async {
-                                                                            PdfActionHelper
-                                                                                .showPdfOptions(
-                                                                              context:
-                                                                                  context,
-                                                                              title:
-                                                                                  'Work Completion Report 1',
-                                                                              pdfUrl:
-                                                                                  '${HttpUrls.getPdfWorkCompletionReportSunfix}${widget.customerId}',
-                                                                              onGenerate:
-                                                                                  () async {
-                                                                                await Loader.showLoader(context);
-                                                                                final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfWorkCompletionReportSunfix}${widget.customerId}');
-                                                                                Loader.stopLoader(context);
-                                                                                return bytes ?? Uint8List(0);
-                                                                              },
-                                                                            );
-                                                                          },
-                                                                        ),
-                                                                      if ((settingsprovider.menuIsViewMap[212] == 1 ||
-                                                                              settingsprovider.menuIsViewMapPrint[212] == 1) &&
-                                                                          sideprovider.name != 'Lead /')
-                                                                        CustomElevatedButton(
-                                                                          radius: 4,
-                                                                          backgroundColor:
-                                                                              AppColors.whiteColor,
-                                                                          borderColor:
-                                                                              AppColors.bluebutton,
-                                                                          textColor:
-                                                                              AppColors.bluebutton,
-                                                                          buttonText:
-                                                                              'Checklist 1',
-                                                                          onPressed:
-                                                                              () async {
-                                                                              PdfActionHelper
-                                                                                  .showPdfOptions(
-                                                                                context:
-                                                                                    context,
-                                                                                title:
-                                                                                    'Checklist 1',
-                                                                                pdfUrl:
-                                                                                    '${HttpUrls.getPdfChecklistSunfix}${widget.customerId}',
-                                                                                onGenerate:
-                                                                                    () async {
-                                                                                  await Loader.showLoader(context);
-                                                                                  final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfChecklistSunfix}${widget.customerId}');
-                                                                                  Loader.stopLoader(context);
-                                                                                  return bytes ?? Uint8List(0);
-                                                                                },
-                                                                              );
+                                                                    if ((settingsprovider.menuIsViewMap[185] ==
+                                                                                1 ||
+                                                                            settingsprovider.menuIsViewMapPrint[185] ==
+                                                                                1) &&
+                                                                        sideprovider.name !=
+                                                                            'Lead /')
+                                                                      CustomElevatedButton(
+                                                                        radius:
+                                                                            4,
+                                                                        backgroundColor:
+                                                                            AppColors.whiteColor,
+                                                                        borderColor:
+                                                                            AppColors.bluebutton,
+                                                                        textColor:
+                                                                            AppColors.bluebutton,
+                                                                        buttonText:
+                                                                            'Margin Voucher',
+                                                                        onPressed:
+                                                                            () async {
+                                                                          PdfActionHelper
+                                                                              .showPdfOptions(
+                                                                            context:
+                                                                                context,
+                                                                            title:
+                                                                                'Margin Voucher',
+                                                                            pdfUrl:
+                                                                                '${HttpUrls.getPdfMarginVoucher}${widget.customerId}',
+                                                                            onGenerate:
+                                                                                () async {
+                                                                              await Loader.showLoader(context);
+                                                                              final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfMarginVoucher}${widget.customerId}');
+                                                                              Loader.stopLoader(context);
+                                                                              return bytes ?? Uint8List(0);
                                                                             },
-                                                                        ),
+                                                                          );
+                                                                        },
+                                                                      ),
+                                                                    if ((settingsprovider.menuIsViewMap[222] ==
+                                                                                1 ||
+                                                                            settingsprovider.menuIsViewMapPrint[222] ==
+                                                                                1) &&
+                                                                        sideprovider.name !=
+                                                                            'Lead /')
+                                                                      CustomElevatedButton(
+                                                                        radius:
+                                                                            4,
+                                                                        backgroundColor:
+                                                                            AppColors.whiteColor,
+                                                                        borderColor:
+                                                                            AppColors.bluebutton,
+                                                                        textColor:
+                                                                            AppColors.bluebutton,
+                                                                        buttonText:
+                                                                            'Vendor Feasibility Report',
+                                                                        onPressed:
+                                                                            () async {
+                                                                          PdfActionHelper
+                                                                              .showPdfOptions(
+                                                                            context:
+                                                                                context,
+                                                                            title:
+                                                                                'Vendor Feasibility Report',
+                                                                            pdfUrl:
+                                                                                '${HttpUrls.getPdfVendorFeasibilityReport}${widget.customerId}',
+                                                                            onGenerate:
+                                                                                () async {
+                                                                              await Loader.showLoader(context);
+                                                                              final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfVendorFeasibilityReport}${widget.customerId}');
+                                                                              Loader.stopLoader(context);
+                                                                              return bytes ?? Uint8List(0);
+                                                                            },
+                                                                          );
+                                                                        },
+                                                                      ),
+                                                                    if (settingsprovider
+                                                                            .menuIsViewMap[224] ==
+                                                                        1)
+                                                                      CustomElevatedButton(
+                                                                        radius:
+                                                                            4,
+                                                                        backgroundColor:
+                                                                            AppColors.whiteColor,
+                                                                        borderColor:
+                                                                            AppColors.darkGreen,
+                                                                        textColor:
+                                                                            AppColors.darkGreen,
+                                                                        buttonText:
+                                                                            'Download Document',
+                                                                        onPressed:
+                                                                            () {
+                                                                          showDialog(
+                                                                            context:
+                                                                                context,
+                                                                            builder: (context) =>
+                                                                                DocumentCategoryDownloadDialog(
+                                                                              customerId: widget.customerId,
+                                                                            ),
+                                                                          );
+                                                                        },
+                                                                      ),
+                                                                    if ((settingsprovider.menuIsViewMap[210] ==
+                                                                                1 ||
+                                                                            settingsprovider.menuIsViewMapPrint[210] ==
+                                                                                1) &&
+                                                                        sideprovider.name !=
+                                                                            'Lead /')
+                                                                      CustomElevatedButton(
+                                                                        radius:
+                                                                            4,
+                                                                        backgroundColor:
+                                                                            AppColors.whiteColor,
+                                                                        borderColor:
+                                                                            AppColors.bluebutton,
+                                                                        textColor:
+                                                                            AppColors.bluebutton,
+                                                                        buttonText:
+                                                                            'Vendor Feasibility',
+                                                                        onPressed:
+                                                                            () async {
+                                                                          PdfActionHelper
+                                                                              .showPdfOptions(
+                                                                            context:
+                                                                                context,
+                                                                            title:
+                                                                                'Vendor Feasibility',
+                                                                            pdfUrl:
+                                                                                '${HttpUrls.getPdfVendorFeasibilityReport}${widget.customerId}',
+                                                                            onGenerate:
+                                                                                () async {
+                                                                              await Loader.showLoader(context);
+                                                                              final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfVendorFeasibilityReport}${widget.customerId}');
+                                                                              Loader.stopLoader(context);
+                                                                              return bytes ?? Uint8List(0);
+                                                                            },
+                                                                          );
+                                                                        },
+                                                                      ),
+                                                                    if ((settingsprovider.menuIsViewMap[211] ==
+                                                                                1 ||
+                                                                            settingsprovider.menuIsViewMapPrint[211] ==
+                                                                                1) &&
+                                                                        sideprovider.name !=
+                                                                            'Lead /')
+                                                                      CustomElevatedButton(
+                                                                        radius:
+                                                                            4,
+                                                                        backgroundColor:
+                                                                            AppColors.whiteColor,
+                                                                        borderColor:
+                                                                            AppColors.bluebutton,
+                                                                        textColor:
+                                                                            AppColors.bluebutton,
+                                                                        buttonText:
+                                                                            'Work Completion Report 1',
+                                                                        onPressed:
+                                                                            () async {
+                                                                          PdfActionHelper
+                                                                              .showPdfOptions(
+                                                                            context:
+                                                                                context,
+                                                                            title:
+                                                                                'Work Completion Report 1',
+                                                                            pdfUrl:
+                                                                                '${HttpUrls.getPdfWorkCompletionReportSunfix}${widget.customerId}',
+                                                                            onGenerate:
+                                                                                () async {
+                                                                              await Loader.showLoader(context);
+                                                                              final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfWorkCompletionReportSunfix}${widget.customerId}');
+                                                                              Loader.stopLoader(context);
+                                                                              return bytes ?? Uint8List(0);
+                                                                            },
+                                                                          );
+                                                                        },
+                                                                      ),
+                                                                    if ((settingsprovider.menuIsViewMap[212] ==
+                                                                                1 ||
+                                                                            settingsprovider.menuIsViewMapPrint[212] ==
+                                                                                1) &&
+                                                                        sideprovider.name !=
+                                                                            'Lead /')
+                                                                      CustomElevatedButton(
+                                                                        radius:
+                                                                            4,
+                                                                        backgroundColor:
+                                                                            AppColors.whiteColor,
+                                                                        borderColor:
+                                                                            AppColors.bluebutton,
+                                                                        textColor:
+                                                                            AppColors.bluebutton,
+                                                                        buttonText:
+                                                                            'Checklist 1',
+                                                                        onPressed:
+                                                                            () async {
+                                                                          PdfActionHelper
+                                                                              .showPdfOptions(
+                                                                            context:
+                                                                                context,
+                                                                            title:
+                                                                                'Checklist 1',
+                                                                            pdfUrl:
+                                                                                '${HttpUrls.getPdfChecklistSunfix}${widget.customerId}',
+                                                                            onGenerate:
+                                                                                () async {
+                                                                              await Loader.showLoader(context);
+                                                                              final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfChecklistSunfix}${widget.customerId}');
+                                                                              Loader.stopLoader(context);
+                                                                              return bytes ?? Uint8List(0);
+                                                                            },
+                                                                          );
+                                                                        },
+                                                                      ),
                                                                   ],
                                                                 ),
                                                                 const SizedBox(
                                                                     height: 20),
                                                                 // ACTION BUTTONS (Moved here)
-                                                                if (settingsprovider.menuIsViewMap[235] == 1)
-                                                                CustomerCard(
-                                                                  title:
-                                                                      "Additional Details",
-                                                                  action:
-                                                                      _buildCopyAdditionalDetailsButton(
-                                                                          leadProvider
-                                                                              .customFieldEnquiryFor),
-                                                                  content: _buildCategorizedAdditionalDetails(leadProvider.customFieldEnquiryFor),
-                                                                ),
+                                                                if (settingsprovider
+                                                                            .menuIsViewMap[
+                                                                        235] ==
+                                                                    1)
+                                                                  CustomerCard(
+                                                                    title:
+                                                                        "Additional Details",
+                                                                    action: _buildCopyAdditionalDetailsButton(
+                                                                        leadProvider
+                                                                            .customFieldEnquiryFor),
+                                                                    content: _buildCategorizedAdditionalDetails(
+                                                                        leadProvider
+                                                                            .customFieldEnquiryFor),
+                                                                  ),
                                                               ],
                                                             ),
                                                           )
@@ -4051,7 +4109,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                               const SizedBox(
                                                                   height: 2),
                                                               DetailRow(
-                                                                label: "District",
+                                                                label:
+                                                                    "District",
                                                                 value: customerDetailsProvider
                                                                         .leadDetails![
                                                                             0]
@@ -4100,7 +4159,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                         0]
                                                                     .referenceName,
                                                               ),
-                                                              if (settingsprovider.menuIsViewMap[247] == 1) ...[
+                                                              if (settingsprovider
+                                                                          .menuIsViewMap[
+                                                                      247] ==
+                                                                  1) ...[
                                                                 const SizedBox(
                                                                     height: 2),
                                                                 DetailRow(
@@ -4118,9 +4180,9 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                 label:
                                                                     "Total project cost",
                                                                 value: customerDetailsProvider
-                                                                        .leadDetails![
-                                                                            0]
-                                                                        .displayProjectCost,
+                                                                    .leadDetails![
+                                                                        0]
+                                                                    .displayProjectCost,
                                                               ),
                                                               const SizedBox(
                                                                   height: 2),
@@ -4128,23 +4190,21 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                 label:
                                                                     "Total Expense",
                                                                 value: customerDetailsProvider
-                                                                        .leadDetails![0]
+                                                                        .leadDetails![
+                                                                            0]
                                                                         .displayTotalExpense
                                                                         .isNotEmpty
                                                                     ? customerDetailsProvider
-                                                                        .leadDetails![0]
+                                                                        .leadDetails![
+                                                                            0]
                                                                         .displayTotalExpense
                                                                     : (customerDetailsProvider
                                                                             .expenseList
                                                                             .isNotEmpty
                                                                         ? customerDetailsProvider
                                                                             .expenseList
-                                                                            .fold<double>(
-                                                                                0.0,
-                                                                                (sum, item) =>
-                                                                                    sum +
-                                                                                    (item.amount ??
-                                                                                        0.0))
+                                                                            .fold<double>(0.0,
+                                                                                (sum, item) => sum + (item.amount ?? 0.0))
                                                                             .toStringAsFixed(2)
                                                                             .replaceAll(RegExp(r'\.00$'), '')
                                                                         : ''),
@@ -4155,22 +4215,23 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                 label:
                                                                     "Balance Amount",
                                                                 value: customerDetailsProvider
-                                                                        .leadDetails![0]
+                                                                        .leadDetails![
+                                                                            0]
                                                                         .displayBalanceAmount
                                                                         .isNotEmpty
                                                                     ? customerDetailsProvider
-                                                                        .leadDetails![0]
+                                                                        .leadDetails![
+                                                                            0]
                                                                         .displayBalanceAmount
-                                                                    : (customerDetailsProvider
-                                                                                    .balanceTotal
-                                                                                    .isNotEmpty &&
+                                                                    : (customerDetailsProvider.balanceTotal.isNotEmpty &&
                                                                             customerDetailsProvider.balanceTotal !=
                                                                                 '0' &&
                                                                             customerDetailsProvider.balanceTotal !=
                                                                                 '0.0'
                                                                         ? customerDetailsProvider
                                                                             .balanceTotal
-                                                                            .replaceAll(RegExp(r'\.0+$'), '')
+                                                                            .replaceAll(RegExp(r'\.0+$'),
+                                                                                '')
                                                                         : ''),
                                                               ),
                                                             ],
@@ -4273,19 +4334,21 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           .address2 ??
                                                                       ''),
                                                               // Consumer Number
-                                                              if (settingsprovider.consumerNoInLeadPage == 1)...[
-                                                              const SizedBox(
-                                                                  height: 2),
-                                                              DetailRow(
-                                                                  label:
-                                                                      "Consumer Number",
-                                                                  value: customerDetailsProvider
-                                                                      .leadDetails![
-                                                                          0]
-                                                                      .consumerNumber
-                                                                      .toString()),
-                                                              const SizedBox(
-                                                                  height: 2),
+                                                              if (settingsprovider
+                                                                      .consumerNoInLeadPage ==
+                                                                  1) ...[
+                                                                const SizedBox(
+                                                                    height: 2),
+                                                                DetailRow(
+                                                                    label:
+                                                                        "Consumer Number",
+                                                                    value: customerDetailsProvider
+                                                                        .leadDetails![
+                                                                            0]
+                                                                        .consumerNumber
+                                                                        .toString()),
+                                                                const SizedBox(
+                                                                    height: 2),
                                                               ],
                                                               const Text(
                                                                 'Location',
@@ -4363,7 +4426,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                               ),
                                                             ],
                                                           ),
-                                                          if (settingsprovider.menuIsViewMap[206] == 1)
+                                                          if (settingsprovider
+                                                                      .menuIsViewMap[
+                                                                  206] ==
+                                                              1)
                                                             // Additional Details
                                                             CustomerCard(
                                                               title:
@@ -4372,73 +4438,131 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                 DetailRow(
                                                                   label:
                                                                       "Electrical Section",
-                                                                  value: customerDetailsProvider.leadDetails![0].electricalSection == 'null'
+                                                                  value: customerDetailsProvider
+                                                                              .leadDetails![
+                                                                                  0]
+                                                                              .electricalSection ==
+                                                                          'null'
                                                                       ? ''
-                                                                      : customerDetailsProvider.leadDetails![0].electricalSection,
+                                                                      : customerDetailsProvider
+                                                                          .leadDetails![
+                                                                              0]
+                                                                          .electricalSection,
                                                                 ),
                                                                 const SizedBox(
                                                                     height: 2),
                                                                 DetailRow(
                                                                   label:
                                                                       "Connected load",
-                                                                  value: customerDetailsProvider.leadDetails![0].connectedLoad == 0
+                                                                  value: customerDetailsProvider
+                                                                              .leadDetails![
+                                                                                  0]
+                                                                              .connectedLoad ==
+                                                                          0
                                                                       ? ''
-                                                                      : customerDetailsProvider.leadDetails![0].connectedLoad
+                                                                      : customerDetailsProvider
+                                                                          .leadDetails![
+                                                                              0]
+                                                                          .connectedLoad
                                                                           .toString()
-                                                                          .replaceAll(RegExp(r'\.0$'), ''),
+                                                                          .replaceAll(
+                                                                              RegExp(r'\.0$'),
+                                                                              ''),
                                                                 ),
                                                                 const SizedBox(
                                                                     height: 2),
                                                                 DetailRow(
                                                                   label: "REP",
-                                                                  value: customerDetailsProvider.leadDetails![0].rep == 'null'
+                                                                  value: customerDetailsProvider
+                                                                              .leadDetails![
+                                                                                  0]
+                                                                              .rep ==
+                                                                          'null'
                                                                       ? ''
-                                                                      : customerDetailsProvider.leadDetails![0].rep,
+                                                                      : customerDetailsProvider
+                                                                          .leadDetails![
+                                                                              0]
+                                                                          .rep,
                                                                 ),
                                                                 const SizedBox(
                                                                     height: 2),
                                                                 DetailRow(
                                                                   label:
                                                                       "Lead By",
-                                                                  value: customerDetailsProvider.leadDetails![0].leadBy == 'null'
+                                                                  value: customerDetailsProvider
+                                                                              .leadDetails![
+                                                                                  0]
+                                                                              .leadBy ==
+                                                                          'null'
                                                                       ? ''
-                                                                      : customerDetailsProvider.leadDetails![0].leadBy,
+                                                                      : customerDetailsProvider
+                                                                          .leadDetails![
+                                                                              0]
+                                                                          .leadBy,
                                                                 ),
                                                                 const SizedBox(
                                                                     height: 2),
                                                                 DetailRow(
                                                                   label:
                                                                       "Work Type",
-                                                                  value: customerDetailsProvider.leadDetails![0].workTypeName == 'null'
+                                                                  value: customerDetailsProvider
+                                                                              .leadDetails![
+                                                                                  0]
+                                                                              .workTypeName ==
+                                                                          'null'
                                                                       ? ''
-                                                                      : customerDetailsProvider.leadDetails![0].workTypeName,
+                                                                      : customerDetailsProvider
+                                                                          .leadDetails![
+                                                                              0]
+                                                                          .workTypeName,
                                                                 ),
                                                                 const SizedBox(
                                                                     height: 2),
                                                                 DetailRow(
                                                                   label:
                                                                       "Roof Type",
-                                                                  value: customerDetailsProvider.leadDetails![0].roofTypeName == 'null'
+                                                                  value: customerDetailsProvider
+                                                                              .leadDetails![
+                                                                                  0]
+                                                                              .roofTypeName ==
+                                                                          'null'
                                                                       ? ''
-                                                                      : customerDetailsProvider.leadDetails![0].roofTypeName,
+                                                                      : customerDetailsProvider
+                                                                          .leadDetails![
+                                                                              0]
+                                                                          .roofTypeName,
                                                                 ),
                                                                 const SizedBox(
                                                                     height: 2),
                                                                 DetailRow(
                                                                   label:
                                                                       "Work Completion Date",
-                                                                  value: customerDetailsProvider.leadDetails![0].workCompletionDateDisplay == 'null'
+                                                                  value: customerDetailsProvider
+                                                                              .leadDetails![
+                                                                                  0]
+                                                                              .workCompletionDateDisplay ==
+                                                                          'null'
                                                                       ? ''
-                                                                      : customerDetailsProvider.leadDetails![0].workCompletionDateDisplay,
+                                                                      : customerDetailsProvider
+                                                                          .leadDetails![
+                                                                              0]
+                                                                          .workCompletionDateDisplay,
                                                                 ),
                                                                 const SizedBox(
                                                                     height: 2),
                                                                 DetailRow(
                                                                   label:
                                                                       "Any Additional Comments",
-                                                                  value: customerDetailsProvider.leadDetails![0].additionalComments == 'null'
+                                                                  value: customerDetailsProvider
+                                                                              .leadDetails![
+                                                                                  0]
+                                                                              .additionalComments ==
+                                                                          'null'
                                                                       ? ''
-                                                                      : customerDetailsProvider.leadDetails![0].additionalComments,
+                                                                      : customerDetailsProvider
+                                                                          .leadDetails![
+                                                                              0]
+                                                                          .additionalComments,
                                                                 ),
                                                               ],
                                                             ),
@@ -5058,9 +5182,15 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                     );
                                                                   },
                                                                 ),
-                                                              if ((settingsprovider.menuIsViewMap[223] == 1 ||
-                                                                      settingsprovider.menuIsViewMapPrint[223] == 1) &&
-                                                                  sideprovider.name != 'Lead /')
+                                                              if ((settingsprovider.menuIsViewMap[
+                                                                              223] ==
+                                                                          1 ||
+                                                                      settingsprovider.menuIsViewMapPrint[
+                                                                              223] ==
+                                                                          1) &&
+                                                                  sideprovider
+                                                                          .name !=
+                                                                      'Lead /')
                                                                 CustomElevatedButton(
                                                                   radius: 4,
                                                                   backgroundColor:
@@ -5069,37 +5199,35 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                   borderColor:
                                                                       AppColors
                                                                           .bluebutton,
-                                                                  textColor: AppColors
-                                                                      .bluebutton,
+                                                                  textColor:
+                                                                      AppColors
+                                                                          .bluebutton,
                                                                   buttonText:
                                                                       'Rts Vender feasibility',
                                                                   onPressed:
                                                                       () async {
-                                                                  PdfActionHelper
-                                                                      .showPdfOptions(
-                                                                    context:
-                                                                        context,
-                                                                    title:
-                                                                        'Rts Vender feasibility',
-                                                                    pdfUrl:
-                                                                        '${HttpUrls.getPdfVendorFeasibilityReport}${widget.customerId}',
-                                                                    onGenerate:
-                                                                        () async {
-                                                                      await Loader
-                                                                          .showLoader(
-                                                                              context);
-                                                                      final bytes =
-                                                                          await customerDetailsProvider
-                                                                              .getAnnexurePdfBytes('${HttpUrls.getPdfVendorFeasibilityReport}${widget.customerId}');
-                                                                      Loader.stopLoader(
-                                                                          context);
-                                                                      return bytes ??
-                                                                          Uint8List(
-                                                                              0);
-                                                                    },
-                                                                  );
-                                                                },
-                                                              ),
+                                                                    PdfActionHelper
+                                                                        .showPdfOptions(
+                                                                      context:
+                                                                          context,
+                                                                      title:
+                                                                          'Rts Vender feasibility',
+                                                                      pdfUrl:
+                                                                          '${HttpUrls.getPdfVendorFeasibilityReport}${widget.customerId}',
+                                                                      onGenerate:
+                                                                          () async {
+                                                                        await Loader.showLoader(
+                                                                            context);
+                                                                        final bytes =
+                                                                            await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfVendorFeasibilityReport}${widget.customerId}');
+                                                                        Loader.stopLoader(
+                                                                            context);
+                                                                        return bytes ??
+                                                                            Uint8List(0);
+                                                                      },
+                                                                    );
+                                                                  },
+                                                                ),
                                                               if (settingsprovider
                                                                               .menuIsViewMap[
                                                                           112] ==
@@ -5251,120 +5379,163 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                   );
                                                                 },
                                                               ),
-                                                                if ((settingsprovider.menuIsViewMap[210] == 1 ||
-                                                                        settingsprovider.menuIsViewMapPrint[210] == 1) &&
-                                                                    sideprovider.name != 'Lead /')
-                                                                  CustomElevatedButton(
-                                                                    radius: 4,
-                                                                    backgroundColor:
-                                                                        AppColors.whiteColor,
-                                                                    borderColor:
-                                                                        AppColors.bluebutton,
-                                                                    textColor:
-                                                                        AppColors.bluebutton,
-                                                                    buttonText:
-                                                                        'Vendor Feasibility',
-                                                                    onPressed:
-                                                                        () async {
-                                                                      PdfActionHelper
-                                                                          .showPdfOptions(
-                                                                        context:
-                                                                            context,
-                                                                        title:
-                                                                            'Vendor Feasibility',
-                                                                        pdfUrl:
-                                                                            '${HttpUrls.getPdfVendorFeasibilityReport}${widget.customerId}',
-                                                                        onGenerate:
-                                                                            () async {
-                                                                          await Loader.showLoader(context);
-                                                                          final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfVendorFeasibilityReport}${widget.customerId}');
-                                                                          Loader.stopLoader(context);
-                                                                          return bytes ?? Uint8List(0);
-                                                                        },
-                                                                      );
-                                                                    },
-                                                                  ),
-                                                                if ((settingsprovider.menuIsViewMap[211] == 1 ||
-                                                                        settingsprovider.menuIsViewMapPrint[211] == 1) &&
-                                                                    sideprovider.name != 'Lead /')
-                                                                  CustomElevatedButton(
-                                                                    radius: 4,
-                                                                    backgroundColor:
-                                                                        AppColors.whiteColor,
-                                                                    borderColor:
-                                                                        AppColors.bluebutton,
-                                                                    textColor:
-                                                                        AppColors.bluebutton,
-                                                                    buttonText:
-                                                                        'Work Completion Report 1',
-                                                                    onPressed:
-                                                                        () async {
-                                                                      PdfActionHelper
-                                                                          .showPdfOptions(
-                                                                        context:
-                                                                            context,
-                                                                        title:
-                                                                            'Work Completion Report 1',
-                                                                        pdfUrl:
-                                                                            '${HttpUrls.getPdfWorkCompletionReportSunfix}${widget.customerId}',
-                                                                        onGenerate:
-                                                                            () async {
-                                                                          await Loader.showLoader(context);
-                                                                          final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfWorkCompletionReportSunfix}${widget.customerId}');
-                                                                          Loader.stopLoader(context);
-                                                                          return bytes ?? Uint8List(0);
-                                                                        },
-                                                                      );
-                                                                    },
-                                                                  ),
-                                                                if ((settingsprovider.menuIsViewMap[212] == 1 ||
-                                                                        settingsprovider.menuIsViewMapPrint[212] == 1) &&
-                                                                    sideprovider.name != 'Lead /')
-                                                                  CustomElevatedButton(
-                                                                    radius: 4,
-                                                                    backgroundColor:
-                                                                        AppColors.whiteColor,
-                                                                    borderColor:
-                                                                        AppColors.bluebutton,
-                                                                    textColor:
-                                                                        AppColors.bluebutton,
-                                                                    buttonText:
-                                                                        'Checklist 1',
-                                                                    onPressed:
-                                                                        () async {
-                                                                      PdfActionHelper
-                                                                          .showPdfOptions(
-                                                                        context:
-                                                                            context,
-                                                                        title:
-                                                                            'Checklist 1',
-                                                                        pdfUrl:
-                                                                            '${HttpUrls.getPdfChecklistSunfix}${widget.customerId}',
-                                                                        onGenerate:
-                                                                            () async {
-                                                                          await Loader.showLoader(context);
-                                                                          final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfChecklistSunfix}${widget.customerId}');
-                                                                          Loader.stopLoader(context);
-                                                                          return bytes ?? Uint8List(0);
-                                                                        },
-                                                                      );
-                                                                    },
-                                                                  ),
+                                                              if ((settingsprovider.menuIsViewMap[
+                                                                              210] ==
+                                                                          1 ||
+                                                                      settingsprovider.menuIsViewMapPrint[
+                                                                              210] ==
+                                                                          1) &&
+                                                                  sideprovider
+                                                                          .name !=
+                                                                      'Lead /')
+                                                                CustomElevatedButton(
+                                                                  radius: 4,
+                                                                  backgroundColor:
+                                                                      AppColors
+                                                                          .whiteColor,
+                                                                  borderColor:
+                                                                      AppColors
+                                                                          .bluebutton,
+                                                                  textColor:
+                                                                      AppColors
+                                                                          .bluebutton,
+                                                                  buttonText:
+                                                                      'Vendor Feasibility',
+                                                                  onPressed:
+                                                                      () async {
+                                                                    PdfActionHelper
+                                                                        .showPdfOptions(
+                                                                      context:
+                                                                          context,
+                                                                      title:
+                                                                          'Vendor Feasibility',
+                                                                      pdfUrl:
+                                                                          '${HttpUrls.getPdfVendorFeasibilityReport}${widget.customerId}',
+                                                                      onGenerate:
+                                                                          () async {
+                                                                        await Loader.showLoader(
+                                                                            context);
+                                                                        final bytes =
+                                                                            await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfVendorFeasibilityReport}${widget.customerId}');
+                                                                        Loader.stopLoader(
+                                                                            context);
+                                                                        return bytes ??
+                                                                            Uint8List(0);
+                                                                      },
+                                                                    );
+                                                                  },
+                                                                ),
+                                                              if ((settingsprovider.menuIsViewMap[
+                                                                              211] ==
+                                                                          1 ||
+                                                                      settingsprovider.menuIsViewMapPrint[
+                                                                              211] ==
+                                                                          1) &&
+                                                                  sideprovider
+                                                                          .name !=
+                                                                      'Lead /')
+                                                                CustomElevatedButton(
+                                                                  radius: 4,
+                                                                  backgroundColor:
+                                                                      AppColors
+                                                                          .whiteColor,
+                                                                  borderColor:
+                                                                      AppColors
+                                                                          .bluebutton,
+                                                                  textColor:
+                                                                      AppColors
+                                                                          .bluebutton,
+                                                                  buttonText:
+                                                                      'Work Completion Report 1',
+                                                                  onPressed:
+                                                                      () async {
+                                                                    PdfActionHelper
+                                                                        .showPdfOptions(
+                                                                      context:
+                                                                          context,
+                                                                      title:
+                                                                          'Work Completion Report 1',
+                                                                      pdfUrl:
+                                                                          '${HttpUrls.getPdfWorkCompletionReportSunfix}${widget.customerId}',
+                                                                      onGenerate:
+                                                                          () async {
+                                                                        await Loader.showLoader(
+                                                                            context);
+                                                                        final bytes =
+                                                                            await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfWorkCompletionReportSunfix}${widget.customerId}');
+                                                                        Loader.stopLoader(
+                                                                            context);
+                                                                        return bytes ??
+                                                                            Uint8List(0);
+                                                                      },
+                                                                    );
+                                                                  },
+                                                                ),
+                                                              if ((settingsprovider.menuIsViewMap[
+                                                                              212] ==
+                                                                          1 ||
+                                                                      settingsprovider.menuIsViewMapPrint[
+                                                                              212] ==
+                                                                          1) &&
+                                                                  sideprovider
+                                                                          .name !=
+                                                                      'Lead /')
+                                                                CustomElevatedButton(
+                                                                  radius: 4,
+                                                                  backgroundColor:
+                                                                      AppColors
+                                                                          .whiteColor,
+                                                                  borderColor:
+                                                                      AppColors
+                                                                          .bluebutton,
+                                                                  textColor:
+                                                                      AppColors
+                                                                          .bluebutton,
+                                                                  buttonText:
+                                                                      'Checklist 1',
+                                                                  onPressed:
+                                                                      () async {
+                                                                    PdfActionHelper
+                                                                        .showPdfOptions(
+                                                                      context:
+                                                                          context,
+                                                                      title:
+                                                                          'Checklist 1',
+                                                                      pdfUrl:
+                                                                          '${HttpUrls.getPdfChecklistSunfix}${widget.customerId}',
+                                                                      onGenerate:
+                                                                          () async {
+                                                                        await Loader.showLoader(
+                                                                            context);
+                                                                        final bytes =
+                                                                            await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfChecklistSunfix}${widget.customerId}');
+                                                                        Loader.stopLoader(
+                                                                            context);
+                                                                        return bytes ??
+                                                                            Uint8List(0);
+                                                                      },
+                                                                    );
+                                                                  },
+                                                                ),
                                                             ],
                                                           ),
                                                           const SizedBox(
                                                               height: 20),
                                                           // ACTION BUTTONS (Moved here mobile)
-                                                          if (settingsprovider.menuIsViewMap[235] == 1)
-                                                          CustomerCard(
-                                                            title:
-                                                                "Additional Details",
-                                                            action:
-                                                                _buildCopyAdditionalDetailsButton(
-                                                                    leadProvider
-                                                                        .customFieldEnquiryFor),
-                                                            content: _buildCategorizedAdditionalDetails(leadProvider.customFieldEnquiryFor),
-                                                          ),
+                                                          if (settingsprovider
+                                                                      .menuIsViewMap[
+                                                                  235] ==
+                                                              1)
+                                                            CustomerCard(
+                                                              title:
+                                                                  "Additional Details",
+                                                              action: _buildCopyAdditionalDetailsButton(
+                                                                  leadProvider
+                                                                      .customFieldEnquiryFor),
+                                                              content: _buildCategorizedAdditionalDetails(
+                                                                  leadProvider
+                                                                      .customFieldEnquiryFor),
+                                                            ),
                                                         ],
                                                       ))
                                                 : Container(),
@@ -5605,7 +5776,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                             if (settingsprovider
                                                     .menuIsViewMap[16] ==
                                                 1)
-                                              customerDetailsProvider.isLoading ||
+                                              customerDetailsProvider
+                                                          .isLoading ||
                                                       customerDetailsProvider
                                                           .isQuotationListLoading
                                                   ? const Center(
@@ -5688,8 +5860,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                 19] ==
                                                             1)
                                                           GestureDetector(
-                                                            onTap: () {
-                                                              showDialog(
+                                                            onTap: () async {
+                                                              await showDialog(
                                                                 barrierDismissible:
                                                                     false,
                                                                 context:
@@ -5699,6 +5871,16 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                         customerId:
                                                                             widget.customerId),
                                                               );
+                                                              if (context
+                                                                  .mounted) {
+                                                                customerDetailsProvider
+                                                                    .getDocument(
+                                                                        widget
+                                                                            .customerId,
+                                                                        context,
+                                                                        forceRefresh:
+                                                                            true);
+                                                              }
                                                             },
                                                             child: Container(
                                                               width: 44,
@@ -5738,34 +5920,49 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                       ],
                                                     ),
                                                     const SizedBox(height: 16),
-                                                    if (customerDetailsProvider.isLoading)
+                                                    if (customerDetailsProvider
+                                                        .isLoading)
                                                       const Expanded(
                                                         child: Center(
-                                                          child: CircularProgressIndicator(),
+                                                          child:
+                                                              CircularProgressIndicator(),
                                                         ),
                                                       )
-                                                    else if (customerDetailsProvider.documentList.isEmpty)
+                                                    else if (customerDetailsProvider
+                                                        .documentList.isEmpty)
                                                       Expanded(
                                                         child: Center(
                                                           child: Column(
-                                                            mainAxisAlignment: MainAxisAlignment.center,
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
                                                             children: [
-                                                              const SizedBox(height: 80),
+                                                              const SizedBox(
+                                                                  height: 80),
                                                               Text(
                                                                 'No documents found.',
-                                                                style: GoogleFonts.plusJakartaSans(
+                                                                style: GoogleFonts
+                                                                    .plusJakartaSans(
                                                                   fontSize: 14,
-                                                                  fontWeight: FontWeight.w600,
-                                                                  color: AppColors.textBlack,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                  color: AppColors
+                                                                      .textBlack,
                                                                 ),
                                                               ),
-                                                              const SizedBox(height: 4),
+                                                              const SizedBox(
+                                                                  height: 4),
                                                               Text(
                                                                 'Start by uploading a new document',
-                                                                style: GoogleFonts.plusJakartaSans(
+                                                                style: GoogleFonts
+                                                                    .plusJakartaSans(
                                                                   fontSize: 12,
-                                                                  fontWeight: FontWeight.w500,
-                                                                  color: AppColors.textGrey3,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                  color: AppColors
+                                                                      .textGrey3,
                                                                 ),
                                                               ),
                                                             ],
@@ -5781,8 +5978,12 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                   .length,
                                                           itemBuilder:
                                                               (context, index) {
-                                                            if (index >= customerDetailsProvider.documentList.length) {
-                                                              return const SizedBox.shrink();
+                                                            if (index >=
+                                                                customerDetailsProvider
+                                                                    .documentList
+                                                                    .length) {
+                                                              return const SizedBox
+                                                                  .shrink();
                                                             }
                                                             var userData =
                                                                 customerDetailsProvider
@@ -5790,375 +5991,354 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                     index];
                                                             userData.userName;
                                                             List<ImageDetail>
-                                                                images = userData
+                                                                images =
+                                                                userData
                                                                     .imageDetails;
 
-                                                          return Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .only(
-                                                                    bottom:
-                                                                        24.0),
-                                                            child: Column(
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                // Header: Uploaded By
-                                                                Row(
-                                                                  children: [
-                                                                    CircleAvatar(
-                                                                      radius:
-                                                                          14,
-                                                                      backgroundColor:
-                                                                          getAvatarColor(
-                                                                              userData.userName),
-                                                                      child:
-                                                                          Text(
-                                                                        userData.userName.isNotEmpty
-                                                                            ? userData.userName[0].toUpperCase()
-                                                                            : 'U',
-                                                                        style: const TextStyle(
-                                                                            fontSize:
-                                                                                12,
-                                                                            color:
-                                                                                Colors.white,
-                                                                            fontWeight: FontWeight.bold),
+                                                            return Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .only(
+                                                                      bottom:
+                                                                          24.0),
+                                                              child: Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  // Header: Uploaded By
+                                                                  Row(
+                                                                    children: [
+                                                                      CircleAvatar(
+                                                                        radius:
+                                                                            14,
+                                                                        backgroundColor:
+                                                                            getAvatarColor(userData.userName),
+                                                                        child:
+                                                                            Text(
+                                                                          userData.userName.isNotEmpty
+                                                                              ? userData.userName[0].toUpperCase()
+                                                                              : 'U',
+                                                                          style: const TextStyle(
+                                                                              fontSize: 12,
+                                                                              color: Colors.white,
+                                                                              fontWeight: FontWeight.bold),
+                                                                        ),
                                                                       ),
-                                                                    ),
-                                                                    const SizedBox(
-                                                                        width:
-                                                                            8),
-                                                                    Text(
-                                                                      'Uploaded By ',
-                                                                      style: TextStyle(
-                                                                          fontWeight: FontWeight
-                                                                              .w500,
+                                                                      const SizedBox(
+                                                                          width:
+                                                                              8),
+                                                                      Text(
+                                                                        'Uploaded By ',
+                                                                        style: TextStyle(
+                                                                            fontWeight: FontWeight
+                                                                                .w500,
+                                                                            fontSize:
+                                                                                14,
+                                                                            color:
+                                                                                AppColors.textGrey4),
+                                                                      ),
+                                                                      Text(
+                                                                        userData
+                                                                            .userName,
+                                                                        style:
+                                                                            const TextStyle(
+                                                                          fontWeight:
+                                                                              FontWeight.bold,
                                                                           fontSize:
                                                                               14,
                                                                           color:
-                                                                              AppColors.textGrey4),
-                                                                    ),
-                                                                    Text(
-                                                                      userData
-                                                                          .userName,
-                                                                      style:
-                                                                          const TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight.bold,
-                                                                        fontSize:
-                                                                            14,
-                                                                        color: Colors
-                                                                            .black87,
+                                                                              Colors.black87,
+                                                                        ),
                                                                       ),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                                const SizedBox(
-                                                                    height: 12),
-                                                                // Images List
-                                                                Builder(builder:
-                                                                    (context) {
-                                                                  final isWeb =
-                                                                      AppStyles
-                                                                          .isWebScreen(
-                                                                              context);
-                                                                  final imageSize =
-                                                                      isWeb
-                                                                          ? 140.0
-                                                                          : 100.0;
+                                                                    ],
+                                                                  ),
+                                                                  const SizedBox(
+                                                                      height:
+                                                                          12),
+                                                                  // Images List
+                                                                  Builder(builder:
+                                                                      (context) {
+                                                                    final isWeb =
+                                                                        AppStyles.isWebScreen(
+                                                                            context);
+                                                                    final imageSize = isWeb
+                                                                        ? 140.0
+                                                                        : 100.0;
 
-                                                                  final imageWidgets = images
-                                                                      .asMap()
-                                                                      .entries
-                                                                      .map(
-                                                                          (entry) {
-                                                                    final index =
-                                                                        entry
-                                                                            .key;
-                                                                    final image =
-                                                                        entry
-                                                                            .value;
-                                                                    return SizedBox(
-                                                                      width:
-                                                                          imageSize,
-                                                                      child:
-                                                                          Column(
-                                                                        children: [
-                                                                          Stack(
-                                                                            children: [
-                                                                              Center(
-                                                                                child: InkWell(
-                                                                                  onTap: () {
-                                                                                    int currentIndex = index;
-                                                                                    _showFullScreenImage(context, currentIndex, images, true);
-                                                                                  },
-                                                                                  child: ClipRRect(
-                                                                                    borderRadius: BorderRadius.circular(4),
-                                                                                    child: Image.network(
-                                                                                      image.filePath,
-                                                                                      width: imageSize,
-                                                                                      height: imageSize,
-                                                                                      fit: BoxFit.cover,
-                                                                                      loadingBuilder: (context, child, loadingProgress) {
-                                                                                        if (loadingProgress == null) return child;
-                                                                                        return SizedBox(
-                                                                                          height: imageSize,
-                                                                                          width: imageSize,
-                                                                                          child: Center(
-                                                                                            child: CircularProgressIndicator(
-                                                                                              value: loadingProgress.expectedTotalBytes != null ? loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1) : null,
-                                                                                            ),
-                                                                                          ),
-                                                                                        );
-                                                                                      },
-                                                                                      errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
-                                                                                        return GestureDetector(
-                                                                                          onTap: () async {
-                                                                                            final Uri url = Uri.parse(image.filePath);
-                                                                                            try {
-                                                                                              await launchUrl(url, mode: LaunchMode.externalApplication);
-                                                                                            } catch (e) {
-                                                                                              print('Could not launch $url: $e');
-                                                                                            }
-                                                                                          },
-                                                                                          child: Container(
-                                                                                            color: Colors.grey[200],
-                                                                                            width: imageSize,
+                                                                    final imageWidgets = images
+                                                                        .asMap()
+                                                                        .entries
+                                                                        .map(
+                                                                            (entry) {
+                                                                      final index =
+                                                                          entry
+                                                                              .key;
+                                                                      final image =
+                                                                          entry
+                                                                              .value;
+                                                                      return SizedBox(
+                                                                        width:
+                                                                            imageSize,
+                                                                        child:
+                                                                            Column(
+                                                                          children: [
+                                                                            Stack(
+                                                                              children: [
+                                                                                Center(
+                                                                                  child: InkWell(
+                                                                                    onTap: () {
+                                                                                      int currentIndex = index;
+                                                                                      _showFullScreenImage(context, currentIndex, images, true);
+                                                                                    },
+                                                                                    child: ClipRRect(
+                                                                                      borderRadius: BorderRadius.circular(4),
+                                                                                      child: Image.network(
+                                                                                        image.filePath,
+                                                                                        width: imageSize,
+                                                                                        height: imageSize,
+                                                                                        fit: BoxFit.cover,
+                                                                                        loadingBuilder: (context, child, loadingProgress) {
+                                                                                          if (loadingProgress == null) return child;
+                                                                                          return SizedBox(
                                                                                             height: imageSize,
-                                                                                            child: Builder(
-                                                                                              builder: (context) {
-                                                                                                final urlStr = image.filePath.toLowerCase();
-                                                                                                IconData iconData = Icons.insert_drive_file;
-                                                                                                Color iconColor = Colors.grey;
-                                                                                                String openText = 'Open File';
-
-                                                                                                if (urlStr.endsWith('.pdf')) {
-                                                                                                  iconData = Icons.picture_as_pdf;
-                                                                                                  iconColor = Colors.red;
-                                                                                                  openText = 'Open PDF';
-                                                                                                } else if (urlStr.endsWith('.doc') || urlStr.endsWith('.docx')) {
-                                                                                                  iconData = Icons.description;
-                                                                                                  iconColor = Colors.blue;
-                                                                                                  openText = 'Open Word';
-                                                                                                } else if (urlStr.endsWith('.xls') || urlStr.endsWith('.xlsx') || urlStr.endsWith('.csv')) {
-                                                                                                  iconData = Icons.table_chart;
-                                                                                                  iconColor = Colors.green;
-                                                                                                  openText = 'Open Excel';
-                                                                                                }
-
-                                                                                                return Column(
-                                                                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                                                                  children: [
-                                                                                                    Icon(iconData, color: iconColor, size: 40),
-                                                                                                    const SizedBox(height: 2),
-                                                                                                    Text(openText, style: const TextStyle(color: Colors.blue, decoration: TextDecoration.underline, fontSize: 10)),
-                                                                                                  ],
-                                                                                                );
-                                                                                              },
+                                                                                            width: imageSize,
+                                                                                            child: Center(
+                                                                                              child: CircularProgressIndicator(
+                                                                                                value: loadingProgress.expectedTotalBytes != null ? loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1) : null,
+                                                                                              ),
                                                                                             ),
-                                                                                          ),
-                                                                                        );
-                                                                                      },
+                                                                                          );
+                                                                                        },
+                                                                                        errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                                                                          return GestureDetector(
+                                                                                            onTap: () async {
+                                                                                              final Uri url = Uri.parse(image.filePath);
+                                                                                              try {
+                                                                                                await launchUrl(url, mode: LaunchMode.externalApplication);
+                                                                                              } catch (e) {
+                                                                                                print('Could not launch $url: $e');
+                                                                                              }
+                                                                                            },
+                                                                                            child: Container(
+                                                                                              color: Colors.grey[200],
+                                                                                              width: imageSize,
+                                                                                              height: imageSize,
+                                                                                              child: Builder(
+                                                                                                builder: (context) {
+                                                                                                  final urlStr = image.filePath.toLowerCase();
+                                                                                                  IconData iconData = Icons.insert_drive_file;
+                                                                                                  Color iconColor = Colors.grey;
+                                                                                                  String openText = 'Open File';
+
+                                                                                                  if (urlStr.endsWith('.pdf')) {
+                                                                                                    iconData = Icons.picture_as_pdf;
+                                                                                                    iconColor = Colors.red;
+                                                                                                    openText = 'Open PDF';
+                                                                                                  } else if (urlStr.endsWith('.doc') || urlStr.endsWith('.docx')) {
+                                                                                                    iconData = Icons.description;
+                                                                                                    iconColor = Colors.blue;
+                                                                                                    openText = 'Open Word';
+                                                                                                  } else if (urlStr.endsWith('.xls') || urlStr.endsWith('.xlsx') || urlStr.endsWith('.csv')) {
+                                                                                                    iconData = Icons.table_chart;
+                                                                                                    iconColor = Colors.green;
+                                                                                                    openText = 'Open Excel';
+                                                                                                  }
+
+                                                                                                  return Column(
+                                                                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                                                                    children: [
+                                                                                                      Icon(iconData, color: iconColor, size: 40),
+                                                                                                      const SizedBox(height: 2),
+                                                                                                      Text(openText, style: const TextStyle(color: Colors.blue, decoration: TextDecoration.underline, fontSize: 10)),
+                                                                                                    ],
+                                                                                                  );
+                                                                                                },
+                                                                                              ),
+                                                                                            ),
+                                                                                          );
+                                                                                        },
+                                                                                      ),
                                                                                     ),
                                                                                   ),
                                                                                 ),
-                                                                              ),
-                                                                              Positioned(
-                                                                                top: 5,
-                                                                                right: 5,
-                                                                                child: Row(
-                                                                                  mainAxisSize: MainAxisSize.min,
-                                                                                  children: [
-                                                                                    GestureDetector(
-                                                                                      onTap: () async {
-                                                                                        try {
-                                                                                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Downloading file...')));
-                                                                                          final downloadedPath = await FileDownloader.download(image.filePath);
-                                                                                          if (context.mounted) {
-                                                                                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Downloaded to $downloadedPath')));
-                                                                                          }
-                                                                                        } catch (e) {
-                                                                                          if (context.mounted) {
-                                                                                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Failed to download file')));
-                                                                                          }
-                                                                                        }
-                                                                                      },
-                                                                                      child: const CircleAvatar(
-                                                                                        radius: 12,
-                                                                                        backgroundColor: AppColors.whiteColor,
-                                                                                        child: Icon(Icons.download, size: 20, color: AppColors.primaryBlue),
-                                                                                      ),
-                                                                                    ),
-                                                                                    if (settingsprovider.menuIsDeleteMap[19] == 1) ...[
-                                                                                      const SizedBox(width: 4),
+                                                                                Positioned(
+                                                                                  top: 5,
+                                                                                  right: 5,
+                                                                                  child: Row(
+                                                                                    mainAxisSize: MainAxisSize.min,
+                                                                                    children: [
                                                                                       GestureDetector(
-                                                                                        onTap: () {
-                                                                                          showConfirmationDialog(
-                                                                                            isLoading: customerDetailsProvider.isDeleteLoading,
-                                                                                            context: context,
-                                                                                            title: 'Confirm Deletion',
-                                                                                            content: 'Are you sure you want to delete this file?',
-                                                                                            onCancel: () {
-                                                                                              Navigator.of(context).pop();
-                                                                                            },
-                                                                                            onConfirm: () {
-                                                                                              customerDetailsProvider.deleteImage(context, image.imageId.toString(), widget.customerId);
-                                                                                              Navigator.of(context).pop();
-                                                                                            },
-                                                                                            confirmButtonText: 'Delete',
-                                                                                          );
+                                                                                        onTap: () async {
+                                                                                          try {
+                                                                                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Downloading file...')));
+                                                                                            final downloadedPath = await FileDownloader.download(image.filePath);
+                                                                                            if (context.mounted) {
+                                                                                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Downloaded to $downloadedPath')));
+                                                                                            }
+                                                                                          } catch (e) {
+                                                                                            if (context.mounted) {
+                                                                                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Failed to download file')));
+                                                                                            }
+                                                                                          }
                                                                                         },
                                                                                         child: const CircleAvatar(
                                                                                           radius: 12,
                                                                                           backgroundColor: AppColors.whiteColor,
-                                                                                          child: Icon(Icons.delete, size: 20, color: AppColors.textRed),
+                                                                                          child: Icon(Icons.download, size: 20, color: AppColors.primaryBlue),
                                                                                         ),
                                                                                       ),
+                                                                                      if (settingsprovider.menuIsDeleteMap[19] == 1) ...[
+                                                                                        const SizedBox(width: 4),
+                                                                                        GestureDetector(
+                                                                                          onTap: () {
+                                                                                            showConfirmationDialog(
+                                                                                              isLoading: customerDetailsProvider.isDeleteLoading,
+                                                                                              context: context,
+                                                                                              title: 'Confirm Deletion',
+                                                                                              content: 'Are you sure you want to delete this file?',
+                                                                                              onCancel: () {
+                                                                                                Navigator.of(context).pop();
+                                                                                              },
+                                                                                              onConfirm: () {
+                                                                                                customerDetailsProvider.deleteImage(context, image.imageId.toString(), widget.customerId);
+                                                                                                Navigator.of(context).pop();
+                                                                                              },
+                                                                                              confirmButtonText: 'Delete',
+                                                                                            );
+                                                                                          },
+                                                                                          child: const CircleAvatar(
+                                                                                            radius: 12,
+                                                                                            backgroundColor: AppColors.whiteColor,
+                                                                                            child: Icon(Icons.delete, size: 20, color: AppColors.textRed),
+                                                                                          ),
+                                                                                        ),
+                                                                                      ],
                                                                                     ],
-                                                                                  ],
-                                                                                ),
-                                                                              ),
-                                                                            ],
-                                                                          ),
-                                                                          const SizedBox(
-                                                                              height: 6),
-                                                                          if (image.isVerified ==
-                                                                              '1') ...[
-                                                                            Row(
-                                                                              children: [
-                                                                                Icon(
-                                                                                  Icons.check,
-                                                                                  color: Colors.green,
-                                                                                ),
-                                                                                Expanded(
-                                                                                  child: Text(
-                                                                                    "Verified by ${image.verifiedName}",
-                                                                                    style: TextStyle(fontSize: 12, color: AppColors.textBlack),
-                                                                                    textAlign: TextAlign.left,
-                                                                                    maxLines: 1,
-                                                                                    overflow: TextOverflow.ellipsis,
                                                                                   ),
                                                                                 ),
                                                                               ],
                                                                             ),
-                                                                            if (image.verifiedDate.isNotEmpty &&
-                                                                                DateTime.tryParse(image.verifiedDate) != null)
+                                                                            const SizedBox(height: 6),
+                                                                            if (image.isVerified ==
+                                                                                '1') ...[
+                                                                              Row(
+                                                                                children: [
+                                                                                  Icon(
+                                                                                    Icons.check,
+                                                                                    color: Colors.green,
+                                                                                  ),
+                                                                                  Expanded(
+                                                                                    child: Text(
+                                                                                      "Verified by ${image.verifiedName}",
+                                                                                      style: TextStyle(fontSize: 12, color: AppColors.textBlack),
+                                                                                      textAlign: TextAlign.left,
+                                                                                      maxLines: 1,
+                                                                                      overflow: TextOverflow.ellipsis,
+                                                                                    ),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                              if (image.verifiedDate.isNotEmpty && DateTime.tryParse(image.verifiedDate) != null)
+                                                                                Text(
+                                                                                  DateFormat('dd/MM/yyyy h:mm a').format(DateTime.parse(image.verifiedDate)),
+                                                                                  style: TextStyle(fontSize: 10, color: AppColors.textGrey4),
+                                                                                  textAlign: TextAlign.center,
+                                                                                ),
+                                                                            ] else if (settingsprovider.menuIsViewMap[176] ==
+                                                                                1)
+                                                                              Row(
+                                                                                children: [
+                                                                                  Expanded(
+                                                                                    child: Text(
+                                                                                      "Verification Pending",
+                                                                                      style: TextStyle(fontSize: 10, color: AppColors.textBlack, fontWeight: FontWeight.w600),
+                                                                                      textAlign: TextAlign.center,
+                                                                                      maxLines: 2,
+                                                                                      overflow: TextOverflow.ellipsis,
+                                                                                    ),
+                                                                                  ),
+                                                                                  SizedBox(
+                                                                                    width: 10,
+                                                                                  ),
+                                                                                  Expanded(
+                                                                                    child: CustomElevatedButton(
+                                                                                      onPressed: () {
+                                                                                        customerDetailsProvider.verifyDocument(image.imageId, context);
+                                                                                      },
+                                                                                      buttonText: 'Verify',
+                                                                                      backgroundColor: AppColors.primaryBlue,
+                                                                                      textColor: AppColors.whiteColor,
+                                                                                      borderColor: AppColors.primaryBlue,
+                                                                                      textSize: 12,
+                                                                                      horizontalPadding: 2,
+                                                                                      verticalPadding: 2,
+                                                                                    ),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                            const SizedBox(height: 10),
+                                                                            Text(
+                                                                              image.documentTypeName,
+                                                                              style: TextStyle(fontSize: 12, color: AppColors.textBlack),
+                                                                              textAlign: TextAlign.center,
+                                                                              maxLines: 2,
+                                                                              overflow: TextOverflow.ellipsis,
+                                                                            ),
+                                                                            if (image.entryDate.isNotEmpty &&
+                                                                                DateTime.tryParse(image.entryDate) != null)
                                                                               Text(
-                                                                                DateFormat('dd/MM/yyyy h:mm a').format(DateTime.parse(image.verifiedDate)),
+                                                                                DateFormat('dd/MM/yyyy h:mm a').format(DateTime.parse(image.entryDate)),
                                                                                 style: TextStyle(fontSize: 10, color: AppColors.textGrey4),
                                                                                 textAlign: TextAlign.center,
                                                                               ),
-                                                                          ] else if (settingsprovider.menuIsViewMap[176] ==
-                                                                              1)
-                                                                            Row(
-                                                                              children: [
-                                                                                Expanded(
-                                                                                  child: Text(
-                                                                                    "Verification Pending",
-                                                                                    style: TextStyle(fontSize: 10, color: AppColors.textBlack, fontWeight: FontWeight.w600),
-                                                                                    textAlign: TextAlign.center,
-                                                                                    maxLines: 2,
-                                                                                    overflow: TextOverflow.ellipsis,
-                                                                                  ),
-                                                                                ),
-                                                                                SizedBox(
-                                                                                  width: 10,
-                                                                                ),
-                                                                                Expanded(
-                                                                                  child: CustomElevatedButton(
-                                                                                    onPressed: () {
-                                                                                      customerDetailsProvider.verifyDocument(image.imageId, context);
-                                                                                    },
-                                                                                    buttonText: 'Verify',
-                                                                                    backgroundColor: AppColors.primaryBlue,
-                                                                                    textColor: AppColors.whiteColor,
-                                                                                    borderColor: AppColors.primaryBlue,
-                                                                                    textSize: 12,
-                                                                                    horizontalPadding: 2,
-                                                                                    verticalPadding: 2,
-                                                                                  ),
-                                                                                ),
-                                                                              ],
-                                                                            ),
-                                                                          const SizedBox(
-                                                                              height: 10),
-                                                                          Text(
-                                                                            image.documentTypeName,
-                                                                            style:
-                                                                                TextStyle(fontSize: 12, color: AppColors.textBlack),
-                                                                            textAlign:
-                                                                                TextAlign.center,
-                                                                            maxLines:
-                                                                                2,
-                                                                            overflow:
-                                                                                TextOverflow.ellipsis,
-                                                                          ),
-                                                                          if (image.entryDate.isNotEmpty &&
-                                                                              DateTime.tryParse(image.entryDate) != null)
                                                                             Text(
-                                                                              DateFormat('dd/MM/yyyy h:mm a').format(DateTime.parse(image.entryDate)),
-                                                                              style:
-                                                                                  TextStyle(fontSize: 10, color: AppColors.textGrey4),
-                                                                              textAlign:
-                                                                                  TextAlign.center,
+                                                                              image.description,
+                                                                              style: TextStyle(fontSize: 12, color: AppColors.textBlack),
+                                                                              textAlign: TextAlign.center,
+                                                                              maxLines: 3,
+                                                                              overflow: TextOverflow.ellipsis,
                                                                             ),
-                                                                          Text(
-                                                                            image.description,
-                                                                            style:
-                                                                                TextStyle(fontSize: 12, color: AppColors.textBlack),
-                                                                            textAlign:
-                                                                                TextAlign.center,
-                                                                            maxLines:
-                                                                                3,
-                                                                            overflow:
-                                                                                TextOverflow.ellipsis,
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                    );
-                                                                  }).toList();
+                                                                          ],
+                                                                        ),
+                                                                      );
+                                                                    }).toList();
 
-                                                                  return MouseRegion(
-                                                                    cursor:
-                                                                        SystemMouseCursors
-                                                                            .click,
-                                                                    child: isWeb
-                                                                        ? SizedBox(
-                                                                            width:
-                                                                                double.infinity,
-                                                                            child:
-                                                                                Wrap(
-                                                                              spacing: 16,
-                                                                              runSpacing: 16,
-                                                                              children: imageWidgets,
-                                                                            ),
-                                                                          )
-                                                                        : SizedBox(
-                                                                            height:
-                                                                                160,
-                                                                            child:
-                                                                                Scrollbar(
-                                                                              controller: customerDetailsProvider.imageScrollController,
-                                                                              thumbVisibility: true,
-                                                                              child: ListView.separated(
+                                                                    return MouseRegion(
+                                                                      cursor: SystemMouseCursors
+                                                                          .click,
+                                                                      child: isWeb
+                                                                          ? SizedBox(
+                                                                              width: double.infinity,
+                                                                              child: Wrap(
+                                                                                spacing: 16,
+                                                                                runSpacing: 16,
+                                                                                children: imageWidgets,
+                                                                              ),
+                                                                            )
+                                                                          : SizedBox(
+                                                                              height: 160,
+                                                                              child: Scrollbar(
                                                                                 controller: customerDetailsProvider.imageScrollController,
-                                                                                scrollDirection: Axis.horizontal,
-                                                                                separatorBuilder: (context, index) => const SizedBox(width: 12),
-                                                                                physics: const ClampingScrollPhysics(),
-                                                                                itemCount: imageWidgets.length,
-                                                                                itemBuilder: (context, index) => imageWidgets[index],
+                                                                                thumbVisibility: true,
+                                                                                child: ListView.separated(
+                                                                                  controller: customerDetailsProvider.imageScrollController,
+                                                                                  scrollDirection: Axis.horizontal,
+                                                                                  separatorBuilder: (context, index) => const SizedBox(width: 12),
+                                                                                  physics: const ClampingScrollPhysics(),
+                                                                                  itemCount: imageWidgets.length,
+                                                                                  itemBuilder: (context, index) => imageWidgets[index],
+                                                                                ),
                                                                               ),
                                                                             ),
-                                                                          ),
-                                                                  );
-                                                                })
-                                                              ],
-                                                            ),
-                                                          );
-                                                        },
+                                                                    );
+                                                                  })
+                                                                ],
+                                                              ),
+                                                            );
+                                                          },
+                                                        ),
                                                       ),
-                                                    ),
                                                   ],
                                                 ),
                                               ),

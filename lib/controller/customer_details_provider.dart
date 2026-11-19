@@ -558,8 +558,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
   String? _lastPaymentCustomerId;
 
-  Future<void> getPaymentListApi(
-      String customerId, BuildContext context,
+  Future<void> getPaymentListApi(String customerId, BuildContext context,
       {bool forceRefresh = false}) async {
     if (!forceRefresh &&
         _lastPaymentCustomerId == customerId &&
@@ -639,7 +638,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Payment Saved Successfully')),
         );
-        getPaymentListApi(payment.customerId.toString(), context, forceRefresh: true);
+        getPaymentListApi(payment.customerId.toString(), context,
+            forceRefresh: true);
         Navigator.pop(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -695,8 +695,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
   String? _lastFollowUpHistoryCustomerId;
 
-  Future<void> getFollowUpHistory(
-      String customerId, BuildContext context,
+  Future<void> getFollowUpHistory(String customerId, BuildContext context,
       {bool forceRefresh = false}) async {
     if (!forceRefresh &&
         _lastFollowUpHistoryCustomerId == customerId &&
@@ -1527,7 +1526,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
   String? _lastTaskOverviewCustomerId;
 
-  Future<void> getCustomerTaskOverview(String customerId, {bool forceRefresh = false}) async {
+  Future<void> getCustomerTaskOverview(String customerId,
+      {bool forceRefresh = false}) async {
     if (!forceRefresh &&
         _lastTaskOverviewCustomerId == customerId &&
         _customerTaskOverviewTasks.isNotEmpty) {
@@ -3408,8 +3408,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
   String? _lastAmcCustomerId;
 
-  Future<void> getAmc(
-      String customerId, String amcId, BuildContext context,
+  Future<void> getAmc(String customerId, String amcId, BuildContext context,
       {bool forceRefresh = false}) async {
     if (!forceRefresh &&
         _lastAmcCustomerId == customerId &&
@@ -3440,15 +3439,19 @@ class CustomerDetailsProvider extends ChangeNotifier {
           notifyListeners();
         }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Server Error')),
-        );
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Server Error')),
+          );
+        }
       }
     } catch (e) {
       print('Exception occurred: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred')),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('An error occurred')),
+        );
+      }
     } finally {
       _isAmcListLoading = false;
 
@@ -3517,15 +3520,19 @@ class CustomerDetailsProvider extends ChangeNotifier {
         }
         print(data);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Server Error')),
-        );
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Server Error')),
+          );
+        }
       }
     } catch (e) {
       print('Exception occurred: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred')),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('An error occurred')),
+        );
+      }
     } finally {
       Navigator.pop(context);
     }
@@ -4395,15 +4402,19 @@ class CustomerDetailsProvider extends ChangeNotifier {
               .toList();
         }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Server Error')),
-        );
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Server Error')),
+          );
+        }
       }
     } catch (e) {
       print('Exception occurred: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred')),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('An error occurred')),
+        );
+      }
     } finally {
       _isLoading = false; // Set loading to false once the request completes
       notifyListeners(); // Notify listeners to rebuild with the final state
@@ -4412,8 +4423,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
   String? _lastReceiptCustomerId;
 
-  Future<void> getRecieptListApi(
-      String customerId, BuildContext context,
+  Future<void> getRecieptListApi(String customerId, BuildContext context,
       {bool forceRefresh = false}) async {
     if (!forceRefresh &&
         _lastReceiptCustomerId == customerId &&
@@ -4442,15 +4452,19 @@ class CustomerDetailsProvider extends ChangeNotifier {
               .toList();
         }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Server Error')),
-        );
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Server Error')),
+          );
+        }
       }
     } catch (e) {
       print('Exception occurred: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred')),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('An error occurred')),
+        );
+      }
     } finally {
       _isLoading = false; // Set loading to false once the request completes
       notifyListeners(); // Notify listeners to rebuild with the final state
@@ -4671,15 +4685,19 @@ class CustomerDetailsProvider extends ChangeNotifier {
               .toList();
         }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Server Error')),
-        );
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Server Error')),
+          );
+        }
       }
     } catch (e) {
       print('Exception occurred: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred')),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('An error occurred')),
+        );
+      }
     } finally {
       _isLoading = false; // Set loading to false once the request completes
       notifyListeners(); // Notify listeners to rebuild with the final state
@@ -4742,15 +4760,19 @@ class CustomerDetailsProvider extends ChangeNotifier {
               .toList();
         }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Server Error')),
-        );
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Server Error')),
+          );
+        }
       }
     } catch (e) {
       print('Exception occurred: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred')),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('An error occurred')),
+        );
+      }
     } finally {
       _isLoading = false; // Set loading to false once the request completes
       notifyListeners(); // Notify listeners to rebuild with the final state
@@ -5048,15 +5070,19 @@ class CustomerDetailsProvider extends ChangeNotifier {
               .toList();
         }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Server Error')),
-        );
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Server Error')),
+          );
+        }
       }
     } catch (e) {
       print('Exception occurred: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred')),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('An error occurred')),
+        );
+      }
     } finally {
       // _isLoading = false; // Set loading to false once the request completes
       notifyListeners(); // Notify listeners to rebuild with the final state
@@ -5163,15 +5189,19 @@ class CustomerDetailsProvider extends ChangeNotifier {
           //     .toList();
         }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Server Error')),
-        );
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Server Error')),
+          );
+        }
       }
     } catch (e) {
       print('Exception occurred: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred')),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('An error occurred')),
+        );
+      }
     } finally {
       _isLoading = false; // Set loading to false once the request completes
       notifyListeners(); // Notify listeners to rebuild with the final state
@@ -5584,7 +5614,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> getQuotationTypes(BuildContext context, {bool forceRefresh = false}) async {
+  Future<void> getQuotationTypes(BuildContext context,
+      {bool forceRefresh = false}) async {
     if (!forceRefresh && _quotationTypeData.isNotEmpty) return;
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -5604,15 +5635,19 @@ class CustomerDetailsProvider extends ChangeNotifier {
           notifyListeners();
         }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Server Error')),
-        );
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Server Error')),
+          );
+        }
       }
     } catch (e) {
       print('Exception occurred: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred')),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('An error occurred')),
+        );
+      }
     }
   }
 

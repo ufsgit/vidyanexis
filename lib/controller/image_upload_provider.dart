@@ -674,7 +674,10 @@ class ImageUploadProvider extends ChangeNotifier {
         clearFiles();
         print(data);
 
-        customerDetailsProvider.getDocument(customerId, context);
+        if (customerId.isNotEmpty && customerId != '0') {
+          customerDetailsProvider.getDocument(customerId, context,
+              forceRefresh: true);
+        }
 
         if (shouldPop) {
           navigator.pop(true);
@@ -803,7 +806,10 @@ class ImageUploadProvider extends ChangeNotifier {
           const SnackBar(content: Text('Documents uploaded successfully')),
         );
         clearFiles();
-        customerDetailsProvider.getDocument(customerId, context);
+        if (customerId.isNotEmpty && customerId != '0') {
+          customerDetailsProvider.getDocument(customerId, context,
+              forceRefresh: true);
+        }
         if (shouldPop) navigator.pop(uploadedDocResults);
         return uploadedUrls;
       } else {
