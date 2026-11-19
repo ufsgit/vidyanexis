@@ -964,8 +964,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
   String selectedBomItemName = '';
   TextEditingController quotationStatusController = TextEditingController();
   TextEditingController systemPriceController = TextEditingController();
-  TextEditingController additionalStructureController =
-      TextEditingController(text: '200');
+  TextEditingController additionalStructureController = TextEditingController();
   TextEditingController feasibilityFeeController = TextEditingController();
   TextEditingController registrationFeeController = TextEditingController();
   TextEditingController feasibilityFeeThreeController = TextEditingController();
@@ -4040,7 +4039,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     billinvoiceController.clear();
     billdescriptionController.clear();
     systemPriceController.clear();
-    additionalStructureController.text = '200';
+    additionalStructureController.clear();
     feasibilityFeeController.clear();
     registrationFeeController.clear();
     itemMrpController.clear();
