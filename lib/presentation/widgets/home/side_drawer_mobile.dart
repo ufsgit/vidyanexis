@@ -22,6 +22,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/presentation/pages/home/process_flow_page.dart';
 import 'package:vidyanexis/presentation/pages/inventory/expense_management.dart';
 import 'package:vidyanexis/presentation/pages/inventory/inventory_page.dart';
@@ -798,6 +799,7 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
                   int? cachedJbDefault = prefs.getInt('cached_jb_default');
 
                   await prefs.clear();
+                  HttpRequest.clearCachedToken();
 
                   // Restore attendance state
                   if (userId != null) {

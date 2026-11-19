@@ -68,9 +68,11 @@ class LoginController extends ChangeNotifier {
           }
         }
 
+
         final tokenStr = data['token'].toString();
         preferences.setString('token', tokenStr);
         HttpRequest.setCachedToken(tokenStr);
+
         preferences.setString('userName', data['User_Details_Name'].toString());
         preferences.setString('userId', data['User_Details_Id'].toString());
         preferences.setString('userType', data['User_Type_Id'].toString());

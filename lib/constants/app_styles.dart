@@ -12,7 +12,7 @@ class AppStyles {
   }
 
   static String versionNumber(){
-    const versionNumber = '1.0.3.27';
+    const versionNumber = '1.0.3.28';
     return versionNumber;
   }
 

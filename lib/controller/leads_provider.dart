@@ -1377,7 +1377,7 @@ class LeadsProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> saveLead({
+  Future<bool> saveLead({
     required BuildContext context,
     required String customerName,
     required String contactNumber,
@@ -1730,19 +1730,23 @@ class LeadsProvider extends ChangeNotifier {
         }
 
         if (customerIdFlag == -2) {
-          // Loader.stopLoader(context);
+          Loader.stopLoader(context);
           alert(context, "Email Already Exists");
+          return false;
         } else if (customerIdFlag == -1) {
-          // Loader.stopLoader(context);
+          Loader.stopLoader(context);
           if (leadMobileExistedCheck == 1) {
             alert(context, "Mobile No. Already Exists");
           }
+          return false;
         } else if (customerIdFlag == -3) {
-          // Loader.stopLoader(context);
+          Loader.stopLoader(context);
           alert(context, "Consumer No. Already Exists");
+          return false;
         } else if (customerIdFlag == -4) {
-          // Loader.stopLoader(context);
+          Loader.stopLoader(context);
           alert(context, "Aadhar No. Already Exists");
+          return false;
         } else {
           log('Success');
           leadData.clear();
@@ -1769,16 +1773,17 @@ class LeadsProvider extends ChangeNotifier {
               Provider.of<DashboardProvider>(context, listen: false);
           dashboardProvider.refreshDashboardData(context, isSilent: true);
 
-          Navigator.pop(context);
           Loader.stopLoader(context);
           notifyListeners();
           print(data);
+          return true;
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Server Error')),
         );
         Loader.stopLoader(context);
+        return false;
       }
     } catch (e) {
       print('Exception occurred: $e');
@@ -1786,6 +1791,7 @@ class LeadsProvider extends ChangeNotifier {
         const SnackBar(content: Text('An error occurred')),
       );
       Loader.stopLoader(context);
+      return false;
     }
   }
 

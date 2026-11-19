@@ -26,19 +26,26 @@ class HttpRequest {
     return _cachedToken!;
   }
 
-  static void clearCachedToken() {
-    _cachedToken = null;
-  }
+  static Future<String> getToken() => _getToken();
 
   static void setCachedToken(String token) {
     _cachedToken = token;
   }
 
+  static void updateCachedToken(String token) {
+    _cachedToken = token;
+  }
+
+  static void clearCachedToken() {
+    _cachedToken = null;
+  }
+
   static Dio _createDio() {
     final Dio dio = Dio(
       BaseOptions(
-        connectTimeout: const Duration(seconds: 60),
-        receiveTimeout: const Duration(seconds: 60),
+        connectTimeout: const Duration(seconds: 15),
+        receiveTimeout: const Duration(seconds: 25),
+        sendTimeout: const Duration(seconds: 25),
       ),
     );
     if (!kIsWeb) {
@@ -70,7 +77,9 @@ class HttpRequest {
     }
 
     final Dio dio = _getDio();
+
     final String token = await _getToken();
+
 
     try {
       final String url = endPoint.startsWith('http')
@@ -111,7 +120,9 @@ class HttpRequest {
       print('post request ====> $endPoint $bodyData');
     }
     final Dio dio = _getDio();
+
     final String token = await _getToken();
+
 
     try {
       final Response response = await dio.post(
@@ -151,7 +162,9 @@ class HttpRequest {
       print('delete request ====> $endPoint $bodyData');
     }
     final Dio dio = _getDio();
+
     final String token = await _getToken();
+
 
     try {
       final Response response = await dio.delete(
@@ -188,7 +201,9 @@ class HttpRequest {
       print('put request ====> $endPoint $bodyData');
     }
     final Dio dio = _getDio();
+
     final String token = await _getToken();
+
 
     try {
       final Response response = await dio.put(
@@ -225,7 +240,9 @@ class HttpRequest {
       print('put request ====> $endPoint $bodyData');
     }
     final Dio dio = _getDio();
+
     final String token = await _getToken();
+
 
     try {
       final Response response = await dio.put(
