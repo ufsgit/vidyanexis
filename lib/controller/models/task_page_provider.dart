@@ -1181,8 +1181,14 @@ class TaskPageProvider extends ChangeNotifier {
           final metaData = data['metadata'] ?? {};
 
           // Update metadata
-          _totalSize = metaData['Total_Items'] ?? 1;
-          _totalPages = metaData['Total_Pages'] ?? 1;
+          _totalSize = data['Total_Task_Count'] ??
+              metaData['Total_Task_Count'] ??
+              metaData['Total_Items'] ??
+              1;
+          _totalPages = metaData['Total_Pages'] ??
+              ((_totalSize / _pageSize).ceil() > 0
+                  ? (_totalSize / _pageSize).ceil()
+                  : 1);
 
           final newData = data['data'] ?? [];
 

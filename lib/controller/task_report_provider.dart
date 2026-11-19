@@ -346,6 +346,31 @@ class TaskReportProvider extends ChangeNotifier {
 
             print("DEBUG: Total items received from API: ${allTasks.length}");
 
+            // Extract Total_Task_Count from API response (if provided by backend)
+            int? apiTotalTaskCount;
+            if (data is Map) {
+              if (data['Total_Task_Count'] != null) {
+                apiTotalTaskCount =
+                    int.tryParse(data['Total_Task_Count'].toString());
+              } else if (data['metadata'] is Map &&
+                  data['metadata']['Total_Task_Count'] != null) {
+                apiTotalTaskCount = int.tryParse(
+                    data['metadata']['Total_Task_Count'].toString());
+              }
+            }
+            if (apiTotalTaskCount == null && dataMap.isNotEmpty) {
+              for (final item in dataMap) {
+                if (item is Map && item['Total_Task_Count'] != null) {
+                  final parsed =
+                      int.tryParse(item['Total_Task_Count'].toString());
+                  if (parsed != null && parsed > 0) {
+                    apiTotalTaskCount = parsed;
+                    break;
+                  }
+                }
+              }
+            }
+
             if (allTasks.isNotEmpty) {
               // Check if the last item is a metadata row (pattern in Leads/Customer Reports)
               bool likelyMetadataRow = allTasks.length > 1 &&
@@ -372,14 +397,18 @@ class TaskReportProvider extends ChangeNotifier {
                   _taskReport = [];
                 }
 
-                if (!likelyMetadataRow) {
+                if (apiTotalTaskCount != null && apiTotalTaskCount > 0) {
+                  _totalSize = apiTotalTaskCount;
+                } else if (!likelyMetadataRow) {
                   _totalSize = allTasks.length;
                 }
               } else {
                 // Server seems to have paginated the results
                 _taskReport = allTasks;
 
-                if (!likelyMetadataRow) {
+                if (apiTotalTaskCount != null && apiTotalTaskCount > 0) {
+                  _totalSize = apiTotalTaskCount;
+                } else if (!likelyMetadataRow) {
                   if (allTasks.length == _pageSize) {
                     _totalSize =
                         _pageIndex * _pageSize + 1; // Assume more pages
@@ -390,7 +419,7 @@ class TaskReportProvider extends ChangeNotifier {
               }
             } else {
               _taskReport = [];
-              _totalSize = 0;
+              _totalSize = apiTotalTaskCount ?? 0;
             }
 
             _totalPages = (_totalSize / _pageSize).ceil();
