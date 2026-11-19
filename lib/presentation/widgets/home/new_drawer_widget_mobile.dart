@@ -200,10 +200,16 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
           village: '',
           enquiryForId: dropDownProvider.selectedEnquiryForId ?? 0,
           enquiryForName: dropDownProvider.selectedEnquiryForName,
-          branchId: settingsProvider.selectedBranchId!,
-          branchName: leadProvider.branchController.text,
-          departmentId: settingsProvider.selectedDepartmentId,
-          departmentName: leadProvider.departmentController.text,
+          branchId: settingsProvider.selectedBranchId ?? leadProvider.loginBranchId,
+          branchName: leadProvider.branchController.text.isNotEmpty
+              ? leadProvider.branchController.text
+              : leadProvider.loginBranchName,
+          departmentId: settingsProvider.selectedDepartmentId != 0
+              ? settingsProvider.selectedDepartmentId
+              : (selectedStatus.departmentId ?? leadProvider.loginDepartmentId),
+          departmentName: leadProvider.departmentController.text.isNotEmpty
+              ? leadProvider.departmentController.text
+              : (selectedStatus.departmentName ?? leadProvider.loginDepartmentName),
           sourceId: dropDownProvider.selectedSourceId ?? 0,
           sourceName: leadProvider.sourceCategoryController.text,
           districtId: dropDownProvider.selectedDistrictId ?? 0,
@@ -248,15 +254,18 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
         widget.isEdit == false) {
       errorMessage = 'Please select Follow-up Status';
       errorTab = 3;
-    } else if (leadProvider.branchController.text.isEmpty &&
+    } else if (showTransfer &&
+        leadProvider.branchController.text.isEmpty &&
         widget.isEdit == false) {
       errorMessage = 'Please select Branch';
       errorTab = 3;
-    } else if (leadProvider.departmentController.text.isEmpty &&
+    } else if (showTransfer &&
+        leadProvider.departmentController.text.isEmpty &&
         widget.isEdit == false) {
       errorMessage = 'Please select Department';
       errorTab = 3;
-    } else if (leadProvider.searchUserController.text.isEmpty &&
+    } else if (showTransfer &&
+        leadProvider.searchUserController.text.isEmpty &&
         widget.isEdit == false) {
       errorMessage = 'Please Assign Staff';
       errorTab = 3;

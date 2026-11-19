@@ -259,10 +259,16 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
         village: '',
         enquiryForId: dropDownProvider.selectedEnquiryForId ?? 0,
         enquiryForName: dropDownProvider.selectedEnquiryForName,
-        branchId: settingsProvider.selectedBranchId!,
-        branchName: leadProvider.branchController.text,
-        departmentId: settingsProvider.selectedDepartmentId,
-        departmentName: leadProvider.departmentController.text,
+        branchId: settingsProvider.selectedBranchId ?? leadProvider.loginBranchId,
+        branchName: leadProvider.branchController.text.isNotEmpty
+            ? leadProvider.branchController.text
+            : leadProvider.loginBranchName,
+        departmentId: settingsProvider.selectedDepartmentId != 0
+            ? settingsProvider.selectedDepartmentId
+            : (selectedStatus.departmentId ?? leadProvider.loginDepartmentId),
+        departmentName: leadProvider.departmentController.text.isNotEmpty
+            ? leadProvider.departmentController.text
+            : (selectedStatus.departmentName ?? leadProvider.loginDepartmentName),
         sourceId: dropDownProvider.selectedSourceId ?? 0,
         sourceName: leadProvider.sourceCategoryController.text,
         districtId: dropDownProvider.selectedDistrictId ?? 0,
@@ -308,16 +314,18 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
         widget.isEdit == false) {
       errors['followUpStatus'] = 'Please fill this field';
     }
-    if (leadProvider.branchController.text.isEmpty && widget.isEdit == false) {
-      errors['branch'] = 'Please fill this field';
-    }
-    if (leadProvider.departmentController.text.isEmpty &&
-        widget.isEdit == false) {
-      errors['department'] = 'Please fill this field';
-    }
-    if (leadProvider.searchUserController.text.isEmpty &&
-        widget.isEdit == false) {
-      errors['staff'] = 'Please fill this field';
+    if (showTransfer) {
+      if (leadProvider.branchController.text.isEmpty && widget.isEdit == false) {
+        errors['branch'] = 'Please fill this field';
+      }
+      if (leadProvider.departmentController.text.isEmpty &&
+          widget.isEdit == false) {
+        errors['department'] = 'Please fill this field';
+      }
+      if (leadProvider.searchUserController.text.isEmpty &&
+          widget.isEdit == false) {
+        errors['staff'] = 'Please fill this field';
+      }
     }
     if (settingsProvider.companyDetails.isNotEmpty &&
         settingsProvider.companyDetails[0].districtCityMandatory == 1 &&
@@ -355,9 +363,30 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
         ..addAll(errors);
     });
 
-    if (errors.isNotEmpty ||
-        validation?.isValid == false ||
-        validation2?.isValid == false) {
+    if (errors.isNotEmpty) {
+      final firstKey = errors.keys.first;
+      final friendlyName = {
+        'mobile': 'Mobile Number',
+        'followUpStatus': 'Follow-up Status',
+        'branch': 'Branch',
+        'department': 'Department',
+        'staff': 'Assigned Staff',
+        'district': 'District (under Address)',
+        'place': 'Place (under Address)',
+        'enquiryFor': 'Enquiry For',
+        'enquirySource': 'Enquiry Source',
+        'followUpDate': 'Follow-up Date',
+      }[firstKey] ?? firstKey;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please fill $friendlyName')),
+      );
+      return false;
+    }
+
+    if (validation?.isValid == false || validation2?.isValid == false) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill all mandatory custom fields')),
+      );
       return false;
     }
 
