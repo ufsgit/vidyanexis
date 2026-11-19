@@ -1514,7 +1514,8 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                               ),
                             ),
                             tilePadding: EdgeInsets.zero,
-                            initiallyExpanded: false,
+                            initiallyExpanded:
+                                settingsProvider.expandAddressSection,
                             children: [
                               const SizedBox(
                                 height: 10,

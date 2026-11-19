@@ -969,6 +969,30 @@ class SettingsProvider extends ChangeNotifier {
         : 0;
   }
 
+  /// Expand Address Section (Company Permission ID: 77)
+  /// Value = 1 → Address section auto-expanded in New Lead / Edit Lead drawer.
+  /// Value = 0 or permission absent → collapsed by default (no change).
+  bool get expandAddressSection {
+    if (_companyDetails.isNotEmpty &&
+        _companyDetails[0].permissions.isNotEmpty) {
+      for (var p in _companyDetails[0].permissions) {
+        if (p.companyPermissionId == 77 ||
+            p.companyPermissionId.toString() == '77') {
+          return p.value == 1 || p.value.toString() == '1';
+        }
+      }
+      for (var p in _companyDetails[0].permissions) {
+        final cap = (p.caption.isNotEmpty ? p.caption : p.displayCaption)
+            .trim()
+            .toLowerCase();
+        if (cap.contains('expand address')) {
+          return p.value == 1 || p.value.toString() == '1';
+        }
+      }
+    }
+    return false;
+  }
+
   void setStatusWiseCount(int value) {
     _statusWiseCount = value;
     _syncStateToPermissionsList(67, value);
