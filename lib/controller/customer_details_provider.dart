@@ -5654,56 +5654,90 @@ class CustomerDetailsProvider extends ChangeNotifier {
   Future<void> loadQuotationFromCustomFields(
       BuildContext context, String type, int quotationType) async {
     try {
+      final quotationCustomFieldsRaw =
+          customFieldQuotationKey.currentState?.getFieldValuesAsJson() ?? [];
+      final commercialCustomFieldsRaw =
+          customFieldCommercialKey.currentState?.getFieldValuesAsJson() ?? [];
+
+      final allEnteredFields = quotationCustomFieldsRaw + commercialCustomFieldsRaw;
+
+      // Filter custom fields: if metadata is loaded, match against quotation or commercial fields.
+      // If metadata is empty or fields match, make sure non-empty values are passed.
+      final filteredCustomFields = allEnteredFields.where((field) {
+        final fieldId = field['custom_field_id'];
+        if (fieldId == null) return false;
+        if (_customFieldQuotation.isEmpty && _commercialCustomFields.isEmpty) {
+          return true;
+        }
+        return _customFieldQuotation.any((element) =>
+                element.customFieldId == fieldId) ||
+            _commercialCustomFields
+                .any((element) => element.customFieldId == fieldId);
+      }).toList();
+
+      log('loadQuotationFromCustomFields sending payload: type=$type, quotationType=$quotationType, fields=${jsonEncode(filteredCustomFields)}');
+
       final response = await HttpRequest.httpPostRequest(
           endPoint: HttpUrls.loadQuotationFromCustomFields,
           bodyData: {
-            "custom_fields": ((customFieldQuotationKey.currentState
-                            ?.getFieldValuesAsJson() ??
-                        []) +
-                    (customFieldCommercialKey.currentState
-                            ?.getFieldValuesAsJson() ??
-                        []))
-                .where((field) {
-              final fieldId = field['custom_field_id'];
-              return _customFieldQuotation.any((element) =>
-                      element.customFieldId == fieldId &&
-                      element.isQuotationCustom == 1) ||
-                  _commercialCustomFields
-                      .any((element) => element.customFieldId == fieldId);
-            }).toList(),
+            "custom_fields": filteredCustomFields,
             "type": type,
             "quotation_type_id": quotationType
           });
 
       if (response?.statusCode == 200) {
-        final data = response?.data;
+        dynamic data = response?.data;
 
         if (data != null) {
-          log('API Response: ${data.toString()}');
+          if (data is String) {
+            try {
+              data = jsonDecode(data);
+            } catch (e) {
+              log('Failed to decode string response: $e');
+            }
+          }
+
+          log('API Response data type: ${data.runtimeType}, content: $data');
 
           try {
-            // Handle single object response
-            if (data is Map<String, dynamic>) {
+            dynamic targetData = data;
+            // Unwrap data object if nested inside {"data": ...}
+            if (data is Map<String, dynamic> && data.containsKey('data')) {
+              targetData = data['data'];
+            }
+
+            if (targetData is Map<String, dynamic>) {
+              _quotationListByMaster = [
+                ql.GetQuotationbyMasterIdmodel.fromJson(targetData)
+              ];
+            } else if (targetData is List) {
+              _quotationListByMaster = targetData
+                  .map((item) => ql.GetQuotationbyMasterIdmodel.fromJson(item))
+                  .toList();
+            } else if (data is Map<String, dynamic>) {
+              // Fallback to data directly
               _quotationListByMaster = [
                 ql.GetQuotationbyMasterIdmodel.fromJson(data)
               ];
-            }
-            // Handle list response
-            else if (data is List) {
+            } else if (data is List) {
               _quotationListByMaster = data
                   .map((item) => ql.GetQuotationbyMasterIdmodel.fromJson(item))
                   .toList();
+            } else {
+              _quotationListByMaster = [];
             }
 
             log('Parsed Quotations: ${_quotationListByMaster.length}');
-          } catch (parseError) {
-            log('Data parsing error: $parseError');
-            // Don't show error to user, just log it
+          } catch (parseError, stackTrace) {
+            log('Data parsing error: $parseError\n$stackTrace');
+            _quotationListByMaster = [];
           }
+        } else {
+          _quotationListByMaster = [];
         }
       } else {
+        _quotationListByMaster = [];
         log('Server Error: ${response?.statusCode}');
-        // Optional: Show error only for non-200 status codes
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -5712,6 +5746,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
         }
       }
     } catch (e) {
+      _quotationListByMaster = [];
       log('Network error: $e');
       if (context.mounted) {
         String errorMessage = 'Connection error. Please check your internet.';
