@@ -77,12 +77,15 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
         final initialFutures = <Future>[
           if (settingsProvider.companyDetails.isEmpty)
             settingsProvider.getCompanyDetails(),
-          expenseProvider.searchItemList(context: context, isFilter: false),
           if (settingsProvider.branchModel.isEmpty)
             settingsProvider.searchBranch(context),
-          customerDetailsProvider.getQuotationTypes(context),
-          customerDetailsProvider.getProfitList(context),
-          customerDetailsProvider.getCommercialCustomFieldsApi(context),
+          if (customerDetailsProvider.quotationTypeData.isEmpty)
+            customerDetailsProvider.getQuotationTypes(context),
+          // customerDetailsProvider.getProfitList(context),
+          if (settingsProvider.companyDetails.isNotEmpty &&
+              settingsProvider.companyDetails.first.commercialProposal == 1)
+            customerDetailsProvider.getCommercialCustomFieldsApi(context),
+
           settingsProvider.getTermsAndWarranty(context),
         ];
 
@@ -173,7 +176,10 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
         try {
           customerDetailsProvider.getCustomFieldsByQuotationId(context);
           await customerDetailsProvider.getQuotationFieldsApi();
-          await customerDetailsProvider.getAdditionalCustomFields(context);
+          // await customerDetailsProvider.getAdditionalCustomFields(context);
+          if (companyQuotationItems) {
+            expenseProvider.searchItemList(context: context, isFilter: false);
+          }
         } catch (e) {
           debugPrint('Failed to load quotation custom fields: $e');
         }
