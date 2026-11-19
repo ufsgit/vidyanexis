@@ -42,7 +42,7 @@ class _TaskStatusDetailsViewState extends State<TaskStatusDetailsView> {
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _horizontalScrollController = ScrollController();
   final ScrollController _verticalScrollController = ScrollController();
-  int? _hoveredRowIndex;
+  final ValueNotifier<int?> _hoveredRowNotifier = ValueNotifier<int?>(null);
 
   @override
   void initState() {
@@ -67,6 +67,7 @@ class _TaskStatusDetailsViewState extends State<TaskStatusDetailsView> {
     _searchController.dispose();
     _horizontalScrollController.dispose();
     _verticalScrollController.dispose();
+    _hoveredRowNotifier.dispose();
     super.dispose();
   }
 
@@ -833,29 +834,41 @@ class _TaskStatusDetailsViewState extends State<TaskStatusDetailsView> {
                           itemCount: _filteredTasks.length,
                           itemBuilder: (context, index) {
                             final task = _filteredTasks[index];
-                            final isHovered = _hoveredRowIndex == index;
                             final statusColor =
                                 _getStatusColor(task.taskStatusName);
 
                             return MouseRegion(
-                              onEnter: (_) =>
-                                  setState(() => _hoveredRowIndex = index),
-                              onExit: (_) =>
-                                  setState(() => _hoveredRowIndex = null),
-                              child: Container(
-                                constraints:
-                                    const BoxConstraints(minHeight: 44),
-                                decoration: BoxDecoration(
-                                  color: isHovered
-                                      ? const Color(0xFFF1F5F9)
-                                      : index % 2 == 0
-                                          ? Colors.white
-                                          : const Color(0xFFF8FAFC),
-                                  border: const Border(
-                                    bottom: BorderSide(
-                                        color: Color(0xFFE2E8F0), width: 1.0),
-                                  ),
-                                ),
+                              onEnter: (_) {
+                                if (_hoveredRowNotifier.value != index) {
+                                  _hoveredRowNotifier.value = index;
+                                }
+                              },
+                              onExit: (_) {
+                                if (_hoveredRowNotifier.value == index) {
+                                  _hoveredRowNotifier.value = null;
+                                }
+                              },
+                              child: ValueListenableBuilder<int?>(
+                                valueListenable: _hoveredRowNotifier,
+                                builder: (context, hoveredIdx, child) {
+                                  final isHovered = hoveredIdx == index;
+                                  return Container(
+                                    constraints:
+                                        const BoxConstraints(minHeight: 44),
+                                    decoration: BoxDecoration(
+                                      color: isHovered
+                                          ? const Color(0xFFF1F5F9)
+                                          : index % 2 == 0
+                                              ? Colors.white
+                                              : const Color(0xFFF8FAFC),
+                                      border: const Border(
+                                        bottom: BorderSide(
+                                            color: Color(0xFFE2E8F0), width: 1.0),
+                                      ),
+                                    ),
+                                    child: child,
+                                  );
+                                },
                                 child: Row(
                                   children: [
                                     // No

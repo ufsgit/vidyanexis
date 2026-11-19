@@ -79,7 +79,7 @@ class _TotalTaskDataPageState extends State<TotalTaskDataPage> {
   final ScrollController _verticalScrollController = ScrollController();
   final ScrollController _mobileScrollController = ScrollController();
 
-  int? _hoveredRowIndex;
+  final ValueNotifier<int?> _hoveredRowNotifier = ValueNotifier<int?>(null);
   int? _expandedIndex;
 
   @override
@@ -136,6 +136,7 @@ class _TotalTaskDataPageState extends State<TotalTaskDataPage> {
     _horizontalScrollController.dispose();
     _verticalScrollController.dispose();
     _mobileScrollController.dispose();
+    _hoveredRowNotifier.dispose();
     super.dispose();
   }
 
@@ -717,17 +718,29 @@ class _TotalTaskDataPageState extends State<TotalTaskDataPage> {
                             itemBuilder: (context, index) {
                               final task = _filteredTasks[index];
                               return MouseRegion(
-                                onEnter: (_) =>
-                                    setState(() => _hoveredRowIndex = index),
-                                onExit: (_) =>
-                                    setState(() => _hoveredRowIndex = null),
-                                child: Container(
-                                  height: rowH,
-                                  color: index == _hoveredRowIndex
-                                      ? const Color(0xFFE2E8F0)
-                                      : (index % 2 == 0
-                                          ? Colors.white
-                                          : const Color(0xFFF6F7F9)),
+                                onEnter: (_) {
+                                  if (_hoveredRowNotifier.value != index) {
+                                    _hoveredRowNotifier.value = index;
+                                  }
+                                },
+                                onExit: (_) {
+                                  if (_hoveredRowNotifier.value == index) {
+                                    _hoveredRowNotifier.value = null;
+                                  }
+                                },
+                                child: ValueListenableBuilder<int?>(
+                                  valueListenable: _hoveredRowNotifier,
+                                  builder: (context, hoveredIdx, child) {
+                                    return Container(
+                                      height: rowH,
+                                      color: index == hoveredIdx
+                                          ? const Color(0xFFE2E8F0)
+                                          : (index % 2 == 0
+                                              ? Colors.white
+                                              : const Color(0xFFF6F7F9)),
+                                      child: child,
+                                    );
+                                  },
                                   child: Row(
                                     children: [
                                       SizedBox(

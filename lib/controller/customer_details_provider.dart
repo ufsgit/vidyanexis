@@ -556,8 +556,17 @@ class CustomerDetailsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  String? _lastPaymentCustomerId;
+
   Future<void> getPaymentListApi(
-      String customerId, BuildContext context) async {
+      String customerId, BuildContext context,
+      {bool forceRefresh = false}) async {
+    if (!forceRefresh &&
+        _lastPaymentCustomerId == customerId &&
+        _paymentList.isNotEmpty) {
+      return;
+    }
+    _lastPaymentCustomerId = customerId;
     try {
       _isPaymentListLoading = true;
       notifyListeners();
@@ -630,7 +639,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Payment Saved Successfully')),
         );
-        getPaymentListApi(payment.customerId.toString(), context);
+        getPaymentListApi(payment.customerId.toString(), context, forceRefresh: true);
         Navigator.pop(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -659,7 +668,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
       if (!context.mounted) return;
       Loader.stopLoader(context);
       if (response?.statusCode == 200) {
-        getPaymentListApi(customerId, context);
+        getPaymentListApi(customerId, context, forceRefresh: true);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Payment Deleted Successfully')),
         );
@@ -684,8 +693,17 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
+  String? _lastFollowUpHistoryCustomerId;
+
   Future<void> getFollowUpHistory(
-      String customerId, BuildContext context) async {
+      String customerId, BuildContext context,
+      {bool forceRefresh = false}) async {
+    if (!forceRefresh &&
+        _lastFollowUpHistoryCustomerId == customerId &&
+        _followUpHistory.isNotEmpty) {
+      return;
+    }
+    _lastFollowUpHistoryCustomerId = customerId;
     try {
       _isFollowUpHistoryLoading = true;
       final settingsProvider =
@@ -771,7 +789,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
           ),
         );
 
-        await getFollowUpHistory(customerId, context);
+        await getFollowUpHistory(customerId, context, forceRefresh: true);
         return true;
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -1507,7 +1525,15 @@ class CustomerDetailsProvider extends ChangeNotifier {
   bool _isTaskOverviewLoading = false;
   bool get isTaskOverviewLoading => _isTaskOverviewLoading;
 
-  Future<void> getCustomerTaskOverview(String customerId) async {
+  String? _lastTaskOverviewCustomerId;
+
+  Future<void> getCustomerTaskOverview(String customerId, {bool forceRefresh = false}) async {
+    if (!forceRefresh &&
+        _lastTaskOverviewCustomerId == customerId &&
+        _customerTaskOverviewTasks.isNotEmpty) {
+      return;
+    }
+    _lastTaskOverviewCustomerId = customerId;
     try {
       _isTaskOverviewLoading = true;
       notifyListeners();
@@ -3228,7 +3254,16 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> getServiceList(String customerId, BuildContext context) async {
+  String? _lastServiceCustomerId;
+
+  Future<void> getServiceList(String customerId, BuildContext context,
+      {bool forceRefresh = false}) async {
+    if (!forceRefresh &&
+        _lastServiceCustomerId == customerId &&
+        _serviceList.isNotEmpty) {
+      return;
+    }
+    _lastServiceCustomerId = customerId;
     _isLoading = true;
     notifyListeners();
 
@@ -3351,7 +3386,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
         Navigator.pop(context);
         Loader.stopLoader(context);
-        getServiceList(customerId, context);
+        getServiceList(customerId, context, forceRefresh: true);
         if (isEdit) {
           getServiceDetails(serviceId, context);
         }
@@ -3371,8 +3406,17 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
+  String? _lastAmcCustomerId;
+
   Future<void> getAmc(
-      String customerId, String amcId, BuildContext context) async {
+      String customerId, String amcId, BuildContext context,
+      {bool forceRefresh = false}) async {
+    if (!forceRefresh &&
+        _lastAmcCustomerId == customerId &&
+        _amcList.isNotEmpty) {
+      return;
+    }
+    _lastAmcCustomerId = customerId;
     _isAmcListLoading = true;
     notifyListeners();
 
@@ -3466,7 +3510,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
       if (response!.statusCode == 200) {
         final data = response.data;
         log('Success');
-        getAmc(cusId, '0', context);
+        getAmc(cusId, '0', context, forceRefresh: true);
         clearAmcControllers();
         if (onSuccess != null) {
           onSuccess();
@@ -3489,7 +3533,14 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
   String? _lastQuotationCustomerId;
 
-  Future<void> getQuatationList(String customerId, BuildContext context) async {
+  Future<void> getQuatationList(String customerId, BuildContext context,
+      {bool forceRefresh = false}) async {
+    if (!forceRefresh &&
+        _lastQuotationCustomerId == customerId &&
+        _quotationList.isNotEmpty) {
+      return;
+    }
+    _lastQuotationCustomerId = customerId;
     _isQuotationListLoading = true;
     quotationListState.setLoading();
     _quotationList.clear(); // Clear stale data before fetching
@@ -3516,10 +3567,6 @@ class CustomerDetailsProvider extends ChangeNotifier {
         final data = response.data;
 
         if (data != null) {
-          log('--- QUOTATION API RESPONSE ---');
-          log('Response Body: ${jsonEncode(data)}');
-          log('--------------------------------');
-
           List<dynamic> rawList = [];
           if (data is List) {
             rawList = data;
@@ -3601,7 +3648,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
         quotationListState.status == TabStatus.initial ||
         quotationListState.status == TabStatus.error) {
       _lastQuotationCustomerId = customerId;
-      await getQuatationList(customerId, context);
+      await getQuatationList(customerId, context, forceRefresh: true);
     }
   }
 
@@ -3866,7 +3913,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
       if (response!.statusCode == 200) {
         final data = response.data;
         log('Success');
-        getQuatationList(customerId, context);
+        getQuatationList(customerId, context, forceRefresh: true);
         if (isEdit) {
           getQuatationListByMasterId(quotationId, context);
         }
@@ -4319,7 +4366,16 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> getDocument(String customerId, BuildContext context) async {
+  String? _lastDocumentCustomerId;
+
+  Future<void> getDocument(String customerId, BuildContext context,
+      {bool forceRefresh = false}) async {
+    if (!forceRefresh &&
+        _lastDocumentCustomerId == customerId &&
+        _documentList.isNotEmpty) {
+      return;
+    }
+    _lastDocumentCustomerId = customerId;
     _isLoading = true;
     _documentList.clear();
     notifyListeners();
@@ -4354,8 +4410,17 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
+  String? _lastReceiptCustomerId;
+
   Future<void> getRecieptListApi(
-      String customerId, BuildContext context) async {
+      String customerId, BuildContext context,
+      {bool forceRefresh = false}) async {
+    if (!forceRefresh &&
+        _lastReceiptCustomerId == customerId &&
+        _receiptList.isNotEmpty) {
+      return;
+    }
+    _lastReceiptCustomerId = customerId;
     _isLoading = true;
     notifyListeners();
 
@@ -4433,7 +4498,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
         clearRecieptDetails();
 
         Navigator.pop(context);
-        getRecieptListApi(customerId, context);
+        getRecieptListApi(customerId, context, forceRefresh: true);
         getInvoiceRecieptTotal(customerId, context);
         print(data);
       } else {
@@ -4507,7 +4572,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
         Navigator.pop(context);
         Loader.stopLoader(context);
-        getRecieptListApi(customerId, context);
+        getRecieptListApi(customerId, context, forceRefresh: true);
         getInvoiceRecieptTotal(customerId, context);
         print(data);
       } else {
@@ -4760,7 +4825,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
         log('Image deleted successfully');
         // _leadData.removeWhere((lead) => lead.toUserId == leadId);
 
-        getDocument(customerId, context);
+        getDocument(customerId, context, forceRefresh: true);
         notifyListeners();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -4858,7 +4923,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
         log('Service deleted successfully');
         // _leadData.removeWhere((lead) => lead.toUserId == leadId);
 
-        getServiceList(customerId, context);
+        getServiceList(customerId, context, forceRefresh: true);
         notifyListeners();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -4887,7 +4952,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
         log('AMC deleted successfully');
         // _leadData.removeWhere((lead) => lead.toUserId == leadId);
 
-        getAmc(customerId, '0', context);
+        getAmc(customerId, '0', context, forceRefresh: true);
         notifyListeners();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -4915,7 +4980,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
         log('AMC deleted successfully');
         // _leadData.removeWhere((lead) => lead.toUserId == leadId);
 
-        getQuatationList(customerId, context);
+        getQuatationList(customerId, context, forceRefresh: true);
         notifyListeners();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -4943,7 +5008,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
         log('Reciept deleted successfully');
         // _leadData.removeWhere((lead) => lead.toUserId == leadId);
 
-        getRecieptListApi(customerId, context);
+        getRecieptListApi(customerId, context, forceRefresh: true);
         notifyListeners();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -5519,7 +5584,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> getQuotationTypes(BuildContext context) async {
+  Future<void> getQuotationTypes(BuildContext context, {bool forceRefresh = false}) async {
+    if (!forceRefresh && _quotationTypeData.isNotEmpty) return;
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -6108,7 +6174,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
       if (response?.statusCode == 200) {
         log('Structure materials saved successfully');
-        getDocument(customerId, context);
+        getDocument(customerId, context, forceRefresh: true);
         notifyListeners();
       } else {
         log('Failed to save structure materials');
@@ -6135,7 +6201,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
       Loader.stopLoader(context);
 
       if (response?.statusCode == 200 || response?.statusCode == 201) {
-        await getQuatationList(customerId, context);
+        await getQuatationList(customerId, context, forceRefresh: true);
         return true;
       }
       return false;
@@ -6164,7 +6230,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
       Loader.stopLoader(context);
 
       if (response?.statusCode == 200 || response?.statusCode == 201) {
-        await getQuatationList(customerId, context);
+        await getQuatationList(customerId, context, forceRefresh: true);
         return true;
       }
       return false;
@@ -6200,7 +6266,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
       Loader.stopLoader(context);
 
       if (response?.statusCode == 200 || response?.statusCode == 201) {
-        await getRecieptListApi(customerId, context);
+        await getRecieptListApi(customerId, context, forceRefresh: true);
         return true;
       } else {
         final errorMsg = response?.data is Map &&
@@ -6255,7 +6321,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
       Loader.stopLoader(context);
 
       if (response?.statusCode == 200 || response?.statusCode == 201) {
-        await getRecieptListApi(customerId, context);
+        await getRecieptListApi(customerId, context, forceRefresh: true);
         return true;
       } else {
         final errorMsg = response?.data is Map &&
@@ -6350,7 +6416,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
             ),
           );
         }
-        await getQuatationList(customerId, context);
+        await getQuatationList(customerId, context, forceRefresh: true);
         return true;
       } else {
         if (message.isEmpty) {

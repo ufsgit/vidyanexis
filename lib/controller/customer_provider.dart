@@ -354,7 +354,6 @@ class CustomerProvider extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         var data = response.data;
-        debugPrint('CUSTOMER API RESPONSE: ${jsonEncode(data)}');
         if (data != null && data is List) {
           List<SearchLeadModel> allItems = data.map((item) {
             final jsonMap = item is Map<String, dynamic>
@@ -362,13 +361,7 @@ class CustomerProvider extends ChangeNotifier {
                 : (item is Map
                     ? Map<String, dynamic>.from(item)
                     : <String, dynamic>{});
-            debugPrint(
-              'API Work_Completion_Date: ${jsonMap['Work_Completion_Date']}',
-            );
             final customer = SearchLeadModel.fromJson(jsonMap);
-            debugPrint(
-              'MODEL workCompletionDate: ${customer.workCompletionDate}',
-            );
             return customer;
           }).toList();
 
@@ -946,7 +939,6 @@ class CustomerProvider extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         var data = response.data;
-        debugPrint('CUSTOMER API RESPONSE: ${jsonEncode(data)}');
         if (data != null && data is List) {
           List<SearchLeadModel> allItems = data.map((item) {
             final jsonMap = item is Map<String, dynamic>
@@ -954,13 +946,7 @@ class CustomerProvider extends ChangeNotifier {
                 : (item is Map
                     ? Map<String, dynamic>.from(item)
                     : <String, dynamic>{});
-            debugPrint(
-              'API Work_Completion_Date: ${jsonMap['Work_Completion_Date']}',
-            );
             final customer = SearchLeadModel.fromJson(jsonMap);
-            debugPrint(
-              'MODEL workCompletionDate: ${customer.workCompletionDate}',
-            );
             return customer;
           }).toList();
           _customerData = allItems.where((item) => item.tp == 1).toList();
@@ -1123,7 +1109,6 @@ class CustomerProvider extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         var data = response.data;
-        debugPrint('CUSTOMER API RESPONSE: ${jsonEncode(data)}');
         if (data != null && data is List) {
           List<SearchLeadModel> allItems = data.map((item) {
             final jsonMap = item is Map<String, dynamic>
@@ -1131,13 +1116,7 @@ class CustomerProvider extends ChangeNotifier {
                 : (item is Map
                     ? Map<String, dynamic>.from(item)
                     : <String, dynamic>{});
-            debugPrint(
-              'API Work_Completion_Date: ${jsonMap['Work_Completion_Date']}',
-            );
             final customer = SearchLeadModel.fromJson(jsonMap);
-            debugPrint(
-              'MODEL workCompletionDate: ${customer.workCompletionDate}',
-            );
             return customer;
           }).toList();
 
@@ -1219,51 +1198,58 @@ class CustomerProvider extends ChangeNotifier {
       return;
     }
 
-    await Future.wait(uncachedCustomerIds.map((cid) async {
-      try {
-        final response = await HttpRequest.httpGetRequest(
-          endPoint: '${HttpUrls.getAmc}?Customer_Id=$cid&AMC_Status_Id=0',
-        );
-        if (response.statusCode == 200 &&
-            response.data != null &&
-            response.data is List) {
-          final list = response.data as List;
-          if (list.isNotEmpty) {
-            String latestToDate = '';
-            DateTime? latestDt;
-            for (var amcItem in list) {
-              if (amcItem is Map) {
-                final toDateStr = (amcItem['To_Date'] ??
-                            amcItem['to_date'] ??
-                            amcItem['AMC_To_Date'] ??
-                            amcItem['Date'])
-                        ?.toString() ??
-                    '';
-                if (toDateStr.isNotEmpty) {
-                  final dt = DateTime.tryParse(toDateStr);
-                  if (dt != null) {
-                    if (latestDt == null || dt.isAfter(latestDt)) {
-                      latestDt = dt;
+    const batchSize = 6;
+    for (int i = 0; i < uncachedCustomerIds.length; i += batchSize) {
+      final end = (i + batchSize < uncachedCustomerIds.length)
+          ? i + batchSize
+          : uncachedCustomerIds.length;
+      final batch = uncachedCustomerIds.sublist(i, end);
+      await Future.wait(batch.map((cid) async {
+        try {
+          final response = await HttpRequest.httpGetRequest(
+            endPoint: '${HttpUrls.getAmc}?Customer_Id=$cid&AMC_Status_Id=0',
+          );
+          if (response.statusCode == 200 &&
+              response.data != null &&
+              response.data is List) {
+            final list = response.data as List;
+            if (list.isNotEmpty) {
+              String latestToDate = '';
+              DateTime? latestDt;
+              for (var amcItem in list) {
+                if (amcItem is Map) {
+                  final toDateStr = (amcItem['To_Date'] ??
+                              amcItem['to_date'] ??
+                              amcItem['AMC_To_Date'] ??
+                              amcItem['Date'])
+                          ?.toString() ??
+                      '';
+                  if (toDateStr.isNotEmpty) {
+                    final dt = DateTime.tryParse(toDateStr);
+                    if (dt != null) {
+                      if (latestDt == null || dt.isAfter(latestDt)) {
+                        latestDt = dt;
+                        latestToDate = toDateStr;
+                      }
+                    } else if (latestToDate.isEmpty) {
                       latestToDate = toDateStr;
                     }
-                  } else if (latestToDate.isEmpty) {
-                    latestToDate = toDateStr;
                   }
                 }
               }
+              _customerAmcDateCache[cid] =
+                  latestToDate.isNotEmpty ? latestToDate : '-';
+            } else {
+              _customerAmcDateCache[cid] = '-';
             }
-            _customerAmcDateCache[cid] =
-                latestToDate.isNotEmpty ? latestToDate : '-';
           } else {
             _customerAmcDateCache[cid] = '-';
           }
-        } else {
+        } catch (e) {
           _customerAmcDateCache[cid] = '-';
         }
-      } catch (e) {
-        _customerAmcDateCache[cid] = '-';
-      }
-    }));
+      }));
+    }
 
     _applyCachedAmcDates();
   }
@@ -1302,36 +1288,43 @@ class CustomerProvider extends ChangeNotifier {
       return;
     }
 
-    await Future.wait(uncachedCustomerIds.map((c) async {
-      try {
-        final response = await HttpRequest.httpGetRequest(
-          endPoint:
-              '${HttpUrls.getCustomFieldByEnquiryForId}?enquiry_for_id=${c.enquiryForId}&lead_id=${c.customerId}',
-        );
-        if (response.statusCode == 200 &&
-            response.data != null &&
-            response.data is List) {
-          final list = response.data as List;
-          String wcDate = '';
-          for (var field in list) {
-            if (field is Map) {
-              final fieldName =
-                  field['custom_field_name']?.toString().toLowerCase() ?? '';
-              if (fieldName.contains('work completion date') ||
-                  fieldName.contains('completion date')) {
-                wcDate = field['datavalue']?.toString() ?? '';
-                break;
+    const batchSize = 6;
+    for (int i = 0; i < uncachedCustomerIds.length; i += batchSize) {
+      final end = (i + batchSize < uncachedCustomerIds.length)
+          ? i + batchSize
+          : uncachedCustomerIds.length;
+      final batch = uncachedCustomerIds.sublist(i, end);
+      await Future.wait(batch.map((c) async {
+        try {
+          final response = await HttpRequest.httpGetRequest(
+            endPoint:
+                '${HttpUrls.getCustomFieldByEnquiryForId}?enquiry_for_id=${c.enquiryForId}&lead_id=${c.customerId}',
+          );
+          if (response.statusCode == 200 &&
+              response.data != null &&
+              response.data is List) {
+            final list = response.data as List;
+            String wcDate = '';
+            for (var field in list) {
+              if (field is Map) {
+                final fieldName =
+                    field['custom_field_name']?.toString().toLowerCase() ?? '';
+                if (fieldName.contains('work completion date') ||
+                    fieldName.contains('completion date')) {
+                  wcDate = field['datavalue']?.toString() ?? '';
+                  break;
+                }
               }
             }
+            _customerWcDateCache[c.customerId] = wcDate.isNotEmpty ? wcDate : '-';
+          } else {
+            _customerWcDateCache[c.customerId] = '-';
           }
-          _customerWcDateCache[c.customerId] = wcDate.isNotEmpty ? wcDate : '-';
-        } else {
+        } catch (e) {
           _customerWcDateCache[c.customerId] = '-';
         }
-      } catch (e) {
-        _customerWcDateCache[c.customerId] = '-';
-      }
-    }));
+      }));
+    }
 
     _applyCachedWcDates();
   }

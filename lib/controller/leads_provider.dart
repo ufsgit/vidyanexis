@@ -2382,7 +2382,8 @@ class LeadsProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> getLeadDropdowns(BuildContext context) async {
+  Future<void> getLeadDropdowns(BuildContext context, {bool forceRefresh = false}) async {
+    if (!forceRefresh && _captionList.isNotEmpty) return;
     try {
       final response =
           await HttpRequest.httpGetRequest(endPoint: HttpUrls.getLeadDropdowns);

@@ -131,8 +131,8 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
   Widget build(BuildContext context) {
     final customerProvider = Provider.of<CustomerProvider>(context);
     final provider = Provider.of<DropDownProvider>(context);
-    final sideprovider = Provider.of<SidebarProvider>(context);
-    final searchProvider = Provider.of<SidebarProvider>(context);
+    final searchProvider =
+        Provider.of<SidebarProvider>(context, listen: false);
     final settingsProvider = Provider.of<SettingsProvider>(context);
 
     return Scaffold(

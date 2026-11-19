@@ -187,7 +187,6 @@ class _LeadsPageState extends State<LeadPage> {
   }
 
   // bool isEdit = false;
-  int? _hoveredRowIndex;
 
   int userId = 0;
   String userName = '';
@@ -524,9 +523,9 @@ class _LeadsPageState extends State<LeadPage> {
   @override
   Widget build(BuildContext context) {
     final leadProvider = Provider.of<LeadsProvider>(context);
-    final provider = Provider.of<DropDownProvider>(context);
+    final provider = Provider.of<DropDownProvider>(context, listen: false);
     final settingsProvider = Provider.of<SettingsProvider>(context);
-    final sideProvider = Provider.of<SidebarProvider>(context);
+    final sideProvider = Provider.of<SidebarProvider>(context, listen: false);
 
     double scrollableTableWidth = 1905;
     if (settingsProvider.menuIsViewMap[142] == 1) scrollableTableWidth += 150.0;
@@ -1258,24 +1257,7 @@ class _LeadsPageState extends State<LeadPage> {
                                               }
                                               var lead =
                                                   leadProvider.leadData[index];
-                                              return MouseRegion(
-                                                onEnter: (_) {
-                                                  if (_hoveredRowIndex !=
-                                                      index) {
-                                                    setState(() =>
-                                                        _hoveredRowIndex =
-                                                            index);
-                                                  }
-                                                },
-                                                onExit: (_) {
-                                                  if (_hoveredRowIndex !=
-                                                      null) {
-                                                    setState(() =>
-                                                        _hoveredRowIndex =
-                                                            null);
-                                                  }
-                                                },
-                                                child: Container(
+                                              return Container(
                                                   height: rowHeight,
                                                   decoration: BoxDecoration(
                                                     color: index % 2 == 0 ? const Color(0xFFE8EDF2) : const Color(0xFFF5F5F5),
@@ -1794,8 +1776,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                       ),
                                                     ],
                                                   ),
-                                                ),
-                                              );
+                                                );
                                             },
                                           ),
                                         ),
@@ -2135,24 +2116,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                       listen: false);
                                               var lead =
                                                   leadProvider.leadData[index];
-                                              return MouseRegion(
-                                                onEnter: (_) {
-                                                  if (_hoveredRowIndex !=
-                                                      index) {
-                                                    setState(() =>
-                                                        _hoveredRowIndex =
-                                                            index);
-                                                  }
-                                                },
-                                                onExit: (_) {
-                                                  if (_hoveredRowIndex !=
-                                                      null) {
-                                                    setState(() =>
-                                                        _hoveredRowIndex =
-                                                            null);
-                                                  }
-                                                },
-                                                child: Container(
+                                              return Container(
                                                   height: rowHeight,
                                                                 decoration: BoxDecoration(
                                                                     color: index % 2 == 0 ? const Color(0xFFE8EDF2) : const Color(0xFFF5F5F5),
@@ -2899,8 +2863,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                         ),
                                                     ],
                                                   ),
-                                                ),
-                                              );
+                                                );
                                             },
                                           ),
                                         ),

@@ -2332,7 +2332,8 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  Future<List<CustomFieldModel>>? getCustomField(BuildContext context) async {
+  Future<List<CustomFieldModel>>? getCustomField(BuildContext context, {bool forceRefresh = false}) async {
+    if (!forceRefresh && customFieldModelList.isNotEmpty) return customFieldModelList;
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -4016,7 +4017,8 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> searchUserTypeDetails(BuildContext context) async {
+  Future<void> searchUserTypeDetails(BuildContext context, {bool forceRefresh = false}) async {
+    if (!forceRefresh && _searchUserType.isNotEmpty) return;
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -4046,7 +4048,8 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> searchWorkingStatusData(BuildContext context) async {
+  Future<void> searchWorkingStatusData(BuildContext context, {bool forceRefresh = false}) async {
+    if (!forceRefresh && _searchWorkingStatus.isNotEmpty) return;
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";

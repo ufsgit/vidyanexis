@@ -27,7 +27,9 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final cdProvider =
           Provider.of<CustomerDetailsProvider>(context, listen: false);
-      cdProvider.getExpenseListApi(widget.customerId.toString(), context);
+      if (cdProvider.expenseList.isEmpty && !cdProvider.isLoading) {
+        cdProvider.getExpenseListApi(widget.customerId.toString(), context);
+      }
     });
   }
 

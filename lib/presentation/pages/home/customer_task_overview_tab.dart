@@ -25,8 +25,12 @@ class _CustomerTaskOverviewTabState extends State<CustomerTaskOverviewTab> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<CustomerDetailsProvider>(context, listen: false)
-          .getCustomerTaskOverview(widget.customerId);
+      final provider =
+          Provider.of<CustomerDetailsProvider>(context, listen: false);
+      if (provider.customerTaskOverviewTasks.isEmpty &&
+          !provider.isTaskOverviewLoading) {
+        provider.getCustomerTaskOverview(widget.customerId);
+      }
     });
   }
 

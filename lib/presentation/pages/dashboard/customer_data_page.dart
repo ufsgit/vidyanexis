@@ -61,7 +61,7 @@ class _CustomerDataPageState extends State<CustomerDataPage> {
   late final ScrollController _scrollableVerticalController;
   late final ScrollController _mobileScrollController;
   bool _isSyncing = false;
-  int? _hoveredRowIndex;
+  final ValueNotifier<int?> _hoveredRowNotifier = ValueNotifier<int?>(null);
   int? _expandedIndex;
 
   @override
@@ -145,6 +145,7 @@ class _CustomerDataPageState extends State<CustomerDataPage> {
     _fixedVerticalController.dispose();
     _scrollableVerticalController.dispose();
     _mobileScrollController.dispose();
+    _hoveredRowNotifier.dispose();
     super.dispose();
   }
 
@@ -922,27 +923,33 @@ class _CustomerDataPageState extends State<CustomerDataPage> {
                         final lead = _filteredCustomers[index];
                         return MouseRegion(
                           onEnter: (_) {
-                            if (_hoveredRowIndex != index) {
-                              setState(() => _hoveredRowIndex = index);
+                            if (_hoveredRowNotifier.value != index) {
+                              _hoveredRowNotifier.value = index;
                             }
                           },
                           onExit: (_) {
-                            if (_hoveredRowIndex != null) {
-                              setState(() => _hoveredRowIndex = null);
+                            if (_hoveredRowNotifier.value == index) {
+                              _hoveredRowNotifier.value = null;
                             }
                           },
-                          child: Container(
-                            height: rowHeight,
-                            decoration: BoxDecoration(
-                              color: index == _hoveredRowIndex
-                                  ? const Color(0xFFE2E8F0)
-                                  : (index % 2 == 0
-                                      ? const Color(0xFFE8EDF2)
-                                      : const Color(0xFFF5F5F5)),
-                              border: Border(
-                                  bottom:
-                                      BorderSide(color: Colors.grey.shade200)),
-                            ),
+                          child: ValueListenableBuilder<int?>(
+                            valueListenable: _hoveredRowNotifier,
+                            builder: (context, hoveredIdx, child) {
+                              return Container(
+                                height: rowHeight,
+                                decoration: BoxDecoration(
+                                  color: index == hoveredIdx
+                                      ? const Color(0xFFE2E8F0)
+                                      : (index % 2 == 0
+                                          ? const Color(0xFFE8EDF2)
+                                          : const Color(0xFFF5F5F5)),
+                                  border: Border(
+                                      bottom:
+                                          BorderSide(color: Colors.grey.shade200)),
+                                ),
+                                child: child,
+                              );
+                            },
                             child: Row(
                               children: [
                                 TableWidget(
@@ -1076,27 +1083,33 @@ class _CustomerDataPageState extends State<CustomerDataPage> {
                               final lead = _filteredCustomers[index];
                               return MouseRegion(
                                 onEnter: (_) {
-                                  if (_hoveredRowIndex != index) {
-                                    setState(() => _hoveredRowIndex = index);
+                                  if (_hoveredRowNotifier.value != index) {
+                                    _hoveredRowNotifier.value = index;
                                   }
                                 },
                                 onExit: (_) {
-                                  if (_hoveredRowIndex != null) {
-                                    setState(() => _hoveredRowIndex = null);
+                                  if (_hoveredRowNotifier.value == index) {
+                                    _hoveredRowNotifier.value = null;
                                   }
                                 },
-                                child: Container(
-                                  height: rowHeight,
-                                  decoration: BoxDecoration(
-                                    color: index == _hoveredRowIndex
-                                        ? const Color(0xFFE2E8F0)
-                                        : (index % 2 == 0
-                                            ? const Color(0xFFE8EDF2)
-                                            : const Color(0xFFF5F5F5)),
-                                    border: Border(
-                                        bottom: BorderSide(
-                                            color: Colors.grey.shade200)),
-                                  ),
+                                child: ValueListenableBuilder<int?>(
+                                  valueListenable: _hoveredRowNotifier,
+                                  builder: (context, hoveredIdx, child) {
+                                    return Container(
+                                      height: rowHeight,
+                                      decoration: BoxDecoration(
+                                        color: index == hoveredIdx
+                                            ? const Color(0xFFE2E8F0)
+                                            : (index % 2 == 0
+                                                ? const Color(0xFFE8EDF2)
+                                                : const Color(0xFFF5F5F5)),
+                                        border: Border(
+                                            bottom: BorderSide(
+                                                color: Colors.grey.shade200)),
+                                      ),
+                                      child: child,
+                                    );
+                                  },
                                   child: buildScrollableRow(lead),
                                 ),
                               );

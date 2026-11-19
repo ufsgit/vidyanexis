@@ -73,6 +73,7 @@ import 'package:vidyanexis/controller/task_summary_provider.dart';
 import 'package:vidyanexis/controller/job_sheet_provider.dart';
 import 'package:vidyanexis/controller/task_aging_report_provider.dart';
 import 'package:vidyanexis/http/http_urls.dart';
+import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/controller/company_provider.dart';
 import 'package:vidyanexis/firebase_options.dart';
 import 'package:vidyanexis/routes/routes.dart';
@@ -106,14 +107,18 @@ Future<void> main() async {
 
   print('[PERF-BOOT] initialization started');
   final initStart = DateTime.now().millisecondsSinceEpoch;
-  // Initialize dynamic base URL from storage
+  // Initialize dynamic base URL and cache token from storage
+  final prefs = await SharedPreferences.getInstance();
   if (isCompanyCode) {
     HttpUrls.updateBaseUrl('');
-    final prefs = await SharedPreferences.getInstance();
     final storedUrl = prefs.getString('company_base_url') ?? '';
     if (storedUrl.isNotEmpty) {
       HttpUrls.updateBaseUrl(storedUrl);
     }
+  }
+  final token = prefs.getString('token') ?? '';
+  if (token.isNotEmpty) {
+    HttpRequest.setCachedToken(token);
   }
   print(
       '[PERF-BOOT] initialization completed: ${DateTime.now().millisecondsSinceEpoch - initStart} ms');

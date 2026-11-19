@@ -85,6 +85,7 @@ class CompanyProvider extends ChangeNotifier {
     // Clear login session so user is forced to login screen
     await prefs.setBool('IsLoggedIn', false);
     await prefs.remove('token');
+    HttpRequest.clearCachedToken();
 
     _baseUrl = targetUrl;
     _companyCode = code;

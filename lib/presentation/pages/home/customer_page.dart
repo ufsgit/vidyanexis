@@ -143,7 +143,7 @@ class _CustomerPageState extends State<CustomerPage> {
   }
   Timer? _debounce;
   bool _isSyncing = false;
-  int? _hoveredRowIndex;
+  final ValueNotifier<int?> _hoveredRowNotifier = ValueNotifier<int?>(null);
   final sideProvider =
       Provider.of<SidebarProvider>(navigatorKey.currentState!.context);
   int userId = 0;
@@ -228,6 +228,7 @@ class _CustomerPageState extends State<CustomerPage> {
     _enquirySourceFilterFocusNode.dispose();
     _departmentFilterController.dispose();
     _departmentFilterFocusNode.dispose();
+    _hoveredRowNotifier.dispose();
     super.dispose();
   }
 
@@ -312,7 +313,7 @@ class _CustomerPageState extends State<CustomerPage> {
   @override
   Widget build(BuildContext context) {
     final customerProvider = Provider.of<CustomerProvider>(context);
-    final provider = Provider.of<DropDownProvider>(context);
+    final provider = Provider.of<DropDownProvider>(context, listen: false);
     final settingsProvider = Provider.of<SettingsProvider>(context);
 
     // Calculate dynamic heights for table
@@ -1418,21 +1419,27 @@ class _CustomerPageState extends State<CustomerPage> {
                               var lead = customerProvider.customerData[index];
                               return MouseRegion(
                                 onEnter: (_) {
-                                  if (_hoveredRowIndex != index) {
-                                    setState(() => _hoveredRowIndex = index);
+                                  if (_hoveredRowNotifier.value != index) {
+                                    _hoveredRowNotifier.value = index;
                                   }
                                 },
                                 onExit: (_) {
-                                  if (_hoveredRowIndex != null) {
-                                    setState(() => _hoveredRowIndex = null);
+                                  if (_hoveredRowNotifier.value == index) {
+                                    _hoveredRowNotifier.value = null;
                                   }
                                 },
-                                child: Container(
-                                  height: rowHeight,
-                                  decoration: BoxDecoration(
-                                    color: index == _hoveredRowIndex ? const Color(0xFFE2E8F0) : (index % 2 == 0 ? const Color(0xFFE8EDF2) : const Color(0xFFF5F5F5)),
-                                    border: Border(bottom: BorderSide(color: Colors.grey.shade200)),
-                                  ),
+                                child: ValueListenableBuilder<int?>(
+                                  valueListenable: _hoveredRowNotifier,
+                                  builder: (context, hoveredIdx, child) {
+                                    return Container(
+                                      height: rowHeight,
+                                      decoration: BoxDecoration(
+                                        color: index == hoveredIdx ? const Color(0xFFE2E8F0) : (index % 2 == 0 ? const Color(0xFFE8EDF2) : const Color(0xFFF5F5F5)),
+                                        border: Border(bottom: BorderSide(color: Colors.grey.shade200)),
+                                      ),
+                                      child: child,
+                                    );
+                                  },
                                   child: Row(
                                     children: [
                                       TableWidget(
@@ -1866,23 +1873,27 @@ class _CustomerPageState extends State<CustomerPage> {
                                         customerProvider.customerData[index];
                                     return MouseRegion(
                                       onEnter: (_) {
-                                        if (_hoveredRowIndex != index) {
-                                          setState(
-                                              () => _hoveredRowIndex = index);
+                                        if (_hoveredRowNotifier.value != index) {
+                                          _hoveredRowNotifier.value = index;
                                         }
                                       },
                                       onExit: (_) {
-                                        if (_hoveredRowIndex != null) {
-                                          setState(
-                                              () => _hoveredRowIndex = null);
+                                        if (_hoveredRowNotifier.value == index) {
+                                          _hoveredRowNotifier.value = null;
                                         }
                                       },
-                                      child: Container(
-                                        height: rowHeight,
-                                        decoration: BoxDecoration(
-                                          color: index == _hoveredRowIndex ? const Color(0xFFE2E8F0) : (index % 2 == 0 ? const Color(0xFFE8EDF2) : const Color(0xFFF5F5F5)),
-                                          border: Border(bottom: BorderSide(color: Colors.grey.shade200)),
-                                        ),
+                                      child: ValueListenableBuilder<int?>(
+                                        valueListenable: _hoveredRowNotifier,
+                                        builder: (context, hoveredIdx, child) {
+                                          return Container(
+                                            height: rowHeight,
+                                            decoration: BoxDecoration(
+                                              color: index == hoveredIdx ? const Color(0xFFE2E8F0) : (index % 2 == 0 ? const Color(0xFFE8EDF2) : const Color(0xFFF5F5F5)),
+                                              border: Border(bottom: BorderSide(color: Colors.grey.shade200)),
+                                            ),
+                                            child: child,
+                                          );
+                                        },
                                         child: _buildScrollableRow(lead),
                                       ),
                                     );

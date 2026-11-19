@@ -439,7 +439,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
 
       // Fetch data for the initially selected tab
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        _fetchDataForCurrentTab(forceRefresh: true);
+        _fetchDataForCurrentTab(forceRefresh: false);
       });
     }
   }
@@ -461,7 +461,12 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
 
     switch (currentTabName) {
       case "Info":
-        provider.fetchLeadDetails(widget.customerId, context).then((_) {
+        if (forceRefresh ||
+            provider.leadDetails == null ||
+            provider.leadDetails!.isEmpty ||
+            provider.leadDetails!.first.customerId.toString() !=
+                widget.customerId) {
+          provider.fetchLeadDetails(widget.customerId, context).then((_) {
           if (provider.leadDetails != null &&
               provider.leadDetails!.isNotEmpty) {
             final lead = provider.leadDetails!.first;
@@ -475,6 +480,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
             } catch (_) {}
           }
         });
+        }
         break;
       case "Summary":
         provider.getCustomerTaskOverview(widget.customerId);
@@ -510,8 +516,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
         }
         break;
       case "Expense":
-        provider.getExpenseListApi(widget.customerId, context,
-            forceRefresh: true);
+        provider.getExpenseListApi(widget.customerId, context);
         break;
       case "CheckList Management":
         setState(() {
@@ -1145,7 +1150,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
             tooltip: "Refresh",
             onPressed: () {
               _refreshAnimationController.forward(from: 0.0);
-              _fetchDataForCurrentTab(forceRefresh: true);
+              _fetchDataForCurrentTab(forceRefresh: false);
             },
             icon: RotationTransition(
               turns: _refreshAnimationController,
@@ -1426,7 +1431,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                 tooltip: "Refresh",
                 onPressed: () {
                   _refreshAnimationController.forward(from: 0.0);
-                  _fetchDataForCurrentTab(forceRefresh: true);
+                  _fetchDataForCurrentTab(forceRefresh: false);
                 },
                 icon: RotationTransition(
                   turns: _refreshAnimationController,
@@ -1447,13 +1452,16 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
 
     final customerDetailsProvider =
         Provider.of<CustomerDetailsProvider>(context);
-    final dropDownProvider = Provider.of<DropDownProvider>(context);
+    final dropDownProvider =
+        Provider.of<DropDownProvider>(context, listen: false);
     final sideprovider = Provider.of<SidebarProvider>(context);
     final settingsprovider = Provider.of<SettingsProvider>(context);
     // final screenWidth = MediaQuery.of(context).size.width;
 
-    final leadDetailsProvider = Provider.of<LeadDetailsProvider>(context);
-    final customerProvider = Provider.of<CustomerProvider>(context);
+    final leadDetailsProvider =
+        Provider.of<LeadDetailsProvider>(context, listen: false);
+    final customerProvider =
+        Provider.of<CustomerProvider>(context, listen: false);
 
     // final List<SidebarOption> sidebarOptions = [
     //   SidebarOption(

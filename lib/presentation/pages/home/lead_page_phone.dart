@@ -171,10 +171,10 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
 
   @override
   Widget build(BuildContext context) {
-    final sideProvider = Provider.of<SidebarProvider>(context);
     final leadProvider = Provider.of<LeadsProvider>(context);
     final provider = Provider.of<DropDownProvider>(context);
-    final searchProvider = Provider.of<SidebarProvider>(context);
+    final searchProvider =
+        Provider.of<SidebarProvider>(context, listen: false);
     final settingsProvider = Provider.of<SettingsProvider>(context);
 
     return Scaffold(

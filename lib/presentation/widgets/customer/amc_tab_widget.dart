@@ -34,7 +34,9 @@ class _AmcTabWidgetState extends State<AmcTabWidget> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider =
           Provider.of<CustomerDetailsProvider>(context, listen: false);
-      provider.getAmc(widget.customerId, '0', context);
+      if (provider.amcList.isEmpty && !provider.isAmcListLoading) {
+        provider.getAmc(widget.customerId, '0', context);
+      }
       provider.getPeriodicServiceFieldsApi();
     });
   }

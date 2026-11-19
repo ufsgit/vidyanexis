@@ -31,7 +31,9 @@ class _ReceiptScreenState extends State<ReceiptScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final cdProvider =
           Provider.of<CustomerDetailsProvider>(context, listen: false);
-      cdProvider.getRecieptListApi(widget.customerId.toString(), context);
+      if (cdProvider.receiptList.isEmpty && !cdProvider.isLoading) {
+        cdProvider.getRecieptListApi(widget.customerId.toString(), context);
+      }
       if (cdProvider.leadDetails == null || cdProvider.leadDetails!.isEmpty) {
         cdProvider.fetchLeadDetails(widget.customerId.toString(), context);
       }

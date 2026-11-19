@@ -15,6 +15,25 @@ class HttpRequest {
 
   static final Dio _dioInstance = _createDio();
 
+  static String? _cachedToken;
+
+  static Future<String> _getToken() async {
+    if (_cachedToken != null && _cachedToken!.isNotEmpty) {
+      return _cachedToken!;
+    }
+    final prefs = await SharedPreferences.getInstance();
+    _cachedToken = prefs.getString('token') ?? "";
+    return _cachedToken!;
+  }
+
+  static void clearCachedToken() {
+    _cachedToken = null;
+  }
+
+  static void setCachedToken(String token) {
+    _cachedToken = token;
+  }
+
   static Dio _createDio() {
     final Dio dio = Dio(
       BaseOptions(
@@ -51,9 +70,7 @@ class HttpRequest {
     }
 
     final Dio dio = _getDio();
-    final prefs = await SharedPreferences.getInstance();
-    final String token = prefs.getString('token') ?? "";
-    print(token);
+    final String token = await _getToken();
 
     try {
       final String url = endPoint.startsWith('http')
@@ -71,7 +88,8 @@ class HttpRequest {
       );
 
       if (kDebugMode) {
-        print('get result $endPoint ====> $response  ');
+        final str = response.data?.toString() ?? '';
+        print('get result $endPoint ====> ${str.length > 200 ? '${str.substring(0, 200)}... (length: ${str.length})' : str}');
       }
 
       return response;
@@ -93,8 +111,7 @@ class HttpRequest {
       print('post request ====> $endPoint $bodyData');
     }
     final Dio dio = _getDio();
-    final prefs = await SharedPreferences.getInstance();
-    final String token = prefs.getString('token') ?? "";
+    final String token = await _getToken();
 
     try {
       final Response response = await dio.post(
@@ -108,7 +125,8 @@ class HttpRequest {
         data: bodyData,
       );
       if (kDebugMode) {
-        print('post result  $endPoint ====> ${response.data}  ');
+        final str = response.data?.toString() ?? '';
+        print('post result  $endPoint ====> ${str.length > 200 ? '${str.substring(0, 200)}... (length: ${str.length})' : str}');
       }
 
       return response;
@@ -133,8 +151,7 @@ class HttpRequest {
       print('delete request ====> $endPoint $bodyData');
     }
     final Dio dio = _getDio();
-    final prefs = await SharedPreferences.getInstance();
-    final String token = prefs.getString('token') ?? "";
+    final String token = await _getToken();
 
     try {
       final Response response = await dio.delete(
@@ -148,7 +165,8 @@ class HttpRequest {
         data: bodyData,
       );
       if (kDebugMode) {
-        print('delete result $endPoint ====> ${response.data}  ');
+        final str = response.data?.toString() ?? '';
+        print('delete result $endPoint ====> ${str.length > 200 ? '${str.substring(0, 200)}... (length: ${str.length})' : str}');
       }
 
       return response;
@@ -170,8 +188,7 @@ class HttpRequest {
       print('put request ====> $endPoint $bodyData');
     }
     final Dio dio = _getDio();
-    final prefs = await SharedPreferences.getInstance();
-    final String token = prefs.getString('token') ?? "";
+    final String token = await _getToken();
 
     try {
       final Response response = await dio.put(
@@ -185,7 +202,8 @@ class HttpRequest {
         data: bodyData, // data remains the same
       );
       if (kDebugMode) {
-        print('put result  $endPoint ====> ${response.data}');
+        final str = response.data?.toString() ?? '';
+        print('put result  $endPoint ====> ${str.length > 200 ? '${str.substring(0, 200)}... (length: ${str.length})' : str}');
       }
 
       return response;
@@ -207,8 +225,7 @@ class HttpRequest {
       print('put request ====> $endPoint $bodyData');
     }
     final Dio dio = _getDio();
-    final prefs = await SharedPreferences.getInstance();
-    final String token = prefs.getString('token') ?? "";
+    final String token = await _getToken();
 
     try {
       final Response response = await dio.put(
@@ -222,7 +239,8 @@ class HttpRequest {
         queryParameters: bodyData,
       );
       if (kDebugMode) {
-        print('put result  $endPoint ====> ${response.data}');
+        final str = response.data?.toString() ?? '';
+        print('put result  $endPoint ====> ${str.length > 200 ? '${str.substring(0, 200)}... (length: ${str.length})' : str}');
       }
 
       return response;

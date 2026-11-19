@@ -21,8 +21,11 @@ class _PaymentTabWidgetState extends State<PaymentTabWidget> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<CustomerDetailsProvider>(context, listen: false)
-          .getPaymentListApi(widget.customerId, context);
+      final provider =
+          Provider.of<CustomerDetailsProvider>(context, listen: false);
+      if (provider.paymentList.isEmpty && !provider.isPaymentListLoading) {
+        provider.getPaymentListApi(widget.customerId, context);
+      }
     });
   }
 

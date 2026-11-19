@@ -906,6 +906,7 @@ class DropDownProvider extends ChangeNotifier {
 
   Future<void> getEnquirySource(BuildContext context,
       {bool fetchUserSpecific = false, bool forceRefresh = false}) async {
+    if (!forceRefresh && _enquiryData.isNotEmpty) return;
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -1002,6 +1003,7 @@ class DropDownProvider extends ChangeNotifier {
 
   Future<void> getEnquiryFor(BuildContext context,
       {bool fetchUserSpecific = false, bool forceRefresh = false}) async {
+    if (!forceRefresh && _enquiryForList.isNotEmpty) return;
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -1155,7 +1157,8 @@ class DropDownProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> getFollowUpStatusCustomer(BuildContext context) async {
+  Future<void> getFollowUpStatusCustomer(BuildContext context, {bool forceRefresh = false}) async {
+    if (!forceRefresh && _followUpstatus.isNotEmpty) return;
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -1278,7 +1281,8 @@ class DropDownProvider extends ChangeNotifier {
     }
   }
 
-  void getAMCStatus(BuildContext context) async {
+  void getAMCStatus(BuildContext context, {bool forceRefresh = false}) async {
+    if (!forceRefresh && _amcStatus.isNotEmpty) return;
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -1366,7 +1370,8 @@ class DropDownProvider extends ChangeNotifier {
     }
   }
 
-  void getDocumentType(BuildContext context, {String searchQuery = ""}) async {
+  void getDocumentType(BuildContext context, {String searchQuery = "", bool forceRefresh = false}) async {
+    if (!forceRefresh && searchQuery.isEmpty && _documentType.isNotEmpty) return;
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
