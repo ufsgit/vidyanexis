@@ -3759,12 +3759,42 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
           );
           return;
         }
-        await customerDetailsProvider.loadQuotationFromCustomFields(context,
-            "view_in_quotation", customerDetailsProvider.selectedQuotationType);
-        if (customerDetailsProvider.quotationListByMaster.isNotEmpty) {
-          final quotation = customerDetailsProvider.quotationListByMaster.first;
-          customerDetailsProvider.populateAllQuotationFields(
-              quotation, widget.customerId);
+
+        Loader.showLoader(context, message: 'Loading Quotation...');
+        try {
+          await customerDetailsProvider.loadQuotationFromCustomFields(
+            context,
+            "view_in_quotation",
+            customerDetailsProvider.selectedQuotationType,
+          );
+
+          if (!mounted) return;
+
+          if (customerDetailsProvider.quotationListByMaster.isNotEmpty) {
+            final quotation =
+                customerDetailsProvider.quotationListByMaster.first;
+            customerDetailsProvider.populateAllQuotationFields(
+                quotation, widget.customerId);
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Quotation loaded successfully'),
+                backgroundColor: Colors.green,
+                duration: Duration(seconds: 2),
+              ),
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(
+                    'No matching quotation found for the selected custom fields'),
+                duration: Duration(seconds: 3),
+              ),
+            );
+          }
+        } finally {
+          if (mounted) {
+            Loader.stopLoader(context);
+          }
         }
       },
       buttonText:
