@@ -8,29 +8,31 @@ class NotificationOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<NotificationProvider>(
-      builder: (context, provider, child) {
-        if (provider.notifications.isEmpty) {
-          return const SizedBox.shrink();
-        }
+    return Positioned(
+      top: 16,
+      right: 16,
+      child: Consumer<NotificationProvider>(
+        builder: (context, provider, child) {
+          if (provider.notifications.isEmpty) {
+            return const SizedBox.shrink();
+          }
 
-        return Positioned(
-          top: 20,
-          right: 20,
-          child: SizedBox(
-            width: 320,
+          return SizedBox(
+            width: 340,
             child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: provider.notifications.map((notification) {
                 return NotificationWidget(
                   notification: notification,
                   onDismiss: () => provider.removeNotification(
-                      int.parse(notification.notificationId!)),
+                      int.tryParse(notification.notificationId ?? '') ?? 0),
                 );
               }).toList(),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }

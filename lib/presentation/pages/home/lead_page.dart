@@ -17,6 +17,7 @@ import 'package:vidyanexis/controller/audio_file_provider.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/leads_provider.dart';
+import 'package:vidyanexis/controller/notification_provider.dart';
 import 'package:vidyanexis/controller/lead_details_provider.dart';
 import 'package:vidyanexis/controller/models/search_leads_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
@@ -753,6 +754,8 @@ class _LeadsPageState extends State<LeadPage> {
                                   leadId: leadIdController.text,
                                 );
                                 leadProvider.getSearchLeads(context);
+                                Provider.of<NotificationProvider>(context, listen: false)
+                                    .fetchOverdueTaskCount(context: context);
                               },
                               tooltip: 'Refresh',
                             ),

@@ -19,6 +19,7 @@ import 'package:vidyanexis/controller/customer_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/leads_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
+import 'package:vidyanexis/controller/notification_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_follow_up_dialog.dart';
@@ -66,7 +67,8 @@ class CustomerEnquirySourceFilterOption {
   final int id;
   final String name;
 
-  const CustomerEnquirySourceFilterOption({required this.id, required this.name});
+  const CustomerEnquirySourceFilterOption(
+      {required this.id, required this.name});
 }
 
 class CustomerDepartmentFilterOption {
@@ -78,7 +80,7 @@ class CustomerDepartmentFilterOption {
 
 class CustomerPage extends StatefulWidget {
   final bool fromDashBoard;
-  const CustomerPage({super.key, this.fromDashBoard=false});
+  const CustomerPage({super.key, this.fromDashBoard = false});
   static _CustomerPageState? _currentState;
 
   static void callFunction(int customerId) {
@@ -122,9 +124,11 @@ class _CustomerPageState extends State<CustomerPage> {
   Future<void> _openMaps(String location) async {
     if (location.isEmpty || location == 'null' || location == '-') return;
     String cleanLocation = location.trim();
-    if (cleanLocation.startsWith('http://') || cleanLocation.startsWith('https://')) {
+    if (cleanLocation.startsWith('http://') ||
+        cleanLocation.startsWith('https://')) {
       try {
-        await launchUrl(Uri.parse(cleanLocation), mode: LaunchMode.externalApplication);
+        await launchUrl(Uri.parse(cleanLocation),
+            mode: LaunchMode.externalApplication);
         return;
       } catch (e) {
         debugPrint('Error launching existing URL: $e');
@@ -133,17 +137,20 @@ class _CustomerPageState extends State<CustomerPage> {
         if (match != null) {
           String coords = '${match.group(1)},${match.group(2)}';
           String newUrl = 'https://www.google.com/maps/search/$coords';
-          await launchUrl(Uri.parse(newUrl), mode: LaunchMode.externalApplication);
+          await launchUrl(Uri.parse(newUrl),
+              mode: LaunchMode.externalApplication);
         }
       }
     } else {
-      String newUrl = 'https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(cleanLocation)}';
+      String newUrl =
+          'https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(cleanLocation)}';
       await launchUrl(Uri.parse(newUrl), mode: LaunchMode.externalApplication);
     }
   }
+
   Timer? _debounce;
   bool _isSyncing = false;
-  int? _hoveredRowIndex;
+  final ValueNotifier<int?> _hoveredRowNotifier = ValueNotifier<int?>(null);
   final sideProvider =
       Provider.of<SidebarProvider>(navigatorKey.currentState!.context);
   int userId = 0;
@@ -228,6 +235,7 @@ class _CustomerPageState extends State<CustomerPage> {
     _enquirySourceFilterFocusNode.dispose();
     _departmentFilterController.dispose();
     _departmentFilterFocusNode.dispose();
+    _hoveredRowNotifier.dispose();
     super.dispose();
   }
 
@@ -312,7 +320,7 @@ class _CustomerPageState extends State<CustomerPage> {
   @override
   Widget build(BuildContext context) {
     final customerProvider = Provider.of<CustomerProvider>(context);
-    final provider = Provider.of<DropDownProvider>(context);
+    final provider = Provider.of<DropDownProvider>(context, listen: false);
     final settingsProvider = Provider.of<SettingsProvider>(context);
 
     // Calculate dynamic heights for table
@@ -384,8 +392,8 @@ class _CustomerPageState extends State<CustomerPage> {
                                       behavior: HitTestBehavior.opaque,
                                       onTap: () {
                                         customerProvider.setEntryType('myown');
-                                        customerProvider.getSearchCustomers(
-                                            context);
+                                        customerProvider
+                                            .getSearchCustomers(context);
                                       },
                                       child: Container(
                                         padding:
@@ -404,7 +412,8 @@ class _CustomerPageState extends State<CustomerPage> {
                                         ),
                                         child: Text(
                                           'ME',
-                                          style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                          style: TextStyle(
+                                            fontFamily: 'PlusJakartaSans',
                                             color: customerProvider.entryType !=
                                                     'all'
                                                 ? AppColors.primaryBlue
@@ -424,8 +433,8 @@ class _CustomerPageState extends State<CustomerPage> {
                                       behavior: HitTestBehavior.opaque,
                                       onTap: () {
                                         customerProvider.setEntryType('all');
-                                        customerProvider.getSearchCustomers(
-                                            context);
+                                        customerProvider
+                                            .getSearchCustomers(context);
                                       },
                                       child: Container(
                                         padding:
@@ -444,7 +453,8 @@ class _CustomerPageState extends State<CustomerPage> {
                                         ),
                                         child: Text(
                                           'ALL',
-                                          style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                                          style: TextStyle(
+                                            fontFamily: 'PlusJakartaSans',
                                             color: customerProvider.entryType ==
                                                     'all'
                                                 ? AppColors.primaryBlue
@@ -577,9 +587,11 @@ class _CustomerPageState extends State<CustomerPage> {
                                   const PopupMenuItem(
                                       value: 8, child: Text('Name (Z-A)')),
                                   const PopupMenuItem(
-                                      value: 10, child: Text('Registration Date (ASC)')),
+                                      value: 10,
+                                      child: Text('Registration Date (ASC)')),
                                   const PopupMenuItem(
-                                      value: 11, child: Text('Registration Date (DESC)')),
+                                      value: 11,
+                                      child: Text('Registration Date (DESC)')),
                                 ],
                               ),
                               CustomFilterButton(
@@ -599,6 +611,9 @@ class _CustomerPageState extends State<CustomerPage> {
                                   );
                                   customerProvider.getSearchCustomers(context,
                                       isSilent: true);
+                                  Provider.of<NotificationProvider>(context,
+                                          listen: false)
+                                      .fetchOverdueTaskCount(context: context);
                                 },
                                 tooltip: 'Refresh',
                               ),
@@ -691,7 +706,12 @@ class _CustomerPageState extends State<CustomerPage> {
                                     ),
                                   ),
                                 ),
-                              if (settingsProvider.menuIsSaveMap[167].toString() == '1' && settingsProvider.menuIsSaveMap[191].toString() == '1')
+                              if (settingsProvider.menuIsSaveMap[167]
+                                          .toString() ==
+                                      '1' &&
+                                  settingsProvider.menuIsSaveMap[191]
+                                          .toString() ==
+                                      '1')
                                 const SizedBox(width: 8),
                               if (settingsProvider.menuIsSaveMap[191]
                                       .toString() ==
@@ -872,9 +892,11 @@ class _CustomerPageState extends State<CustomerPage> {
                               const PopupMenuItem(
                                   value: 8, child: Text('Name (Z-A)')),
                               const PopupMenuItem(
-                                  value: 10, child: Text('Registration Date (ASC)')),
+                                  value: 10,
+                                  child: Text('Registration Date (ASC)')),
                               const PopupMenuItem(
-                                  value: 11, child: Text('Registration Date (DESC)')),
+                                  value: 11,
+                                  child: Text('Registration Date (DESC)')),
                             ],
                           ),
                           const SizedBox(width: 8),
@@ -1131,11 +1153,11 @@ class _CustomerPageState extends State<CustomerPage> {
     double rowHeight,
     double tableHeaderHeight,
   ) {
-
     final bool showCustomerCode = settingsProvider.menuIsViewMap[184] == 1;
     final bool showLeadCode = settingsProvider.showLeadCode == 1;
     final bool showLocation = settingsProvider.menuIsViewMap[142] == 1;
-    final bool showRamcoLocation = settingsProvider.ramcoLocationPermission == 1;
+    final bool showRamcoLocation =
+        settingsProvider.ramcoLocationPermission == 1;
     final bool showConsumerName = settingsProvider.consumerNameMandatory == 1;
 
     final bool apiLoaded = customerProvider.customerFields.isNotEmpty;
@@ -1145,7 +1167,8 @@ class _CustomerPageState extends State<CustomerPage> {
       ..sort((a, b) => (a.sort ?? 99).compareTo(b.sort ?? 99));
 
     // Helper: is a field ID visible — if API not loaded, always show
-    bool visible(int id) => !apiLoaded || customerProvider.isCustomerFieldVisible(id);
+    bool visible(int id) =>
+        !apiLoaded || customerProvider.isCustomerFieldVisible(id);
     // Helper: get field name — if API not loaded, use fallback
     String fieldName(int id, String fallback) => !apiLoaded
         ? fallback
@@ -1170,13 +1193,17 @@ class _CustomerPageState extends State<CustomerPage> {
             .toList();
 
     Widget headerCell(double w, String title) => TableWidget(
-          width: w, title: title, fontWeight: FontWeight.normal,
+          width: w,
+          title: title,
+          fontWeight: FontWeight.normal,
           padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
           color: const Color(0xFFFFFFFF),
         );
 
     Widget textCell(double w, String text) => TableWidget(
-          width: w, fontSize: 12, fontWeight: FontWeight.normal,
+          width: w,
+          fontSize: 12,
+          fontWeight: FontWeight.normal,
           padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 8.0),
           title: text,
         );
@@ -1185,25 +1212,30 @@ class _CustomerPageState extends State<CustomerPage> {
     final Map<dynamic, CustomerCustomField> uniqueCustomFields = {};
     for (var lead in customerProvider.customerData) {
       for (var cf in lead.customFields) {
-        final key = cf.customFieldId != 0 ? cf.customFieldId : cf.customFieldName;
-        if (key != null && key != '' && key != 0 && !uniqueCustomFields.containsKey(key)) {
+        final key =
+            cf.customFieldId != 0 ? cf.customFieldId : cf.customFieldName;
+        if (key != null &&
+            key != '' &&
+            key != 0 &&
+            !uniqueCustomFields.containsKey(key)) {
           uniqueCustomFields[key] = cf;
         }
       }
     }
-    final List<CustomerCustomField> customFieldColumns = uniqueCustomFields.values.toList()
-      ..sort((a, b) => a.order.compareTo(b.order));
+    final List<CustomerCustomField> customFieldColumns =
+        uniqueCustomFields.values.toList()
+          ..sort((a, b) => a.order.compareTo(b.order));
 
     Widget _buildScrollableHeader() {
       return Row(children: [
         for (final id in scrollableFieldIds) ...[
-          if (id == 2)  headerCell(180, fieldName(2, 'Place')),
-          if (id == 4)  headerCell(140, fieldName(4, 'AMC Date')),
-          if (id == 5)  headerCell(190, fieldName(5, 'Work Completion Date')),
-          if (id == 6)  headerCell(220, fieldName(6, 'Remarks')),
-          if (id == 7)  headerCell(160, fieldName(7, 'Follow Up Status')),
-          if (id == 8)  headerCell(140, fieldName(8, 'Follow Up Date')),
-          if (id == 9)  headerCell(140, fieldName(9, 'Consumer No')),
+          if (id == 2) headerCell(180, fieldName(2, 'Place')),
+          if (id == 4) headerCell(140, fieldName(4, 'AMC Date')),
+          if (id == 5) headerCell(190, fieldName(5, 'Work Completion Date')),
+          if (id == 6) headerCell(220, fieldName(6, 'Remarks')),
+          if (id == 7) headerCell(160, fieldName(7, 'Follow Up Status')),
+          if (id == 8) headerCell(140, fieldName(8, 'Follow Up Date')),
+          if (id == 9) headerCell(140, fieldName(9, 'Consumer No')),
           if (id == 10) headerCell(150, fieldName(10, 'Assigned Staff')),
           if (id == 11) ...[
             for (final cf in customFieldColumns)
@@ -1213,21 +1245,22 @@ class _CustomerPageState extends State<CustomerPage> {
           // if (id == 13) headerCell(150, fieldName(13, 'Quoted Rate')),
         ],
         if (showRamcoLocation) headerCell(120, 'Location'),
-        if (showLocation)      headerCell(140, 'Location'),
+        if (showLocation) headerCell(140, 'Location'),
       ]);
     }
 
     Widget _buildScrollableRow(SearchLeadModel lead) {
       return Row(children: [
         for (final id in scrollableFieldIds) ...[
-          if (id == 2)  textCell(180, lead.displayPlace),
-          if (id == 4)  textCell(140, lead.amcDateDisplay),
-          if (id == 5)  textCell(190, lead.workCompletionDateDisplay),
-          if (id == 6)  textCell(220, lead.remark),
+          if (id == 2) textCell(180, lead.displayPlace),
+          if (id == 4) textCell(140, lead.amcDateDisplay),
+          if (id == 5) textCell(190, lead.workCompletionDateDisplay),
+          if (id == 6) textCell(220, lead.remark),
           if (id == 7)
             TableWidget(
               width: 160,
-              padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+              padding:
+                  const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
               data: InkWell(
                 onTap: () => settingsProvider.customerStatusBlock == 1
                     ? null
@@ -1255,10 +1288,12 @@ class _CustomerPageState extends State<CustomerPage> {
               ),
             ),
           if (id == 8)
-            textCell(140, lead.nextFollowUpDate.isNotEmpty
-                ? lead.nextFollowUpDate.toDayMonthYearFormat()
-                : ''),
-          if (id == 9)  textCell(140, lead.consumerNo),
+            textCell(
+                140,
+                lead.nextFollowUpDate.isNotEmpty
+                    ? lead.nextFollowUpDate.toDayMonthYearFormat()
+                    : ''),
+          if (id == 9) textCell(140, lead.consumerNo),
           if (id == 10) textCell(150, lead.toUserName),
           if (id == 11) ...[
             for (final cf in customFieldColumns)
@@ -1304,15 +1339,31 @@ class _CustomerPageState extends State<CustomerPage> {
           // if (id == 13) textCell(150, lead.totalProjectCost),
         ],
         if (showRamcoLocation)
-          textCell(120, (lead.location?.toString() ?? '').trim().isNotEmpty ? 'Yes' : 'No'),
+          textCell(
+              120,
+              (lead.location?.toString() ?? '').trim().isNotEmpty
+                  ? 'Yes'
+                  : 'No'),
         if (showLocation) textCell(140, lead.locationName ?? ''),
       ]);
     }
 
     final double scrollableWidth = scrollableFieldIds.fold(0.0, (sum, id) {
-      final w = {2: 180.0, 4: 140.0, 5: 190.0, 6: 220.0, 7: 160.0, 8: 140.0, 9: 140.0, 10: 150.0, 11: customFieldColumns.length * 200.0};
-      return sum + (w[id] ?? 0.0);
-    }) + (showRamcoLocation ? 120.0 : 0.0) + (showLocation ? 140.0 : 0.0);
+          final w = {
+            2: 180.0,
+            4: 140.0,
+            5: 190.0,
+            6: 220.0,
+            7: 160.0,
+            8: 140.0,
+            9: 140.0,
+            10: 150.0,
+            11: customFieldColumns.length * 200.0
+          };
+          return sum + (w[id] ?? 0.0);
+        }) +
+        (showRamcoLocation ? 120.0 : 0.0) +
+        (showLocation ? 140.0 : 0.0);
 
     return Scrollbar(
       controller: _scrollableVerticalController,
@@ -1367,14 +1418,14 @@ class _CustomerPageState extends State<CustomerPage> {
                           color: Color(0xFFFFFFFF),
                         ),
                       if (visible(1))
-                      TableWidget(
-                        width: 230,
-                        title: fieldName(1, 'Customer Name'),
-                        fontWeight: FontWeight.normal,
-                        padding: EdgeInsets.symmetric(
-                            vertical: 4.0, horizontal: 8.0),
-                        color: Color(0xFFFFFFFF),
-                      ),
+                        TableWidget(
+                          width: 230,
+                          title: fieldName(1, 'Customer Name'),
+                          fontWeight: FontWeight.normal,
+                          padding: EdgeInsets.symmetric(
+                              vertical: 4.0, horizontal: 8.0),
+                          color: Color(0xFFFFFFFF),
+                        ),
                       if (showConsumerName)
                         TableWidget(
                           width: 150,
@@ -1386,14 +1437,14 @@ class _CustomerPageState extends State<CustomerPage> {
                           color: const Color(0xFFFFFFFF),
                         ),
                       if (visible(3))
-                      TableWidget(
-                        width: 140,
-                        title: fieldName(3, 'Mobile no'),
-                        fontWeight: FontWeight.normal,
-                        padding: EdgeInsets.symmetric(
-                            vertical: 4.0, horizontal: 8.0),
-                        color: Color(0xFFFFFFFF),
-                      ),
+                        TableWidget(
+                          width: 140,
+                          title: fieldName(3, 'Mobile no'),
+                          fontWeight: FontWeight.normal,
+                          padding: EdgeInsets.symmetric(
+                              vertical: 4.0, horizontal: 8.0),
+                          color: Color(0xFFFFFFFF),
+                        ),
                     ],
                   ),
                 ),
@@ -1418,21 +1469,33 @@ class _CustomerPageState extends State<CustomerPage> {
                               var lead = customerProvider.customerData[index];
                               return MouseRegion(
                                 onEnter: (_) {
-                                  if (_hoveredRowIndex != index) {
-                                    setState(() => _hoveredRowIndex = index);
+                                  if (_hoveredRowNotifier.value != index) {
+                                    _hoveredRowNotifier.value = index;
                                   }
                                 },
                                 onExit: (_) {
-                                  if (_hoveredRowIndex != null) {
-                                    setState(() => _hoveredRowIndex = null);
+                                  if (_hoveredRowNotifier.value == index) {
+                                    _hoveredRowNotifier.value = null;
                                   }
                                 },
-                                child: Container(
-                                  height: rowHeight,
-                                  decoration: BoxDecoration(
-                                    color: index == _hoveredRowIndex ? const Color(0xFFE2E8F0) : (index % 2 == 0 ? const Color(0xFFE8EDF2) : const Color(0xFFF5F5F5)),
-                                    border: Border(bottom: BorderSide(color: Colors.grey.shade200)),
-                                  ),
+                                child: ValueListenableBuilder<int?>(
+                                  valueListenable: _hoveredRowNotifier,
+                                  builder: (context, hoveredIdx, child) {
+                                    return Container(
+                                      height: rowHeight,
+                                      decoration: BoxDecoration(
+                                        color: index == hoveredIdx
+                                            ? const Color(0xFFE2E8F0)
+                                            : (index % 2 == 0
+                                                ? const Color(0xFFE8EDF2)
+                                                : const Color(0xFFF5F5F5)),
+                                        border: Border(
+                                            bottom: BorderSide(
+                                                color: Colors.grey.shade200)),
+                                      ),
+                                      child: child,
+                                    );
+                                  },
                                   child: Row(
                                     children: [
                                       TableWidget(
@@ -1462,320 +1525,401 @@ class _CustomerPageState extends State<CustomerPage> {
                                           fontWeight: FontWeight.normal,
                                           padding: const EdgeInsets.symmetric(
                                               vertical: 6.0, horizontal: 8.0),
-                                          title: settingsProvider.showCustomerCode == 1
+                                          title: settingsProvider
+                                                      .showCustomerCode ==
+                                                  1
                                               ? lead.customerCode
                                               : lead.registrationNo,
                                         ),
                                       if (visible(1))
-                                      TableWidget(
-                                        width: 230,
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 2.0, horizontal: 8.0),
-                                        data: Row(
-                                          children: [
-                                            Expanded(
-                                              child: InkWell(
-                                                onTap: () => onItemClick(
-                                                    lead.customerId),
-                                                child: Tooltip(
-                                                  message: lead.customerName,
-                                                  child: Text(
-                                                    lead.customerName,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    maxLines: 1,
-                                                    style: const TextStyle(fontFamily: 'PlusJakartaSans', 
-                                                      color: Colors.blue,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      fontSize: 12,
+                                        TableWidget(
+                                          width: 230,
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 2.0, horizontal: 8.0),
+                                          data: Row(
+                                            children: [
+                                              Expanded(
+                                                child: InkWell(
+                                                  onTap: () => onItemClick(
+                                                      lead.customerId),
+                                                  child: Tooltip(
+                                                    message: lead.customerName,
+                                                    child: Text(
+                                                      lead.customerName,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      maxLines: 1,
+                                                      style: const TextStyle(
+                                                        fontFamily:
+                                                            'PlusJakartaSans',
+                                                        color: Colors.blue,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        fontSize: 12,
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
                                               ),
-                                            ),
-                                            _HoverMenuAnchor(
-                                              builder: (context, controller,
-                                                  onHover, child) {
-                                                return InkWell(
-                                                  onTap: () {
-                                                    if (controller.isOpen) {
-                                                      controller.close();
-                                                    } else {
-                                                      controller.open();
-                                                    }
-                                                  },
-                                                  child: const Padding(
-                                                    padding: EdgeInsets.symmetric(horizontal: 4.0),
-                                                    child: Icon(
-                                                      Icons.keyboard_arrow_down,
-                                                      size: 20,
-                                                      color: Colors.black,
+                                              _HoverMenuAnchor(
+                                                builder: (context, controller,
+                                                    onHover, child) {
+                                                  return InkWell(
+                                                    onTap: () {
+                                                      if (controller.isOpen) {
+                                                        controller.close();
+                                                      } else {
+                                                        controller.open();
+                                                      }
+                                                    },
+                                                    child: const Padding(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 4.0),
+                                                      child: Icon(
+                                                        Icons
+                                                            .keyboard_arrow_down,
+                                                        size: 20,
+                                                        color: Colors.black,
+                                                      ),
                                                     ),
-                                                  ),
-                                                );
-                                              },
-                                              menuChildren: [
-                                                if (settingsProvider
-                                                        .menuIsSaveMap[13] ==
-                                                    1)
-                                                  (onHover) =>
-                                                      MultiLevelHoverMenu(
-                                                        isSubMenu: false,
-                                                        title: 'Create Task',
-                                                        onHoverChange:
-                                                            (hovering) {
-                                                          onHover(hovering);
-                                                        },
-                                                        leadingIcon: const Icon(
-                                                            Icons.add_task,
-                                                            size: 18,
-                                                            color: Colors.teal),
-                                                        children: provider
-                                                            .taskType
-                                                            .where((taskType) =>
-                                                                taskType
-                                                                    .manualCreation == 1)
-                                                            .expand<Widget>((taskType) {
-                                                          final users = provider
-                                                              .searchUserDetails
-                                                              .where((user) {
-                                                            if (user.workingStatus != "1") return false;
-                                                            final taskDeptList = taskType.departmentIds.toString().split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
-                                                            final userDeptList = (user.departmentId ?? '').toString().split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
-                                                            
-                                                            List<String> transferDeptList = [];
-                                                            if (user.transferDepartments != null) {
-                                                              if (user.transferDepartments is Iterable) {
-                                                                for (var t in user.transferDepartments) {
-                                                                  if (t is Map) {
-                                                                    final tId = t["Department_Id"]?.toString() ?? t["department_id"]?.toString();
-                                                                    if (tId != null) transferDeptList.add(tId.trim());
-                                                                  } else if (t != null) {
-                                                                    transferDeptList.addAll(t.toString().split(',').map((e) => e.trim()));
+                                                  );
+                                                },
+                                                menuChildren: [
+                                                  if (settingsProvider
+                                                          .menuIsSaveMap[13] ==
+                                                      1)
+                                                    (onHover) =>
+                                                        MultiLevelHoverMenu(
+                                                          isSubMenu: false,
+                                                          title: 'Create Task',
+                                                          onHoverChange:
+                                                              (hovering) {
+                                                            onHover(hovering);
+                                                          },
+                                                          leadingIcon:
+                                                              const Icon(
+                                                                  Icons
+                                                                      .add_task,
+                                                                  size: 18,
+                                                                  color: Colors
+                                                                      .teal),
+                                                          children: provider
+                                                              .taskType
+                                                              .where((taskType) =>
+                                                                  taskType
+                                                                      .manualCreation ==
+                                                                  1)
+                                                              .expand<Widget>(
+                                                                  (taskType) {
+                                                            final users = provider
+                                                                .searchUserDetails
+                                                                .where((user) {
+                                                              if (user.workingStatus !=
+                                                                  "1")
+                                                                return false;
+                                                              final taskDeptList = taskType
+                                                                  .departmentIds
+                                                                  .toString()
+                                                                  .split(',')
+                                                                  .map((e) =>
+                                                                      e.trim())
+                                                                  .where((e) =>
+                                                                      e.isNotEmpty)
+                                                                  .toList();
+                                                              final userDeptList = (user
+                                                                          .departmentId ??
+                                                                      '')
+                                                                  .toString()
+                                                                  .split(',')
+                                                                  .map((e) =>
+                                                                      e.trim())
+                                                                  .where((e) =>
+                                                                      e.isNotEmpty)
+                                                                  .toList();
+
+                                                              List<String>
+                                                                  transferDeptList =
+                                                                  [];
+                                                              if (user.transferDepartments !=
+                                                                  null) {
+                                                                if (user.transferDepartments
+                                                                    is Iterable) {
+                                                                  for (var t in user
+                                                                      .transferDepartments) {
+                                                                    if (t
+                                                                        is Map) {
+                                                                      final tId = t["Department_Id"]
+                                                                              ?.toString() ??
+                                                                          t["department_id"]
+                                                                              ?.toString();
+                                                                      if (tId !=
+                                                                          null)
+                                                                        transferDeptList
+                                                                            .add(tId.trim());
+                                                                    } else if (t !=
+                                                                        null) {
+                                                                      transferDeptList.addAll(t
+                                                                          .toString()
+                                                                          .split(
+                                                                              ',')
+                                                                          .map((e) =>
+                                                                              e.trim()));
+                                                                    }
                                                                   }
+                                                                } else {
+                                                                  transferDeptList.addAll(user
+                                                                      .transferDepartments
+                                                                      .toString()
+                                                                      .split(
+                                                                          ',')
+                                                                      .map((e) =>
+                                                                          e.trim()));
                                                                 }
-                                                              } else {
-                                                                transferDeptList.addAll(user.transferDepartments.toString().split(',').map((e) => e.trim()));
                                                               }
-                                                            }
-                                                            
-                                                            return taskDeptList.any((dept) => userDeptList.contains(dept) || transferDeptList.contains(dept));
-                                                          }).toList();
 
-                                                          if (users.isEmpty) return <Widget>[];
+                                                              return taskDeptList.any((dept) =>
+                                                                  userDeptList
+                                                                      .contains(
+                                                                          dept) ||
+                                                                  transferDeptList
+                                                                      .contains(
+                                                                          dept));
+                                                            }).toList();
 
-                                                          return [MultiLevelHoverMenu(
-                                                            title: taskType
-                                                                .taskTypeName,
-                                                            children: users
-                                                                .map((user) {
-                                                              return MenuItemButton(
-                                                                onPressed: () {
-                                                                  _quickSaveTask(
-                                                                      lead,
-                                                                      taskType,
-                                                                      user);
-                                                                },
-                                                                child: Text(user
-                                                                    .userDetailsName),
-                                                              );
-                                                            }).toList(),
-                                                          )];
-                                                        }).toList(),
-                                                      ),
-                                                if (settingsProvider
-                                                        .menuIsSaveMap[16] ==
-                                                    1)
-                                                  (onHover) => MenuItemButton(onHover: onHover, 
-                                                        onPressed: () =>
-                                                            _handleLeadAction(
-                                                                'quotation',
-                                                                lead),
-                                                        child: const Row(
-                                                          children: [
-                                                            Icon(
-                                                                Icons
-                                                                    .request_quote,
-                                                                size: 18,
-                                                                color: Colors
-                                                                    .orange),
-                                                            SizedBox(width: 8),
-                                                            Text('Quotation'),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                if (settingsProvider
-                                                        .menuIsViewMap[16] ==
-                                                    1)
-                                                  (onHover) => MenuItemButton(onHover: onHover, 
-                                                        onPressed: () =>
-                                                            _handleLeadAction(
-                                                                'quotation_list_tab',
-                                                                lead),
-                                                        child: const Row(
-                                                          children: [
-                                                            Icon(Icons.list_alt,
-                                                                size: 18,
-                                                                color: Colors
-                                                                    .orangeAccent),
-                                                            SizedBox(width: 8),
-                                                            Text(
-                                                                'Quotation list'),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                if (settingsProvider
-                                                        .menuIsSaveMap[19] ==
-                                                    1)
-                                                  (onHover) => MenuItemButton(onHover: onHover, 
-                                                        onPressed: () =>
-                                                            _handleLeadAction(
-                                                                'document',
-                                                                lead),
-                                                        child: const Row(
-                                                          children: [
-                                                            Icon(
-                                                                Icons
-                                                                    .description,
-                                                                size: 18,
-                                                                color: Colors
-                                                                    .purple),
-                                                            SizedBox(width: 8),
-                                                            Text('Document'),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                if (settingsProvider
-                                                        .menuIsViewMap[19] ==
-                                                    1)
-                                                  (onHover) => MenuItemButton(onHover: onHover, 
-                                                        onPressed: () =>
-                                                            _handleLeadAction(
-                                                                'documents_tab',
-                                                                lead),
-                                                        child: const Row(
-                                                          children: [
-                                                            Icon(Icons.folder,
-                                                                size: 18,
-                                                                color: Colors
-                                                                    .blue),
-                                                            SizedBox(width: 8),
-                                                            Text(
-                                                                'Documents Tab'),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                if (settingsProvider
-                                                        .menuIsEditMap[4] ==
-                                                    1)
-                                                  (onHover) => MenuItemButton(onHover: onHover, 
-                                                        onPressed: () =>
-                                                            _handleLeadAction(
-                                                                'edit', lead),
-                                                        child: const Row(
-                                                          children: [
-                                                            Icon(Icons.edit,
-                                                                size: 18,
-                                                                color: Colors
-                                                                    .blue),
-                                                            SizedBox(width: 8),
-                                                            Text(
-                                                                'Edit Customer'),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                if (settingsProvider
-                                                        .menuIsDeleteMap[4] ==
-                                                    1)
-                                                  (onHover) => MenuItemButton(onHover: onHover, 
-                                                        onPressed: () =>
-                                                            _handleLeadAction(
-                                                                'delete', lead),
-                                                        child: const Row(
-                                                          children: [
-                                                            Icon(Icons.delete,
-                                                                size: 18,
-                                                                color:
-                                                                    Colors.red),
-                                                            SizedBox(width: 8),
-                                                            Text('Delete'),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                      if (settingsProvider
-                                                        .menuIsViewMap[226] ==
-                                                    1)
-                                                  (onHover) => MenuItemButton(
-                                                        onHover: onHover,
-                                                        onPressed: () {
-                                                          showDialog(
-                                                            context: context,
-                                                            builder:
-                                                                (BuildContext
-                                                                    context) {
-                                                              return AlertDialog(
-                                                                title: const Text(
-                                                                    'Delete All Tasks'),
-                                                                content:
-                                                                    const Text(
-                                                                  'Are you sure you want to delete all tasks for this lead? This action cannot be undone.',
-                                                                ),
-                                                                actions: [
-                                                                  TextButton(
-                                                                    onPressed: () =>
-                                                                        Navigator.of(context)
-                                                                            .pop(),
-                                                                    child: const Text(
-                                                                        'Cancel'),
-                                                                  ),
-                                                                  TextButton(
+                                                            if (users.isEmpty)
+                                                              return <Widget>[];
+
+                                                            return [
+                                                              MultiLevelHoverMenu(
+                                                                title: taskType
+                                                                    .taskTypeName,
+                                                                children: users
+                                                                    .map(
+                                                                        (user) {
+                                                                  return MenuItemButton(
                                                                     onPressed:
                                                                         () {
-                                                                      final leadsProvider = Provider.of<
-                                                                              LeadsProvider>(
-                                                                          context,
-                                                                          listen:
-                                                                              false);
-                                                                      leadsProvider
-                                                                          .deleteAllTasks(
-                                                                        context:
-                                                                            context,
-                                                                        customerId: lead
-                                                                            .customerId
-                                                                            .toString(),
-                                                                      );
+                                                                      _quickSaveTask(
+                                                                          lead,
+                                                                          taskType,
+                                                                          user);
                                                                     },
-                                                                    child:
-                                                                        const Text(
-                                                                      'Delete',
-                                                                      style: TextStyle(
-                                                                          color:
-                                                                              Colors.redAccent),
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              );
-                                                            },
-                                                          );
-                                                        },
-                                                        child: Row(
-                                                          children: [
-                                                            Icon(Icons.delete,
-                                                                size: 18,
-                                                                color: Colors
-                                                                    .redAccent),
-                                                            SizedBox(width: 8),
-                                                            Text(
-                                                                'Delete All Tasks'),
-                                                          ],
+                                                                    child: Text(
+                                                                        user.userDetailsName),
+                                                                  );
+                                                                }).toList(),
+                                                              )
+                                                            ];
+                                                          }).toList(),
                                                         ),
-                                                      ),
-                                              ],
-                                            ),
-                                          ],
+                                                  if (settingsProvider
+                                                          .menuIsSaveMap[16] ==
+                                                      1)
+                                                    (onHover) => MenuItemButton(
+                                                          onHover: onHover,
+                                                          onPressed: () =>
+                                                              _handleLeadAction(
+                                                                  'quotation',
+                                                                  lead),
+                                                          child: const Row(
+                                                            children: [
+                                                              Icon(
+                                                                  Icons
+                                                                      .request_quote,
+                                                                  size: 18,
+                                                                  color: Colors
+                                                                      .orange),
+                                                              SizedBox(
+                                                                  width: 8),
+                                                              Text('Quotation'),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                  if (settingsProvider
+                                                          .menuIsViewMap[16] ==
+                                                      1)
+                                                    (onHover) => MenuItemButton(
+                                                          onHover: onHover,
+                                                          onPressed: () =>
+                                                              _handleLeadAction(
+                                                                  'quotation_list_tab',
+                                                                  lead),
+                                                          child: const Row(
+                                                            children: [
+                                                              Icon(
+                                                                  Icons
+                                                                      .list_alt,
+                                                                  size: 18,
+                                                                  color: Colors
+                                                                      .orangeAccent),
+                                                              SizedBox(
+                                                                  width: 8),
+                                                              Text(
+                                                                  'Quotation list'),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                  if (settingsProvider
+                                                          .menuIsSaveMap[19] ==
+                                                      1)
+                                                    (onHover) => MenuItemButton(
+                                                          onHover: onHover,
+                                                          onPressed: () =>
+                                                              _handleLeadAction(
+                                                                  'document',
+                                                                  lead),
+                                                          child: const Row(
+                                                            children: [
+                                                              Icon(
+                                                                  Icons
+                                                                      .description,
+                                                                  size: 18,
+                                                                  color: Colors
+                                                                      .purple),
+                                                              SizedBox(
+                                                                  width: 8),
+                                                              Text('Document'),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                  if (settingsProvider
+                                                          .menuIsViewMap[19] ==
+                                                      1)
+                                                    (onHover) => MenuItemButton(
+                                                          onHover: onHover,
+                                                          onPressed: () =>
+                                                              _handleLeadAction(
+                                                                  'documents_tab',
+                                                                  lead),
+                                                          child: const Row(
+                                                            children: [
+                                                              Icon(Icons.folder,
+                                                                  size: 18,
+                                                                  color: Colors
+                                                                      .blue),
+                                                              SizedBox(
+                                                                  width: 8),
+                                                              Text(
+                                                                  'Documents Tab'),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                  if (settingsProvider
+                                                          .menuIsEditMap[4] ==
+                                                      1)
+                                                    (onHover) => MenuItemButton(
+                                                          onHover: onHover,
+                                                          onPressed: () =>
+                                                              _handleLeadAction(
+                                                                  'edit', lead),
+                                                          child: const Row(
+                                                            children: [
+                                                              Icon(Icons.edit,
+                                                                  size: 18,
+                                                                  color: Colors
+                                                                      .blue),
+                                                              SizedBox(
+                                                                  width: 8),
+                                                              Text(
+                                                                  'Edit Customer'),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                  if (settingsProvider
+                                                          .menuIsDeleteMap[4] ==
+                                                      1)
+                                                    (onHover) => MenuItemButton(
+                                                          onHover: onHover,
+                                                          onPressed: () =>
+                                                              _handleLeadAction(
+                                                                  'delete',
+                                                                  lead),
+                                                          child: const Row(
+                                                            children: [
+                                                              Icon(Icons.delete,
+                                                                  size: 18,
+                                                                  color: Colors
+                                                                      .red),
+                                                              SizedBox(
+                                                                  width: 8),
+                                                              Text('Delete'),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                  if (settingsProvider
+                                                          .menuIsViewMap[226] ==
+                                                      1)
+                                                    (onHover) => MenuItemButton(
+                                                          onHover: onHover,
+                                                          onPressed: () {
+                                                            showDialog(
+                                                              context: context,
+                                                              builder:
+                                                                  (BuildContext
+                                                                      context) {
+                                                                return AlertDialog(
+                                                                  title: const Text(
+                                                                      'Delete All Tasks'),
+                                                                  content:
+                                                                      const Text(
+                                                                    'Are you sure you want to delete all tasks for this lead? This action cannot be undone.',
+                                                                  ),
+                                                                  actions: [
+                                                                    TextButton(
+                                                                      onPressed:
+                                                                          () =>
+                                                                              Navigator.of(context).pop(),
+                                                                      child: const Text(
+                                                                          'Cancel'),
+                                                                    ),
+                                                                    TextButton(
+                                                                      onPressed:
+                                                                          () {
+                                                                        final leadsProvider = Provider.of<LeadsProvider>(
+                                                                            context,
+                                                                            listen:
+                                                                                false);
+                                                                        leadsProvider
+                                                                            .deleteAllTasks(
+                                                                          context:
+                                                                              context,
+                                                                          customerId: lead
+                                                                              .customerId
+                                                                              .toString(),
+                                                                        );
+                                                                      },
+                                                                      child:
+                                                                          const Text(
+                                                                        'Delete',
+                                                                        style: TextStyle(
+                                                                            color:
+                                                                                Colors.redAccent),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                );
+                                                              },
+                                                            );
+                                                          },
+                                                          child: Row(
+                                                            children: [
+                                                              Icon(Icons.delete,
+                                                                  size: 18,
+                                                                  color: Colors
+                                                                      .redAccent),
+                                                              SizedBox(
+                                                                  width: 8),
+                                                              Text(
+                                                                  'Delete All Tasks'),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      ),
                                       if (showConsumerName)
                                         TableWidget(
                                           width: 150,
@@ -1797,14 +1941,14 @@ class _CustomerPageState extends State<CustomerPage> {
                                           ),
                                         ),
                                       if (visible(3))
-                                      TableWidget(
-                                        width: 140,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.normal,
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 6.0, horizontal: 8.0),
-                                        title: lead.contactNumber,
-                                      ),
+                                        TableWidget(
+                                          width: 140,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.normal,
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 6.0, horizontal: 8.0),
+                                          title: lead.contactNumber,
+                                        ),
                                     ],
                                   ),
                                 ),
@@ -1866,23 +2010,37 @@ class _CustomerPageState extends State<CustomerPage> {
                                         customerProvider.customerData[index];
                                     return MouseRegion(
                                       onEnter: (_) {
-                                        if (_hoveredRowIndex != index) {
-                                          setState(
-                                              () => _hoveredRowIndex = index);
+                                        if (_hoveredRowNotifier.value !=
+                                            index) {
+                                          _hoveredRowNotifier.value = index;
                                         }
                                       },
                                       onExit: (_) {
-                                        if (_hoveredRowIndex != null) {
-                                          setState(
-                                              () => _hoveredRowIndex = null);
+                                        if (_hoveredRowNotifier.value ==
+                                            index) {
+                                          _hoveredRowNotifier.value = null;
                                         }
                                       },
-                                      child: Container(
-                                        height: rowHeight,
-                                        decoration: BoxDecoration(
-                                          color: index == _hoveredRowIndex ? const Color(0xFFE2E8F0) : (index % 2 == 0 ? const Color(0xFFE8EDF2) : const Color(0xFFF5F5F5)),
-                                          border: Border(bottom: BorderSide(color: Colors.grey.shade200)),
-                                        ),
+                                      child: ValueListenableBuilder<int?>(
+                                        valueListenable: _hoveredRowNotifier,
+                                        builder: (context, hoveredIdx, child) {
+                                          return Container(
+                                            height: rowHeight,
+                                            decoration: BoxDecoration(
+                                              color: index == hoveredIdx
+                                                  ? const Color(0xFFE2E8F0)
+                                                  : (index % 2 == 0
+                                                      ? const Color(0xFFE8EDF2)
+                                                      : const Color(
+                                                          0xFFF5F5F5)),
+                                              border: Border(
+                                                  bottom: BorderSide(
+                                                      color: Colors
+                                                          .grey.shade200)),
+                                            ),
+                                            child: child,
+                                          );
+                                        },
                                         child: _buildScrollableRow(lead),
                                       ),
                                     );
@@ -1908,7 +2066,8 @@ class _CustomerPageState extends State<CustomerPage> {
     DropDownProvider provider,
   ) {
     final bool showCustomerCode = settingsProvider.menuIsViewMap[184] == 1;
-    final bool showRamcoLocation = settingsProvider.ramcoLocationPermission == 1;
+    final bool showRamcoLocation =
+        settingsProvider.ramcoLocationPermission == 1;
     final bool showConsumerName = settingsProvider.consumerNameMandatory == 1;
 
     return customerProvider.customerData.isEmpty
@@ -1942,7 +2101,9 @@ class _CustomerPageState extends State<CustomerPage> {
                             onTap: () => onItemClick(lead.customerId),
                             child: Text(
                               lead.customerName,
-                              style: const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
+                              style: const TextStyle(
+                                fontFamily: 'PlusJakartaSans',
+                                color: Colors.black,
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -1952,7 +2113,8 @@ class _CustomerPageState extends State<CustomerPage> {
                         ),
                         Text(
                           lead.nextFollowUpDate.toFormattedDate(),
-                          style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                          style: TextStyle(
+                            fontFamily: 'PlusJakartaSans',
                             fontSize: 12,
                             color: lead.lateFollowUp == '0'
                                 ? Colors.green
@@ -1964,8 +2126,10 @@ class _CustomerPageState extends State<CustomerPage> {
                     const SizedBox(height: 4),
                     Text(
                       'To: ${lead.toUserName}',
-                      style:
-                          TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 12, color: Colors.grey.shade600),
+                      style: TextStyle(
+                          fontFamily: 'PlusJakartaSans',
+                          fontSize: 12,
+                          color: Colors.grey.shade600),
                     ),
                     if (showCustomerCode &&
                         (settingsProvider.showCustomerCode == 1
@@ -1999,7 +2163,10 @@ class _CustomerPageState extends State<CustomerPage> {
                         padding: const EdgeInsets.only(top: 4.0),
                         child: Text(
                           'Location: ${(((lead.locationName != null && lead.locationName!.trim().isNotEmpty && lead.locationName != 'null')) || (lead.location != null && lead.location != 'null' && lead.location!.trim().isNotEmpty) || (lead.mapLink != null && lead.mapLink != 'null' && lead.mapLink!.trim().isNotEmpty) || (lead.latitude != null && lead.latitude != 'null' && lead.latitude!.trim().isNotEmpty && lead.longitude != null && lead.longitude != 'null' && lead.longitude!.trim().isNotEmpty)) ? 'Yes' : 'No'}',
-                          style: TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 12, color: Colors.grey.shade700),
+                          style: TextStyle(
+                              fontFamily: 'PlusJakartaSans',
+                              fontSize: 12,
+                              color: Colors.grey.shade700),
                         ),
                       ),
                     const SizedBox(height: 8),
@@ -2008,8 +2175,10 @@ class _CustomerPageState extends State<CustomerPage> {
                         lead.remark,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(fontFamily: 'PlusJakartaSans', 
-                            fontSize: 12, color: Colors.black87),
+                        style: const TextStyle(
+                            fontFamily: 'PlusJakartaSans',
+                            fontSize: 12,
+                            color: Colors.black87),
                       ),
                     if (lead.customFields.isNotEmpty) ...[
                       ...lead.customFields
@@ -2060,7 +2229,8 @@ class _CustomerPageState extends State<CustomerPage> {
                             ),
                             child: Text(
                               lead.statusName,
-                              style: TextStyle(fontFamily: 'PlusJakartaSans', 
+                              style: TextStyle(
+                                fontFamily: 'PlusJakartaSans',
                                 color: parseColor(lead.colorCode),
                                 fontSize: 11,
                                 fontWeight: FontWeight.w600,
@@ -2101,7 +2271,10 @@ class _CustomerPageState extends State<CustomerPage> {
           ),
           Text(
             'Showing $startItem / $endItem of ${customerProvider.totalCount}',
-            style: const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 16),
+            style: const TextStyle(
+                fontFamily: 'PlusJakartaSans',
+                color: Colors.black,
+                fontSize: 16),
           ),
           IconButton(
             icon: const Icon(Icons.arrow_forward),
@@ -2137,8 +2310,11 @@ class _CustomerPageState extends State<CustomerPage> {
                     const Center(
                       child: Text(
                         'Choose Follow Up Date',
-                        style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
-                            fontSize: 18, fontWeight: FontWeight.w700),
+                        style: TextStyle(
+                            fontFamily: 'PlusJakartaSans',
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700),
                       ),
                     ),
                     const SizedBox(height: 15),
@@ -2161,7 +2337,8 @@ class _CustomerPageState extends State<CustomerPage> {
                               customerProvider.selectedDateFilterIndex == index
                                   ? AppColors.primaryBlue
                                   : Colors.white,
-                          labelStyle: TextStyle(fontFamily: 'PlusJakartaSans', 
+                          labelStyle: TextStyle(
+                            fontFamily: 'PlusJakartaSans',
                             color: customerProvider.selectedDateFilterIndex ==
                                     index
                                 ? Colors.white
@@ -2173,8 +2350,11 @@ class _CustomerPageState extends State<CustomerPage> {
                     const SizedBox(height: 15),
                     const Text(
                       'Pick a date',
-                      style:
-                          TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 16, fontWeight: FontWeight.w700),
+                      style: TextStyle(
+                          fontFamily: 'PlusJakartaSans',
+                          color: Colors.black,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700),
                     ),
                     const SizedBox(height: 15),
                     Row(
@@ -2310,8 +2490,11 @@ class _CustomerPageState extends State<CustomerPage> {
                     const Center(
                       child: Text(
                         'Choose AMC Date',
-                        style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
-                            fontSize: 18, fontWeight: FontWeight.w700),
+                        style: TextStyle(
+                            fontFamily: 'PlusJakartaSans',
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700),
                       ),
                     ),
                     const SizedBox(height: 15),
@@ -2335,7 +2518,8 @@ class _CustomerPageState extends State<CustomerPage> {
                                       index
                                   ? AppColors.primaryBlue
                                   : Colors.white,
-                          labelStyle: TextStyle(fontFamily: 'PlusJakartaSans', 
+                          labelStyle: TextStyle(
+                            fontFamily: 'PlusJakartaSans',
                             color:
                                 customerProvider.selectedAmcDateFilterIndex ==
                                         index
@@ -2348,8 +2532,11 @@ class _CustomerPageState extends State<CustomerPage> {
                     const SizedBox(height: 15),
                     const Text(
                       'Pick a date',
-                      style:
-                          TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 16, fontWeight: FontWeight.w700),
+                      style: TextStyle(
+                          fontFamily: 'PlusJakartaSans',
+                          color: Colors.black,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700),
                     ),
                     const SizedBox(height: 15),
                     Row(
@@ -2477,8 +2664,11 @@ class _CustomerPageState extends State<CustomerPage> {
                     const Center(
                       child: Text(
                         'Choose Work Completion Date',
-                        style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
-                            fontSize: 18, fontWeight: FontWeight.w700),
+                        style: TextStyle(
+                            fontFamily: 'PlusJakartaSans',
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700),
                       ),
                     ),
                     const SizedBox(height: 15),
@@ -2502,7 +2692,8 @@ class _CustomerPageState extends State<CustomerPage> {
                                       index
                                   ? AppColors.primaryBlue
                                   : Colors.white,
-                          labelStyle: TextStyle(fontFamily: 'PlusJakartaSans', 
+                          labelStyle: TextStyle(
+                            fontFamily: 'PlusJakartaSans',
                             color: customerProvider.selectedWcDateFilterIndex ==
                                     index
                                 ? Colors.white
@@ -2514,8 +2705,11 @@ class _CustomerPageState extends State<CustomerPage> {
                     const SizedBox(height: 15),
                     const Text(
                       'Pick a date',
-                      style:
-                          TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 16, fontWeight: FontWeight.w700),
+                      style: TextStyle(
+                          fontFamily: 'PlusJakartaSans',
+                          color: Colors.black,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700),
                     ),
                     const SizedBox(height: 15),
                     Row(
@@ -2668,8 +2862,8 @@ class _CustomerPageState extends State<CustomerPage> {
     } else if (value == 'quotation') {
       final customerDetailsProvider =
           Provider.of<CustomerDetailsProvider>(context, listen: false);
-      final hasPending = await customerDetailsProvider
-          .checkAndWarnPendingApprovalQuotation(
+      final hasPending =
+          await customerDetailsProvider.checkAndWarnPendingApprovalQuotation(
               lead.customerId.toString(), context);
       if (hasPending) return;
       if (!context.mounted) return;
@@ -2916,8 +3110,7 @@ class _CustomerPageState extends State<CustomerPage> {
       _statusFilterController.text = currentStatusName;
     }
 
-    final bool isFilterActive =
-        customerProvider.selectedStatus != null &&
+    final bool isFilterActive = customerProvider.selectedStatus != null &&
         customerProvider.selectedStatus != 0;
 
     return SizedBox(
@@ -2933,8 +3126,7 @@ class _CustomerPageState extends State<CustomerPage> {
             const Icon(Icons.search, size: 20, color: AppColors.textGrey2),
         contentPadding:
             const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-        borderColor:
-            isFilterActive ? AppColors.primaryBlue : Colors.grey[300]!,
+        borderColor: isFilterActive ? AppColors.primaryBlue : Colors.grey[300]!,
         focusedBorderColor: AppColors.primaryBlue,
         showOptionsOnTap: true,
         maxHeight: 300,
@@ -2943,8 +3135,8 @@ class _CustomerPageState extends State<CustomerPage> {
           if (query.isEmpty || query == 'all') {
             return statusOptions;
           }
-          final matches = statusOptions.where(
-              (item) => item.name.toLowerCase().contains(query));
+          final matches = statusOptions
+              .where((item) => item.name.toLowerCase().contains(query));
           if (matches.isEmpty) {
             return statusOptions;
           }
@@ -3039,8 +3231,7 @@ class _CustomerPageState extends State<CustomerPage> {
       _assignedStaffFilterController.text = currentUserName;
     }
 
-    final bool isFilterActive =
-        customerProvider.selectedUser != null &&
+    final bool isFilterActive = customerProvider.selectedUser != null &&
         customerProvider.selectedUser != 0;
 
     return SizedBox(
@@ -3056,8 +3247,7 @@ class _CustomerPageState extends State<CustomerPage> {
             const Icon(Icons.search, size: 20, color: AppColors.textGrey2),
         contentPadding:
             const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-        borderColor:
-            isFilterActive ? AppColors.primaryBlue : Colors.grey[300]!,
+        borderColor: isFilterActive ? AppColors.primaryBlue : Colors.grey[300]!,
         focusedBorderColor: AppColors.primaryBlue,
         showOptionsOnTap: true,
         maxHeight: 300,
@@ -3066,8 +3256,8 @@ class _CustomerPageState extends State<CustomerPage> {
           if (query.isEmpty || query == 'all') {
             return staffOptions;
           }
-          final matches = staffOptions.where(
-              (item) => item.name.toLowerCase().contains(query));
+          final matches = staffOptions
+              .where((item) => item.name.toLowerCase().contains(query));
           if (matches.isEmpty) {
             return staffOptions;
           }
@@ -3137,8 +3327,7 @@ class _CustomerPageState extends State<CustomerPage> {
       _enquiryForFilterController.text = currentEnquiryForName;
     }
 
-    final bool isFilterActive =
-        customerProvider.selectedEnquiryFor != null &&
+    final bool isFilterActive = customerProvider.selectedEnquiryFor != null &&
         customerProvider.selectedEnquiryFor != 0;
 
     return SizedBox(
@@ -3154,8 +3343,7 @@ class _CustomerPageState extends State<CustomerPage> {
             const Icon(Icons.search, size: 20, color: AppColors.textGrey2),
         contentPadding:
             const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-        borderColor:
-            isFilterActive ? AppColors.primaryBlue : Colors.grey[300]!,
+        borderColor: isFilterActive ? AppColors.primaryBlue : Colors.grey[300]!,
         focusedBorderColor: AppColors.primaryBlue,
         showOptionsOnTap: true,
         maxHeight: 300,
@@ -3164,8 +3352,8 @@ class _CustomerPageState extends State<CustomerPage> {
           if (query.isEmpty || query == 'all') {
             return enquiryForOptions;
           }
-          final matches = enquiryForOptions.where(
-              (item) => item.name.toLowerCase().contains(query));
+          final matches = enquiryForOptions
+              .where((item) => item.name.toLowerCase().contains(query));
           if (matches.isEmpty) {
             return enquiryForOptions;
           }
@@ -3238,7 +3426,7 @@ class _CustomerPageState extends State<CustomerPage> {
 
     final bool isFilterActive =
         customerProvider.selectedEnquirySource != null &&
-        customerProvider.selectedEnquirySource != 0;
+            customerProvider.selectedEnquirySource != 0;
 
     return SizedBox(
       width: 230,
@@ -3253,8 +3441,7 @@ class _CustomerPageState extends State<CustomerPage> {
             const Icon(Icons.search, size: 20, color: AppColors.textGrey2),
         contentPadding:
             const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-        borderColor:
-            isFilterActive ? AppColors.primaryBlue : Colors.grey[300]!,
+        borderColor: isFilterActive ? AppColors.primaryBlue : Colors.grey[300]!,
         focusedBorderColor: AppColors.primaryBlue,
         showOptionsOnTap: true,
         maxHeight: 300,
@@ -3263,8 +3450,8 @@ class _CustomerPageState extends State<CustomerPage> {
           if (query.isEmpty || query == 'all') {
             return enquirySourceOptions;
           }
-          final matches = enquirySourceOptions.where(
-              (item) => item.name.toLowerCase().contains(query));
+          final matches = enquirySourceOptions
+              .where((item) => item.name.toLowerCase().contains(query));
           if (matches.isEmpty) {
             return enquirySourceOptions;
           }
@@ -3337,8 +3524,7 @@ class _CustomerPageState extends State<CustomerPage> {
       _departmentFilterController.text = currentBranchName;
     }
 
-    final bool isFilterActive =
-        customerProvider.selectedBranch != null &&
+    final bool isFilterActive = customerProvider.selectedBranch != null &&
         customerProvider.selectedBranch != 0;
 
     return SizedBox(
@@ -3354,8 +3540,7 @@ class _CustomerPageState extends State<CustomerPage> {
             const Icon(Icons.search, size: 20, color: AppColors.textGrey2),
         contentPadding:
             const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-        borderColor:
-            isFilterActive ? AppColors.primaryBlue : Colors.grey[300]!,
+        borderColor: isFilterActive ? AppColors.primaryBlue : Colors.grey[300]!,
         focusedBorderColor: AppColors.primaryBlue,
         showOptionsOnTap: true,
         maxHeight: 300,
@@ -3364,8 +3549,8 @@ class _CustomerPageState extends State<CustomerPage> {
           if (query.isEmpty || query == 'all') {
             return departmentOptions;
           }
-          final matches = departmentOptions.where(
-              (item) => item.name.toLowerCase().contains(query));
+          final matches = departmentOptions
+              .where((item) => item.name.toLowerCase().contains(query));
           if (matches.isEmpty) {
             return departmentOptions;
           }
@@ -3562,7 +3747,9 @@ class _StatusMultiSelectDialogState extends State<_StatusMultiSelectDialog> {
                   const Expanded(
                     child: Text(
                       'Select Status',
-                      style: TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, 
+                      style: TextStyle(
+                        fontFamily: 'PlusJakartaSans',
+                        color: Colors.black,
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
@@ -3590,7 +3777,11 @@ class _StatusMultiSelectDialogState extends State<_StatusMultiSelectDialog> {
                   final bool isChecked = _tempSelected.contains(id);
                   return CheckboxListTile(
                     dense: true,
-                    title: Text(name, style: const TextStyle(fontFamily: 'PlusJakartaSans', color: Colors.black, fontSize: 14)),
+                    title: Text(name,
+                        style: const TextStyle(
+                            fontFamily: 'PlusJakartaSans',
+                            color: Colors.black,
+                            fontSize: 14)),
                     value: isChecked,
                     activeColor: const Color(0xFF152D70),
                     controlAffinity: ListTileControlAffinity.leading,
@@ -3658,4 +3849,3 @@ class _CustomerTableColumn {
     required this.width,
   });
 }
-

@@ -15,6 +15,8 @@ import 'package:vidyanexis/presentation/pages/home/dashboard_page.dart';
 import 'package:vidyanexis/presentation/pages/home/lead_page_phone.dart';
 import 'package:vidyanexis/presentation/pages/home/task_page.dart';
 import 'package:vidyanexis/http/socket_io.dart';
+import 'package:vidyanexis/controller/notification_provider.dart';
+import 'package:vidyanexis/presentation/widgets/notification_overlay.dart';
 
 class HomePageMobile extends StatefulWidget {
   const HomePageMobile({super.key});
@@ -40,6 +42,10 @@ class _HomePageMobileState extends State<HomePageMobile> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await MicrotecSocket.initSocket();
+      if (mounted) {
+        Provider.of<NotificationProvider>(context, listen: false)
+            .fetchOverdueTaskCount(context: context);
+      }
 
       final preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "0";
@@ -128,12 +134,17 @@ class _HomePageMobileState extends State<HomePageMobile> {
     return Scaffold(
       drawer: const SidebarDrawer(),
       appBar: bottomNavItems.isEmpty ? AppBar() : null,
-      body: sideProvider.reportPage != null
-          ? sideProvider.reportPage!
-          : (pages.isEmpty
-              ? const DashBoardPage()
-              : pages[
-                  sideProvider.selectedIndexMobile.clamp(0, pages.length - 1)]),
+      body: Stack(
+        children: [
+          sideProvider.reportPage != null
+              ? sideProvider.reportPage!
+              : (pages.isEmpty
+                  ? const DashBoardPage()
+                  : pages[
+                      sideProvider.selectedIndexMobile.clamp(0, pages.length - 1)]),
+          const NotificationOverlay(),
+        ],
+      ),
       bottomNavigationBar: bottomNavItems.length >= 2
           ? BottomNavigationBar(
               currentIndex: sideProvider.selectedIndexMobile

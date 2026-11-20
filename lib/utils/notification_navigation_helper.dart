@@ -3,10 +3,13 @@ import 'package:provider/provider.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/leads_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
+import 'package:vidyanexis/controller/notification_provider.dart';
 import 'package:vidyanexis/http/socket_io.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_detail_page_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/customer/task_details_page_phone.dart';
 import 'package:vidyanexis/presentation/widgets/customer/task_details_widget.dart';
+import 'package:vidyanexis/presentation/pages/reports/overdue_task_report_screen.dart';
+import 'package:vidyanexis/presentation/pages/home/homepage.dart';
 import 'package:go_router/go_router.dart';
 
 class NotificationNavigationHelper {
@@ -17,6 +20,8 @@ class NotificationNavigationHelper {
     required String? masterIdStr,
     required String? followupIdStr,
     required String? redirectIdStr,
+    String? title,
+    String? body,
     bool isWeb = false,
   }) {
     final int customerId = int.tryParse(customerIdStr ?? '0') ?? 0;
@@ -34,13 +39,28 @@ class NotificationNavigationHelper {
         Provider.of<CustomerDetailsProvider>(context, listen: false);
     final sideProvider = Provider.of<SidebarProvider>(context, listen: false);
 
+    // Check if Overdue Task Reminder
+    final titleLower = (title ?? '').toLowerCase();
+    final bodyLower = (body ?? '').toLowerCase();
+    if (titleLower.contains('overdue') || bodyLower.contains('overdue')) {
+      final intId = int.tryParse(notificationId ?? '');
+      if (intId != null && intId > 0 && intId != 999999) {
+        MicrotecSocket.readNotification(id: intId);
+      } else {
+        final notifProvider =
+            Provider.of<NotificationProvider>(context, listen: false);
+        notifProvider.markNotificationAsRead(notificationId ?? '999999');
+      }
+      sideProvider.updateSelectedName('Overdue Task');
+      sideProvider.setReportPage(const OverdueTaskReportScreen());
+      context.go(HomePage.route);
+      return;
+    }
+
     // Mark as read
     if (notificationId != null) {
       MicrotecSocket.readNotification(id: int.tryParse(notificationId));
     }
-
-    leadProvider.setCutomerId(customerId);
-    customerDetailsProvider.setCustomerId(customerId);
 
     if (redirectId == 3 || redirectId == 4) {
       // task

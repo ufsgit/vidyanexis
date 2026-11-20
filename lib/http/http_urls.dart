@@ -534,6 +534,8 @@ class HttpUrls {
   static String saveDocumentCategory = "item/save_Document_Category";
   static String deleteDocumentCategory = "item/delete_Document_Category";
   static String taskDeadlineReport = "task/Task_Deadline_Report";
+  static String getOverdueTasks = "task/Get_Overdue_Tasks";
+  static String getOverdueTaskCount = "task/Get_Overdue_Task_Count";
   static String saveItemDocuments = "item/Save_Item_Documents";
   static String getItemDocumentsByItemId = "item/Get_Item_Documents_By_Item_Id";
   static String deleteItemDocument = "item/Delete_Item_Document";

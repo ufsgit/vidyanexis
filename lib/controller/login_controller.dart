@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/controller/notification_provider.dart';
 import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/http/loader.dart';
@@ -104,6 +105,17 @@ class LoginController extends ChangeNotifier {
           } catch (e) {
             if (kDebugMode) {
               print('Location tracking auto-start note on login: $e');
+            }
+          }
+
+          // Fetch overdue task count for notifications on login
+          try {
+            final notificationProvider =
+                Provider.of<NotificationProvider>(safeContext, listen: false);
+            notificationProvider.fetchOverdueTaskCount(context: safeContext);
+          } catch (e) {
+            if (kDebugMode) {
+              print('Error fetching overdue task count on login: $e');
             }
           }
 
