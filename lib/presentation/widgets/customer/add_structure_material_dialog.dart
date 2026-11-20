@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
@@ -23,6 +24,39 @@ class AddStructureMaterialDialog extends StatefulWidget {
 
 class _AddStructureMaterialDialogState
     extends State<AddStructureMaterialDialog> {
+  late final FocusNode _specificationFocusNode;
+
+  @override
+  void initState() {
+    super.initState();
+    _specificationFocusNode = FocusNode(
+      onKeyEvent: (node, event) {
+        if (event is KeyDownEvent &&
+            (event.logicalKey == LogicalKeyboardKey.enter ||
+             event.logicalKey == LogicalKeyboardKey.numpadEnter)) {
+          final controller = Provider.of<CustomerDetailsProvider>(context, listen: false).structureSpecificationController;
+          final text = controller.text;
+          final selection = controller.selection;
+          final start = selection.start >= 0 ? selection.start : text.length;
+          final end = selection.end >= 0 ? selection.end : text.length;
+          final newText = text.replaceRange(start, end, '\n');
+          controller.value = TextEditingValue(
+            text: newText,
+            selection: TextSelection.collapsed(offset: start + 1),
+          );
+          return KeyEventResult.handled;
+        }
+        return KeyEventResult.ignored;
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _specificationFocusNode.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<CustomerDetailsProvider>(context);
@@ -102,7 +136,11 @@ class _AddStructureMaterialDialogState
                   labelText:
                       provider.getQuotationFieldName(153, 'Specification'),
                   hintText: provider.getQuotationFieldName(153, 'Specification'),
-                  height: 54,
+                  focusNode: _specificationFocusNode,
+                  keyboardType: TextInputType.multiline,
+                  textInputAction: TextInputAction.newline,
+                  minLines: 2,
+                  maxLines: 5,
                   borderRadius: 12,
                   borderColor: const Color(0xFFD0D5DD),
                   focusedBorderColor: AppColors.bluebutton,
