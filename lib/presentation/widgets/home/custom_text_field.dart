@@ -27,6 +27,7 @@ class CustomTextField extends StatelessWidget {
   final Color? borderColor;
   final Color? focusedBorderColor;
   final EdgeInsetsGeometry? contentPadding;
+  final TextInputAction? textInputAction;
 
   const CustomTextField({
     super.key,
@@ -52,6 +53,7 @@ class CustomTextField extends StatelessWidget {
     this.borderColor,
     this.focusedBorderColor,
     this.contentPadding,
+    this.textInputAction,
   });
 
   @override
@@ -77,6 +79,10 @@ class CustomTextField extends StatelessWidget {
             minLines: minLines,
             maxLength: maxlength,
             maxLines: maxLines ?? 5,
+            textInputAction: textInputAction ??
+                (keyboardType == TextInputType.multiline
+                    ? TextInputAction.newline
+                    : null),
             obscureText: isObscureText,
             keyboardType: keyboardType,
             inputFormatters: inputFormatters,
