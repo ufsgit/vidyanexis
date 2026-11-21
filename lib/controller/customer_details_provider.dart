@@ -1123,25 +1123,40 @@ class CustomerDetailsProvider extends ChangeNotifier {
       print("priceTo: $priceTo");
       print("total: $total");
 
-      // Validation: Show AlertDialog if total is out of range
-      if (total < priceFrom || total > priceTo) {
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Invalid Amount'),
-            content: Text(
-              'Total amount must be between $priceFrom and $priceTo.\n\n'
-              'Current total: ${total.toStringAsFixed(2)}',
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('OK'),
+      final bool hasMinLimit = priceFrom > 0;
+      final bool hasMaxLimit = priceTo > 0;
+
+      // Validation: Show AlertDialog if total is out of range (only when limits are configured)
+      if (hasMinLimit || hasMaxLimit) {
+        if ((hasMinLimit && total < priceFrom) ||
+            (hasMaxLimit && total > priceTo)) {
+          String rangeText;
+          if (hasMinLimit && hasMaxLimit) {
+            rangeText = 'between $priceFrom and $priceTo';
+          } else if (hasMinLimit) {
+            rangeText = 'at least $priceFrom';
+          } else {
+            rangeText = 'up to $priceTo';
+          }
+
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Invalid Amount'),
+              content: Text(
+                'Total amount must be $rangeText.\n\n'
+                'Current total: ${total.toStringAsFixed(2)}',
               ),
-            ],
-          ),
-        );
-        return; // Important: Stop execution, do not update amount
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+          );
+          return; // Important: Stop execution, do not update amount
+        }
       }
 
       // If validation passes, update the amount

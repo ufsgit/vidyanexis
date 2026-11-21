@@ -2027,28 +2027,44 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                       } catch (_) {}
                     }
 
-                    double netTotal = double.tryParse(
-                            customerDetailsProvider.totalController.text) ??
-                        0.0;
-                    // Validation: Show AlertDialog if total is out of range
-                    if (netTotal < priceFrom || netTotal > priceTo) {
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: const Text('Invalid Amount'),
-                          content: Text(
-                            'Total amount must be between $priceFrom and $priceTo.\n\n'
-                            'Current total: ${netTotal.toStringAsFixed(2)}',
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: const Text('OK'),
+                    final bool hasMinLimit = priceFrom > 0;
+                    final bool hasMaxLimit = priceTo > 0;
+
+                    // Only validate if an actual price range is configured
+                    if (hasMinLimit || hasMaxLimit) {
+                      double netTotal = double.tryParse(
+                              customerDetailsProvider.totalController.text) ??
+                          0.0;
+                      // Validation: Show AlertDialog if total is out of range
+                      if ((hasMinLimit && netTotal < priceFrom) ||
+                          (hasMaxLimit && netTotal > priceTo)) {
+                        String rangeText;
+                        if (hasMinLimit && hasMaxLimit) {
+                          rangeText = 'between $priceFrom and $priceTo';
+                        } else if (hasMinLimit) {
+                          rangeText = 'at least $priceFrom';
+                        } else {
+                          rangeText = 'up to $priceTo';
+                        }
+
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: const Text('Invalid Amount'),
+                            content: Text(
+                              'Total amount must be $rangeText.\n\n'
+                              'Current total: ${netTotal.toStringAsFixed(2)}',
                             ),
-                          ],
-                        ),
-                      );
-                      return; // Important: Stop execution, do not update amount
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: const Text('OK'),
+                              ),
+                            ],
+                          ),
+                        );
+                        return; // Important: Stop execution, do not update amount
+                      }
                     }
                   }
 
