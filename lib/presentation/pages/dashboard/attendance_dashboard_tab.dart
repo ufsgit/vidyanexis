@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:data_table_2/data_table_2.dart';
 import 'package:vidyanexis/controller/dashboard_provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
@@ -30,19 +29,32 @@ class AttendanceDashboardTab extends StatelessWidget {
     }
 
     // Keys the user expects based on typical response or requirement:
+    // • Login Status
     // • Present Staff
     // • Absent Staff
-    // • Login Status
     // • Late Login Report
-    // We will display whatever keys the API returns since attendanceCountMap contains the data.
+    // • Half Day
     final items = dashBoardProvider.attendanceCountMap.entries.toList();
-    
-    // Move 'login_status' to the front if it exists
-    final loginStatusIndex = items.indexWhere((item) => item.key.toLowerCase() == 'login_status');
-    if (loginStatusIndex != -1) {
-      final loginStatusItem = items.removeAt(loginStatusIndex);
-      items.insert(0, loginStatusItem);
+
+    // Ensure Half_Day is present in items
+    final hasHalfDay = items.any(
+        (item) => item.key.toLowerCase().replaceAll(' ', '_').contains('half'));
+    if (!hasHalfDay) {
+      items.add(const MapEntry('Half_Day', 0));
     }
+
+    // Sort order: Login Status (0), Present Staff (1), Absent Staff (2), Late Login Staff (3), Half Day (4)
+    int getOrder(String key) {
+      final k = key.toLowerCase().replaceAll(' ', '_');
+      if (k.contains('login_status')) return 0;
+      if (k.contains('present')) return 1;
+      if (k.contains('absent')) return 2;
+      if (k.contains('late')) return 3;
+      if (k.contains('half')) return 4;
+      return 5;
+    }
+
+    items.sort((a, b) => getOrder(a.key).compareTo(getOrder(b.key)));
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -64,7 +76,9 @@ class AttendanceDashboardTab extends StatelessWidget {
           child: LayoutBuilder(
             builder: (context, constraints) {
               int crossAxisCount = 2; // Default to 2 for mobile
-              if (constraints.maxWidth > 800) {
+              if (constraints.maxWidth > 1000) {
+                crossAxisCount = items.length >= 5 ? 5 : 4;
+              } else if (constraints.maxWidth > 800) {
                 crossAxisCount = 4;
               } else if (constraints.maxWidth > 600) {
                 crossAxisCount = 3;
@@ -233,7 +247,10 @@ class AttendanceDashboardTab extends StatelessWidget {
       }
     }
 
-    if (isLate || s.contains('late')|| s.contains('present')) {
+    if (s.contains('half')) {
+      bgColor = const Color(0xFFFEF3C7);
+      textColor = const Color(0xFFD97706);
+    } else if (isLate || s.contains('late')) {
       bgColor = const Color(0xFFF4E6F8);
       textColor = const Color(0xFF9E40B5);
     } else if (s.contains('on time') || s.contains('present')) {
@@ -269,12 +286,12 @@ class AttendanceDashboardTab extends StatelessWidget {
 
   _CardTheme _getCardTheme(int index) {
     final themes = [
-      _CardTheme(const Color(0xFFE9EAFB), const Color(0xFF7B61FF)), // Purple
-      _CardTheme(const Color(0xFFFFF1E8), const Color(0xFFFF9D6E)), // Orange
-      _CardTheme(const Color(0xFFE6F5FF), const Color(0xFF63B3ED)), // Blue
-      _CardTheme(const Color(0xFFEDF7ED), const Color(0xFF48BB78)), // Green
-      _CardTheme(const Color(0xFFFCE4EC), const Color(0xFFF06292)), // Rose
-      _CardTheme(const Color(0xFFFFF9C4), const Color(0xFFFBC02D)), // Amber
+      _CardTheme(const Color(0xFFE9EAFB), const Color(0xFF7B61FF)), // 0: Purple (Login Status)
+      _CardTheme(const Color(0xFFFFF1E8), const Color(0xFFFF9D6E)), // 1: Orange (Present Staff)
+      _CardTheme(const Color(0xFFE6F5FF), const Color(0xFF63B3ED)), // 2: Blue (Absent Staff)
+      _CardTheme(const Color(0xFFEDF7ED), const Color(0xFF48BB78)), // 3: Green (Late Login Staff)
+      _CardTheme(const Color(0xFFFFF9C4), const Color(0xFFFBC02D)), // 4: Amber (Half Day)
+      _CardTheme(const Color(0xFFFCE4EC), const Color(0xFFF06292)), // 5: Rose
     ];
     return themes[index % themes.length];
   }
@@ -297,7 +314,7 @@ class AttendanceDashboardTab extends StatelessWidget {
       child: GridView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
-        itemCount: 4,
+        itemCount: 5,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           crossAxisSpacing: 16,

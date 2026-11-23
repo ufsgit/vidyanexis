@@ -721,6 +721,26 @@ class SettingsProvider extends ChangeNotifier {
   final TextEditingController ccinNoController = TextEditingController();
   final TextEditingController ccompanyCodeController = TextEditingController();
   final TextEditingController cuserCountController = TextEditingController();
+  final TextEditingController cworkingTimeController = TextEditingController();
+
+  String getWorkingStartTime() {
+    final text = cworkingTimeController.text.trim();
+    if (text.contains('-')) {
+      return text.split('-')[0].trim();
+    }
+    return text;
+  }
+
+  String getWorkingEndTime() {
+    final text = cworkingTimeController.text.trim();
+    if (text.contains('-')) {
+      final parts = text.split('-');
+      if (parts.length > 1) {
+        return parts[1].trim();
+      }
+    }
+    return '';
+  }
 
   final List<Uint8List> _images = [];
   List<Uint8List> get images => _images;
@@ -5955,6 +5975,7 @@ class SettingsProvider extends ChangeNotifier {
                   cinNo: parsed.cinNo,
                   companyCode: parsed.companyCode,
                   userCount: parsed.userCount,
+                  workingTime: parsed.workingTime,
                   deleteStatus: parsed.deleteStatus,
                   isLocation: parsed.isLocation,
                   notificationTopic: parsed.notificationTopic,
@@ -5998,6 +6019,7 @@ class SettingsProvider extends ChangeNotifier {
                   cinNo: '',
                   companyCode: '',
                   userCount: '',
+                  workingTime: '',
                   deleteStatus: 0,
                   isLocation: 0,
                   notificationTopic: notificationTopic,
@@ -6036,6 +6058,7 @@ class SettingsProvider extends ChangeNotifier {
                 cinNo: existing.cinNo,
                 companyCode: existing.companyCode,
                 userCount: existing.userCount,
+                workingTime: existing.workingTime,
                 deleteStatus: existing.deleteStatus,
                 isLocation: existing.isLocation,
                 notificationTopic: existing.notificationTopic,
@@ -6134,6 +6157,10 @@ class SettingsProvider extends ChangeNotifier {
             "Cin_No": ccinNoController.text.toString(),
             "Company_Code": ccompanyCodeController.text.toString(),
             "User_Count": cuserCountController.text.toString(),
+            "Working_Time": cworkingTimeController.text.toString(),
+            "Work_Time": cworkingTimeController.text.toString(),
+            "Start_Time": getWorkingStartTime(),
+            "End_Time": getWorkingEndTime(),
             "Is_Location": _toggleValue,
             "Enquiry_For_Mandatory": _enquiryForMandatory,
             "Enquiry_Source_Mandatory": _enquirySourceMandatory,
@@ -6270,6 +6297,7 @@ class SettingsProvider extends ChangeNotifier {
     ccinNoController.clear();
     ccompanyCodeController.clear();
     cuserCountController.clear();
+    cworkingTimeController.clear();
     uploadedFilePath = '';
     _toggleValue = 0;
     _enquiryForMandatory = 0;
