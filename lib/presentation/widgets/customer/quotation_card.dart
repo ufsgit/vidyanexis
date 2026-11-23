@@ -216,13 +216,16 @@ class QuotationCard extends StatelessWidget {
                             icon: Icon(Icons.print,
                                 size: 22, color: AppColors.primaryBlue),
                             onPressed: () async {
-                              await Loader.showLoader(context);
-                              await customerDetailsProvider
-                                  .getQuotationMasterPdf(
-                                      quotation!.quotationMasterId.toString(),
-                                      quotation!.quotationNo,
-                                      context);
-                              Loader.stopLoader(context);
+                              Loader.showLoader(context);
+                              try {
+                                await customerDetailsProvider
+                                    .getQuotationMasterPdf(
+                                        quotation!.quotationMasterId.toString(),
+                                        quotation!.quotationNo,
+                                        context);
+                              } finally {
+                                Loader.stopLoader(context);
+                              }
                             },
                           ),
                         ],

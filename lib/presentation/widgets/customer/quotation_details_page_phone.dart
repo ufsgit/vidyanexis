@@ -284,10 +284,13 @@ class _QuotationDetailsPagePhoneState extends State<QuotationDetailsPagePhone> {
             ),
           CustomOutlinedSvgButton(
             onPressed: () async {
-              await Loader.showLoader(context);
-              await customerDetailsProvider.getQuotationMasterPdf(
-                  widget.quotationId, widget.quotation.quotationNo, context);
-              Loader.stopLoader(context);
+              Loader.showLoader(context);
+              try {
+                await customerDetailsProvider.getQuotationMasterPdf(
+                    widget.quotationId, widget.quotation.quotationNo, context);
+              } finally {
+                Loader.stopLoader(context);
+              }
             },
             svgPath: 'assets/images/Print.svg',
             label: 'Print Quotation 1',

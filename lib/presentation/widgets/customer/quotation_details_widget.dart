@@ -119,10 +119,13 @@ class QuotationDetailsWidget extends StatelessWidget {
             ),
             IconButton(
               onPressed: () async {
-                await Loader.showLoader(context);
-                await customerDetailsProvider.getQuotationMasterPdf(
-                    serviceId, '0', context);
-                Loader.stopLoader(context);
+                Loader.showLoader(context);
+                try {
+                  await customerDetailsProvider.getQuotationMasterPdf(
+                      serviceId, '0', context);
+                } finally {
+                  Loader.stopLoader(context);
+                }
               },
               icon: Icon(Icons.print, color: AppColors.primaryBlue),
               tooltip: 'Print Quotation 1',

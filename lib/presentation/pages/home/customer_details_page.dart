@@ -5777,8 +5777,6 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                     .menuIsViewMap[16] ==
                                                 1)
                                               customerDetailsProvider
-                                                          .isLoading ||
-                                                      customerDetailsProvider
                                                           .isQuotationListLoading
                                                   ? const Center(
                                                       child:
