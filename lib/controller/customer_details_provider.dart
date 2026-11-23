@@ -5666,7 +5666,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
   }
 
   Future<void> loadQuotationFromCustomFields(
-      BuildContext context, String type, int quotationType) async {
+      BuildContext context, String type, int quotationType, String customerId) async {
     try {
       final quotationCustomFieldsRaw =
           customFieldQuotationKey.currentState?.getFieldValuesAsJson() ?? [];
@@ -5696,7 +5696,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
           bodyData: {
             "custom_fields": filteredCustomFields,
             "type": type,
-            "quotation_type_id": quotationType
+            "quotation_type_id": quotationType,
+            "Customer_Id": customerId,
           });
 
       if (response?.statusCode == 200) {

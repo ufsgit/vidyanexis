@@ -3782,6 +3782,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
             context,
             "view_in_quotation",
             customerDetailsProvider.selectedQuotationType,
+            widget.customerId,
           );
 
           if (!mounted) return;
