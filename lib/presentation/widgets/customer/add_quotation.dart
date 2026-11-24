@@ -3853,12 +3853,18 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
       onPressed: () async {
         if (customerDetailsProvider.selectedQuotationType == 0) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Please select a Quotation Type')),
+            const SnackBar(
+              content: Text('Please select a Quotation Type'),
+            ),
           );
           return;
         }
 
-        Loader.showLoader(context, message: 'Loading Quotation...');
+        Loader.showLoader(
+          context,
+          message: 'Loading Quotation...',
+        );
+
         try {
           await customerDetailsProvider.loadQuotationFromCustomFields(
             context,
@@ -3869,25 +3875,49 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
 
           if (!mounted) return;
 
-          if (customerDetailsProvider.quotationListByMaster.isNotEmpty) {
-            final quotation =
-                customerDetailsProvider.quotationListByMaster.first;
-            customerDetailsProvider.populateAllQuotationFields(
-                quotation, widget.customerId);
+          final quotations = customerDetailsProvider.quotationListByMaster;
+
+          if (quotations.isEmpty) return;
+
+          final quotation = quotations.first;
+
+          debugPrint('========== APPLY QUOTATION ==========');
+          debugPrint(
+            'Items: ${quotation.quotationDetails.length}',
+          );
+          debugPrint(
+            'BOM: ${quotation.billOfMaterials.length}',
+          );
+
+          // Populate all quotation fields, including items and BOM.
+          customerDetailsProvider.populateAllQuotationFields(
+            quotation,
+            widget.customerId,
+          );
+
+          debugPrint(
+            'Provider Items After Populate: '
+            '${customerDetailsProvider.items.length}',
+          );
+
+          debugPrint(
+            'Provider BOM After Populate: '
+            '${customerDetailsProvider.billOfMaterialsItems.length}',
+          );
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Quotation loaded successfully'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        } catch (e, stackTrace) {
+          debugPrint('Load quotation button error: $e');
+          debugPrint('$stackTrace');
+
+          if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Quotation loaded successfully'),
-                backgroundColor: Colors.green,
-                duration: Duration(seconds: 2),
-              ),
-            );
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text(
-                    'No matching quotation found for the selected custom fields'),
-                duration: Duration(seconds: 3),
-              ),
+              SnackBar(content: Text('Unable to load quotation: $e')),
             );
           }
         } finally {
