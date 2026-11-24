@@ -51,6 +51,9 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
   bool companyQuotationItems = false;
   bool _isInitializing = true;
   CustomerDetailsProvider? _customerDetailsProvider;
+  final ScrollController _scrollController = ScrollController();
+  final GlobalKey _multiItemsEndKey = GlobalKey();
+  final GlobalKey _addMaterialKey = GlobalKey();
 
   @override
   void initState() {
@@ -202,7 +205,32 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
       notify: false,
       resetFormKeys: false,
     );
+    _scrollController.dispose();
     super.dispose();
+  }
+  
+  Widget _buildScrollButton({
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
+    return Material(
+      elevation: 3,
+      shape: const CircleBorder(),
+      color: AppColors.primaryBlue,
+      child: InkWell(
+        customBorder: const CircleBorder(),
+        onTap: onTap,
+        child: SizedBox(
+          width: 36,
+          height: 36,
+          child: Icon(
+            icon,
+            color: Colors.white,
+            size: 22,
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -252,6 +280,57 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
           ),
         ),
       ),
+      floatingActionButton: (companyQuotationItems &&
+              customerDetailsProvider.multiItems.isNotEmpty)
+          ? Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // ↑ Scroll to Add Material
+                _buildScrollButton(
+                  icon: Icons.keyboard_arrow_up_rounded,
+                  onTap: () {
+                    final ctx = _addMaterialKey.currentContext;
+                    if (ctx != null) {
+                      Scrollable.ensureVisible(
+                        ctx,
+                        duration: const Duration(milliseconds: 400),
+                        curve: Curves.easeInOut,
+                        alignment: 0.0,
+                      );
+                    } else {
+                      _scrollController.animateTo(
+                        0,
+                        duration: const Duration(milliseconds: 400),
+                        curve: Curves.easeInOut,
+                      );
+                    }
+                  },
+                ),
+                const SizedBox(height: 10),
+                // ↓ Scroll to Total Amount
+                _buildScrollButton(
+                  icon: Icons.keyboard_arrow_down_rounded,
+                  onTap: () {
+                    final ctx = _multiItemsEndKey.currentContext;
+                    if (ctx != null) {
+                      Scrollable.ensureVisible(
+                        ctx,
+                        duration: const Duration(milliseconds: 400),
+                        curve: Curves.easeInOut,
+                        alignment: 1.0,
+                      );
+                    } else {
+                      _scrollController.animateTo(
+                        _scrollController.position.maxScrollExtent,
+                        duration: const Duration(milliseconds: 400),
+                        curve: Curves.easeInOut,
+                      );
+                    }
+                  },
+                ),
+              ],
+            )
+          : null,
       body: _isInitializing
           ? const ColoredBox(
               color: Colors.white,
@@ -260,6 +339,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
           : Form(
         key: _formKey,
         child: SingleChildScrollView(
+          controller: _scrollController,
           child: Center(
             child: Container(
               color: Colors.white,
@@ -860,6 +940,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                             children: [
                               Expanded(
                                 child: OutlinedButton.icon(
+                                  key: _addMaterialKey,
                                   onPressed: () {
                                     showDialog(
                                       context: context,
@@ -2238,6 +2319,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Container(
+          key: _multiItemsEndKey,
           decoration: BoxDecoration(
             color: const Color(0xFFF6F7F9),
             borderRadius: BorderRadius.circular(4),
