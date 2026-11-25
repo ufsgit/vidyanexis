@@ -3553,36 +3553,53 @@ class CustomerDetailsProvider extends ChangeNotifier {
   }
 
   String? _lastQuotationCustomerId;
+  int _quotationListRequestId = 0;
 
   Future<void> getQuatationList(String customerId, BuildContext context,
       {bool forceRefresh = false}) async {
+    // 1) Already have data for this customer → skip (unless forced)
     if (!forceRefresh &&
         _lastQuotationCustomerId == customerId &&
         _quotationList.isNotEmpty) {
+      if (_isQuotationListLoading) {
+        _isQuotationListLoading = false;
+        notifyListeners();
+      }
       return;
     }
+
+    // 2) Already fetching and not forced → don't start another request
+    if (_isQuotationListLoading && !forceRefresh) {
+      return;
+    }
+
+    final int requestId = ++_quotationListRequestId;
     _lastQuotationCustomerId = customerId;
     _isQuotationListLoading = true;
-    quotationListState.setLoading();
-    _quotationList.clear(); // Clear stale data before fetching
+    try {
+      quotationListState.setLoading();
+    } catch (_) {}
+    // Do NOT clear list here — keep old data visible until new data arrives
     notifyListeners();
 
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
-      String token =
-          preferences.getString('token') ?? ""; // Assuming token is stored
+      String token = preferences.getString('token') ?? "";
 
       final url = '${HttpUrls.getQuatationByCustomer}?Customer_Id=$customerId';
 
       log('--- QUOTATION API REQUEST ---');
       log('Base URL: ${HttpUrls.baseUrl}');
       log('Endpoint: $url');
-      log('Authorization Token: $token');
       log('Customer ID: $customerId');
+      log('Request ID: $requestId forceRefresh: $forceRefresh');
       log('-------------------------------');
 
       final response = await HttpRequest.httpGetRequest(endPoint: url);
+
+      // Ignore stale response if a newer request started
+      if (requestId != _quotationListRequestId) return;
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -3597,25 +3614,29 @@ class CustomerDetailsProvider extends ChangeNotifier {
             rawList = data['data'] as List;
           }
 
-          var parsedList = rawList
-              .map((item) => QuatationListModel.fromMap(
-                  Map<String, dynamic>.from(item as Map)))
-              .toList();
+          final parsedList = <QuatationListModel>[];
+          for (final item in rawList) {
+            try {
+              if (item is Map) {
+                parsedList.add(
+                  QuatationListModel.fromMap(Map<String, dynamic>.from(item)),
+                );
+              }
+            } catch (parseError) {
+              log('Skipping bad quotation item: $parseError');
+            }
+          }
 
-          // Prevent duplicates by ensuring unique Quotation_Master_Id
           final uniqueQuotations = <int, QuatationListModel>{};
           for (var q in parsedList) {
             uniqueQuotations[q.quotationMasterId] = q;
           }
 
           _quotationList = uniqueQuotations.values.toList();
-
-          // Sort descending by quotationMasterId so the latest is on top
           _quotationList.sort(
               (a, b) => b.quotationMasterId.compareTo(a.quotationMasterId));
 
           log('Parsed Model Count: ${_quotationList.length}');
-          log('Displayed Quotation Count: ${_quotationList.length}');
 
           if (_quotationList.isEmpty) {
             quotationListState.setEmpty();
@@ -3649,15 +3670,20 @@ class CustomerDetailsProvider extends ChangeNotifier {
       }
     } catch (e) {
       print('Exception occurred in getQuatationList: $e');
-      quotationListState.setError('Network error');
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Network or Parsing error occurred')),
-        );
+      if (requestId == _quotationListRequestId) {
+        quotationListState.setError('Network error');
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Network or Parsing error occurred')),
+          );
+        }
       }
     } finally {
-      _isQuotationListLoading = false;
-      notifyListeners();
+      // Only the latest request clears the loading flag
+      if (requestId == _quotationListRequestId) {
+        _isQuotationListLoading = false;
+        notifyListeners();
+      }
     }
   }
 
@@ -3934,12 +3960,14 @@ class CustomerDetailsProvider extends ChangeNotifier {
       if (response!.statusCode == 200) {
         final data = response.data;
         log('Success');
-        getQuatationList(customerId, context, forceRefresh: true);
+        await getQuatationList(customerId, context, forceRefresh: true);
         if (isEdit) {
-          getQuatationListByMasterId(quotationId, context);
+          await getQuatationListByMasterId(quotationId, context);
         }
 
-        Loader.stopLoader(context);
+        if (context.mounted) {
+          Loader.stopLoader(context);
+        }
         print(data);
 
         // Save structure materials if any
@@ -5016,7 +5044,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
         log('AMC deleted successfully');
         // _leadData.removeWhere((lead) => lead.toUserId == leadId);
 
-        getQuatationList(customerId, context, forceRefresh: true);
+        await getQuatationList(customerId, context, forceRefresh: true);
         notifyListeners();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
