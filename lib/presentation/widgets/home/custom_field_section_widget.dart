@@ -534,6 +534,7 @@ class CustomFieldWidgetBuilder {
     // Get existing field value or create new one
     final existingValue = _getFieldValue(field.customFieldId!);
     final fieldType = CustomFieldType.fromValue(field.customFieldTypeId);
+    final bool isQuotationCustomField = field.isQuotationCustom == 1;
 
     Widget fieldWidget;
 
@@ -560,6 +561,15 @@ class CustomFieldWidgetBuilder {
       margin: crossAxisCount == 3
           ? EdgeInsets.zero
           : const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+      decoration: isQuotationCustomField
+          ? BoxDecoration(
+         borderRadius: BorderRadius.circular(12),    
+              border: Border.all(
+                color: AppColors.primaryBlue,
+                width: 1.5,
+              ),
+            )
+          : null,
       child: fieldWidget,
     );
 

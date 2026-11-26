@@ -120,6 +120,9 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                   residentialType.quotationTypeName;
             }
           }
+          // Default entry date to current date for new quotations
+          customerDetailsProvider.qEntryDateController.text =
+              DateFormat('yyyy-MM-dd').format(DateTime.now());
         }
 
         customerDetailsProvider.qtermsConditionsController.text =
@@ -868,6 +871,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                                             .toList(),
                                         controllerKey: 'quotation',
                                         showEditButton: true,
+                                        showMore: false,
                                         onFieldValuesChanged: (values) {
                                           for (final fv in values) {
                                             final match =
