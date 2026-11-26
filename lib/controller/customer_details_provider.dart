@@ -1123,25 +1123,40 @@ class CustomerDetailsProvider extends ChangeNotifier {
       print("priceTo: $priceTo");
       print("total: $total");
 
-      // Validation: Show AlertDialog if total is out of range
-      if (total < priceFrom || total > priceTo) {
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Invalid Amount'),
-            content: Text(
-              'Total amount must be between $priceFrom and $priceTo.\n\n'
-              'Current total: ${total.toStringAsFixed(2)}',
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('OK'),
+      final bool hasMinLimit = priceFrom > 0;
+      final bool hasMaxLimit = priceTo > 0;
+
+      // Validation: Show AlertDialog if total is out of range (only when limits are configured)
+      if (hasMinLimit || hasMaxLimit) {
+        if ((hasMinLimit && total < priceFrom) ||
+            (hasMaxLimit && total > priceTo)) {
+          String rangeText;
+          if (hasMinLimit && hasMaxLimit) {
+            rangeText = 'between $priceFrom and $priceTo';
+          } else if (hasMinLimit) {
+            rangeText = 'at least $priceFrom';
+          } else {
+            rangeText = 'up to $priceTo';
+          }
+
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Invalid Amount'),
+              content: Text(
+                'Total amount must be $rangeText.\n\n'
+                'Current total: ${total.toStringAsFixed(2)}',
               ),
-            ],
-          ),
-        );
-        return; // Important: Stop execution, do not update amount
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+          );
+          return; // Important: Stop execution, do not update amount
+        }
       }
 
       // If validation passes, update the amount
@@ -3538,36 +3553,53 @@ class CustomerDetailsProvider extends ChangeNotifier {
   }
 
   String? _lastQuotationCustomerId;
+  int _quotationListRequestId = 0;
 
   Future<void> getQuatationList(String customerId, BuildContext context,
       {bool forceRefresh = false}) async {
+    // 1) Already have data for this customer → skip (unless forced)
     if (!forceRefresh &&
         _lastQuotationCustomerId == customerId &&
         _quotationList.isNotEmpty) {
+      if (_isQuotationListLoading) {
+        _isQuotationListLoading = false;
+        notifyListeners();
+      }
       return;
     }
+
+    // 2) Already fetching and not forced → don't start another request
+    if (_isQuotationListLoading && !forceRefresh) {
+      return;
+    }
+
+    final int requestId = ++_quotationListRequestId;
     _lastQuotationCustomerId = customerId;
     _isQuotationListLoading = true;
-    quotationListState.setLoading();
-    _quotationList.clear(); // Clear stale data before fetching
+    try {
+      quotationListState.setLoading();
+    } catch (_) {}
+    // Do NOT clear list here — keep old data visible until new data arrives
     notifyListeners();
 
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
-      String token =
-          preferences.getString('token') ?? ""; // Assuming token is stored
+      String token = preferences.getString('token') ?? "";
 
       final url = '${HttpUrls.getQuatationByCustomer}?Customer_Id=$customerId';
 
       log('--- QUOTATION API REQUEST ---');
       log('Base URL: ${HttpUrls.baseUrl}');
       log('Endpoint: $url');
-      log('Authorization Token: $token');
       log('Customer ID: $customerId');
+      log('Request ID: $requestId forceRefresh: $forceRefresh');
       log('-------------------------------');
 
       final response = await HttpRequest.httpGetRequest(endPoint: url);
+
+      // Ignore stale response if a newer request started
+      if (requestId != _quotationListRequestId) return;
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -3582,25 +3614,29 @@ class CustomerDetailsProvider extends ChangeNotifier {
             rawList = data['data'] as List;
           }
 
-          var parsedList = rawList
-              .map((item) => QuatationListModel.fromMap(
-                  Map<String, dynamic>.from(item as Map)))
-              .toList();
+          final parsedList = <QuatationListModel>[];
+          for (final item in rawList) {
+            try {
+              if (item is Map) {
+                parsedList.add(
+                  QuatationListModel.fromMap(Map<String, dynamic>.from(item)),
+                );
+              }
+            } catch (parseError) {
+              log('Skipping bad quotation item: $parseError');
+            }
+          }
 
-          // Prevent duplicates by ensuring unique Quotation_Master_Id
           final uniqueQuotations = <int, QuatationListModel>{};
           for (var q in parsedList) {
             uniqueQuotations[q.quotationMasterId] = q;
           }
 
           _quotationList = uniqueQuotations.values.toList();
-
-          // Sort descending by quotationMasterId so the latest is on top
           _quotationList.sort(
               (a, b) => b.quotationMasterId.compareTo(a.quotationMasterId));
 
           log('Parsed Model Count: ${_quotationList.length}');
-          log('Displayed Quotation Count: ${_quotationList.length}');
 
           if (_quotationList.isEmpty) {
             quotationListState.setEmpty();
@@ -3634,15 +3670,20 @@ class CustomerDetailsProvider extends ChangeNotifier {
       }
     } catch (e) {
       print('Exception occurred in getQuatationList: $e');
-      quotationListState.setError('Network error');
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Network or Parsing error occurred')),
-        );
+      if (requestId == _quotationListRequestId) {
+        quotationListState.setError('Network error');
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Network or Parsing error occurred')),
+          );
+        }
       }
     } finally {
-      _isQuotationListLoading = false;
-      notifyListeners();
+      // Only the latest request clears the loading flag
+      if (requestId == _quotationListRequestId) {
+        _isQuotationListLoading = false;
+        notifyListeners();
+      }
     }
   }
 
@@ -3919,12 +3960,14 @@ class CustomerDetailsProvider extends ChangeNotifier {
       if (response!.statusCode == 200) {
         final data = response.data;
         log('Success');
-        getQuatationList(customerId, context, forceRefresh: true);
+        await getQuatationList(customerId, context, forceRefresh: true);
         if (isEdit) {
-          getQuatationListByMasterId(quotationId, context);
+          await getQuatationListByMasterId(quotationId, context);
         }
 
-        Loader.stopLoader(context);
+        if (context.mounted) {
+          Loader.stopLoader(context);
+        }
         print(data);
 
         // Save structure materials if any
@@ -5001,7 +5044,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
         log('AMC deleted successfully');
         // _leadData.removeWhere((lead) => lead.toUserId == leadId);
 
-        getQuatationList(customerId, context, forceRefresh: true);
+        await getQuatationList(customerId, context, forceRefresh: true);
         notifyListeners();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -5651,118 +5694,215 @@ class CustomerDetailsProvider extends ChangeNotifier {
   }
 
   Future<void> loadQuotationFromCustomFields(
-      BuildContext context, String type, int quotationType) async {
+    BuildContext context,
+    String type,
+    int quotationType,
+    String customerId,
+  ) async {
     try {
+      // ---------------------------------------------
+      // 1. Get custom field values
+      // ---------------------------------------------
       final quotationCustomFieldsRaw =
           customFieldQuotationKey.currentState?.getFieldValuesAsJson() ?? [];
+
       final commercialCustomFieldsRaw =
           customFieldCommercialKey.currentState?.getFieldValuesAsJson() ?? [];
 
-      final allEnteredFields = quotationCustomFieldsRaw + commercialCustomFieldsRaw;
+      final allEnteredFields = [
+        ...quotationCustomFieldsRaw,
+        ...commercialCustomFieldsRaw,
+      ];
 
-      // Filter custom fields: if metadata is loaded, match against quotation or commercial fields.
-      // If metadata is empty or fields match, make sure non-empty values are passed.
       final filteredCustomFields = allEnteredFields.where((field) {
-        final fieldId = field['custom_field_id'];
+        final fieldId = int.tryParse(
+          field['custom_field_id']?.toString() ?? '',
+        );
+
         if (fieldId == null) return false;
+
         if (_customFieldQuotation.isEmpty && _commercialCustomFields.isEmpty) {
           return true;
         }
-        return _customFieldQuotation.any((element) =>
-                element.customFieldId == fieldId) ||
-            _commercialCustomFields
-                .any((element) => element.customFieldId == fieldId);
+
+        return _customFieldQuotation.any(
+              (element) => element.customFieldId == fieldId,
+            ) ||
+            _commercialCustomFields.any(
+              (element) => element.customFieldId == fieldId,
+            );
       }).toList();
 
-      log('loadQuotationFromCustomFields sending payload: type=$type, quotationType=$quotationType, fields=${jsonEncode(filteredCustomFields)}');
+      log('========== LOAD QUOTATION REQUEST ==========');
+      log('Customer ID: $customerId');
+      log('Quotation Type: $quotationType');
+      log('Custom Fields: ${filteredCustomFields.length}');
 
+      // ---------------------------------------------
+      // 2. Call live API
+      // ---------------------------------------------
       final response = await HttpRequest.httpPostRequest(
-          endPoint: HttpUrls.loadQuotationFromCustomFields,
-          bodyData: {
-            "custom_fields": filteredCustomFields,
-            "type": type,
-            "quotation_type_id": quotationType
-          });
+        endPoint: HttpUrls.loadQuotationFromCustomFields,
+        bodyData: {
+          "custom_fields": filteredCustomFields,
+          "type": type,
+          "quotation_type_id": quotationType,
+          "Customer_Id": customerId,
+        },
+      );
 
-      if (response?.statusCode == 200) {
-        dynamic data = response?.data;
+      if (response == null || response.statusCode != 200) {
+        log('Load quotation API failed: ${response?.statusCode}');
 
-        if (data != null) {
-          if (data is String) {
-            try {
-              data = jsonDecode(data);
-            } catch (e) {
-              log('Failed to decode string response: $e');
-            }
-          }
-
-          log('API Response data type: ${data.runtimeType}, content: $data');
-
-          try {
-            dynamic targetData = data;
-            // Unwrap data object if nested inside {"data": ...}
-            if (data is Map<String, dynamic> && data.containsKey('data')) {
-              targetData = data['data'];
-            }
-
-            if (targetData is Map<String, dynamic>) {
-              _quotationListByMaster = [
-                ql.GetQuotationbyMasterIdmodel.fromJson(targetData)
-              ];
-            } else if (targetData is List) {
-              _quotationListByMaster = targetData
-                  .map((item) => ql.GetQuotationbyMasterIdmodel.fromJson(item))
-                  .toList();
-            } else if (data is Map<String, dynamic>) {
-              // Fallback to data directly
-              _quotationListByMaster = [
-                ql.GetQuotationbyMasterIdmodel.fromJson(data)
-              ];
-            } else if (data is List) {
-              _quotationListByMaster = data
-                  .map((item) => ql.GetQuotationbyMasterIdmodel.fromJson(item))
-                  .toList();
-            } else {
-              _quotationListByMaster = [];
-            }
-
-            log('Parsed Quotations: ${_quotationListByMaster.length}');
-          } catch (parseError, stackTrace) {
-            log('Data parsing error: $parseError\n$stackTrace');
-            _quotationListByMaster = [];
-          }
-        } else {
-          _quotationListByMaster = [];
-        }
-      } else {
-        _quotationListByMaster = [];
-        log('Server Error: ${response?.statusCode}');
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-                content: Text('Unable to load data. Please try again.')),
+              content: Text('Unable to load quotation. Please try again.'),
+            ),
           );
         }
+        return;
       }
-    } catch (e) {
-      _quotationListByMaster = [];
-      log('Network error: $e');
-      if (context.mounted) {
-        String errorMessage = 'Connection error. Please check your internet.';
-        if (e is DioException && e.response?.data != null) {
-          final data = e.response?.data;
-          if (data is Map && data.containsKey('message')) {
-            errorMessage = data['message'];
-          }
+
+      // ---------------------------------------------
+      // 3. Normalize API response
+      // ---------------------------------------------
+      dynamic data = response.data;
+
+      log('Response type: ${data.runtimeType}');
+
+      if (data is String) {
+        data = jsonDecode(data);
+      }
+
+      // Convert any Map implementation to Map<String, dynamic>.
+      Map<String, dynamic> convertMap(dynamic value) {
+        if (value is Map) {
+          return Map<String, dynamic>.from(value);
         }
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(errorMessage)),
+
+        throw FormatException(
+          'Expected JSON Map but received ${value.runtimeType}',
         );
       }
-    }
 
-    // Notify listeners only once at the end
-    notifyListeners();
+      // Unwrap nested API response.
+      dynamic targetData = data;
+
+      while (targetData is Map && targetData.containsKey('data')) {
+        final nestedData = targetData['data'];
+
+        if (nestedData == null) break;
+
+        targetData = nestedData;
+      }
+
+      // ---------------------------------------------
+      // 4. Convert response into quotation list
+      // ---------------------------------------------
+      List<dynamic> quotationJsonList;
+
+      if (targetData is Map) {
+        quotationJsonList = [targetData];
+      } else if (targetData is List) {
+        quotationJsonList = targetData;
+      } else {
+        throw FormatException(
+          'Unexpected quotation response: ${targetData.runtimeType}',
+        );
+      }
+
+      if (quotationJsonList.isEmpty) {
+        log('No matching quotation returned by API.');
+
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('No matching quotation found.'),
+            ),
+          );
+        }
+        return;
+      }
+
+      // ---------------------------------------------
+      // 5. Parse quotation without losing valid data
+      // ---------------------------------------------
+      final List<ql.GetQuotationbyMasterIdmodel> parsedQuotations = [];
+
+      for (int i = 0; i < quotationJsonList.length; i++) {
+        final quotationJson = convertMap(quotationJsonList[i]);
+
+        final details = quotationJson['quotation_details'];
+        final billMaterials = quotationJson['bill_of_materials'];
+
+        log('========== QUOTATION RESPONSE $i ==========');
+        log('Master ID: ${quotationJson['Quotation_Master_Id']}');
+        log(
+          'Quotation Details Count: '
+          '${details is List ? details.length : 'INVALID'}',
+        );
+        log(
+          'Bill Of Materials Count: '
+          '${billMaterials is List ? billMaterials.length : 'INVALID'}',
+        );
+        log(
+          'Custom Fields Count: '
+          '${quotationJson['quotation_custom_fields'] is List ? (quotationJson['quotation_custom_fields'] as List).length : 'INVALID'}',
+        );
+
+        // Check array types before model parsing.
+        if (details != null && details is! List) {
+          throw FormatException('quotation_details is not a List');
+        }
+
+        if (billMaterials != null && billMaterials is! List) {
+          throw FormatException('bill_of_materials is not a List');
+        }
+
+        final quotation =
+            ql.GetQuotationbyMasterIdmodel.fromJson(quotationJson);
+
+        log('Parsed Items: ${quotation.quotationDetails.length}');
+        log('Parsed BOM: ${quotation.billOfMaterials.length}');
+
+        parsedQuotations.add(quotation);
+      }
+
+      if (parsedQuotations.isEmpty) {
+        log('No quotation could be parsed.');
+        return;
+      }
+
+      // ---------------------------------------------
+      // 6. Update provider only after successful parse
+      // ---------------------------------------------
+      _quotationListByMaster = parsedQuotations;
+
+      log('========== FINAL PARSED DATA ==========');
+      log('Quotation Count: ${_quotationListByMaster.length}');
+      log(
+        'Items: ${_quotationListByMaster.first.quotationDetails.length}',
+      );
+      log(
+        'BOM: ${_quotationListByMaster.first.billOfMaterials.length}',
+      );
+      log('=======================================');
+    } catch (e, stackTrace) {
+      // Keep previous valid data if this request fails.
+      log('LOAD QUOTATION ERROR: $e');
+      log('STACK TRACE: $stackTrace');
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to load quotation: $e'),
+          ),
+        );
+      }
+    } finally {
+      notifyListeners();
+    }
   }
 
   Future<Uint8List?> getAnnexurePdfBytes(String endpoint) async {

@@ -49,7 +49,9 @@ class _CustomSidebarState extends State<CustomSidebar> {
         title.contains('Summary') ||
         title == 'Sales Pipeline' ||
         title == 'Task Calendar' ||
-        title == 'Source category Summary';
+        title == 'Source category Summary' ||
+        title == 'Overdue Task' ||
+        title == 'Overdue Tasks';
   }
 
   List<SidebarOption> getNonReportOptions() {
@@ -263,6 +265,8 @@ class _CustomSidebarState extends State<CustomSidebar> {
 
   Widget _buildSubmenuItem(BuildContext context, SidebarProvider provider,
       SidebarOption option, int index) {
+    final bool isSelected = provider.selectedName == option.title ||
+        provider.selectedIndex == index;
     return Padding(
       padding: const EdgeInsets.only(left: 54, right: 0, top: 0, bottom: 0),
       child: InkWell(
@@ -276,7 +280,7 @@ class _CustomSidebarState extends State<CustomSidebar> {
         child: Container(
           height: 35,
           decoration: BoxDecoration(
-            color: provider.selectedIndex == index
+            color: isSelected
                 ? AppColors.lightBlueColor
                 : AppColors.whiteColor,
             borderRadius: BorderRadius.circular(4),
@@ -287,7 +291,7 @@ class _CustomSidebarState extends State<CustomSidebar> {
             child: Text(
               option.title,
               style: GoogleFonts.plusJakartaSans(
-                color: provider.selectedIndex == index
+                color: isSelected
                     ? AppColors.primaryBlue
                     : AppColors.textGrey4,
                 fontSize: 14,

@@ -266,6 +266,7 @@ class SidebarProvider extends ChangeNotifier {
   void selectOption({required String name, required int index}) {
     _hasUserNavigated = true;
     _selectedName = name;
+    _reportPage = null;
     _replaceLead = true;
     _replaceCustomer = true;
     _customerId = '';
@@ -276,6 +277,18 @@ class SidebarProvider extends ChangeNotifier {
   void updateSelectedName(String name) {
     _hasUserNavigated = true;
     _selectedName = name;
+    if (name != 'Overdue Task' &&
+        !name.toLowerCase().contains('report') &&
+        !name.toLowerCase().contains('summary')) {
+      _reportPage = null;
+    }
+    notifyListeners();
+  }
+
+  void closeReportPage({String fallback = 'Leads'}) {
+    _hasUserNavigated = true;
+    _reportPage = null;
+    _selectedName = fallback;
     notifyListeners();
   }
 

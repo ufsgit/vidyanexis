@@ -1083,6 +1083,20 @@ class DashboardProvider extends ChangeNotifier {
               dataCount: intValue,
             ));
           });
+
+          // Ensure Half_Day is always included in the map
+          final hasHalfDay = newMap.keys.any(
+            (k) => k.toLowerCase().replaceAll(' ', '_').contains('half'),
+          );
+          if (!hasHalfDay) {
+            newMap['Half_Day'] = 0;
+            newList.add(DashBoardCountModel(
+              tp: 1,
+              title: 'Half_Day',
+              dataCount: 0,
+            ));
+          }
+
           attendanceCountMap.clear();
           attendanceCountMap.addAll(newMap);
           attendanceDashboardCountData.clear();
@@ -1119,6 +1133,24 @@ class DashboardProvider extends ChangeNotifier {
             }
           } else {
             loginStatusDetails = [];
+          }
+
+          // If Half_Day count is 0, check if loginStatusDetails contains any half-day records
+          final halfDayKey = attendanceCountMap.keys.firstWhere(
+            (k) => k.toLowerCase().replaceAll(' ', '_').contains('half'),
+            orElse: () => '',
+          );
+          if (halfDayKey.isNotEmpty && (attendanceCountMap[halfDayKey] == null || attendanceCountMap[halfDayKey] == 0)) {
+            int halfCount = 0;
+            for (var r in loginStatusDetails) {
+              if (r is Map) {
+                final st = (r['Status'] ?? r['status'])?.toString().toLowerCase() ?? '';
+                if (st.contains('half')) halfCount++;
+              }
+            }
+            if (halfCount > 0) {
+              attendanceCountMap[halfDayKey] = halfCount;
+            }
           }
         }
       });
@@ -1157,6 +1189,17 @@ class DashboardProvider extends ChangeNotifier {
           } else {
             attendanceDetails = [];
           }
+        } else {
+          attendanceDetails = [];
+        }
+
+        // If specific search returns empty for Half_Day, filter from loginStatusDetails
+        if (attendanceDetails.isEmpty && keyword.toLowerCase().contains('half')) {
+          attendanceDetails = loginStatusDetails.where((r) {
+            if (r is! Map) return false;
+            final st = (r['Status'] ?? r['status'])?.toString().toLowerCase() ?? '';
+            return st.contains('half');
+          }).toList();
         }
       });
     } catch (e) {

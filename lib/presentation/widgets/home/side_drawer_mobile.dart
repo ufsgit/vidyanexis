@@ -57,6 +57,7 @@ import 'package:vidyanexis/presentation/pages/reports/invoice_reports_screen.dar
 import 'package:vidyanexis/presentation/pages/reports/task_summary_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/task_aging_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/task_deadline_report_screen.dart';
+import 'package:vidyanexis/presentation/pages/reports/overdue_task_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/solar_lead_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/lead_status_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/lead_creation_report_screen.dart';
@@ -254,6 +255,12 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
         {
           'title': 'Task Deadline Report',
           'page': const TaskDeadlineReportScreen()
+        },
+      if (settingsProvider.menuIsViewMap[7].toString() == '1' ||
+          (settingsProvider.menuIsViewMap[246] ?? 0).toString() == '1')
+        {
+          'title': 'Overdue Task',
+          'page': const OverdueTaskReportScreen()
         },
       if (settingsProvider.menuIsViewMap[80].toString() == '1')
         {'title': 'Stock Reports', 'page': const StockReport()},

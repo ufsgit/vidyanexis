@@ -172,6 +172,7 @@ class Company {
   final String cinNo;
   final String companyCode;
   final String userCount;
+  final String workingTime;
   final int deleteStatus;
   final int isLocation;
   final String notificationTopic;
@@ -207,6 +208,7 @@ class Company {
     required this.cinNo,
     required this.companyCode,
     required this.userCount,
+    this.workingTime = '',
     required this.deleteStatus,
     required this.isLocation,
     required this.notificationTopic,
@@ -245,6 +247,14 @@ class Company {
       cinNo: json['Cin_No'] ?? '',
       companyCode: json['Company_Code'] ?? '',
       userCount: json['User_Count']?.toString() ?? '',
+      workingTime: json['Working_Time']?.toString() ??
+          json['Work_Time']?.toString() ??
+          json['working_time']?.toString() ??
+          (json['Start_Time'] != null &&
+                  json['End_Time'] != null &&
+                  json['Start_Time'].toString().isNotEmpty
+              ? '${json['Start_Time']} - ${json['End_Time']}'
+              : ''),
       deleteStatus: json['DeleteStatus'] ?? 0,
       isLocation: json['Is_Location'] ?? 0,
       notificationTopic: json['notification_topic'] ?? '',
@@ -293,6 +303,7 @@ class Company {
       'Cin_No': cinNo,
       'Company_Code': companyCode,
       'User_Count': userCount,
+      'Working_Time': workingTime,
       'DeleteStatus': deleteStatus,
       'Is_Location': isLocation,
       'notification_topic': notificationTopic,

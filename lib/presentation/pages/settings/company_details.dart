@@ -91,6 +91,8 @@ class _CompanyDetailsState extends State<CompanyDetails> {
                             settingsProvider.companyDetails[0].companyCode.toString();
                         settingsProvider.cuserCountController.text =
                             settingsProvider.companyDetails[0].userCount.toString();
+                        settingsProvider.cworkingTimeController.text =
+                            settingsProvider.companyDetails[0].workingTime.toString();
                         settingsProvider.saveImagePath(
                             settingsProvider.companyDetails[0].logo.toString());
                         settingsProvider.setToggleValue(
@@ -182,6 +184,9 @@ class _CompanyDetailsState extends State<CompanyDetails> {
                       // User Count
                       _buildInfoTile(Icons.people, "User Count",
                           settingsProvider.companyDetails[0].userCount),
+                      // Working Time
+                      _buildInfoTile(Icons.access_time, "Working Time",
+                          settingsProvider.companyDetails[0].workingTime),
                       // Website
                       _buildInfoTile(
                         Icons.location_on_sharp,

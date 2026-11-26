@@ -13,6 +13,7 @@ import 'package:vidyanexis/presentation/pages/home/customer_detail_page_mobile.d
 import 'package:vidyanexis/presentation/pages/home/homepage.dart';
 import 'package:vidyanexis/presentation/widgets/customer/task_details_page_phone.dart';
 import 'package:vidyanexis/presentation/widgets/customer/task_details_widget.dart';
+import 'package:vidyanexis/presentation/pages/reports/overdue_task_report_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/controller/models/notification_model.dart';
 import 'package:intl/intl.dart';
@@ -35,6 +36,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
       provider.getFollowUpStatus(context, '1');
       provider.getUserDetails(context);
       MicrotecSocket.getNotifications();
+      Provider.of<NotificationProvider>(context, listen: false)
+          .fetchOverdueTaskCount(context: context);
     });
   }
 
@@ -326,6 +329,54 @@ class _NotificationTile extends StatefulWidget {
 class _NotificationTileState extends State<_NotificationTile> {
   final bool _isHovered = false;
 
+  Widget _buildNotificationBody(String message, bool isRead) {
+    if (message.contains('for') && message.contains('has been created')) {
+      final parts = message.split('for');
+      if (parts.length > 1) {
+        final before = parts[0]; // e.g. "a new lead "
+        final nameAndRest = parts[1].split('has been created');
+        final name = nameAndRest.isNotEmpty ? nameAndRest[0].trim() : '';
+        final after = nameAndRest.length > 1 ? 'has been created' : '';
+
+        if (name.isNotEmpty) {
+          return RichText(
+            text: TextSpan(
+              style: TextStyle(
+                color: isRead ? Colors.grey[600] : Colors.grey[700],
+                fontSize: 14,
+              ),
+              children: [
+                TextSpan(text: "$before "),
+                WidgetSpan(
+                  alignment: PlaceholderAlignment.middle,
+                  child: Text(
+                    name,
+                    style: TextStyle(
+                      color: isRead ? Colors.grey[500] : Colors.blue,
+                      fontWeight: FontWeight.bold,
+                      decoration: TextDecoration.underline,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+                TextSpan(text: " $after"),
+              ],
+            ),
+          );
+        }
+      }
+    }
+
+    // Default for all other notification types (e.g., Overdue Task Reminder)
+    return Text(
+      message,
+      style: TextStyle(
+        color: isRead ? Colors.grey[600] : Colors.grey[700],
+        fontSize: 14,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final created = widget.notification.createdAt;
@@ -348,8 +399,39 @@ class _NotificationTileState extends State<_NotificationTile> {
     final sideProvider = Provider.of<SidebarProvider>(context);
     final isRead = widget.notification.isRead == '1';
 
+    final title = (widget.notification.titleNew?.isNotEmpty == true)
+        ? widget.notification.titleNew!
+        : (widget.notification.title?.isNotEmpty == true
+            ? widget.notification.title!
+            : '');
+    final body = (widget.notification.body?.isNotEmpty == true)
+        ? widget.notification.body!
+        : (widget.notification.bodyNew?.isNotEmpty == true
+            ? widget.notification.bodyNew!
+            : '');
+
     return InkWell(
       onTap: () {
+        if (title.toLowerCase().contains('overdue') ||
+            body.toLowerCase().contains('overdue')) {
+          final notifId = widget.notification.notificationId;
+          final intId = int.tryParse(notifId ?? '');
+          if (intId != null && intId > 0 && intId != 999999) {
+            MicrotecSocket.readNotification(id: intId);
+          } else {
+            Provider.of<NotificationProvider>(context, listen: false)
+                .markNotificationAsRead(notifId ?? '999999');
+          }
+          sideProvider.updateSelectedName('Overdue Task');
+          sideProvider.setReportPage(const OverdueTaskReportScreen());
+          if (Navigator.of(context).canPop()) {
+            Navigator.of(context).pop();
+          } else {
+            context.go(HomePage.route);
+          }
+          return;
+        }
+
         // Mark notification as read when clicked
         MicrotecSocket.readNotification(
             id: int.tryParse(widget.notification.notificationId ?? '0'));
@@ -457,7 +539,7 @@ class _NotificationTileState extends State<_NotificationTile> {
                     children: [
                       Expanded(
                         child: Text(
-                          widget.notification.titleNew ?? '',
+                          title,
                           style: TextStyle(
                             fontWeight:
                                 isRead ? FontWeight.w500 : FontWeight.w600,
@@ -476,64 +558,9 @@ class _NotificationTileState extends State<_NotificationTile> {
                         ),
                     ],
                   ),
-                  const SizedBox(height: 4),
-                  if ((widget.notification.body ?? '').isNotEmpty) ...[
-                    const SizedBox(height: 4),
-                    InkWell(
-                      onTap: () {
-                        MicrotecSocket.readNotification(
-                            id: int.tryParse(
-                                widget.notification.notificationId ?? '0'));
-                      },
-                      child: Builder(
-                        builder: (context) {
-                          final message = widget.notification.body ?? '';
-                          final parts = message.split('for');
-                          String before = '';
-                          String name = '';
-                          String after = '';
-
-                          if (parts.length > 1) {
-                            before = parts[0]; // "a new lead "
-                            final nameAndRest =
-                                parts[1].split('has been created');
-                            if (nameAndRest.isNotEmpty) {
-                              name = nameAndRest[0].trim(); // "ravi"
-                            }
-                            if (nameAndRest.length > 1) {
-                              after = 'has been created';
-                            }
-                          }
-
-                          return RichText(
-                            text: TextSpan(
-                              style: TextStyle(
-                                color: isRead
-                                    ? Colors.grey[600]
-                                    : Colors.grey[700],
-                                fontSize: 14,
-                              ),
-                              children: [
-                                TextSpan(text: "$before "), // normal text
-                                WidgetSpan(
-                                  child: Text(
-                                    name,
-                                    style: TextStyle(
-                                      color: isRead
-                                          ? Colors.grey[500]
-                                          : Colors.blue,
-                                      fontWeight: FontWeight.bold,
-                                      decoration: TextDecoration.underline,
-                                    ),
-                                  ),
-                                ),
-                                TextSpan(text: " $after"), // rest of message
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                    )
+                  if (body.isNotEmpty) ...[
+                    const SizedBox(height: 6),
+                    _buildNotificationBody(body, isRead),
                   ],
                 ],
               ),
@@ -552,6 +579,17 @@ class _NotificationTileState extends State<_NotificationTile> {
     final sideProvider = Provider.of<SidebarProvider>(context);
     final isRead = widget.notification.isRead == '1';
 
+    final title = (widget.notification.titleNew?.isNotEmpty == true)
+        ? widget.notification.titleNew!
+        : (widget.notification.title?.isNotEmpty == true
+            ? widget.notification.title!
+            : '');
+    final body = (widget.notification.body?.isNotEmpty == true)
+        ? widget.notification.body!
+        : (widget.notification.bodyNew?.isNotEmpty == true
+            ? widget.notification.bodyNew!
+            : '');
+
     return Card(
       elevation: isRead ? 1 : 2,
       margin: EdgeInsets.zero,
@@ -563,6 +601,26 @@ class _NotificationTileState extends State<_NotificationTile> {
       ),
       child: InkWell(
         onTap: () {
+          if (title.toLowerCase().contains('overdue') ||
+              body.toLowerCase().contains('overdue')) {
+            final notifId = widget.notification.notificationId;
+            final intId = int.tryParse(notifId ?? '');
+            if (intId != null && intId > 0 && intId != 999999) {
+              MicrotecSocket.readNotification(id: intId);
+            } else {
+              Provider.of<NotificationProvider>(context, listen: false)
+                  .markNotificationAsRead(notifId ?? '999999');
+            }
+            sideProvider.updateSelectedName('Overdue Task');
+            sideProvider.setReportPage(const OverdueTaskReportScreen());
+            if (Navigator.of(context).canPop()) {
+              Navigator.of(context).pop();
+            } else {
+              context.go(HomePage.route);
+            }
+            return;
+          }
+
           // Mark notification as read when clicked
           MicrotecSocket.readNotification(
               id: int.tryParse(widget.notification.notificationId ?? '0'));
@@ -657,7 +715,7 @@ class _NotificationTileState extends State<_NotificationTile> {
             ),
           ),
           title: Text(
-            widget.notification.title ?? '',
+            title,
             style: TextStyle(
               fontWeight: isRead ? FontWeight.w500 : FontWeight.w600,
               fontSize: 16,
@@ -667,51 +725,9 @@ class _NotificationTileState extends State<_NotificationTile> {
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if ((widget.notification.body ?? '').isNotEmpty) ...[
+              if (body.isNotEmpty) ...[
                 const SizedBox(height: 4),
-                Builder(
-                  builder: (context) {
-                    final message = widget.notification.body ?? '';
-                    final parts = message.split('for');
-                    String before = '';
-                    String name = '';
-                    String after = '';
-
-                    if (parts.length > 1) {
-                      before = parts[0]; // "a new lead "
-                      final nameAndRest = parts[1].split('has been created');
-                      if (nameAndRest.isNotEmpty) {
-                        name = nameAndRest[0].trim(); // "ravi"
-                      }
-                      if (nameAndRest.length > 1) {
-                        after = 'has been created';
-                      }
-                    }
-
-                    return RichText(
-                      text: TextSpan(
-                        style: TextStyle(
-                          color: isRead ? Colors.grey[600] : Colors.grey[700],
-                          fontSize: 14,
-                        ),
-                        children: [
-                          TextSpan(text: "$before "), // normal text
-                          WidgetSpan(
-                            child: Text(
-                              name,
-                              style: TextStyle(
-                                color: isRead ? Colors.grey[500] : Colors.blue,
-                                fontWeight: FontWeight.bold,
-                                decoration: TextDecoration.underline,
-                              ),
-                            ),
-                          ),
-                          TextSpan(text: " $after"), // rest of message
-                        ],
-                      ),
-                    );
-                  },
-                )
+                _buildNotificationBody(body, isRead),
               ],
               if (createdStr.isNotEmpty) ...[
                 const SizedBox(height: 8),

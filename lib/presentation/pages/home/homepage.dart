@@ -9,6 +9,7 @@ import 'package:vidyanexis/controller/notification_provider.dart';
 import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/socket_io.dart';
 import 'package:vidyanexis/presentation/pages/home/notifications_page.dart';
+import 'package:vidyanexis/presentation/widgets/notification_overlay.dart';
 import 'package:vidyanexis/presentation/pages/reports/followup_reports.dart';
 import 'package:vidyanexis/presentation/pages/reports/followup_amount_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/solar_lead_report_page.dart';
@@ -53,6 +54,7 @@ import 'package:vidyanexis/presentation/pages/reports/stock_return_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/task_page_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/task_aging_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/task_deadline_report_screen.dart';
+import 'package:vidyanexis/presentation/pages/reports/overdue_task_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/balance_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/payment_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/receipt_report_page.dart';
@@ -120,6 +122,8 @@ class _HomePageState extends State<HomePage> {
     initDevicePlugin();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       MicrotecSocket.initSocket();
+      Provider.of<NotificationProvider>(context, listen: false)
+          .fetchOverdueTaskCount(context: context);
 
       final preferences = await SharedPreferences.getInstance();
       if (!mounted) return;
@@ -435,6 +439,13 @@ class _HomePageState extends State<HomePage> {
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: TaskDeadlineReportScreen()),
         ),
+      if (settingsProvider.menuIsViewMap[7].toString() == '1' ||
+          (settingsProvider.menuIsViewMap[246] ?? 0).toString() == '1')
+        SidebarOption(
+          title: 'Overdue Task',
+          iconPath: 'assets/images/Reports.svg',
+          baseContent: const Center(child: OverdueTaskReportScreen()),
+        ),
       if (settingsProvider.menuIsViewMap[123].toString() == '1')
         SidebarOption(
           title: 'Task Calendar',
@@ -743,7 +754,9 @@ class _HomePageState extends State<HomePage> {
                     sideProvider.selectedName.contains('Summary') ||
                     sideProvider.selectedName == 'Sales Pipeline' ||
                     sideProvider.selectedName == 'Task Calendar' ||
-                    sideProvider.selectedName == 'Source category Summary'));
+                    sideProvider.selectedName == 'Source category Summary' ||
+                    sideProvider.selectedName == 'Overdue Task' ||
+                    sideProvider.selectedName == 'Overdue Tasks'));
     return Scaffold(
       appBar: hideMainAppBar
           ? null
@@ -998,7 +1011,22 @@ class _HomePageState extends State<HomePage> {
 
                 Widget? overlayContent;
 
-                if (sidebarOptions.isNotEmpty) {
+                final bool isReportSelected = provider.selectedName ==
+                        'Overdue Task' ||
+                    provider.selectedName.toLowerCase().contains('report') ||
+                    provider.selectedName.toLowerCase().contains('summary') ||
+                    provider.selectedName == 'Sales Pipeline' ||
+                    provider.selectedName == 'Task Calendar' ||
+                    provider.selectedName == 'Source category Summary';
+
+                if (provider.reportPage != null && isReportSelected) {
+                  baseContent = provider.reportPage!;
+                } else if (sidebarOptions.isNotEmpty) {
+                  if (provider.reportPage != null) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      provider.setReportPage(null);
+                    });
+                  }
                   // Find the selected page only if the user has permission for it.
                   final matchingOptions = sidebarOptions
                       .where((option) => option.title == provider.selectedName)
@@ -1038,6 +1066,7 @@ class _HomePageState extends State<HomePage> {
                             child: overlayContent!,
                           ),
                         ),
+                      const NotificationOverlay(),
                     ],
                   ),
                 );

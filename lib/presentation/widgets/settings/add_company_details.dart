@@ -23,6 +23,361 @@ class AddCompanyDetails extends StatefulWidget {
 }
 
 class _AddCompanyDetailsState extends State<AddCompanyDetails> {
+  String _formatTimeOfDay(TimeOfDay time) {
+    final hour = time.hourOfPeriod == 0 ? 12 : time.hourOfPeriod;
+    final minute = time.minute.toString().padLeft(2, '0');
+    final period = time.period == DayPeriod.am ? 'AM' : 'PM';
+    final formattedHour = hour.toString().padLeft(2, '0');
+    return '$formattedHour:$minute $period';
+  }
+
+  TimeOfDay? _parseTimeOfDay(String timeStr) {
+    try {
+      timeStr = timeStr.trim();
+      if (timeStr.isEmpty) return null;
+      final isPm = timeStr.toUpperCase().contains('PM');
+      final isAm = timeStr.toUpperCase().contains('AM');
+      final cleanStr = timeStr.replaceAll(RegExp(r'[a-zA-Z\s]'), '');
+      final parts = cleanStr.split(':');
+      if (parts.length < 2) return null;
+      int hour = int.parse(parts[0]);
+      int minute = int.parse(parts[1]);
+      if (isPm && hour < 12) hour += 12;
+      if (isAm && hour == 12) hour = 0;
+      return TimeOfDay(hour: hour, minute: minute);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  String _getStartTime(String text) {
+    if (text.contains('-')) {
+      return text.split('-')[0].trim();
+    }
+    return text.trim();
+  }
+
+  String _getEndTime(String text) {
+    if (text.contains('-')) {
+      final parts = text.split('-');
+      if (parts.length > 1) {
+        return parts[1].trim();
+      }
+    }
+    return '';
+  }
+
+  void _showWorkingTimeDialog(
+      BuildContext context, SettingsProvider settingsProvider) {
+    TimeOfDay? startTime = _parseTimeOfDay(
+        _getStartTime(settingsProvider.cworkingTimeController.text));
+    TimeOfDay? endTime = _parseTimeOfDay(
+        _getEndTime(settingsProvider.cworkingTimeController.text));
+
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            final startStr =
+                startTime != null ? _formatTimeOfDay(startTime!) : '';
+            final endStr = endTime != null ? _formatTimeOfDay(endTime!) : '';
+
+            return AlertDialog(
+              backgroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              titlePadding: const EdgeInsets.fromLTRB(20, 16, 16, 8),
+              title: Row(
+                children: [
+                  Text(
+                    'Select Working Time',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textBlack,
+                    ),
+                  ),
+                  const Spacer(),
+                  IconButton(
+                    icon: const Icon(Icons.close, size: 20),
+                    onPressed: () => Navigator.pop(dialogContext),
+                  ),
+                ],
+              ),
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              content: SizedBox(
+                width: 400,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      children: [
+                        // Starting Time Tile
+                        Expanded(
+                          child: InkWell(
+                            onTap: () async {
+                              final picked = await showTimePicker(
+                                context: context,
+                                initialTime: startTime ??
+                                    const TimeOfDay(hour: 9, minute: 0),
+                                helpText: 'SELECT STARTING TIME',
+                              );
+                              if (picked != null) {
+                                setDialogState(() {
+                                  startTime = picked;
+                                });
+                                if (endTime == null && dialogContext.mounted) {
+                                  final endPicked = await showTimePicker(
+                                    context: context,
+                                    initialTime:
+                                        const TimeOfDay(hour: 18, minute: 0),
+                                    helpText: 'SELECT ENDING TIME',
+                                  );
+                                  if (endPicked != null) {
+                                    setDialogState(() {
+                                      endTime = endPicked;
+                                    });
+                                  }
+                                }
+                              }
+                            },
+                            borderRadius: BorderRadius.circular(6),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 12),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFF8FAFC),
+                                borderRadius: BorderRadius.circular(6),
+                                border: Border.all(
+                                  color: startTime != null
+                                      ? AppColors.secondaryBlue
+                                      : const Color(0xFFE2E8F0),
+                                  width: 1,
+                                ),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Starting Time',
+                                    style: GoogleFonts.plusJakartaSans(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                      color: AppColors.textGrey4,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.access_time,
+                                        size: 16,
+                                        color: startTime != null
+                                            ? AppColors.secondaryBlue
+                                            : AppColors.textGrey4,
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Expanded(
+                                        child: Text(
+                                          startTime != null
+                                              ? startStr
+                                              : 'Choose time',
+                                          style: GoogleFonts.plusJakartaSans(
+                                            fontSize: 13,
+                                            fontWeight: startTime != null
+                                                ? FontWeight.w600
+                                                : FontWeight.w400,
+                                            color: startTime != null
+                                                ? AppColors.textBlack
+                                                : AppColors.textGrey3,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'to',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.textGrey3,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        // Ending Time Tile
+                        Expanded(
+                          child: InkWell(
+                            onTap: () async {
+                              final picked = await showTimePicker(
+                                context: context,
+                                initialTime: endTime ??
+                                    const TimeOfDay(hour: 18, minute: 0),
+                                helpText: 'SELECT ENDING TIME',
+                              );
+                              if (picked != null) {
+                                setDialogState(() {
+                                  endTime = picked;
+                                });
+                              }
+                            },
+                            borderRadius: BorderRadius.circular(6),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 12),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFF8FAFC),
+                                borderRadius: BorderRadius.circular(6),
+                                border: Border.all(
+                                  color: endTime != null
+                                      ? AppColors.secondaryBlue
+                                      : const Color(0xFFE2E8F0),
+                                  width: 1,
+                                ),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Ending Time',
+                                    style: GoogleFonts.plusJakartaSans(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                      color: AppColors.textGrey4,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.access_time,
+                                        size: 16,
+                                        color: endTime != null
+                                            ? AppColors.secondaryBlue
+                                            : AppColors.textGrey4,
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Expanded(
+                                        child: Text(
+                                          endTime != null
+                                              ? endStr
+                                              : 'Choose time',
+                                          style: GoogleFonts.plusJakartaSans(
+                                            fontSize: 13,
+                                            fontWeight: endTime != null
+                                                ? FontWeight.w600
+                                                : FontWeight.w400,
+                                            color: endTime != null
+                                                ? AppColors.textBlack
+                                                : AppColors.textGrey3,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    if (startTime != null && endTime != null) ...[
+                      const SizedBox(height: 14),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFEFF6FF),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.schedule,
+                              size: 16,
+                              color: AppColors.secondaryBlue,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              'Working Hours: $startStr - $endStr',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.secondaryBlue,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              actionsPadding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
+              actions: [
+                if (settingsProvider.cworkingTimeController.text.isNotEmpty ||
+                    startTime != null ||
+                    endTime != null)
+                  TextButton(
+                    onPressed: () {
+                      settingsProvider.cworkingTimeController.clear();
+                      Navigator.pop(dialogContext);
+                    },
+                    child: Text(
+                      'Clear',
+                      style: GoogleFonts.plusJakartaSans(
+                        color: Colors.redAccent,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                CustomElevatedButton(
+                  buttonText: 'Cancel',
+                  onPressed: () => Navigator.pop(dialogContext),
+                  radius: 4,
+                  backgroundColor: AppColors.whiteColor,
+                  borderColor: const Color(0xFFE2E8F0),
+                  textColor: const Color(0xFF64748B),
+                ),
+                CustomElevatedButton(
+                  buttonText: 'Done',
+                  onPressed: () {
+                    if (startTime == null || endTime == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content:
+                              Text('Please select both starting and ending time'),
+                        ),
+                      );
+                      return;
+                    }
+                    settingsProvider.cworkingTimeController.text =
+                        '$startStr - $endStr';
+                    Navigator.pop(dialogContext);
+                  },
+                  radius: 4,
+                  backgroundColor: AppColors.secondaryBlue,
+                  borderColor: AppColors.secondaryBlue,
+                  textColor: AppColors.whiteColor,
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   String? validateInputs(
       BuildContext context, SettingsProvider settingsProvider) {
     return null;
@@ -202,6 +557,22 @@ class _AddCompanyDetailsState extends State<AddCompanyDetails> {
                   hintText: 'User Count',
                   labelText: '',
                 ),
+                const SizedBox(height: 10),
+                CustomTextField(
+                  readOnly: true,
+                  height: 54,
+                  controller: settingsProvider.cworkingTimeController,
+                  hintText: 'Working Time',
+                  labelText: '',
+                  suffixIcon: IconButton(
+                    icon: const Icon(Icons.access_time,
+                        color: Color(0xFF64748B), size: 20),
+                    onPressed: () =>
+                        _showWorkingTimeDialog(context, settingsProvider),
+                  ),
+                  onTap: () =>
+                      _showWorkingTimeDialog(context, settingsProvider),
+                ),
               ] else ...[
                 Row(
                   children: [
@@ -360,7 +731,21 @@ class _AddCompanyDetailsState extends State<AddCompanyDetails> {
                     ),
                     const SizedBox(width: 10),
                     Expanded(
-                      child: Container(),
+                      child: CustomTextField(
+                        readOnly: true,
+                        height: 54,
+                        controller: settingsProvider.cworkingTimeController,
+                        hintText: 'Working Time',
+                        labelText: '',
+                        suffixIcon: IconButton(
+                          icon: const Icon(Icons.access_time,
+                              color: Color(0xFF64748B), size: 20),
+                          onPressed: () =>
+                              _showWorkingTimeDialog(context, settingsProvider),
+                        ),
+                        onTap: () =>
+                            _showWorkingTimeDialog(context, settingsProvider),
+                      ),
                     ),
                   ],
                 ),

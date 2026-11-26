@@ -14,6 +14,7 @@ import 'package:intl/intl.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/lead_details_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/controller/notification_provider.dart';
 import 'package:vidyanexis/presentation/widgets/common/document_preview_dialog.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/pages/home/process_flow_dialog.dart';
@@ -1668,6 +1669,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                   );
                                   reportsProvider.searchTaskByCustomer(context);
                                 }
+                                Provider.of<NotificationProvider>(context, listen: false)
+                                    .fetchOverdueTaskCount(context: context);
                               },
                               tooltip: 'Refresh',
                             ),

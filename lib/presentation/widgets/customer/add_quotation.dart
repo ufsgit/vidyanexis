@@ -51,6 +51,9 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
   bool companyQuotationItems = false;
   bool _isInitializing = true;
   CustomerDetailsProvider? _customerDetailsProvider;
+  final ScrollController _scrollController = ScrollController();
+  final GlobalKey _multiItemsEndKey = GlobalKey();
+  final GlobalKey _addMaterialKey = GlobalKey();
 
   @override
   void initState() {
@@ -202,7 +205,32 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
       notify: false,
       resetFormKeys: false,
     );
+    _scrollController.dispose();
     super.dispose();
+  }
+  
+  Widget _buildScrollButton({
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
+    return Material(
+      elevation: 3,
+      shape: const CircleBorder(),
+      color: AppColors.primaryBlue,
+      child: InkWell(
+        customBorder: const CircleBorder(),
+        onTap: onTap,
+        child: SizedBox(
+          width: 36,
+          height: 36,
+          child: Icon(
+            icon,
+            color: Colors.white,
+            size: 22,
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -252,6 +280,57 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
           ),
         ),
       ),
+      floatingActionButton: (companyQuotationItems &&
+              customerDetailsProvider.multiItems.isNotEmpty)
+          ? Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // ↑ Scroll to Add Material
+                _buildScrollButton(
+                  icon: Icons.keyboard_arrow_up_rounded,
+                  onTap: () {
+                    final ctx = _addMaterialKey.currentContext;
+                    if (ctx != null) {
+                      Scrollable.ensureVisible(
+                        ctx,
+                        duration: const Duration(milliseconds: 400),
+                        curve: Curves.easeInOut,
+                        alignment: 0.0,
+                      );
+                    } else {
+                      _scrollController.animateTo(
+                        0,
+                        duration: const Duration(milliseconds: 400),
+                        curve: Curves.easeInOut,
+                      );
+                    }
+                  },
+                ),
+                const SizedBox(height: 10),
+                // ↓ Scroll to Total Amount
+                _buildScrollButton(
+                  icon: Icons.keyboard_arrow_down_rounded,
+                  onTap: () {
+                    final ctx = _multiItemsEndKey.currentContext;
+                    if (ctx != null) {
+                      Scrollable.ensureVisible(
+                        ctx,
+                        duration: const Duration(milliseconds: 400),
+                        curve: Curves.easeInOut,
+                        alignment: 1.0,
+                      );
+                    } else {
+                      _scrollController.animateTo(
+                        _scrollController.position.maxScrollExtent,
+                        duration: const Duration(milliseconds: 400),
+                        curve: Curves.easeInOut,
+                      );
+                    }
+                  },
+                ),
+              ],
+            )
+          : null,
       body: _isInitializing
           ? const ColoredBox(
               color: Colors.white,
@@ -260,6 +339,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
           : Form(
         key: _formKey,
         child: SingleChildScrollView(
+          controller: _scrollController,
           child: Center(
             child: Container(
               color: Colors.white,
@@ -860,6 +940,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                             children: [
                               Expanded(
                                 child: OutlinedButton.icon(
+                                  key: _addMaterialKey,
                                   onPressed: () {
                                     showDialog(
                                       context: context,
@@ -2027,28 +2108,44 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                       } catch (_) {}
                     }
 
-                    double netTotal = double.tryParse(
-                            customerDetailsProvider.totalController.text) ??
-                        0.0;
-                    // Validation: Show AlertDialog if total is out of range
-                    if (netTotal < priceFrom || netTotal > priceTo) {
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: const Text('Invalid Amount'),
-                          content: Text(
-                            'Total amount must be between $priceFrom and $priceTo.\n\n'
-                            'Current total: ${netTotal.toStringAsFixed(2)}',
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: const Text('OK'),
+                    final bool hasMinLimit = priceFrom > 0;
+                    final bool hasMaxLimit = priceTo > 0;
+
+                    // Only validate if an actual price range is configured
+                    if (hasMinLimit || hasMaxLimit) {
+                      double netTotal = double.tryParse(
+                              customerDetailsProvider.totalController.text) ??
+                          0.0;
+                      // Validation: Show AlertDialog if total is out of range
+                      if ((hasMinLimit && netTotal < priceFrom) ||
+                          (hasMaxLimit && netTotal > priceTo)) {
+                        String rangeText;
+                        if (hasMinLimit && hasMaxLimit) {
+                          rangeText = 'between $priceFrom and $priceTo';
+                        } else if (hasMinLimit) {
+                          rangeText = 'at least $priceFrom';
+                        } else {
+                          rangeText = 'up to $priceTo';
+                        }
+
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: const Text('Invalid Amount'),
+                            content: Text(
+                              'Total amount must be $rangeText.\n\n'
+                              'Current total: ${netTotal.toStringAsFixed(2)}',
                             ),
-                          ],
-                        ),
-                      );
-                      return; // Important: Stop execution, do not update amount
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: const Text('OK'),
+                              ),
+                            ],
+                          ),
+                        );
+                        return; // Important: Stop execution, do not update amount
+                      }
                     }
                   }
 
@@ -2222,6 +2319,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Container(
+          key: _multiItemsEndKey,
           decoration: BoxDecoration(
             color: const Color(0xFFF6F7F9),
             borderRadius: BorderRadius.circular(4),
@@ -3755,40 +3853,71 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
       onPressed: () async {
         if (customerDetailsProvider.selectedQuotationType == 0) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Please select a Quotation Type')),
+            const SnackBar(
+              content: Text('Please select a Quotation Type'),
+            ),
           );
           return;
         }
 
-        Loader.showLoader(context, message: 'Loading Quotation...');
+        Loader.showLoader(
+          context,
+          message: 'Loading Quotation...',
+        );
+
         try {
           await customerDetailsProvider.loadQuotationFromCustomFields(
             context,
             "view_in_quotation",
             customerDetailsProvider.selectedQuotationType,
+            widget.customerId,
           );
 
           if (!mounted) return;
 
-          if (customerDetailsProvider.quotationListByMaster.isNotEmpty) {
-            final quotation =
-                customerDetailsProvider.quotationListByMaster.first;
-            customerDetailsProvider.populateAllQuotationFields(
-                quotation, widget.customerId);
+          final quotations = customerDetailsProvider.quotationListByMaster;
+
+          if (quotations.isEmpty) return;
+
+          final quotation = quotations.first;
+
+          debugPrint('========== APPLY QUOTATION ==========');
+          debugPrint(
+            'Items: ${quotation.quotationDetails.length}',
+          );
+          debugPrint(
+            'BOM: ${quotation.billOfMaterials.length}',
+          );
+
+          // Populate all quotation fields, including items and BOM.
+          customerDetailsProvider.populateAllQuotationFields(
+            quotation,
+            widget.customerId,
+          );
+
+          debugPrint(
+            'Provider Items After Populate: '
+            '${customerDetailsProvider.items.length}',
+          );
+
+          debugPrint(
+            'Provider BOM After Populate: '
+            '${customerDetailsProvider.billOfMaterialsItems.length}',
+          );
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Quotation loaded successfully'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        } catch (e, stackTrace) {
+          debugPrint('Load quotation button error: $e');
+          debugPrint('$stackTrace');
+
+          if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Quotation loaded successfully'),
-                backgroundColor: Colors.green,
-                duration: Duration(seconds: 2),
-              ),
-            );
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text(
-                    'No matching quotation found for the selected custom fields'),
-                duration: Duration(seconds: 3),
-              ),
+              SnackBar(content: Text('Unable to load quotation: $e')),
             );
           }
         } finally {
