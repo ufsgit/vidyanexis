@@ -175,7 +175,7 @@ class _TaskCountSummaryTabState extends State<TaskCountSummaryTab> {
       );
     }
 
-    // 1. Extract all unique statuses and sort logically
+    // 1. Extract all unique statuses from the response
     final Set<String> statusSet = {};
     for (var taskType in allItems) {
       for (var sc in taskType.statusCounts) {
@@ -184,26 +184,7 @@ class _TaskCountSummaryTabState extends State<TaskCountSummaryTab> {
       }
     }
 
-    final standardPriority = [
-      'pending',
-      'in progress',
-      'completed',
-      'converted',
-      'rejected',
-      'on hold',
-      'cancelled'
-    ];
-    final sortedStatuses = statusSet.toList()
-      ..sort((a, b) {
-        final aLower = a.toLowerCase();
-        final bLower = b.toLowerCase();
-        int aIdx = standardPriority.indexWhere((p) => aLower.contains(p));
-        int bIdx = standardPriority.indexWhere((p) => bLower.contains(p));
-        if (aIdx == -1) aIdx = 999;
-        if (bIdx == -1) bIdx = 999;
-        if (aIdx != bIdx) return aIdx.compareTo(bIdx);
-        return a.compareTo(b);
-      });
+    final sortedStatuses = statusSet.toList();
 
     // 2. Calculate status totals and grand total
     final Map<String, int> statusTotals = {};
@@ -231,7 +212,6 @@ class _TaskCountSummaryTabState extends State<TaskCountSummaryTab> {
           _buildTaskCardsGrid(
             context: context,
             taskItems: allItems,
-            sortedStatuses: sortedStatuses,
           ),
           const SizedBox(height: 20),
           // Total Summary Card
@@ -249,7 +229,6 @@ class _TaskCountSummaryTabState extends State<TaskCountSummaryTab> {
   Widget _buildTaskCardsGrid({
     required BuildContext context,
     required List<TaskTypeSummaryModel> taskItems,
-    required List<String> sortedStatuses,
   }) {
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -280,7 +259,6 @@ class _TaskCountSummaryTabState extends State<TaskCountSummaryTab> {
                             ? _buildTaskTypeCard(
                                 context: context,
                                 taskItem: taskItems[itemIndex],
-                                sortedStatuses: sortedStatuses,
                                 accentColor: _cardAccentColors[
                                     itemIndex % _cardAccentColors.length],
                               )
@@ -300,7 +278,6 @@ class _TaskCountSummaryTabState extends State<TaskCountSummaryTab> {
   Widget _buildTaskTypeCard({
     required BuildContext context,
     required TaskTypeSummaryModel taskItem,
-    required List<String> sortedStatuses,
     required Color accentColor,
   }) {
     final taskName = taskItem.taskTypeName.trim().isEmpty
@@ -375,19 +352,13 @@ class _TaskCountSummaryTabState extends State<TaskCountSummaryTab> {
                     ),
                     const SizedBox(height: 14),
 
-                    // Dynamic Status Rows
-                    ...sortedStatuses.map((status) {
-                      StatusCountModel? matchingSc;
-                      for (var sc in taskItem.statusCounts) {
-                        if (sc.statusName.trim().toLowerCase() ==
-                            status.trim().toLowerCase()) {
-                          matchingSc = sc;
-                          break;
-                        }
-                      }
-
-                      final count = matchingSc?.count ?? 0;
-                      final statusId = matchingSc?.taskStatusId;
+                    // Dynamic Status Rows (only statuses present in this task type's response)
+                    ...taskItem.statusCounts
+                        .where((sc) => sc.statusName.trim().isNotEmpty)
+                        .map((sc) {
+                      final status = sc.statusName.trim();
+                      final count = sc.count;
+                      final statusId = sc.taskStatusId;
                       final statusColor = _getStatusColor(status);
                       final isClickable = count > 0;
 
@@ -416,9 +387,8 @@ class _TaskCountSummaryTabState extends State<TaskCountSummaryTab> {
                                         _selectedTaskTypeName = taskName;
                                         _selectedTaskStatusId = statusId;
                                         _selectedTaskStatusName =
-                                            matchingSc?.statusName.isNotEmpty ==
-                                                    true
-                                                ? matchingSc!.statusName
+                                            sc.statusName.isNotEmpty
+                                                ? sc.statusName
                                                 : status;
                                       });
                                     }
