@@ -999,6 +999,41 @@ class SettingsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Process Flow Combination (Company Permission ID: 78)
+  /// Value = 1 -> Call process_flow/Get_Flow_By_Custom_Field_Combination
+  /// Value = 0 or absent -> Call process_flow/Get_Task_Types_Of_Process_Flow_With_Custom_Field
+  int _processFlowCombination = 0;
+  int get processFlowCombination {
+    if (_companyDetails.isNotEmpty &&
+        _companyDetails[0].permissions.isNotEmpty) {
+      for (var p in _companyDetails[0].permissions) {
+        if (p.companyPermissionId == 78 ||
+            p.companyPermissionId.toString() == '78') {
+          return (p.value == 1 || p.value.toString() == '1') ? 1 : 0;
+        }
+      }
+      for (var p in _companyDetails[0].permissions) {
+        final cap = (p.caption.isNotEmpty ? p.caption : p.displayCaption)
+            .trim()
+            .toLowerCase();
+        if (cap.contains('process flow combination') ||
+            cap.contains('process_flow_combination')) {
+          return (p.value == 1 || p.value.toString() == '1') ? 1 : 0;
+        }
+      }
+    }
+    return (_processFlowCombination == 1 ||
+            _processFlowCombination.toString() == '1')
+        ? 1
+        : 0;
+  }
+
+  void setProcessFlowCombination(int value) {
+    _processFlowCombination = value;
+    _syncStateToPermissionsList(78, value);
+    notifyListeners();
+  }
+
   int _recordVoiceNote = 0;
   int get recordVoiceNote => _recordVoiceNote;
 
@@ -1430,6 +1465,11 @@ class SettingsProvider extends ChangeNotifier {
                 caption.toLowerCase().contains('status wise lead count') ||
                 caption.toLowerCase().contains('status_wise_lead_count')))) {
       _statusWiseCount = value;
+    } else if (permissionId == 78 ||
+        (caption != null &&
+            (caption.toLowerCase().contains('process flow combination') ||
+                caption.toLowerCase().contains('process_flow_combination')))) {
+      _processFlowCombination = value;
     } else if (caption != null &&
         (caption.toLowerCase().contains('quotation product name') ||
             caption.toLowerCase().contains('quotation_product_name'))) {
@@ -1771,6 +1811,17 @@ class SettingsProvider extends ChangeNotifier {
               cap.contains('status_wise_lead_count');
         });
       }
+      if (index == -1 && permissionId == 78) {
+        index = _companyDetails[0].permissions.indexWhere((p) {
+          if (p.companyPermissionId == 78 ||
+              p.companyPermissionId.toString() == '78') return true;
+          final cap = (p.caption.isNotEmpty ? p.caption : p.displayCaption)
+              .trim()
+              .toLowerCase();
+          return cap.contains('process flow combination') ||
+              cap.contains('process_flow_combination');
+        });
+      }
       if (index != -1) {
         final old = _companyDetails[0].permissions[index];
         _companyDetails[0].permissions[index] = CompanyPermission(
@@ -1915,6 +1966,17 @@ class SettingsProvider extends ChangeNotifier {
               cap.contains('status_wise_count') ||
               cap.contains('status wise lead count') ||
               cap.contains('status_wise_lead_count');
+        });
+      }
+      if (index == -1 && permissionId == 78) {
+        index = _companyDetails[0].permissions.indexWhere((p) {
+          if (p.companyPermissionId == 78 ||
+              p.companyPermissionId.toString() == '78') return true;
+          final cap = (p.caption.isNotEmpty ? p.caption : p.displayCaption)
+              .trim()
+              .toLowerCase();
+          return cap.contains('process flow combination') ||
+              cap.contains('process_flow_combination');
         });
       }
       if (index != -1) {
