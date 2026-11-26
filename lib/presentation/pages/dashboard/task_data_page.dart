@@ -2168,7 +2168,10 @@ class _TotalTaskDataPageState extends State<TotalTaskDataPage> {
                                         enabled: true,
                                         showMore: false,
                                         onFieldValuesChanged: (values) {
-                                          // Optional: You can also handle here if needed
+                                          if (!reportsProvider.showCustomFields
+                                              .any((cf) => cf.isChecked == 1)) {
+                                            return;
+                                          }
                                           reportsProvider
                                               .fetchTaskTypesWithCustomFields(
                                                   selectedStatus
