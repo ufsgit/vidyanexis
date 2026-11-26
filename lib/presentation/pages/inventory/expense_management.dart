@@ -268,6 +268,40 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
     );
   }
 
+  String _formatAmount(double? val) {
+    if (val == null) return '0';
+    if (val == val.roundToDouble()) return val.toInt().toString();
+    return val.toStringAsFixed(2);
+  }
+
+  Widget _buildDetailChip(IconData icon, String label, {Color? color}) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: (color ?? const Color(0xFF64748B)).withOpacity(0.08),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 13, color: color ?? const Color(0xFF64748B)),
+          const SizedBox(width: 4),
+          Flexible(
+            child: Text(
+              label,
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 12,
+                color: color ?? const Color(0xFF334155),
+                fontWeight: FontWeight.w600,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildMobileCardList(BuildContext context, ExpenseProvider provider) {
     if (provider.expenseModelList.isEmpty) {
       return _buildEmptyState();
@@ -278,22 +312,38 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
         final index = entry.key;
         final expenseModel = entry.value;
 
+        final customerName = (expenseModel.customerName ?? '').trim();
+        final expenseHead = (expenseModel.expenseHead ?? '').trim();
+        final expenseType = (expenseModel.expenseTypeName ?? '').trim();
+        final projectType = (expenseModel.projectTypeName ?? '').trim();
+        final projectName = (expenseModel.projectName ?? '').trim();
+        final entryDate = (expenseModel.entryDate ?? '').trim();
+        final userName = (expenseModel.userName ?? expenseModel.entryByName ?? '').trim();
+        final comment = (expenseModel.comment ?? '').trim();
+        final displayAmount = _formatAmount(expenseModel.netAmount ?? expenseModel.amount);
+
+        final String primaryTitle = customerName.isNotEmpty
+            ? customerName
+            : (expenseHead.isNotEmpty
+                ? expenseHead
+                : (expenseType.isNotEmpty ? expenseType : 'Unnamed Expense'));
+
         return Container(
           margin: const EdgeInsets.only(bottom: 12),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: BorderRadius.circular(6),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.02),
+                color: Colors.black.withOpacity(0.03),
                 blurRadius: 8,
                 offset: const Offset(0, 4),
               ),
             ],
-            border: Border.all(color: const Color(0xFFF1F5F9), width: 1),
+            border: Border.all(color: const Color(0xFFE2E8F0), width: 1),
           ),
           child: Padding(
-            padding: const EdgeInsets.all(12.0),
+            padding: const EdgeInsets.all(14.0),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -301,8 +351,8 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
                   width: 44,
                   height: 44,
                   decoration: BoxDecoration(
-                    color: AppColors.secondaryBlue.withOpacity(0.05),
-                    borderRadius: BorderRadius.circular(4),
+                    color: AppColors.secondaryBlue.withOpacity(0.08),
+                    borderRadius: BorderRadius.circular(6),
                   ),
                   child: Center(
                     child: Text(
@@ -315,60 +365,103 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
                     ),
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 14),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        expenseModel.expenseHead ?? 'Unnamed Expense',
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.textBlue800,
+                      Row(
+                        children: [
+                          if (customerName.isNotEmpty) ...[
+                            Icon(Icons.business_center_outlined,
+                                size: 16, color: AppColors.secondaryBlue),
+                            const SizedBox(width: 6),
+                          ],
+                          Expanded(
+                            child: Text(
+                              primaryTitle,
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 15.5,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.textBlue800,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF10B981).withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              '₹$displayAmount',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 13.5,
+                                fontWeight: FontWeight.w700,
+                                color: const Color(0xFF047857),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      if (customerName.isNotEmpty && expenseHead.isNotEmpty) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                          expenseHead,
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xFF475569),
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 6),
-                      Row(
+                      ],
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 6,
                         children: [
-                          const Icon(Icons.info_outline_rounded,
-                              size: 13, color: Color(0xFF64748B)),
-                          const SizedBox(width: 4),
-                          Expanded(
-                            child: Text(
-                              '${expenseModel.expenseTypeName ?? "N/A"} | ₹${expenseModel.amount ?? 0}',
-                              style: GoogleFonts.plusJakartaSans(
-                                fontSize: 12,
-                                color: const Color(0xFF64748B),
-                                fontWeight: FontWeight.w600,
-                              ),
-                              overflow: TextOverflow.ellipsis,
+                          if (expenseType.isNotEmpty)
+                            _buildDetailChip(
+                              Icons.category_outlined,
+                              expenseType,
+                              color: AppColors.secondaryBlue,
                             ),
-                          ),
+                          if (projectType.isNotEmpty)
+                            _buildDetailChip(
+                              Icons.work_outline_rounded,
+                              projectName.isNotEmpty
+                                  ? '$projectType • $projectName'
+                                  : projectType,
+                            ),
+                          if (entryDate.isNotEmpty)
+                            _buildDetailChip(
+                              Icons.calendar_today_outlined,
+                              entryDate,
+                            ),
+                          if (userName.isNotEmpty)
+                            _buildDetailChip(
+                              Icons.person_outline_rounded,
+                              userName,
+                            ),
                         ],
                       ),
-                      const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          const Icon(Icons.person_outline_rounded,
-                              size: 13, color: Color(0xFF64748B)),
-                          const SizedBox(width: 4),
-                          Expanded(
-                            child: Text(
-                              expenseModel.userName ?? "System",
-                              style: GoogleFonts.plusJakartaSans(
-                                fontSize: 12,
-                                color: const Color(0xFF64748B),
-                                fontWeight: FontWeight.w500,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                      if (comment.isNotEmpty) ...[
+                        const SizedBox(height: 8),
+                        Text(
+                          comment,
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 12.5,
+                            color: const Color(0xFF64748B),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ],
                   ),
                 ),
+                const SizedBox(width: 8),
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
