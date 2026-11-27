@@ -58,14 +58,18 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
   @override
   void initState() {
     super.initState();
+
     _customerDetailsProvider =
         Provider.of<CustomerDetailsProvider>(context, listen: false);
+
     _customerDetailsProvider?.clearQuotationDetails(
       notify: false,
       resetFormKeys: false,
     );
+
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      Loader.showLoader(context);
+      if (!mounted) return;
+
       try {
         final customerDetailsProvider =
             Provider.of<CustomerDetailsProvider>(context, listen: false);
@@ -84,19 +88,19 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
             settingsProvider.searchBranch(context),
           if (customerDetailsProvider.quotationTypeData.isEmpty)
             customerDetailsProvider.getQuotationTypes(context),
-          // customerDetailsProvider.getProfitList(context),
           if (settingsProvider.companyDetails.isNotEmpty &&
               settingsProvider.companyDetails.first.commercialProposal == 1)
             customerDetailsProvider.getCommercialCustomFieldsApi(context),
-
           settingsProvider.getTermsAndWarranty(context),
         ];
 
         try {
           await Future.wait(initialFutures);
         } catch (e) {
-          debugPrint('Error loading initial quotation data in parallel: $e');
+          debugPrint('Error loading initial quotation data: $e');
         }
+
+        if (!mounted) return;
 
         companyQuotationItems = settingsProvider.companyDetails.isNotEmpty &&
             settingsProvider.companyDetails.first.quotationItemValue == 1;
@@ -113,14 +117,16 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     .toLowerCase()
                     .contains('residential'))
                 .firstOrNull;
+
             if (residentialType != null) {
               customerDetailsProvider.selectedQuotationType =
                   residentialType.quotationTypeId;
+
               customerDetailsProvider.quotationTypeController.text =
                   residentialType.quotationTypeName;
             }
           }
-          // Default entry date to current date for new quotations
+
           customerDetailsProvider.qEntryDateController.text =
               DateFormat('yyyy-MM-dd').format(DateTime.now());
         }
@@ -143,7 +149,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
             settingsProvider.onWorkCompletionPercentageText;
         customerDetailsProvider.qvalidityController.text =
             settingsProvider.validityText;
-        // Auto generate product name on init
+
         if (settingsProvider.quotationProductName == 1) {
           customerDetailsProvider.updateAutoProductName();
         }
@@ -151,17 +157,24 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
         if (widget.isEdit) {
           try {
             await customerDetailsProvider.getQuatationListByMasterId(
-                widget.quotationId, context);
+              widget.quotationId,
+              context,
+            );
+
+            if (!mounted) return;
 
             if (customerDetailsProvider.quotationListByMaster.isNotEmpty) {
               final quotation =
                   customerDetailsProvider.quotationListByMaster.first;
-              customerDetailsProvider.populateAllQuotationFields(
-                  quotation, widget.customerId);
 
-              // Pre-populate newItemId if companyQuotationItems is active
+              customerDetailsProvider.populateAllQuotationFields(
+                quotation,
+                widget.customerId,
+              );
+
               if (companyQuotationItems) {
                 final nameOfItem = customerDetailsProvider.selectedItemName;
+
                 if (nameOfItem.isNotEmpty) {
                   try {
                     final matchItem = expenseProvider.itemList.firstWhere(
@@ -169,6 +182,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                           item.itemName.toLowerCase() ==
                           nameOfItem.toLowerCase(),
                     );
+
                     customerDetailsProvider.newItemId = matchItem.itemId;
                   } catch (_) {}
                 }
@@ -179,28 +193,33 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
           }
         }
 
-        try {
-          customerDetailsProvider.getCustomFieldsByQuotationId(context);
-          await customerDetailsProvider.getQuotationFieldsApi();
-          // await customerDetailsProvider.getAdditionalCustomFields(context);
-          if (companyQuotationItems) {
-            expenseProvider.searchItemList(context: context, isFilter: false);
-          }
-        } catch (e) {
-          debugPrint('Failed to load quotation custom fields: $e');
+        // IMPORTANT: Wait for custom fields API to finish.
+        await customerDetailsProvider.getCustomFieldsByQuotationId(context);
+
+        if (!mounted) return;
+
+        await customerDetailsProvider.getQuotationFieldsApi();
+
+        if (!mounted) return;
+
+        if (companyQuotationItems) {
+          expenseProvider.searchItemList(
+            context: context,
+            isFilter: false,
+          );
         }
       } catch (e, stack) {
-        debugPrint('Error in quotation initState: $e\n$stack');
+        debugPrint('Error in quotation initialization: $e\n$stack');
       } finally {
         if (mounted) {
           setState(() {
             _isInitializing = false;
           });
-          Loader.stopLoader(context);
         }
       }
     });
   }
+
 
   @override
   void dispose() {
@@ -208,7 +227,9 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
       notify: false,
       resetFormKeys: false,
     );
+
     _scrollController.dispose();
+
     super.dispose();
   }
   
@@ -337,7 +358,9 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
       body: _isInitializing
           ? const ColoredBox(
               color: Colors.white,
-              child: SizedBox.expand(),
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
             )
           : Form(
         key: _formKey,
