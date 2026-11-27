@@ -6000,6 +6000,77 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
+  /// Downloads an uploaded document or image from [fileUrl], converts images
+  /// into an A4 PDF document, and opens the print/preview dialog.
+  Future<void> printUploadedDocument(
+      String fileUrl, String title, BuildContext context) async {
+    if (fileUrl.trim().isEmpty) return;
+
+    try {
+      Loader.showLoader(context);
+      final response = await Dio().get<List<int>>(
+        fileUrl,
+        options: Options(responseType: ResponseType.bytes),
+      );
+
+      if (response.statusCode != 200 ||
+          response.data == null ||
+          response.data!.isEmpty) {
+        if (context.mounted) Loader.stopLoader(context);
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Failed to load document for printing')),
+          );
+        }
+        return;
+      }
+
+      final bytes = Uint8List.fromList(response.data!);
+      final bool isPdf = bytes.length >= 4 &&
+          bytes[0] == 0x25 &&
+          bytes[1] == 0x50 &&
+          bytes[2] == 0x44 &&
+          bytes[3] == 0x46;
+
+      Uint8List pdfBytes;
+      if (isPdf) {
+        pdfBytes = bytes;
+      } else {
+        final pdf = pw.Document();
+        final image = pw.MemoryImage(bytes);
+        pdf.addPage(
+          pw.Page(
+            pageFormat: PdfPageFormat.a4,
+            margin: const pw.EdgeInsets.all(16),
+            build: (pw.Context ctx) {
+              return pw.Center(
+                child: pw.Image(image, fit: pw.BoxFit.contain),
+              );
+            },
+          ),
+        );
+        pdfBytes = await pdf.save();
+      }
+
+      if (context.mounted) Loader.stopLoader(context);
+
+      final docTitle = title.trim().isNotEmpty ? title.trim() : 'Document';
+      await Printing.layoutPdf(
+        name: docTitle,
+        onLayout: (PdfPageFormat format) async => pdfBytes,
+      );
+    } catch (e) {
+      if (context.mounted) Loader.stopLoader(context);
+      print('Exception in printUploadedDocument: $e');
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('Unable to print this file. Try downloading instead.')),
+        );
+      }
+    }
+  }
+
   Future<Uint8List?> getQuotationMasterPdfBytes(String masterId) async {
     try {
       final response = await HttpRequest.httpGetRequest(

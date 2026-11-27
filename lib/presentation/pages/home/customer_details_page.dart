@@ -6167,6 +6167,21 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                                     mainAxisSize: MainAxisSize.min,
                                                                                     children: [
                                                                                       GestureDetector(
+                                                                                        onTap: () {
+                                                                                          customerDetailsProvider.printUploadedDocument(
+                                                                                            image.filePath,
+                                                                                            image.documentTypeName,
+                                                                                            context,
+                                                                                          );
+                                                                                        },
+                                                                                        child: const CircleAvatar(
+                                                                                          radius: 12,
+                                                                                          backgroundColor: AppColors.whiteColor,
+                                                                                          child: Icon(Icons.print, size: 18, color: AppColors.primaryBlue),
+                                                                                        ),
+                                                                                      ),
+                                                                                      const SizedBox(width: 4),
+                                                                                      GestureDetector(
                                                                                         onTap: () async {
                                                                                           try {
                                                                                             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Downloading file...')));
