@@ -358,7 +358,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
   List<Tab> _tabs = [];
   bool _isControllerInitialized = false;
   Key _checklistKey = UniqueKey();
-  int? _lastFetchedTabIndex;
+  final Set<int> _fetchedTabIndices = {};
+  String? _lastCustomerId;
 
   bool _canScrollLeft = false;
   bool _canScrollRight = false;
@@ -453,15 +454,23 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
   }
 
   void _fetchDataForCurrentTab({bool forceRefresh = false, int? tabIndex}) {
+    if (_lastCustomerId != widget.customerId) {
+      _lastCustomerId = widget.customerId;
+      _fetchedTabIndices.clear();
+    }
+
     final activeIndex =
         tabIndex ?? (_isControllerInitialized ? _tabController.index : -1);
     if (activeIndex < 0 || activeIndex >= _tabs.length) {
       return;
     }
-    if (!forceRefresh && _lastFetchedTabIndex == activeIndex) {
+    if (!forceRefresh && _fetchedTabIndices.contains(activeIndex)) {
       return;
     }
-    _lastFetchedTabIndex = activeIndex;
+    if (forceRefresh) {
+      _fetchedTabIndices.clear();
+    }
+    _fetchedTabIndices.add(activeIndex);
 
     String currentTabName = _tabs[activeIndex].text ?? "";
     final provider =
@@ -495,7 +504,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
             forceRefresh: forceRefresh);
         break;
       case "Tasks":
-        provider.getTaskList(widget.customerId, context);
+        provider.getTaskList(widget.customerId, context,
+            forceRefresh: forceRefresh);
         break;
       case "Quotations":
         provider.getQuatationList(widget.customerId, context,
@@ -557,10 +567,15 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
         break;
       case "Invoice":
         try {
-          Provider.of<InvoiceTabProvider>(context, listen: false)
-              .getInvoiceByCustomer(widget.customerId, context);
-          provider.getQuatationList(widget.customerId, context);
-          provider.getRecieptListApi(widget.customerId, context);
+          final invoiceProvider =
+              Provider.of<InvoiceTabProvider>(context, listen: false);
+          if (forceRefresh || invoiceProvider.invoiceList.isEmpty) {
+            invoiceProvider.getInvoiceByCustomer(widget.customerId, context);
+          }
+          provider.getQuatationList(widget.customerId, context,
+              forceRefresh: forceRefresh);
+          provider.getRecieptListApi(widget.customerId, context,
+              forceRefresh: forceRefresh);
         } catch (_) {}
         break;
       case "Calendar":
@@ -947,7 +962,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
         child: TabBar(
           controller: _tabController,
           onTap: (index) {
-            _fetchDataForCurrentTab(forceRefresh: true, tabIndex: index);
+            _fetchDataForCurrentTab(forceRefresh: false, tabIndex: index);
             if (isMobile) {
               setState(() {});
             }

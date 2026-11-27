@@ -31,11 +31,16 @@ class _StockReturnPageState extends State<InvoiceTabPage> {
           Provider.of<InvoiceTabProvider>(context, listen: false);
       final customerDetailsProvider =
           Provider.of<CustomerDetailsProvider>(context, listen: false);
-      invoiceProvider.getInvoiceByCustomer(widget.customerId, context);
-      customerDetailsProvider.getQuatationList(widget.customerId, context);
-
-      customerDetailsProvider.getRecieptListApi(
-          widget.customerId.toString(), context);
+      if (invoiceProvider.invoiceList.isEmpty) {
+        invoiceProvider.getInvoiceByCustomer(widget.customerId, context);
+      }
+      if (customerDetailsProvider.quotationList.isEmpty) {
+        customerDetailsProvider.getQuatationList(widget.customerId, context);
+      }
+      if (customerDetailsProvider.receiptList.isEmpty) {
+        customerDetailsProvider.getRecieptListApi(
+            widget.customerId.toString(), context);
+      }
     });
   }
 

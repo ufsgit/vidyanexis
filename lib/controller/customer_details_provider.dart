@@ -2983,12 +2983,24 @@ class CustomerDetailsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  String? _lastTaskCustomerId;
+
   Future<bool> getTaskList(String customerId, BuildContext context,
-      {bool isLoadMore = false}) async {
+      {bool isLoadMore = false, bool forceRefresh = false}) async {
+    if (!isLoadMore &&
+        !forceRefresh &&
+        _lastTaskCustomerId == customerId &&
+        _taskList.isNotEmpty) {
+      return false;
+    }
+
     if (!isLoadMore) {
+      if (_lastTaskCustomerId != customerId) {
+        _taskList = [];
+      }
+      _lastTaskCustomerId = customerId;
       _isLoading = true;
       taskListPageIndex = 1;
-      _taskList = [];
       notifyListeners();
     }
 
