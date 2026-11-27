@@ -339,29 +339,39 @@ class CustomFieldByStatusId {
 }
 
 class DropdownValue {
+  int? slno;
   int? dropdownId;
   String? dropdownValue;
 
   DropdownValue({
+    this.slno,
     this.dropdownId,
     this.dropdownValue,
   });
 
   DropdownValue copyWith({
+    int? slno,
     int? dropdownId,
     String? dropdownValue,
   }) =>
       DropdownValue(
+        slno: slno ?? this.slno,
         dropdownId: dropdownId ?? this.dropdownId,
         dropdownValue: dropdownValue ?? this.dropdownValue,
       );
 
   factory DropdownValue.fromJson(Map<String, dynamic> json) => DropdownValue(
-        dropdownId: json["dropdown_id"] ?? json["id"],
-        dropdownValue: (json["dropdown_value"] ?? json["value"])?.toString(),
+        slno: json["slno"] != null
+            ? int.tryParse(json["slno"].toString())
+            : (json["Sl_No"] != null || json["sl_no"] != null
+                ? int.tryParse((json["Sl_No"] ?? json["sl_no"]).toString())
+                : null),
+        dropdownId: json["dropdown_id"] ?? json["id"] ?? json["Dropdown_Id"],
+        dropdownValue: (json["dropdown_value"] ?? json["value"] ?? json["Dropdown_Value"])?.toString(),
       );
 
   Map<String, dynamic> toJson() => {
+        "slno": slno,
         "dropdown_id": dropdownId,
         "dropdown_value": dropdownValue,
       };

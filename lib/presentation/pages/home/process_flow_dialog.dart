@@ -587,6 +587,14 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                     enabled: true,
                                     showMore: false,
                                     onFieldValuesChanged: (values) {
+                                      if (!reportsProvider.showCustomFields
+                                          .any((cf) => cf.isChecked == 1)) {
+                                        return;
+                                      }
+                                      if (!reportsProvider.showCustomFields
+                                          .any((cf) => cf.isChecked == 1)) {
+                                        return;
+                                      }
                                       int statusId =
                                           selectedStatus.statusId ?? 0;
                                       int tasktypeId =

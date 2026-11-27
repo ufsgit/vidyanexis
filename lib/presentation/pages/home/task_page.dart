@@ -4849,6 +4849,7 @@ class _tasksPageReportState extends State<TaskPage> {
     // Get logged-in user ID saved during login.
     final preferences = await SharedPreferences.getInstance();
 
+
     final int loggedInUserId =
         int.tryParse(preferences.getString('userId') ?? '') ?? 0;
 
@@ -5419,7 +5420,10 @@ class _tasksPageReportState extends State<TaskPage> {
                                         enabled: true,
                                         showMore: false,
                                         onFieldValuesChanged: (values) {
-                                          // Optional: You can also handle here if needed
+                                          if (!reportsProvider.showCustomFields
+                                              .any((cf) => cf.isChecked == 1)) {
+                                            return;
+                                          }
                                           reportsProvider
                                               .fetchTaskTypesWithCustomFields(
                                                   selectedStatus
@@ -6522,8 +6526,11 @@ class _tasksPageReportState extends State<TaskPage> {
                         return Column(
                           children: [
                             Expanded(
-                              child: SingleChildScrollView(
-                                child: formFields,
+                              child: Scrollbar(
+                                thumbVisibility: true,
+                                child: SingleChildScrollView(
+                                  child: formFields,
+                                ),
                               ),
                             ),
 

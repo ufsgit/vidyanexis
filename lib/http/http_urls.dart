@@ -301,6 +301,8 @@ class HttpUrls {
   static String saveUserTaskType = "user_details/save_user_task_type";
   static String getTaskTypesOfProcessFlow =
       "process_flow/Get_Task_Types_Of_Process_Flow";
+  static String getFlowByCustomFieldCombination =
+      "process_flow/Get_Flow_By_Custom_Field_Combination";
 
   static String saveDepartment = "department/Save_department";
   static String deleteDepartment = "department/Delete_department";

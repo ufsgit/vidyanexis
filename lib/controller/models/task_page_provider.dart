@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/controller/models/custom_field_by_status.dart';
+import 'package:vidyanexis/controller/models/field_value_model.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_field_section_widget.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/controller/models/document_type_model.dart';
@@ -22,8 +23,10 @@ import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/http/loader.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/utils/extensions.dart';
+import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/models/form_settings_provider.dart';
 import 'package:vidyanexis/controller/dashboard_provider.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 
 class TaskPageProvider extends ChangeNotifier {
@@ -1749,6 +1752,166 @@ class TaskPageProvider extends ChangeNotifier {
     }
   }
 
+  void _applyProcessFlowResponse(dynamic data, BuildContext context,
+      {bool preserveCustomFieldsIfEmpty = false}) {
+    if (data == null || data is! Map<String, dynamic>) {
+      Loader.stopLoader(context);
+      return;
+    }
+
+    _selectedTaskTypeIds.clear();
+    final newData = data['data'] ?? data['task_types'] ?? [];
+    final documentData =
+        data['document_types'] ?? data['documents'] ?? [];
+    final statusData = data['mandatory_status'] ?? [];
+    final formsData = data['forms'] ?? [];
+
+    dynamic customFieldData = data['show_custom_field'] ??
+        data['show_custom_fields'] ??
+        data['custom_fields'];
+    if (customFieldData == null ||
+        (customFieldData is List && customFieldData.isEmpty)) {
+      for (final entry in data.entries) {
+        final k = entry.key.toString().toLowerCase().replaceAll('_', '');
+        if (k == 'showcustomfield' ||
+            k == 'showcustomfields' ||
+            k == 'customfields' ||
+            k == 'customfield') {
+          if (entry.value is List && (entry.value as List).isNotEmpty) {
+            customFieldData = entry.value;
+            break;
+          }
+        }
+      }
+    }
+
+    final flowDetails = data['flow_details'];
+    final enquiry = data['enquiry'] ?? [];
+    if (flowDetails is Map) {
+      _flowId = flowDetails['FlowId'] ?? flowDetails['flow_id'] ?? 0;
+      final msg = flowDetails['message'];
+      if (msg != null &&
+          msg.toString().trim().isNotEmpty &&
+          msg.toString().trim().toLowerCase() != 'null') {
+        _processFlowMessage = msg.toString().trim();
+      } else {
+        _processFlowMessage = null;
+      }
+    } else if (enquiry is List && enquiry.isNotEmpty) {
+      final firstEnquiry = enquiry.first;
+      if (firstEnquiry is Map) {
+        _flowId = firstEnquiry['FlowId'] ?? firstEnquiry['flow_id'] ?? 0;
+        final msg = firstEnquiry['message'];
+        if (msg != null &&
+            msg.toString().trim().isNotEmpty &&
+            msg.toString().trim().toLowerCase() != 'null') {
+          _processFlowMessage = msg.toString().trim();
+        } else {
+          _processFlowMessage = null;
+        }
+      } else {
+        _flowId = 0;
+        _processFlowMessage = null;
+      }
+    } else {
+      _flowId = 0;
+      _processFlowMessage = null;
+    }
+    print(
+        "FlowId: ${_flowId.toString()} | ProcessFlowMessage: $_processFlowMessage");
+
+    debugPrint("DEBUG: Process flow received ${formsData.length} forms");
+
+    try {
+      final dropDownProvider =
+          Provider.of<DropDownProvider>(context, listen: false);
+      _taskTypeModel = (newData as List<dynamic>).map((item) {
+        if (item is Map<String, dynamic>) {
+          final tId = item["Task_Type_Id"] ?? item["task_type_id"];
+          final master = dropDownProvider.taskType.firstWhere(
+            (t) => t.taskTypeId == tId,
+            orElse: () => TaskTypeModel.fromJson(item),
+          );
+          if (master.taskTypeId == tId) {
+            final mergedJson = master.toJson();
+            item.forEach((k, v) {
+              if (v != null) mergedJson[k] = v;
+            });
+            if (item["Show_User"] == null && item["show_user"] == null) {
+              mergedJson["Show_User"] = master.showUser;
+            }
+            if (item["Department_Ids"] == null &&
+                item["department_id"] == null &&
+                item["department_ids"] == null) {
+              mergedJson["Department_Ids"] = master.departmentIds;
+            }
+            if (item["Branch_Ids"] == null &&
+                item["branch_id"] == null &&
+                item["branch_ids"] == null) {
+              mergedJson["Branch_Ids"] = master.branchIds;
+            }
+            if (item["Duration"] == null && item["duration"] == null) {
+              mergedJson["Duration"] = master.duration;
+            }
+            return TaskTypeModel.fromJson(mergedJson);
+          }
+        }
+        return TaskTypeModel.fromJson(item);
+      }).toList();
+    } catch (_) {
+      _taskTypeModel = (newData as List<dynamic>)
+          .map((item) => TaskTypeModel.fromJson(item))
+          .toList();
+    }
+
+    initializeSelectedTaskTypes(); // deafult checkbox
+
+    for (var task in _taskTypeModel) {
+      final taskKey = task.uniqueId ?? task.taskTypeId.toString();
+      final uId = task.userDetailsId ?? task.userId;
+      if (uId != null && uId > 0) {
+        _taskTypeToUserMap[taskKey] = uId;
+      }
+    }
+
+    if (_taskTypeModel.isNotEmpty) {
+      followUpDateController.text = DateFormat('dd MMM yyyy').format(
+          DateTime.now()
+              .add(Duration(days: _taskTypeModel.first.duration)));
+    }
+
+    _documentTypeModel = (documentData as List<dynamic>).map((item) {
+      debugPrint("DEBUG DOCUMENT JSON: $item");
+      return DocumentTypeModel.fromJson(item);
+    }).toList();
+
+    _statusData = (statusData as List<dynamic>)
+        .map((item) => MandatoryStatusModel.fromJson(item))
+        .toList();
+
+    if (customFieldData is List && customFieldData.isNotEmpty) {
+      debugPrint("DEBUG raw customFieldData: $customFieldData");
+      _showCustomFields = (customFieldData as List)
+          .map((e) => CustomFieldByStatusId.fromJson(e))
+          .toList();
+      debugPrint(
+          "DEBUG parsed _showCustomFields: ${_showCustomFields.map((f) => '${f.customFieldName}: id=${f.customFieldId}, isMandatory=${f.isMandatory}, typeId=${f.customFieldTypeId}').toList()}");
+    } else if (!preserveCustomFieldsIfEmpty) {
+      _showCustomFields = [];
+    }
+
+    // Update forms in FormProvider if present
+    try {
+      final formProvider = Provider.of<FormProvider>(context, listen: false);
+      formProvider.setCustomerForms(data);
+    } catch (e) {
+      debugPrint("Error updating customer forms: $e");
+    }
+
+    Loader.stopLoader(context);
+    notifyListeners();
+  }
+
   Future<void> _fetchTaskTypesInternal(int tasktypeId, int statusId,
       int customerId, int enquiryForId, BuildContext context) async {
     print(statusId);
@@ -1763,8 +1926,8 @@ class TaskPageProvider extends ChangeNotifier {
 
       final Map<String, dynamic> queryParams = {
         "Task_Type_Id": tasktypeId,
-        "Status_Id": statusId,
         "Customer_Id": customerId,
+        "Status_Id": statusId,
         "Login_User_Id": userId,
         "Enquiry_For_Id": enquiryForId,
       };
@@ -1778,101 +1941,10 @@ class TaskPageProvider extends ChangeNotifier {
         final data = response.data;
 
         if (data != null) {
-          // log(data.toString());
-          _selectedTaskTypeIds.clear();
-          final newData = data['data'] ?? [];
-          final documentData = data['document_types'] ?? [];
-          final statusData = data['mandatory_status'] ?? [];
-          final formsData = data['forms'] ?? [];
-          dynamic customFieldData = data['show_custom_field'] ??
-              data['show_custom_fields'] ??
-              data['custom_fields'];
-          if (customFieldData == null ||
-              (customFieldData is List && customFieldData.isEmpty)) {
-            for (final entry in (data as Map<String, dynamic>).entries) {
-              final k = entry.key.toString().toLowerCase().replaceAll('_', '');
-              if (k == 'showcustomfield' ||
-                  k == 'showcustomfields' ||
-                  k == 'customfields' ||
-                  k == 'customfield') {
-                if (entry.value is List && (entry.value as List).isNotEmpty) {
-                  customFieldData = entry.value;
-                  break;
-                }
-              }
-            }
-          }
-          customFieldData ??= [];
-          final enquiry = data['enquiry'] ?? [];
-          if (enquiry is List && enquiry.isNotEmpty) {
-            final firstEnquiry = enquiry.first;
-            if (firstEnquiry is Map) {
-              _flowId = firstEnquiry['FlowId'] ?? 0;
-              final msg = firstEnquiry['message'];
-              if (msg != null &&
-                  msg.toString().trim().isNotEmpty &&
-                  msg.toString().trim().toLowerCase() != 'null') {
-                _processFlowMessage = msg.toString().trim();
-              } else {
-                _processFlowMessage = null;
-              }
-            } else {
-              _flowId = 0;
-              _processFlowMessage = null;
-            }
-            print(
-                "FlowId: ${_flowId.toString()} | ProcessFlowMessage: $_processFlowMessage");
-          } else {
-            _flowId = 0;
-            _processFlowMessage = null;
-          }
-
-          debugPrint(
-              "DEBUG: fetchTaskTypes received ${formsData.length} forms");
-
-          _taskTypeModel = (newData as List<dynamic>)
-              .map((item) => TaskTypeModel.fromJson(item))
-              .toList();
-
-          initializeSelectedTaskTypes(); // deafult checkbox
-
-          for (var task in _taskTypeModel) {
-            final taskKey = task.uniqueId ?? task.taskTypeId.toString();
-            final uId = task.userDetailsId ?? task.userId;
-            if (uId != null && uId > 0) {
-              _taskTypeToUserMap[taskKey] = uId;
-            }
-          }
-
-          if (_taskTypeModel.isNotEmpty) {
-            followUpDateController.text = DateFormat('dd MMM yyyy').format(
-                DateTime.now()
-                    .add(Duration(days: _taskTypeModel.first.duration)));
-          }
-
-          _documentTypeModel = (documentData as List<dynamic>).map((item) {
-            debugPrint("DEBUG DOCUMENT JSON: $item");
-            return DocumentTypeModel.fromJson(item);
-          }).toList();
-          _statusData = (statusData as List<dynamic>)
-              .map((item) => MandatoryStatusModel.fromJson(item))
-              .toList();
-
-          debugPrint(
-              "DEBUG fetchTaskTypes raw customFieldData: $customFieldData");
-          _showCustomFields = (customFieldData as List)
-              .map((e) => CustomFieldByStatusId.fromJson(e))
-              .toList();
-          debugPrint(
-              "DEBUG fetchTaskTypes parsed _showCustomFields: ${_showCustomFields.map((f) => '${f.customFieldName}: id=${f.customFieldId}, isMandatory=${f.isMandatory}, typeId=${f.customFieldTypeId}').toList()}");
-
-          // Update forms in FormProvider if present
-          final formProvider =
-              Provider.of<FormProvider>(context, listen: false);
-          formProvider.setCustomerForms(data);
-
+          _applyProcessFlowResponse(data, context,
+              preserveCustomFieldsIfEmpty: false);
+        } else {
           Loader.stopLoader(context);
-          notifyListeners();
         }
       } else {
         Loader.stopLoader(context);
@@ -1923,171 +1995,175 @@ class TaskPageProvider extends ChangeNotifier {
       {bool forceRefresh = false}) async {
     print(statusId);
     print(tasktypeId);
-    List<Map<String, dynamic>> customFieldsData = [];
-    if (customFieldTaskStatusKey.currentState != null) {
-      final fieldValues =
-          customFieldTaskStatusKey.currentState!.getFieldValues();
 
-      final checkedFieldIds = _showCustomFields
-          .where((cf) => cf.isChecked == 1 || cf.isChecked == null)
-          .map((cf) => cf.customFieldId)
-          .toSet();
+    // Check if there are custom fields with is_checked == 1
+    final checkedFields = _showCustomFields
+        .where((cf) => cf.isChecked == 1 && cf.customFieldId != null)
+        .toList();
 
-      customFieldsData = fieldValues
-          .where((field) => checkedFieldIds.contains(field.customFieldId))
-          .map((field) => field.toJson())
-          .toList();
-    }
-
-    if (customFieldsData.isEmpty) {
+    if (checkedFields.isEmpty) {
       if (forceRefresh) {
         return fetchTaskTypes(
             tasktypeId, statusId, customerId, enquiryForId, context);
       }
-      return; // No need to call the API if there are no active custom fields to pass
-    }
-
-    final payloadJson = jsonEncode(customFieldsData);
-    if (!forceRefresh && payloadJson == _lastFetchPayload) {
-      // Payload hasn't changed (e.g., interacted with unchecked fields)
       return;
     }
-    _lastFetchPayload = payloadJson;
 
-    try {
-      Loader.showLoader(context);
+    final settingsProvider =
+        Provider.of<SettingsProvider>(context, listen: false);
+    final bool isCombinationFlow =
+        settingsProvider.processFlowCombination == 1;
 
+    if (isCombinationFlow) {
+      // Sort ascending by custom_field_id: smallest id first (e.g. 1 then 2 then 3, 384 then 385)
+      checkedFields.sort((a, b) => a.customFieldId!.compareTo(b.customFieldId!));
+
+      final fieldValues =
+          customFieldTaskStatusKey.currentState?.getFieldValues() ?? [];
+
+      final List<String> combinationParts = ["$tasktypeId", "$statusId"];
+      bool hasAnyCheckedFieldSelected = false;
+
+      for (final field in checkedFields) {
+        final fv = fieldValues.firstWhere(
+          (v) => v.customFieldId == field.customFieldId,
+          orElse: () =>
+              FieldValueModel(customFieldId: field.customFieldId, value: ''),
+        );
+        final valStr = (fv.value ?? '').trim();
+        if (valStr.isEmpty) continue;
+
+        int? slno;
+        if (field.dropdownValues != null && field.dropdownValues!.isNotEmpty) {
+          for (int i = 0; i < field.dropdownValues!.length; i++) {
+            final item = field.dropdownValues![i];
+            final itemVal = (item.dropdownValue ?? '').trim().toLowerCase();
+            final itemId =
+                (item.dropdownId ?? '').toString().trim().toLowerCase();
+            if (itemVal == valStr.toLowerCase() ||
+                itemId == valStr.toLowerCase()) {
+              slno = item.slno ?? (i + 1);
+              break;
+            }
+          }
+        } else {
+          slno = int.tryParse(valStr);
+        }
+
+        if (slno != null) {
+          hasAnyCheckedFieldSelected = true;
+          combinationParts.add("${field.customFieldId}");
+          combinationParts.add("$slno");
+        }
+      }
+
+      if (hasAnyCheckedFieldSelected) {
+        final combination = combinationParts.join("-");
+        if (!forceRefresh && combination == _lastFetchPayload) {
+          return;
+        }
+        _lastFetchPayload = combination;
+
+        try {
+          Loader.showLoader(context);
+
+          final Map<String, dynamic> queryParams = {
+            "combination": combination,
+            if (customerId > 0) "Customer_Id": customerId,
+          };
+
+          final response = await HttpRequest.httpGetRequest(
+            endPoint: HttpUrls.getFlowByCustomFieldCombination,
+            bodyData: queryParams,
+          );
+
+          if (response.statusCode == 200) {
+            final data = response.data;
+            if (data != null) {
+              _applyProcessFlowResponse(data, context,
+                  preserveCustomFieldsIfEmpty: true);
+            } else {
+              Loader.stopLoader(context);
+            }
+          } else {
+            Loader.stopLoader(context);
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Server Error')),
+            );
+          }
+        } catch (e) {
+          Loader.stopLoader(context);
+          print('Exception occurred: $e');
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('An error occurred')),
+          );
+        }
+        return;
+      } else {
+        if (forceRefresh) {
+          return fetchTaskTypes(
+              tasktypeId, statusId, customerId, enquiryForId, context);
+        }
+        return;
+      }
+    } else {
+      // Permission 78 == 0 or absent: Call process_flow/Get_Task_Types_Of_Process_Flow_With_Custom_Field
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
-      _loginUserId = userId;
 
-      final Map<String, dynamic> queryParams = {
-        "Task_Type_Id": tasktypeId,
-        "Status_Id": statusId,
-        "Customer_Id": customerId,
-        "Login_User_Id": userId,
-        "Enquiry_For_Id": enquiryForId,
-        "Custom_Fields": customFieldsData,
-      };
+      List<Map<String, dynamic>> customFieldsData = [];
+      if (customFieldTaskStatusKey.currentState != null) {
+        final fieldValues =
+            customFieldTaskStatusKey.currentState!.getFieldValues();
+        customFieldsData = fieldValues.map((field) => field.toJson()).toList();
+      }
 
-      final response = await HttpRequest.httpGetRequest(
-        endPoint: HttpUrls.getTaskTypesOfProcessFlowWithCustomFields,
-        bodyData: queryParams,
-      );
+      final cacheKey =
+          "$tasktypeId|$statusId|$customerId|$enquiryForId|$customFieldsData";
+      if (!forceRefresh && cacheKey == _lastFetchPayload) {
+        return;
+      }
+      _lastFetchPayload = cacheKey;
 
-      if (response.statusCode == 200) {
-        final data = response.data;
+      try {
+        Loader.showLoader(context);
 
-        if (data != null) {
-          // log(data.toString());
-          final newData = data['data'] ?? [];
-          _selectedTaskTypeIds.clear();
-          final documentData = data['document_types'] ?? [];
-          final statusData = data['mandatory_status'] ?? [];
-          final formsData = data['forms'] ?? [];
-          // final customFieldData = data['show_custom_field'] ?? [];
-          final enquiry = data['enquiry'] ?? [];
-          if (enquiry is List && enquiry.isNotEmpty) {
-            final firstEnquiry = enquiry.first;
-            if (firstEnquiry is Map) {
-              _flowId = firstEnquiry['FlowId'] ?? 0;
-              final msg = firstEnquiry['message'];
-              if (msg != null &&
-                  msg.toString().trim().isNotEmpty &&
-                  msg.toString().trim().toLowerCase() != 'null') {
-                _processFlowMessage = msg.toString().trim();
-              } else {
-                _processFlowMessage = null;
-              }
-            } else {
-              _flowId = 0;
-              _processFlowMessage = null;
-            }
-            print(
-                "FlowId: ${_flowId.toString()} | ProcessFlowMessage: $_processFlowMessage");
+        final Map<String, dynamic> queryParams = {
+          "Task_Type_Id": tasktypeId,
+          "Status_Id": statusId,
+          if (customerId > 0) "Customer_Id": customerId,
+          if (userId.isNotEmpty) "Login_User_Id": userId,
+          if (enquiryForId > 0) "Enquiry_For_Id": enquiryForId,
+          "Custom_Fields": customFieldsData,
+        };
+
+        final response = await HttpRequest.httpGetRequest(
+          endPoint: HttpUrls.getTaskTypesOfProcessFlowWithCustomFields,
+          bodyData: queryParams,
+        );
+
+        if (response.statusCode == 200) {
+          final data = response.data;
+          if (data != null) {
+            _applyProcessFlowResponse(data, context,
+                preserveCustomFieldsIfEmpty: true);
           } else {
-            _flowId = 0;
-            _processFlowMessage = null;
+            Loader.stopLoader(context);
           }
-
-          debugPrint(
-              "DEBUG: fetchTaskTypes received ${formsData.length} forms");
-
-          _taskTypeModel = (newData as List<dynamic>)
-              .map((item) => TaskTypeModel.fromJson(item))
-              .toList();
-
-          initializeSelectedTaskTypes(); // deafult checkbox
-
-          for (var task in _taskTypeModel) {
-            final taskKey = task.uniqueId ?? task.taskTypeId.toString();
-            final uId = task.userDetailsId ?? task.userId;
-            if (uId != null && uId > 0) {
-              _taskTypeToUserMap[taskKey] = uId;
-            }
-          }
-
-          if (_taskTypeModel.isNotEmpty) {
-            followUpDateController.text = DateFormat('dd MMM yyyy').format(
-                DateTime.now()
-                    .add(Duration(days: _taskTypeModel.first.duration)));
-          }
-
-          _documentTypeModel = (documentData as List<dynamic>)
-              .map((item) => DocumentTypeModel.fromJson(item))
-              .toList();
-          _statusData = (statusData as List<dynamic>)
-              .map((item) => MandatoryStatusModel.fromJson(item))
-              .toList();
-
-          dynamic customFieldData = data['show_custom_field'] ??
-              data['show_custom_fields'] ??
-              data['custom_fields'];
-          if (customFieldData == null ||
-              (customFieldData is List && customFieldData.isEmpty)) {
-            for (final entry in (data as Map<String, dynamic>).entries) {
-              final k = entry.key.toString().toLowerCase().replaceAll('_', '');
-              if (k == 'showcustomfield' ||
-                  k == 'showcustomfields' ||
-                  k == 'customfields' ||
-                  k == 'customfield') {
-                if (entry.value is List && (entry.value as List).isNotEmpty) {
-                  customFieldData = entry.value;
-                  break;
-                }
-              }
-            }
-          }
-          customFieldData ??= [];
-          if (customFieldData.isNotEmpty) {
-            debugPrint(
-                "DEBUG withCustomFields raw customFieldData: $customFieldData");
-            _showCustomFields = (customFieldData as List)
-                .map((e) => CustomFieldByStatusId.fromJson(e))
-                .toList();
-            debugPrint(
-                "DEBUG withCustomFields parsed _showCustomFields: ${_showCustomFields.map((f) => '${f.customFieldName}: id=${f.customFieldId}, isMandatory=${f.isMandatory}, typeId=${f.customFieldTypeId}').toList()}");
-          }
-          // Update forms in FormProvider if present
-          final formProvider =
-              Provider.of<FormProvider>(context, listen: false);
-          formProvider.setCustomerForms(data);
-
+        } else {
           Loader.stopLoader(context);
-          notifyListeners();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Server Error')),
+          );
         }
-      } else {
+      } catch (e) {
         Loader.stopLoader(context);
+        print('Exception occurred: $e');
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Server Error')),
+          const SnackBar(content: Text('An error occurred')),
         );
       }
-    } catch (e) {
-      Loader.stopLoader(context);
-      print('Exception occurred: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred')),
-      );
+      return;
     }
   }
 
