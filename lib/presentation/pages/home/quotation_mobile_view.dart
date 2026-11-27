@@ -41,7 +41,7 @@ class _QuotationMobileViewState extends State<QuotationMobileView>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<CustomerDetailsProvider>(context, listen: false)
           .fetchQuotationListIfNeeded(widget.customerId, context,
-              forceRefresh: true);
+              forceRefresh: false);
     });
   }
 
